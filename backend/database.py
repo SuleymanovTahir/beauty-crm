@@ -164,7 +164,7 @@ def init_database():
                   created_at TEXT,
                   updated_at TEXT)''')
 
-    c.execute('''CREATE TABLE notification_settings (
+    c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
   id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
   email_notifications BOOLEAN DEFAULT 1,

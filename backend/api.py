@@ -871,3 +871,4 @@ async def update_notification_settings_api(
                 "Обновлены настройки уведомлений")
     
     return {"success": True, "message": "Notification settings updated"}
+
