@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 interface Booking {
   id: number;
   client_id: string;
-  service_name: string;
+  service: string;
   datetime: string;
   phone: string;
   name: string;
@@ -18,7 +18,24 @@ interface Booking {
 
 const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-const HOURS = Array.from({ length: 13 }, (_, i) => 9 + i);
+
+// Получаем часы работы из конфига (по умолчанию 9:00 - 21:00)
+const SALON_START_HOUR = 9;
+const SALON_END_HOUR = 21;
+
+// Генерируем часы + 30 минут
+const generateTimeSlots = () => {
+  const slots = [];
+  for (let hour = SALON_START_HOUR; hour <= SALON_END_HOUR; hour++) {
+    slots.push({ hour, minute: 0, display: `${String(hour).padStart(2, '0')}:00` });
+    if (hour < SALON_END_HOUR) {
+      slots.push({ hour, minute: 30, display: `${String(hour).padStart(2, '0')}:30` });
+    }
+  }
+  return slots;
+};
+
+const TIME_SLOTS = generateTimeSlots();
 
 const statusColors: Record<string, { bg: string; text: string; border: string }> = {
   pending: { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
@@ -37,14 +54,17 @@ const statusLabels: Record<string, string> = {
 
 export default function Calendar() {
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<{ date: Date; hour: number } | null>(null);
-  const [form, setForm] = useState({ name: '', service: '', phone: '', datetime: '' });
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [form, setForm] = useState({ name: '', service: '', phone: '', date: '', time: '' });
+  
   const statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
   useEffect(() => {
@@ -53,83 +73,97 @@ export default function Calendar() {
 
   const loadBookings = async () => {
     try {
-      setLoading(false);
+      setLoading(true);
       const data = await api.getBookings();
       setBookings(data.bookings || []);
     } catch (err) {
       toast.error('Ошибка загрузки');
+    } finally {
       setLoading(false);
     }
   };
 
-  const getWeekDays = () => {
-    const date = new Date(currentDate);
-    const day = date.getDay() || 7;
-    const diff = date.getDate() - day + 1;
-    const monday = new Date(date.setDate(diff));
-    
+  // Генерируем 7 дней вокруг текущей даты (3 дня до, текущий, 3 дня после)
+  const weekDays = useMemo(() => {
     const days = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date(currentDate);
       d.setDate(d.getDate() + i);
       days.push(d);
     }
     return days;
-  };
+  }, [currentDate]);
 
-  const getBookingsForSlot = (day: Date, hour: number) => {
+  const getBookingsForSlot = (day: Date, hour: number, minute: number) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
       return bookingDate.toDateString() === day.toDateString() && 
-             bookingDate.getHours() === hour;
+             bookingDate.getHours() === hour &&
+             bookingDate.getMinutes() === minute;
     });
   };
 
-  const handlePrevWeek = () => {
+  // ✅ НОВОЕ: Получить количество записей на конкретный день
+  const getBookingsForDay = (day: Date) => {
+    return bookings.filter(b => {
+      const bookingDate = new Date(b.datetime);
+      return bookingDate.toDateString() === day.toDateString();
+    });
+  };
+
+  const handlePrevDay = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() - 7);
+    d.setDate(d.getDate() - 1);
     setCurrentDate(d);
   };
 
-  const handleNextWeek = () => {
+  const handleNextDay = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() + 7);
+    d.setDate(d.getDate() + 1);
     setCurrentDate(d);
   };
 
+  // ✅ ИСПРАВЛЕНО: Переключение на сегодня с красивым тостом
   const handleToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    setCurrentDate(today);
-  };
-
-  const handleChangeMonth = (newMonth: number) => {
-    setCurrentDate(new Date(currentDate.getFullYear(), newMonth, 1));
-  };
-
-  const handleChangeYear = (newYear: number) => {
-    setCurrentDate(new Date(newYear, currentDate.getMonth(), 1));
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    setCurrentDate(todayDate);
+    
+    const todayBookings = getBookingsForDay(todayDate);
+    
+    // Красивый toast с разными сообщениями
+    if (todayBookings.length === 0) {
+      toast.success('📅 Сегодня записей нет - свободный день! 🎉', {
+        duration: 3000,
+      });
+    } else if (todayBookings.length === 1) {
+      toast.success(`📅 Одна запись на сегодня ⏰`, {
+        duration: 3000,
+      });
+    } else {
+      toast.success(`📅 ${todayBookings.length} записей на сегодня 🔥`, {
+        duration: 3000,
+      });
+    }
   };
 
   const handleCreateEvent = async () => {
-    if (!form.name || !form.service || !form.phone || !form.datetime) {
+    if (!form.name || !form.service || !form.phone || !form.date || !form.time) {
       toast.error('Заполните все поля');
       return;
     }
     try {
-      const [date, time] = form.datetime.split('T');
       await api.createBooking({
         name: form.name,
         service: form.service,
         phone: form.phone,
-        date,
-        time,
+        date: form.date,
+        time: form.time,
         instagram_id: Date.now().toString(),
       });
       toast.success('Запись создана');
       setShowCreateModal(false);
-      setForm({ name: '', service: '', phone: '', datetime: '' });
-      setSelectedSlot(null);
+      setForm({ name: '', service: '', phone: '', date: '', time: '' });
       await loadBookings();
     } catch (err) {
       toast.error('Ошибка создания');
@@ -152,156 +186,153 @@ export default function Calendar() {
     }
   };
 
-  const weekDays = getWeekDays();
-  const firstDay = weekDays[0];
-  const lastDay = weekDays[6];
+  const isToday = (date: Date) => date.toDateString() === today.toDateString();
+  const isCurrentDate = (date: Date) => date.toDateString() === currentDate.toDateString();
 
   return (
-    <div style={{ padding: '2rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
+    <div style={{ padding: '1rem 2rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
       {/* Header */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
           Календарь
         </h1>
-        <p style={{ color: '#6b7280' }}>{bookings.length} записей</p>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>{bookings.length} записей</p>
       </div>
 
-      {/* Toolbar */}
+      {/* Top Toolbar */}
       <div style={{
         backgroundColor: '#fff',
         borderRadius: '0.75rem',
         border: '1px solid #e5e7eb',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
+        padding: '1rem',
+        marginBottom: '1rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
-        {/* Navigation */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button
-            type="button"
-            onClick={() => handlePrevWeek()}
-            style={{
-              width: '40px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              backgroundColor: '#fff',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-              e.currentTarget.style.borderColor = '#9ca3af';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#fff';
-              e.currentTarget.style.borderColor = '#d1d5db';
-            }}
-          >
-            <ChevronLeft size={20} color="#6b7280" />
-          </button>
+        {/* Left: Navigation */}
+        <button
+          onClick={handlePrevDay}
+          style={{
+            width: '36px',
+            height: '36px',
+            border: '1px solid #d1d5db',
+            borderRadius: '0.5rem',
+            backgroundColor: '#fff',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f3f4f6';
+            e.currentTarget.style.borderColor = '#9ca3af';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fff';
+            e.currentTarget.style.borderColor = '#d1d5db';
+          }}
+        >
+          <ChevronLeft size={18} color="#6b7280" />
+        </button>
 
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827', minWidth: '200px', textAlign: 'center' }}>
-            {firstDay.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} - {lastDay.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
-          </h2>
-
-          <button
-            type="button"
-            onClick={() => handleNextWeek()}
-            style={{
-              width: '40px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              backgroundColor: '#fff',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-              e.currentTarget.style.borderColor = '#9ca3af';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#fff';
-              e.currentTarget.style.borderColor = '#d1d5db';
-            }}
-          >
-            <ChevronRight size={20} color="#6b7280" />
-          </button>
+        {/* Center: Current Date */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.3rem',
+          minWidth: '140px',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            color: '#ec4899',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.4rem'
+          }}>
+            {isToday(currentDate) ? (
+              <>
+                <CalendarIcon size={14} />
+                СЕГОДНЯ
+              </>
+            ) : (
+              DAYS[currentDate.getDay()]
+            )}
+          </div>
+          <div style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: '#111827'
+          }}>
+            {currentDate.getDate()}
+          </div>
+          <div style={{
+            fontSize: '0.8rem',
+            color: '#6b7280',
+            fontWeight: '500'
+          }}>
+            {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </div>
         </div>
 
-        {/* Selectors and Buttons */}
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Month Selector */}
-          <select
-            value={currentDate.getMonth()}
-            onChange={(e) => handleChangeMonth(parseInt(e.target.value))}
-            style={{
-              padding: '0.5rem 0.75rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              backgroundColor: '#fff',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              color: '#374151'
-            }}
-          >
-            {MONTHS.map((m, idx) => (
-              <option key={idx} value={idx}>{m}</option>
-            ))}
-          </select>
+        {/* Right: Navigation */}
+        <button
+          onClick={handleNextDay}
+          style={{
+            width: '36px',
+            height: '36px',
+            border: '1px solid #d1d5db',
+            borderRadius: '0.5rem',
+            backgroundColor: '#fff',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f3f4f6';
+            e.currentTarget.style.borderColor = '#9ca3af';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#fff';
+            e.currentTarget.style.borderColor = '#d1d5db';
+          }}
+        >
+          <ChevronRight size={18} color="#6b7280" />
+        </button>
 
-          {/* Year Selector */}
-          <select
-            value={currentDate.getFullYear()}
-            onChange={(e) => handleChangeYear(parseInt(e.target.value))}
-            style={{
-              padding: '0.5rem 0.75rem',
-              border: '1px solid #d1d5db',
-              borderRadius: '0.5rem',
-              backgroundColor: '#fff',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              color: '#374151'
-            }}
-          >
-            {Array.from({ length: 20 }, (_, i) => currentDate.getFullYear() - 10 + i).map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={handleToday}
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.4rem 0.8rem',
               backgroundColor: '#fff',
-              border: '1px solid #d1d5db',
+              border: '2px solid #ec4899',
               borderRadius: '0.5rem',
-              fontSize: '0.9rem',
-              fontWeight: '500',
-              color: '#374151',
+              fontSize: '0.85rem',
+              fontWeight: '600',
+              color: '#ec4899',
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-              e.currentTarget.style.borderColor = '#9ca3af';
+              e.currentTarget.style.backgroundColor = '#ec4899';
+              e.currentTarget.style.color = '#fff';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '#fff';
-              e.currentTarget.style.borderColor = '#d1d5db';
+              e.currentTarget.style.color = '#ec4899';
             }}
           >
             Сегодня
@@ -309,30 +340,94 @@ export default function Calendar() {
 
           <button
             onClick={() => {
-              setForm({ name: '', service: '', phone: '', datetime: new Date().toISOString().slice(0, 16) });
+              setForm({
+                name: '',
+                service: '',
+                phone: '',
+                date: currentDate.toISOString().split('T')[0],
+                time: TIME_SLOTS[0].display
+              });
               setShowCreateModal(true);
             }}
             style={{
-              padding: '0.5rem 1rem',
+              padding: '0.4rem 0.8rem',
               backgroundColor: '#2563eb',
               color: '#fff',
               border: 'none',
               borderRadius: '0.5rem',
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               fontWeight: '500',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.4rem',
               transition: 'background-color 0.2s'
             }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
           >
-            <Plus size={18} />
+            <Plus size={16} />
             Событие
           </button>
         </div>
+      </div>
+
+      {/* Week Navigation */}
+      <div style={{
+        backgroundColor: '#fff',
+        borderRadius: '0.75rem',
+        border: '1px solid #e5e7eb',
+        padding: '0.75rem',
+        marginBottom: '1rem',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        gap: '0.5rem'
+      }}>
+        {weekDays.map((day, idx) => {
+          const isCurrent = isCurrentDate(day);
+          const isCurrentToday = isToday(day);
+          
+          return (
+            <button
+              key={idx}
+              onClick={() => setCurrentDate(new Date(day))}
+              style={{
+                padding: '0.75rem 0.5rem',
+                backgroundColor: isCurrent ? '#ec4899' : isCurrentToday ? '#fef3c7' : '#f9fafb',
+                border: isCurrent ? '2px solid #ec4899' : '1px solid #e5e7eb',
+                borderRadius: '0.5rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                if (!isCurrent) {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isCurrent) {
+                  e.currentTarget.style.backgroundColor = isCurrentToday ? '#fef3c7' : '#f9fafb';
+                }
+              }}
+            >
+              <div style={{
+                fontSize: '0.7rem',
+                fontWeight: '600',
+                color: isCurrent ? '#fff' : '#6b7280',
+                marginBottom: '0.25rem'
+              }}>
+                {DAYS[day.getDay()]}
+              </div>
+              <div style={{
+                fontSize: '0.95rem',
+                fontWeight: 'bold',
+                color: isCurrent ? '#fff' : '#111827'
+              }}>
+                {day.getDate()}
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Calendar Grid */}
@@ -342,99 +437,89 @@ export default function Calendar() {
         border: '1px solid #e5e7eb',
         overflow: 'hidden'
       }}>
-        {/* Header with Days */}
-        <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', gap: '0', borderBottom: '2px solid #e5e7eb' }}>
-          <div style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', color: '#6b7280', backgroundColor: '#f9fafb' }}></div>
-          {weekDays.map((day, idx) => (
+        {/* Time Slots */}
+        <div style={{ maxHeight: 'calc(100vh - 450px)', overflow: 'auto' }}>
+          {TIME_SLOTS.map((slot, slotIdx) => (
             <div
-              key={idx}
+              key={slotIdx}
               style={{
-                padding: '1rem',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                color: '#111827',
-                backgroundColor: day.toDateString() === new Date().toDateString() ? '#fef3c7' : '#fff',
-                borderRight: '1px solid #e5e7eb'
+                display: 'grid',
+                gridTemplateColumns: '80px 1fr',
+                gap: '0',
+                borderBottom: '1px solid #e5e7eb',
+                minHeight: '60px'
               }}
             >
-              <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.25rem' }}>{DAYS[idx]}</div>
-              <div style={{ fontSize: '1.125rem' }}>{day.getDate()}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Hours Grid */}
-        <div style={{ maxHeight: 'calc(100vh - 300px)', overflow: 'auto' }}>
-          {HOURS.map(hour => (
-            <div key={hour} style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', gap: '0', borderBottom: '1px solid #e5e7eb' }}>
+              {/* Time Label */}
               <div style={{
-                padding: '0.5rem',
-                textAlign: 'center',
-                fontSize: '0.85rem',
-                color: '#6b7280',
+                padding: '0.75rem 0.5rem',
                 backgroundColor: '#f9fafb',
                 borderRight: '1px solid #e5e7eb',
-                fontWeight: '500'
+                fontWeight: '600',
+                color: '#6b7280',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.85rem',
+                gap: '0.25rem',
+                whiteSpace: 'nowrap'
               }}>
-                {hour}:00
+                <Clock size={14} />
+                {slot.display}
               </div>
 
-              {weekDays.map((day, dayIdx) => {
-                const dayBookings = getBookingsForSlot(day, hour);
-                return (
+              {/* Bookings for this slot */}
+              <div
+                onClick={() => {
+                  setForm({
+                    name: '',
+                    service: '',
+                    phone: '',
+                    date: currentDate.toISOString().split('T')[0],
+                    time: slot.display
+                  });
+                  setShowCreateModal(true);
+                }}
+                style={{
+                  padding: '0.4rem',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.2rem',
+                  overflow: 'auto'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+              >
+                {getBookingsForSlot(currentDate, slot.hour, slot.minute).map(booking => (
                   <div
-                    key={dayIdx}
-                    onClick={() => {
-                      setForm({
-                        name: '',
-                        service: '',
-                        phone: '',
-                        datetime: new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0).toISOString().slice(0, 16)
-                      });
-                      setShowCreateModal(true);
+                    key={booking.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedBooking(booking);
                     }}
                     style={{
-                      minHeight: '80px',
-                      padding: '0.5rem',
-                      borderRight: '1px solid #e5e7eb',
-                      backgroundColor: '#fff',
+                      padding: '0.4rem',
+                      backgroundColor: statusColors[booking.status]?.bg,
+                      color: statusColors[booking.status]?.text,
+                      border: `1px solid ${statusColors[booking.status]?.border}`,
+                      borderRadius: '0.3rem',
+                      fontSize: '0.7rem',
                       cursor: 'pointer',
-                      transition: 'background-color 0.2s',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.25rem'
+                      fontWeight: 'bold',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                    title={booking.name}
                   >
-                    {dayBookings.map(booking => (
-                      <div
-                        key={booking.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedBooking(booking);
-                        }}
-                        style={{
-                          padding: '0.5rem',
-                          backgroundColor: statusColors[booking.status]?.bg,
-                          color: statusColors[booking.status]?.text,
-                          border: `1px solid ${statusColors[booking.status]?.border}`,
-                          borderRadius: '0.375rem',
-                          fontSize: '0.75rem',
-                          cursor: 'pointer',
-                          fontWeight: 'bold',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}
-                        title={booking.name}
-                      >
-                        {booking.name} - {booking.service_name}
-                      </div>
-                    ))}
+                    {booking.name} - {booking.service}
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -456,7 +541,7 @@ export default function Calendar() {
             backgroundColor: '#fff',
             borderRadius: '1rem',
             width: '100%',
-            maxWidth: '400px',
+            maxWidth: '450px',
             boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)'
           }}>
             <div style={{
@@ -466,7 +551,9 @@ export default function Calendar() {
               justifyContent: 'space-between',
               alignItems: 'center'
             }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>Создать событие</h3>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>
+                Создать событие
+              </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 style={{
@@ -525,9 +612,9 @@ export default function Calendar() {
               />
 
               <input
-                type="datetime-local"
-                value={form.datetime}
-                onChange={(e) => setForm({ ...form, datetime: e.target.value })}
+                type="date"
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
                 style={{
                   padding: '0.75rem',
                   border: '1px solid #d1d5db',
@@ -536,6 +623,33 @@ export default function Calendar() {
                   boxSizing: 'border-box'
                 }}
               />
+
+              {/* Time Selector */}
+              <div style={{ position: 'relative' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  Время
+                </label>
+                <select
+                  value={form.time}
+                  onChange={(e) => setForm({ ...form, time: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box',
+                    backgroundColor: '#fff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {TIME_SLOTS.map((slot, idx) => (
+                    <option key={idx} value={slot.display}>
+                      {slot.display}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                 <button
@@ -593,7 +707,7 @@ export default function Calendar() {
             backgroundColor: '#fff',
             borderRadius: '1rem',
             width: '100%',
-            maxWidth: '400px',
+            maxWidth: '450px',
             boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)',
             maxHeight: '90vh',
             overflow: 'auto'
@@ -627,7 +741,9 @@ export default function Calendar() {
 
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Клиент</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  Клиент
+                </label>
                 <input
                   type="text"
                   value={selectedBooking.name}
@@ -645,10 +761,12 @@ export default function Calendar() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Услуга</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  Услуга
+                </label>
                 <input
                   type="text"
-                  value={selectedBooking.service_name}
+                  value={selectedBooking.service}
                   readOnly
                   style={{
                     width: '100%',
@@ -663,7 +781,9 @@ export default function Calendar() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Телефон</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  Телефон
+                </label>
                 <input
                   type="tel"
                   value={selectedBooking.phone}
@@ -681,10 +801,18 @@ export default function Calendar() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Дата и время</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  Дата и время
+                </label>
                 <input
-                  type="datetime-local"
-                  value={selectedBooking.datetime.slice(0, 16)}
+                  type="text"
+                  value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                   readOnly
                   style={{
                     width: '100%',
