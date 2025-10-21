@@ -5781,3 +5781,13 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 19:53:01 - crm - INFO - [middleware] 📤 POST /api/bookings → 200 (0.00s)
 2025-10-21 19:53:01 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-21 19:53:01 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 20:00:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 20:00:09 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-21 20:00:09 - crm - INFO - [middleware] 🔥 OPTIONS /api/users
+2025-10-21 20:00:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-21 20:00:09 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-21 20:00:09 - crm - INFO - [middleware] 📤 OPTIONS /api/users → 200 (0.00s)
+2025-10-21 20:00:09 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 20:00:09 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 20:00:09 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-21 20:00:09 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
