@@ -4509,3 +4509,118 @@ Traceback (most recent call last):
     );''')
     ^^^^^^
 sqlite3.OperationalError: table notification_settings already exists
+2025-10-21 15:12:00 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 15:12:00 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:12:00 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 15:12:00 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 15:12:00 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 15:12:00 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 15:12:00 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:12:00 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: table notification_settings already exists
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 740, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 167, in init_database
+        c.execute('''CREATE TABLE notification_settings (
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      id INTEGER PRIMARY KEY,
+      ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+      FOREIGN KEY (user_id) REFERENCES users(id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    );''')
+    ^^^^^^
+sqlite3.OperationalError: table notification_settings already exists
+2025-10-21 15:12:06 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 15:12:06 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:12:06 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 15:12:06 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 15:12:06 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 15:12:06 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 15:12:06 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:12:06 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: table notification_settings already exists
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 740, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 167, in init_database
+        c.execute('''CREATE TABLE notification_settings (
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      id INTEGER PRIMARY KEY,
+      ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+      FOREIGN KEY (user_id) REFERENCES users(id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    );''')
+    ^^^^^^
+sqlite3.OperationalError: table notification_settings already exists
+2025-10-21 15:13:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 15:13:38 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:13:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 15:13:38 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 15:13:38 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 15:13:38 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 15:13:38 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:13:38 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: table notification_settings already exists
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 740, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 167, in init_database
+        c.execute('''CREATE TABLE notification_settings (
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      id INTEGER PRIMARY KEY,
+      ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+      FOREIGN KEY (user_id) REFERENCES users(id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    );''')
+    ^^^^^^
+sqlite3.OperationalError: table notification_settings already exists
+2025-10-21 15:13:58 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 15:13:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:13:58 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 15:13:58 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 15:13:58 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 15:13:58 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 15:13:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:13:58 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: table notification_settings already exists
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 740, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 167, in init_database
+        c.execute('''CREATE TABLE notification_settings (
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      id INTEGER PRIMARY KEY,
+      ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+      FOREIGN KEY (user_id) REFERENCES users(id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    );''')
+    ^^^^^^
+sqlite3.OperationalError: table notification_settings already exists
+2025-10-21 15:14:03 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 15:14:03 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:14:03 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 15:14:03 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 15:14:03 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 15:14:03 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 15:14:03 - crm - INFO - [startup] ======================================================================
+2025-10-21 15:14:03 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: table notification_settings already exists
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 740, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 167, in init_database
+        c.execute('''CREATE TABLE notification_settings (
+        ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      id INTEGER PRIMARY KEY,
+      ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+      FOREIGN KEY (user_id) REFERENCES users(id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    );''')
+    ^^^^^^
+sqlite3.OperationalError: table notification_settings already exists

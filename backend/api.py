@@ -681,3 +681,193 @@ async def update_notification_settings(
     data = await request.json()
     save_notification_settings(user["id"], data)
     return {"success": True, "message": "Notification settings updated"}
+
+# backend/api.py - ДОБАВИТЬ ДО конца файла:
+
+@router.get("/api/bot-settings")
+async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки бота"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    # Получить из базы или из конфига
+    try:
+        c.execute("SELECT * FROM bot_settings LIMIT 1")
+        result = c.fetchone()
+        if result:
+            return {
+                "bot_name": result[1],
+                "personality_traits": result[2],
+                "greeting_message": result[3],
+                "farewell_message": result[4],
+                "price_explanation": result[5],
+                "salon_name": result[6],
+                "salon_address": result[7],
+                "salon_phone": result[8],
+                "salon_hours": result[9],
+                "booking_url": result[10],
+                "google_maps_link": result[11],
+                "communication_style": result[12],
+                "max_message_length": result[13]
+            }
+    except:
+        pass
+    finally:
+        conn.close()
+    
+    # Если нет в БД, вернуть defaults
+    from config import SALON_INFO
+    return {
+        "bot_name": SALON_INFO.get('bot_name', 'M.Le Diamant Assistant'),
+        "personality_traits": "Обаятельная, уверенная, харизматичная",
+        "greeting_message": "Привет! Добро пожаловать в M.Le Diamant!",
+        "farewell_message": "Спасибо за визит! Ждём вас снова!",
+        "price_explanation": "Мы в премиум-сегменте",
+        "salon_name": SALON_INFO.get('name', 'M.Le Diamant Beauty Lounge'),
+        "salon_address": SALON_INFO.get('address', ''),
+        "salon_phone": SALON_INFO.get('phone', ''),
+        "salon_hours": SALON_INFO.get('hours_ru', 'Ежедневно 10:30 - 21:00'),
+        "booking_url": SALON_INFO.get('booking_url', ''),
+        "google_maps_link": SALON_INFO.get('google_maps', ''),
+        "communication_style": "Дружелюбный, экспертный, вдохновляющий",
+        "max_message_length": 4
+    }
+
+
+@router.post("/api/bot-settings")
+async def update_bot_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки бота"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Создать таблицу если её нет
+        c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
+                     (id INTEGER PRIMARY KEY,
+                      bot_name TEXT,
+                      personality_traits TEXT,
+                      greeting_message TEXT,
+                      farewell_message TEXT,
+                      price_explanation TEXT,
+                      salon_name TEXT,
+                      salon_address TEXT,
+                      salon_phone TEXT,
+                      salon_hours TEXT,
+                      booking_url TEXT,
+                      google_maps_link TEXT,
+                      communication_style TEXT,
+                      max_message_length INTEGER)''')
+        
+        # Проверить есть ли уже запись
+        c.execute("SELECT COUNT(*) FROM bot_settings")
+        if c.fetchone()[0] > 0:
+            # Обновить
+            c.execute("""UPDATE bot_settings SET
+                        bot_name = ?,
+                        personality_traits = ?,
+                        greeting_message = ?,
+                        farewell_message = ?,
+                        price_explanation = ?,
+                        salon_name = ?,
+                        salon_address = ?,
+                        salon_phone = ?,
+                        salon_hours = ?,
+                        booking_url = ?,
+                        google_maps_link = ?,
+                        communication_style = ?,
+                        max_message_length = ?
+                        WHERE id = 1""",
+                      (data.get('bot_name'),
+                       data.get('personality_traits'),
+                       data.get('greeting_message'),
+                       data.get('farewell_message'),
+                       data.get('price_explanation'),
+                       data.get('salon_name'),
+                       data.get('salon_address'),
+                       data.get('salon_phone'),
+                       data.get('salon_hours'),
+                       data.get('booking_url'),
+                       data.get('google_maps_link'),
+                       data.get('communication_style'),
+                       data.get('max_message_length', 4)))
+        else:
+            # Вставить
+            c.execute("""INSERT INTO bot_settings
+                        (bot_name, personality_traits, greeting_message,
+                         farewell_message, price_explanation, salon_name,
+                         salon_address, salon_phone, salon_hours,
+                         booking_url, google_maps_link, communication_style,
+                         max_message_length)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      (data.get('bot_name'),
+                       data.get('personality_traits'),
+                       data.get('greeting_message'),
+                       data.get('farewell_message'),
+                       data.get('price_explanation'),
+                       data.get('salon_name'),
+                       data.get('salon_address'),
+                       data.get('salon_phone'),
+                       data.get('salon_hours'),
+                       data.get('booking_url'),
+                       data.get('google_maps_link'),
+                       data.get('communication_style'),
+                       data.get('max_message_length', 4)))
+        
+        conn.commit()
+        log_activity(user["id"], "update_bot_settings", "bot", "general",
+                    f"Обновлены настройки бота")
+        
+        return {"success": True, "message": "Bot settings updated"}
+    except Exception as e:
+        log_error(f"Error updating bot settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+
+# backend/api.py - добавить:
+
+@router.get("/api/notifications/settings")
+async def get_notification_settings_api(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from database import get_notification_settings
+    settings = get_notification_settings(user["id"])
+    return settings
+
+
+@router.post("/api/notifications/settings")
+async def update_notification_settings_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    data = await request.json()
+    
+    from database import save_notification_settings
+    save_notification_settings(user["id"], data)
+    
+    log_activity(user["id"], "update_notifications", "settings", "notifications",
+                "Обновлены настройки уведомлений")
+    
+    return {"success": True, "message": "Notification settings updated"}

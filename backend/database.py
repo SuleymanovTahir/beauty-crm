@@ -1124,3 +1124,77 @@ def update_custom_status(status_key: str, status_label: str = None,
         print(f"Ошибка обновления статуса: {e}")
         conn.close()
         return False
+    
+
+# backend/database.py - добавить в конец:
+
+def get_notification_settings(user_id: int):
+    """Получить настройки уведомлений пользователя"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""SELECT email_notifications, sms_notifications, 
+                        booking_notifications, birthday_reminders, 
+                        birthday_days_advance
+                 FROM notification_settings 
+                 WHERE user_id = ?""", (user_id,))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    if result:
+        return {
+            "email_notifications": bool(result[0]),
+            "sms_notifications": bool(result[1]),
+            "booking_notifications": bool(result[2]),
+            "birthday_reminders": bool(result[3]),
+            "birthday_days_advance": result[4]
+        }
+    
+    # Дефолт
+    return {
+        "email_notifications": True,
+        "sms_notifications": False,
+        "booking_notifications": True,
+        "birthday_reminders": True,
+        "birthday_days_advance": 7
+    }
+
+
+def save_notification_settings(user_id: int, settings: dict):
+    """Сохранить настройки уведомлений"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    # Проверить есть ли уже
+    c.execute("SELECT id FROM notification_settings WHERE user_id = ?", (user_id,))
+    exists = c.fetchone()
+    
+    if exists:
+        c.execute("""UPDATE notification_settings SET
+                    email_notifications = ?,
+                    sms_notifications = ?,
+                    booking_notifications = ?,
+                    birthday_reminders = ?,
+                    birthday_days_advance = ?
+                    WHERE user_id = ?""",
+                  (settings.get('email_notifications', True),
+                   settings.get('sms_notifications', False),
+                   settings.get('booking_notifications', True),
+                   settings.get('birthday_reminders', True),
+                   settings.get('birthday_days_advance', 7),
+                   user_id))
+    else:
+        c.execute("""INSERT INTO notification_settings
+                    (user_id, email_notifications, sms_notifications,
+                     booking_notifications, birthday_reminders, birthday_days_advance)
+                    VALUES (?, ?, ?, ?, ?, ?)""",
+                  (user_id,
+                   settings.get('email_notifications', True),
+                   settings.get('sms_notifications', False),
+                   settings.get('booking_notifications', True),
+                   settings.get('birthday_reminders', True),
+                   settings.get('birthday_days_advance', 7)))
+    
+    conn.commit()
+    conn.close()

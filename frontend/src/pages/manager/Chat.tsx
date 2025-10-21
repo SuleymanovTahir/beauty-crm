@@ -4,12 +4,10 @@ import {
   Search, 
   Phone, 
   Instagram, 
-  Paperclip, 
-  Image as ImageIcon,
+  Paperclip,
   Send,
   Loader,
   AlertCircle,
-  Pin,
   X,
   StickyNote
 } from 'lucide-react';
@@ -17,7 +15,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -41,7 +39,7 @@ interface Message {
 }
 
 export default function Chat() {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,22 +53,44 @@ export default function Chat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // ✅ ИСПРАВЛЕНО: Получить client_id из URL параметра
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const clientIdFromUrl = searchParams.get('client_id');  // ← ВАЖНО: client_id, не client!
+    
+    console.log('📍 URL параметр client_id:', clientIdFromUrl);
+    
+    if (clientIdFromUrl) {
+      // Если параметр есть, сохраняем его для использования после загрузки клиентов
+      localStorage.setItem('selectedClientId', clientIdFromUrl);
+    }
+  }, [location.search]);
+
   // Загрузить клиентов при монтировании
   useEffect(() => {
+    console.log('👥 Загружаю клиентов...');
     loadClients();
   }, []);
 
-  // Выбрать клиента из URL параметра
+  // Выбрать клиента из URL параметра после загрузки клиентов
   useEffect(() => {
-    const clientId = searchParams.get('client');
-    if (clientId && clients.length > 0) {
-      const client = clients.find(c => c.id === clientId);
-      if (client) {
-        setSelectedClient(client);
-        loadMessages(clientId);
+    if (clients.length > 0) {
+      const selectedClientId = localStorage.getItem('selectedClientId');
+      console.log('🔍 Ищу клиента с ID:', selectedClientId);
+      
+      if (selectedClientId) {
+        const client = clients.find(c => c.id === selectedClientId);
+        if (client) {
+          console.log('✅ Найден клиент:', client.display_name);
+          setSelectedClient(client);
+          loadMessages(selectedClientId);
+          localStorage.removeItem('selectedClientId');
+        } else {
+          console.log('❌ Клиент с ID не найден:', selectedClientId);
+        }
       }
     }
-  }, [searchParams, clients]);
+  }, [clients]);
 
   // Скроллить к последнему сообщению
   useEffect(() => {
@@ -84,6 +104,7 @@ export default function Chat() {
       const data = await api.getClients();
       
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
+      console.log('📦 Загружено клиентов:', clientsArray.length);
       setClients(clientsArray);
       
       // Выбрать первого клиента если нет в URL
@@ -104,9 +125,11 @@ export default function Chat() {
   const loadMessages = async (clientId: string) => {
     try {
       setLoadingMessages(true);
+      console.log('💬 Загружаю сообщения для клиента:', clientId);
       const data = await api.getChatMessages(clientId, 50);
       
       const messagesArray = data.messages || (Array.isArray(data) ? data : []);
+      console.log('📨 Загружено сообщений:', messagesArray.length);
       setMessages(messagesArray);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
@@ -118,6 +141,7 @@ export default function Chat() {
   };
 
   const handleSelectClient = (client: Client) => {
+    console.log('👤 Выбран клиент:', client.display_name);
     setSelectedClient(client);
     loadMessages(client.id);
   };
@@ -126,6 +150,7 @@ export default function Chat() {
     if (!message.trim() || !selectedClient) return;
 
     try {
+      console.log('📤 Отправляю сообщение клиенту:', selectedClient.display_name);
       await api.sendMessage(selectedClient.id, message);
       
       // Добавить сообщение в локальный список
@@ -148,6 +173,7 @@ export default function Chat() {
   };
 
   const handleSaveNotes = () => {
+    console.log('💾 Сохраняю заметки для клиента:', selectedClient?.display_name);
     toast.success('Заметки сохранены');
     setShowNotes(false);
   };
@@ -195,7 +221,8 @@ export default function Chat() {
           {/* Header */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg text-gray-900 flex items-center gap-2 font-semibold">
+                <MessageCircle className="w-5 h-5" />
                 Чаты ({clients.length})
               </h3>
             </div>
@@ -223,7 +250,7 @@ export default function Chat() {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
                       {client.display_name.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -252,7 +279,7 @@ export default function Chat() {
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
                     {selectedClient.display_name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -283,6 +310,7 @@ export default function Chat() {
                     size="sm" 
                     variant="outline"
                     onClick={() => setShowNotes(!showNotes)}
+                    title="Заметки"
                   >
                     <StickyNote className="w-4 h-4" />
                   </Button>
@@ -331,7 +359,7 @@ export default function Chat() {
             {showNotes && (
               <div className="border-t border-gray-200 p-4 bg-yellow-50">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm text-gray-900">Заметки о клиенте</h4>
+                  <h4 className="text-sm text-gray-900 font-medium">Заметки о клиенте</h4>
                   <Button size="sm" variant="ghost" onClick={() => setShowNotes(false)}>
                     <X className="w-4 h-4" />
                   </Button>
@@ -378,6 +406,7 @@ export default function Chat() {
                     size="sm"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
+                    title="Прикрепить файл"
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
@@ -385,6 +414,7 @@ export default function Chat() {
                     onClick={handleSendMessage}
                     className="bg-gradient-to-r from-pink-500 to-purple-600"
                     disabled={!message.trim()}
+                    title="Отправить"
                   >
                     <Send className="w-4 h-4" />
                   </Button>

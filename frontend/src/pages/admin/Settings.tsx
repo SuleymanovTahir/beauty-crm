@@ -50,7 +50,7 @@ export default function AdminSettings() {
     }
   };
 
-  const handleSaveNotifications = async (e: React.FormEvent) => {
+const handleSaveNotifications = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
     const response = await fetch('/api/notifications/settings', {
@@ -61,10 +61,13 @@ export default function AdminSettings() {
     });
 
     if (response.ok) {
-      toast.success('Уведомления настроены ✅');
+      toast.success('Уведомления настроены');
+    } else {
+      toast.error('Ошибка при сохранении');
     }
   } catch (err) {
-    toast.error('Ошибка при сохранении');
+    console.error('Error saving notification settings:', err);
+    toast.error('Ошибка сервера');
   }
 };
   

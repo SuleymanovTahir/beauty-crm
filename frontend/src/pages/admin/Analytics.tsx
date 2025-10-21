@@ -1,6 +1,5 @@
-// frontend/src/pages/admin/Analytics.tsx
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, TrendingDown, RefreshCw, Download, Loader } from 'lucide-react';
+import { BarChart3, Download, RefreshCw, Calendar, AlertCircle, Loader } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Input } from '../../components/ui/input';
@@ -30,8 +29,10 @@ export default function Analytics() {
   const [dateTo, setDateTo] = useState('');
   const [showCustomDates, setShowCustomDates] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -40,6 +41,7 @@ export default function Analytics() {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       
       // Загрузить статистику
       const statsData = await api.getStats();
@@ -55,7 +57,8 @@ export default function Analytics() {
       setAnalytics(analyticsData);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки';
-      toast.error(`Ошибка: ${message}`);
+      setError(message);
+      toast.error(`Ошибка загрузки аналитики: ${message}`);
       console.error('Analytics error:', err);
     } finally {
       setLoading(false);
@@ -85,15 +88,48 @@ export default function Analytics() {
     loadData();
   };
 
-  const handleExport = async (format: string) => {
+  // ✅ ФУНКЦИЯ ЭКСПОРТА CSV
+  const handleExportCSV = async () => {
     try {
-      toast.loading('Подготовка файла...');
-      await api.exportClients(format);
-      toast.success(`Файл экспортирован как ${format.toUpperCase()}`);
+      setExporting(true);
+      const blob = await api.exportAnalytics('csv', parseInt(period));
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analytics_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Файл успешно скачан');
     } catch (err) {
-      toast.error('Ошибка экспорта');
+      console.error('Export error:', err);
+      toast.error('Ошибка при экспорте файла');
+    } finally {
+      setExporting(false);
     }
   };
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Ошибка загрузки аналитики</p>
+              <p className="text-red-700 text-sm mt-1">{error}</p>
+              <Button onClick={loadData} className="mt-4 bg-red-600 hover:bg-red-700">
+                Попробовать еще раз
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -120,7 +156,7 @@ export default function Analytics() {
   })) || [];
 
   const statusData = analytics?.status_stats?.map(([status, count]) => ({
-    name: status,
+    name: status === 'pending' ? 'Ожидает' : status === 'completed' ? 'Завершена' : status === 'cancelled' ? 'Отменена' : 'Подтверждена',
     записи: count
   })) || [];
 
@@ -143,7 +179,7 @@ export default function Analytics() {
 
       {/* Filters */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div className="flex flex-col md:flex-row gap-4 flex-wrap">
+        <div className="flex flex-col md:flex-row gap-4 flex-wrap items-end">
           <Select value={period} onValueChange={handlePeriodChange}>
             <SelectTrigger className="w-full md:w-[200px]">
               <SelectValue placeholder="Период" />
@@ -173,7 +209,7 @@ export default function Analytics() {
                 placeholder="До"
                 className="w-full md:w-[180px]"
               />
-              <Button onClick={handleApplyCustomDates} className="bg-pink-600">
+              <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700">
                 Применить
               </Button>
             </>
@@ -188,16 +224,15 @@ export default function Analytics() {
             Обновить
           </Button>
           
-          <Select defaultValue="csv" onValueChange={(format) => handleExport(format)}>
-            <SelectTrigger className="w-full md:w-[150px]">
-              <SelectValue placeholder="Формат" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="csv">CSV</SelectItem>
-              <SelectItem value="excel">Excel</SelectItem>
-              <SelectItem value="pdf">PDF</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* ✅ КНОПКА ЭКСПОРТА */}
+          <Button 
+            onClick={handleExportCSV}
+            disabled={exporting}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
+          >
+            <Download className="w-4 h-4" />
+            {exporting ? 'Экспорт...' : 'Экспортировать'}
+          </Button>
         </div>
       </div>
 
@@ -209,9 +244,8 @@ export default function Analytics() {
               {stats.conversion_rate.toFixed(1)}%
             </h3>
             <p className="text-gray-600 text-sm mb-2">Конверсия</p>
-            <div className="flex items-center gap-1 text-green-600 text-sm">
-              <TrendingUp className="w-4 h-4" />
-              <span>От посетителей к клиентам</span>
+            <div className="text-sm text-green-600">
+              От посетителей к клиентам
             </div>
           </div>
           
@@ -220,7 +254,7 @@ export default function Analytics() {
               {analytics?.avg_response_time.toFixed(0) || 0} мин
             </h3>
             <p className="text-gray-600 text-sm mb-2">Время ответа</p>
-            <div className="flex items-center gap-1 text-blue-600 text-sm">
+            <div className="text-sm text-blue-600">
               Среднее время
             </div>
           </div>
@@ -230,8 +264,7 @@ export default function Analytics() {
               {stats.total_revenue.toLocaleString()} AED
             </h3>
             <p className="text-gray-600 text-sm mb-2">Доход</p>
-            <div className="flex items-center gap-1 text-green-600 text-sm">
-              <TrendingUp className="w-4 h-4" />
+            <div className="text-sm text-green-600">
               За период
             </div>
           </div>
@@ -241,7 +274,7 @@ export default function Analytics() {
               {stats.total_revenue > 0 ? (stats.total_revenue / stats.total_bookings).toFixed(0) : 0} AED
             </h3>
             <p className="text-gray-600 text-sm mb-2">Средний чек</p>
-            <div className="flex items-center gap-1 text-green-600 text-sm">
+            <div className="text-sm text-green-600">
               На запись
             </div>
           </div>
