@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Instagram, Clock, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Phone, Mail, Instagram, Clock, Send, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner@2.0.3';
+
+interface SalonInfo {
+  address?: string;
+  phone?: string;
+  email?: string;
+  instagram?: string;
+}
 
 export default function Contacts() {
   const [formData, setFormData] = useState({
@@ -12,11 +19,69 @@ export default function Contacts() {
     email: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [salonInfo, setSalonInfo] = useState<SalonInfo>({
+    address: 'Dubai Marina, Marina Plaza, Office 2301, Dubai, UAE',
+    phone: '+971 50 123 4567',
+    email: 'info@luxurybeauty.ae',
+    instagram: '@luxurybeauty_dubai'
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Загружаем информацию о салоне из API или config
+    const fetchSalonInfo = async () => {
+      try {
+        const response = await fetch('/api', {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.salon_info) {
+            setSalonInfo(data.salon_info);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching salon info:', err);
+        // Используем default значения
+      }
+    };
+    fetchSalonInfo();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Ваше сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
-    setFormData({ name: '', email: '', message: '' });
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error('Пожалуйста, заполните все поля');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Отправляем сообщение на email или в БД
+      const response = await fetch('/api/send-message', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message
+        })
+      });
+
+      if (response.ok) {
+        toast.success('Ваше сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        toast.error('Ошибка отправки сообщения');
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+      toast.error('Ошибка отправки. Попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,41 +105,42 @@ export default function Contacts() {
               <h2 className="text-3xl text-gray-900 mb-8">Как с нами связаться</h2>
               
               <div className="space-y-6">
+                {/* Address */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-pink-600" />
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Адрес</h3>
-                    <p className="text-gray-600">
-                      Dubai Marina, Marina Plaza<br />
-                      Office 2301, Dubai, UAE
-                    </p>
+                    <p className="text-gray-600">{salonInfo.address}</p>
                   </div>
                 </div>
 
+                {/* Phone */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Телефон</h3>
-                    <p className="text-gray-600">+971 50 123 4567</p>
+                    <p className="text-gray-600">{salonInfo.phone}</p>
                     <p className="text-gray-600">+971 4 123 4567</p>
                   </div>
                 </div>
 
+                {/* Email */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-cyan-600" />
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Email</h3>
-                    <p className="text-gray-600">info@luxurybeauty.ae</p>
+                    <p className="text-gray-600">{salonInfo.email}</p>
                     <p className="text-gray-600">booking@luxurybeauty.ae</p>
                   </div>
                 </div>
 
+                {/* Instagram */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Instagram className="w-6 h-6 text-pink-600" />
@@ -87,11 +153,12 @@ export default function Contacts() {
                       rel="noopener noreferrer"
                       className="text-pink-600 hover:underline"
                     >
-                      @luxurybeauty_dubai
+                      {salonInfo.instagram}
                     </a>
                   </div>
                 </div>
 
+                {/* Hours */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Clock className="w-6 h-6 text-amber-600" />
@@ -118,6 +185,7 @@ export default function Contacts() {
                     <Input
                       id="name"
                       required
+                      disabled={loading}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Анна Иванова"
@@ -130,6 +198,7 @@ export default function Contacts() {
                       id="email"
                       type="email"
                       required
+                      disabled={loading}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="anna@example.com"
@@ -141,6 +210,7 @@ export default function Contacts() {
                     <Textarea
                       id="message"
                       required
+                      disabled={loading}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Расскажите нам, чем мы можем вам помочь..."
@@ -148,9 +218,14 @@ export default function Contacts() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600" size="lg">
+                  <Button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-pink-500 to-purple-600" 
+                    size="lg"
+                  >
                     <Send className="w-4 h-4 mr-2" />
-                    Отправить сообщение
+                    {loading ? 'Отправка...' : 'Отправить сообщение'}
                   </Button>
                 </form>
               </div>

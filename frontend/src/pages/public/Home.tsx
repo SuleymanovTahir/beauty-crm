@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
-import { Calendar, Clock, Sparkles, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Clock, Sparkles, Star, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -8,18 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
 
-const services = [
-  'Перманентный макияж бровей',
-  'Маникюр',
-  'Педикюр',
-  'Массаж лица',
-  'Наращивание ресниц',
-  'Стрижка и укладка',
-  'Окрашивание волос',
-  'Чистка лица'
-];
+interface Service {
+  name: string;
+}
 
-const testimonials = [
+interface Testimonial {
+  name: string;
+  rating: number;
+  text: string;
+  avatar: string;
+}
+
+const defaultTestimonials: Testimonial[] = [
   {
     name: 'Анна Иванова',
     rating: 5,
@@ -42,7 +42,10 @@ const testimonials = [
 
 export default function Home() {
   const navigate = useNavigate();
+  const [services, setServices] = useState<string[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -50,6 +53,38 @@ export default function Home() {
     date: '',
     time: ''
   });
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/services?active_only=true', {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const serviceNames = data.services.map((s: any) => s.name).slice(0, 8);
+          setServices(serviceNames);
+        }
+      } catch (err) {
+        console.error('Error fetching services:', err);
+        // Используем default услуги
+        setServices([
+          'Перманентный макияж бровей',
+          'Маникюр',
+          'Педикюр',
+          'Массаж лица',
+          'Наращивание ресниц',
+          'Стрижка и укладка',
+          'Окрашивание волос',
+          'Чистка лица'
+        ]);
+      } finally {
+        setLoadingServices(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,38 +243,40 @@ export default function Home() {
             <p className="text-xl text-gray-600">Что говорят о нас</p>
           </div>
 
-          <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-12">
-            <button
-              onClick={prevTestimonial}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
+          {testimonials.length > 0 ? (
+            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-12">
+              <button
+                onClick={prevTestimonial}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
 
-            <button
-              onClick={nextTestimonial}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+              <button
+                onClick={nextTestimonial}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
 
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6">
-                {testimonials[currentTestimonial].avatar}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6">
+                  {testimonials[currentTestimonial].avatar}
+                </div>
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-xl text-gray-700 mb-6 italic">
+                  "{testimonials[currentTestimonial].text}"
+                </p>
+                <p className="text-lg text-gray-900">
+                  {testimonials[currentTestimonial].name}
+                </p>
               </div>
-              <div className="flex justify-center gap-1 mb-4">
-                {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              <p className="text-xl text-gray-700 mb-6 italic">
-                "{testimonials[currentTestimonial].text}"
-              </p>
-              <p className="text-lg text-gray-900">
-                {testimonials[currentTestimonial].name}
-              </p>
             </div>
-          </div>
+          ) : null}
         </div>
       </section>
 
@@ -251,77 +288,83 @@ export default function Home() {
             <p className="text-xl text-gray-600">Заполните форму и мы свяжемся с вами для подтверждения</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="name">Ваше имя *</Label>
-                <Input
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Анна Иванова"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Телефон *</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+971 50 123 4567"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="service">Услуга *</Label>
-                <Select required value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите услугу" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {services.map((service) => (
-                      <SelectItem key={service} value={service}>
-                        {service}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
+          {loadingServices ? (
+            <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+              <p className="text-gray-600">Загрузка услуг...</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="date">Дата *</Label>
+                  <Label htmlFor="name">Ваше имя *</Label>
                   <Input
-                    id="date"
-                    type="date"
+                    id="name"
                     required
-                    value={formData.date}
-                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Анна Иванова"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="time">Время *</Label>
+                  <Label htmlFor="phone">Телефон *</Label>
                   <Input
-                    id="time"
-                    type="time"
+                    id="phone"
+                    type="tel"
                     required
-                    value={formData.time}
-                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+971 50 123 4567"
                   />
                 </div>
-              </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg" size="lg">
-                <Calendar className="w-5 h-5 mr-2" />
-                Записаться
-              </Button>
-            </form>
-          </div>
+                <div>
+                  <Label htmlFor="service">Услуга *</Label>
+                  <Select required value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите услугу" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {services.map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {service}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="date">Дата *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      required
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="time">Время *</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      required
+                      value={formData.time}
+                      onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg" size="lg">
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Записаться
+                </Button>
+              </form>
+            </div>
+          )}
         </div>
       </section>
     </div>

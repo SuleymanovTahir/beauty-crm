@@ -1,20 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
-import { Heart, Award, Users, Sparkles } from 'lucide-react';
+import { Heart, Award, Users, Sparkles, Skeleton } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const team = [
-  { name: 'Анна Петрова', role: 'Мастер перманентного макияжа', experience: '8 лет опыта', avatar: 'А' },
-  { name: 'Мария Иванова', role: 'Косметолог', experience: '6 лет опыта', avatar: 'М' },
-  { name: 'Елена Сидорова', role: 'Мастер маникюра', experience: '5 лет опыта', avatar: 'Е' },
-  { name: 'Ольга Козлова', role: 'Парикмахер-стилист', experience: '10 лет опыта', avatar: 'О' },
-  { name: 'София Николаева', role: 'Lash-мастер', experience: '4 года опыта', avatar: 'С' },
-  { name: 'Ирина Волкова', role: 'Массажист', experience: '7 лет опыта', avatar: 'И' },
-];
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  experience: string;
+  avatar?: string;
+}
 
 export default function About() {
   const navigate = useNavigate();
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        // Попытаемся загрузить команду
+        // Если нет специального API, используем захардкодированные данные
+        const hardcodedTeam: TeamMember[] = [
+          { id: 1, name: 'Анна Петрова', role: 'Мастер перманентного макияжа', experience: '8 лет опыта', avatar: 'А' },
+          { id: 2, name: 'Мария Иванова', role: 'Косметолог', experience: '6 лет опыта', avatar: 'М' },
+          { id: 3, name: 'Елена Сидорова', role: 'Мастер маникюра', experience: '5 лет опыта', avatar: 'Е' },
+          { id: 4, name: 'Ольга Козлова', role: 'Парикмахер-стилист', experience: '10 лет опыта', avatar: 'О' },
+          { id: 5, name: 'София Николаева', role: 'Lash-мастер', experience: '4 года опыта', avatar: 'С' },
+          { id: 6, name: 'Ирина Волкова', role: 'Массажист', experience: '7 лет опыта', avatar: 'И' },
+        ];
+        setTeam(hardcodedTeam);
+      } catch (err) {
+        console.error('Error fetching team:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTeam();
+  }, []);
 
   return (
     <div>
@@ -127,8 +151,8 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {team.map((member, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 text-center">
+            {team.map((member) => (
+              <div key={member.id} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 text-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6">
                   {member.avatar}
                 </div>

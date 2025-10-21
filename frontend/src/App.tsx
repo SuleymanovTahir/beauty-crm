@@ -1,3 +1,7 @@
+// ============================================
+// frontend/src/App.tsx - ИСПРАВЛЕННЫЙ
+// ============================================
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
@@ -14,6 +18,7 @@ import CreateUser from './pages/admin/CreateUser';
 import Users from './pages/admin/Users';
 import Calendar from './pages/admin/Calendar';
 import Settings from './pages/admin/Settings';
+import BotSettings from './pages/admin/BotSettings';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -53,17 +58,38 @@ interface User {
 }
 
 interface CurrentUser {
+  id: number;
+  username: string;
+  full_name: string;
   role: string;
-  name: string;
 }
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
   isAuthenticated: boolean;
+  requiredRole?: string;
+  currentRole?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, isAuthenticated }) => {
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  element, 
+  isAuthenticated, 
+  requiredRole,
+  currentRole 
+}) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && currentRole !== requiredRole) {
+    // Редирект на панель в зависимости от роли
+    if (currentRole === 'admin') return <Navigate to="/admin" replace />;
+    if (currentRole === 'manager') return <Navigate to="/manager" replace />;
+    if (currentRole === 'employee') return <Navigate to="/employee" replace />;
+    return <Navigate to="/" replace />;
+  }
+
+  return element;
 };
 
 export default function App() {
@@ -80,13 +106,14 @@ export default function App() {
         if (savedToken && savedUser) {
           const user = JSON.parse(savedUser);
           setCurrentUser({
-            role: user.role,
-            name: user.full_name || user.username
+            id: user.id,
+            username: user.username,
+            full_name: user.full_name,
+            role: user.role
           });
         }
       } catch (err) {
         console.error('Auth check error:', err);
-        // Очищаем неверные данные
         localStorage.removeItem('session_token');
         localStorage.removeItem('user');
       } finally {
@@ -97,11 +124,14 @@ export default function App() {
     checkAuth();
   }, []);
 
-  const handleLogin = (user: any) => {
-    setCurrentUser({
-      role: user.role,
-      name: user.full_name || user.username
-    });
+  const handleLogin = (user: User) => {
+    const userData = {
+      id: user.id,
+      username: user.username,
+      full_name: user.full_name,
+      role: user.role
+    };
+    setCurrentUser(userData);
   };
 
   const handleLogout = () => {
@@ -131,7 +161,15 @@ export default function App() {
           <Route 
             path="/login" 
             element={
-              currentUser ? <Navigate to="/admin" replace /> : <Login onLogin={handleLogin} />
+              currentUser ? (
+                // Редирект в зависимости от роли
+                currentUser.role === 'admin' ? <Navigate to="/admin" replace /> :
+                currentUser.role === 'manager' ? <Navigate to="/manager" replace /> :
+                currentUser.role === 'employee' ? <Navigate to="/employee" replace /> :
+                <Navigate to="/" replace />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
             } 
           />
 
@@ -141,7 +179,14 @@ export default function App() {
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
-                element={<AdminLayout user={currentUser} onLogout={handleLogout} />}
+                requiredRole="admin"
+                currentRole={currentUser?.role}
+                element={
+                  <AdminLayout 
+                    user={currentUser} 
+                    onLogout={handleLogout}
+                  />
+                }
               />
             }
           >
@@ -159,6 +204,7 @@ export default function App() {
             <Route path="users/create" element={<CreateUser />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="bot-settings" element={<BotSettings />} />
           </Route>
 
           {/* Manager Routes - Protected */}
@@ -167,7 +213,14 @@ export default function App() {
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
-                element={<ManagerLayout user={currentUser} />}
+                requiredRole="manager"
+                currentRole={currentUser?.role}
+                element={
+                  <ManagerLayout 
+                    user={currentUser}
+                    onLogout={handleLogout}
+                  />
+                }
               />
             }
           >
@@ -179,6 +232,7 @@ export default function App() {
             <Route path="funnel" element={<Funnel />} />
             <Route path="clients" element={<Clients />} />
             <Route path="settings" element={<ManagerSettings />} />
+            <Route path="bot-settings" element={<BotSettings />} />
           </Route>
 
           {/* Employee Routes - Protected */}
@@ -187,7 +241,14 @@ export default function App() {
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
-                element={<EmployeeLayout user={currentUser} />}
+                requiredRole="employee"
+                currentRole={currentUser?.role}
+                element={
+                  <EmployeeLayout 
+                    user={currentUser}
+                    onLogout={handleLogout}
+                  />
+                }
               />
             }
           >
@@ -208,7 +269,22 @@ export default function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="cooperation" element={<Cooperation />} />
             <Route path="faq" element={<FAQ />} />
-            <Route path="cabinet" element={<UserCabinet />} />
+            {/* Cabinet route - для неавторизованных пользователей */}
+            <Route 
+              path="cabinet" 
+              element={
+                currentUser ? (
+                  // Если уже авторизован, редирект на его панель
+                  currentUser.role === 'admin' ? <Navigate to="/admin" replace /> :
+                  currentUser.role === 'manager' ? <Navigate to="/manager" replace /> :
+                  currentUser.role === 'employee' ? <Navigate to="/employee" replace /> :
+                  <Navigate to="/" replace />
+                ) : (
+                  // Если не авторизован, показать форму входа
+                  <UserCabinet />
+                )
+              }
+            />
           </Route>
 
           {/* Redirect to home by default */}

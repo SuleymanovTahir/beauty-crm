@@ -1,165 +1,191 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
   Search, 
   Phone, 
   Instagram, 
   Paperclip, 
-  Image as ImageIcon, 
-  FileText, 
-  MapPin, 
-  Smile, 
+  Image as ImageIcon,
   Send,
-  Mic,
-  StickyNote,
+  Loader,
+  AlertCircle,
   Pin,
-  X
+  X,
+  StickyNote
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
-import { toast } from 'sonner@2.0.3';
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
-// Mock data
-const mockClients = [
-  {
-    id: 1,
-    name: 'Анна Иванова',
-    avatar: 'А',
-    phone: '+971 50 123 4567',
-    instagram: '@anna_ivanova',
-    lastMessage: 'Спасибо, записалась!',
-    time: '10:30',
-    unread: 2,
-    online: true
-  },
-  {
-    id: 2,
-    name: 'Мария Петрова',
-    avatar: 'М',
-    phone: '+971 50 234 5678',
-    instagram: '@maria_p',
-    lastMessage: 'Какие у вас цены на маникюр?',
-    time: 'Вчера',
-    unread: 0,
-    online: false
-  },
-  {
-    id: 3,
-    name: 'Елена Сидорова',
-    avatar: 'Е',
-    phone: '+971 50 345 6789',
-    instagram: '@elena_sid',
-    lastMessage: 'Можно перенести запись?',
-    time: '2 дня назад',
-    unread: 1,
-    online: false
-  },
-];
+interface Client {
+  id: string;
+  name: string;
+  username: string;
+  phone: string;
+  display_name: string;
+  last_contact: string;
+  total_messages: number;
+  status: string;
+}
 
-const mockMessages = [
-  {
-    id: 1,
-    clientId: 1,
-    type: 'client',
-    text: 'Здравствуйте! Хочу записаться на перманентный макияж бровей',
-    time: '10:15',
-    read: true
-  },
-  {
-    id: 2,
-    clientId: 1,
-    type: 'bot',
-    text: 'Здравствуйте! Конечно, будем рады видеть вас. У нас есть свободные слоты на эту неделю. Когда вам удобно?',
-    time: '10:16',
-    read: true
-  },
-  {
-    id: 3,
-    clientId: 1,
-    type: 'client',
-    text: 'В пятницу после 14:00 было бы идеально',
-    time: '10:18',
-    read: true
-  },
-  {
-    id: 4,
-    clientId: 1,
-    type: 'bot',
-    text: 'Отлично! Записала вас на пятницу в 15:00. Процедура занимает около 2-3 часов. Нужна ли вам консультация перед процедурой?',
-    time: '10:20',
-    read: true
-  },
-  {
-    id: 5,
-    clientId: 1,
-    type: 'client',
-    text: 'Спасибо, записалась!',
-    time: '10:30',
-    read: false
-  },
-];
+interface Message {
+  id?: string | number;
+  message: string;
+  sender: string;
+  timestamp: string;
+  type?: string;
+}
 
 export default function Chat() {
-  const [selectedClient, setSelectedClient] = useState(mockClients[0]);
+  const [searchParams] = useSearchParams();
+  const [clients, setClients] = useState<Client[]>([]);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState(mockMessages);
-  const [isTyping, setIsTyping] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState('');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const filteredClients = mockClients.filter(client =>
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.phone.includes(searchTerm)
-  );
+  // Загрузить клиентов при монтировании
+  useEffect(() => {
+    loadClients();
+  }, []);
 
-  const clientMessages = messages.filter(m => m.clientId === selectedClient.id);
-
-  const handleSendMessage = () => {
-    if (!message.trim()) return;
-    
-    const newMessage = {
-      id: messages.length + 1,
-      clientId: selectedClient.id,
-      type: 'bot' as const,
-      text: message,
-      time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-      read: false
-    };
-    
-    setMessages([...messages, newMessage]);
-    setMessage('');
-    toast.success('Сообщение отправлено');
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-        toast.success('Файл прикреплен');
-      } else {
-        toast.success('Документ прикреплен');
+  // Выбрать клиента из URL параметра
+  useEffect(() => {
+    const clientId = searchParams.get('client');
+    if (clientId && clients.length > 0) {
+      const client = clients.find(c => c.id === clientId);
+      if (client) {
+        setSelectedClient(client);
+        loadMessages(clientId);
       }
+    }
+  }, [searchParams, clients]);
+
+  // Скроллить к последнему сообщению
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getClients();
+      
+      const clientsArray = data.clients || (Array.isArray(data) ? data : []);
+      setClients(clientsArray);
+      
+      // Выбрать первого клиента если нет в URL
+      if (clientsArray.length > 0 && !selectedClient) {
+        setSelectedClient(clientsArray[0]);
+        loadMessages(clientsArray[0].id);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
+      setError(message);
+      toast.error(`Ошибка: ${message}`);
+      console.error('Error loading clients:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePinClient = () => {
-    toast.success('Клиент закреплен');
+  const loadMessages = async (clientId: string) => {
+    try {
+      setLoadingMessages(true);
+      const data = await api.getChatMessages(clientId, 50);
+      
+      const messagesArray = data.messages || (Array.isArray(data) ? data : []);
+      setMessages(messagesArray);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
+      toast.error(`Ошибка: ${message}`);
+      console.error('Error loading messages:', err);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  const handleSelectClient = (client: Client) => {
+    setSelectedClient(client);
+    loadMessages(client.id);
+  };
+
+  const handleSendMessage = async () => {
+    if (!message.trim() || !selectedClient) return;
+
+    try {
+      await api.sendMessage(selectedClient.id, message);
+      
+      // Добавить сообщение в локальный список
+      const newMessage: Message = {
+        id: Date.now(),
+        message: message,
+        sender: 'bot',
+        timestamp: new Date().toISOString(),
+        type: 'text'
+      };
+      
+      setMessages([...messages, newMessage]);
+      setMessage('');
+      toast.success('Сообщение отправлено');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Ошибка отправки';
+      toast.error(`Ошибка: ${errorMsg}`);
+      console.error('Error sending message:', err);
+    }
   };
 
   const handleSaveNotes = () => {
     toast.success('Заметки сохранены');
     setShowNotes(false);
   };
+
+  const filteredClients = clients.filter(client =>
+    client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.phone.includes(searchTerm)
+  );
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          <p className="text-gray-600">Загрузка чатов...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-700 text-sm mt-1">{error}</p>
+              <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
+                Попробовать еще раз
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[calc(100vh-2rem)] p-4">
@@ -170,12 +196,7 @@ export default function Chat() {
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg text-gray-900 flex items-center gap-2">
-                Чаты
-                {mockClients.filter(c => c.unread > 0).length > 0 && (
-                  <Badge className="bg-pink-600 text-white">
-                    {mockClients.reduce((sum, c) => sum + c.unread, 0)}
-                  </Badge>
-                )}
+                Чаты ({clients.length})
               </h3>
             </div>
             <div className="relative">
@@ -192,243 +213,193 @@ export default function Chat() {
 
           {/* Clients */}
           <div className="flex-1 overflow-y-auto">
-            {filteredClients.map((client) => (
-              <div
-                key={client.id}
-                onClick={() => setSelectedClient(client)}
-                className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                  selectedClient.id === client.id ? 'bg-pink-50' : ''
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
-                      {client.avatar}
+            {filteredClients.length > 0 ? (
+              filteredClients.map((client) => (
+                <div
+                  key={client.id}
+                  onClick={() => handleSelectClient(client)}
+                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                    selectedClient?.id === client.id ? 'bg-pink-50' : ''
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                      {client.display_name.charAt(0).toUpperCase()}
                     </div>
-                    {client.online && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm text-gray-900 truncate">{client.name}</p>
-                      <span className="text-xs text-gray-500">{client.time}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900 truncate font-medium">{client.display_name}</p>
+                      <p className="text-xs text-gray-600 truncate">{client.phone}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {client.total_messages} сообщений
+                      </p>
                     </div>
-                    <p className="text-xs text-gray-600 truncate mb-1">{client.lastMessage}</p>
-                    <a 
-                      href={`https://instagram.com/${client.instagram.substring(1)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-pink-600 hover:underline flex items-center gap-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Instagram className="w-3 h-3" />
-                      {client.instagram}
-                    </a>
                   </div>
-                  {client.unread > 0 && (
-                    <Badge className="bg-pink-600 text-white text-xs">
-                      {client.unread}
-                    </Badge>
-                  )}
                 </div>
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500">
+                <MessageCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm">Клиентов не найдено</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Chat Header */}
-          <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
-                  {selectedClient.avatar}
-                </div>
-                <div>
-                  <p className="text-sm text-gray-900">{selectedClient.name}</p>
-                  <div className="flex items-center gap-3 text-xs text-gray-600">
-                    <span className="flex items-center gap-1">
-                      <Phone className="w-3 h-3" />
-                      {selectedClient.phone}
-                    </span>
-                    <a 
-                      href={`https://instagram.com/${selectedClient.instagram.substring(1)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-pink-600 hover:underline flex items-center gap-1"
-                    >
-                      <Instagram className="w-3 h-3" />
-                      {selectedClient.instagram}
-                    </a>
+        {selectedClient ? (
+          <div className="flex-1 flex flex-col">
+            {/* Chat Header */}
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
+                    {selectedClient.display_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-900 font-medium">{selectedClient.display_name}</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-600">
+                      {selectedClient.phone && (
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-3 h-3" />
+                          {selectedClient.phone}
+                        </span>
+                      )}
+                      {selectedClient.username && (
+                        <a 
+                          href={`https://instagram.com/${selectedClient.username}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-pink-600 hover:underline flex items-center gap-1"
+                        >
+                          <Instagram className="w-3 h-3" />
+                          @{selectedClient.username}
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" onClick={handlePinClient}>
-                  <Pin className="w-4 h-4" />
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => setShowNotes(!showNotes)}
-                >
-                  <StickyNote className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => setShowNotes(!showNotes)}
+                  >
+                    <StickyNote className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {isTyping && (
-              <div className="flex items-center gap-2 text-gray-500 text-sm">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+              {loadingMessages ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader className="w-6 h-6 text-pink-600 animate-spin" />
                 </div>
-                <span>{selectedClient.name} печатает...</span>
+              ) : messages.length > 0 ? (
+                messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-md px-4 py-3 rounded-2xl ${
+                        msg.sender === 'bot'
+                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
+                          : 'bg-white text-gray-900 border border-gray-200'
+                      }`}
+                    >
+                      <p className="text-sm">{msg.message}</p>
+                      <p className={`text-xs mt-1 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
+                        {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  <div className="text-center">
+                    <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                    <p>Нет сообщений</p>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Notes Panel */}
+            {showNotes && (
+              <div className="border-t border-gray-200 p-4 bg-yellow-50">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm text-gray-900">Заметки о клиенте</h4>
+                  <Button size="sm" variant="ghost" onClick={() => setShowNotes(false)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Введите заметки..."
+                  className="min-h-[80px] mb-2"
+                />
+                <Button size="sm" onClick={handleSaveNotes} className="bg-pink-600 hover:bg-pink-700">
+                  Сохранить заметки
+                </Button>
               </div>
             )}
 
-            {clientMessages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.type === 'bot' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-md px-4 py-3 rounded-2xl ${
-                    msg.type === 'bot'
-                      ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                      : 'bg-white text-gray-900 border border-gray-200'
-                  }`}
-                >
-                  <p className="text-sm">{msg.text}</p>
-                  <p className={`text-xs mt-1 ${msg.type === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
-                    {msg.time}
-                  </p>
+            {/* Chat Input */}
+            <div className="p-4 border-t border-gray-200 bg-white">
+              <div className="flex items-end gap-2">
+                <div className="flex-1">
+                  <Textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Введите сообщение..."
+                    className="resize-none"
+                    rows={2}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Notes Panel */}
-          {showNotes && (
-            <div className="border-t border-gray-200 p-4 bg-yellow-50">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm text-gray-900">Заметки о клиенте</h4>
-                <Button size="sm" variant="ghost" onClick={() => setShowNotes(false)}>
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-              <Textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Введите заметки..."
-                className="min-h-[80px] mb-2"
-              />
-              <Button size="sm" onClick={handleSaveNotes} className="bg-pink-600 hover:bg-pink-700">
-                Сохранить заметки
-              </Button>
-            </div>
-          )}
-
-          {/* Image Preview */}
-          {imagePreview && (
-            <div className="border-t border-gray-200 p-4 bg-gray-50">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-gray-600">Прикрепленное изображение</p>
-                <Button size="sm" variant="ghost" onClick={() => setImagePreview(null)}>
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-              <img src={imagePreview} alt="Preview" className="max-h-32 rounded-lg" />
-            </div>
-          )}
-
-          {/* Chat Input */}
-          <div className="p-4 border-t border-gray-200 bg-white">
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <Textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Введите сообщение..."
-                  className="resize-none"
-                  rows={2}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                />
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
+                
+                <div className="flex flex-col gap-2">
                   <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={handleFileSelect}
                     className="hidden"
-                    accept="image/*,application/pdf,.doc,.docx"
+                    accept="image/*,application/pdf"
                   />
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
-                    title="Прикрепить файл"
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
                   <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    title="Прикрепить изображение"
-                  >
-                    <ImageIcon className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    title="Отправить локацию"
-                  >
-                    <MapPin className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    title="Смайлики"
-                  >
-                    <Smile className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    title="Голосовое сообщение"
-                  >
-                    <Mic className="w-4 h-4" />
-                  </Button>
-                  <Button
                     onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 flex-1"
+                    className="bg-gradient-to-r from-pink-500 to-purple-600"
                     disabled={!message.trim()}
                   >
-                    <Send className="w-4 h-4 mr-2" />
-                    Отправить
+                    <Send className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="text-center">
+              <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p>Выберите клиента для начала чата</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ router = APIRouter(prefix="/api", tags=["API"])
 
 
 # ===== MIDDLEWARE АВТОРИЗАЦИИ =====
-async def require_auth(session_token: Optional[str] = Cookie(None)):
+def require_auth(session_token: Optional[str] = Cookie(None)):
     """Проверить авторизацию"""
     if not session_token:
         return None
@@ -65,10 +65,10 @@ def get_client_display_name(client):
 
 # ===== ОСНОВНЫЕ API ENDPOINTS =====
 
-@router.get("/api/dashboard")
+@router.get("/dashboard")  # ✅ ИСПРАВЛЕНО: убрано /api - будет /api/dashboard
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -89,7 +89,7 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
 @router.get("/clients")
 async def list_clients(session_token: Optional[str] = Cookie(None)):
     """Получить всех клиентов"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -122,7 +122,7 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
 @router.get("/clients/{client_id}")
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить деталь клиента"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -175,7 +175,7 @@ async def update_client_status_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус клиента"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -198,7 +198,7 @@ async def update_client_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить информацию клиента"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -223,7 +223,7 @@ async def pin_client_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Закрепить/открепить клиента"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -249,7 +249,7 @@ async def pin_client_api(
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить все записи"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -279,7 +279,7 @@ async def create_booking_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать запись"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -310,7 +310,7 @@ async def update_booking_status_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус записи"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -337,7 +337,7 @@ async def get_chat_messages(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить сообщения чата"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -364,7 +364,7 @@ async def send_chat_message(
     session_token: Optional[str] = Cookie(None)
 ):
     """Отправить сообщение клиенту"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -395,7 +395,7 @@ async def get_analytics_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить аналитику"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -408,7 +408,7 @@ async def get_analytics_api(
 @router.get("/funnel")
 async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     """Получить данные воронки"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -418,7 +418,7 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
 @router.get("/stats")
 async def get_stats_api(session_token: Optional[str] = Cookie(None)):
     """Получить статистику"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -433,7 +433,7 @@ async def list_services(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить услуги"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -463,7 +463,7 @@ async def list_services(
 @router.get("/users")
 async def list_users(session_token: Optional[str] = Cookie(None)):
     """Получить пользователей (только для admin)"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
@@ -491,7 +491,7 @@ async def delete_user_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить пользователя"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
@@ -515,7 +515,7 @@ async def export_clients(
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать клиентов"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -542,8 +542,61 @@ async def export_clients(
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return {"count": get_total_unread()}
+
+
+
+@router.get("/api/bot-settings")
+async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки бота"""
+    user = await require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    return {
+        "bot_name": SALON_INFO.get('bot_name', 'Diamant'),
+        "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
+        "farewell_message": "Спасибо за визит! Ждём вас снова! 💖",
+        "price_message": "Мы в премиум-сегменте 💎",
+        "booking_url": SALON_INFO.get('booking_url'),
+        "salon_address": SALON_INFO.get('address'),
+        "salon_phone": SALON_INFO.get('phone'),
+        "salon_hours": SALON_INFO.get('hours_ru'),
+        "google_maps_link": SALON_INFO.get('google_maps'),
+        "personality": "Обаятельная, уверенная, харизматичная. Эксперт в beauty-индустрии."
+    }
+
+
+@router.post("/api/bot-settings")
+async def update_bot_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки бота"""
+    user = await require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        # Сохраняем настройки в файл или БД
+        # Для начала просто логируем
+        log_activity(
+            user["id"],
+            "update_bot_settings",
+            "bot",
+            "general",
+            f"Обновлены настройки: {data.get('bot_name')}"
+        )
+        
+        # TODO: Реализовать сохранение в БД или файл
+        
+        return {"success": True, "message": "Bot settings updated"}
+    except Exception as e:
+        log_error(f"Error updating bot settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

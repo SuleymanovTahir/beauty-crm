@@ -7,14 +7,17 @@ import {
   Settings,
   LogOut
 } from 'lucide-react';
+import { toast } from 'sonner@2.0.3';
 
 interface EmployeeLayoutProps {
-  user: { role: string; name: string } | null;
+  user: { id: number; role: string; full_name: string } | null;
+  onLogout: () => void;
 }
 
-export default function EmployeeLayout({ user }: EmployeeLayoutProps) {
+export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = React.useState(false);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Мои записи', path: '/employee/dashboard' },
@@ -23,8 +26,33 @@ export default function EmployeeLayout({ user }: EmployeeLayoutProps) {
     { icon: Settings, label: 'Настройки', path: '/employee/settings' },
   ];
 
-  const handleLogout = () => {
-    navigate('/login');
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      const response = await fetch('/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('session_token');
+        localStorage.removeItem('user');
+        onLogout();
+        navigate('/login', { replace: true });
+        toast.success('Вы успешно вышли из системы');
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+      localStorage.removeItem('session_token');
+      localStorage.removeItem('user');
+      onLogout();
+      navigate('/login', { replace: true });
+    } finally {
+      setLoggingOut(false);
+    }
   };
 
   return (
@@ -63,19 +91,20 @@ export default function EmployeeLayout({ user }: EmployeeLayoutProps) {
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-white">
-              {user?.name.charAt(0) || 'E'}
+              {user?.full_name?.charAt(0) || 'E'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm truncate">{user?.name || 'Сотрудник'}</p>
+              <p className="text-sm truncate">{user?.full_name || 'Сотрудник'}</p>
               <p className="text-xs text-gray-500">Мастер</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            disabled={loggingOut}
+            className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
           >
             <LogOut className="w-4 h-4" />
-            <span>Выйти</span>
+            <span>{loggingOut ? 'Выход...' : 'Выйти'}</span>
           </button>
         </div>
       </aside>

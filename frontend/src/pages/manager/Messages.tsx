@@ -1,125 +1,118 @@
-import React, { useState } from 'react';
-import { MessageSquare, Search, Filter, Star, Archive, Trash2, Check, CheckCheck, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MessageSquare, Search, Filter, Star, Archive, Trash2, Check, CheckCheck, Clock, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Checkbox } from '../../components/ui/checkbox';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
-// Mock data
-const mockMessages = [
-  {
-    id: 1,
-    from: 'Анна Иванова',
-    avatar: 'А',
-    subject: 'Запрос на перманентный макияж',
-    preview: 'Здравствуйте! Хотела бы узнать подробнее о процедуре перманентного макияжа бровей...',
-    time: '10:30',
-    date: 'Сегодня',
-    unread: true,
-    starred: false,
-    category: 'inquiry',
-    status: 'new'
-  },
-  {
-    id: 2,
-    from: 'Мария Петрова',
-    avatar: 'М',
-    subject: 'Вопрос по ценам',
-    preview: 'Какие у вас цены на маникюр и педикюр? Есть ли какие-то акции?',
-    time: '09:15',
-    date: 'Сегодня',
-    unread: true,
-    starred: true,
-    category: 'price',
-    status: 'new'
-  },
-  {
-    id: 3,
-    from: 'Елена Сидорова',
-    avatar: 'Е',
-    subject: 'Перенос записи',
-    preview: 'Добрый день! Не могу прийти в назначенное время, можно ли перенести?',
-    time: 'Вчера',
-    date: 'Вчера',
-    unread: false,
-    starred: false,
-    category: 'booking',
-    status: 'replied'
-  },
-  {
-    id: 4,
-    from: 'Ольга Николаева',
-    avatar: 'О',
-    subject: 'Отзыв о процедуре',
-    preview: 'Спасибо огромное! Результатом очень довольна, обязательно приду еще!',
-    time: '2 дня назад',
-    date: '17.10.2025',
-    unread: false,
-    starred: true,
-    category: 'feedback',
-    status: 'archived'
-  },
-  {
-    id: 5,
-    from: 'София Козлова',
-    avatar: 'С',
-    subject: 'Вопрос о противопоказаниях',
-    preview: 'У меня чувствительная кожа, есть ли противопоказания для процедуры?',
-    time: '3 дня назад',
-    date: '16.10.2025',
-    unread: false,
-    starred: false,
-    category: 'inquiry',
-    status: 'in_progress'
-  },
-];
+interface ClientMessage {
+  id: string;
+  name: string;
+  display_name: string;
+  avatar: string;
+  phone: string;
+  last_contact: string;
+  total_messages: number;
+  status: string;
+  is_pinned: number;
+}
+
+interface ExtendedMessage extends ClientMessage {
+  starred: boolean;
+  unread: boolean;
+}
 
 const categories = [
   { value: 'all', label: 'Все сообщения' },
-  { value: 'inquiry', label: 'Запросы' },
-  { value: 'booking', label: 'Записи' },
-  { value: 'price', label: 'Цены' },
-  { value: 'feedback', label: 'Отзывы' },
+  { value: 'new', label: 'Новые' },
+  { value: 'active', label: 'Активные' },
 ];
 
 const statuses = [
   { value: 'all', label: 'Все' },
-  { value: 'new', label: 'Новые' },
-  { value: 'in_progress', label: 'В работе' },
-  { value: 'replied', label: 'Отвечено' },
-  { value: 'archived', label: 'Архив' },
+  { value: 'new', label: 'Новые клиенты' },
+  { value: 'interested', label: 'Заинтересованные' },
+  { value: 'customer', label: 'Клиенты' },
+  { value: 'vip', label: 'VIP' },
 ];
 
 export default function Messages() {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState<ExtendedMessage[]>([]);
+  const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredMessages = messages.filter(msg => {
-    const matchesSearch = msg.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         msg.preview.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || msg.category === categoryFilter;
-    const matchesStatus = statusFilter === 'all' || msg.status === statusFilter;
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  useEffect(() => {
+    loadMessages();
+  }, []);
 
-  const unreadCount = messages.filter(m => m.unread).length;
-  const starredCount = messages.filter(m => m.starred).length;
+  useEffect(() => {
+    const filtered = messages.filter(msg => {
+      const matchesSearch = msg.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           msg.phone.includes(searchTerm);
+      const matchesCategory = categoryFilter === 'all' || 
+                            (categoryFilter === 'new' && msg.unread) ||
+                            (categoryFilter === 'active' && msg.total_messages > 0);
+      const matchesStatus = statusFilter === 'all' || msg.status === statusFilter;
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+    setFilteredMessages(filtered);
+  }, [searchTerm, categoryFilter, statusFilter, messages]);
 
-  const handleToggleStar = (id: number) => {
+  const loadMessages = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const data = await api.getClients();
+      const clientsArray = data.clients || (Array.isArray(data) ? data : []);
+      
+      // Преобразуем клиентов в сообщения
+      const extendedMessages: ExtendedMessage[] = clientsArray.map((client: any) => ({
+        id: client.id,
+        name: client.name,
+        display_name: client.display_name,
+        avatar: (client.display_name || client.name || '?').charAt(0).toUpperCase(),
+        phone: client.phone || '-',
+        last_contact: client.last_contact,
+        total_messages: client.total_messages,
+        status: client.status,
+        is_pinned: client.is_pinned,
+        starred: client.is_pinned === 1,
+        unread: client.total_messages > 0 // Упрощённо: если есть сообщения, считаем непрочитанными
+      }));
+
+      setMessages(extendedMessages);
+      
+      if (extendedMessages.length === 0) {
+        toast.info('Сообщений не найдено');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
+      setError(message);
+      toast.error(`Ошибка: ${message}`);
+      console.error('Error loading messages:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleStar = (id: string) => {
     setMessages(messages.map(msg => 
       msg.id === id ? { ...msg, starred: !msg.starred } : msg
     ));
   };
 
-  const handleToggleSelect = (id: number) => {
+  const handleToggleSelect = (id: string) => {
     setSelectedMessages(prev => 
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
@@ -142,33 +135,74 @@ export default function Messages() {
   };
 
   const handleArchive = () => {
-    setMessages(messages.map(msg => 
-      selectedMessages.includes(msg.id) ? { ...msg, status: 'archived' } : msg
-    ));
+    setMessages(messages.filter(msg => !selectedMessages.includes(msg.id)));
     setSelectedMessages([]);
     toast.success('Сообщения перемещены в архив');
   };
 
-  const handleDelete = () => {
-    if (confirm('Вы уверены, что хотите удалить выбранные сообщения?')) {
-      setMessages(messages.filter(msg => !selectedMessages.includes(msg.id)));
-      setSelectedMessages([]);
-      toast.success('Сообщения удалены');
-    }
-  };
+  const unreadCount = messages.filter(m => m.unread).length;
+  const starredCount = messages.filter(m => m.starred).length;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'new':
         return <Clock className="w-4 h-4 text-blue-600" />;
-      case 'in_progress':
+      case 'interested':
         return <Check className="w-4 h-4 text-yellow-600" />;
-      case 'replied':
+      case 'customer':
         return <CheckCheck className="w-4 h-4 text-green-600" />;
+      case 'vip':
+        return <Star className="w-4 h-4 text-pink-600" />;
       default:
         return null;
     }
   };
+
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      new: 'Новый',
+      interested: 'Заинтересован',
+      customer: 'Клиент',
+      vip: 'VIP',
+      lead: 'Лид',
+      contacted: 'Связались',
+      booking_started: 'Начал запись',
+      booked: 'Записан',
+      inactive: 'Неактивен',
+      blocked: 'Заблокирован'
+    };
+    return labels[status] || status;
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          <p className="text-gray-600">Загрузка сообщений...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-700 text-sm mt-1">{error}</p>
+              <Button onClick={loadMessages} className="mt-4 bg-red-600 hover:bg-red-700">
+                Попробовать еще раз
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -183,7 +217,7 @@ export default function Messages() {
             </Badge>
           )}
         </h1>
-        <p className="text-gray-600">Входящие сообщения от клиентов</p>
+        <p className="text-gray-600">История общения с клиентами</p>
       </div>
 
       {/* Stats */}
@@ -191,7 +225,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Всего сообщений</p>
+              <p className="text-gray-500 text-sm mb-1">Всего клиентов</p>
               <h3 className="text-3xl text-gray-900">{messages.length}</h3>
             </div>
             <MessageSquare className="w-8 h-8 text-gray-400" />
@@ -201,8 +235,10 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Непрочитанные</p>
-              <h3 className="text-3xl text-blue-600">{unreadCount}</h3>
+              <p className="text-gray-500 text-sm mb-1">Активные</p>
+              <h3 className="text-3xl text-blue-600">
+                {messages.filter(m => m.total_messages > 0).length}
+              </h3>
             </div>
             <Clock className="w-8 h-8 text-blue-400" />
           </div>
@@ -211,7 +247,7 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">Избранные</p>
+              <p className="text-gray-500 text-sm mb-1">Закреплённые</p>
               <h3 className="text-3xl text-yellow-600">{starredCount}</h3>
             </div>
             <Star className="w-8 h-8 text-yellow-400" />
@@ -221,9 +257,9 @@ export default function Messages() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-sm mb-1">В работе</p>
+              <p className="text-gray-500 text-sm mb-1">Всего сообщений</p>
               <h3 className="text-3xl text-green-600">
-                {messages.filter(m => m.status === 'in_progress').length}
+                {messages.reduce((sum, m) => sum + m.total_messages, 0)}
               </h3>
             </div>
             <Check className="w-8 h-8 text-green-400" />
@@ -238,7 +274,7 @@ export default function Messages() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по отправителю или содержанию..."
+              placeholder="Поиск по имени или телефону..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -261,7 +297,7 @@ export default function Messages() {
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full md:w-[200px]">
-              <SelectValue />
+              <SelectValue placeholder="Статус" />
             </SelectTrigger>
             <SelectContent>
               {statuses.map(status => (
@@ -290,10 +326,6 @@ export default function Messages() {
                 <Archive className="w-4 h-4 mr-2" />
                 Архив
               </Button>
-              <Button size="sm" variant="outline" onClick={handleDelete} className="text-red-600">
-                <Trash2 className="w-4 h-4 mr-2" />
-                Удалить
-              </Button>
             </div>
           </div>
         </div>
@@ -312,61 +344,65 @@ export default function Messages() {
 
         {/* Messages */}
         <div className="divide-y divide-gray-200">
-          {filteredMessages.map((message) => (
-            <div
-              key={message.id}
-              className={`px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                message.unread ? 'bg-blue-50' : ''
-              }`}
-              onClick={() => navigate(`/manager/chat?client=${message.id}`)}
-            >
-              <div className="flex items-start gap-4">
-                <Checkbox
-                  checked={selectedMessages.includes(message.id)}
-                  onCheckedChange={() => handleToggleSelect(message.id)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggleStar(message.id);
-                  }}
-                  className="mt-1"
-                >
-                  <Star
-                    className={`w-5 h-5 ${
-                      message.starred
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300 hover:text-yellow-400'
-                    }`}
+          {filteredMessages.length > 0 ? (
+            filteredMessages.map((message) => (
+              <div
+                key={message.id}
+                className={`px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  message.unread ? 'bg-blue-50' : ''
+                }`}
+                onClick={() => navigate(`/manager/chat?client=${message.id}`)}
+              >
+                <div className="flex items-start gap-4">
+                  <Checkbox
+                    checked={selectedMessages.includes(message.id)}
+                    onCheckedChange={() => handleToggleSelect(message.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
-                </button>
 
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
-                  {message.avatar}
-                </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleStar(message.id);
+                    }}
+                    className="mt-1"
+                  >
+                    <Star
+                      className={`w-5 h-5 ${
+                        message.starred
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-gray-300 hover:text-yellow-400'
+                      }`}
+                    />
+                  </button>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <p className={`text-sm ${message.unread ? 'text-gray-900' : 'text-gray-700'}`}>
-                        {message.from}
-                      </p>
-                      {getStatusIcon(message.status)}
-                    </div>
-                    <span className="text-xs text-gray-500">{message.time}</span>
+                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium">
+                    {message.avatar}
                   </div>
-                  <p className={`text-sm mb-1 ${message.unread ? 'text-gray-900' : 'text-gray-600'}`}>
-                    {message.subject}
-                  </p>
-                  <p className="text-sm text-gray-500 truncate">{message.preview}</p>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <p className={`text-sm ${message.unread ? 'text-gray-900 font-medium' : 'text-gray-700'}`}>
+                          {message.display_name}
+                        </p>
+                        {getStatusIcon(message.status)}
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {new Date(message.last_contact).toLocaleDateString('ru-RU')}
+                      </span>
+                    </div>
+                    <p className={`text-sm ${message.unread ? 'text-gray-900' : 'text-gray-600'}`}>
+                      {message.phone}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {message.total_messages} сообщений
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-
-          {filteredMessages.length === 0 && (
+            ))
+          ) : (
             <div className="py-20 text-center">
               <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500">Сообщения не найдены</p>

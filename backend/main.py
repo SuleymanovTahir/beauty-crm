@@ -263,20 +263,19 @@ async def login_page(request: Request, error: str = None, success: str = None):
 
 
 @app.post("/logout")
-async def logout(session_token: Optional[str] = Cookie(None)):
-    """Выход из системы"""
+async def logout_api(session_token: Optional[str] = Cookie(None)):
+    """API: Logout"""
     try:
         if session_token:
             delete_session(session_token)
             log_info("Пользователь вышел из системы", "auth")
-
-        response = RedirectResponse(url="/login", status_code=302)
+        
+        response = JSONResponse({"success": True, "message": "Logged out"})
         response.delete_cookie("session_token")
         return response
     except Exception as e:
-        log_error(f"Ошибка при выходе: {e}", "auth", exc_info=True)
-        raise
-
+        log_error(f"Error in logout: {e}", "auth", exc_info=True)
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
@@ -519,16 +518,23 @@ async def reset_password(
                 "error": "Недействительная или истёкшая ссылка"
             })
 
-        reset_user_password(user_id, password)
-        mark_reset_token_used(token)
-
-        log_info(f"Пароль успешно сброшен для пользователя {user_id}", "auth")
-        return RedirectResponse(url="/login?success=Пароль успешно изменён", status_code=302)
+        success = reset_user_password(user_id, password)  # ✅ НОВОЕ: Проверяем результат
+        
+        if success:  # ✅ НОВОЕ: Проверяем успешность
+            mark_reset_token_used(token)
+            log_info(f"Пароль успешно сброшен для пользователя {user_id}", "auth")
+            return RedirectResponse(url="/login?success=Пароль успешно изменён", status_code=302)
+        else:  # ✅ НОВОЕ: Обработка ошибки
+            log_error(f"Ошибка сброса пароля для пользователя {user_id}", "auth")
+            return templates.TemplateResponse("admin/reset_password.html", {
+                "request": request,
+                "salon_info": SALON_INFO,
+                "token": token,
+                "error": "Ошибка при сбросе пароля. Попробуйте позже."
+            })
     except Exception as e:
         log_error(f"Ошибка в reset_password: {e}", "auth", exc_info=True)
         raise
-
-
 # ===== ВЕБХУКИ INSTAGRAM =====
 
 @app.get("/webhook")

@@ -1,33 +1,88 @@
 import React, { useState } from 'react';
-import { UserPlus, ArrowLeft } from 'lucide-react';
+import { UserPlus, ArrowLeft, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
 export default function CreateUser() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
+    full_name: '',
     username: '',
     email: '',
     password: '',
     role: 'employee'
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Валидация
+    if (!formData.full_name.trim()) {
+      toast.error('Заполните поле "ФИ"');
+      return;
+    }
+
+    if (!formData.username.trim()) {
+      toast.error('Заполните поле "Логин"');
+      return;
+    }
+
+    if (formData.username.length < 3) {
+      toast.error('Логин должен содержать минимум 3 символа');
+      return;
+    }
+
+    if (!formData.password) {
+      toast.error('Заполните поле "Пароль"');
+      return;
+    }
+
     if (formData.password.length < 6) {
       toast.error('Пароль должен содержать минимум 6 символов');
       return;
     }
-    
-    toast.success('Пользователь успешно создан!');
-    navigate('/admin/users');
+
+    try {
+      setLoading(true);
+
+      // Создаём форму для отправки (используется в register endpoint)
+      const form = new FormData();
+      form.append('full_name', formData.full_name);
+      form.append('username', formData.username);
+      form.append('email', formData.email);
+      form.append('password', formData.password);
+      form.append('role', formData.role);
+
+      // Используем прямой fetch для register эндпоинта
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/register`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: form
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(error.error || error.message || 'Ошибка создания пользователя');
+      }
+
+      toast.success('Пользователь успешно создан!');
+      navigate('/admin/users');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка создания пользователя';
+      toast.error(`Ошибка: ${message}`);
+      console.error('Error creating user:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +91,7 @@ export default function CreateUser() {
         variant="ghost"
         className="mb-6"
         onClick={() => navigate('/admin/users')}
+        disabled={loading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Назад к пользователям
@@ -51,27 +107,16 @@ export default function CreateUser() {
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="name">Имя *</Label>
-                <Input
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Анна"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="surname">Фамилия</Label>
-                <Input
-                  id="surname"
-                  value={formData.surname}
-                  onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-                  placeholder="Иванова"
-                />
-              </div>
+            <div>
+              <Label htmlFor="full_name">ФИ *</Label>
+              <Input
+                id="full_name"
+                required
+                disabled={loading}
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                placeholder="Анна Петрова"
+              />
             </div>
 
             <div>
@@ -79,12 +124,13 @@ export default function CreateUser() {
               <Input
                 id="username"
                 required
+                disabled={loading}
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder="anna_ivanova"
+                placeholder="anna_petrova"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Будет использоваться для входа в систему
+                Минимум 3 символа, будет использоваться для входа в систему
               </p>
             </div>
 
@@ -93,6 +139,7 @@ export default function CreateUser() {
               <Input
                 id="email"
                 type="email"
+                disabled={loading}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="anna@example.com"
@@ -108,6 +155,7 @@ export default function CreateUser() {
                 id="password"
                 type="password"
                 required
+                disabled={loading}
                 minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -120,7 +168,11 @@ export default function CreateUser() {
 
             <div>
               <Label htmlFor="role">Роль *</Label>
-              <Select required value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
+              <Select 
+                value={formData.role} 
+                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                disabled={loading}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -137,9 +189,22 @@ export default function CreateUser() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-pink-600 hover:bg-pink-700">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Создать аккаунт
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-pink-600 hover:bg-pink-700"
+            >
+              {loading ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Создание...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Создать аккаунт
+                </>
+              )}
             </Button>
           </form>
         </div>

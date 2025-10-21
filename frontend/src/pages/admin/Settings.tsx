@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, MessageSquare, Smartphone } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, Smartphone } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -9,54 +10,69 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner@2.0.3';
 
-export default function Settings() {
+export default function AdminSettings() {
   const [generalSettings, setGeneralSettings] = useState({
-    salonName: 'Luxury Beauty Salon',
+    salonName: 'M.Le Diamant Beauty Lounge',
     city: 'Dubai',
-    address: 'Dubai Marina, Marina Plaza, Office 2301',
+    address: 'Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai',
     phone: '+971 50 123 4567',
     email: 'info@luxurybeauty.ae',
     instagram: '@luxurybeauty_dubai',
     language: 'ru'
   });
 
-  const [botSettings, setBotSettings] = useState({
-    enabled: true,
-    autoReply: true,
-    welcomeMessage: 'Здравствуйте! Спасибо, что обратились в Luxury Beauty Salon. Чем могу помочь?',
-    bookingConfirmation: 'Ваша запись подтверждена! Мы ждем вас {date} в {time}.',
-    reminderMessage: 'Напоминаем о вашей записи завтра в {time}. Ждем вас!',
-    workingHours: '9:00 - 21:00',
-  });
-
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     smsNotifications: false,
-    pushNotifications: true,
     bookingNotifications: true,
-    marketingEmails: true,
     birthdayReminders: true,
     birthdayDaysAdvance: 7,
   });
 
-  const handleSaveGeneral = (e: React.FormEvent) => {
+  const handleSaveGeneral = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Основные настройки сохранены');
+    try {
+      const response = await fetch('/api/settings/general', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(generalSettings)
+      });
+
+      if (response.ok) {
+        toast.success('Основные настройки сохранены ✅');
+      } else {
+        toast.error('Ошибка при сохранении');
+      }
+    } catch (err) {
+      console.error('Error saving general settings:', err);
+      toast.error('Ошибка сервера');
+    }
   };
 
-  const handleSaveBot = (e: React.FormEvent) => {
+  const handleSaveNotifications = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Настройки бота сохранены');
-  };
+    try {
+      const response = await fetch('/api/settings/notifications', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notificationSettings)
+      });
 
-  const handleSaveNotifications = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success('Настройки уведомлений сохранены');
+      if (response.ok) {
+        toast.success('Настройки уведомлений сохранены ✅');
+      } else {
+        toast.error('Ошибка при сохранении');
+      }
+    } catch (err) {
+      console.error('Error saving notification settings:', err);
+      toast.error('Ошибка сервера');
+    }
   };
 
   return (
     <div className="p-8">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <SettingsIcon className="w-8 h-8 text-pink-600" />
@@ -66,14 +82,10 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">Общие</span>
-          </TabsTrigger>
-          <TabsTrigger value="bot" className="flex items-center gap-2">
-            <Bot className="w-4 h-4" />
-            <span className="hidden sm:inline">Бот</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
@@ -109,9 +121,9 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ru">Русский</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="ar">العربية</SelectItem>
+                      <SelectItem value="ru">🇷🇺 Русский</SelectItem>
+                      <SelectItem value="en">🇬🇧 English</SelectItem>
+                      <SelectItem value="ar">🇦🇪 العربية</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -176,101 +188,6 @@ export default function Settings() {
           </div>
         </TabsContent>
 
-        {/* Bot Settings */}
-        <TabsContent value="bot">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Настройки бота и автоответов</h2>
-            
-            <form onSubmit={handleSaveBot} className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Bot className="w-6 h-6 text-pink-600" />
-                  <div>
-                    <p className="text-sm text-gray-900">Включить бота</p>
-                    <p className="text-xs text-gray-600">Автоматические ответы на сообщения</p>
-                  </div>
-                </div>
-                <Switch
-                  checked={botSettings.enabled}
-                  onCheckedChange={(checked) => setBotSettings({ ...botSettings, enabled: checked })}
-                />
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <MessageSquare className="w-6 h-6 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-900">Автоответы</p>
-                    <p className="text-xs text-gray-600">Мгновенный ответ на первое сообщение</p>
-                  </div>
-                </div>
-                <Switch
-                  checked={botSettings.autoReply}
-                  onCheckedChange={(checked) => setBotSettings({ ...botSettings, autoReply: checked })}
-                  disabled={!botSettings.enabled}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="welcomeMessage">Приветственное сообщение</Label>
-                <Textarea
-                  id="welcomeMessage"
-                  value={botSettings.welcomeMessage}
-                  onChange={(e) => setBotSettings({ ...botSettings, welcomeMessage: e.target.value })}
-                  className="min-h-[100px]"
-                  disabled={!botSettings.enabled}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Это сообщение будет отправлено клиенту при первом обращении
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="bookingConfirmation">Подтверждение записи</Label>
-                <Textarea
-                  id="bookingConfirmation"
-                  value={botSettings.bookingConfirmation}
-                  onChange={(e) => setBotSettings({ ...botSettings, bookingConfirmation: e.target.value })}
-                  className="min-h-[80px]"
-                  disabled={!botSettings.enabled}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Доступные переменные: {'{date}'}, {'{time}'}, {'{service}'}
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="reminderMessage">Напоминание о записи</Label>
-                <Textarea
-                  id="reminderMessage"
-                  value={botSettings.reminderMessage}
-                  onChange={(e) => setBotSettings({ ...botSettings, reminderMessage: e.target.value })}
-                  className="min-h-[80px]"
-                  disabled={!botSettings.enabled}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Отправляется за 24 часа до визита
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="workingHours">Часы работы</Label>
-                <Input
-                  id="workingHours"
-                  value={botSettings.workingHours}
-                  onChange={(e) => setBotSettings({ ...botSettings, workingHours: e.target.value })}
-                  placeholder="9:00 - 21:00"
-                  disabled={!botSettings.enabled}
-                />
-              </div>
-
-              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
-                Сохранить настройки бота
-              </Button>
-            </form>
-          </div>
-        </TabsContent>
-
         {/* Notifications */}
         <TabsContent value="notifications">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -307,20 +224,6 @@ export default function Settings() {
                     onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, smsNotifications: checked })}
                   />
                 </div>
-
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Bell className="w-6 h-6 text-purple-600" />
-                    <div>
-                      <p className="text-sm text-gray-900">Push уведомления</p>
-                      <p className="text-xs text-gray-600">Уведомления в браузере</p>
-                    </div>
-                  </div>
-                  <Switch
-                    checked={notificationSettings.pushNotifications}
-                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, pushNotifications: checked })}
-                  />
-                </div>
               </div>
 
               <div className="border-t border-gray-200 pt-6 space-y-4">
@@ -334,17 +237,6 @@ export default function Settings() {
                   <Switch
                     checked={notificationSettings.bookingNotifications}
                     onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, bookingNotifications: checked })}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="text-sm text-gray-900">Маркетинговые рассылки</p>
-                    <p className="text-xs text-gray-600">Акции, специальные предложения</p>
-                  </div>
-                  <Switch
-                    checked={notificationSettings.marketingEmails}
-                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, marketingEmails: checked })}
                   />
                 </div>
 
@@ -398,34 +290,25 @@ export default function Settings() {
                 <div className="flex items-start gap-3">
                   <Shield className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-sm text-gray-900 mb-2">Рекомендации по безопасности</h3>
+                    <h3 className="text-sm text-gray-900 mb-2 font-semibold">Рекомендации по безопасности</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
                       <li>• Используйте сложные пароли (минимум 8 символов)</li>
                       <li>• Регулярно меняйте пароли сотрудников</li>
                       <li>• Не передавайте учетные данные третьим лицам</li>
                       <li>• Проверяйте активные сессии пользователей</li>
+                      <li>• Регулярно создавайте резервные копии данных</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg text-gray-900 mb-4">Управление сессиями</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Просмотрите активные сессии пользователей и завершите подозрительные соединения
-                </p>
-                <Button variant="outline">
-                  Просмотреть активные сессии
-                </Button>
-              </div>
-
-              <div>
                 <h3 className="text-lg text-gray-900 mb-4">Резервное копирование</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Скачайте резервную копию всех данных системы
+                  Скачайте резервную копию всех данных системы для безопасности
                 </p>
                 <Button variant="outline">
-                  Скачать данные
+                  📥 Скачать резервную копию
                 </Button>
               </div>
             </div>

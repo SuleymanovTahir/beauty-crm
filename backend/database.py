@@ -446,7 +446,6 @@ def mark_reset_token_used(token: str):
     conn.close()
 
 def reset_user_password(user_id: int, new_password: str):
-    """Сбросить пароль пользователя"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
@@ -456,9 +455,8 @@ def reset_user_password(user_id: int, new_password: str):
     
     conn.commit()
     conn.close()
-
     
-    return RedirectResponse(url="/login?success=Пароль успешно изменён", status_code=302)
+    return True  # ✅ Просто возвращаем успех
 
 def create_session(user_id: int) -> str:
     """Создать сессию для пользователя"""

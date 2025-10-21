@@ -1,24 +1,84 @@
-import React, { useState } from 'react';
-import { User, Mail, Phone, Briefcase, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Mail, Phone, Briefcase, Save, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { toast } from 'sonner@2.0.3';
 
+interface UserProfile {
+  id: number;
+  username: string;
+  full_name: string;
+  email: string;
+  role: string;
+}
+
 export default function EmployeeProfile() {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
-    name: 'Анна',
-    surname: 'Петрова',
-    email: 'anna.petrova@luxurybeauty.ae',
-    phone: '+971 50 123 4567',
-    position: 'Мастер перманентного макияжа',
-    experience: '8 лет'
+    full_name: '',
+    email: '',
+    phone: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/dashboard', {
+          credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Failed to fetch user');
+        const data = await response.json();
+        // Из session получаем информацию пользователя
+        if (data.user) {
+          setUser(data.user);
+          setProfileData({
+            full_name: data.user.full_name || '',
+            email: data.user.email || '',
+            phone: ''
+          });
+        }
+      } catch (err) {
+        toast.error('Ошибка загрузки профиля');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Профиль обновлен');
+    try {
+      const response = await fetch('/api/profile/update', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData)
+      });
+      if (response.ok) {
+        toast.success('Профиль обновлен');
+      }
+    } catch (err) {
+      toast.error('Ошибка обновления профиля');
+    }
   };
+
+  if (loading) {
+    return <div className="p-8">Загрузка...</div>;
+  }
+
+  if (!user) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-600" />
+          <span className="text-red-800">Ошибка загрузки профиля</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -34,13 +94,11 @@ export default function EmployeeProfile() {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
             <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-4">
-              {profileData.name.charAt(0)}
+              {user.full_name.charAt(0)}
             </div>
-            <h3 className="text-xl text-gray-900 mb-1">
-              {profileData.name} {profileData.surname}
-            </h3>
-            <p className="text-gray-600 mb-2">{profileData.position}</p>
-            <p className="text-sm text-gray-500">{profileData.experience} опыта</p>
+            <h3 className="text-xl text-gray-900 mb-1">{user.full_name}</h3>
+            <p className="text-gray-600 mb-2">{user.role === 'admin' ? 'Администратор' : 'Сотрудник'}</p>
+            <p className="text-sm text-gray-500">@{user.username}</p>
           </div>
         </div>
 
@@ -48,23 +106,13 @@ export default function EmployeeProfile() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Личные данные</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="name">Имя</Label>
-                  <Input
-                    id="name"
-                    value={profileData.name}
-                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="surname">Фамилия</Label>
-                  <Input
-                    id="surname"
-                    value={profileData.surname}
-                    onChange={(e) => setProfileData({ ...profileData, surname: e.target.value })}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="full_name">Полное имя</Label>
+                <Input
+                  id="full_name"
+                  value={profileData.full_name}
+                  onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
+                />
               </div>
 
               <div>
@@ -76,33 +124,6 @@ export default function EmployeeProfile() {
                     type="email"
                     value={profileData.email}
                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="phone">Телефон</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="position">Должность</Label>
-                <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    id="position"
-                    value={profileData.position}
-                    onChange={(e) => setProfileData({ ...profileData, position: e.target.value })}
                     className="pl-10"
                   />
                 </div>
