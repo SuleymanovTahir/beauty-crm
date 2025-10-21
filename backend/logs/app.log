@@ -1494,3 +1494,11 @@ jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search p
 2025-10-21 09:36:33 - crm - INFO - [startup] ======================================================================
 2025-10-21 09:36:39 - crm - INFO - [middleware] 🔥 GET /api/stats
 2025-10-21 09:36:39 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 09:41:06 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-21 09:41:06 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-21 09:41:06 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-21 09:41:06 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
