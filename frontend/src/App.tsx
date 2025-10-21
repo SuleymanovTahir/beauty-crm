@@ -10,6 +10,7 @@ import BookingDetail from './pages/admin/BookingDetail';
 import Analytics from './pages/admin/Analytics';
 import Services from './pages/admin/Services';
 import Clients from './pages/admin/Clients';
+import ClientDetail from './pages/admin/ClientDetail';
 import CreateUser from './pages/admin/CreateUser';
 import Users from './pages/admin/Users';
 import Calendar from './pages/admin/Calendar';
@@ -193,6 +194,7 @@ export default function App() {
             <Route path="funnel" element={<Funnel />} />
             <Route path="services" element={<Services />} />
             <Route path="clients" element={<Clients />} />
+            <Route path="clients/:id" element={<ClientDetail />} />
             <Route path="messages" element={<Messages />} />
             <Route path="chat" element={<Chat />} />
             <Route path="users" element={<Users />} />

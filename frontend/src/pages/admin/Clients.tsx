@@ -15,6 +15,9 @@ import { Badge } from "../../components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
 
 interface Client {
   id: string;
@@ -55,6 +58,16 @@ export default function Clients() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  // ✅ Добавить состояния для диалога создания клиента:
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    name: '',
+    phone: '',
+    instagram_id: '',
+    notes: ''
+  });
+  const [creatingClient, setCreatingClient] = useState(false);
 
   // Загрузить клиентов при монтировании
   useEffect(() => {
@@ -100,6 +113,35 @@ export default function Clients() {
     await loadClients();
     setRefreshing(false);
     toast.success("Данные обновлены");
+  };
+
+  // ✅ Функция создания клиента:
+  const handleCreateClient = async () => {
+    if (!createForm.name.trim() || !createForm.phone.trim()) {
+      toast.error("Заполните имя и телефон");
+      return;
+    }
+
+    try {
+      setCreatingClient(true);
+      await api.createClient({
+        name: createForm.name,
+        phone: createForm.phone,
+        instagram_id: createForm.instagram_id || "",
+        notes: createForm.notes,
+      });
+
+      toast.success("Клиент создан ✅");
+      setShowCreateDialog(false);
+      setCreateForm({ name: "", phone: "", instagram_id: "", notes: "" });
+      await loadClients(); // Перезагрузить список
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка создания";
+      toast.error(`❌ Ошибка: ${message}`);
+      console.error("Error:", err);
+    } finally {
+      setCreatingClient(false);
+    }
   };
 
   const stats = {
@@ -191,7 +233,10 @@ export default function Clients() {
               className="pl-10"
             />
           </div>
-          <Button className="bg-pink-600 hover:bg-pink-700">
+          <Button
+            className="bg-pink-600 hover:bg-pink-700"
+            onClick={() => setShowCreateDialog(true)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Добавить клиента
           </Button>
@@ -318,6 +363,75 @@ export default function Clients() {
           </div>
         )}
       </div>
+
+      {/* ✅ Диалог создания клиента */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Добавить нового клиента</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Имя *</Label>
+              <Input
+                id="name"
+                value={createForm.name}
+                onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                placeholder="Анна Петрова"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="phone">Телефон *</Label>
+              <Input
+                id="phone"
+                value={createForm.phone}
+                onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
+                placeholder="+971 50 123 4567"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="instagram">Instagram ID (опционально)</Label>
+              <Input
+                id="instagram"
+                value={createForm.instagram_id}
+                onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
+                placeholder="123456789"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="notes">Заметки</Label>
+              <Textarea
+                id="notes"
+                value={createForm.notes}
+                onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
+                placeholder="Добавьте любые заметки о клиенте..."
+                className="min-h-[80px]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateDialog(false)}
+              disabled={creatingClient}
+            >
+              Отмена
+            </Button>
+            <Button
+              onClick={handleCreateClient}
+              className="bg-pink-600 hover:bg-pink-700"
+              disabled={creatingClient}
+            >
+              {creatingClient ? 'Создание...' : 'Создать'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

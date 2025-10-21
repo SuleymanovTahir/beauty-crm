@@ -7,6 +7,8 @@ from typing import Optional
 from datetime import datetime
 import csv
 import io
+import time  # ← ДОБАВИТЬ
+import sqlite3  # ← ДОБАВИТЬ
 
 # ===== ИМПОРТЫ =====
 from logger import logger, log_info, log_error, log_warning
@@ -89,6 +91,37 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
 
 # ===== КЛИЕНТЫ =====
 
+@router.post("/clients")  # ← ДОБАВИТЬ НОВЫЙ ЭНДПОИНТ
+async def create_client_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Создать нового клиента вручную"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        instagram_id = data.get('instagram_id') or str(time.time())  # Генерируем ID если не задан
+        get_or_create_client(instagram_id, username=data.get('name'))
+        
+        if data.get('phone') or data.get('notes'):
+            update_client_info(
+                instagram_id,
+                name=data.get('name'),
+                phone=data.get('phone'),
+                notes=data.get('notes')
+            )
+        
+        log_activity(user["id"], "create_client", "client", instagram_id, f"Client: {data.get('name')}")
+        return {"success": True, "message": "Client created", "id": instagram_id}
+    except Exception as e:
+        log_error(f"Error creating client: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
 @router.get("/clients")
 async def list_clients(session_token: Optional[str] = Cookie(None)):
     """Получить всех клиентов"""
@@ -121,11 +154,10 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
         "unread_count": get_total_unread()
     }
 
-
-@router.get("/clients/{client_id}")
+@router.get("/clients/{client_id}")  # ← УЖЕ ЕСТЬ, но проверьте чтобы возвращал все данные
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить деталь клиента"""
-    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
+    user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -169,6 +201,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             for b in bookings
         ]
     }
+
 
 
 @router.post("/clients/{client_id}/status")
@@ -872,3 +905,78 @@ async def update_notification_settings_api(
     
     return {"success": True, "message": "Notification settings updated"}
 
+
+@router.post("/services")  # ← ДОБАВИТЬ: был только GET
+async def create_service_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Создать новую услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        success = create_service(
+            service_key=data.get('key'),
+            name=data.get('name'),
+            name_ru=data.get('name_ru'),
+            price=float(data.get('price', 0)),
+            currency=data.get('currency', 'AED'),
+            category=data.get('category'),
+            description=data.get('description'),
+            description_ru=data.get('description_ru'),
+            benefits=data.get('benefits', [])
+        )
+        
+        if success:
+            log_activity(user["id"], "create_service", "service", data.get('key'), "Service created")
+            return {"success": True, "message": "Service created"}
+        else:
+            return JSONResponse({"error": "Service key already exists"}, status_code=400)
+    except Exception as e:
+        log_error(f"Error creating service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@router.post("/services/{service_id}/update")  # ← ДОБАВИТЬ
+async def update_service_api(
+    service_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        update_service(service_id, **data)
+        log_activity(user["id"], "update_service", "service", str(service_id), "Service updated")
+        return {"success": True, "message": "Service updated"}
+    except Exception as e:
+        log_error(f"Error updating service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@router.post("/services/{service_id}/delete")  # ← ДОБАВИТЬ
+async def delete_service_api(
+    service_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        delete_service(service_id)
+        log_activity(user["id"], "delete_service", "service", str(service_id), "Service deleted")
+        return {"success": True, "message": "Service deleted"}
+    except Exception as e:
+        log_error(f"Error deleting service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)

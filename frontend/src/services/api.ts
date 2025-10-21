@@ -141,7 +141,7 @@ export class ApiClient {
   }
 
   async createBooking(data: any) {
-    return this.request('/api/bookings', {
+    return this.request('/api/bookings', {  // ✅ ПРАВИЛЬНО
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -171,23 +171,30 @@ export class ApiClient {
     return this.request<any>(`/api/services?active_only=${activeOnly}`)
   }
 
-  async createService(data: any) {
-    return this.request('/api/services/create', {
+   async createService(data: any) {
+    return this.request('/api/services', {  // ← БЫЛО: '/api/services/create'
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async updateService(serviceId: number, data: any) {
-    return this.request(`/api/services/${serviceId}/update`, {
+    return this.request(`/api/services/${serviceId}/update`, {  // ✅ ПРАВИЛЬНО
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async deleteService(serviceId: number) {
-    return this.request(`/api/services/${serviceId}/delete`, {
+    return this.request(`/api/services/${serviceId}/delete`, {  // ✅ ПРАВИЛЬНО
       method: 'POST',
+    })
+  }
+
+  async createClient(data: any) {
+    return this.request('/api/clients', {  // ← НОВОЕ
+      method: 'POST',
+      body: JSON.stringify(data),
     })
   }
 
