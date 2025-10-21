@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2 } from 'lucide-react';
+import { Button } from '../../components/ui/button';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 interface Booking {
   id: number;
@@ -23,9 +25,11 @@ const statusConfig: Record<string, { label: string; color: string; bgColor: stri
   new: { label: 'Новая', color: 'text-purple-700', bgColor: 'bg-purple-100 border-purple-300' },
 };
 
-const HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 08:00 - 20:00
+// ← НОВОЕ: часы от 00:00 до 23:59
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 export default function Calendar() {
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'week' | 'month'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -52,7 +56,6 @@ export default function Calendar() {
     }
   };
 
-  // Получить первый день недели (понедельник)
   const getMonday = (date: Date) => {
     const d = new Date(date);
     const day = d.getDay();
@@ -93,6 +96,37 @@ export default function Calendar() {
     setCurrentDate(new Date());
   };
 
+  // ← НОВОЕ: функции для редактирования
+  const handleEditBooking = (booking: Booking) => {
+    navigate(`/admin/bookings/${booking.id}`);
+    setSelectedBooking(null);
+  };
+
+  // ← НОВОЕ: функция для отмены
+  const handleCancelBooking = async (bookingId: number) => {
+    try {
+      await api.updateBookingStatus(bookingId, 'cancelled');
+      setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'cancelled' } : b));
+      setSelectedBooking(null);
+      toast.success('Запись отменена');
+    } catch (err) {
+      toast.error('Ошибка отмены');
+    }
+  };
+
+  // ← НОВОЕ: функция для удаления
+  const handleDeleteBooking = async (bookingId: number) => {
+    if (!confirm('Удалить эту запись?')) return;
+
+    try {
+      setBookings(bookings.filter(b => b.id !== bookingId));
+      setSelectedBooking(null);
+      toast.success('Запись удалена');
+    } catch (err) {
+      toast.error('Ошибка удаления');
+    }
+  };
+
   const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
@@ -116,13 +150,12 @@ export default function Calendar() {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <CalendarIcon className="w-8 h-8 text-pink-600" />
           Календарь записей
         </h1>
-        <p className="text-gray-600">Визуальное отображение всех записей</p>
+        <p className="text-gray-600">Визуальное отображение всех записей (00:00 - 23:59)</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -213,7 +246,7 @@ export default function Calendar() {
               <tbody>
                 {HOURS.map(hour => (
                   <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="w-20 px-4 py-3 text-xs font-medium text-gray-600 bg-gray-50 text-center">
+                    <td className="w-20 px-4 py-3 text-xs font-medium text-gray-600 bg-gray-50 text-center sticky left-0">
                       {hour.toString().padStart(2, '0')}:00
                     </td>
                     {weekDays.map((day, dayIdx) => {
@@ -307,10 +340,9 @@ export default function Calendar() {
               ✕
             </button>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Детали записи #{selectedBooking.id}</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Запись #{selectedBooking.id}</h3>
 
             <div className="space-y-4">
-              {/* Client */}
               <div className="flex items-start gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
                 <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
                   {selectedBooking.name?.charAt(0).toUpperCase()}
@@ -321,13 +353,11 @@ export default function Calendar() {
                 </div>
               </div>
 
-              {/* Service */}
               <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                 <p className="text-xs text-gray-600 mb-1">Услуга</p>
                 <p className="font-semibold text-gray-900">{selectedBooking.service_name}</p>
               </div>
 
-              {/* Date & Time */}
               <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <Clock className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -339,7 +369,6 @@ export default function Calendar() {
                 </div>
               </div>
 
-              {/* Phone */}
               <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
                 <Phone className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -348,7 +377,6 @@ export default function Calendar() {
                 </div>
               </div>
 
-              {/* Status */}
               <div>
                 <p className="text-xs text-gray-600 mb-2">Статус</p>
                 <div className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[selectedBooking.status]?.bgColor}`}>
@@ -362,6 +390,31 @@ export default function Calendar() {
                   <p className="text-2xl font-bold text-yellow-600">{selectedBooking.revenue} AED</p>
                 </div>
               )}
+
+              {/* ← НОВОЕ: Кнопки действий */}
+              <div className="flex gap-2 pt-4 border-t border-gray-200">
+                <Button
+                  onClick={() => handleEditBooking(selectedBooking)}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 gap-2"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  Редактировать
+                </Button>
+                <Button
+                  onClick={() => handleCancelBooking(selectedBooking.id)}
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                  disabled={selectedBooking.status === 'cancelled'}
+                >
+                  Отменить
+                </Button>
+                <Button
+                  onClick={() => handleDeleteBooking(selectedBooking.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Удалить
+                </Button>
+              </div>
             </div>
           </div>
         </div>

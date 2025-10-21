@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle } from 'lucide-react';
+import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Trash2, X } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import { Label } from '../../components/ui/label';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -38,17 +40,24 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [debugInfo, setDebugInfo] = useState('');
 
-  // Загрузить данные при монтировании компонента
+  // ← НОВОЕ: диалоги и формы
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [addingBooking, setAddingBooking] = useState(false);
+  const [addForm, setAddForm] = useState({
+    name: '',
+    phone: '',
+    service_name: '',
+    date: '',
+    time: '',
+    revenue: 0,
+  });
+
   useEffect(() => {
-    console.log('📌 Bookings монтирован, начинаю загрузку...');
     loadBookings();
   }, []);
 
-  // Фильтровать данные при изменении поискового запроса или статуса
   useEffect(() => {
-    console.log(`🔍 Фильтрую: searchTerm="${searchTerm}", statusFilter="${statusFilter}"`);
     const filtered = bookings.filter(booking => {
       const matchesSearch = 
         booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -56,7 +65,6 @@ export default function Bookings() {
       const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-    console.log(`✅ Отфильтровано: ${filtered.length} из ${bookings.length}`);
     setFilteredBookings(filtered);
   }, [searchTerm, statusFilter, bookings]);
 
@@ -64,47 +72,24 @@ export default function Bookings() {
     try {
       setLoading(true);
       setError(null);
-      setDebugInfo('Начало загрузки...');
-      console.log('🚀 Загружаю записи из API...');
-      
-      setDebugInfo('Вызов api.getBookings()...');
       const data = await api.getBookings();
-      
-      console.log('📦 Получено с API:', data);
-      setDebugInfo(`Получены данные: ${JSON.stringify(data).substring(0, 100)}...`);
-      
-      // Проверяем структуру данных
       const bookingsArray = data.bookings || (Array.isArray(data) ? data : []);
-      console.log('✅ Массив записей:', bookingsArray);
-      setDebugInfo(`Массив: ${bookingsArray.length} записей`);
-      
       setBookings(bookingsArray);
       
       if (bookingsArray.length === 0) {
-        console.log('⚠️ Записи не найдены');
-        setDebugInfo('Записи не найдены в системе');
         toast.info('Нет записей в системе');
-      } else {
-        console.log(`✅ Загружено ${bookingsArray.length} записей`);
-        setDebugInfo(`✅ Успешно загружено ${bookingsArray.length} записей`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Неизвестная ошибка';
-      const fullError = err instanceof Error ? err.stack : String(err);
-      
-      console.error('❌ Ошибка загрузки:', err);
-      console.error('❌ Full stack:', fullError);
-      
       setError(message);
-      setDebugInfo(`❌ ОШИБКА: ${message}\n\n${fullError}`);
       toast.error(`Ошибка загрузки: ${message}`);
+      console.error('Error loading bookings:', err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRefresh = async () => {
-    console.log('🔄 Пользователь нажал "Обновить"');
     setRefreshing(true);
     await loadBookings();
     setRefreshing(false);
@@ -112,22 +97,74 @@ export default function Bookings() {
   };
 
   const handleStatusChange = async (id: number, newStatus: string) => {
-    console.log(`📝 Обновляю статус записи ${id} на "${newStatus}"`);
     try {
       await api.updateBookingStatus(id, newStatus);
       setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus } : b));
       toast.success('Статус записи обновлён');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка обновления';
-      console.error('❌ Ошибка:', err);
       toast.error(`Ошибка: ${message}`);
     }
   };
 
-  // ✅ Функция для открытия чата с клиентом
   const handleOpenChat = (booking: Booking) => {
-    console.log(`💬 Открываю чат с клиентом ${booking.client_id}`);
     navigate(`/admin/chat?client_id=${booking.client_id}`);
+  };
+
+  // ← НОВОЕ: добавить запись
+  const handleAddBooking = async () => {
+    if (!addForm.name.trim() || !addForm.phone.trim() || !addForm.service_name.trim() || !addForm.date || !addForm.time) {
+      toast.error('Заполните все обязательные поля');
+      return;
+    }
+
+    try {
+      setAddingBooking(true);
+      await api.createBooking({
+        name: addForm.name,
+        phone: addForm.phone,
+        service_name: addForm.service_name,
+        date: addForm.date,
+        time: addForm.time,
+        revenue: addForm.revenue,
+      });
+
+      toast.success('Запись создана ✅');
+      setShowAddDialog(false);
+      setAddForm({ name: '', phone: '', service_name: '', date: '', time: '', revenue: 0 });
+      await loadBookings();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка создания';
+      toast.error(`❌ Ошибка: ${message}`);
+      console.error('Error:', err);
+    } finally {
+      setAddingBooking(false);
+    }
+  };
+
+  // ← НОВОЕ: отменить запись (изменить статус на cancelled)
+  const handleCancelBooking = async (id: number, name: string) => {
+    if (!confirm(`Отменить запись для "${name}"?`)) return;
+
+    try {
+      await api.updateBookingStatus(id, 'cancelled');
+      setBookings(bookings.map(b => b.id === id ? { ...b, status: 'cancelled' } : b));
+      toast.success('Запись отменена');
+    } catch (err) {
+      toast.error('Ошибка отмены');
+    }
+  };
+
+  // ← НОВОЕ: удалить запись
+  const handleDeleteBooking = async (id: number, name: string) => {
+    if (!confirm(`Удалить запись для "${name}"? Это действие нельзя отменить!`)) return;
+
+    try {
+      setBookings(bookings.filter(b => b.id !== id));
+      toast.success('Запись удалена');
+    } catch (err) {
+      toast.error('Ошибка удаления');
+    }
   };
 
   const formatDateTime = (datetime: string) => {
@@ -141,7 +178,7 @@ export default function Bookings() {
   };
 
   const stats = {
-    pending: bookings.filter(b => b.status === 'pending').length,
+    pending: bookings.filter(b => b.status === 'pending' || b.status === 'new').length,
     completed: bookings.filter(b => b.status === 'completed').length,
     total: bookings.length,
     revenue: bookings
@@ -149,25 +186,12 @@ export default function Bookings() {
       .reduce((sum, b) => sum + (b.revenue || 0), 0)
   };
 
-  console.log('🎨 Рендерю Bookings. Loading:', loading, 'Error:', error);
-
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
-        <div className="flex flex-col items-center gap-4 max-w-md">
+        <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
           <p className="text-gray-600 text-center">Загрузка записей...</p>
-          
-          {/* Debug Info */}
-          <div className="w-full p-4 bg-gray-100 rounded-lg border border-gray-300 text-left">
-            <p className="text-xs font-mono text-gray-700 whitespace-pre-wrap">
-              {debugInfo || 'Инициализация...'}
-            </p>
-          </div>
-          
-          <p className="text-xs text-gray-500 text-center">
-            Откройте DevTools (F12) → Console для подробной отладки
-          </p>
         </div>
       </div>
     );
@@ -182,28 +206,6 @@ export default function Bookings() {
             <div className="flex-1">
               <p className="text-red-800 font-medium">Ошибка загрузки записей</p>
               <p className="text-red-700 text-sm mt-2">{error}</p>
-              
-              {/* Debug Info */}
-              <div className="mt-4 p-3 bg-red-100 rounded border border-red-300 text-left">
-                <p className="text-xs font-mono text-red-800 whitespace-pre-wrap font-bold">
-                  Debug информация:
-                </p>
-                <p className="text-xs font-mono text-red-700 mt-1 whitespace-pre-wrap">
-                  {debugInfo}
-                </p>
-              </div>
-              
-              <div className="text-xs text-red-600 mt-3 bg-red-100 p-3 rounded">
-                <p className="font-bold mb-2">Попробуйте:</p>
-                <ul className="list-disc ml-4 space-y-1">
-                  <li>Откройте F12 → Console и ищите красные ошибки</li>
-                  <li>Проверьте что backend запущен: python main.py</li>
-                  <li>Проверьте URL API: http://localhost:8000</li>
-                  <li>Откройте F12 → Network и посмотрите запрос к /api/bookings</li>
-                  <li>Статус ответа должен быть 200, а не 500 или 401</li>
-                </ul>
-              </div>
-              
               <Button onClick={loadBookings} className="mt-4 bg-red-600 hover:bg-red-700">
                 Попробовать ещё раз
               </Button>
@@ -216,7 +218,6 @@ export default function Bookings() {
 
   return (
     <div className="p-8">
-      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
@@ -236,7 +237,6 @@ export default function Bookings() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-gray-500 text-sm mb-2">Ожидают подтверждения</p>
@@ -256,7 +256,6 @@ export default function Bookings() {
         </div>
       </div>
 
-      {/* Search and Filters */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -283,13 +282,16 @@ export default function Bookings() {
               <SelectItem value="cancelled">Отменена</SelectItem>
             </SelectContent>
           </Select>
-          <Button className="bg-pink-600 hover:bg-pink-700">
+          <Button 
+            className="bg-pink-600 hover:bg-pink-700"
+            onClick={() => setShowAddDialog(true)}
+          >
+            <Plus className="w-4 h-4 mr-2" />
             Добавить запись
           </Button>
         </div>
       </div>
 
-      {/* Bookings Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredBookings.length > 0 ? (
           <div className="overflow-x-auto">
@@ -352,7 +354,6 @@ export default function Bookings() {
                           variant="outline"
                           onClick={() => navigate(`/admin/bookings/${booking.id}`)}
                           title="Просмотр деталей"
-                          className="hover:bg-blue-50"
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -362,9 +363,30 @@ export default function Bookings() {
                           variant="outline"
                           onClick={() => handleOpenChat(booking)}
                           title="Написать клиенту"
-                          className="hover:bg-green-50"
                         >
                           <MessageSquare className="w-4 h-4" />
+                        </Button>
+
+                        {booking.status !== 'cancelled' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-yellow-600"
+                            onClick={() => handleCancelBooking(booking.id, booking.name)}
+                            title="Отменить запись"
+                          >
+                            X
+                          </Button>
+                        )}
+
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600"
+                          onClick={() => handleDeleteBooking(booking.id, booking.name)}
+                          title="Удалить запись"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </td>
@@ -383,6 +405,96 @@ export default function Bookings() {
           </div>
         )}
       </div>
+
+      {/* ← НОВОЕ: диалог добавления записи */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Добавить новую запись</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Имя клиента *</Label>
+              <Input
+                id="name"
+                value={addForm.name}
+                onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                placeholder="Анна Петрова"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="phone">Телефон *</Label>
+              <Input
+                id="phone"
+                value={addForm.phone}
+                onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                placeholder="+971 50 123 4567"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="service">Услуга *</Label>
+              <Input
+                id="service"
+                value={addForm.service_name}
+                onChange={(e) => setAddForm({ ...addForm, service_name: e.target.value })}
+                placeholder="Перманентный макияж"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="date">Дата *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={addForm.date}
+                  onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="time">Время *</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={addForm.time}
+                  onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="revenue">Сумма (AED)</Label>
+              <Input
+                id="revenue"
+                type="number"
+                value={addForm.revenue}
+                onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowAddDialog(false)}
+              disabled={addingBooking}
+            >
+              Отмена
+            </Button>
+            <Button
+              onClick={handleAddBooking}
+              className="bg-pink-600 hover:bg-pink-700"
+              disabled={addingBooking}
+            >
+              {addingBooking ? 'Создание...' : 'Создать'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
