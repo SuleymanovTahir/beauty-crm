@@ -1,7 +1,7 @@
 // frontend/src/pages/admin/Bookings.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Search, Filter, MessageSquare, Eye, Loader } from 'lucide-react';
+import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -37,6 +37,7 @@ export default function Bookings() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Загрузить данные при монтировании компонента
   useEffect(() => {
@@ -60,14 +61,29 @@ export default function Bookings() {
       setLoading(true);
       setError(null);
       const data = await api.getBookings();
-      setBookings(Array.isArray(data) ? data : []);
+      
+      // Проверяем структуру данных
+      const bookingsArray = data.bookings || (Array.isArray(data) ? data : []);
+      setBookings(bookingsArray);
+      
+      if (bookingsArray.length === 0) {
+        toast.info('Нет записей');
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки данных';
       setError(message);
       toast.error(`Ошибка: ${message}`);
+      console.error('Error loading bookings:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadBookings();
+    setRefreshing(false);
+    toast.success('Данные обновлены');
   };
 
   const handleStatusChange = async (id: number, newStatus: string) => {
@@ -76,7 +92,19 @@ export default function Bookings() {
       setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus } : b));
       toast.success('Статус записи обновлен');
     } catch (err) {
-      toast.error('Ошибка обновления статуса');
+      const message = err instanceof Error ? err.message : 'Ошибка обновления статуса';
+      toast.error(`Ошибка: ${message}`);
+      console.error('Error updating booking status:', err);
+    }
+  };
+
+  const formatDateTime = (datetime: string) => {
+    try {
+      const date = new Date(datetime);
+      return date.toLocaleDateString('ru-RU') + ' ' + 
+             date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return datetime;
     }
   };
 
@@ -104,10 +132,16 @@ export default function Bookings() {
     return (
       <div className="p-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
-          <Button onClick={loadBookings} className="mt-4 bg-red-600">
-            Попробовать еще раз
-          </Button>
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-700 text-sm mt-1">{error}</p>
+              <Button onClick={loadBookings} className="mt-4 bg-red-600 hover:bg-red-700">
+                Попробовать еще раз
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -116,12 +150,22 @@ export default function Bookings() {
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <Calendar className="w-8 h-8 text-pink-600" />
-          Управление записями
-        </h1>
-        <p className="text-gray-600">{filteredBookings.length} записей</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
+            <Calendar className="w-8 h-8 text-pink-600" />
+            Управление записями
+          </h1>
+          <p className="text-gray-600">{filteredBookings.length} записей</p>
+        </div>
+        <Button 
+          onClick={handleRefresh}
+          disabled={refreshing}
+          variant="outline"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          Обновить
+        </Button>
       </div>
 
       {/* Stats */}
@@ -140,7 +184,7 @@ export default function Bookings() {
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-gray-500 text-sm mb-2">Общий доход</p>
-          <h3 className="text-3xl text-green-600">{stats.revenue} AED</h3>
+          <h3 className="text-3xl text-green-600">{stats.revenue.toFixed(2)} AED</h3>
         </div>
       </div>
 
@@ -178,23 +222,23 @@ export default function Bookings() {
 
       {/* Bookings Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">ID</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Клиент</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Услуга</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Дата и время</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Телефон</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Статус</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Сумма</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredBookings.length > 0 ? (
-                filteredBookings.map((booking) => (
+        {filteredBookings.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">ID</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Клиент</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Услуга</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Дата и время</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Телефон</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Статус</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Сумма</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredBookings.map((booking) => (
                   <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 text-sm text-gray-900">#{booking.id}</td>
                     <td className="px-6 py-4">
@@ -207,7 +251,7 @@ export default function Bookings() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">{booking.service_name}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(booking.datetime).toLocaleDateString('ru-RU')} {new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                      {formatDateTime(booking.datetime)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{booking.phone}</td>
                     <td className="px-6 py-4">
@@ -216,33 +260,20 @@ export default function Bookings() {
                         onValueChange={(value) => handleStatusChange(booking.id, value)}
                       >
                         <SelectTrigger className="w-[140px]">
-                          <SelectValue />
+                          <Badge className={statusConfig[booking.status as keyof typeof statusConfig]?.color || 'bg-gray-100'}>
+                            {statusConfig[booking.status as keyof typeof statusConfig]?.label || booking.status}
+                          </Badge>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pending">
-                            <Badge className={statusConfig.pending.color}>
-                              {statusConfig.pending.label}
-                            </Badge>
-                          </SelectItem>
-                          <SelectItem value="confirmed">
-                            <Badge className={statusConfig.confirmed.color}>
-                              {statusConfig.confirmed.label}
-                            </Badge>
-                          </SelectItem>
-                          <SelectItem value="completed">
-                            <Badge className={statusConfig.completed.color}>
-                              {statusConfig.completed.label}
-                            </Badge>
-                          </SelectItem>
-                          <SelectItem value="cancelled">
-                            <Badge className={statusConfig.cancelled.color}>
-                              {statusConfig.cancelled.label}
-                            </Badge>
-                          </SelectItem>
+                          {Object.entries(statusConfig).map(([key, config]) => (
+                            <SelectItem key={key} value={key}>
+                              {config.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{booking.revenue || 0} AED</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{(booking.revenue || 0).toFixed(2)} AED</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Button
@@ -262,17 +293,16 @@ export default function Bookings() {
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                    Записи не найдены
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="py-20 text-center text-gray-500">
+            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <p>Записи не найдены</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -19,65 +19,66 @@ export class ApiClient {
       ...options.headers,
     };
 
-    // Добавляем токен если он сохранен
-    const token = localStorage.getItem('session_token');
-    if (token) {
-      // На backend это будет читаться из Cookie, но добавим и в header на всякий случай
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     const defaultOptions: RequestInit = {
+      method: 'GET',
       headers,
-      credentials: 'include', // Включить куки для сессий
+      credentials: 'include', // Важно для cookies
       ...options,
     };
 
-    const response = await fetch(url, defaultOptions);
+    try {
+      const response = await fetch(url, defaultOptions);
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: response.statusText }));
-      throw new Error(error.message || `API Error: ${response.status}`);
+      // Если 401 - значит сессия истекла
+      if (response.status === 401) {
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        throw new Error('Сессия истекла. Пожалуйста, перезагрузитесь.');
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(error.error || error.message || `API Error: ${response.status}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
   // ===== АВТОРИЗАЦИЯ =====
   async login(username: string, password: string) {
     const formData = new FormData();
-    formData.append('email', username); // Backend ожидает 'email' параметр
+    formData.append('username', username);
     formData.append('password', password);
 
-    const response = await this.request('/api/login', {
+    const response = await this.request<any>('/login', {
       method: 'POST',
       body: formData,
-      headers: {},
+      headers: {}, // FormData устанавливает header сам
     });
 
-    // Сохраняем токен для дальнейших запросов
-    if (response.token) {
-      this.setToken(response.token);
+    // Сохраняем информацию о пользователе
+    if (response.user) {
+      localStorage.setItem('user', JSON.stringify(response.user));
     }
 
     return response;
   }
 
-  private setToken(token: string) {
-    // Сохраняем токен для использования в будущих запросах
-    (this as any).token = token;
-  }
-
   async logout() {
-    return this.request('/api/logout', { method: 'POST' });
+    return this.request('/logout', { method: 'GET' });
   }
 
   // ===== КЛИЕНТЫ =====
   async getClients() {
-    return this.request('/api/clients');
+    return this.request<any>('/api/clients');
   }
 
   async getClientDetail(clientId: string) {
-    return this.request(`/api/clients/${clientId}`);
+    return this.request<any>(`/api/clients/${clientId}`);
   }
 
   async updateClient(clientId: string, data: any) {
@@ -88,29 +89,29 @@ export class ApiClient {
   }
 
   async updateClientStatus(clientId: string, status: string) {
-    return this.request(`/admin/api/clients/${clientId}/status`, {
+    return this.request(`/api/clients/${clientId}/status`, {
       method: 'POST',
       body: JSON.stringify({ status }),
     });
   }
 
   async pinClient(clientId: string) {
-    return this.request(`/admin/api/clients/${clientId}/pin`, {
+    return this.request(`/api/clients/${clientId}/pin`, {
       method: 'POST',
     });
   }
 
   // ===== ЗАПИСИ =====
   async getBookings() {
-    return this.request('/api/bookings');
+    return this.request<any>('/api/bookings');
   }
 
   async getBookingDetail(bookingId: number) {
-    return this.request(`/api/bookings/${bookingId}`);
+    return this.request<any>(`/api/bookings/${bookingId}`);
   }
 
   async createBooking(data: any) {
-    return this.request('/api/bookings/create', {
+    return this.request('/api/bookings', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -132,37 +133,37 @@ export class ApiClient {
   }
 
   async getChatHistory(clientId: string, limit: number = 50) {
-    return this.request(`/api/chat/${clientId}/history?limit=${limit}`);
+    return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}`);
   }
 
   // ===== УСЛУГИ =====
-  async getServices() {
-    return this.request('/api/services');
+  async getServices(activeOnly: boolean = true) {
+    return this.request<any>(`/api/services?active_only=${activeOnly}`);
   }
 
   async createService(data: any) {
-    return this.request('/admin/api/services/create', {
+    return this.request('/api/services/create', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async updateService(serviceId: number, data: any) {
-    return this.request(`/admin/api/services/${serviceId}/update`, {
+    return this.request(`/api/services/${serviceId}/update`, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async deleteService(serviceId: number) {
-    return this.request(`/admin/api/services/${serviceId}/delete`, {
+    return this.request(`/api/services/${serviceId}/delete`, {
       method: 'POST',
     });
   }
 
   // ===== АНАЛИТИКА =====
   async getStats() {
-    return this.request('/api/stats');
+    return this.request<any>('/api/stats');
   }
 
   async getAnalytics(period: number = 30, dateFrom?: string, dateTo?: string) {
@@ -170,34 +171,55 @@ export class ApiClient {
     if (dateFrom && dateTo) {
       url += `&date_from=${dateFrom}&date_to=${dateTo}`;
     }
-    return this.request(url);
+    return this.request<any>(url);
   }
 
   async getFunnel() {
-    return this.request('/api/funnel');
+    return this.request<any>('/api/funnel');
+  }
+
+  async getDashboard() {
+    return this.request<any>('/api/dashboard');
   }
 
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {
-    return this.request('/api/users');
+    return this.request<any>('/api/users');
+  }
+
+  async createUser(data: any) {
+    return this.request('/register', {
+      method: 'POST',
+      body: new FormData(data as any),
+      headers: {},
+    });
   }
 
   async deleteUser(userId: number) {
-    return this.request(`/admin/api/users/${userId}/delete`, {
+    return this.request(`/api/users/${userId}/delete`, {
       method: 'POST',
     });
   }
 
   // ===== ЭКСПОРТ =====
   async exportClients(format: string = 'csv') {
-    const response = await fetch(`${this.baseURL}/admin/api/export/clients?format=${format}`, {
+    const response = await fetch(`${this.baseURL}/api/export/clients?format=${format}`, {
       credentials: 'include',
     });
     
     if (!response.ok) throw new Error('Export failed');
     
-    const blob = await response.blob();
-    return new URL(blob);
+    return response.blob();
+  }
+
+  // ===== DASHBOARD =====
+  async getDashboardData() {
+    return this.request<any>('/api/dashboard');
+  }
+
+  // ===== UNREAD COUNT =====
+  async getUnreadCount() {
+    return this.request<any>('/api/unread-count');
   }
 }
 

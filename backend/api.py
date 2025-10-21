@@ -65,7 +65,7 @@ def get_client_display_name(client):
 
 # ===== ОСНОВНЫЕ API ENDPOINTS =====
 
-@router.get("/dashboard")
+@router.get("/api/dashboard")
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
     user = await require_auth(session_token)

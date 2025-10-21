@@ -3299,3 +3299,433 @@ jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path:
 2025-10-21 11:22:23 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
 2025-10-21 11:23:19 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-21 11:23:19 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 11:33:30 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-21 11:33:30 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-21 11:33:30 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 11:33:30 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 11:33:36 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 11:33:36 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 11:33:36 - crm - INFO - [auth] Session created for admin
+2025-10-21 11:33:36 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.00s)
+2025-10-21 11:33:38 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 11:33:38 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 11:33:46 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 11:33:46 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 11:33:46 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 11:33:46 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 11:33:48 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-21 11:33:48 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-21 11:33:48 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 11:33:48 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 11:33:48 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-21 11:33:48 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-21 11:33:48 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 11:33:48 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 11:33:49 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 11:33:49 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 12:11:45 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:11:45 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:11:45 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 12:11:45 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 12:11:45 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/dashboard
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:11:45 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 12:11:45 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:11:45 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:11:45 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:11:45 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:11:45 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:11:45 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:11:45 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:11:45 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:11:45 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:11:45 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 12:11:45 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 12:11:45 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 12:11:45 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:11:45 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:10 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:17:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:10 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'HEAD', 'GET'} /openapi.json
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs/oauth2-redirect
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'HEAD', 'GET'} /redoc
+2025-10-21 12:17:10 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 12:17:10 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/dashboard
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:17:10 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 12:17:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:10 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:17:10 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:17:10 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:17:10 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:17:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:10 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:17:10 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:17:10 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 12:17:10 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 12:17:10 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 12:17:10 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:17:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:17:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:40 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'HEAD', 'GET'} /openapi.json
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs/oauth2-redirect
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'HEAD', 'GET'} /redoc
+2025-10-21 12:17:40 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 12:17:40 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/api/dashboard
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:17:40 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 12:17:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:17:40 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:17:40 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:17:40 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:17:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:17:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:17:40 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:17:40 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 12:17:40 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 12:17:40 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 12:17:40 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:17:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:25:09 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:25:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:25:10 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 12:25:10 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 12:25:10 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/api/dashboard
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:25:10 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 12:25:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:25:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:25:10 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:25:10 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:25:10 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:25:10 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:25:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:25:10 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:25:10 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:25:10 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 12:25:10 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 12:25:10 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 12:25:10 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:25:10 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:48 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:28:48 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:48 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:28:48 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:28:48 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:28:48 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:28:48 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:48 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:28:48 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:28:48 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 12:28:48 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:28:48 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:28:49 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:49 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 12:28:49 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 12:28:49 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/api/dashboard
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 12:28:49 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 12:28:49 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:49 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:49 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:28:49 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:28:49 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:28:49 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:28:49 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:49 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:28:49 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:28:49 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 12:28:49 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 12:28:49 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 12:28:49 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:28:49 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:50 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 12:28:50 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:50 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 12:28:50 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 12:28:50 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 12:28:50 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 12:28:50 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:28:50 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 12:28:50 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 12:28:50 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 12:28:50 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 12:28:50 - crm - INFO - [startup] ======================================================================
+2025-10-21 12:55:13 - crm - INFO - [middleware] 🔥 POST /login
+2025-10-21 12:55:13 - crm - INFO - [middleware] 📤 POST /login → 405 (0.00s)
