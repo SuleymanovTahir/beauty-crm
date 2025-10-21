@@ -1,69 +1,83 @@
-import React, { useState } from 'react';
-import { Lock, User, Loader } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { api } from '../../services/api';
+import React, { useState } from "react";
+import { Lock, User, Loader } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { api } from "../../services/api";
 
 interface LoginProps {
-  onLogin: (user: { id: number; username: string; full_name: string; email: string; role: string; token: string }) => void;
+  onLogin: (user: {
+    id: number;
+    username: string;
+    full_name: string;
+    email: string;
+    role: string;
+    token: string;
+  }) => void;
 }
 
 export default function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!credentials.username || !credentials.password) {
-      setError('Заполните оба поля');
+      setError("Заполните оба поля");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
       // Вызываем реальный API
-      const response = await api.login(credentials.username, credentials.password);
+      const response = await api.login(
+        credentials.username,
+        credentials.password
+      );
 
       if (response.success && response.token) {
         // Сохраняем токен в localStorage
-        localStorage.setItem('session_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem("session_token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
 
         // Вызываем callback
         onLogin({
           ...response.user,
-          token: response.token
+          token: response.token,
         });
 
-        toast.success(`Добро пожаловать, ${response.user.full_name || response.user.username}!`);
-        navigate('/admin/dashboard');
+        toast.success(
+          `Добро пожаловать, ${
+            response.user.full_name || response.user.username
+          }!`
+        );
+        navigate("/admin/dashboard");
       } else {
-        setError('Ошибка авторизации');
-        toast.error('Ошибка авторизации');
+        setError("Ошибка авторизации");
+        toast.error("Ошибка авторизации");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка входа';
-      
+      const message = err instanceof Error ? err.message : "Ошибка входа";
+
       // Проверяем если это ошибка валидации
-      if (message.includes('Unauthorized') || message.includes('401')) {
-        setError('Неверное имя пользователя или пароль');
+      if (message.includes("Unauthorized") || message.includes("401")) {
+        setError("Неверное имя пользователя или пароль");
       } else {
         setError(message);
       }
-      
+
       toast.error(message);
-      console.error('Login error:', err);
+      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }
@@ -97,7 +111,9 @@ export default function Login({ onLogin }: LoginProps) {
                   required
                   disabled={loading}
                   value={credentials.username}
-                  onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, username: e.target.value })
+                  }
                   placeholder="admin"
                   className="pl-10"
                 />
@@ -117,7 +133,9 @@ export default function Login({ onLogin }: LoginProps) {
                   required
                   disabled={loading}
                   value={credentials.password}
-                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
                   placeholder="••••••"
                   className="pl-10"
                 />
@@ -127,10 +145,12 @@ export default function Login({ onLogin }: LoginProps) {
               </p>
             </div>
 
-            <Button 
-              type="submit" 
-              disabled={loading || !credentials.username || !credentials.password}
-              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 flex items-center justify-center gap-2" 
+            <Button
+              type="submit"
+              disabled={
+                loading || !credentials.username || !credentials.password
+              }
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 flex items-center justify-center gap-2"
               size="lg"
             >
               {loading ? (
@@ -139,30 +159,33 @@ export default function Login({ onLogin }: LoginProps) {
                   Вход...
                 </>
               ) : (
-                'Войти'
+                "Войти"
               )}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Button variant="link" className="text-pink-600">
+            <Button
+              variant="link"
+              className="text-pink-600"
+              onClick={() => navigate("/forgot-password")}
+            >
               Забыли пароль?
             </Button>
           </div>
         </div>
 
         <div className="mt-6 text-center">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/')}
-          >
+          <Button variant="outline" onClick={() => navigate("/")}>
             Вернуться на главную
           </Button>
         </div>
 
         <div className="mt-6 p-4 bg-blue-50 rounded-lg text-xs text-blue-800">
-          <strong>💡 Тестовые учетные данные:</strong><br/>
-          Username: <code className="bg-blue-100 px-1">admin</code><br/>
+          <strong>💡 Тестовые учетные данные:</strong>
+          <br />
+          Username: <code className="bg-blue-100 px-1">admin</code>
+          <br />
           Password: <code className="bg-blue-100 px-1">admin123</code>
         </div>
       </div>

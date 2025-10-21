@@ -4695,3 +4695,187 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 15:40:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
 2025-10-21 15:40:52 - crm - INFO - [middleware] 🔥 GET /api/clients
 2025-10-21 15:40:52 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:41:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:41:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:41:53 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:41:53 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:42:26 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:42:26 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:42:28 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:42:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:42:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:42:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:42:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:42:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:42:30 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:42:30 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:42:31 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-21 15:42:31 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-21 15:42:31 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 15:42:31 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 15:42:31 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-21 15:42:31 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-21 15:42:31 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 15:42:31 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 15:42:32 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:42:32 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:42:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:42:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:42:33 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:42:33 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:43:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:43:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:43:25 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 15:43:25 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 15:43:25 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 15:43:25 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 15:43:26 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-21 15:43:26 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-21 15:43:26 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 15:43:26 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 15:43:31 - crm - INFO - [middleware] 🔥 OPTIONS /api/users
+2025-10-21 15:43:31 - crm - INFO - [middleware] 📤 OPTIONS /api/users → 200 (0.00s)
+2025-10-21 15:43:31 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-21 15:43:31 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-10-21 15:44:52 - crm - INFO - [middleware] 🔥 POST /api/logout
+2025-10-21 15:44:52 - crm - INFO - [middleware] 📤 POST /api/logout → 404 (0.00s)
+2025-10-21 15:50:26 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 15:50:26 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 15:50:26 - crm - INFO - [auth] Session created for admin
+2025-10-21 15:50:26 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.00s)
+2025-10-21 15:50:28 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 15:50:29 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:29 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:33 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 15:50:33 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 15:50:33 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:33 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:50:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:50:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:50:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:50:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:41 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:41 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:50:47 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 15:50:47 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 15:50:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:50:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:50:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:50:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:52:08 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 15:52:08 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 15:52:08 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:52:08 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:52:08 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:52:08 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:52:10 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:52:10 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:52:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:52:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:52:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:52:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:52:11 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:52:11 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:52:13 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:52:13 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:52:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:52:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:52:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:52:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:52:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:52:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:20 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:20 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:53:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:53:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:25 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:25 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:53:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:53:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:53:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:53:28 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:32 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:32 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:35 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:35 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 15:53:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:53:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:53:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:53:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:53:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:53:51 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:53:51 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:54:31 - crm - INFO - [middleware] 🔥 POST /api/logout
+2025-10-21 15:54:31 - crm - INFO - [middleware] 📤 POST /api/logout → 404 (0.00s)
+2025-10-21 15:54:43 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 15:54:43 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 15:54:43 - crm - INFO - [auth] Session created for admin
+2025-10-21 15:54:43 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.00s)
+2025-10-21 15:55:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:55:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:57:32 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:57:32 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:57:34 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:57:34 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:57:41 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:57:41 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:57:42 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:57:42 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:57:43 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:57:43 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:57:44 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:57:44 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:57:45 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:57:45 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:57:45 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:57:45 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:57:46 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:57:46 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 15:57:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 15:57:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 15:57:47 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-21 15:57:47 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-21 15:57:47 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 15:57:47 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 15:57:47 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-21 15:57:47 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-21 15:57:47 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 15:57:47 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 15:59:22 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 15:59:22 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 15:59:24 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 15:59:24 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)

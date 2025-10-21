@@ -1,24 +1,371 @@
-import React from 'react';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List } from 'lucide-react';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
+
+interface Booking {
+  id: number;
+  client_id: string;
+  service_name: string;
+  datetime: string;
+  phone: string;
+  name: string;
+  status: string;
+  created_at: string;
+  revenue: number;
+}
+
+const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
+  pending: { label: 'Ожидает', color: 'text-yellow-700', bgColor: 'bg-yellow-100 border-yellow-300' },
+  confirmed: { label: 'Подтверждена', color: 'text-green-700', bgColor: 'bg-green-100 border-green-300' },
+  completed: { label: 'Завершена', color: 'text-blue-700', bgColor: 'bg-blue-100 border-blue-300' },
+  cancelled: { label: 'Отменена', color: 'text-red-700', bgColor: 'bg-red-100 border-red-300' },
+  new: { label: 'Новая', color: 'text-purple-700', bgColor: 'bg-purple-100 border-purple-300' },
+};
+
+const HOURS = Array.from({ length: 13 }, (_, i) => i + 8); // 08:00 - 20:00
 
 export default function Calendar() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState<'week' | 'month'>('week');
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  useEffect(() => {
+    loadBookings();
+  }, []);
+
+  const loadBookings = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getBookings();
+      const bookingsArray = data.bookings || [];
+      setBookings(bookingsArray);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка загрузки';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Получить первый день недели (понедельник)
+  const getMonday = (date: Date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+  };
+
+  const mondayOfWeek = getMonday(currentDate);
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(mondayOfWeek);
+    d.setDate(d.getDate() + i);
+    return d;
+  });
+
+  const getBookingsForTimeSlot = (day: Date, hour: number) => {
+    return bookings.filter(b => {
+      const bookingDate = new Date(b.datetime);
+      return (
+        bookingDate.toDateString() === day.toDateString() &&
+        bookingDate.getHours() === hour
+      );
+    });
+  };
+
+  const handlePrevWeek = () => {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() - 7);
+    setCurrentDate(d);
+  };
+
+  const handleNextWeek = () => {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + 7);
+    setCurrentDate(d);
+  };
+
+  const handleToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+            <div>
+              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <button onClick={loadBookings} className="mt-2 text-red-600 hover:text-red-700 font-medium">
+                Попробовать ещё раз
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-8">
+    <div className="p-8 bg-gray-50 min-h-screen">
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <CalendarIcon className="w-8 h-8 text-pink-600" />
-          Календарь
+          Календарь записей
         </h1>
-        <p className="text-gray-600">Просмотр записей в календаре</p>
+        <p className="text-gray-600">Визуальное отображение всех записей</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <div className="text-center py-20">
-          <CalendarIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl text-gray-600">Календарь в разработке</h3>
-          <p className="text-gray-500 mt-2">Скоро здесь появится интерактивный календарь</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Toolbar */}
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrevWeek}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-600" />
+            </button>
+            
+            <div className="min-w-[200px] text-center">
+              <h2 className="text-xl font-bold text-gray-900">
+                {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+              </h2>
+              <p className="text-sm text-gray-600">
+                {mondayOfWeek.toLocaleDateString('ru-RU')} - {weekDays[6].toLocaleDateString('ru-RU')}
+              </p>
+            </div>
+
+            <button
+              onClick={handleNextWeek}
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleToday}
+              className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition text-sm font-medium"
+            >
+              Сегодня
+            </button>
+            
+            <div className="flex border border-gray-300 rounded-lg">
+              <button
+                onClick={() => setView('week')}
+                className={`p-2 transition ${view === 'week' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setView('month')}
+                className={`p-2 transition ${view === 'month' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+              >
+                <Grid3x3 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Loading */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          </div>
+        ) : view === 'week' ? (
+          // НЕДЕЛЬНЫЙ ВИД
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="w-20 px-4 py-3 text-left text-sm font-semibold text-gray-600 bg-gray-50">Время</th>
+                  {weekDays.map((day, idx) => {
+                    const isToday = day.toDateString() === new Date().toDateString();
+                    return (
+                      <th
+                        key={idx}
+                        className={`px-4 py-3 text-center text-sm font-semibold transition ${
+                          isToday ? 'bg-pink-50 border-b-2 border-pink-500' : 'bg-gray-50 hover:bg-gray-100'
+                        }`}
+                      >
+                        <div className={`font-bold ${isToday ? 'text-pink-600' : 'text-gray-900'}`}>
+                          {dayNames[idx]}
+                        </div>
+                        <div className={`text-xs ${isToday ? 'text-pink-600' : 'text-gray-600'}`}>
+                          {day.getDate()}
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {HOURS.map(hour => (
+                  <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="w-20 px-4 py-3 text-xs font-medium text-gray-600 bg-gray-50 text-center">
+                      {hour.toString().padStart(2, '0')}:00
+                    </td>
+                    {weekDays.map((day, dayIdx) => {
+                      const dayBookings = getBookingsForTimeSlot(day, hour);
+                      return (
+                        <td
+                          key={dayIdx}
+                          className="px-2 py-2 min-w-[140px] align-top"
+                        >
+                          {dayBookings.map(booking => (
+                            <div
+                              key={booking.id}
+                              onClick={() => setSelectedBooking(booking)}
+                              className={`p-2 rounded-lg mb-1 cursor-pointer border-2 transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
+                            >
+                              <p className="text-xs font-bold text-gray-900 truncate">{booking.name}</p>
+                              <p className="text-xs text-gray-700">{booking.service_name}</p>
+                              <p className="text-xs text-gray-600">{booking.phone}</p>
+                            </div>
+                          ))}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          // МЕСЯЧНЫЙ ВИД
+          <div className="p-6">
+            <div className="grid grid-cols-7 gap-4">
+              {dayNames.map(day => (
+                <div key={day} className="text-center font-bold text-gray-700 py-3 border-b-2 border-gray-200">
+                  {day}
+                </div>
+              ))}
+
+              {Array.from({ length: 35 }, (_, i) => {
+                const date = new Date(mondayOfWeek);
+                date.setDate(date.getDate() + i);
+                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+                const dayBookings = bookings.filter(b => {
+                  const bDate = new Date(b.datetime);
+                  return bDate.toDateString() === date.toDateString();
+                });
+
+                return (
+                  <div
+                    key={i}
+                    className={`min-h-[120px] p-2 border-2 rounded-lg transition ${
+                      isCurrentMonth
+                        ? 'bg-white border-gray-200 hover:border-pink-300 hover:bg-pink-50'
+                        : 'bg-gray-50 border-gray-100'
+                    }`}
+                  >
+                    <div className={`text-sm font-bold mb-2 ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}`}>
+                      {date.getDate()}
+                    </div>
+                    <div className="space-y-1">
+                      {dayBookings.slice(0, 3).map(booking => (
+                        <button
+                          key={booking.id}
+                          onClick={() => setSelectedBooking(booking)}
+                          className={`w-full text-left text-xs px-2 py-1 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate`}
+                          title={`${booking.name} - ${booking.service_name}`}
+                        >
+                          {booking.name}
+                        </button>
+                      ))}
+                      {dayBookings.length > 3 && (
+                        <div className="text-xs text-gray-600 px-2">+{dayBookings.length - 3}</div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Selected Booking Detail */}
+      {selectedBooking && (
+        <div className="fixed bottom-0 right-0 left-0 bg-black bg-opacity-50 flex items-end z-50">
+          <div className="bg-white w-full md:w-[400px] rounded-t-2xl shadow-2xl p-6 animate-in slide-in-from-bottom-4">
+            <button
+              onClick={() => setSelectedBooking(null)}
+              className="float-right text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Детали записи #{selectedBooking.id}</h3>
+
+            <div className="space-y-4">
+              {/* Client */}
+              <div className="flex items-start gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
+                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {selectedBooking.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600">Клиент</p>
+                  <p className="font-semibold text-gray-900">{selectedBooking.name}</p>
+                </div>
+              </div>
+
+              {/* Service */}
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <p className="text-xs text-gray-600 mb-1">Услуга</p>
+                <p className="font-semibold text-gray-900">{selectedBooking.service_name}</p>
+              </div>
+
+              {/* Date & Time */}
+              <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <Clock className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600">Дата и время</p>
+                  <p className="font-bold text-blue-600">
+                    {new Date(selectedBooking.datetime).toLocaleDateString('ru-RU')} в{' '}
+                    {new Date(selectedBooking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
+                <Phone className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600">Телефон</p>
+                  <p className="font-semibold text-gray-900">{selectedBooking.phone}</p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <p className="text-xs text-gray-600 mb-2">Статус</p>
+                <div className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[selectedBooking.status]?.bgColor}`}>
+                  {statusConfig[selectedBooking.status]?.label || selectedBooking.status}
+                </div>
+              </div>
+
+              {selectedBooking.revenue > 0 && (
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <p className="text-xs text-gray-600 mb-1">Сумма</p>
+                  <p className="text-2xl font-bold text-yellow-600">{selectedBooking.revenue} AED</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

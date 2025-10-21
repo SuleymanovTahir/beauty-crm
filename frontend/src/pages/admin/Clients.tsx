@@ -1,11 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Search, MessageSquare, Eye, Plus, Loader, RefreshCw, AlertCircle } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Badge } from '../../components/ui/badge';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { api } from '../../services/api';
+import React, { useState, useEffect } from "react";
+import {
+  Users,
+  Search,
+  MessageSquare,
+  Eye,
+  Plus,
+  Loader,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { api } from "../../services/api";
 
 interface Client {
   id: string;
@@ -25,21 +34,24 @@ interface Client {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  new: { label: 'Новый', color: 'bg-green-100 text-green-800' },
-  contacted: { label: 'Связались', color: 'bg-blue-100 text-blue-800' },
-  interested: { label: 'Заинтересован', color: 'bg-yellow-100 text-yellow-800' },
-  lead: { label: 'Лид', color: 'bg-orange-100 text-orange-800' },
-  customer: { label: 'Клиент', color: 'bg-purple-100 text-purple-800' },
-  vip: { label: 'VIP', color: 'bg-pink-100 text-pink-800' },
-  inactive: { label: 'Неактивен', color: 'bg-gray-100 text-gray-800' },
-  blocked: { label: 'Заблокирован', color: 'bg-red-100 text-red-800' },
+  new: { label: "Новый", color: "bg-green-100 text-green-800" },
+  contacted: { label: "Связались", color: "bg-blue-100 text-blue-800" },
+  interested: {
+    label: "Заинтересован",
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  lead: { label: "Лид", color: "bg-orange-100 text-orange-800" },
+  customer: { label: "Клиент", color: "bg-purple-100 text-purple-800" },
+  vip: { label: "VIP", color: "bg-pink-100 text-pink-800" },
+  inactive: { label: "Неактивен", color: "bg-gray-100 text-gray-800" },
+  blocked: { label: "Заблокирован", color: "bg-red-100 text-red-800" },
 };
 
 export default function Clients() {
   const navigate = useNavigate();
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,10 +63,11 @@ export default function Clients() {
 
   // Фильтровать клиентов при изменении поиска
   useEffect(() => {
-    const filtered = clients.filter(client =>
-      client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.phone.includes(searchTerm) ||
-      client.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = clients.filter(
+      (client) =>
+        client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.phone.includes(searchTerm) ||
+        client.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredClients(filtered);
   }, [searchTerm, clients]);
@@ -64,18 +77,19 @@ export default function Clients() {
       setLoading(true);
       setError(null);
       const data = await api.getClients();
-      
+
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
       setClients(clientsArray);
-      
+
       if (clientsArray.length === 0) {
-        toast.info('Клиентов не найдено');
+        toast.info("Клиентов не найдено");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
+      const message =
+        err instanceof Error ? err.message : "Ошибка загрузки клиентов";
       setError(message);
       toast.error(`Ошибка: ${message}`);
-      console.error('Error loading clients:', err);
+      console.error("Error loading clients:", err);
     } finally {
       setLoading(false);
     }
@@ -85,14 +99,14 @@ export default function Clients() {
     setRefreshing(true);
     await loadClients();
     setRefreshing(false);
-    toast.success('Данные обновлены');
+    toast.success("Данные обновлены");
   };
 
   const stats = {
     total: clients.length,
-    vip: clients.filter(c => c.status === 'vip').length,
-    new: clients.filter(c => c.status === 'new').length,
-    active: clients.filter(c => c.total_messages > 0).length
+    vip: clients.filter((c) => c.status === "vip").length,
+    new: clients.filter((c) => c.status === "new").length,
+    active: clients.filter((c) => c.total_messages > 0).length,
   };
 
   if (loading) {
@@ -115,7 +129,10 @@ export default function Clients() {
             <div className="flex-1">
               <p className="text-red-800 font-medium">Ошибка загрузки</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
-              <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
+              <Button
+                onClick={loadClients}
+                className="mt-4 bg-red-600 hover:bg-red-700"
+              >
                 Попробовать еще раз
               </Button>
             </div>
@@ -135,12 +152,10 @@ export default function Clients() {
           </h1>
           <p className="text-gray-600">{filteredClients.length} клиентов</p>
         </div>
-        <Button 
-          onClick={handleRefresh}
-          disabled={refreshing}
-          variant="outline"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+        <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
+          <RefreshCw
+            className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+          />
           Обновить
         </Button>
       </div>
@@ -189,33 +204,58 @@ export default function Clients() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Клиент</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Контакты</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Сообщений</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">LTV</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Последний контакт</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Статус</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Клиент
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Контакты
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Сообщений
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    LTV
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Последний контакт
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Статус
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">
+                    Действия
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredClients.map((client) => (
-                  <tr key={client.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={client.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
-                          {client.name ? client.name.charAt(0).toUpperCase() : '?'}
+                          {client.name
+                            ? client.name.charAt(0).toUpperCase()
+                            : "?"}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-900 font-medium">{client.display_name}</p>
+                          <p className="text-sm text-gray-900 font-medium">
+                            {client.display_name}
+                          </p>
                           {client.username && (
-                            <p className="text-xs text-gray-500">@{client.username}</p>
+                            <p className="text-xs text-gray-500">
+                              @{client.username}
+                            </p>
                           )}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-900">{client.phone || '-'}</p>
+                      <p className="text-sm text-gray-900">
+                        {client.phone || "-"}
+                      </p>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {client.total_messages}
@@ -224,30 +264,41 @@ export default function Clients() {
                       {client.lifetime_value} AED
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(client.last_contact).toLocaleDateString('ru-RU')}
+                      {new Date(client.last_contact).toLocaleDateString(
+                        "ru-RU"
+                      )}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge className={statusConfig[client.status as keyof typeof statusConfig]?.color || 'bg-gray-100 text-gray-800'}>
-                        {statusConfig[client.status as keyof typeof statusConfig]?.label || client.status}
+                      <Badge
+                        className={
+                          statusConfig[
+                            client.status as keyof typeof statusConfig
+                          ]?.color || "bg-gray-100 text-gray-800"
+                        }
+                      >
+                        {statusConfig[
+                          client.status as keyof typeof statusConfig
+                        ]?.label || client.status}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => navigate(`/admin/clients/${client.id}`)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
+  size="sm" 
+  variant="outline" 
+  className="text-green-600"
+  onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
+>
+  <MessageSquare className="w-4 h-4" />
+</Button>
                         <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-green-600"
-                          onClick={() => navigate(`/manager/chat?client=${client.id}`)}
-                        >
-                          <MessageSquare className="w-4 h-4" />
-                        </Button>
+  size="sm" 
+  variant="outline" 
+  className="text-green-600"
+  onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
+>
+  <MessageSquare className="w-4 h-4" />
+</Button>
                       </div>
                     </td>
                   </tr>

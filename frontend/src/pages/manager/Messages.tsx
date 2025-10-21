@@ -1,13 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { MessageSquare, Search, Filter, Star, Archive, Trash2, Check, CheckCheck, Clock, Loader, AlertCircle } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Badge } from '../../components/ui/badge';
-import { Checkbox } from '../../components/ui/checkbox';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { api } from '../../services/api';
+import React, { useState, useEffect } from "react";
+import {
+  MessageSquare,
+  Search,
+  Filter,
+  Star,
+  Archive,
+  Trash2,
+  Check,
+  CheckCheck,
+  Clock,
+  Loader,
+  AlertCircle,
+} from "lucide-react";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { Badge } from "../../components/ui/badge";
+import { Checkbox } from "../../components/ui/checkbox";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { api } from "../../services/api";
 
 interface ClientMessage {
   id: string;
@@ -27,26 +45,28 @@ interface ExtendedMessage extends ClientMessage {
 }
 
 const categories = [
-  { value: 'all', label: 'Все сообщения' },
-  { value: 'new', label: 'Новые' },
-  { value: 'active', label: 'Активные' },
+  { value: "all", label: "Все сообщения" },
+  { value: "new", label: "Новые" },
+  { value: "active", label: "Активные" },
 ];
 
 const statuses = [
-  { value: 'all', label: 'Все' },
-  { value: 'new', label: 'Новые клиенты' },
-  { value: 'interested', label: 'Заинтересованные' },
-  { value: 'customer', label: 'Клиенты' },
-  { value: 'vip', label: 'VIP' },
+  { value: "all", label: "Все" },
+  { value: "new", label: "Новые клиенты" },
+  { value: "interested", label: "Заинтересованные" },
+  { value: "customer", label: "Клиенты" },
+  { value: "vip", label: "VIP" },
 ];
 
 export default function Messages() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
-  const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>(
+    []
+  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,13 +76,16 @@ export default function Messages() {
   }, []);
 
   useEffect(() => {
-    const filtered = messages.filter(msg => {
-      const matchesSearch = msg.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           msg.phone.includes(searchTerm);
-      const matchesCategory = categoryFilter === 'all' || 
-                            (categoryFilter === 'new' && msg.unread) ||
-                            (categoryFilter === 'active' && msg.total_messages > 0);
-      const matchesStatus = statusFilter === 'all' || msg.status === statusFilter;
+    const filtered = messages.filter((msg) => {
+      const matchesSearch =
+        msg.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        msg.phone.includes(searchTerm);
+      const matchesCategory =
+        categoryFilter === "all" ||
+        (categoryFilter === "new" && msg.unread) ||
+        (categoryFilter === "active" && msg.total_messages > 0);
+      const matchesStatus =
+        statusFilter === "all" || msg.status === statusFilter;
       return matchesSearch && matchesCategory && matchesStatus;
     });
     setFilteredMessages(filtered);
@@ -72,49 +95,56 @@ export default function Messages() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await api.getClients();
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
-      
+
       // Преобразуем клиентов в сообщения
-      const extendedMessages: ExtendedMessage[] = clientsArray.map((client: any) => ({
-        id: client.id,
-        name: client.name,
-        display_name: client.display_name,
-        avatar: (client.display_name || client.name || '?').charAt(0).toUpperCase(),
-        phone: client.phone || '-',
-        last_contact: client.last_contact,
-        total_messages: client.total_messages,
-        status: client.status,
-        is_pinned: client.is_pinned,
-        starred: client.is_pinned === 1,
-        unread: client.total_messages > 0 // Упрощённо: если есть сообщения, считаем непрочитанными
-      }));
+      const extendedMessages: ExtendedMessage[] = clientsArray.map(
+        (client: any) => ({
+          id: client.id,
+          name: client.name,
+          display_name: client.display_name,
+          avatar: (client.display_name || client.name || "?")
+            .charAt(0)
+            .toUpperCase(),
+          phone: client.phone || "-",
+          last_contact: client.last_contact,
+          total_messages: client.total_messages,
+          status: client.status,
+          is_pinned: client.is_pinned,
+          starred: client.is_pinned === 1,
+          unread: client.total_messages > 0, // Упрощённо: если есть сообщения, считаем непрочитанными
+        })
+      );
 
       setMessages(extendedMessages);
-      
+
       if (extendedMessages.length === 0) {
-        toast.info('Сообщений не найдено');
+        toast.info("Сообщений не найдено");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
+      const message =
+        err instanceof Error ? err.message : "Ошибка загрузки сообщений";
       setError(message);
       toast.error(`Ошибка: ${message}`);
-      console.error('Error loading messages:', err);
+      console.error("Error loading messages:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleToggleStar = (id: string) => {
-    setMessages(messages.map(msg => 
-      msg.id === id ? { ...msg, starred: !msg.starred } : msg
-    ));
+    setMessages(
+      messages.map((msg) =>
+        msg.id === id ? { ...msg, starred: !msg.starred } : msg
+      )
+    );
   };
 
   const handleToggleSelect = (id: string) => {
-    setSelectedMessages(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    setSelectedMessages((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
@@ -122,36 +152,38 @@ export default function Messages() {
     if (selectedMessages.length === filteredMessages.length) {
       setSelectedMessages([]);
     } else {
-      setSelectedMessages(filteredMessages.map(m => m.id));
+      setSelectedMessages(filteredMessages.map((m) => m.id));
     }
   };
 
   const handleMarkAsRead = () => {
-    setMessages(messages.map(msg => 
-      selectedMessages.includes(msg.id) ? { ...msg, unread: false } : msg
-    ));
+    setMessages(
+      messages.map((msg) =>
+        selectedMessages.includes(msg.id) ? { ...msg, unread: false } : msg
+      )
+    );
     setSelectedMessages([]);
-    toast.success('Сообщения помечены как прочитанные');
+    toast.success("Сообщения помечены как прочитанные");
   };
 
   const handleArchive = () => {
-    setMessages(messages.filter(msg => !selectedMessages.includes(msg.id)));
+    setMessages(messages.filter((msg) => !selectedMessages.includes(msg.id)));
     setSelectedMessages([]);
-    toast.success('Сообщения перемещены в архив');
+    toast.success("Сообщения перемещены в архив");
   };
 
-  const unreadCount = messages.filter(m => m.unread).length;
-  const starredCount = messages.filter(m => m.starred).length;
+  const unreadCount = messages.filter((m) => m.unread).length;
+  const starredCount = messages.filter((m) => m.starred).length;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'new':
+      case "new":
         return <Clock className="w-4 h-4 text-blue-600" />;
-      case 'interested':
+      case "interested":
         return <Check className="w-4 h-4 text-yellow-600" />;
-      case 'customer':
+      case "customer":
         return <CheckCheck className="w-4 h-4 text-green-600" />;
-      case 'vip':
+      case "vip":
         return <Star className="w-4 h-4 text-pink-600" />;
       default:
         return null;
@@ -160,16 +192,16 @@ export default function Messages() {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      new: 'Новый',
-      interested: 'Заинтересован',
-      customer: 'Клиент',
-      vip: 'VIP',
-      lead: 'Лид',
-      contacted: 'Связались',
-      booking_started: 'Начал запись',
-      booked: 'Записан',
-      inactive: 'Неактивен',
-      blocked: 'Заблокирован'
+      new: "Новый",
+      interested: "Заинтересован",
+      customer: "Клиент",
+      vip: "VIP",
+      lead: "Лид",
+      contacted: "Связались",
+      booking_started: "Начал запись",
+      booked: "Записан",
+      inactive: "Неактивен",
+      blocked: "Заблокирован",
     };
     return labels[status] || status;
   };
@@ -194,7 +226,10 @@ export default function Messages() {
             <div className="flex-1">
               <p className="text-red-800 font-medium">Ошибка загрузки</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
-              <Button onClick={loadMessages} className="mt-4 bg-red-600 hover:bg-red-700">
+              <Button
+                onClick={loadMessages}
+                className="mt-4 bg-red-600 hover:bg-red-700"
+              >
                 Попробовать еще раз
               </Button>
             </div>
@@ -212,9 +247,7 @@ export default function Messages() {
           <MessageSquare className="w-8 h-8 text-pink-600" />
           Сообщения
           {unreadCount > 0 && (
-            <Badge className="bg-pink-600 text-white">
-              {unreadCount}
-            </Badge>
+            <Badge className="bg-pink-600 text-white">{unreadCount}</Badge>
           )}
         </h1>
         <p className="text-gray-600">История общения с клиентами</p>
@@ -237,7 +270,7 @@ export default function Messages() {
             <div>
               <p className="text-gray-500 text-sm mb-1">Активные</p>
               <h3 className="text-3xl text-blue-600">
-                {messages.filter(m => m.total_messages > 0).length}
+                {messages.filter((m) => m.total_messages > 0).length}
               </h3>
             </div>
             <Clock className="w-8 h-8 text-blue-400" />
@@ -287,7 +320,7 @@ export default function Messages() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {categories.map(cat => (
+              {categories.map((cat) => (
                 <SelectItem key={cat.value} value={cat.value}>
                   {cat.label}
                 </SelectItem>
@@ -300,7 +333,7 @@ export default function Messages() {
               <SelectValue placeholder="Статус" />
             </SelectTrigger>
             <SelectContent>
-              {statuses.map(status => (
+              {statuses.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
                 </SelectItem>
@@ -336,7 +369,10 @@ export default function Messages() {
         {/* Table Header */}
         <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 flex items-center gap-4">
           <Checkbox
-            checked={selectedMessages.length === filteredMessages.length && filteredMessages.length > 0}
+            checked={
+              selectedMessages.length === filteredMessages.length &&
+              filteredMessages.length > 0
+            }
             onCheckedChange={handleSelectAll}
           />
           <span className="text-sm text-gray-600">Выбрать все</span>
@@ -349,9 +385,9 @@ export default function Messages() {
               <div
                 key={message.id}
                 className={`px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                  message.unread ? 'bg-blue-50' : ''
+                  message.unread ? "bg-blue-50" : ""
                 }`}
-                onClick={() => navigate(`/manager/chat?client=${message.id}`)}
+                onClick={() => navigate(`/admin/chat?client_id=${message.id}`)}
               >
                 <div className="flex items-start gap-4">
                   <Checkbox
@@ -370,8 +406,8 @@ export default function Messages() {
                     <Star
                       className={`w-5 h-5 ${
                         message.starred
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300 hover:text-yellow-400'
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300 hover:text-yellow-400"
                       }`}
                     />
                   </button>
@@ -383,16 +419,28 @@ export default function Messages() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        <p className={`text-sm ${message.unread ? 'text-gray-900 font-medium' : 'text-gray-700'}`}>
+                        <p
+                          className={`text-sm ${
+                            message.unread
+                              ? "text-gray-900 font-medium"
+                              : "text-gray-700"
+                          }`}
+                        >
                           {message.display_name}
                         </p>
                         {getStatusIcon(message.status)}
                       </div>
                       <span className="text-xs text-gray-500">
-                        {new Date(message.last_contact).toLocaleDateString('ru-RU')}
+                        {new Date(message.last_contact).toLocaleDateString(
+                          "ru-RU"
+                        )}
                       </span>
                     </div>
-                    <p className={`text-sm ${message.unread ? 'text-gray-900' : 'text-gray-600'}`}>
+                    <p
+                      className={`text-sm ${
+                        message.unread ? "text-gray-900" : "text-gray-600"
+                      }`}
+                    >
                       {message.phone}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
