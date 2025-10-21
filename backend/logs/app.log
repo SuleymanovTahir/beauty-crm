@@ -1502,3 +1502,1800 @@ jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search p
 2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
 2025-10-21 09:41:06 - crm - INFO - [middleware] 🔥 GET /api/stats
 2025-10-21 09:41:06 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 10:18:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 10:18:54 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:18:54 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'HEAD', 'GET'} /openapi.json
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs/oauth2-redirect
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'HEAD', 'GET'} /redoc
+2025-10-21 10:18:54 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 10:18:54 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/clients
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/clients/{client_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/bookings
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/bookings/{booking_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/chat
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/messages
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/analytics
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/funnel
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/statuses
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/services
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/users
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/stats
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/unread-count
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/analytics
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/funnel
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/status
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/update
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/notes
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/pin
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/create
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/status
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/notes
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/chat/send
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/chat/messages
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'DELETE'} /admin/api/chat/message/{client_id}/{message_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/chat/upload
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/chat/voice
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/uploads/{file_type}/{filename}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/chats-update
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/create
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/{status_key}/delete
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/services/create
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/update
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/delete
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/services/{service_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /admin/api/users/{user_id}/delete
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/export/clients
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/export/analytics
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /admin/api/export/bookings
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 10:18:54 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 10:18:54 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:18:54 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:18:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 10:18:54 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 10:18:54 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 10:18:54 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 10:18:54 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:18:54 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 10:18:54 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 10:18:54 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 10:18:54 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 10:18:54 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 10:18:54 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 10:18:54 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:29:55 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 10:29:55 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:29:55 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'HEAD', 'GET'} /openapi.json
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs/oauth2-redirect
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'HEAD', 'GET'} /redoc
+2025-10-21 10:29:55 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 10:29:55 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/clients
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/clients/{client_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/bookings
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/bookings/{booking_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/chat
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/messages
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/analytics
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/funnel
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/statuses
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/services
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/users
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/stats
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/unread-count
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/analytics
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/funnel
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/status
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/update
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/notes
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/pin
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/create
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/status
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/notes
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/chat/send
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/chat/messages
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'DELETE'} /admin/api/chat/message/{client_id}/{message_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/chat/upload
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/chat/voice
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/uploads/{file_type}/{filename}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/chats-update
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/create
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/{status_key}/delete
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/services/create
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/update
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/delete
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/services/{service_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /admin/api/users/{user_id}/delete
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/export/clients
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/export/analytics
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /admin/api/export/bookings
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 10:29:55 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 10:29:55 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:29:55 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:29:55 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 10:29:55 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 10:29:55 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 10:29:55 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 10:29:55 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:29:55 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 10:29:55 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 10:29:55 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 10:29:55 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 10:29:55 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 10:29:55 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 10:29:55 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:30:49 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 10:30:49 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 10:30:49 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:30:49 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:31:11 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 10:31:11 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 10:31:41 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-21 10:31:41 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-21 10:31:41 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-21 10:31:41 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-21 10:31:41 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-21 10:31:41 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-21 10:31:41 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 10:31:41 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 10:33:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:33:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:33:13 - crm - INFO - [middleware] 🔥 GET /admin/
+2025-10-21 10:33:13 - crm - INFO - [middleware] 📤 GET /admin/ → 307 (0.00s)
+2025-10-21 10:33:13 - crm - INFO - [middleware] 🔥 GET /admin
+2025-10-21 10:33:13 - crm - ERROR - [middleware] ❌ ОШИБКА: GET /admin
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 151, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream from None
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/admin.py", line 92, in admin_dashboard
+    return templates.TemplateResponse("admin/dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+        "get_client_display_name": get_client_display_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search path: 'templates'
+2025-10-21 10:33:13 - crm - CRITICAL - [exception_handler] ❌ НЕОБРАБОТАННАЯ ОШИБКА: 'admin/dashboard.html' not found in search path: 'templates'
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/admin.py", line 92, in admin_dashboard
+    |     return templates.TemplateResponse("admin/dashboard.html", {
+    |            ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         "request": request,
+    |         ^^^^^^^^^^^^^^^^^^^
+    |     ...<9 lines>...
+    |         "get_client_display_name": get_client_display_name,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     })
+    |     ^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    |     template = self.get_template(name)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    |     return self.env.get_template(name)
+    |            ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    |     return self._load_template(name, globals)
+    |            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    |     template = self.loader.load(self, name, self.make_globals(globals))
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    |     source, filename, uptodate = self.get_source(environment, name)
+    |                                  ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    |     raise TemplateNotFound(
+    |     ...<2 lines>...
+    |     )
+    | jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search path: 'templates'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/admin.py", line 92, in admin_dashboard
+    return templates.TemplateResponse("admin/dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+        "get_client_display_name": get_client_display_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search path: 'templates'
+2025-10-21 10:33:13 - crm - ERROR - [exception_handler] 📍 URL: http://127.0.0.1:8000/admin
+2025-10-21 10:33:14 - crm - ERROR - [exception_handler] 📋 Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/admin.py", line 92, in admin_dashboard
+    |     return templates.TemplateResponse("admin/dashboard.html", {
+    |            ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         "request": request,
+    |         ^^^^^^^^^^^^^^^^^^^
+    |     ...<9 lines>...
+    |         "get_client_display_name": get_client_display_name,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     })
+    |     ^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    |     template = self.get_template(name)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    |     return self.env.get_template(name)
+    |            ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    |     return self._load_template(name, globals)
+    |            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    |     template = self.loader.load(self, name, self.make_globals(globals))
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    |     source, filename, uptodate = self.get_source(environment, name)
+    |                                  ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    |     raise TemplateNotFound(
+    |     ...<2 lines>...
+    |     )
+    | jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search path: 'templates'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/admin.py", line 92, in admin_dashboard
+    return templates.TemplateResponse("admin/dashboard.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+        "get_client_display_name": get_client_display_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/dashboard.html' not found in search path: 'templates'
+
+2025-10-21 10:33:21 - crm - INFO - [middleware] 🔥 GET /login
+2025-10-21 10:33:21 - crm - INFO - [auth] Открыта страница логина
+2025-10-21 10:33:21 - crm - ERROR - [auth] Ошибка в login_page: 'admin/login.html' not found in search path: 'templates'
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    return templates.TemplateResponse("admin/login.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+        "salon_info": SALON_INFO,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+        "error": error
+        ^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+2025-10-21 10:33:21 - crm - ERROR - [middleware] ❌ ОШИБКА: GET /login
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 151, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream from None
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    return templates.TemplateResponse("admin/login.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+        "salon_info": SALON_INFO,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+        "error": error
+        ^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+2025-10-21 10:33:21 - crm - CRITICAL - [exception_handler] ❌ НЕОБРАБОТАННАЯ ОШИБКА: 'admin/login.html' not found in search path: 'templates'
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    |     return templates.TemplateResponse("admin/login.html", {
+    |            ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+    |         "request": request,
+    |         ^^^^^^^^^^^^^^^^^^^
+    |         "salon_info": SALON_INFO,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         "error": error
+    |         ^^^^^^^^^^^^^^
+    |     })
+    |     ^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    |     template = self.get_template(name)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    |     return self.env.get_template(name)
+    |            ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    |     return self._load_template(name, globals)
+    |            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    |     template = self.loader.load(self, name, self.make_globals(globals))
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    |     source, filename, uptodate = self.get_source(environment, name)
+    |                                  ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    |     raise TemplateNotFound(
+    |     ...<2 lines>...
+    |     )
+    | jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    return templates.TemplateResponse("admin/login.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+        "salon_info": SALON_INFO,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+        "error": error
+        ^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+2025-10-21 10:33:22 - crm - ERROR - [exception_handler] 📍 URL: http://127.0.0.1:8000/login
+2025-10-21 10:33:22 - crm - ERROR - [exception_handler] 📋 Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    |     return templates.TemplateResponse("admin/login.html", {
+    |            ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+    |         "request": request,
+    |         ^^^^^^^^^^^^^^^^^^^
+    |         "salon_info": SALON_INFO,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |         "error": error
+    |         ^^^^^^^^^^^^^^
+    |     })
+    |     ^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    |     template = self.get_template(name)
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    |     return self.env.get_template(name)
+    |            ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    |     return self._load_template(name, globals)
+    |            ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    |     template = self.loader.load(self, name, self.make_globals(globals))
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    |     source, filename, uptodate = self.get_source(environment, name)
+    |                                  ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    |     raise TemplateNotFound(
+    |     ...<2 lines>...
+    |     )
+    | jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 128, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 110, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 173, in login_page
+    return templates.TemplateResponse("admin/login.html", {
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+        "request": request,
+        ^^^^^^^^^^^^^^^^^^^
+        "salon_info": SALON_INFO,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+        "error": error
+        ^^^^^^^^^^^^^^
+    })
+    ^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 209, in TemplateResponse
+    template = self.get_template(name)
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/starlette/templating.py", line 132, in get_template
+    return self.env.get_template(name)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 126, in load
+    source, filename, uptodate = self.get_source(environment, name)
+                                 ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/venv/lib/python3.14/site-packages/jinja2/loaders.py", line 209, in get_source
+    raise TemplateNotFound(
+    ...<2 lines>...
+    )
+jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path: 'templates'
+
+2025-10-21 10:33:29 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-21 10:33:29 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-21 10:33:29 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-21 10:33:29 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-21 10:34:06 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:34:06 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:43:46 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 10:43:46 - crm - INFO - [auth] API Login attempt: ыв
+2025-10-21 10:43:46 - crm - WARNING - [auth] Invalid credentials for ыв
+2025-10-21 10:43:46 - crm - INFO - [middleware] 📤 POST /api/login → 401 (0.00s)
+2025-10-21 10:43:58 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 10:43:58 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 10:43:58 - crm - INFO - [auth] Session created for admin
+2025-10-21 10:43:58 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.01s)
+2025-10-21 10:44:04 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 10:44:04 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 10:44:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:44:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:44:05 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:44:05 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:44:27 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:44:27 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:44:28 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:44:28 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:44:28 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:44:28 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:48:05 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 10:48:05 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 10:48:05 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:48:05 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:48:11 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:48:11 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:49:03 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 10:49:04 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:04 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'HEAD', 'GET'} /openapi.json
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'HEAD', 'GET'} /docs/oauth2-redirect
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'HEAD', 'GET'} /redoc
+2025-10-21 10:49:04 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 10:49:04 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/clients
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/clients/{client_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/bookings
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/bookings/{booking_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/chat
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/messages
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/analytics
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/funnel
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/statuses
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/services
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/users
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/stats
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/unread-count
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/analytics
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/funnel
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/status
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/update
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/notes
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/pin
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/create
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/status
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/notes
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/chat/send
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/chat/messages
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'DELETE'} /admin/api/chat/message/{client_id}/{message_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/chat/upload
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/chat/voice
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/uploads/{file_type}/{filename}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/chats-update
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/create
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/{status_key}/delete
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/services/create
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/update
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/delete
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/services/{service_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /admin/api/users/{user_id}/delete
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/export/clients
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/export/analytics
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /admin/api/export/bookings
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 10:49:04 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 10:49:04 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:04 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:04 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 10:49:04 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 10:49:04 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 10:49:04 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 10:49:04 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:04 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 10:49:04 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 10:49:04 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 10:49:04 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 10:49:04 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 10:49:04 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 10:49:04 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:32 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:49:32 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:49:34 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:49:34 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:49:46 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 10:49:46 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:46 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 10:49:46 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 10:49:46 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/clients
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/clients/{client_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/bookings
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/bookings/{booking_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/chat
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/messages
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/analytics
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/funnel
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/statuses
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/services
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/users
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/stats
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/unread-count
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/analytics
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/funnel
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/status
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/update
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/notes
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/pin
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/create
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/status
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/notes
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/chat/send
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/chat/messages
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'DELETE'} /admin/api/chat/message/{client_id}/{message_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/chat/upload
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/chat/voice
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/uploads/{file_type}/{filename}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/chats-update
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/create
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/{status_key}/delete
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/services/create
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/update
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/delete
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/services/{service_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /admin/api/users/{user_id}/delete
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/export/clients
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/export/analytics
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /admin/api/export/bookings
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 10:49:46 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 10:49:46 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:46 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:46 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 10:49:46 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 10:49:46 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 10:49:46 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 10:49:46 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:46 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 10:49:46 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 10:49:46 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 10:49:46 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 10:49:46 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 10:49:46 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 10:49:46 - crm - INFO - [startup] ======================================================================
+2025-10-21 10:49:49 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:49:49 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:51:03 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:51:03 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:51:03 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:51:03 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:51:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:51:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:51:10 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:51:10 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:51:31 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 10:51:31 - crm - INFO - [middleware] 📤 GET /api/bookings → 401 (0.00s)
+2025-10-21 10:55:09 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 10:55:09 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 10:55:09 - crm - INFO - [auth] Session created for admin
+2025-10-21 10:55:09 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.01s)
+2025-10-21 10:55:23 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-10-21 10:55:23 - crm - INFO - [auth] API Login attempt: admin
+2025-10-21 10:55:23 - crm - INFO - [auth] Session created for admin
+2025-10-21 10:55:23 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.00s)
+2025-10-21 11:13:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 11:13:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:13:40 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 11:13:40 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 11:13:40 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/clients
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/clients/{client_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/bookings
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/bookings/{booking_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/chat
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/messages
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/analytics
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/funnel
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/statuses
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/services
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/users
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/stats
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/unread-count
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/analytics
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/funnel
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/status
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/update
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/notes
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/clients/{client_id}/pin
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/create
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/status
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/bookings/{booking_id}/notes
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/chat/send
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/chat/messages
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'DELETE'} /admin/api/chat/message/{client_id}/{message_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/chat/upload
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/chat/voice
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/uploads/{file_type}/{filename}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/chats-update
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/create
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/statuses/{status_key}/delete
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/services/create
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/update
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/services/{service_id}/delete
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/services/{service_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /admin/api/users/{user_id}/delete
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/export/clients
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/export/analytics
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /admin/api/export/bookings
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 11:13:40 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 11:13:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:13:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:13:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 11:13:40 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 11:13:40 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 11:13:40 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 11:13:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:13:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 11:13:40 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 11:13:40 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 11:13:40 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 11:13:40 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 11:13:40 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 11:13:40 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:16:29 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 11:16:58 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 11:16:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:16:58 - crm - INFO - [startup] 📋 Зарегистрированные роуты:
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET', 'HEAD'} /openapi.json
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET', 'HEAD'} /docs/oauth2-redirect
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET', 'HEAD'} /redoc
+2025-10-21 11:16:58 - crm - INFO - [startup]    MOUNT /ws
+2025-10-21 11:16:58 - crm - INFO - [startup]    MOUNT /static
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/dashboard
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/status
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/pin
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/bookings
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/chat/messages
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/users/{user_id}/delete
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/export/clients
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/unread-count
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /login
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /login
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /logout
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /register
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /register
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /webhook
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /webhook
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /book
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /forgot-password
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /forgot-password
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /reset-password
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /reset-password
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /stats
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /health
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /privacy-policy
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /terms
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/users
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/clients
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/clients/{client_id}
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/bookings
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/bookings/{booking_id}
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/services
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/analytics
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/funnel
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/stats
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/login
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/logout
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/bookings/create
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/clients/{client_id}/update
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/bookings/{booking_id}/status
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'POST'} /api/chat/send
+2025-10-21 11:16:58 - crm - INFO - [startup]    {'GET'} /api/chat/{client_id}/history
+2025-10-21 11:16:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:16:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:16:58 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 11:16:58 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 11:16:58 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 11:16:58 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 11:16:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:16:58 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 11:16:58 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 11:16:58 - crm - INFO - [startup] 📊 Админ-панель: http://localhost:8000/admin
+2025-10-21 11:16:58 - crm - INFO - [startup] 📈 Воронка продаж: http://localhost:8000/admin/funnel
+2025-10-21 11:16:58 - crm - INFO - [startup] 📉 Аналитика: http://localhost:8000/admin/analytics
+2025-10-21 11:16:58 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 11:16:58 - crm - INFO - [startup] ======================================================================
+2025-10-21 11:22:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 11:22:15 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 11:22:15 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 11:22:15 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 11:22:18 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-21 11:22:18 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-21 11:22:18 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 11:22:18 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 11:22:18 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-21 11:22:18 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-21 11:22:18 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 11:22:18 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 11:22:19 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 11:22:19 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 11:22:21 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 11:22:21 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 11:22:21 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 11:22:21 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 11:22:23 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 11:22:23 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 11:22:23 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 11:22:23 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 11:23:19 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 11:23:19 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)

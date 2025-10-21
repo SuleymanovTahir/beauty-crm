@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 
@@ -44,22 +44,107 @@ import UserCabinet from './pages/public/UserCabinet';
 // Auth Pages
 import Login from './pages/auth/Login';
 
+interface User {
+  id: number;
+  username: string;
+  full_name: string;
+  email: string;
+  role: string;
+}
+
+interface CurrentUser {
+  role: string;
+  name: string;
+}
+
+interface ProtectedRouteProps {
+  element: React.ReactNode;
+  isAuthenticated: boolean;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, isAuthenticated }) => {
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
+};
+
 export default function App() {
-  // Mock authentication - в production это будет работать с Supabase
-  const [currentUser, setCurrentUser] = useState<{ role: string; name: string } | null>({
-    role: 'admin',
-    name: 'Администратор'
-  });
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Проверяем авторизацию при загрузке приложения
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const savedToken = localStorage.getItem('session_token');
+        const savedUser = localStorage.getItem('user');
+
+        if (savedToken && savedUser) {
+          const user = JSON.parse(savedUser);
+          setCurrentUser({
+            role: user.role,
+            name: user.full_name || user.username
+          });
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        // Очищаем неверные данные
+        localStorage.removeItem('session_token');
+        localStorage.removeItem('user');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogin = (user: any) => {
+    setCurrentUser({
+      role: user.role,
+      name: user.full_name || user.username
+    });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('session_token');
+    localStorage.removeItem('user');
+    setCurrentUser(null);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin">
+            <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
+          </div>
+          <p className="mt-4 text-gray-600">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Routes>
           {/* Auth Routes */}
-          <Route path="/login" element={<Login onLogin={setCurrentUser} />} />
+          <Route 
+            path="/login" 
+            element={
+              currentUser ? <Navigate to="/admin" replace /> : <Login onLogin={handleLogin} />
+            } 
+          />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout user={currentUser} />}>
+          {/* Admin Routes - Protected */}
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute
+                isAuthenticated={!!currentUser}
+                element={<AdminLayout user={currentUser} onLogout={handleLogout} />}
+              />
+            }
+          >
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="bookings" element={<Bookings />} />
@@ -76,8 +161,16 @@ export default function App() {
             <Route path="settings" element={<Settings />} />
           </Route>
 
-          {/* Manager Routes */}
-          <Route path="/manager" element={<ManagerLayout user={currentUser} />}>
+          {/* Manager Routes - Protected */}
+          <Route 
+            path="/manager" 
+            element={
+              <ProtectedRoute
+                isAuthenticated={!!currentUser}
+                element={<ManagerLayout user={currentUser} />}
+              />
+            }
+          >
             <Route index element={<ManagerDashboard />} />
             <Route path="dashboard" element={<ManagerDashboard />} />
             <Route path="messages" element={<Messages />} />
@@ -88,8 +181,16 @@ export default function App() {
             <Route path="settings" element={<ManagerSettings />} />
           </Route>
 
-          {/* Employee Routes */}
-          <Route path="/employee" element={<EmployeeLayout user={currentUser} />}>
+          {/* Employee Routes - Protected */}
+          <Route 
+            path="/employee" 
+            element={
+              <ProtectedRoute
+                isAuthenticated={!!currentUser}
+                element={<EmployeeLayout user={currentUser} />}
+              />
+            }
+          >
             <Route index element={<EmployeeDashboard />} />
             <Route path="dashboard" element={<EmployeeDashboard />} />
             <Route path="profile" element={<EmployeeProfile />} />

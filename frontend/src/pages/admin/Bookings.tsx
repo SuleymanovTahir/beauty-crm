@@ -1,72 +1,28 @@
-import React, { useState } from 'react';
+// frontend/src/pages/admin/Bookings.tsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Search, Filter, MessageSquare, Eye } from 'lucide-react';
+import { Calendar, Search, Filter, MessageSquare, Eye, Loader } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
-// Mock data
-const mockBookings = [
-  {
-    id: 1,
-    client: 'Анна Иванова',
-    service: 'Перманентный макияж бровей',
-    date: '2025-10-20',
-    time: '10:00',
-    phone: '+971 50 123 4567',
-    status: 'pending',
-    created: '2025-10-19 14:30',
-    amount: 800
-  },
-  {
-    id: 2,
-    client: 'Мария Петрова',
-    service: 'Маникюр + педикюр',
-    date: '2025-10-20',
-    time: '12:00',
-    phone: '+971 50 234 5678',
-    status: 'confirmed',
-    created: '2025-10-18 09:15',
-    amount: 350
-  },
-  {
-    id: 3,
-    client: 'Елена Сидорова',
-    service: 'Массаж лица',
-    date: '2025-10-19',
-    time: '15:00',
-    phone: '+971 50 345 6789',
-    status: 'completed',
-    created: '2025-10-17 11:20',
-    amount: 450
-  },
-  {
-    id: 4,
-    client: 'Ольга Николаева',
-    service: 'Наращивание ресниц',
-    date: '2025-10-20',
-    time: '14:00',
-    phone: '+971 50 456 7890',
-    status: 'pending',
-    created: '2025-10-19 16:45',
-    amount: 500
-  },
-  {
-    id: 5,
-    client: 'София Козлова',
-    service: 'Стрижка и укладка',
-    date: '2025-10-18',
-    time: '11:00',
-    phone: '+971 50 567 8901',
-    status: 'cancelled',
-    created: '2025-10-15 13:00',
-    amount: 300
-  },
-];
+interface Booking {
+  id: number;
+  client_id: string;
+  service_name: string;
+  datetime: string;
+  phone: string;
+  name: string;
+  status: string;
+  created_at: string;
+  revenue: number;
+  notes?: string;
+}
 
-const statusConfig = {
+const statusConfig: Record<string, { label: string; color: string }> = {
   pending: { label: 'Ожидает', color: 'bg-yellow-100 text-yellow-800' },
   confirmed: { label: 'Подтверждена', color: 'bg-green-100 text-green-800' },
   completed: { label: 'Завершена', color: 'bg-blue-100 text-blue-800' },
@@ -75,28 +31,87 @@ const statusConfig = {
 
 export default function Bookings() {
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState(mockBookings);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Загрузить данные при монтировании компонента
+  useEffect(() => {
+    loadBookings();
+  }, []);
+
+  // Фильтровать данные при изменении поискового запроса или статуса
+  useEffect(() => {
+    const filtered = bookings.filter(booking => {
+      const matchesSearch = 
+        booking.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booking.service_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredBookings(filtered);
+  }, [searchTerm, statusFilter, bookings]);
+
+  const loadBookings = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await api.getBookings();
+      setBookings(Array.isArray(data) ? data : []);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка загрузки данных';
+      setError(message);
+      toast.error(`Ошибка: ${message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    try {
+      await api.updateBookingStatus(id, newStatus);
+      setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus } : b));
+      toast.success('Статус записи обновлен');
+    } catch (err) {
+      toast.error('Ошибка обновления статуса');
+    }
+  };
 
   const stats = {
     pending: bookings.filter(b => b.status === 'pending').length,
     completed: bookings.filter(b => b.status === 'completed').length,
     total: bookings.length,
-    revenue: bookings.filter(b => b.status === 'completed').reduce((sum, b) => sum + b.amount, 0)
+    revenue: bookings
+      .filter(b => b.status === 'completed')
+      .reduce((sum, b) => sum + (b.revenue || 0), 0)
   };
 
-  const filteredBookings = bookings.filter(booking => {
-    const matchesSearch = booking.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         booking.service.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          <p className="text-gray-600">Загрузка записей...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus } : b));
-    toast.success('Статус записи обновлен');
-  };
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800">{error}</p>
+          <Button onClick={loadBookings} className="mt-4 bg-red-600">
+            Попробовать еще раз
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -178,75 +193,83 @@ export default function Bookings() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-900">#{booking.id}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600">
-                        {booking.client.charAt(0)}
+              {filteredBookings.length > 0 ? (
+                filteredBookings.map((booking) => (
+                  <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-900">#{booking.id}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600">
+                          {booking.name?.charAt(0) || 'N'}
+                        </div>
+                        <span className="text-sm text-gray-900">{booking.name}</span>
                       </div>
-                      <span className="text-sm text-gray-900">{booking.client}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{booking.service}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {new Date(booking.date).toLocaleDateString('ru-RU')} {booking.time}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{booking.phone}</td>
-                  <td className="px-6 py-4">
-                    <Select
-                      value={booking.status}
-                      onValueChange={(value) => handleStatusChange(booking.id, value)}
-                    >
-                      <SelectTrigger className="w-[140px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">
-                          <Badge className={statusConfig.pending.color}>
-                            {statusConfig.pending.label}
-                          </Badge>
-                        </SelectItem>
-                        <SelectItem value="confirmed">
-                          <Badge className={statusConfig.confirmed.color}>
-                            {statusConfig.confirmed.label}
-                          </Badge>
-                        </SelectItem>
-                        <SelectItem value="completed">
-                          <Badge className={statusConfig.completed.color}>
-                            {statusConfig.completed.label}
-                          </Badge>
-                        </SelectItem>
-                        <SelectItem value="cancelled">
-                          <Badge className={statusConfig.cancelled.color}>
-                            {statusConfig.cancelled.label}
-                          </Badge>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{booking.amount} AED</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{booking.service_name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {new Date(booking.datetime).toLocaleDateString('ru-RU')} {new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{booking.phone}</td>
+                    <td className="px-6 py-4">
+                      <Select
+                        value={booking.status}
+                        onValueChange={(value) => handleStatusChange(booking.id, value)}
                       >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-green-600 hover:text-green-700"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                      </Button>
-                    </div>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">
+                            <Badge className={statusConfig.pending.color}>
+                              {statusConfig.pending.label}
+                            </Badge>
+                          </SelectItem>
+                          <SelectItem value="confirmed">
+                            <Badge className={statusConfig.confirmed.color}>
+                              {statusConfig.confirmed.label}
+                            </Badge>
+                          </SelectItem>
+                          <SelectItem value="completed">
+                            <Badge className={statusConfig.completed.color}>
+                              {statusConfig.completed.label}
+                            </Badge>
+                          </SelectItem>
+                          <SelectItem value="cancelled">
+                            <Badge className={statusConfig.cancelled.color}>
+                              {statusConfig.cancelled.label}
+                            </Badge>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{booking.revenue || 0} AED</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/admin/bookings/${booking.id}`)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                    Записи не найдены
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

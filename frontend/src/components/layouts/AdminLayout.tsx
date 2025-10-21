@@ -35,8 +35,19 @@ export default function AdminLayout({ user }: AdminLayoutProps) {
     { icon: Settings, label: 'Настройки', path: '/admin/settings' },
   ];
 
-  const handleLogout = () => {
-    navigate('/login');
+const handleLogout = () => {
+    try {
+      // Удаляем токен и пользователя из localStorage
+      localStorage.removeItem('session_token');
+      localStorage.removeItem('user');
+
+      // Перенаправляем на login с replace (чтобы нельзя было вернуться назад)
+      navigate('/login', { replace: true });
+    } catch (err) {
+      console.error('Logout error:', err);
+      // Все равно перенаправляем даже если ошибка
+      navigate('/login', { replace: true });
+    }
   };
 
   return (

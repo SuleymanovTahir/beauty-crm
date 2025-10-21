@@ -37,7 +37,7 @@ from bot import ask_gemini, build_genius_prompt, extract_booking_info, is_bookin
 from instagram import send_message, send_typing_indicator
 
 # ===== ИМПОРТЫ ADMIN =====
-from admin import router as admin_router, get_client_display_name
+from api import router as api_router, get_client_display_name
 
 
 # ===== ФУНКЦИЯ ДЛЯ СОЗДАНИЯ ДИРЕКТОРИЙ =====
@@ -75,7 +75,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Подключить админ-панель
-app.include_router(admin_router)
+app.include_router(api_router)
 
 
 # ===== MIDDLEWARE CORS (для React) =====
@@ -942,6 +942,8 @@ async def api_get_stats():
     return get_stats()
 
 
+# backend/main.py - замените @app.post("/api/login") на это:
+
 @app.post("/api/login")
 async def api_login(
     email: str = Form(...),
@@ -954,12 +956,16 @@ async def api_login(
         
         if not user:
             log_warning(f"Invalid credentials for {email}", "auth")
-            return JSONResponse({"error": "Invalid email or password"}, status_code=401)
+            return JSONResponse(
+                {"error": "Invalid email or password"}, 
+                status_code=401
+            )
         
         session_token = create_session(user["id"])
         log_info(f"Session created for {email}", "auth")
         
-        return {
+        # Создаем Response объект чтобы установить cookie
+        response_data = {
             "success": True,
             "token": session_token,
             "user": {
@@ -970,11 +976,23 @@ async def api_login(
                 "role": user["role"]
             }
         }
+        
+        response = JSONResponse(response_data)
+        
+        # Устанавливаем session_token cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax"
+        )
+        
+        return response
+        
     except Exception as e:
         log_error(f"Error in api_login: {e}", "auth", exc_info=True)
         return JSONResponse({"error": str(e)}, status_code=500)
-
-
 @app.post("/api/logout")
 async def api_logout(session_token: Optional[str] = Cookie(None)):
     """API: Логаут"""
