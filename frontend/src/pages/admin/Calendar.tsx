@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2, ZoomIn, ZoomOut, Plus } from 'lucide-react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2, ZoomIn, ZoomOut, Plus, X } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
@@ -45,6 +45,9 @@ export default function Calendar() {
     datetime: new Date().toISOString().slice(0, 16),
   });
 
+  // Для месячного вида с выбором даты
+  const [selectedMonthDate, setSelectedMonthDate] = useState<Date | null>(null);
+
   useEffect(() => {
     loadBookings();
   }, []);
@@ -78,6 +81,27 @@ export default function Calendar() {
     return d;
   });
 
+  // Для месячного вида: получить первый день месяца и построить календарь
+  const getCalendarDays = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days: Date[] = [];
+    const current = new Date(startDate);
+    
+    while (days.length < 42) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+    
+    return days;
+  };
+
   const getBookingsForTimeSlot = (day: Date, hour: number) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
@@ -99,15 +123,15 @@ export default function Calendar() {
     return date.toDateString() === currentDate.toDateString();
   };
 
-  const handlePrevWeek = () => {
+  const handlePrevMonth = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() - (view === 'day' ? 1 : 7));
+    d.setMonth(d.getMonth() - 1);
     setCurrentDate(d);
   };
 
-  const handleNextWeek = () => {
+  const handleNextMonth = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() + (view === 'day' ? 1 : 7));
+    d.setMonth(d.getMonth() + 1);
     setCurrentDate(d);
   };
 
@@ -116,11 +140,11 @@ export default function Calendar() {
   };
 
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.1, 2));
+    setZoomLevel(prev => Math.min(prev + 0.2, 2));
   };
 
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
+    setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
   };
 
   const handleCreateEvent = async () => {
@@ -170,17 +194,6 @@ export default function Calendar() {
     }
   };
 
-  const handleDeleteBooking = async (bookingId: number) => {
-    if (!confirm('Удалить эту запись?')) return;
-    try {
-      setBookings(bookings.filter(b => b.id !== bookingId));
-      setSelectedBooking(null);
-      toast.success('Запись удалена');
-    } catch (err) {
-      toast.error('Ошибка удаления');
-    }
-  };
-
   const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
@@ -202,6 +215,8 @@ export default function Calendar() {
     );
   }
 
+  const calendarDays = getCalendarDays();
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="mb-8">
@@ -209,7 +224,7 @@ export default function Calendar() {
           <CalendarIcon className="w-8 h-8 text-pink-600" />
           Календарь записей
         </h1>
-        <p className="text-gray-600">Визуальное отображение всех записей (00:00 - 23:59)</p>
+        <p className="text-gray-600">Визуальное отображение всех записей</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -218,34 +233,56 @@ export default function Calendar() {
           <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
             <div className="flex items-center gap-2">
               <button
-                onClick={handlePrevWeek}
+                onClick={handlePrevMonth}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <ChevronLeft className="w-6 h-6 text-gray-600" />
               </button>
               
-              <div className="min-w-[250px] text-center">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {view === 'day' 
-                    ? currentDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })
-                    : `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`}
+              <div className="min-w-[300px]">
+                <h2 className="text-xl font-bold text-gray-900 text-center">
+                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h2>
-                {view === 'week' && (
-                  <p className="text-sm text-gray-600">
-                    {mondayOfWeek.toLocaleDateString('ru-RU')} - {weekDays[6].toLocaleDateString('ru-RU')}
-                  </p>
-                )}
               </div>
 
               <button
-                onClick={handleNextWeek}
+                onClick={handleNextMonth}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
                 <ChevronRight className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Выбор года и месяца */}
+              <select
+                value={currentDate.getMonth()}
+                onChange={(e) => {
+                  const d = new Date(currentDate);
+                  d.setMonth(parseInt(e.target.value));
+                  setCurrentDate(d);
+                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              >
+                {monthNames.map((m, idx) => (
+                  <option key={idx} value={idx}>{m}</option>
+                ))}
+              </select>
+
+              <select
+                value={currentDate.getFullYear()}
+                onChange={(e) => {
+                  const d = new Date(currentDate);
+                  d.setFullYear(parseInt(e.target.value));
+                  setCurrentDate(d);
+                }}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              >
+                {Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - 5 + i).map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+
               <Button 
                 onClick={handleToday}
                 className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition text-sm font-medium"
@@ -255,20 +292,13 @@ export default function Calendar() {
               
               <Button
                 onClick={() => setShowCreateEvent(true)}
-                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm gap-2 font-semibold"
+                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm gap-2 font-semibold flex items-center whitespace-nowrap"
               >
                 <Plus className="w-5 h-5" />
                 Событие
               </Button>
-              
-              {/* Датепикер */}
-              <Input
-                type="date"
-                value={currentDate.toISOString().split('T')[0]}
-                onChange={(e) => setCurrentDate(new Date(e.target.value))}
-                className="px-3 py-2 text-sm"
-              />
 
+              {/* View Switcher */}
               <div className="flex border border-gray-300 rounded-lg">
                 <button
                   onClick={() => setView('day')}
@@ -295,14 +325,14 @@ export default function Calendar() {
             </div>
           </div>
 
-          {/* Zoom Controls */}
+          {/* Zoom Controls для день и неделя */}
           {view !== 'month' && (
             <div className="flex items-center gap-2 justify-center pt-4 border-t border-gray-200">
               <Button
                 size="sm"
                 variant="outline"
                 onClick={handleZoomOut}
-                disabled={zoomLevel <= 0.5}
+                disabled={zoomLevel <= 0.6}
               >
                 <ZoomOut className="w-4 h-4" />
               </Button>
@@ -428,20 +458,20 @@ export default function Calendar() {
             </table>
           </div>
         ) : (
-          // МЕСЯЧНЫЙ ВИД
+          // МЕСЯЧНЫЙ ВИД - ИСПРАВЛЕННЫЙ
           <div className="p-6 overflow-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
-            <div className="grid grid-cols-7 gap-2">
-              {/* Заголовки дней недели */}
+            {/* Заголовки дней недели */}
+            <div className="grid grid-cols-7 gap-2 mb-2">
               {dayNames.map(day => (
-                <div key={`header-${day}`} className="text-center font-bold text-gray-700 py-2 border-b-2 border-gray-200 text-sm">
+                <div key={`header-${day}`} className="text-center font-bold text-gray-700 py-2 border-b-2 border-gray-300 text-sm h-10 flex items-center justify-center">
                   {day}
                 </div>
               ))}
+            </div>
 
-              {/* Даты месяца */}
-              {Array.from({ length: 35 }, (_, i) => {
-                const date = new Date(mondayOfWeek);
-                date.setDate(date.getDate() + i);
+            {/* Даты месяца */}
+            <div className="grid grid-cols-7 gap-2 auto-rows-[120px]">
+              {calendarDays.map((date, i) => {
                 const isCurrentMonth = date.getMonth() === currentDate.getMonth();
                 const isViewDate = isCurrentViewDate(date);
                 const dayBookings = getBookingsForDay(date);
@@ -450,7 +480,7 @@ export default function Calendar() {
                   <div
                     key={`date-${i}`}
                     onClick={() => setCurrentDate(date)}
-                    className={`min-h-[100px] p-2 border-2 rounded-lg transition cursor-pointer ${
+                    className={`p-2 border-2 rounded-lg transition cursor-pointer ${
                       isViewDate
                         ? 'bg-pink-50 border-pink-400'
                         : isCurrentMonth
@@ -461,22 +491,22 @@ export default function Calendar() {
                     <div className={`text-sm font-bold mb-2 ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}`}>
                       {date.getDate()}
                     </div>
-                    <div className="space-y-1">
-                      {dayBookings.slice(0, 2).map(booking => (
+                    <div className="space-y-1 overflow-y-auto" style={{ maxHeight: '80px' }}>
+                      {dayBookings.slice(0, 3).map(booking => (
                         <button
                           key={booking.id}
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedBooking(booking);
                           }}
-                          className={`w-full text-left text-xs px-1.5 py-0.5 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate`}
+                          className={`w-full text-left text-xs px-1.5 py-0.5 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate block`}
                           title={`${booking.name} - ${booking.service_name}`}
                         >
                           {booking.name}
                         </button>
                       ))}
-                      {dayBookings.length > 2 && (
-                        <div className="text-xs text-gray-600 px-1">+{dayBookings.length - 2}</div>
+                      {dayBookings.length > 3 && (
+                        <div className="text-xs text-gray-600 px-1 font-medium">+{dayBookings.length - 3}</div>
                       )}
                     </div>
                   </div>
@@ -489,16 +519,17 @@ export default function Calendar() {
 
       {/* Create Event Dialog */}
       {showCreateEvent && (
-        <div className="fixed bottom-0 right-0 left-0 bg-black bg-opacity-50 flex items-end z-50">
-          <div className="bg-white w-full md:w-[400px] rounded-t-2xl shadow-2xl p-6 animate-in slide-in-from-bottom-4">
-            <button
-              onClick={() => setShowCreateEvent(false)}
-              className="float-right text-gray-400 hover:text-gray-600 text-2xl"
-            >
-              ✕
-            </button>
-
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Создать запись</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Создать запись</h3>
+              <button
+                onClick={() => setShowCreateEvent(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
             <div className="space-y-4">
               <div>
@@ -563,16 +594,17 @@ export default function Calendar() {
 
       {/* Selected Booking Detail */}
       {selectedBooking && (
-        <div className="fixed bottom-0 right-0 left-0 bg-black bg-opacity-50 flex items-end z-50">
-          <div className="bg-white w-full md:w-[400px] rounded-t-2xl shadow-2xl p-6 animate-in slide-in-from-bottom-4">
-            <button
-              onClick={() => setSelectedBooking(null)}
-              className="float-right text-gray-400 hover:text-gray-600 text-2xl"
-            >
-              ✕
-            </button>
-
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Запись #{selectedBooking.id}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Запись #{selectedBooking.id}</h3>
+              <button
+                onClick={() => setSelectedBooking(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
             <div className="space-y-4">
               <div className="flex items-start gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
@@ -615,13 +647,6 @@ export default function Calendar() {
                 </div>
               </div>
 
-              {selectedBooking.revenue > 0 && (
-                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <p className="text-xs text-gray-600 mb-1">Сумма</p>
-                  <p className="text-2xl font-bold text-yellow-600">{selectedBooking.revenue} AED</p>
-                </div>
-              )}
-
               <div className="flex gap-2 pt-4 border-t border-gray-200">
                 <Button
                   onClick={() => handleEditBooking(selectedBooking)}
@@ -636,13 +661,6 @@ export default function Calendar() {
                   disabled={selectedBooking.status === 'cancelled'}
                 >
                   Отменить
-                </Button>
-                <Button
-                  onClick={() => handleDeleteBooking(selectedBooking.id)}
-                  className="flex-1 bg-red-600 hover:bg-red-700 gap-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Удалить
                 </Button>
               </div>
             </div>
