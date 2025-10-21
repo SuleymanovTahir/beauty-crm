@@ -51,25 +51,23 @@ export default function AdminSettings() {
   };
 
   const handleSaveNotifications = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('/api/settings/notifications', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(notificationSettings)
-      });
+  e.preventDefault();
+  try {
+    const response = await fetch('/api/notifications/settings', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(notificationSettings)
+    });
 
-      if (response.ok) {
-        toast.success('Настройки уведомлений сохранены ✅');
-      } else {
-        toast.error('Ошибка при сохранении');
-      }
-    } catch (err) {
-      console.error('Error saving notification settings:', err);
-      toast.error('Ошибка сервера');
+    if (response.ok) {
+      toast.success('Уведомления настроены ✅');
     }
-  };
+  } catch (err) {
+    toast.error('Ошибка при сохранении');
+  }
+};
+  
 
   return (
     <div className="p-8">

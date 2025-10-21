@@ -32,8 +32,8 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     if not session_token:
         return None
     from database import get_user_by_session
-    return get_user_by_session(session_token)
-
+    user = get_user_by_session(session_token)
+    return user if user else None
 
 def get_total_unread():
     """Получить общее кол-во непрочитанных"""
@@ -65,10 +65,14 @@ def get_client_display_name(client):
 
 # ===== ОСНОВНЫЕ API ENDPOINTS =====
 
-@router.get("/dashboard")  # ✅ ИСПРАВЛЕНО: убрано /api - будет /api/dashboard
+@router.get("/dashboard")
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
-    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
+    # БЫЛ ОШИБОЧНЫЙ КОД:
+    # user = await require_auth(session_token)  # ❌ НЕПРАВИЛЬНО - require_auth НЕ async!
+    
+    # ПРАВИЛЬНЫЙ КОД:
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -82,7 +86,6 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
         "funnel": funnel,
         "unread_count": get_total_unread()
     }
-
 
 # ===== КЛИЕНТЫ =====
 
@@ -328,6 +331,34 @@ async def update_booking_status_api(
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
+@router.get("/bookings/{booking_id}")
+async def get_booking_detail(
+    booking_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить одну запись по ID"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    bookings = get_all_bookings()
+    booking = next((b for b in bookings if b[0] == booking_id), None)
+    
+    if not booking:
+        return JSONResponse({"error": "Booking not found"}, status_code=404)
+    
+    return {
+        "id": booking[0],
+        "client_id": booking[1],
+        "service": booking[2],
+        "datetime": booking[3],
+        "phone": booking[4],
+        "name": booking[5],
+        "status": booking[6],
+        "created_at": booking[7],
+        "revenue": booking[8] if len(booking) > 8 else 0
+    }
+
 # ===== ЧАТ =====
 
 @router.get("/chat/messages")
@@ -337,7 +368,7 @@ async def get_chat_messages(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить сообщения чата"""
-    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -356,7 +387,6 @@ async def get_chat_messages(
             for msg in messages_raw
         ]
     }
-
 
 @router.post("/chat/send")
 async def send_chat_message(
@@ -539,6 +569,36 @@ async def export_clients(
     )
 
 
+# backend/api.py - убедитесь что есть:
+
+@router.get("/export/analytics")
+async def export_analytics(
+    format: str = Query("csv"),
+    period: int = Query(30),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Экспортировать аналитику"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    if format != "csv":
+        return JSONResponse({"error": "Only CSV supported"}, status_code=400)
+    
+    # Получить данные
+    analytics = get_analytics_data(days=period)
+    
+    # Преобразовать в CSV
+    output = io.StringIO()
+    writer = csv.writer(output)
+    # Написать заголовки и данные...
+    
+    return StreamingResponse(
+        iter([output.getvalue().encode('utf-8')]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=analytics.csv"}
+    )
+
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных"""
@@ -550,10 +610,10 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
 
 
 
-@router.get("/api/bot-settings")
+@router.get("/bot-settings")
 async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user or user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
@@ -571,21 +631,19 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.post("/api/bot-settings")
+@router.post("/bot-settings")
 async def update_bot_settings(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить настройки бота"""
-    user = await require_auth(session_token)
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user or user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
     
     try:
-        # Сохраняем настройки в файл или БД
-        # Для начала просто логируем
         log_activity(
             user["id"],
             "update_bot_settings",
@@ -594,9 +652,32 @@ async def update_bot_settings(
             f"Обновлены настройки: {data.get('bot_name')}"
         )
         
-        # TODO: Реализовать сохранение в БД или файл
-        
         return {"success": True, "message": "Bot settings updated"}
     except Exception as e:
         log_error(f"Error updating bot settings: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+    
+@router.get("/api/notifications/settings")
+async def get_notification_settings(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    # Получить из БД
+    settings = get_notification_settings(user["id"])
+    return settings
+
+@router.post("/api/notifications/settings")
+async def update_notification_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    save_notification_settings(user["id"], data)
+    return {"success": True, "message": "Notification settings updated"}

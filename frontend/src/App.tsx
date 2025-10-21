@@ -1,7 +1,3 @@
-// ============================================
-// frontend/src/App.tsx - ИСПРАВЛЕННЫЙ
-// ============================================
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
@@ -83,13 +79,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (requiredRole && currentRole !== requiredRole) {
     // Редирект на панель в зависимости от роли
-    if (currentRole === 'admin') return <Navigate to="/admin" replace />;
-    if (currentRole === 'manager') return <Navigate to="/manager" replace />;
-    if (currentRole === 'employee') return <Navigate to="/employee" replace />;
+    if (currentRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
+    if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
     return <Navigate to="/" replace />;
   }
 
-  return element;
+  return <>{element}</>;
 };
 
 export default function App() {
@@ -163,9 +159,9 @@ export default function App() {
             element={
               currentUser ? (
                 // Редирект в зависимости от роли
-                currentUser.role === 'admin' ? <Navigate to="/admin" replace /> :
-                currentUser.role === 'manager' ? <Navigate to="/manager" replace /> :
-                currentUser.role === 'employee' ? <Navigate to="/employee" replace /> :
+                currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
+                currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                 <Navigate to="/" replace />
               ) : (
                 <Login onLogin={handleLogin} />
@@ -175,7 +171,7 @@ export default function App() {
 
           {/* Admin Routes - Protected */}
           <Route 
-            path="/admin" 
+            path="/admin/*" 
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
@@ -190,7 +186,6 @@ export default function App() {
               />
             }
           >
-            <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="bookings" element={<Bookings />} />
             <Route path="bookings/:id" element={<BookingDetail />} />
@@ -205,11 +200,12 @@ export default function App() {
             <Route path="calendar" element={<Calendar />} />
             <Route path="settings" element={<Settings />} />
             <Route path="bot-settings" element={<BotSettings />} />
+            <Route path="" element={<Navigate to="dashboard" replace />} />
           </Route>
 
           {/* Manager Routes - Protected */}
           <Route 
-            path="/manager" 
+            path="/manager/*" 
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
@@ -224,7 +220,6 @@ export default function App() {
               />
             }
           >
-            <Route index element={<ManagerDashboard />} />
             <Route path="dashboard" element={<ManagerDashboard />} />
             <Route path="messages" element={<Messages />} />
             <Route path="chat" element={<Chat />} />
@@ -233,11 +228,12 @@ export default function App() {
             <Route path="clients" element={<Clients />} />
             <Route path="settings" element={<ManagerSettings />} />
             <Route path="bot-settings" element={<BotSettings />} />
+            <Route path="" element={<Navigate to="dashboard" replace />} />
           </Route>
 
           {/* Employee Routes - Protected */}
           <Route 
-            path="/employee" 
+            path="/employee/*" 
             element={
               <ProtectedRoute
                 isAuthenticated={!!currentUser}
@@ -252,10 +248,10 @@ export default function App() {
               />
             }
           >
-            <Route index element={<EmployeeDashboard />} />
             <Route path="dashboard" element={<EmployeeDashboard />} />
             <Route path="profile" element={<EmployeeProfile />} />
             <Route path="calendar" element={<Calendar />} />
+            <Route path="" element={<Navigate to="dashboard" replace />} />
           </Route>
 
           {/* Public Routes */}
@@ -269,18 +265,15 @@ export default function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="cooperation" element={<Cooperation />} />
             <Route path="faq" element={<FAQ />} />
-            {/* Cabinet route - для неавторизованных пользователей */}
             <Route 
               path="cabinet" 
               element={
                 currentUser ? (
-                  // Если уже авторизован, редирект на его панель
-                  currentUser.role === 'admin' ? <Navigate to="/admin" replace /> :
-                  currentUser.role === 'manager' ? <Navigate to="/manager" replace /> :
-                  currentUser.role === 'employee' ? <Navigate to="/employee" replace /> :
+                  currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                  currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
+                  currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                   <Navigate to="/" replace />
                 ) : (
-                  // Если не авторизован, показать форму входа
                   <UserCabinet />
                 )
               }

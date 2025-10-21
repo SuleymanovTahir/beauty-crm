@@ -2,37 +2,45 @@ import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
+  Users,
   Calendar, 
-  User,
+  BarChart3,
+  MessageSquare,
+  Wrench,
   Settings,
-  LogOut
+  LogOut,
+  ShoppingCart
 } from 'lucide-react';
 import { toast } from 'sonner@2.0.3';
 
-interface EmployeeLayoutProps {
+interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
   onLogout: () => void;
 }
 
-export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
+export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = React.useState(false);
 
   const menuItems = [
-    { icon: LayoutDashboard, label: 'Мои записи', path: '/employee/dashboard' },
-    { icon: Calendar, label: 'Календарь', path: '/employee/calendar' },
-    { icon: User, label: 'Мой профиль', path: '/employee/profile' },
-    { icon: Settings, label: 'Настройки', path: '/employee/settings' },
-    { icon: MessageSquare, label: 'Чат с клиентом', path: '/admin/chat' },
-    { icon: Settings, label: 'Настройки бота', path: '/admin/bot-settings' },
-
+    { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
+    { icon: Users, label: 'Клиенты', path: '/admin/clients' },
+    { icon: ShoppingCart, label: 'Записи', path: '/admin/bookings' },
+    { icon: MessageSquare, label: 'Сообщения', path: '/admin/messages' },
+    { icon: MessageSquare, label: 'Чат', path: '/admin/chat' },
+    { icon: BarChart3, label: 'Аналитика', path: '/admin/analytics' },
+    { icon: Wrench, label: 'Услуги', path: '/admin/services' },
+    { icon: Users, label: 'Сотрудники', path: '/admin/users' },
+    { icon: Calendar, label: 'Календарь', path: '/admin/calendar' },
+    { icon: Settings, label: 'Настройки', path: '/admin/settings' },
+    { icon: Wrench, label: 'Настройки бота', path: '/admin/bot-settings' },
   ];
 
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      const response = await fetch('/logout', {
+      const response = await fetch('/api/logout', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -62,8 +70,8 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
     <div className="flex h-screen bg-gray-50">
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl text-pink-600">Beauty Salon</h1>
-          <p className="text-sm text-gray-500 mt-1">Личный кабинет</p>
+          <h1 className="text-2xl font-bold text-pink-600">💎 CRM</h1>
+          <p className="text-sm text-gray-500 mt-1">Администратор</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4">
@@ -83,7 +91,7 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
                     }`}
                   >
                     <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <span className="text-sm">{item.label}</span>
                   </Link>
                 </li>
               );
@@ -93,12 +101,12 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
 
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-white">
-              {user?.full_name?.charAt(0) || 'E'}
+            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+              {user?.full_name?.charAt(0) || 'A'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm truncate">{user?.full_name || 'Сотрудник'}</p>
-              <p className="text-xs text-gray-500">Мастер</p>
+              <p className="text-sm font-medium truncate">{user?.full_name || 'Администратор'}</p>
+              <p className="text-xs text-gray-500">Администратор</p>
             </div>
           </div>
           <button
@@ -112,7 +120,7 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-gray-50">
         <Outlet />
       </main>
     </div>

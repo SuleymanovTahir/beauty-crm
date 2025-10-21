@@ -10,13 +10,12 @@ interface FetchOptions extends RequestInit {
 async function apiCall(endpoint: string, options: FetchOptions = {}) {
   const url = `${BASE_URL}${endpoint}`
   const defaultOptions: FetchOptions = {
-    credentials: 'include', // включаем cookies для session
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
   }
 
-  // Если есть body и это не FormData, конвертируем в JSON
   if (options.body && !(options.body instanceof FormData)) {
     options.body = JSON.stringify(options.body)
   }
@@ -102,7 +101,7 @@ export const apiClient = {
 
   // ===== CHAT =====
   getChatMessages: (clientId: string, limit: number = 50) =>
-    apiCall(`/api/chat/${clientId}/history?limit=${limit}`),
+    apiCall(`/api/chat/messages?client_id=${clientId}&limit=${limit}`),
 
   sendMessage: (clientId: string, message: string) =>
     apiCall('/api/chat/send', {
@@ -111,24 +110,24 @@ export const apiClient = {
     }),
 
   // ===== SERVICES =====
-  getServices: () =>
-    apiCall('/api/services'),
+  getServices: (activeOnly: boolean = true) =>
+    apiCall(`/api/services?active_only=${activeOnly}`),
 
   createService: (data: any) =>
-    apiCall('/api/services/create', {
+    apiCall('/api/services', {
       method: 'POST',
       body: data,
     }),
 
   updateService: (id: number, data: any) =>
-    apiCall(`/api/services/${id}/update`, {
+    apiCall(`/api/services/${id}`, {
       method: 'POST',
       body: data,
     }),
 
   deleteService: (id: number) =>
-    apiCall(`/api/services/${id}/delete`, {
-      method: 'POST',
+    apiCall(`/api/services/${id}`, {
+      method: 'DELETE',
     }),
 
   // ===== USERS =====
@@ -144,6 +143,9 @@ export const apiClient = {
   getAnalytics: (period: number = 30) =>
     apiCall(`/api/analytics?period=${period}`),
 
+  getAnalyticsRange: (dateFrom: string, dateTo: string) =>
+    apiCall(`/api/analytics?date_from=${dateFrom}&date_to=${dateTo}`),
+
   getFunnel: () =>
     apiCall('/api/funnel'),
 
@@ -153,4 +155,18 @@ export const apiClient = {
 
   exportAnalytics: (format: string = 'csv', period: number = 30) =>
     apiCall(`/api/export/analytics?format=${format}&period=${period}`),
+
+  // ===== BOT SETTINGS =====
+  getBotSettings: () =>
+    apiCall('/api/bot-settings'),
+
+  updateBotSettings: (data: any) =>
+    apiCall('/api/bot-settings', {
+      method: 'POST',
+      body: data,
+    }),
+
+  // ===== UNREAD =====
+  getUnreadCount: () =>
+    apiCall('/api/unread-count'),
 }
