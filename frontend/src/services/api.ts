@@ -22,14 +22,13 @@ export class ApiClient {
     const defaultOptions: RequestInit = {
       method: 'GET',
       headers,
-      credentials: 'include', // Важно для cookies
+      credentials: 'include',
       ...options,
     }
 
     try {
       const response = await fetch(url, defaultOptions)
 
-      // Если 401 - значит сессия истекла
       if (response.status === 401) {
         localStorage.removeItem('user')
         localStorage.removeItem('session_token')
@@ -58,10 +57,9 @@ export class ApiClient {
     const response = await this.request<any>('/api/login', {
       method: 'POST',
       body: formData,
-      headers: {}, // FormData устанавливает header сам
+      headers: {},
     })
 
-    // Сохраняем информацию о пользователе
     if (response.user) {
       localStorage.setItem('user', JSON.stringify(response.user))
     }
@@ -103,7 +101,6 @@ export class ApiClient {
   }
 
   // ===== КЛИЕНТЫ =====
-// ===== КЛИЕНТЫ =====
   async getClients() {
     return this.request<any>('/api/clients')
   }
@@ -132,7 +129,6 @@ export class ApiClient {
     })
   }
 
-  // ← НОВОЕ: Удалить клиента
   async deleteClient(clientId: string) {
     return this.request(`/api/clients/${clientId}/delete`, {
       method: 'POST',
@@ -156,7 +152,7 @@ export class ApiClient {
   }
 
   async createBooking(data: any) {
-    return this.request('/api/bookings', {  // ✅ ПРАВИЛЬНО
+    return this.request('/api/bookings', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -186,27 +182,25 @@ export class ApiClient {
     return this.request<any>(`/api/services?active_only=${activeOnly}`)
   }
 
-   async createService(data: any) {
-    return this.request('/api/services', {  // ← БЫЛО: '/api/services/create'
+  async createService(data: any) {
+    return this.request('/api/services', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async updateService(serviceId: number, data: any) {
-    return this.request(`/api/services/${serviceId}/update`, {  // ✅ ПРАВИЛЬНО
+    return this.request(`/api/services/${serviceId}/update`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async deleteService(serviceId: number) {
-    return this.request(`/api/services/${serviceId}/delete`, {  // ✅ ПРАВИЛЬНО
+    return this.request(`/api/services/${serviceId}/delete`, {
       method: 'POST',
     })
   }
-
-
 
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {
@@ -242,7 +236,18 @@ export class ApiClient {
   async getUnreadCount() {
     return this.request<any>('/api/unread-count')
   }
+  
+  // ===== BOT SETTINGS =====
+  async getBotSettings() {
+    return this.request<any>('/api/bot-settings')
+  }
+
+  async updateBotSettings(data: any) {
+    return this.request('/api/bot-settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
 }
 
-// Экспортируем глобальный экземпляр
 export const api = new ApiClient()

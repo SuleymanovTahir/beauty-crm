@@ -19,11 +19,9 @@ interface Booking {
 const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
-// Получаем часы работы из конфига (по умолчанию 9:00 - 21:00)
 const SALON_START_HOUR = 9;
 const SALON_END_HOUR = 21;
 
-// Генерируем часы + 30 минут
 const generateTimeSlots = () => {
   const slots = [];
   for (let hour = SALON_START_HOUR; hour <= SALON_END_HOUR; hour++) {
@@ -83,7 +81,6 @@ export default function Calendar() {
     }
   };
 
-  // Генерируем 7 дней вокруг текущей даты (3 дня до, текущий, 3 дня после)
   const weekDays = useMemo(() => {
     const days = [];
     for (let i = -3; i <= 3; i++) {
@@ -103,7 +100,6 @@ export default function Calendar() {
     });
   };
 
-  // ✅ НОВОЕ: Получить количество записей на конкретный день
   const getBookingsForDay = (day: Date) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
@@ -123,7 +119,6 @@ export default function Calendar() {
     setCurrentDate(d);
   };
 
-  // ✅ ИСПРАВЛЕНО: Переключение на сегодня с красивым тостом
   const handleToday = () => {
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
@@ -131,7 +126,6 @@ export default function Calendar() {
     
     const todayBookings = getBookingsForDay(todayDate);
     
-    // Красивый toast с разными сообщениями
     if (todayBookings.length === 0) {
       toast.success('📅 Сегодня записей нет - свободный день! 🎉', {
         duration: 3000,
@@ -159,7 +153,7 @@ export default function Calendar() {
         phone: form.phone,
         date: form.date,
         time: form.time,
-        instagram_id: Date.now().toString(),
+        instagram_id: `manual_${Date.now()}`,
       });
       toast.success('Запись создана');
       setShowCreateModal(false);
@@ -190,137 +184,102 @@ export default function Calendar() {
   const isCurrentDate = (date: Date) => date.toDateString() === currentDate.toDateString();
 
   return (
-    <div style={{ padding: '1rem 2rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '1rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
+    <div style={{ padding: '1rem', backgroundColor: '#f9fafb', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Компактный Header */}
+      <div style={{ marginBottom: '0.75rem' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827' }}>
           Календарь
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>{bookings.length} записей</p>
       </div>
 
-      {/* Top Toolbar */}
+      {/* Компактная навигация */}
       <div style={{
         backgroundColor: '#fff',
-        borderRadius: '0.75rem',
+        borderRadius: '0.5rem',
         border: '1px solid #e5e7eb',
-        padding: '1rem',
-        marginBottom: '1rem',
+        padding: '0.75rem',
+        marginBottom: '0.75rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '1rem'
+        gap: '0.75rem'
       }}>
         {/* Left: Navigation */}
-        <button
-          onClick={handlePrevDay}
-          style={{
-            width: '36px',
-            height: '36px',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.5rem',
-            backgroundColor: '#fff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f3f4f6';
-            e.currentTarget.style.borderColor = '#9ca3af';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#fff';
-            e.currentTarget.style.borderColor = '#d1d5db';
-          }}
-        >
-          <ChevronLeft size={18} color="#6b7280" />
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <button
+            onClick={handlePrevDay}
+            style={{
+              width: '32px',
+              height: '32px',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.375rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#fff';
+            }}
+          >
+            <ChevronLeft size={16} color="#6b7280" />
+          </button>
 
-        {/* Center: Current Date */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0.3rem',
-          minWidth: '140px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontSize: '0.8rem',
-            fontWeight: '600',
-            color: '#ec4899',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.4rem'
-          }}>
-            {isToday(currentDate) ? (
-              <>
-                <CalendarIcon size={14} />
-                СЕГОДНЯ
-              </>
-            ) : (
-              DAYS[currentDate.getDay()]
-            )}
-          </div>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: '#111827'
-          }}>
-            {currentDate.getDate()}
-          </div>
-          <div style={{
-            fontSize: '0.8rem',
-            color: '#6b7280',
-            fontWeight: '500'
-          }}>
-            {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
-          </div>
+          <button
+            onClick={handleNextDay}
+            style={{
+              width: '32px',
+              height: '32px',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.375rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#fff';
+            }}
+          >
+            <ChevronRight size={16} color="#6b7280" />
+          </button>
         </div>
 
-        {/* Right: Navigation */}
-        <button
-          onClick={handleNextDay}
-          style={{
-            width: '36px',
-            height: '36px',
-            border: '1px solid #d1d5db',
-            borderRadius: '0.5rem',
-            backgroundColor: '#fff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f3f4f6';
-            e.currentTarget.style.borderColor = '#9ca3af';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#fff';
-            e.currentTarget.style.borderColor = '#d1d5db';
-          }}
-        >
-          <ChevronRight size={18} color="#6b7280" />
-        </button>
+        {/* Center: Компактная дата */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.95rem',
+          fontWeight: '600',
+          color: '#111827'
+        }}>
+          {isToday(currentDate) && <CalendarIcon size={16} color="#ec4899" />}
+          <span style={{ color: isToday(currentDate) ? '#ec4899' : '#111827' }}>
+            {currentDate.getDate()} {MONTHS[currentDate.getMonth()]}
+          </span>
+        </div>
 
-        {/* Action Buttons */}
+        {/* Right: Action Buttons */}
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             onClick={handleToday}
             style={{
-              padding: '0.4rem 0.8rem',
+              padding: '0.4rem 0.75rem',
               backgroundColor: '#fff',
               border: '2px solid #ec4899',
-              borderRadius: '0.5rem',
-              fontSize: '0.85rem',
+              borderRadius: '0.375rem',
+              fontSize: '0.8rem',
               fontWeight: '600',
               color: '#ec4899',
               cursor: 'pointer',
@@ -350,38 +309,38 @@ export default function Calendar() {
               setShowCreateModal(true);
             }}
             style={{
-              padding: '0.4rem 0.8rem',
+              padding: '0.4rem 0.75rem',
               backgroundColor: '#2563eb',
               color: '#fff',
               border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '0.85rem',
+              borderRadius: '0.375rem',
+              fontSize: '0.8rem',
               fontWeight: '500',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.3rem',
               transition: 'background-color 0.2s'
             }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
           >
-            <Plus size={16} />
-            Событие
+            <Plus size={14} />
+            Запись
           </button>
         </div>
       </div>
 
-      {/* Week Navigation */}
+      {/* Компактная неделя */}
       <div style={{
         backgroundColor: '#fff',
-        borderRadius: '0.75rem',
+        borderRadius: '0.5rem',
         border: '1px solid #e5e7eb',
-        padding: '0.75rem',
-        marginBottom: '1rem',
+        padding: '0.5rem',
+        marginBottom: '0.75rem',
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: '0.5rem'
+        gap: '0.375rem'
       }}>
         {weekDays.map((day, idx) => {
           const isCurrent = isCurrentDate(day);
@@ -392,10 +351,10 @@ export default function Calendar() {
               key={idx}
               onClick={() => setCurrentDate(new Date(day))}
               style={{
-                padding: '0.75rem 0.5rem',
+                padding: '0.5rem 0.25rem',
                 backgroundColor: isCurrent ? '#ec4899' : isCurrentToday ? '#fef3c7' : '#f9fafb',
                 border: isCurrent ? '2px solid #ec4899' : '1px solid #e5e7eb',
-                borderRadius: '0.5rem',
+                borderRadius: '0.375rem',
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
@@ -411,15 +370,15 @@ export default function Calendar() {
               }}
             >
               <div style={{
-                fontSize: '0.7rem',
+                fontSize: '0.65rem',
                 fontWeight: '600',
                 color: isCurrent ? '#fff' : '#6b7280',
-                marginBottom: '0.25rem'
+                marginBottom: '0.125rem'
               }}>
                 {DAYS[day.getDay()]}
               </div>
               <div style={{
-                fontSize: '0.95rem',
+                fontSize: '0.9rem',
                 fontWeight: 'bold',
                 color: isCurrent ? '#fff' : '#111827'
               }}>
@@ -430,29 +389,31 @@ export default function Calendar() {
         })}
       </div>
 
-      {/* Calendar Grid */}
+      {/* Календарь - занимает всё оставшееся место */}
       <div style={{
         backgroundColor: '#fff',
-        borderRadius: '0.75rem',
+        borderRadius: '0.5rem',
         border: '1px solid #e5e7eb',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
       }}>
-        {/* Time Slots */}
-        <div style={{ maxHeight: 'calc(100vh - 450px)', overflow: 'auto' }}>
+        <div style={{ flex: 1, overflow: 'auto' }}>
           {TIME_SLOTS.map((slot, slotIdx) => (
             <div
               key={slotIdx}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '80px 1fr',
+                gridTemplateColumns: '60px 1fr',
                 gap: '0',
-                borderBottom: '1px solid #e5e7eb',
-                minHeight: '60px'
+                borderBottom: slotIdx !== TIME_SLOTS.length - 1 ? '1px solid #e5e7eb' : 'none',
+                minHeight: '50px'
               }}
             >
-              {/* Time Label */}
+              {/* Компактное время */}
               <div style={{
-                padding: '0.75rem 0.5rem',
+                padding: '0.5rem 0.25rem',
                 backgroundColor: '#f9fafb',
                 borderRight: '1px solid #e5e7eb',
                 fontWeight: '600',
@@ -461,15 +422,15 @@ export default function Calendar() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.85rem',
+                fontSize: '0.75rem',
                 gap: '0.25rem',
                 whiteSpace: 'nowrap'
               }}>
-                <Clock size={14} />
+                <Clock size={12} />
                 {slot.display}
               </div>
 
-              {/* Bookings for this slot */}
+              {/* Записи */}
               <div
                 onClick={() => {
                   setForm({
@@ -482,7 +443,7 @@ export default function Calendar() {
                   setShowCreateModal(true);
                 }}
                 style={{
-                  padding: '0.4rem',
+                  padding: '0.3rem',
                   backgroundColor: '#fff',
                   cursor: 'pointer',
                   transition: 'background-color 0.2s',
@@ -502,11 +463,11 @@ export default function Calendar() {
                       setSelectedBooking(booking);
                     }}
                     style={{
-                      padding: '0.4rem',
+                      padding: '0.35rem',
                       backgroundColor: statusColors[booking.status]?.bg,
                       color: statusColors[booking.status]?.text,
                       border: `1px solid ${statusColors[booking.status]?.border}`,
-                      borderRadius: '0.3rem',
+                      borderRadius: '0.25rem',
                       fontSize: '0.7rem',
                       cursor: 'pointer',
                       fontWeight: 'bold',
@@ -514,7 +475,7 @@ export default function Calendar() {
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap'
                     }}
-                    title={booking.name}
+                    title={`${booking.name} - ${booking.service}`}
                   >
                     {booking.name} - {booking.service}
                   </div>
@@ -624,32 +585,26 @@ export default function Calendar() {
                 }}
               />
 
-              {/* Time Selector */}
-              <div style={{ position: 'relative' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
-                  Время
-                </label>
-                <select
-                  value={form.time}
-                  onChange={(e) => setForm({ ...form, time: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem',
-                    boxSizing: 'border-box',
-                    backgroundColor: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {TIME_SLOTS.map((slot, idx) => (
-                    <option key={idx} value={slot.display}>
-                      {slot.display}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={form.time}
+                onChange={(e) => setForm({ ...form, time: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer'
+                }}
+              >
+                {TIME_SLOTS.map((slot, idx) => (
+                  <option key={idx} value={slot.display}>
+                    {slot.display}
+                  </option>
+                ))}
+              </select>
 
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
                 <button
@@ -826,7 +781,6 @@ export default function Calendar() {
                 />
               </div>
 
-              {/* Status Dropdown */}
               <div style={{ position: 'relative' }}>
                 <button
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
@@ -846,17 +800,9 @@ export default function Calendar() {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                  }}
                 >
                   <span>{statusLabels[selectedBooking.status]}</span>
-                  <span style={{ marginLeft: '0.5rem' }}>▼</span>
+                  <span>▼</span>
                 </button>
 
                 {showStatusDropdown && (

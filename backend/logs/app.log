@@ -5767,3 +5767,17 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 19:44:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
 2025-10-21 19:44:28 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-21 19:44:28 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 19:51:32 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 19:51:32 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 19:51:32 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 19:51:32 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 19:51:40 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 19:51:40 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 19:52:42 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 19:52:42 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 19:52:43 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 19:52:43 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 19:53:01 - crm - INFO - [middleware] 🔥 POST /api/bookings
+2025-10-21 19:53:01 - crm - INFO - [middleware] 📤 POST /api/bookings → 200 (0.00s)
+2025-10-21 19:53:01 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 19:53:01 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
