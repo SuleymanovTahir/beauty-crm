@@ -1,3 +1,6 @@
+// frontend/src/pages/manager/Messages.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// Замени весь файл на этот код:
+
 import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
@@ -12,6 +15,7 @@ import {
   Loader,
   AlertCircle,
   ArchiveRestore,
+  X,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -71,6 +75,10 @@ export default function Messages() {
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // ✅ НОВОЕ: Состояние для диалога удаления
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [messageToDelete, setMessageToDelete] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     loadMessages();
@@ -82,12 +90,11 @@ export default function Messages() {
         msg.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         msg.phone.includes(searchTerm);
 
-      // ✅ ИСПРАВЛЕНО: Архив теперь отдельный раздел, не включается в "все"
       const matchesCategory =
-        (categoryFilter === "all" && !msg.archived) ||  // ← НЕ включаем архив
-        (categoryFilter === "new" && msg.unread && !msg.archived) ||  // ← НЕ включаем архив
-        (categoryFilter === "active" && msg.total_messages > 0 && !msg.archived) ||  // ← НЕ включаем архив
-        (categoryFilter === "archived" && msg.archived);  // ← ТОЛЬКО архив
+        (categoryFilter === "all" && !msg.archived) ||
+        (categoryFilter === "new" && msg.unread && !msg.archived) ||
+        (categoryFilter === "active" && msg.total_messages > 0 && !msg.archived) ||
+        (categoryFilter === "archived" && msg.archived);
 
       const matchesStatus =
         statusFilter === "all" || msg.status === statusFilter;
@@ -196,15 +203,23 @@ export default function Messages() {
     toast.success("Восстановлено из архива");
   };
 
-  const handlePermanentDelete = (id: string) => {
-    if (confirm("Удалить это сообщение безвозвратно?")) {
-      setMessages(messages.filter((msg) => msg.id !== id));
-      localStorage.removeItem(`archived_${id}`);
-      toast.success("Удалено безвозвратно");
-    }
+  // ✅ НОВОЕ: Функция для открытия диалога удаления
+  const handleOpenDeleteDialog = (id: string, name: string) => {
+    setMessageToDelete({ id, name });
+    setShowDeleteDialog(true);
   };
 
-  // ✅ Статистика правильная
+  // ✅ НОВОЕ: Функция подтверждения удаления
+  const handleConfirmDelete = () => {
+    if (!messageToDelete) return;
+    
+    setMessages(messages.filter((msg) => msg.id !== messageToDelete.id));
+    localStorage.removeItem(`archived_${messageToDelete.id}`);
+    toast.success("Удалено безвозвратно");
+    setShowDeleteDialog(false);
+    setMessageToDelete(null);
+  };
+
   const unreadCount = messages.filter((m) => m.unread && !m.archived).length;
   const starredCount = messages.filter((m) => m.starred).length;
   const archivedCount = messages.filter((m) => m.archived).length;
@@ -501,10 +516,11 @@ export default function Messages() {
                       >
                         <ArchiveRestore className="w-4 h-4" />
                       </Button>
+                      {/* ✅ ИСПРАВЛЕНО: Открываем диалог вместо confirm() */}
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handlePermanentDelete(message.id)}
+                        onClick={() => handleOpenDeleteDialog(message.id, message.display_name)}
                         className="text-red-600 hover:bg-red-50"
                         title="Удалить безвозвратно"
                       >
@@ -523,6 +539,61 @@ export default function Messages() {
           )}
         </div>
       </div>
+
+      {/* ✅ НОВОЕ: Красивый диалог удаления */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            {/* Red Header */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-red-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Trash2 className="w-5 h-5 text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-red-900">
+                  Удалить сообщение?
+                </h3>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="px-6 py-6">
+              <p className="text-gray-700 mb-4">
+                Вы собираетесь удалить сообщение с клиентом <span className="font-bold">"{messageToDelete?.name}"</span>.
+              </p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-yellow-800 font-semibold mb-2">
+                  ⚠️ Внимание:
+                </p>
+                <ul className="text-sm text-yellow-800 space-y-1 ml-4">
+                  <li>✗ Это действие необратимо</li>
+                  <li>✗ Будет удалена вся история сообщений</li>
+                  <li>✗ Данные не смогут быть восстановлены</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3 justify-end rounded-b-2xl">
+              <button
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setMessageToDelete(null);
+                }}
+                className="px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-200 transition"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition"
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

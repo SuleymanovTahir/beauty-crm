@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2, ZoomIn, ZoomOut, Plus, X } from 'lucide-react';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -18,35 +16,36 @@ interface Booking {
   revenue: number;
 }
 
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  pending: { label: 'Ожидает', color: 'text-yellow-700', bgColor: 'bg-yellow-100 border-yellow-300' },
-  confirmed: { label: 'Подтверждена', color: 'text-green-700', bgColor: 'bg-green-100 border-green-300' },
-  completed: { label: 'Завершена', color: 'text-blue-700', bgColor: 'bg-blue-100 border-blue-300' },
-  cancelled: { label: 'Отменена', color: 'text-red-700', bgColor: 'bg-red-100 border-red-300' },
-  new: { label: 'Новая', color: 'text-purple-700', bgColor: 'bg-purple-100 border-purple-300' },
+const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const HOURS = Array.from({ length: 13 }, (_, i) => 9 + i);
+
+const statusColors: Record<string, { bg: string; text: string; border: string }> = {
+  pending: { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
+  confirmed: { bg: '#dcfce7', text: '#166534', border: '#86efac' },
+  completed: { bg: '#dbeafe', text: '#1e40af', border: '#93c5fd' },
+  cancelled: { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
+  new: { bg: '#f3e8ff', text: '#6b21a8', border: '#e9d5ff' },
 };
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const statusLabels: Record<string, string> = {
+  pending: 'Ожидание',
+  confirmed: 'Подтверждена',
+  completed: 'Завершена',
+  cancelled: 'Отменена'
+};
 
 export default function Calendar() {
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'week' | 'month' | 'day'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [showCreateEvent, setShowCreateEvent] = useState(false);
-  const [eventForm, setEventForm] = useState({
-    name: '',
-    service: '',
-    phone: '',
-    datetime: new Date().toISOString().slice(0, 16),
-  });
-
-  // Для месячного вида с выбором даты
-  const [selectedMonthDate, setSelectedMonthDate] = useState<Date | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<{ date: Date; hour: number } | null>(null);
+  const [form, setForm] = useState({ name: '', service: '', phone: '', datetime: '' });
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
   useEffect(() => {
     loadBookings();
@@ -54,615 +53,750 @@ export default function Calendar() {
 
   const loadBookings = async () => {
     try {
-      setLoading(true);
+      setLoading(false);
       const data = await api.getBookings();
-      const bookingsArray = data.bookings || [];
-      setBookings(bookingsArray);
+      setBookings(data.bookings || []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки';
-      setError(message);
-      toast.error(message);
-    } finally {
+      toast.error('Ошибка загрузки');
       setLoading(false);
     }
   };
 
-  const getMonday = (date: Date) => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff));
-  };
-
-  const mondayOfWeek = getMonday(currentDate);
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(mondayOfWeek);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
-
-  // Для месячного вида: получить первый день месяца и построить календарь
-  const getCalendarDays = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+  const getWeekDays = () => {
+    const date = new Date(currentDate);
+    const day = date.getDay() || 7;
+    const diff = date.getDate() - day + 1;
+    const monday = new Date(date.setDate(diff));
     
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-    
-    const days: Date[] = [];
-    const current = new Date(startDate);
-    
-    while (days.length < 42) {
-      days.push(new Date(current));
-      current.setDate(current.getDate() + 1);
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(d.getDate() + i);
+      days.push(d);
     }
-    
     return days;
   };
 
-  const getBookingsForTimeSlot = (day: Date, hour: number) => {
+  const getBookingsForSlot = (day: Date, hour: number) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
-      return (
-        bookingDate.toDateString() === day.toDateString() &&
-        bookingDate.getHours() === hour
-      );
+      return bookingDate.toDateString() === day.toDateString() && 
+             bookingDate.getHours() === hour;
     });
   };
 
-  const getBookingsForDay = (day: Date) => {
-    return bookings.filter(b => {
-      const bookingDate = new Date(b.datetime);
-      return bookingDate.toDateString() === day.toDateString();
-    });
-  };
-
-  const isCurrentViewDate = (date: Date) => {
-    return date.toDateString() === currentDate.toDateString();
-  };
-
-  const handlePrevMonth = () => {
+  const handlePrevWeek = () => {
     const d = new Date(currentDate);
-    d.setMonth(d.getMonth() - 1);
+    d.setDate(d.getDate() - 7);
     setCurrentDate(d);
   };
 
-  const handleNextMonth = () => {
+  const handleNextWeek = () => {
     const d = new Date(currentDate);
-    d.setMonth(d.getMonth() + 1);
+    d.setDate(d.getDate() + 7);
     setCurrentDate(d);
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date());
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setCurrentDate(today);
   };
 
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.2, 2));
+  const handleChangeMonth = (newMonth: number) => {
+    setCurrentDate(new Date(currentDate.getFullYear(), newMonth, 1));
   };
 
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.2, 0.6));
+  const handleChangeYear = (newYear: number) => {
+    setCurrentDate(new Date(newYear, currentDate.getMonth(), 1));
   };
 
   const handleCreateEvent = async () => {
-    if (!eventForm.name.trim() || !eventForm.service.trim() || !eventForm.phone.trim()) {
+    if (!form.name || !form.service || !form.phone || !form.datetime) {
       toast.error('Заполните все поля');
       return;
     }
-
     try {
+      const [date, time] = form.datetime.split('T');
       await api.createBooking({
-        name: eventForm.name,
-        service: eventForm.service,
-        phone: eventForm.phone,
-        date: eventForm.datetime.split('T')[0],
-        time: eventForm.datetime.split('T')[1],
+        name: form.name,
+        service: form.service,
+        phone: form.phone,
+        date,
+        time,
         instagram_id: Date.now().toString(),
       });
-
       toast.success('Запись создана');
-      setShowCreateEvent(false);
-      setEventForm({
-        name: '',
-        service: '',
-        phone: '',
-        datetime: new Date().toISOString().slice(0, 16),
-      });
+      setShowCreateModal(false);
+      setForm({ name: '', service: '', phone: '', datetime: '' });
+      setSelectedSlot(null);
       await loadBookings();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка создания';
-      toast.error(`Ошибка: ${message}`);
+      toast.error('Ошибка создания');
     }
   };
 
-  const handleEditBooking = (booking: Booking) => {
-    navigate(`/admin/bookings/${booking.id}`);
-    setSelectedBooking(null);
-  };
-
-  const handleCancelBooking = async (bookingId: number) => {
+  const handleChangeStatus = async (newStatus: string) => {
+    if (!selectedBooking) return;
     try {
-      await api.updateBookingStatus(bookingId, 'cancelled');
-      setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'cancelled' } : b));
-      setSelectedBooking(null);
-      toast.success('Запись отменена');
+      await api.updateBookingStatus(selectedBooking.id, newStatus);
+      const updated = bookings.map(b => 
+        b.id === selectedBooking.id ? { ...b, status: newStatus } : b
+      );
+      setBookings(updated);
+      setSelectedBooking({ ...selectedBooking, status: newStatus });
+      setShowStatusDropdown(false);
+      toast.success('Статус изменён');
     } catch (err) {
-      toast.error('Ошибка отмены');
+      toast.error('Ошибка');
     }
   };
 
-  const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-  const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-
-  if (error) {
-    return (
-      <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
-            <div>
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
-              <button onClick={loadBookings} className="mt-2 text-red-600 hover:text-red-700 font-medium">
-                Попробовать ещё раз
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const calendarDays = getCalendarDays();
+  const weekDays = getWeekDays();
+  const firstDay = weekDays[0];
+  const lastDay = weekDays[6];
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <CalendarIcon className="w-8 h-8 text-pink-600" />
-          Календарь записей
+    <div style={{ padding: '2rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>
+          Календарь
         </h1>
-        <p className="text-gray-600">Визуальное отображение всех записей</p>
+        <p style={{ color: '#6b7280' }}>{bookings.length} записей</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* Toolbar */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handlePrevMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ChevronLeft className="w-6 h-6 text-gray-600" />
-              </button>
-              
-              <div className="min-w-[300px]">
-                <h2 className="text-xl font-bold text-gray-900 text-center">
-                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-                </h2>
-              </div>
+      {/* Toolbar */}
+      <div style={{
+        backgroundColor: '#fff',
+        borderRadius: '0.75rem',
+        border: '1px solid #e5e7eb',
+        padding: '1.5rem',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}>
+        {/* Navigation */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button
+            type="button"
+            onClick={() => handlePrevWeek()}
+            style={{
+              width: '40px',
+              height: '40px',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.borderColor = '#9ca3af';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#fff';
+              e.currentTarget.style.borderColor = '#d1d5db';
+            }}
+          >
+            <ChevronLeft size={20} color="#6b7280" />
+          </button>
 
-              <button
-                onClick={handleNextMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
-              >
-                <ChevronRight className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#111827', minWidth: '200px', textAlign: 'center' }}>
+            {firstDay.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} - {lastDay.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+          </h2>
 
-            <div className="flex items-center gap-3 flex-wrap">
-              {/* Выбор года и месяца */}
-              <select
-                value={currentDate.getMonth()}
-                onChange={(e) => {
-                  const d = new Date(currentDate);
-                  d.setMonth(parseInt(e.target.value));
-                  setCurrentDate(d);
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              >
-                {monthNames.map((m, idx) => (
-                  <option key={idx} value={idx}>{m}</option>
-                ))}
-              </select>
-
-              <select
-                value={currentDate.getFullYear()}
-                onChange={(e) => {
-                  const d = new Date(currentDate);
-                  d.setFullYear(parseInt(e.target.value));
-                  setCurrentDate(d);
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              >
-                {Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - 5 + i).map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
-
-              <Button 
-                onClick={handleToday}
-                className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition text-sm font-medium"
-              >
-                Сегодня
-              </Button>
-              
-              <Button
-                onClick={() => setShowCreateEvent(true)}
-                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm gap-2 font-semibold flex items-center whitespace-nowrap"
-              >
-                <Plus className="w-5 h-5" />
-                Событие
-              </Button>
-
-              {/* View Switcher */}
-              <div className="flex border border-gray-300 rounded-lg">
-                <button
-                  onClick={() => setView('day')}
-                  className={`p-2 transition ${view === 'day' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                  title="День"
-                >
-                  <Clock className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setView('week')}
-                  className={`p-2 transition ${view === 'week' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                  title="Неделя"
-                >
-                  <List className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setView('month')}
-                  className={`p-2 transition ${view === 'month' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                  title="Месяц"
-                >
-                  <Grid3x3 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Zoom Controls для день и неделя */}
-          {view !== 'month' && (
-            <div className="flex items-center gap-2 justify-center pt-4 border-t border-gray-200">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleZoomOut}
-                disabled={zoomLevel <= 0.6}
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <span className="text-sm text-gray-600 w-16 text-center">{Math.round(zoomLevel * 100)}%</span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleZoomIn}
-                disabled={zoomLevel >= 2}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => handleNextWeek()}
+            style={{
+              width: '40px',
+              height: '40px',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.borderColor = '#9ca3af';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#fff';
+              e.currentTarget.style.borderColor = '#d1d5db';
+            }}
+          >
+            <ChevronRight size={20} color="#6b7280" />
+          </button>
         </div>
 
-        {/* Loading */}
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          </div>
-        ) : view === 'day' ? (
-          // ДНЕВНЫЙ ВИД
-          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)', fontSize: `${zoomLevel * 100}%` }}>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b-2 border-gray-300 bg-pink-50 sticky top-0">
-                  <th className="px-4 py-3 text-center font-bold text-gray-900 min-w-[80px]">
-                    Время
-                  </th>
-                  <th className="px-4 py-3 text-center font-bold text-gray-900">
-                    {currentDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'short' })}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {HOURS.map(hour => {
-                  const dayBookings = getBookingsForTimeSlot(currentDate, hour);
-                  return (
-                    <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="px-4 py-2 text-xs font-medium text-gray-600 bg-gray-50 text-center min-w-[80px] sticky left-0 z-10">
-                        {hour.toString().padStart(2, '0')}:00
-                      </td>
-                      <td className="px-4 py-2 align-top" style={{ minHeight: '60px' }}>
-                        <div className="space-y-1">
-                          {dayBookings.map(booking => (
-                            <div
-                              key={booking.id}
-                              onClick={() => setSelectedBooking(booking)}
-                              className={`p-2 rounded-lg cursor-pointer border-2 transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
-                            >
-                              <p className="text-xs font-bold text-gray-900">{booking.name}</p>
-                              <p className="text-xs text-gray-700">{booking.service_name}</p>
-                              <p className="text-xs text-gray-600">{booking.phone}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : view === 'week' ? (
-          // НЕДЕЛЬНЫЙ ВИД
-          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)', fontSize: `${zoomLevel * 100}%` }}>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-gray-200 sticky top-0 bg-white z-20">
-                  <th className="px-2 py-2 text-left text-xs font-semibold text-gray-600 bg-gray-50 min-w-[60px] sticky left-0 z-10">Время</th>
-                  {weekDays.map((day, idx) => {
-                    const isViewDate = isCurrentViewDate(day);
-                    return (
-                      <th
-                        key={idx}
-                        onClick={() => setCurrentDate(day)}
-                        className={`px-2 py-2 text-center text-xs font-semibold transition min-w-[100px] cursor-pointer ${
-                          isViewDate ? 'bg-pink-50 border-b-2 border-pink-500' : 'bg-gray-50 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className={`font-bold text-xs ${isViewDate ? 'text-pink-600' : 'text-gray-900'}`}>
-                          {dayNames[idx]}
-                        </div>
-                        <div className={`text-xs ${isViewDate ? 'text-pink-600' : 'text-gray-600'}`}>
-                          {day.getDate()}
-                        </div>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {HOURS.map(hour => (
-                  <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="px-2 py-2 text-xs font-medium text-gray-600 bg-gray-50 text-center sticky left-0 z-10 min-w-[60px]">
-                      {hour.toString().padStart(2, '0')}:00
-                    </td>
-                    {weekDays.map((day, dayIdx) => {
-                      const dayBookings = getBookingsForTimeSlot(day, hour);
-                      return (
-                        <td
-                          key={dayIdx}
-                          className="px-1 py-1 align-top min-w-[100px]"
-                          style={{ minHeight: '50px' }}
-                        >
-                          {dayBookings.map(booking => (
-                            <div
-                              key={booking.id}
-                              onClick={() => setSelectedBooking(booking)}
-                              className={`p-1 rounded mb-0.5 cursor-pointer border transition hover:shadow-md text-xs ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
-                            >
-                              <p className="font-bold text-gray-900 truncate">{booking.name}</p>
-                              <p className="text-gray-700 truncate">{booking.service_name}</p>
-                            </div>
-                          ))}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          // МЕСЯЧНЫЙ ВИД - ИСПРАВЛЕННЫЙ
-          <div className="p-6 overflow-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
-            {/* Заголовки дней недели */}
-            <div className="grid grid-cols-7 gap-2 mb-2">
-              {dayNames.map(day => (
-                <div key={`header-${day}`} className="text-center font-bold text-gray-700 py-2 border-b-2 border-gray-300 text-sm h-10 flex items-center justify-center">
-                  {day}
-                </div>
-              ))}
+        {/* Selectors and Buttons */}
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Month Selector */}
+          <select
+            value={currentDate.getMonth()}
+            onChange={(e) => handleChangeMonth(parseInt(e.target.value))}
+            style={{
+              padding: '0.5rem 0.75rem',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              color: '#374151'
+            }}
+          >
+            {MONTHS.map((m, idx) => (
+              <option key={idx} value={idx}>{m}</option>
+            ))}
+          </select>
+
+          {/* Year Selector */}
+          <select
+            value={currentDate.getFullYear()}
+            onChange={(e) => handleChangeYear(parseInt(e.target.value))}
+            style={{
+              padding: '0.5rem 0.75rem',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              backgroundColor: '#fff',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              color: '#374151'
+            }}
+          >
+            {Array.from({ length: 20 }, (_, i) => currentDate.getFullYear() - 10 + i).map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+
+          <button
+            onClick={handleToday}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#fff',
+              border: '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              color: '#374151',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+              e.currentTarget.style.borderColor = '#9ca3af';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#fff';
+              e.currentTarget.style.borderColor = '#d1d5db';
+            }}
+          >
+            Сегодня
+          </button>
+
+          <button
+            onClick={() => {
+              setForm({ name: '', service: '', phone: '', datetime: new Date().toISOString().slice(0, 16) });
+              setShowCreateModal(true);
+            }}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#2563eb',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+          >
+            <Plus size={18} />
+            Событие
+          </button>
+        </div>
+      </div>
+
+      {/* Calendar Grid */}
+      <div style={{
+        backgroundColor: '#fff',
+        borderRadius: '0.75rem',
+        border: '1px solid #e5e7eb',
+        overflow: 'hidden'
+      }}>
+        {/* Header with Days */}
+        <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', gap: '0', borderBottom: '2px solid #e5e7eb' }}>
+          <div style={{ padding: '1rem', textAlign: 'center', fontWeight: 'bold', color: '#6b7280', backgroundColor: '#f9fafb' }}></div>
+          {weekDays.map((day, idx) => (
+            <div
+              key={idx}
+              style={{
+                padding: '1rem',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                color: '#111827',
+                backgroundColor: day.toDateString() === new Date().toDateString() ? '#fef3c7' : '#fff',
+                borderRight: '1px solid #e5e7eb'
+              }}
+            >
+              <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.25rem' }}>{DAYS[idx]}</div>
+              <div style={{ fontSize: '1.125rem' }}>{day.getDate()}</div>
             </div>
+          ))}
+        </div>
 
-            {/* Даты месяца */}
-            <div className="grid grid-cols-7 gap-2 auto-rows-[120px]">
-              {calendarDays.map((date, i) => {
-                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-                const isViewDate = isCurrentViewDate(date);
-                const dayBookings = getBookingsForDay(date);
+        {/* Hours Grid */}
+        <div style={{ maxHeight: 'calc(100vh - 300px)', overflow: 'auto' }}>
+          {HOURS.map(hour => (
+            <div key={hour} style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', gap: '0', borderBottom: '1px solid #e5e7eb' }}>
+              <div style={{
+                padding: '0.5rem',
+                textAlign: 'center',
+                fontSize: '0.85rem',
+                color: '#6b7280',
+                backgroundColor: '#f9fafb',
+                borderRight: '1px solid #e5e7eb',
+                fontWeight: '500'
+              }}>
+                {hour}:00
+              </div>
 
+              {weekDays.map((day, dayIdx) => {
+                const dayBookings = getBookingsForSlot(day, hour);
                 return (
                   <div
-                    key={`date-${i}`}
-                    onClick={() => setCurrentDate(date)}
-                    className={`p-2 border-2 rounded-lg transition cursor-pointer ${
-                      isViewDate
-                        ? 'bg-pink-50 border-pink-400'
-                        : isCurrentMonth
-                        ? 'bg-white border-gray-200 hover:border-pink-300 hover:bg-pink-50'
-                        : 'bg-gray-50 border-gray-100'
-                    }`}
+                    key={dayIdx}
+                    onClick={() => {
+                      setForm({
+                        name: '',
+                        service: '',
+                        phone: '',
+                        datetime: new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour, 0).toISOString().slice(0, 16)
+                      });
+                      setShowCreateModal(true);
+                    }}
+                    style={{
+                      minHeight: '80px',
+                      padding: '0.5rem',
+                      borderRight: '1px solid #e5e7eb',
+                      backgroundColor: '#fff',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.25rem'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
                   >
-                    <div className={`text-sm font-bold mb-2 ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}`}>
-                      {date.getDate()}
-                    </div>
-                    <div className="space-y-1 overflow-y-auto" style={{ maxHeight: '80px' }}>
-                      {dayBookings.slice(0, 3).map(booking => (
-                        <button
-                          key={booking.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedBooking(booking);
-                          }}
-                          className={`w-full text-left text-xs px-1.5 py-0.5 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate block`}
-                          title={`${booking.name} - ${booking.service_name}`}
-                        >
-                          {booking.name}
-                        </button>
-                      ))}
-                      {dayBookings.length > 3 && (
-                        <div className="text-xs text-gray-600 px-1 font-medium">+{dayBookings.length - 3}</div>
-                      )}
-                    </div>
+                    {dayBookings.map(booking => (
+                      <div
+                        key={booking.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBooking(booking);
+                        }}
+                        style={{
+                          padding: '0.5rem',
+                          backgroundColor: statusColors[booking.status]?.bg,
+                          color: statusColors[booking.status]?.text,
+                          border: `1px solid ${statusColors[booking.status]?.border}`,
+                          borderRadius: '0.375rem',
+                          fontSize: '0.75rem',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}
+                        title={booking.name}
+                      >
+                        {booking.name} - {booking.service_name}
+                      </div>
+                    ))}
                   </div>
                 );
               })}
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
-      {/* Create Event Dialog */}
-      {showCreateEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Создать запись</h3>
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '1rem',
+            width: '100%',
+            maxWidth: '400px',
+            boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{
+              padding: '1.5rem',
+              borderBottom: '1px solid #e5e7eb',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>Создать событие</h3>
               <button
-                onClick={() => setShowCreateEvent(false)}
-                className="text-gray-400 hover:text-gray-600"
+                onClick={() => setShowCreateModal(false)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  fontSize: '1.5rem'
+                }}
               >
-                <X className="w-6 h-6" />
+                ×
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-gray-700 font-medium">Имя клиента</label>
-                <Input
-                  value={eventForm.name}
-                  onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
-                  placeholder="Анна Петрова"
-                  className="mt-1"
-                />
-              </div>
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Имя клиента"
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box'
+                }}
+              />
 
-              <div>
-                <label className="text-sm text-gray-700 font-medium">Услуга</label>
-                <Input
-                  value={eventForm.service}
-                  onChange={(e) => setEventForm({ ...eventForm, service: e.target.value })}
-                  placeholder="Маникюр"
-                  className="mt-1"
-                />
-              </div>
+              <input
+                type="text"
+                value={form.service}
+                onChange={(e) => setForm({ ...form, service: e.target.value })}
+                placeholder="Услуга"
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box'
+                }}
+              />
 
-              <div>
-                <label className="text-sm text-gray-700 font-medium">Телефон</label>
-                <Input
-                  value={eventForm.phone}
-                  onChange={(e) => setEventForm({ ...eventForm, phone: e.target.value })}
-                  placeholder="+971 50 123 4567"
-                  className="mt-1"
-                />
-              </div>
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="Телефон"
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box'
+                }}
+              />
 
-              <div>
-                <label className="text-sm text-gray-700 font-medium">Дата и время</label>
-                <Input
-                  type="datetime-local"
-                  value={eventForm.datetime}
-                  onChange={(e) => setEventForm({ ...eventForm, datetime: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
+              <input
+                type="datetime-local"
+                value={form.datetime}
+                onChange={(e) => setForm({ ...form, datetime: e.target.value })}
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box'
+                }}
+              />
 
-              <div className="flex gap-2 pt-4 border-t border-gray-200">
-                <Button
-                  onClick={() => setShowCreateEvent(false)}
-                  variant="outline"
-                  className="flex-1"
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    backgroundColor: '#f3f4f6',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    cursor: 'pointer',
+                    fontWeight: '500'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e7eb'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
                 >
                   Отмена
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={handleCreateEvent}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    backgroundColor: '#2563eb',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    color: '#fff',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
                 >
                   Создать
-                </Button>
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Selected Booking Detail */}
+      {/* Event Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Запись #{selectedBooking.id}</h3>
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '1rem',
+            width: '100%',
+            maxWidth: '400px',
+            boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <div style={{
+              padding: '1.5rem',
+              borderBottom: '1px solid #e5e7eb',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              position: 'sticky',
+              top: 0,
+              backgroundColor: '#fff'
+            }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>
+                Запись #{selectedBooking.id}
+              </h3>
               <button
                 onClick={() => setSelectedBooking(null)}
-                className="text-gray-400 hover:text-gray-600"
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  fontSize: '1.5rem'
+                }}
               >
-                <X className="w-6 h-6" />
+                ×
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-start gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                  {selectedBooking.name?.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600">Клиент</p>
-                  <p className="font-semibold text-gray-900">{selectedBooking.name}</p>
-                </div>
-              </div>
-
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <p className="text-xs text-gray-600 mb-1">Услуга</p>
-                <p className="font-semibold text-gray-900">{selectedBooking.service_name}</p>
-              </div>
-
-              <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <Clock className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-600">Дата и время</p>
-                  <p className="font-bold text-blue-600">
-                    {new Date(selectedBooking.datetime).toLocaleDateString('ru-RU')} в {new Date(selectedBooking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border border-green-200">
-                <Phone className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-600">Телефон</p>
-                  <p className="font-semibold text-gray-900">{selectedBooking.phone}</p>
-                </div>
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Клиент</label>
+                <input
+                  type="text"
+                  value={selectedBooking.name}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#f9fafb',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
 
               <div>
-                <p className="text-xs text-gray-600 mb-2">Статус</p>
-                <div className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${statusConfig[selectedBooking.status]?.bgColor}`}>
-                  {statusConfig[selectedBooking.status]?.label || selectedBooking.status}
-                </div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Услуга</label>
+                <input
+                  type="text"
+                  value={selectedBooking.service_name}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#f9fafb',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
 
-              <div className="flex gap-2 pt-4 border-t border-gray-200">
-                <Button
-                  onClick={() => handleEditBooking(selectedBooking)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 gap-2"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  Редактировать
-                </Button>
-                <Button
-                  onClick={() => handleCancelBooking(selectedBooking.id)}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700"
-                  disabled={selectedBooking.status === 'cancelled'}
-                >
-                  Отменить
-                </Button>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Телефон</label>
+                <input
+                  type="tel"
+                  value={selectedBooking.phone}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#f9fafb',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>Дата и время</label>
+                <input
+                  type="datetime-local"
+                  value={selectedBooking.datetime.slice(0, 16)}
+                  readOnly
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#f9fafb',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              {/* Status Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    backgroundColor: statusColors[selectedBooking.status]?.bg,
+                    borderRadius: '0.5rem',
+                    border: `2px solid ${statusColors[selectedBooking.status]?.border}`,
+                    color: statusColors[selectedBooking.status]?.text,
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    fontSize: '0.95rem',
+                    transition: 'all 0.2s',
+                    boxShadow: `0 2px 4px rgba(0, 0, 0, 0.1)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                  }}
+                >
+                  <span>{statusLabels[selectedBooking.status]}</span>
+                  <span style={{ marginLeft: '0.5rem' }}>▼</span>
+                </button>
+
+                {showStatusDropdown && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: '0.5rem',
+                    backgroundColor: '#fff',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+                    zIndex: 10000,
+                    overflow: 'hidden'
+                  }}>
+                    {statuses.map(status => (
+                      <button
+                        key={status}
+                        onClick={() => {
+                          handleChangeStatus(status);
+                          setShowStatusDropdown(false);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '0.875rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: selectedBooking.status === status ? statusColors[status]?.bg : '#fff',
+                          borderBottom: status !== statuses[statuses.length - 1] ? '1px solid #e5e7eb' : 'none',
+                          cursor: 'pointer',
+                          color: statusColors[status]?.text,
+                          fontWeight: selectedBooking.status === status ? 'bold' : 'normal',
+                          fontSize: '0.95rem',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = statusColors[status]?.bg}
+                        onMouseLeave={(e) => {
+                          if (selectedBooking.status !== status) {
+                            e.currentTarget.style.backgroundColor = '#fff';
+                          }
+                        }}
+                      >
+                        {statusLabels[status]}
+                        {selectedBooking.status === status && ' ✓'}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => setSelectedBooking(null)}
+                style={{
+                  padding: '0.75rem',
+                  backgroundColor: '#2563eb',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  color: '#fff',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  marginTop: '1rem'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+              >
+                Закрыть
+              </button>
             </div>
           </div>
         </div>

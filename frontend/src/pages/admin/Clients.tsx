@@ -9,6 +9,7 @@ import {
   RefreshCw,
   AlertCircle,
   Trash2,
+  X,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -61,7 +62,7 @@ export default function Clients() {
   const [refreshing, setRefreshing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // ===== СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ =====
+  // СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
@@ -71,7 +72,7 @@ export default function Clients() {
   });
   const [creatingClient, setCreatingClient] = useState(false);
 
-  // ===== СОСТОЯНИЯ ДЛЯ УДАЛЕНИЯ =====
+  // СОСТОЯНИЯ ДЛЯ УДАЛЕНИЯ
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
 
@@ -147,7 +148,6 @@ export default function Clients() {
     }
   };
 
-  // ===== УДАЛЕНИЕ КЛИЕНТА =====
   const handleDeleteClient = async (clientId: string, clientName: string) => {
     setClientToDelete({ id: clientId, name: clientName });
     setShowDeleteDialog(true);
@@ -475,58 +475,151 @@ export default function Clients() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog - КРАСИВАЯ ПЛАШКА */}
-      {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && clientToDelete && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '1rem',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+            width: '100%',
+            maxWidth: '420px',
+            overflow: 'hidden'
+          }}>
             {/* Red Header */}
-            <div className="px-6 py-4 border-b border-gray-200 bg-red-50">
-              <h3 className="text-lg font-bold text-red-900 flex items-center gap-2">
-                <AlertCircle className="w-6 h-6" />
-                Удалить клиента?
-              </h3>
+            <div style={{
+              backgroundColor: '#fef2f2',
+              borderBottom: '2px solid #fecaca',
+              padding: '1.5rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: '#fee2e2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />
+                </div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#7f1d1d' }}>
+                  Удалить клиента?
+                </h3>
+              </div>
             </div>
 
             {/* Content */}
-            <div className="px-6 py-6">
-              <p className="text-gray-700 mb-4">
-                Вы собираетесь удалить клиента <span className="font-bold">"{clientToDelete?.name}"</span>.
+            <div style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
+              <p style={{ color: '#1f2937', marginBottom: '1rem', fontSize: '0.95rem' }}>
+                Вы удаляете клиента <strong>"{clientToDelete.name}"</strong>
               </p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-yellow-800">
-                  ⚠️ <span className="font-semibold">Внимание:</span> Это действие<span className="font-bold"> необратимо</span>. Будут удалены:
-                </p>
-                <ul className="text-sm text-yellow-800 mt-2 space-y-1 ml-4">
-                  <li>✗ Все сообщения клиента</li>
-                  <li>✗ Все записи клиента</li>
-                  <li>✗ Вся история взаимодействия</li>
-                </ul>
+
+              <div style={{
+                backgroundColor: '#fefce8',
+                borderLeft: '4px solid #facc15',
+                padding: '1rem',
+                marginBottom: '1rem',
+                borderRadius: '0.5rem'
+              }}>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <AlertCircle style={{ width: '20px', height: '20px', color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
+                  <div>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#92400e', marginBottom: '0.5rem' }}>
+                      ⚠️ Это действие необратимо!
+                    </p>
+                    <ul style={{ fontSize: '0.875rem', color: '#92400e', marginLeft: '1rem' }}>
+                      <li>✗ Все сообщения будут удалены</li>
+                      <li>✗ Все записи будут удалены</li>
+                      <li>✗ История не восстановится</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-gray-600">
-                Если вы хотите просто скрыть клиента, используйте архивирование вместо удаления.
-              </p>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3 justify-end rounded-b-2xl">
+            <div style={{
+              backgroundColor: '#f9fafb',
+              borderTop: '1px solid #e5e7eb',
+              padding: '1rem 1.5rem',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '0.75rem'
+            }}>
               <button
                 onClick={() => {
                   setShowDeleteDialog(false);
                   setClientToDelete(null);
                 }}
-                className="px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-200 transition"
+                disabled={deletingId !== null}
+                style={{
+                  padding: '0.625rem 1.25rem',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  color: '#374151',
+                  backgroundColor: '#fff',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  cursor: deletingId !== null ? 'not-allowed' : 'pointer',
+                  opacity: deletingId !== null ? 0.5 : 1,
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#f3f4f6'; }}
+                onMouseLeave={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#fff'; }}
               >
                 Отмена
               </button>
               <button
                 onClick={handleConfirmDelete}
                 disabled={deletingId !== null}
-                className="px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition disabled:opacity-50"
+                style={{
+                  padding: '0.625rem 1.25rem',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  color: '#fff',
+                  backgroundColor: '#dc2626',
+                  border: '1px solid #dc2626',
+                  borderRadius: '0.5rem',
+                  cursor: deletingId !== null ? 'not-allowed' : 'pointer',
+                  opacity: deletingId !== null ? 0.5 : 1,
+                  transition: 'background-color 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#b91c1c'; }}
+                onMouseLeave={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#dc2626'; }}
               >
-                {deletingId ? "Удаляю..." : "Удалить"}
+                {deletingId ? (
+                  <>
+                    <Loader style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                    Удаляю...
+                  </>
+                ) : (
+                  "Удалить"
+                )}
               </button>
             </div>
           </div>
+          <style>{`
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       )}
     </div>
