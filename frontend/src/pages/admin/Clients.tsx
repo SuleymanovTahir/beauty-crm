@@ -8,6 +8,7 @@ import {
   Loader,
   RefreshCw,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -58,8 +59,8 @@ export default function Clients() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // ✅ Добавить состояния для диалога создания клиента:
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
@@ -69,12 +70,10 @@ export default function Clients() {
   });
   const [creatingClient, setCreatingClient] = useState(false);
 
-  // Загрузить клиентов при монтировании
   useEffect(() => {
     loadClients();
   }, []);
 
-  // Фильтровать клиентов при изменении поиска
   useEffect(() => {
     const filtered = clients.filter(
       (client) =>
@@ -115,7 +114,6 @@ export default function Clients() {
     toast.success("Данные обновлены");
   };
 
-  // ✅ Функция создания клиента:
   const handleCreateClient = async () => {
     if (!createForm.name.trim() || !createForm.phone.trim()) {
       toast.error("Заполните имя и телефон");
@@ -134,13 +132,33 @@ export default function Clients() {
       toast.success("Клиент создан ✅");
       setShowCreateDialog(false);
       setCreateForm({ name: "", phone: "", instagram_id: "", notes: "" });
-      await loadClients(); // Перезагрузить список
+      await loadClients();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка создания";
       toast.error(`❌ Ошибка: ${message}`);
       console.error("Error:", err);
     } finally {
       setCreatingClient(false);
+    }
+  };
+
+  // ← НОВОЕ: Функция удаления клиента
+  const handleDeleteClient = async (clientId: string, clientName: string) => {
+    if (!confirm(`Удалить клиента "${clientName}"? Это действие необратимо!`)) {
+      return;
+    }
+
+    try {
+      setDeletingId(clientId);
+      await api.deleteClient(clientId);
+      setClients(clients.filter(c => c.id !== clientId));
+      toast.success("Клиент удалён");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка удаления";
+      toast.error(`Ошибка: ${message}`);
+      console.error("Error:", err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -341,13 +359,28 @@ export default function Clients() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-green-600"
+                          className="text-green-600 hover:bg-green-50"
                           onClick={() =>
                             navigate(`/admin/chat?client_id=${client.id}`)
                           }
                           title="Написать сообщение"
                         >
                           <MessageSquare className="w-4 h-4" />
+                        </Button>
+                        {/* ← НОВОЕ: Кнопка удаления */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => handleDeleteClient(client.id, client.display_name)}
+                          disabled={deletingId === client.id}
+                          title="Удалить клиента"
+                        >
+                          {deletingId === client.id ? (
+                            <Loader className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
                         </Button>
                       </div>
                     </td>
@@ -364,7 +397,6 @@ export default function Clients() {
         )}
       </div>
 
-      {/* ✅ Диалог создания клиента */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>

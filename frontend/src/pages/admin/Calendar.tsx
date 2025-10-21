@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, User, Phone, Loader, AlertCircle, Grid3x3, List, Edit2, Trash2, ZoomIn, ZoomOut, Plus } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -25,17 +26,24 @@ const statusConfig: Record<string, { label: string; color: string; bgColor: stri
   new: { label: 'Новая', color: 'text-purple-700', bgColor: 'bg-purple-100 border-purple-300' },
 };
 
-// ← НОВОЕ: часы от 00:00 до 23:59
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 export default function Calendar() {
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<'week' | 'month'>('week');
+  const [view, setView] = useState<'week' | 'month' | 'day'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
+  const [eventForm, setEventForm] = useState({
+    name: '',
+    service: '',
+    phone: '',
+    datetime: new Date().toISOString().slice(0, 16),
+  });
 
   useEffect(() => {
     loadBookings();
@@ -80,15 +88,26 @@ export default function Calendar() {
     });
   };
 
+  const getBookingsForDay = (day: Date) => {
+    return bookings.filter(b => {
+      const bookingDate = new Date(b.datetime);
+      return bookingDate.toDateString() === day.toDateString();
+    });
+  };
+
+  const isCurrentViewDate = (date: Date) => {
+    return date.toDateString() === currentDate.toDateString();
+  };
+
   const handlePrevWeek = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() - 7);
+    d.setDate(d.getDate() - (view === 'day' ? 1 : 7));
     setCurrentDate(d);
   };
 
   const handleNextWeek = () => {
     const d = new Date(currentDate);
-    d.setDate(d.getDate() + 7);
+    d.setDate(d.getDate() + (view === 'day' ? 1 : 7));
     setCurrentDate(d);
   };
 
@@ -96,13 +115,50 @@ export default function Calendar() {
     setCurrentDate(new Date());
   };
 
-  // ← НОВОЕ: функции для редактирования
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.1, 2));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
+  };
+
+  const handleCreateEvent = async () => {
+    if (!eventForm.name.trim() || !eventForm.service.trim() || !eventForm.phone.trim()) {
+      toast.error('Заполните все поля');
+      return;
+    }
+
+    try {
+      await api.createBooking({
+        name: eventForm.name,
+        service: eventForm.service,
+        phone: eventForm.phone,
+        date: eventForm.datetime.split('T')[0],
+        time: eventForm.datetime.split('T')[1],
+        instagram_id: Date.now().toString(),
+      });
+
+      toast.success('Запись создана');
+      setShowCreateEvent(false);
+      setEventForm({
+        name: '',
+        service: '',
+        phone: '',
+        datetime: new Date().toISOString().slice(0, 16),
+      });
+      await loadBookings();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка создания';
+      toast.error(`Ошибка: ${message}`);
+    }
+  };
+
   const handleEditBooking = (booking: Booking) => {
     navigate(`/admin/bookings/${booking.id}`);
     setSelectedBooking(null);
   };
 
-  // ← НОВОЕ: функция для отмены
   const handleCancelBooking = async (bookingId: number) => {
     try {
       await api.updateBookingStatus(bookingId, 'cancelled');
@@ -114,10 +170,8 @@ export default function Calendar() {
     }
   };
 
-  // ← НОВОЕ: функция для удаления
   const handleDeleteBooking = async (bookingId: number) => {
     if (!confirm('Удалить эту запись?')) return;
-
     try {
       setBookings(bookings.filter(b => b.id !== bookingId));
       setSelectedBooking(null);
@@ -160,55 +214,109 @@ export default function Calendar() {
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Toolbar */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrevWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
-            >
-              <ChevronLeft className="w-6 h-6 text-gray-600" />
-            </button>
-            
-            <div className="min-w-[200px] text-center">
-              <h2 className="text-xl font-bold text-gray-900">
-                {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-              </h2>
-              <p className="text-sm text-gray-600">
-                {mondayOfWeek.toLocaleDateString('ru-RU')} - {weekDays[6].toLocaleDateString('ru-RU')}
-              </p>
-            </div>
-
-            <button
-              onClick={handleNextWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
-            >
-              <ChevronRight className="w-6 h-6 text-gray-600" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleToday}
-              className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition text-sm font-medium"
-            >
-              Сегодня
-            </button>
-            
-            <div className="flex border border-gray-300 rounded-lg">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setView('week')}
-                className={`p-2 transition ${view === 'week' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                onClick={handlePrevWeek}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
-                <List className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6 text-gray-600" />
               </button>
+              
+              <div className="min-w-[250px] text-center">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {view === 'day' 
+                    ? currentDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })
+                    : `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`}
+                </h2>
+                {view === 'week' && (
+                  <p className="text-sm text-gray-600">
+                    {mondayOfWeek.toLocaleDateString('ru-RU')} - {weekDays[6].toLocaleDateString('ru-RU')}
+                  </p>
+                )}
+              </div>
+
               <button
-                onClick={() => setView('month')}
-                className={`p-2 transition ${view === 'month' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                onClick={handleNextWeek}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
-                <Grid3x3 className="w-5 h-5" />
+                <ChevronRight className="w-6 h-6 text-gray-600" />
               </button>
             </div>
+
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={handleToday}
+                className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition text-sm font-medium"
+              >
+                Сегодня
+              </Button>
+              
+              <Button
+                onClick={() => setShowCreateEvent(true)}
+                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm gap-2 font-semibold"
+              >
+                <Plus className="w-5 h-5" />
+                Событие
+              </Button>
+              
+              {/* Датепикер */}
+              <Input
+                type="date"
+                value={currentDate.toISOString().split('T')[0]}
+                onChange={(e) => setCurrentDate(new Date(e.target.value))}
+                className="px-3 py-2 text-sm"
+              />
+
+              <div className="flex border border-gray-300 rounded-lg">
+                <button
+                  onClick={() => setView('day')}
+                  className={`p-2 transition ${view === 'day' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                  title="День"
+                >
+                  <Clock className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setView('week')}
+                  className={`p-2 transition ${view === 'week' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                  title="Неделя"
+                >
+                  <List className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setView('month')}
+                  className={`p-2 transition ${view === 'month' ? 'bg-pink-100 text-pink-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                  title="Месяц"
+                >
+                  <Grid3x3 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
           </div>
+
+          {/* Zoom Controls */}
+          {view !== 'month' && (
+            <div className="flex items-center gap-2 justify-center pt-4 border-t border-gray-200">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleZoomOut}
+                disabled={zoomLevel <= 0.5}
+              >
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <span className="text-sm text-gray-600 w-16 text-center">{Math.round(zoomLevel * 100)}%</span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleZoomIn}
+                disabled={zoomLevel >= 2}
+              >
+                <ZoomIn className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Loading */}
@@ -216,26 +324,70 @@ export default function Calendar() {
           <div className="flex items-center justify-center py-20">
             <Loader className="w-8 h-8 text-pink-600 animate-spin" />
           </div>
-        ) : view === 'week' ? (
-          // НЕДЕЛЬНЫЙ ВИД
-          <div className="overflow-x-auto">
+        ) : view === 'day' ? (
+          // ДНЕВНЫЙ ВИД
+          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)', fontSize: `${zoomLevel * 100}%` }}>
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="w-20 px-4 py-3 text-left text-sm font-semibold text-gray-600 bg-gray-50">Время</th>
+                <tr className="border-b-2 border-gray-300 bg-pink-50 sticky top-0">
+                  <th className="px-4 py-3 text-center font-bold text-gray-900 min-w-[80px]">
+                    Время
+                  </th>
+                  <th className="px-4 py-3 text-center font-bold text-gray-900">
+                    {currentDate.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'short' })}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {HOURS.map(hour => {
+                  const dayBookings = getBookingsForTimeSlot(currentDate, hour);
+                  return (
+                    <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="px-4 py-2 text-xs font-medium text-gray-600 bg-gray-50 text-center min-w-[80px] sticky left-0 z-10">
+                        {hour.toString().padStart(2, '0')}:00
+                      </td>
+                      <td className="px-4 py-2 align-top" style={{ minHeight: '60px' }}>
+                        <div className="space-y-1">
+                          {dayBookings.map(booking => (
+                            <div
+                              key={booking.id}
+                              onClick={() => setSelectedBooking(booking)}
+                              className={`p-2 rounded-lg cursor-pointer border-2 transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
+                            >
+                              <p className="text-xs font-bold text-gray-900">{booking.name}</p>
+                              <p className="text-xs text-gray-700">{booking.service_name}</p>
+                              <p className="text-xs text-gray-600">{booking.phone}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : view === 'week' ? (
+          // НЕДЕЛЬНЫЙ ВИД
+          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)', fontSize: `${zoomLevel * 100}%` }}>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-gray-200 sticky top-0 bg-white z-20">
+                  <th className="px-2 py-2 text-left text-xs font-semibold text-gray-600 bg-gray-50 min-w-[60px] sticky left-0 z-10">Время</th>
                   {weekDays.map((day, idx) => {
-                    const isToday = day.toDateString() === new Date().toDateString();
+                    const isViewDate = isCurrentViewDate(day);
                     return (
                       <th
                         key={idx}
-                        className={`px-4 py-3 text-center text-sm font-semibold transition ${
-                          isToday ? 'bg-pink-50 border-b-2 border-pink-500' : 'bg-gray-50 hover:bg-gray-100'
+                        onClick={() => setCurrentDate(day)}
+                        className={`px-2 py-2 text-center text-xs font-semibold transition min-w-[100px] cursor-pointer ${
+                          isViewDate ? 'bg-pink-50 border-b-2 border-pink-500' : 'bg-gray-50 hover:bg-gray-100'
                         }`}
                       >
-                        <div className={`font-bold ${isToday ? 'text-pink-600' : 'text-gray-900'}`}>
+                        <div className={`font-bold text-xs ${isViewDate ? 'text-pink-600' : 'text-gray-900'}`}>
                           {dayNames[idx]}
                         </div>
-                        <div className={`text-xs ${isToday ? 'text-pink-600' : 'text-gray-600'}`}>
+                        <div className={`text-xs ${isViewDate ? 'text-pink-600' : 'text-gray-600'}`}>
                           {day.getDate()}
                         </div>
                       </th>
@@ -246,7 +398,7 @@ export default function Calendar() {
               <tbody>
                 {HOURS.map(hour => (
                   <tr key={hour} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="w-20 px-4 py-3 text-xs font-medium text-gray-600 bg-gray-50 text-center sticky left-0">
+                    <td className="px-2 py-2 text-xs font-medium text-gray-600 bg-gray-50 text-center sticky left-0 z-10 min-w-[60px]">
                       {hour.toString().padStart(2, '0')}:00
                     </td>
                     {weekDays.map((day, dayIdx) => {
@@ -254,17 +406,17 @@ export default function Calendar() {
                       return (
                         <td
                           key={dayIdx}
-                          className="px-2 py-2 min-w-[140px] align-top"
+                          className="px-1 py-1 align-top min-w-[100px]"
+                          style={{ minHeight: '50px' }}
                         >
                           {dayBookings.map(booking => (
                             <div
                               key={booking.id}
                               onClick={() => setSelectedBooking(booking)}
-                              className={`p-2 rounded-lg mb-1 cursor-pointer border-2 transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
+                              className={`p-1 rounded mb-0.5 cursor-pointer border transition hover:shadow-md text-xs ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'}`}
                             >
-                              <p className="text-xs font-bold text-gray-900 truncate">{booking.name}</p>
-                              <p className="text-xs text-gray-700">{booking.service_name}</p>
-                              <p className="text-xs text-gray-600">{booking.phone}</p>
+                              <p className="font-bold text-gray-900 truncate">{booking.name}</p>
+                              <p className="text-gray-700 truncate">{booking.service_name}</p>
                             </div>
                           ))}
                         </td>
@@ -277,28 +429,31 @@ export default function Calendar() {
           </div>
         ) : (
           // МЕСЯЧНЫЙ ВИД
-          <div className="p-6">
-            <div className="grid grid-cols-7 gap-4">
+          <div className="p-6 overflow-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+            <div className="grid grid-cols-7 gap-2">
+              {/* Заголовки дней недели */}
               {dayNames.map(day => (
-                <div key={day} className="text-center font-bold text-gray-700 py-3 border-b-2 border-gray-200">
+                <div key={`header-${day}`} className="text-center font-bold text-gray-700 py-2 border-b-2 border-gray-200 text-sm">
                   {day}
                 </div>
               ))}
 
+              {/* Даты месяца */}
               {Array.from({ length: 35 }, (_, i) => {
                 const date = new Date(mondayOfWeek);
                 date.setDate(date.getDate() + i);
                 const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-                const dayBookings = bookings.filter(b => {
-                  const bDate = new Date(b.datetime);
-                  return bDate.toDateString() === date.toDateString();
-                });
+                const isViewDate = isCurrentViewDate(date);
+                const dayBookings = getBookingsForDay(date);
 
                 return (
                   <div
-                    key={i}
-                    className={`min-h-[120px] p-2 border-2 rounded-lg transition ${
-                      isCurrentMonth
+                    key={`date-${i}`}
+                    onClick={() => setCurrentDate(date)}
+                    className={`min-h-[100px] p-2 border-2 rounded-lg transition cursor-pointer ${
+                      isViewDate
+                        ? 'bg-pink-50 border-pink-400'
+                        : isCurrentMonth
                         ? 'bg-white border-gray-200 hover:border-pink-300 hover:bg-pink-50'
                         : 'bg-gray-50 border-gray-100'
                     }`}
@@ -307,18 +462,21 @@ export default function Calendar() {
                       {date.getDate()}
                     </div>
                     <div className="space-y-1">
-                      {dayBookings.slice(0, 3).map(booking => (
+                      {dayBookings.slice(0, 2).map(booking => (
                         <button
                           key={booking.id}
-                          onClick={() => setSelectedBooking(booking)}
-                          className={`w-full text-left text-xs px-2 py-1 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedBooking(booking);
+                          }}
+                          className={`w-full text-left text-xs px-1.5 py-0.5 rounded border transition hover:shadow-md ${statusConfig[booking.status]?.bgColor || 'bg-gray-100'} truncate`}
                           title={`${booking.name} - ${booking.service_name}`}
                         >
                           {booking.name}
                         </button>
                       ))}
-                      {dayBookings.length > 3 && (
-                        <div className="text-xs text-gray-600 px-2">+{dayBookings.length - 3}</div>
+                      {dayBookings.length > 2 && (
+                        <div className="text-xs text-gray-600 px-1">+{dayBookings.length - 2}</div>
                       )}
                     </div>
                   </div>
@@ -328,6 +486,80 @@ export default function Calendar() {
           </div>
         )}
       </div>
+
+      {/* Create Event Dialog */}
+      {showCreateEvent && (
+        <div className="fixed bottom-0 right-0 left-0 bg-black bg-opacity-50 flex items-end z-50">
+          <div className="bg-white w-full md:w-[400px] rounded-t-2xl shadow-2xl p-6 animate-in slide-in-from-bottom-4">
+            <button
+              onClick={() => setShowCreateEvent(false)}
+              className="float-right text-gray-400 hover:text-gray-600 text-2xl"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Создать запись</h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-700 font-medium">Имя клиента</label>
+                <Input
+                  value={eventForm.name}
+                  onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
+                  placeholder="Анна Петрова"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-700 font-medium">Услуга</label>
+                <Input
+                  value={eventForm.service}
+                  onChange={(e) => setEventForm({ ...eventForm, service: e.target.value })}
+                  placeholder="Маникюр"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-700 font-medium">Телефон</label>
+                <Input
+                  value={eventForm.phone}
+                  onChange={(e) => setEventForm({ ...eventForm, phone: e.target.value })}
+                  placeholder="+971 50 123 4567"
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-700 font-medium">Дата и время</label>
+                <Input
+                  type="datetime-local"
+                  value={eventForm.datetime}
+                  onChange={(e) => setEventForm({ ...eventForm, datetime: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4 border-t border-gray-200">
+                <Button
+                  onClick={() => setShowCreateEvent(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Отмена
+                </Button>
+                <Button
+                  onClick={handleCreateEvent}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  Создать
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Selected Booking Detail */}
       {selectedBooking && (
@@ -363,8 +595,7 @@ export default function Calendar() {
                 <div>
                   <p className="text-xs text-gray-600">Дата и время</p>
                   <p className="font-bold text-blue-600">
-                    {new Date(selectedBooking.datetime).toLocaleDateString('ru-RU')} в{' '}
-                    {new Date(selectedBooking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(selectedBooking.datetime).toLocaleDateString('ru-RU')} в {new Date(selectedBooking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>
@@ -391,7 +622,6 @@ export default function Calendar() {
                 </div>
               )}
 
-              {/* ← НОВОЕ: Кнопки действий */}
               <div className="flex gap-2 pt-4 border-t border-gray-200">
                 <Button
                   onClick={() => handleEditBooking(selectedBooking)}

@@ -203,6 +203,30 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     }
 
 
+@router.post("/clients/{client_id}/delete")
+async def delete_client_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить клиента"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        success = delete_client(client_id)
+        if success:
+            log_activity(user["id"], "delete_client", "client", 
+                        client_id, "Client deleted")
+            return {"success": True, "message": "Client deleted"}
+        else:
+            return JSONResponse({"error": "Client not found"}, 
+                              status_code=404)
+    except Exception as e:
+        log_error(f"Error deleting client: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
 
 @router.post("/clients/{client_id}/status")
 async def update_client_status_api(

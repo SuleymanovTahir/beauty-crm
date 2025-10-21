@@ -5165,3 +5165,285 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 16:58:22 - crm - INFO - [middleware] 📤 OPTIONS /api/services/45/delete → 200 (0.00s)
 2025-10-21 16:58:22 - crm - INFO - [middleware] 🔥 POST /api/services/45/delete
 2025-10-21 16:58:22 - crm - INFO - [middleware] 📤 POST /api/services/45/delete → 200 (0.00s)
+2025-10-21 16:58:50 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 16:58:50 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 16:58:50 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 16:58:50 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 16:58:52 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 16:58:52 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 16:58:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 16:58:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 16:58:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 16:58:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 16:59:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 16:59:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 16:59:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 16:59:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 16:59:13 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 16:59:13 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 16:59:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 16:59:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 17:00:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:00:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 17:00:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:00:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:00:51 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:00:51 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:00:51 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 17:00:51 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 17:00:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 17:00:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 17:04:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:04:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:04:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 17:04:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 17:05:13 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:05:13 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:05:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 17:05:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 17:09:21 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:09:21 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:21 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:09:21 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:09:21 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:09:21 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:09:21 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:21 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:09:21 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:09:21 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:09:21 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:09:21 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:22 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:09:22 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:22 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:09:22 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:09:22 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:09:22 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:09:22 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:22 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:09:22 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:09:22 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:09:22 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:09:22 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:09:40 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 17:09:40 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 17:09:40 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:09:40 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:09:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 17:09:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 17:09:50 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:09:50 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:09:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:09:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:09:58 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:09:58 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:11:56 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 17:11:56 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 17:11:56 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:11:56 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:12:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-21 17:12:02 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-21 17:12:02 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 17:12:02 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 17:12:03 - crm - INFO - [middleware] 🔥 OPTIONS /api/users
+2025-10-21 17:12:03 - crm - INFO - [middleware] 📤 OPTIONS /api/users → 200 (0.00s)
+2025-10-21 17:12:03 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-21 17:12:03 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-10-21 17:12:05 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:12:05 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:12:52 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-21 17:12:52 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-10-21 17:12:53 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-21 17:12:53 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-21 17:12:54 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-21 17:12:54 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-21 17:12:54 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-21 17:12:54 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-21 17:12:54 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-21 17:12:54 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-21 17:12:54 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-21 17:12:54 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-21 17:13:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:13:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:13:25 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:13:25 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:13:27 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:13:27 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:13:32 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:13:32 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:14:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:14:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:14:46 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:14:46 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:16:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:16:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:19:40 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 17:19:40 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 17:19:40 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:19:40 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:19:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:19:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:21:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:21:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:23:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:23:01 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:23:01 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:23:01 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:23:01 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:23:01 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:23:01 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:23:01 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:23:01 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:23:01 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:32 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:23:32 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:32 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:23:32 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:23:32 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:23:32 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:23:32 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:32 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:23:32 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:23:32 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:23:32 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:23:32 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:23:35 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:23:35 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:23:35 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:23:35 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:23:35 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:23:35 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:23:35 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:23:35 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:23:35 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:23:35 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:25:14 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-21 17:25:14 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:25:14 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-21 17:25:14 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-21 17:25:14 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-21 17:25:14 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-21 17:25:14 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:25:14 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-21 17:25:14 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-21 17:25:14 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-21 17:25:14 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-21 17:25:14 - crm - INFO - [startup] ======================================================================
+2025-10-21 17:26:01 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:26:01 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:26:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:26:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 17:26:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:26:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:26:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:26:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:27:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:27:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:27:31 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 17:27:31 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 17:27:31 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:27:31 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:28:04 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:28:04 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 17:28:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:28:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:28:52 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:28:52 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:28:53 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:28:53 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:28:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:28:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:29:47 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 17:29:47 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 17:29:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:29:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:30:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:30:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:30:35 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:30:35 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:30:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:30:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:30:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 17:30:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 17:32:52 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:32:52 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:32:57 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:32:57 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:33:02 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:33:02 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:37:47 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 17:37:47 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 17:37:47 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:37:47 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:40:03 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:40:03 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:43:20 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:43:20 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:43:22 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:43:22 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 17:57:55 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 17:57:55 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 17:57:55 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:57:55 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-21 17:58:02 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 17:58:02 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:01:07 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 18:01:07 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 18:01:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:01:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:01:07 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 18:01:07 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 18:01:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:01:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 18:01:09 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 18:01:09 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 18:01:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:01:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 18:01:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:01:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 18:02:44 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:02:44 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:02:45 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:02:45 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:05:01 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:05:01 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:05:50 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:05:50 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-21 18:09:21 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:09:21 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:09:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:09:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:09:42 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:09:42 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:09:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:09:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 18:13:41 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 18:13:41 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 18:13:41 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:13:41 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:14:15 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:14:15 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:14:16 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 18:14:16 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 18:14:16 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:14:16 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:14:18 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 18:14:18 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 18:14:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:14:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-21 18:14:26 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:14:26 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:14:26 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:14:26 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:14:27 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:14:27 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-21 18:14:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:14:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:14:32 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-21 18:14:32 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-21 18:14:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-21 18:14:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)

@@ -9,7 +9,10 @@ import {
   Loader,
   AlertCircle,
   X,
-  StickyNote
+  StickyNote,
+  Edit2,
+  Save,
+  Trash2
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -28,6 +31,7 @@ interface Client {
   last_contact: string;
   total_messages: number;
   status: string;
+  notes: string;
 }
 
 interface Message {
@@ -48,51 +52,47 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showNotes, setShowNotes] = useState(false);
-  const [notes, setNotes] = useState('');
+  
+  // Состояния для редактирования клиента
+  const [editMode, setEditMode] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    phone: '',
+    notes: ''
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ✅ ИСПРАВЛЕНО: Получить client_id из URL параметра
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const clientIdFromUrl = searchParams.get('client_id');  // ← ВАЖНО: client_id, не client!
-    
-    console.log('📍 URL параметр client_id:', clientIdFromUrl);
+    const clientIdFromUrl = searchParams.get('client_id');
     
     if (clientIdFromUrl) {
-      // Если параметр есть, сохраняем его для использования после загрузки клиентов
       localStorage.setItem('selectedClientId', clientIdFromUrl);
     }
   }, [location.search]);
 
-  // Загрузить клиентов при монтировании
   useEffect(() => {
-    console.log('👥 Загружаю клиентов...');
     loadClients();
   }, []);
 
-  // Выбрать клиента из URL параметра после загрузки клиентов
   useEffect(() => {
     if (clients.length > 0) {
       const selectedClientId = localStorage.getItem('selectedClientId');
-      console.log('🔍 Ищу клиента с ID:', selectedClientId);
       
       if (selectedClientId) {
         const client = clients.find(c => c.id === selectedClientId);
         if (client) {
-          console.log('✅ Найден клиент:', client.display_name);
           setSelectedClient(client);
           loadMessages(selectedClientId);
           localStorage.removeItem('selectedClientId');
-        } else {
-          console.log('❌ Клиент с ID не найден:', selectedClientId);
         }
       }
     }
   }, [clients]);
 
-  // Скроллить к последнему сообщению
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -104,19 +104,11 @@ export default function Chat() {
       const data = await api.getClients();
       
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
-      console.log('📦 Загружено клиентов:', clientsArray.length);
       setClients(clientsArray);
-      
-      // Выбрать первого клиента если нет в URL
-      if (clientsArray.length > 0 && !selectedClient) {
-        setSelectedClient(clientsArray[0]);
-        loadMessages(clientsArray[0].id);
-      }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
       setError(message);
       toast.error(`Ошибка: ${message}`);
-      console.error('Error loading clients:', err);
     } finally {
       setLoading(false);
     }
@@ -125,24 +117,20 @@ export default function Chat() {
   const loadMessages = async (clientId: string) => {
     try {
       setLoadingMessages(true);
-      console.log('💬 Загружаю сообщения для клиента:', clientId);
       const data = await api.getChatMessages(clientId, 50);
-      
       const messagesArray = data.messages || (Array.isArray(data) ? data : []);
-      console.log('📨 Загружено сообщений:', messagesArray.length);
       setMessages(messagesArray);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
       toast.error(`Ошибка: ${message}`);
-      console.error('Error loading messages:', err);
     } finally {
       setLoadingMessages(false);
     }
   };
 
   const handleSelectClient = (client: Client) => {
-    console.log('👤 Выбран клиент:', client.display_name);
     setSelectedClient(client);
+    setEditMode(false);
     loadMessages(client.id);
   };
 
@@ -150,10 +138,8 @@ export default function Chat() {
     if (!message.trim() || !selectedClient) return;
 
     try {
-      console.log('📤 Отправляю сообщение клиенту:', selectedClient.display_name);
       await api.sendMessage(selectedClient.id, message);
       
-      // Добавить сообщение в локальный список
       const newMessage: Message = {
         id: Date.now(),
         message: message,
@@ -168,14 +154,46 @@ export default function Chat() {
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Ошибка отправки';
       toast.error(`Ошибка: ${errorMsg}`);
-      console.error('Error sending message:', err);
     }
   };
 
-  const handleSaveNotes = () => {
-    console.log('💾 Сохраняю заметки для клиента:', selectedClient?.display_name);
-    toast.success('Заметки сохранены');
-    setShowNotes(false);
+  const handleEditClient = async () => {
+    if (!selectedClient) return;
+
+    try {
+      setSavingEdit(true);
+      await api.updateClient(selectedClient.id, {
+        name: editForm.name,
+        phone: editForm.phone,
+        notes: editForm.notes,
+      });
+
+      setSelectedClient({
+        ...selectedClient,
+        name: editForm.name,
+        phone: editForm.phone,
+        notes: editForm.notes,
+      });
+      
+      setEditMode(false);
+      toast.success('Данные клиента обновлены');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Ошибка сохранения';
+      toast.error(`Ошибка: ${errorMsg}`);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const startEdit = () => {
+    if (selectedClient) {
+      setEditForm({
+        name: selectedClient.name || '',
+        phone: selectedClient.phone || '',
+        notes: selectedClient.notes || '',
+      });
+      setEditMode(true);
+    }
   };
 
   const filteredClients = clients.filter(client =>
@@ -214,67 +232,66 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-[calc(100vh-2rem)] p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex overflow-hidden">
-        {/* Clients List */}
-        <div className="w-80 border-r border-gray-200 flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-gray-900 flex items-center gap-2 font-semibold">
-                <MessageCircle className="w-5 h-5" />
-                Чаты ({clients.length})
-              </h3>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Поиск..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+    <div className="h-[calc(100vh-2rem)] p-4 flex gap-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-80 flex flex-col overflow-hidden">
+        {/* Clients Header */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg text-gray-900 flex items-center gap-2 font-semibold">
+              <MessageCircle className="w-5 h-5" />
+              Чаты ({clients.length})
+            </h3>
           </div>
-
-          {/* Clients */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredClients.length > 0 ? (
-              filteredClients.map((client) => (
-                <div
-                  key={client.id}
-                  onClick={() => handleSelectClient(client)}
-                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                    selectedClient?.id === client.id ? 'bg-pink-50' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
-                      {client.display_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 truncate font-medium">{client.display_name}</p>
-                      <p className="text-xs text-gray-600 truncate">{client.phone}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {client.total_messages} сообщений
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-500">
-                <MessageCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm">Клиентов не найдено</p>
-              </div>
-            )}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Поиск..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
         </div>
 
-        {/* Chat Area */}
+        {/* Clients List */}
+        <div className="flex-1 overflow-y-auto">
+          {filteredClients.length > 0 ? (
+            filteredClients.map((client) => (
+              <div
+                key={client.id}
+                onClick={() => handleSelectClient(client)}
+                className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                  selectedClient?.id === client.id ? 'bg-pink-50' : ''
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
+                    {client.display_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-900 truncate font-medium">{client.display_name}</p>
+                    <p className="text-xs text-gray-600 truncate">{client.phone}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {client.total_messages} сообщений
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500">
+              <MessageCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+              <p className="text-sm">Клиентов не найдено</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Chat Area */}
+      <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
         {selectedClient ? (
-          <div className="flex-1 flex flex-col">
+          <>
             {/* Chat Header */}
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
@@ -305,16 +322,6 @@ export default function Chat() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => setShowNotes(!showNotes)}
-                    title="Заметки"
-                  >
-                    <StickyNote className="w-4 h-4" />
-                  </Button>
-                </div>
               </div>
             </div>
 
@@ -331,7 +338,7 @@ export default function Chat() {
                     className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-md px-4 py-3 rounded-2xl ${
+                      className={`max-w-xs px-4 py-3 rounded-2xl ${
                         msg.sender === 'bot'
                           ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
                           : 'bg-white text-gray-900 border border-gray-200'
@@ -354,27 +361,6 @@ export default function Chat() {
               )}
               <div ref={messagesEndRef} />
             </div>
-
-            {/* Notes Panel */}
-            {showNotes && (
-              <div className="border-t border-gray-200 p-4 bg-yellow-50">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm text-gray-900 font-medium">Заметки о клиенте</h4>
-                  <Button size="sm" variant="ghost" onClick={() => setShowNotes(false)}>
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Введите заметки..."
-                  className="min-h-[80px] mb-2"
-                />
-                <Button size="sm" onClick={handleSaveNotes} className="bg-pink-600 hover:bg-pink-700">
-                  Сохранить заметки
-                </Button>
-              </div>
-            )}
 
             {/* Chat Input */}
             <div className="p-4 border-t border-gray-200 bg-white">
@@ -421,9 +407,9 @@ export default function Chat() {
                 </div>
               </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
+          <div className="flex items-center justify-center h-full text-gray-500">
             <div className="text-center">
               <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p>Выберите клиента для начала чата</p>
@@ -431,6 +417,116 @@ export default function Chat() {
           </div>
         )}
       </div>
+
+      {/* Client Info Sidebar */}
+      {selectedClient && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-72 flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Информация</h3>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => editMode ? setEditMode(false) : startEdit()}
+                className="gap-2"
+              >
+                {editMode ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {editMode ? (
+              <>
+                <div>
+                  <label className="text-xs text-gray-600 font-medium">Имя</label>
+                  <Input
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-gray-600 font-medium">Телефон</label>
+                  <Input
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-gray-600 font-medium">Заметки</label>
+                  <Textarea
+                    value={editForm.notes}
+                    onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                    className="mt-1 resize-none"
+                    rows={4}
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={() => setEditMode(false)}
+                    variant="outline"
+                    className="flex-1 text-xs"
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    onClick={handleEditClient}
+                    disabled={savingEdit}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs gap-2"
+                  >
+                    <Save className="w-3 h-3" />
+                    {savingEdit ? 'Сохранение...' : 'Сохранить'}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-3 bg-pink-50 rounded-lg border border-pink-200">
+                  <p className="text-xs text-gray-600 mb-1">Имя</p>
+                  <p className="font-semibold text-gray-900">{selectedClient.name || 'Не указано'}</p>
+                </div>
+
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-xs text-gray-600 mb-1">Телефон</p>
+                  <p className="font-semibold text-gray-900">{selectedClient.phone || 'Не указано'}</p>
+                </div>
+
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <p className="text-xs text-gray-600 mb-1">Статус</p>
+                  <Badge className="bg-purple-100 text-purple-800 mt-1">{selectedClient.status}</Badge>
+                </div>
+
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <p className="text-xs text-gray-600 mb-1">Всего сообщений</p>
+                  <p className="font-semibold text-gray-900">{selectedClient.total_messages}</p>
+                </div>
+
+                {selectedClient.notes && (
+                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p className="text-xs text-gray-600 mb-1 flex items-center gap-1">
+                      <StickyNote className="w-3 h-3" />
+                      Заметки
+                    </p>
+                    <p className="text-sm text-gray-900">{selectedClient.notes}</p>
+                  </div>
+                )}
+
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-xs text-gray-600 mb-1">Последний контакт</p>
+                  <p className="text-sm text-gray-900">
+                    {new Date(selectedClient.last_contact).toLocaleDateString('ru-RU')}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

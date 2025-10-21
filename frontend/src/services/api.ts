@@ -103,6 +103,7 @@ export class ApiClient {
   }
 
   // ===== КЛИЕНТЫ =====
+// ===== КЛИЕНТЫ =====
   async getClients() {
     return this.request<any>('/api/clients')
   }
@@ -128,6 +129,20 @@ export class ApiClient {
   async pinClient(clientId: string) {
     return this.request(`/api/clients/${clientId}/pin`, {
       method: 'POST',
+    })
+  }
+
+  // ← НОВОЕ: Удалить клиента
+  async deleteClient(clientId: string) {
+    return this.request(`/api/clients/${clientId}/delete`, {
+      method: 'POST',
+    })
+  }
+
+  async createClient(data: any) {
+    return this.request('/api/clients', {
+      method: 'POST',
+      body: JSON.stringify(data),
     })
   }
 
@@ -191,12 +206,7 @@ export class ApiClient {
     })
   }
 
-  async createClient(data: any) {
-    return this.request('/api/clients', {  // ← НОВОЕ
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
+
 
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {

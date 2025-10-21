@@ -11,6 +11,7 @@ import {
   Clock,
   Loader,
   AlertCircle,
+  ArchiveRestore,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -42,12 +43,14 @@ interface ClientMessage {
 interface ExtendedMessage extends ClientMessage {
   starred: boolean;
   unread: boolean;
+  archived: boolean;
 }
 
 const categories = [
   { value: "all", label: "Все сообщения" },
   { value: "new", label: "Новые" },
   { value: "active", label: "Активные" },
+  { value: "archived", label: "Архив" },
 ];
 
 const statuses = [
@@ -61,9 +64,7 @@ const statuses = [
 export default function Messages() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
-  const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>(
-    []
-  );
+  const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -80,12 +81,17 @@ export default function Messages() {
       const matchesSearch =
         msg.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         msg.phone.includes(searchTerm);
+
+      // ✅ ИСПРАВЛЕНО: Архив теперь отдельный раздел, не включается в "все"
       const matchesCategory =
-        categoryFilter === "all" ||
-        (categoryFilter === "new" && msg.unread) ||
-        (categoryFilter === "active" && msg.total_messages > 0);
+        (categoryFilter === "all" && !msg.archived) ||  // ← НЕ включаем архив
+        (categoryFilter === "new" && msg.unread && !msg.archived) ||  // ← НЕ включаем архив
+        (categoryFilter === "active" && msg.total_messages > 0 && !msg.archived) ||  // ← НЕ включаем архив
+        (categoryFilter === "archived" && msg.archived);  // ← ТОЛЬКО архив
+
       const matchesStatus =
         statusFilter === "all" || msg.status === statusFilter;
+
       return matchesSearch && matchesCategory && matchesStatus;
     });
     setFilteredMessages(filtered);
@@ -99,7 +105,6 @@ export default function Messages() {
       const data = await api.getClients();
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
 
-      // Преобразуем клиентов в сообщения
       const extendedMessages: ExtendedMessage[] = clientsArray.map(
         (client: any) => ({
           id: client.id,
@@ -114,7 +119,8 @@ export default function Messages() {
           status: client.status,
           is_pinned: client.is_pinned,
           starred: client.is_pinned === 1,
-          unread: client.total_messages > 0, // Упрощённо: если есть сообщения, считаем непрочитанными
+          unread: client.total_messages > 0,
+          archived: localStorage.getItem(`archived_${client.id}`) === "true",
         })
       );
 
@@ -167,13 +173,41 @@ export default function Messages() {
   };
 
   const handleArchive = () => {
-    setMessages(messages.filter((msg) => !selectedMessages.includes(msg.id)));
+    setMessages(
+      messages.map((msg) => {
+        if (selectedMessages.includes(msg.id)) {
+          localStorage.setItem(`archived_${msg.id}`, "true");
+          return { ...msg, archived: true };
+        }
+        return msg;
+      })
+    );
     setSelectedMessages([]);
     toast.success("Сообщения перемещены в архив");
   };
 
-  const unreadCount = messages.filter((m) => m.unread).length;
+  const handleRestoreFromArchive = (id: string) => {
+    localStorage.removeItem(`archived_${id}`);
+    setMessages(
+      messages.map((msg) =>
+        msg.id === id ? { ...msg, archived: false } : msg
+      )
+    );
+    toast.success("Восстановлено из архива");
+  };
+
+  const handlePermanentDelete = (id: string) => {
+    if (confirm("Удалить это сообщение безвозвратно?")) {
+      setMessages(messages.filter((msg) => msg.id !== id));
+      localStorage.removeItem(`archived_${id}`);
+      toast.success("Удалено безвозвратно");
+    }
+  };
+
+  // ✅ Статистика правильная
+  const unreadCount = messages.filter((m) => m.unread && !m.archived).length;
   const starredCount = messages.filter((m) => m.starred).length;
+  const archivedCount = messages.filter((m) => m.archived).length;
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -188,22 +222,6 @@ export default function Messages() {
       default:
         return null;
     }
-  };
-
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      new: "Новый",
-      interested: "Заинтересован",
-      customer: "Клиент",
-      vip: "VIP",
-      lead: "Лид",
-      contacted: "Связались",
-      booking_started: "Начал запись",
-      booked: "Записан",
-      inactive: "Неактивен",
-      blocked: "Заблокирован",
-    };
-    return labels[status] || status;
   };
 
   if (loading) {
@@ -254,7 +272,7 @@ export default function Messages() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
@@ -270,7 +288,7 @@ export default function Messages() {
             <div>
               <p className="text-gray-500 text-sm mb-1">Активные</p>
               <h3 className="text-3xl text-blue-600">
-                {messages.filter((m) => m.total_messages > 0).length}
+                {messages.filter((m) => m.total_messages > 0 && !m.archived).length}
               </h3>
             </div>
             <Clock className="w-8 h-8 text-blue-400" />
@@ -284,6 +302,16 @@ export default function Messages() {
               <h3 className="text-3xl text-yellow-600">{starredCount}</h3>
             </div>
             <Star className="w-8 h-8 text-yellow-400" />
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-sm mb-1">В архиве</p>
+              <h3 className="text-3xl text-orange-600">{archivedCount}</h3>
+            </div>
+            <Archive className="w-8 h-8 text-orange-400" />
           </div>
         </div>
 
@@ -384,39 +412,48 @@ export default function Messages() {
             filteredMessages.map((message) => (
               <div
                 key={message.id}
-                className={`px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                  message.unread ? "bg-blue-50" : ""
+                className={`px-6 py-4 hover:bg-gray-50 transition-colors ${
+                  message.unread ? "bg-blue-50" : message.archived ? "bg-gray-50 opacity-75" : ""
                 }`}
-                onClick={() => navigate(`/admin/chat?client_id=${message.id}`)}
               >
                 <div className="flex items-start gap-4">
-                  <Checkbox
-                    checked={selectedMessages.includes(message.id)}
-                    onCheckedChange={() => handleToggleSelect(message.id)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  {!message.archived ? (
+                    <>
+                      <Checkbox
+                        checked={selectedMessages.includes(message.id)}
+                        onCheckedChange={() => handleToggleSelect(message.id)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleStar(message.id);
-                    }}
-                    className="mt-1"
-                  >
-                    <Star
-                      className={`w-5 h-5 ${
-                        message.starred
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-gray-300 hover:text-yellow-400"
-                      }`}
-                    />
-                  </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleStar(message.id);
+                        }}
+                        className="mt-1"
+                      >
+                        <Star
+                          className={`w-5 h-5 ${
+                            message.starred
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300 hover:text-yellow-400"
+                          }`}
+                        />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="w-10" />
+                  )}
 
                   <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium">
                     {message.avatar}
                   </div>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
+                    if (!message.archived) {
+                      navigate(`/manager/chat?client_id=${message.id}`);
+                    }
+                  }}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <p
@@ -429,6 +466,11 @@ export default function Messages() {
                           {message.display_name}
                         </p>
                         {getStatusIcon(message.status)}
+                        {message.archived && (
+                          <Badge className="bg-orange-100 text-orange-800 text-xs">
+                            В архиве
+                          </Badge>
+                        )}
                       </div>
                       <span className="text-xs text-gray-500">
                         {new Date(message.last_contact).toLocaleDateString(
@@ -447,6 +489,29 @@ export default function Messages() {
                       {message.total_messages} сообщений
                     </p>
                   </div>
+
+                  {message.archived && (
+                    <div className="flex gap-2 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRestoreFromArchive(message.id)}
+                        className="text-blue-600 hover:bg-blue-50"
+                        title="Восстановить из архива"
+                      >
+                        <ArchiveRestore className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handlePermanentDelete(message.id)}
+                        className="text-red-600 hover:bg-red-50"
+                        title="Удалить безвозвратно"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))

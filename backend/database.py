@@ -1198,3 +1198,43 @@ def save_notification_settings(user_id: int, settings: dict):
     
     conn.commit()
     conn.close()
+
+
+def delete_client(instagram_id: str) -> bool:
+    """Удалить клиента и все его данные"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        # Удалить все сообщения клиента
+        c.execute("""DELETE FROM chat_history 
+                     WHERE instagram_id = ?""", (instagram_id,))
+        
+        # Удалить все записи клиента
+        c.execute("""DELETE FROM bookings 
+                     WHERE instagram_id = ?""", (instagram_id,))
+        
+        # Удалить прогресс записи если есть
+        c.execute("""DELETE FROM booking_temp 
+                     WHERE instagram_id = ?""", (instagram_id,))
+        
+        # Удалить взаимодействия клиента
+        c.execute("""DELETE FROM client_interactions 
+                     WHERE instagram_id = ?""", (instagram_id,))
+        
+        # Удалить самого клиента
+        c.execute("""DELETE FROM clients 
+                     WHERE instagram_id = ?""", (instagram_id,))
+        
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        
+        if success:
+            print(f"✅ Клиент {instagram_id} и все его данные удалены")
+        
+        return success
+    except Exception as e:
+        print(f"❌ Ошибка удаления клиента: {e}")
+        conn.close()
+        return False
