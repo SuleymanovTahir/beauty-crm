@@ -61,6 +61,7 @@ export default function Clients() {
   const [refreshing, setRefreshing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // ===== СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ =====
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [createForm, setCreateForm] = useState({
     name: '',
@@ -69,6 +70,10 @@ export default function Clients() {
     notes: ''
   });
   const [creatingClient, setCreatingClient] = useState(false);
+
+  // ===== СОСТОЯНИЯ ДЛЯ УДАЛЕНИЯ =====
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     loadClients();
@@ -142,20 +147,25 @@ export default function Clients() {
     }
   };
 
-  // ← НОВОЕ: Функция удаления клиента
+  // ===== УДАЛЕНИЕ КЛИЕНТА =====
   const handleDeleteClient = async (clientId: string, clientName: string) => {
-    if (!confirm(`Удалить клиента "${clientName}"? Это действие необратимо!`)) {
-      return;
-    }
+    setClientToDelete({ id: clientId, name: clientName });
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!clientToDelete) return;
 
     try {
-      setDeletingId(clientId);
-      await api.deleteClient(clientId);
-      setClients(clients.filter(c => c.id !== clientId));
-      toast.success("Клиент удалён");
+      setDeletingId(clientToDelete.id);
+      await api.deleteClient(clientToDelete.id);
+      setClients(clients.filter(c => c.id !== clientToDelete.id));
+      toast.success("✅ Клиент удалён");
+      setShowDeleteDialog(false);
+      setClientToDelete(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка удаления";
-      toast.error(`Ошибка: ${message}`);
+      toast.error(`❌ Ошибка: ${message}`);
       console.error("Error:", err);
     } finally {
       setDeletingId(null);
@@ -367,7 +377,6 @@ export default function Clients() {
                         >
                           <MessageSquare className="w-4 h-4" />
                         </Button>
-                        {/* ← НОВОЕ: Кнопка удаления */}
                         <Button
                           size="sm"
                           variant="outline"
@@ -397,6 +406,7 @@ export default function Clients() {
         )}
       </div>
 
+      {/* Create Client Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -464,6 +474,61 @@ export default function Clients() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog - КРАСИВАЯ ПЛАШКА */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            {/* Red Header */}
+            <div className="px-6 py-4 border-b border-gray-200 bg-red-50">
+              <h3 className="text-lg font-bold text-red-900 flex items-center gap-2">
+                <AlertCircle className="w-6 h-6" />
+                Удалить клиента?
+              </h3>
+            </div>
+
+            {/* Content */}
+            <div className="px-6 py-6">
+              <p className="text-gray-700 mb-4">
+                Вы собираетесь удалить клиента <span className="font-bold">"{clientToDelete?.name}"</span>.
+              </p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-yellow-800">
+                  ⚠️ <span className="font-semibold">Внимание:</span> Это действие<span className="font-bold"> необратимо</span>. Будут удалены:
+                </p>
+                <ul className="text-sm text-yellow-800 mt-2 space-y-1 ml-4">
+                  <li>✗ Все сообщения клиента</li>
+                  <li>✗ Все записи клиента</li>
+                  <li>✗ Вся история взаимодействия</li>
+                </ul>
+              </div>
+              <p className="text-sm text-gray-600">
+                Если вы хотите просто скрыть клиента, используйте архивирование вместо удаления.
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3 justify-end rounded-b-2xl">
+              <button
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setClientToDelete(null);
+                }}
+                className="px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-200 transition"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deletingId !== null}
+                className="px-4 py-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition disabled:opacity-50"
+              >
+                {deletingId ? "Удаляю..." : "Удалить"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

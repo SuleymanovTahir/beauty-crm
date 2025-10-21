@@ -5551,3 +5551,53 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 18:29:26 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
 2025-10-21 18:29:55 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-21 18:29:55 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:32:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:32:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:32:56 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-21 18:32:56 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-21 18:36:52 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-21 18:36:52 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-21 18:36:52 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:36:52 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:37:23 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:37:23 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:37:29 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:37:29 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:39:35 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:39:35 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:39:42 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-21 18:39:42 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-21 18:42:00 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:42:00 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:05 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:05 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:07 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:07 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:08 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:08 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:08 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:08 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:44:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:44:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:45:19 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:45:19 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:45:21 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:45:21 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:45:22 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:45:22 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:46:06 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:46:06 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:46:07 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:46:07 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:46:09 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:46:09 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-21 18:46:10 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-21 18:46:10 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
