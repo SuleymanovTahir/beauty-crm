@@ -283,22 +283,27 @@ export default function Clients() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Button 
-  size="sm" 
-  variant="outline" 
-  className="text-green-600"
-  onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
->
-  <MessageSquare className="w-4 h-4" />
-</Button>
-                        <Button 
-  size="sm" 
-  variant="outline" 
-  className="text-green-600"
-  onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
->
-  <MessageSquare className="w-4 h-4" />
-</Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            navigate(`/admin/clients/${client.id}`)
+                          }
+                          title="Просмотр информации о клиенте"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-green-600"
+                          onClick={() =>
+                            navigate(`/admin/chat?client_id=${client.id}`)
+                          }
+                          title="Написать сообщение"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
                       </div>
                     </td>
                   </tr>
