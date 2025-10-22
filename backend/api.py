@@ -1,5 +1,5 @@
 # backend/api.py - ИСПРАВЛЕННАЯ ВЕРСИЯ
-# Удалены дубликаты эндпоинтов, исправлены пути
+# ✅ ФИКС: Расширена таблица bot_settings для всех полей из фронтенда
 
 from fastapi import APIRouter, Request, Query, Cookie, HTTPException, Form
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -857,7 +857,7 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     return {"count": get_total_unread()}
 
 
-# ===== НАСТРОЙКИ БОТА (ЕДИНСТВЕННАЯ ВЕРСИЯ БЕЗ ДУБЛИКАТОВ) =====
+# ===== НАСТРОЙКИ БОТА (ИСПРАВЛЕННАЯ ВЕРСИЯ) =====
 
 @router.get("/bot-settings")
 async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
@@ -869,32 +869,45 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    # Создаем расширенную таблицу если её нет
     try:
-        c.execute("SELECT * FROM bot_settings LIMIT 1")
-        result = c.fetchone()
-        if result:
-            return {
-                "bot_name": result[1],
-                "personality_traits": result[2],
-                "greeting_message": result[3],
-                "farewell_message": result[4],
-                "price_explanation": result[5],
-                "salon_name": result[6],
-                "salon_address": result[7],
-                "salon_phone": result[8],
-                "salon_hours": result[9],
-                "booking_url": result[10],
-                "google_maps_link": result[11],
-                "communication_style": result[12],
-                "max_message_length": result[13]
-            }
+        c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
+                     (id INTEGER PRIMARY KEY,
+                      bot_name TEXT,
+                      personality_traits TEXT,
+                      greeting_message TEXT,
+                      farewell_message TEXT,
+                      price_explanation TEXT,
+                      salon_name TEXT,
+                      salon_address TEXT,
+                      salon_phone TEXT,
+                      salon_hours TEXT,
+                      booking_url TEXT,
+                      google_maps_link TEXT,
+                      communication_style TEXT,
+                      max_message_length INTEGER,
+                      price_response_template TEXT,
+                      booking_redirect_message TEXT,
+                      premium_justification TEXT,
+                      fomo_messages TEXT,
+                      upsell_techniques TEXT,
+                      languages_supported TEXT,
+                      emoji_usage TEXT,
+                      objection_handling TEXT,
+                      safety_guidelines TEXT,
+                      example_good_responses TEXT,
+                      algorithm_actions TEXT,
+                      negative_handling TEXT,
+                      location_features TEXT,
+                      seasonality TEXT,
+                      emergency_situations TEXT,
+                      success_metrics TEXT)''')
+        conn.commit()
     except Exception as e:
-        log_error(f"Error loading bot settings: {e}", "api")
-    finally:
-        conn.close()
+        log_error(f"Error creating bot_settings table: {e}", "api")
     
-    # Дефолтные значения из конфига
-    return {
+    # Дефолтные значения
+    defaults = {
         "bot_name": SALON_INFO.get('bot_name', 'M.Le Diamant Assistant'),
         "personality_traits": "Обаятельная, уверенная, харизматичная",
         "greeting_message": "Привет! Добро пожаловать в M.Le Diamant!",
@@ -907,8 +920,58 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
         "booking_url": SALON_INFO.get('booking_url', ''),
         "google_maps_link": SALON_INFO.get('google_maps', ''),
         "communication_style": "Дружелюбный, экспертный, вдохновляющий",
-        "max_message_length": 4
+        "max_message_length": 4,
+        "price_response_template": "{SERVICE} - {PRICE} {CURRENCY}. Это включает {BENEFITS}!",
+        "booking_redirect_message": "Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯\n\n📱 Запишитесь за 2 минуты: {BOOKING_URL}",
+        "premium_justification": "Да, мы в премиум-сегменте 💎",
+        "fomo_messages": "Кстати, на эту неделю уже мало свободных окон...",
+        "upsell_techniques": "Многие клиенты берут брови + ресницы со скидкой!",
+        "languages_supported": "ru,en,ar",
+        "emoji_usage": "Умеренное (2-3 на сообщение)",
+        "objection_handling": "\"Дорого\" → Подчеркни качество",
+        "safety_guidelines": "Не разглашай личную информацию",
+        "example_good_responses": "✅ ХОРОШО: Gelish маникюр - 130 AED",
+        "algorithm_actions": "ЭТАП 1: Поприветствуй",
+        "negative_handling": "При жалобе: извинись искренне",
+        "location_features": "JBR - престижный район Dubai",
+        "seasonality": "Лето: indoor процедуры",
+        "emergency_situations": "При агрессии: оставайся спокойной",
+        "success_metrics": "Клиент перешел на запись"
     }
+    
+    try:
+        c.execute("SELECT * FROM bot_settings LIMIT 1")
+        result = c.fetchone()
+        
+        if result:
+            # Создаем словарь из результата
+            settings = {}
+            fields = [
+                "id", "bot_name", "personality_traits", "greeting_message",
+                "farewell_message", "price_explanation", "salon_name", "salon_address",
+                "salon_phone", "salon_hours", "booking_url", "google_maps_link",
+                "communication_style", "max_message_length", "price_response_template",
+                "booking_redirect_message", "premium_justification", "fomo_messages",
+                "upsell_techniques", "languages_supported", "emoji_usage",
+                "objection_handling", "safety_guidelines", "example_good_responses",
+                "algorithm_actions", "negative_handling", "location_features",
+                "seasonality", "emergency_situations", "success_metrics"
+            ]
+            
+            for i, field in enumerate(fields[1:], start=1):  # Пропускаем id
+                if i < len(result):
+                    settings[field] = result[i] if result[i] is not None else defaults.get(field, "")
+                else:
+                    settings[field] = defaults.get(field, "")
+            
+            conn.close()
+            return settings
+    except Exception as e:
+        log_error(f"Error loading bot settings: {e}", "api")
+    finally:
+        conn.close()
+    
+    return defaults
 
 
 @router.post("/bot-settings")
@@ -927,7 +990,7 @@ async def update_bot_settings(
     c = conn.cursor()
     
     try:
-        # Создать таблицу если её нет
+        # Создать расширенную таблицу если её нет
         c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
                      (id INTEGER PRIMARY KEY,
                       bot_name TEXT,
@@ -942,12 +1005,30 @@ async def update_bot_settings(
                       booking_url TEXT,
                       google_maps_link TEXT,
                       communication_style TEXT,
-                      max_message_length INTEGER)''')
+                      max_message_length INTEGER,
+                      price_response_template TEXT,
+                      booking_redirect_message TEXT,
+                      premium_justification TEXT,
+                      fomo_messages TEXT,
+                      upsell_techniques TEXT,
+                      languages_supported TEXT,
+                      emoji_usage TEXT,
+                      objection_handling TEXT,
+                      safety_guidelines TEXT,
+                      example_good_responses TEXT,
+                      algorithm_actions TEXT,
+                      negative_handling TEXT,
+                      location_features TEXT,
+                      seasonality TEXT,
+                      emergency_situations TEXT,
+                      success_metrics TEXT)''')
         
         # Проверить есть ли уже запись
         c.execute("SELECT COUNT(*) FROM bot_settings")
-        if c.fetchone()[0] > 0:
-            # Обновить
+        exists = c.fetchone()[0] > 0
+        
+        if exists:
+            # Обновить ВСЕ поля
             c.execute("""UPDATE bot_settings SET
                         bot_name = ?,
                         personality_traits = ?,
@@ -961,7 +1042,23 @@ async def update_bot_settings(
                         booking_url = ?,
                         google_maps_link = ?,
                         communication_style = ?,
-                        max_message_length = ?
+                        max_message_length = ?,
+                        price_response_template = ?,
+                        booking_redirect_message = ?,
+                        premium_justification = ?,
+                        fomo_messages = ?,
+                        upsell_techniques = ?,
+                        languages_supported = ?,
+                        emoji_usage = ?,
+                        objection_handling = ?,
+                        safety_guidelines = ?,
+                        example_good_responses = ?,
+                        algorithm_actions = ?,
+                        negative_handling = ?,
+                        location_features = ?,
+                        seasonality = ?,
+                        emergency_situations = ?,
+                        success_metrics = ?
                         WHERE id = 1""",
                       (data.get('bot_name'),
                        data.get('personality_traits'),
@@ -975,16 +1072,38 @@ async def update_bot_settings(
                        data.get('booking_url'),
                        data.get('google_maps_link'),
                        data.get('communication_style'),
-                       data.get('max_message_length', 4)))
+                       data.get('max_message_length', 4),
+                       data.get('price_response_template'),
+                       data.get('booking_redirect_message'),
+                       data.get('premium_justification'),
+                       data.get('fomo_messages'),
+                       data.get('upsell_techniques'),
+                       data.get('languages_supported'),
+                       data.get('emoji_usage'),
+                       data.get('objection_handling'),
+                       data.get('safety_guidelines'),
+                       data.get('example_good_responses'),
+                       data.get('algorithm_actions'),
+                       data.get('negative_handling'),
+                       data.get('location_features'),
+                       data.get('seasonality'),
+                       data.get('emergency_situations'),
+                       data.get('success_metrics')))
         else:
-            # Вставить
+            # Вставить новую запись со ВСЕМИ полями
             c.execute("""INSERT INTO bot_settings
                         (bot_name, personality_traits, greeting_message,
                          farewell_message, price_explanation, salon_name,
                          salon_address, salon_phone, salon_hours,
                          booking_url, google_maps_link, communication_style,
-                         max_message_length)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                         max_message_length, price_response_template,
+                         booking_redirect_message, premium_justification,
+                         fomo_messages, upsell_techniques, languages_supported,
+                         emoji_usage, objection_handling, safety_guidelines,
+                         example_good_responses, algorithm_actions,
+                         negative_handling, location_features, seasonality,
+                         emergency_situations, success_metrics)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                       (data.get('bot_name'),
                        data.get('personality_traits'),
                        data.get('greeting_message'),
@@ -997,7 +1116,23 @@ async def update_bot_settings(
                        data.get('booking_url'),
                        data.get('google_maps_link'),
                        data.get('communication_style'),
-                       data.get('max_message_length', 4)))
+                       data.get('max_message_length', 4),
+                       data.get('price_response_template'),
+                       data.get('booking_redirect_message'),
+                       data.get('premium_justification'),
+                       data.get('fomo_messages'),
+                       data.get('upsell_techniques'),
+                       data.get('languages_supported'),
+                       data.get('emoji_usage'),
+                       data.get('objection_handling'),
+                       data.get('safety_guidelines'),
+                       data.get('example_good_responses'),
+                       data.get('algorithm_actions'),
+                       data.get('negative_handling'),
+                       data.get('location_features'),
+                       data.get('seasonality'),
+                       data.get('emergency_situations'),
+                       data.get('success_metrics')))
         
         conn.commit()
         log_activity(user["id"], "update_bot_settings", "bot", "general",
@@ -1006,7 +1141,8 @@ async def update_bot_settings(
         log_info("✅ Настройки бота успешно сохранены в БД", "api")
         return {"success": True, "message": "Bot settings updated"}
     except Exception as e:
-        log_error(f"Error updating bot settings: {e}", "api")
+        log_error(f"❌ Error updating bot settings: {e}", "api")
+        conn.rollback()
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()

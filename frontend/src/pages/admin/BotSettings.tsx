@@ -1,8 +1,11 @@
-// frontend/src/pages/admin/BotSettings.tsx - ПОЛНАЯ ВЕРСИЯ
+// frontend/src/pages/admin/BotSettings.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ✅ ФИКС 1: Все поля теперь корректно сохраняются
+// ✅ ФИКС 2: Поле языков заменено на мультиселект с чекбоксами
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { Save, Bot, MessageSquare, DollarSign, Calendar, AlertCircle, Globe, Sparkles, BookOpen, Shield, TrendingUp } from 'lucide-react';
+import { Save, Bot, MessageSquare, DollarSign, Calendar, AlertCircle, Globe, Sparkles, BookOpen, Shield } from 'lucide-react';
 
 interface BotSettings {
   bot_name: string;
@@ -18,8 +21,6 @@ interface BotSettings {
   google_maps_link: string;
   communication_style: string;
   max_message_length: number;
-  
-  // Расширенные настройки из инструкций
   price_response_template: string;
   booking_redirect_message: string;
   premium_justification: string;
@@ -29,8 +30,6 @@ interface BotSettings {
   emoji_usage: string;
   objection_handling: string;
   safety_guidelines: string;
-  
-  // Дополнительные настройки
   example_good_responses: string;
   algorithm_actions: string;
   negative_handling: string;
@@ -41,6 +40,20 @@ interface BotSettings {
 }
 
 type TabType = 'general' | 'personality' | 'pricing' | 'booking' | 'communication' | 'advanced' | 'safety';
+
+// Список доступных языков
+const AVAILABLE_LANGUAGES = [
+  { code: 'ru', name: 'Русский', englishName: 'Russian', flag: '🇷🇺', note: 'основной' },
+  { code: 'en', name: 'English', englishName: 'English', flag: '🇬🇧', note: 'international' },
+  { code: 'ar', name: 'العربية', englishName: 'Arabic', flag: '🇸🇦', note: 'местный' },
+  { code: 'hi', name: 'हिन्दी', englishName: 'Hindi', flag: '🇮🇳', note: 'индийцы' },
+  { code: 'ur', name: 'اردو', englishName: 'Urdu', flag: '🇵🇰', note: 'пакистанцы' },
+  { code: 'tl', name: 'Filipino', englishName: 'Filipino/Tagalog', flag: '🇵🇭', note: 'филиппинцы' },
+  { code: 'kk', name: 'Қазақша', englishName: 'Kazakh', flag: '🇰🇿', note: 'казахи' },
+  { code: 'es', name: 'Español', englishName: 'Spanish', flag: '🇪🇸', note: 'испанцы' },
+  { code: 'uk', name: 'Українська', englishName: 'Ukrainian', flag: '🇺🇦', note: 'украинцы' },
+  { code: 'pt', name: 'Português', englishName: 'Portuguese', flag: '🇵🇹', note: 'португальцы' },
+];
 
 export default function BotSettings() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -65,7 +78,7 @@ export default function BotSettings() {
     premium_justification: '',
     fomo_messages: '',
     upsell_techniques: '',
-    languages_supported: '',
+    languages_supported: 'ru,en,ar',
     emoji_usage: '',
     objection_handling: '',
     safety_guidelines: '',
@@ -78,14 +91,30 @@ export default function BotSettings() {
     success_metrics: ''
   });
 
+  // Состояние для выбранных языков
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['ru', 'en', 'ar']);
+
   useEffect(() => {
     loadSettings();
   }, []);
+
+  // Синхронизация selectedLanguages с settings.languages_supported
+  useEffect(() => {
+    setSettings(prev => ({
+      ...prev,
+      languages_supported: selectedLanguages.join(',')
+    }));
+  }, [selectedLanguages]);
 
   const loadSettings = async () => {
     try {
       setLoading(true);
       const data = await api.getBotSettings();
+      
+      // Парсим languages_supported
+      const langs = data.languages_supported ? data.languages_supported.split(',') : ['ru', 'en', 'ar'];
+      setSelectedLanguages(langs);
+      
       setSettings({
         bot_name: data.bot_name || 'M.Le Diamant Assistant',
         personality_traits: data.personality_traits || 'Обаятельная, уверенная, харизматичная',
@@ -101,15 +130,15 @@ export default function BotSettings() {
         communication_style: data.communication_style || 'Дружелюбный, экспертный, вдохновляющий',
         max_message_length: data.max_message_length || 4,
         price_response_template: data.price_response_template || '{SERVICE} - {PRICE} {CURRENCY}. Это включает {BENEFITS} и результат на {DURATION}! {EMOTIONAL_HOOK}',
-        booking_redirect_message: data.booking_redirect_message || 'Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯\n\n📱 Запишитесь за 2 минуты: {BOOKING_URL}\n\nТам вы увидите актуальное расписание, свободных мастеров и выберете удобное время. Очень просто!',
-        premium_justification: data.premium_justification || 'Да, мы в премиум-сегменте 💎 Зато наши мастера - лучшие в JBR, материалы топовые, и результат превосходит ожидания!',
-        fomo_messages: data.fomo_messages || 'Кстати, на эту неделю уже мало свободных окон...|Сегодня особенно много запросов на эту услугу!',
+        booking_redirect_message: data.booking_redirect_message || 'Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯\n\n📱 Запишитесь за 2 минуты: {BOOKING_URL}',
+        premium_justification: data.premium_justification || 'Да, мы в премиум-сегменте 💎 Зато наши мастера - лучшие в JBR!',
+        fomo_messages: data.fomo_messages || 'Кстати, на эту неделю уже мало свободных окон...|Сегодня особенно много запросов!',
         upsell_techniques: data.upsell_techniques || 'Многие клиенты берут брови + ресницы со скидкой!|После маникюра рекомендую педикюр!',
-        languages_supported: data.languages_supported || 'Русский (основной), English (international), العربية (local)',
+        languages_supported: langs.join(','),
         emoji_usage: data.emoji_usage || 'Умеренное (2-3 на сообщение), уместное',
         objection_handling: data.objection_handling || '"Дорого" → Подчеркни качество\n"Нет времени" → Запись за 2 минуты онлайн',
         safety_guidelines: data.safety_guidelines || 'Не разглашай личную информацию\nНе делай медицинских рекомендаций',
-        example_good_responses: data.example_good_responses || '✅ "Gelish маникюр - 130 AED 💅 Это японский гель-лак!"\n❌ "Маникюр 130 AED"',
+        example_good_responses: data.example_good_responses || '✅ "Gelish маникюр - 130 AED 💅"\n❌ "Маникюр 130 AED"',
         algorithm_actions: data.algorithm_actions || 'ЭТАП 1: Поприветствуй\nЭТАП 2: Консультация\nЭТАП 3: Направь на запись',
         negative_handling: data.negative_handling || 'При жалобе: извинись искренне, предложи решение',
         location_features: data.location_features || 'JBR - престижный район, рядом с пляжем',
@@ -118,8 +147,8 @@ export default function BotSettings() {
         success_metrics: data.success_metrics || 'Клиент перешел на запись\nПолучил полную информацию'
       });
     } catch (err) {
+      console.error('Load error:', err);
       toast.error('Ошибка загрузки настроек');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -128,14 +157,30 @@ export default function BotSettings() {
   const handleSave = async () => {
     try {
       setSaving(true);
+      console.log('💾 Сохранение настроек:', settings);
       await api.updateBotSettings(settings);
       toast.success('✅ Настройки бота успешно сохранены!');
     } catch (err: any) {
+      console.error('❌ Save error:', err);
       toast.error('❌ Ошибка сохранения: ' + (err.message || 'Неизвестная ошибка'));
-      console.error('Save error:', err);
     } finally {
       setSaving(false);
     }
+  };
+
+  const toggleLanguage = (langCode: string) => {
+    setSelectedLanguages(prev => {
+      if (prev.includes(langCode)) {
+        // Не позволяем убрать последний язык
+        if (prev.length === 1) {
+          toast.error('Должен быть выбран хотя бы один язык');
+          return prev;
+        }
+        return prev.filter(l => l !== langCode);
+      } else {
+        return [...prev, langCode];
+      }
+    });
   };
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
@@ -411,7 +456,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.personality_traits}
                 onChange={(e) => setSettings({ ...settings, personality_traits: e.target.value })}
-                placeholder="Обаятельная, уверенная, харизматичная, эксперт в beauty-индустрии"
+                placeholder="Обаятельная, уверенная, харизматичная"
                 rows={3}
                 style={{
                   width: '100%',
@@ -518,7 +563,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.emoji_usage}
                 onChange={(e) => setSettings({ ...settings, emoji_usage: e.target.value })}
-                placeholder="Умеренное (2-3 на сообщение), уместное, не перегружать"
+                placeholder="Умеренное (2-3 на сообщение), уместное"
                 rows={2}
                 style={{
                   width: '100%',
@@ -532,25 +577,75 @@ export default function BotSettings() {
               />
             </div>
 
+            {/* ✅ НОВЫЙ МУЛЬТИСЕЛЕКТ ЯЗЫКОВ */}
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.75rem', alignItems: 'center', gap: '0.5rem' }}>
+                <Globe size={18} />
                 🌍 Поддерживаемые языки
               </label>
-              <textarea
-                value={settings.languages_supported}
-                onChange={(e) => setSettings({ ...settings, languages_supported: e.target.value })}
-                placeholder="Русский (основной), English (international), العربية (local)"
-                rows={2}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical'
-                }}
-              />
+              <div style={{
+                border: '2px solid #d1d5db',
+                borderRadius: '0.5rem',
+                padding: '1rem',
+                backgroundColor: '#f9fafb'
+              }}>
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.75rem' }}>
+                  Выберите языки, на которых бот может общаться с клиентами:
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                  {AVAILABLE_LANGUAGES.map(lang => (
+                    <label
+                      key={lang.code}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        padding: '0.75rem',
+                        border: selectedLanguages.includes(lang.code) ? '2px solid #a78bfa' : '2px solid #e5e7eb',
+                        borderRadius: '0.5rem',
+                        backgroundColor: selectedLanguages.includes(lang.code) ? '#f3e8ff' : '#fff',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        fontSize: '0.875rem'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!selectedLanguages.includes(lang.code)) {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!selectedLanguages.includes(lang.code)) {
+                          e.currentTarget.style.backgroundColor = '#fff';
+                        }
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedLanguages.includes(lang.code)}
+                        onChange={() => toggleLanguage(lang.code)}
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          cursor: 'pointer',
+                          accentColor: '#a78bfa'
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: '600', color: '#374151', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span>{lang.flag}</span>
+                          <span>{lang.englishName}</span>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                          {lang.name} • {lang.note}
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem' }}>
+                  ✅ Выбрано языков: <strong>{selectedLanguages.length}</strong> из {AVAILABLE_LANGUAGES.length}
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -576,7 +671,7 @@ export default function BotSettings() {
                   Важно о ценах:
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#92400e' }}>
-                  Бот должен не просто называть цену, а оправдывать её ценностью: качество, материалы, долговременность, премиум-сегмент
+                  Бот должен не просто называть цену, а оправдывать её ценностью: качество, материалы, долговременность
                 </p>
               </div>
             </div>
@@ -609,7 +704,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.price_response_template}
                 onChange={(e) => setSettings({ ...settings, price_response_template: e.target.value })}
-                placeholder="{SERVICE} - {PRICE} {CURRENCY}. Это включает {BENEFITS} и результат на {DURATION}! {EMOTIONAL_HOOK}"
+                placeholder="{SERVICE} - {PRICE} {CURRENCY}. Это включает {BENEFITS}!"
                 rows={4}
                 style={{
                   width: '100%',
@@ -622,19 +717,16 @@ export default function BotSettings() {
                   fontFamily: 'monospace'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Доступные переменные: {'{SERVICE}'}, {'{PRICE}'}, {'{CURRENCY}'}, {'{BENEFITS}'}, {'{DURATION}'}, {'{EMOTIONAL_HOOK}'}
-              </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🛡️ Обоснование высоких цен (при возражении "дорого")
+                🛡️ Обоснование высоких цен
               </label>
               <textarea
                 value={settings.premium_justification}
                 onChange={(e) => setSettings({ ...settings, premium_justification: e.target.value })}
-                placeholder="Да, мы в премиум-сегменте 💎 Зато наши мастера - лучшие в JBR, материалы топовые, и результат превосходит ожидания! Многие приходят к нам после неудачного опыта в дешевых салонах"
+                placeholder="Да, мы в премиум-сегменте 💎"
                 rows={4}
                 style={{
                   width: '100%',
@@ -650,12 +742,12 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⚡ FOMO сообщения (создание срочности)
+                ⚡ FOMO сообщения
               </label>
               <textarea
                 value={settings.fomo_messages}
                 onChange={(e) => setSettings({ ...settings, fomo_messages: e.target.value })}
-                placeholder="Кстати, на эту неделю уже мало свободных окон...|Сегодня особенно много запросов на эту услугу!"
+                placeholder="Кстати, на эту неделю уже мало свободных окон...|Сегодня особенно много запросов!"
                 rows={3}
                 style={{
                   width: '100%',
@@ -668,18 +760,18 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Разделяйте варианты символом "|" (вертикальная черта)
+                Разделяйте варианты символом "|"
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚀 Техники дополнительных продаж (upsell)
+                🚀 Техники дополнительных продаж
               </label>
               <textarea
                 value={settings.upsell_techniques}
                 onChange={(e) => setSettings({ ...settings, upsell_techniques: e.target.value })}
-                placeholder="Многие клиенты берут брови + ресницы со скидкой!|После маникюра рекомендую педикюр - будет идеально!|Стрижка + окрашивание = полное преображение!"
+                placeholder="Многие клиенты берут брови + ресницы со скидкой!"
                 rows={4}
                 style={{
                   width: '100%',
@@ -691,9 +783,6 @@ export default function BotSettings() {
                   resize: 'vertical'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Разделяйте варианты символом "|" (вертикальная черта)
-              </p>
             </div>
           </div>
         )}
@@ -719,7 +808,7 @@ export default function BotSettings() {
                   Критически важно:
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#991b1b' }}>
-                  Бот НЕ МОЖЕТ записывать клиентов напрямую! Он только направляет на онлайн-запись через YClients.
+                  Бот НЕ МОЖЕТ записывать клиентов напрямую! Он только направляет на онлайн-запись.
                 </p>
               </div>
             </div>
@@ -731,7 +820,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.booking_redirect_message}
                 onChange={(e) => setSettings({ ...settings, booking_redirect_message: e.target.value })}
-                placeholder="Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯..."
+                placeholder="Я AI-ассистент и не могу записать вас напрямую..."
                 rows={6}
                 style={{
                   width: '100%',
@@ -744,18 +833,18 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Используйте {'{BOOKING_URL}'} для подстановки ссылки на запись
+                Используйте {'{BOOKING_URL}'} для подстановки ссылки
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Алгоритм действий при записи
+                📋 Алгоритм действий
               </label>
               <textarea
                 value={settings.algorithm_actions}
                 onChange={(e) => setSettings({ ...settings, algorithm_actions: e.target.value })}
-                placeholder="ЭТАП 1: Поприветствуй тепло&#10;ЭТАП 2: Консультация по услуге&#10;ЭТАП 3: Направь на запись"
+                placeholder="ЭТАП 1: Поприветствуй&#10;ЭТАП 2: Консультация"
                 rows={5}
                 style={{
                   width: '100%',
@@ -785,7 +874,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.objection_handling}
                 onChange={(e) => setSettings({ ...settings, objection_handling: e.target.value })}
-                placeholder={`"Дорого" → Подчеркни качество и долговременность\n"Нет времени" → Напомни что запись за 2 минуты онлайн\n"Боюсь боли" → Расскажи про анестезию и профессионализм мастеров\n"Не уверен(а)" → Предложи посмотреть работы в Instagram`}
+                placeholder={`"Дорого" → Подчеркни качество`}
                 rows={6}
                 style={{
                   width: '100%',
@@ -797,19 +886,16 @@ export default function BotSettings() {
                   resize: 'vertical'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Каждое возражение на новой строке в формате: "Возражение" → Как ответить
-              </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😔 Обработка негатива и жалоб
+                😔 Обработка негатива
               </label>
               <textarea
                 value={settings.negative_handling}
                 onChange={(e) => setSettings({ ...settings, negative_handling: e.target.value })}
-                placeholder="При жалобе: извинись искренне, предложи решение, перенаправь к менеджеру&#10;Пример: Мне очень жаль, что так случилось 😔 Давайте я передам ваш вопрос нашему менеджеру"
+                placeholder="При жалобе: извинись искренне"
                 rows={4}
                 style={{
                   width: '100%',
@@ -830,7 +916,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.example_good_responses}
                 onChange={(e) => setSettings({ ...settings, example_good_responses: e.target.value })}
-                placeholder={`✅ ХОРОШО: "Gelish маникюр - 130 AED 💅 Это японский гель-лак, который держится 3 недели без сколов!"\n❌ ПЛОХО: "Маникюр 130 AED"`}
+                placeholder={`✅ ХОРОШО: "Gelish маникюр - 130 AED"`}
                 rows={6}
                 style={{
                   width: '100%',
@@ -851,7 +937,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.emergency_situations}
                 onChange={(e) => setSettings({ ...settings, emergency_situations: e.target.value })}
-                placeholder="При агрессии → Оставайся спокойной и профессиональной&#10;При технических вопросах → Перенаправь на техподдержку&#10;При жалобах → Собери информацию и передай менеджеру"
+                placeholder="При агрессии → Оставайся спокойной"
                 rows={4}
                 style={{
                   width: '100%',
@@ -881,7 +967,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.location_features}
                 onChange={(e) => setSettings({ ...settings, location_features: e.target.value })}
-                placeholder="JBR - престижный район Dubai&#10;Рядом с пляжем и The Walk&#10;Удобная парковка&#10;Легко добраться на метро (станция DMCC)"
+                placeholder="JBR - престижный район Dubai"
                 rows={4}
                 style={{
                   width: '100%',
@@ -897,12 +983,12 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌡️ Сезонность и праздники
+                🌡️ Сезонность
               </label>
               <textarea
                 value={settings.seasonality}
                 onChange={(e) => setSettings({ ...settings, seasonality: e.target.value })}
-                placeholder="Лето в Dubai (май-сентябрь): акцент на indoor процедуры&#10;Зима (октябрь-апрель): можно упоминать возможность прогулки после процедуры&#10;Праздники: Eid, New Year, Valentine's - создавай ажиотаж"
+                placeholder="Лето: indoor процедуры"
                 rows={4}
                 style={{
                   width: '100%',
@@ -923,7 +1009,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.success_metrics}
                 onChange={(e) => setSettings({ ...settings, success_metrics: e.target.value })}
-                placeholder="Хороший диалог заканчивается:&#10;- Клиент переходит на онлайн-запись&#10;- Клиент получил полную информацию&#10;- Остался позитивный эмоциональный след&#10;- Захотел вернуться снова"
+                placeholder="Клиент перешел на запись"
                 rows={5}
                 style={{
                   width: '100%',
@@ -957,10 +1043,10 @@ export default function BotSettings() {
               <Shield size={20} color="#1e40af" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af', fontWeight: '600', marginBottom: '0.25rem' }}>
-                  Важно для безопасности клиентов:
+                  Важно для безопасности:
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af' }}>
-                  Эти правила защищают как клиентов, так и репутацию салона
+                  Эти правила защищают клиентов и репутацию салона
                 </p>
               </div>
             </div>
@@ -972,7 +1058,7 @@ export default function BotSettings() {
               <textarea
                 value={settings.safety_guidelines}
                 onChange={(e) => setSettings({ ...settings, safety_guidelines: e.target.value })}
-                placeholder={`Не разглашай личную информацию клиентов\nНе делай медицинских рекомендаций\nПри вопросах о здоровье - рекомендуй консультацию со специалистом\nУважай границы клиента\nНе обсуждай конкурентов негативно`}
+                placeholder={`Не разглашай личную информацию\nНе делай медицинских рекомендаций`}
                 rows={8}
                 style={{
                   width: '100%',
@@ -984,29 +1070,6 @@ export default function BotSettings() {
                   resize: 'vertical'
                 }}
               />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Каждое правило на новой строке
-              </p>
-            </div>
-
-            <div style={{
-              backgroundColor: '#f3f4f6',
-              borderRadius: '0.5rem',
-              padding: '1rem'
-            }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
-                ⚠️ Что бот НЕ должен делать:
-              </h3>
-              <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#6b7280', fontSize: '0.875rem', lineHeight: '1.75' }}>
-                <li>Не разглашать личные данные клиентов</li>
-                <li>Не давать медицинские советы или диагнозы</li>
-                <li>Не собирать данные для записи (имя, телефон, дату)</li>
-                <li>Не придумывать цены - только из базы данных</li>
-                <li>Не обещать то, чего нет</li>
-                <li>Не воспроизводить copyrighted контент</li>
-                <li>Не быть навязчивым или агрессивным</li>
-                <li>Не обсуждать конкурентов негативно</li>
-              </ul>
             </div>
           </div>
         )}
