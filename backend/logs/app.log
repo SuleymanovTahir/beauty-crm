@@ -5949,3 +5949,98 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-22 05:14:36 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
 2025-10-22 05:14:36 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
 2025-10-22 05:14:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:14:49 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:14:49 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:14:53 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:14:53 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:15:04 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:15:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:04 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:15:04 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:15:04 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:15:04 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:15:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:04 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:15:04 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:15:04 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:15:04 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:15:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:15:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:15:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:15:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:15:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:15:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:15:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:15:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:15:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:15:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:08 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:15:08 - crm - ERROR - [api] Error loading bot settings: no such table: bot_settings
+2025-10-22 05:15:08 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:15:13 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:15:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:13 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:15:13 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:15:13 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:15:13 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:15:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:13 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:15:13 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:15:13 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:15:13 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:15:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:13 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:15:13 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:15:19 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:15:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:19 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:15:19 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:15:19 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:15:19 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:15:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:19 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:15:19 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:15:19 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:15:19 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:15:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:35 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:15:35 - crm - ERROR - [api] Error loading bot settings: no such table: bot_settings
+2025-10-22 05:15:35 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:15:37 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:15:37 - crm - ERROR - [api] Error loading bot settings: no such table: bot_settings
+2025-10-22 05:15:37 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:15:52 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:15:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:52 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:15:52 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:15:52 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:15:52 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:15:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:52 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:15:52 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:15:52 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:15:52 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:15:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:15:53 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:15:53 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:16:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:16:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:16:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:16:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:16:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:16:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:16:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:16:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:16:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:16:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:16:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:16:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:16:09 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:16:09 - crm - ERROR - [api] Error loading bot settings: no such table: bot_settings
+2025-10-22 05:16:09 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 05:16:10 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 05:16:10 - crm - ERROR - [api] Error loading bot settings: no such table: bot_settings
+2025-10-22 05:16:10 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
