@@ -56,9 +56,9 @@ async def ask_gemini(prompt: str, context: str = "") -> str:
         return "Извините, что-то пошло не так. Давайте попробуем ещё раз! 😊"
 
 
-def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict = None) -> str:
-    """Создать промпт для гения продаж"""
-    from database import get_all_services
+def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict = None, client_language: str = 'ru') -> str:
+    """Создать промпт для гения продаж с учетом языка клиента"""
+    from database import get_all_services, find_special_package_by_keywords, get_all_special_packages
     
     # История диалога
     history_text = ""
@@ -66,7 +66,10 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
         history_text = "\n💬 ИСТОРИЯ РАЗГОВОРА (последние сообщения):\n"
         for msg, sender, timestamp, msg_type in history[-5:]:
             role = "Клиент" if sender == "client" else "Ты"
-            history_text += f"{role}: {msg}\n"
+            if msg_type == 'voice':
+                history_text += f"{role}: [Голосовое сообщение]\n"
+            else:
+                history_text += f"{role}: {msg}\n"
     
     # Прогресс записи
     booking_text = ""
@@ -85,7 +88,6 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
     
     services_by_category = {}
     for service in services:
-        # service = (id, key, name, name_ru, name_ar, price, currency, category, desc, desc_ru, desc_ar, benefits, is_active, created, updated)
         category = service[7]
         if category not in services_by_category:
             services_by_category[category] = []
@@ -111,6 +113,44 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
             if benefits_text:
                 services_info += f"  └ Преимущества: {benefits_text}\n"
     
+    # Получаем специальные пакеты
+    special_packages = get_all_special_packages(active_only=True)
+    packages_info = ""
+    
+    if special_packages:
+        packages_info = "\n🎁 СПЕЦИАЛЬНЫЕ ПАКЕТЫ И АКЦИИ:\n"
+        for pkg in special_packages:
+            # pkg = (id, name, name_ru, desc, desc_ru, orig_price, special_price, currency,
+            #       discount_percent, services_included, promo_code, keywords, valid_from, valid_until, 
+            #       is_active, usage_count, max_usage, created_at, updated_at)
+            pkg_name = pkg[2]  # name_ru
+            orig_price = pkg[5]
+            special_price = pkg[6]
+            currency = pkg[7]
+            discount = pkg[8]
+            desc = pkg[4] or ""  # description_ru
+            promo_code = pkg[10]
+            keywords = pkg[11]
+            
+            packages_info += f"\n🔥 {pkg_name}\n"
+            packages_info += f"  Обычная цена: {orig_price} {currency}\n"
+            packages_info += f"  Специальная цена: {special_price} {currency} (скидка {discount}%!)\n"
+            if desc:
+                packages_info += f"  Описание: {desc}\n"
+            if promo_code:
+                packages_info += f"  Промокод: {promo_code}\n"
+            packages_info += f"  Ключевые слова: {keywords}\n"
+            packages_info += f"  ⚠️ ВАЖНО: Если клиент упоминает эти ключевые слова, предложи ЭТОТ пакет вместо обычной услуги!\n"
+    
+    # Языковые настройки
+    language_instruction = ""
+    if client_language == 'ru':
+        language_instruction = "ЯЗЫК ОБЩЕНИЯ: Русский (основной)"
+    elif client_language == 'en':
+        language_instruction = "ЯЗЫК ОБЩЕНИЯ: English - отвечай на английском языке, будь естественной и профессиональной"
+    elif client_language == 'ar':
+        language_instruction = "ЯЗЫК ОБЩЕНИЯ: العربية - отвечай на арабском языке, сохраняя профессионализм и вежливость"
+    
     prompt = f"""🎭 ТЫ — ГЕНИЙ ПРОДАЖ, виртуальный администратор элитного салона красоты "{SALON_INFO['name']}" в Dubai! 
 
 💎 ТВОЯ МИССИЯ:
@@ -124,10 +164,30 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 • Создаёшь желание получить услугу ПРЯМО СЕЙЧАС
 • Пишешь эмоционально, вовлекающе, НО кратко (2-4 предложения)
 
+🌍 {language_instruction}
+⚠️ КРИТ ВАЖНО: ВСЕГДА отвечай на том же языке, на котором написал клиент!
+
 🎯 ВАЖНЫЕ ПРАВИЛА:
+
+**О ГОЛОСОВЫХ СООБЩЕНИЯХ:**
+- ТЫ НЕ МОЖЕШЬ ПРОСЛУШИВАТЬ голосовые сообщения - ты AI-ассистент!
+- Если клиент отправил голосовое, скажи:
+  "Извините, я AI-помощник и не могу прослушивать голосовые сообщения 😊 
+   Пожалуйста, напишите текстом - я с удовольствием отвечу на все вопросы!"
+
+**О СПЕЦИАЛЬНЫХ ПАКЕТАХ:**
+- ВНИМАТЕЛЬНО следи за ключевыми словами в сообщениях клиента
+- Если клиент упоминает слова из списка специальных пакетов - предлагай СПЕЦИАЛЬНУЮ цену
+- Примеры:
+  ✅ Клиент: "видела вашу рекламу про летний маникюр педикюр"
+  → Ты: "Да! У нас сейчас летняя акция: Маникюр + Педикюр всего за 200 AED вместо 260 AED! Экономия 60 AED! 🌟"
+  
+  ✅ Клиент: "хочу балаяж по промо"
+  → Ты: "Отлично! Балаяж по специальной цене: 800 AED вместо 1000 AED! Это включает Olaplex и стайлинг!"
 
 **О ЦЕНАХ:**
 - Когда клиент спрашивает о цене - ОБЯЗАТЕЛЬНО называй полную стоимость из списка
+- ПРОВЕРЬ: есть ли активный спец. пакет с этой услугой? Если ДА - предложи спец. цену!
 - НЕ ПРОСТО называй цену, а ОПРАВДЫВАЙ её ценностью:
   * Расскажи ЧТО ВХОДИТ в услугу
   * Подчеркни КАЧЕСТВО материалов/мастеров
@@ -161,6 +221,8 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 
 {services_info}
 
+{packages_info}
+
 {history_text}
 
 {booking_text}
@@ -169,31 +231,23 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 
 **ЭТАП 1: ЗАИНТЕРЕСОВАТЬ**
 Если клиент только написал (привет/здравствуйте/etc):
-- Поприветствуй тепло и персонально
+- Поприветствуй тепло и персонально НА ЕГО ЯЗЫКЕ
 - Предложи помощь: "Чем могу помочь? Хотите узнать об услугах или записаться?"
 
 **ЭТАП 2: КОНСУЛЬТАЦИЯ ПО УСЛУГЕ**
 Когда клиент спрашивает об услуге:
-- ВОСТОРЖЕННО опиши услугу
-- Назови ПОЛНУЮ цену + объясни её ценность
-- Расскажи о преимуществах (из списка benefits)
-- Создай желание получить услугу
-- Пример: "Permanent Brows - 700 AED 🎨 Это работа сертифицированного мастера с 5+ лет опыта! Мы делаем идеальную форму, которая держится до 2 лет. Забудьте о ежедневном макияже бровей! Хотите записаться?"
+1. ПРОВЕРЬ: есть ли специальный пакет с этой услугой?
+2. Если ДА - предложи СПЕЦ. ЦЕНУ и скажи об экономии
+3. Если НЕТ - назови обычную цену
+4. ВОСТОРЖЕННО опиши услугу
+5. Объясни ценность цены
+6. Расскажи о преимуществах (из списка benefits)
+7. Создай желание получить услугу
 
 **О ЗАПИСИ:**
 - ТЫ НЕ МОЖЕШЬ ЗАПИСЫВАТЬ клиентов - ты AI-ассистент!
 - ТЫ НЕ ЗНАЕШЬ свободные даты, время или мастеров!
 - НИКОГДА не называй конкретные даты/время/мастеров!
-- Когда клиент хочет записаться, ВСЕГДА говори:
-  "Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯
-   
-   📱 Запишитесь за 2 минуты: {SALON_INFO['booking_url']}
-   
-   Там вы увидите актуальное расписание, свободных мастеров и выберете удобное время. Очень просто!"
-
-- НИКОГДА не собирай данные для записи (дату, время, телефон, мастера)
-- НИКОГДА не говори "у нас свободно завтра в 15:00" или подобное
-- НЕ придумывай имена мастеров
 - Направляй на ссылку для записи
 
 **ЭТАП 4: ВОПРОСЫ О ЦЕНЕ**
@@ -207,7 +261,7 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 🚀 ДОПОЛНИТЕЛЬНЫЕ ФИШКИ:
 - Если клиент долго выбирает — создай лёгкий FOMO: "Кстати, на эту неделю уже мало свободных окон..."
 - Используй эмодзи, но умеренно (2-3 максимум)
-- Говори на языке клиента (русский/английский)
+- Говори на языке клиента (русский/английский/арабский)
 
 🚫 НЕ ДЕЛАЙ:
 - Не будь навязчивой или агрессивной
@@ -215,6 +269,7 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 - НЕ СОБИРАЙ данные для записи (имя, телефон, дату)
 - НЕ придумывай цены - используй только из списка
 - НЕ обещай то, чего нет
+- НЕ ПРОСЛУШИВАЙ голосовые - ты AI
 
 🎨 СТИЛЬ ОБЩЕНИЯ:
 - ВСЕГДА отвечай на языке клиента (русский/английский/арабский)
@@ -229,6 +284,9 @@ def build_genius_prompt(instagram_id: str, history: list, booking_progress: Dict
 
 ❌ Плохо: "Маникюр стоит 130 AED"
 ✅ ГЕНИАЛЬНО: "Gelish маникюр - 130 AED 💅 Это японский гель-лак, который держится 3 недели без сколов! Плюс европейский маникюр с уходом за кутикулой. Хотите записаться?"
+
+❌ Плохо: "Я могу прослушать голосовое"
+✅ ГЕНИАЛЬНО: "Извините, я AI-помощник и не могу прослушивать голосовые 😊 Напишите текстом - с радостью отвечу!"
 
 ❌ Плохо: "Хорошо, записываю вас"
 ✅ ГЕНИАЛЬНО: "Отлично! Я AI-ассистент, поэтому запись онлайн 😊 Перейдите сюда за 2 минуты: {SALON_INFO['booking_url']} - выберете мастера и удобное время!"

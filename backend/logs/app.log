@@ -5797,3 +5797,83 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-21 20:02:45 - crm - INFO - [middleware] 📤 POST /api/bot-settings → 200 (0.00s)
 2025-10-21 20:02:53 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
 2025-10-21 20:02:53 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:08:30 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:08:30 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:19:43 - crm - INFO - [middleware] 🔥 OPTIONS /api/bot-settings
+2025-10-22 04:19:43 - crm - INFO - [middleware] 📤 OPTIONS /api/bot-settings → 200 (0.00s)
+2025-10-22 04:19:43 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:19:43 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:24:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 04:24:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:24:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 04:24:01 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 04:24:01 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 04:24:01 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 04:24:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:24:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 04:24:01 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 04:24:01 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 04:24:01 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 04:24:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:40:08 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 04:40:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:40:08 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 04:40:08 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 04:40:08 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 04:40:08 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 04:40:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:40:08 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 04:40:08 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 04:40:08 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 04:40:08 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 04:40:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:41:56 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 04:41:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:41:56 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 04:41:56 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 04:41:56 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 04:41:56 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 04:41:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:41:56 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 04:41:56 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 04:41:56 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 04:41:56 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 04:41:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:42:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 04:42:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:42:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 04:42:39 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 04:42:39 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 04:42:39 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 04:42:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:42:39 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 04:42:39 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 04:42:39 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 04:42:39 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 04:42:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:43:04 - crm - INFO - [middleware] 🔥 OPTIONS /api/bot-settings
+2025-10-22 04:43:04 - crm - INFO - [middleware] 📤 OPTIONS /api/bot-settings → 200 (0.00s)
+2025-10-22 04:43:04 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:43:04 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:43:16 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:43:16 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:44:02 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:44:02 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:44:07 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:44:07 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 04:44:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 04:44:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:44:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 04:44:54 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 04:44:54 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 04:44:54 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 04:44:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:44:54 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 04:44:54 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 04:44:54 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 04:44:54 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 04:44:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 04:46:00 - crm - INFO - [middleware] 🔥 POST /api/bot-settings
+2025-10-22 04:46:00 - crm - INFO - [middleware] 📤 POST /api/bot-settings → 200 (0.00s)
+2025-10-22 04:46:01 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 04:46:01 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)

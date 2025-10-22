@@ -11,7 +11,7 @@ def init_database():
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
-    # Таблица услуг
+    # Таблица клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS clients
                  (instagram_id TEXT PRIMARY KEY,
                   username TEXT,
@@ -44,6 +44,12 @@ def init_database():
         c.execute("ALTER TABLE clients ADD COLUMN is_pinned INTEGER DEFAULT 0")
     except sqlite3.OperationalError:
         pass
+    
+    # Добавляем колонку для определенного языка
+    try:
+        c.execute("ALTER TABLE clients ADD COLUMN detected_language TEXT DEFAULT 'ru'")
+    except sqlite3.OperationalError:
+        pass
 
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,7 +79,14 @@ def init_database():
                   created_at TEXT,
                   completed_at TEXT,
                   revenue REAL DEFAULT 0,
-                  notes TEXT)''')
+                  notes TEXT,
+                  special_package_id INTEGER)''')
+    
+    # Добавляем колонку special_package_id если её нет
+    try:
+        c.execute("ALTER TABLE bookings ADD COLUMN special_package_id INTEGER")
+    except sqlite3.OperationalError:
+        pass
 
     c.execute('''CREATE TABLE IF NOT EXISTS booking_temp
                  (instagram_id TEXT PRIMARY KEY,
@@ -145,7 +158,6 @@ def init_database():
                   ('admin', password_hash, 'Администратор', 'admin', now))
         print("✅ Создан дефолтный пользователь: admin / admin123")
 
-    # После всех CREATE TABLE, перед conn.commit()
     # Таблица услуг
     c.execute('''CREATE TABLE IF NOT EXISTS services
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -165,15 +177,38 @@ def init_database():
                   updated_at TEXT)''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
-  id INTEGER PRIMARY KEY,
-  user_id INTEGER NOT NULL,
-  email_notifications BOOLEAN DEFAULT 1,
-  sms_notifications BOOLEAN DEFAULT 0,
-  booking_notifications BOOLEAN DEFAULT 1,
-  birthday_reminders BOOLEAN DEFAULT 1,
-  birthday_days_advance INTEGER DEFAULT 7,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);''')
+      id INTEGER PRIMARY KEY,
+      user_id INTEGER NOT NULL,
+      email_notifications BOOLEAN DEFAULT 1,
+      sms_notifications BOOLEAN DEFAULT 0,
+      booking_notifications BOOLEAN DEFAULT 1,
+      birthday_reminders BOOLEAN DEFAULT 1,
+      birthday_days_advance INTEGER DEFAULT 7,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );''')
+    
+    # ===== НОВАЯ ТАБЛИЦА: СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
+    c.execute('''CREATE TABLE IF NOT EXISTS special_packages
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name TEXT NOT NULL,
+                  name_ru TEXT NOT NULL,
+                  description TEXT,
+                  description_ru TEXT,
+                  original_price REAL NOT NULL,
+                  special_price REAL NOT NULL,
+                  currency TEXT DEFAULT 'AED',
+                  discount_percent INTEGER,
+                  services_included TEXT,
+                  promo_code TEXT UNIQUE,
+                  keywords TEXT NOT NULL,
+                  valid_from TEXT NOT NULL,
+                  valid_until TEXT NOT NULL,
+                  is_active INTEGER DEFAULT 1,
+                  usage_count INTEGER DEFAULT 0,
+                  max_usage INTEGER,
+                  created_at TEXT,
+                  updated_at TEXT)''')
+    
     conn.commit()
     conn.close()
     print("✅ База данных инициализирована")
@@ -213,6 +248,202 @@ def migrate_services_to_db():
     conn.close()
     print("✅ Услуги перенесены в базу данных")
 
+
+# ===== ФУНКЦИИ ДЛЯ РАБОТЫ С СПЕЦИАЛЬНЫМИ ПАКЕТАМИ =====
+
+def get_all_special_packages(active_only=True):
+    """Получить все специальные пакеты"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    now = datetime.now().isoformat()
+    
+    if active_only:
+        c.execute("""SELECT * FROM special_packages 
+                     WHERE is_active = 1 
+                     AND valid_from <= ? 
+                     AND valid_until >= ?
+                     ORDER BY created_at DESC""", (now, now))
+    else:
+        c.execute("SELECT * FROM special_packages ORDER BY created_at DESC")
+
+    packages = c.fetchall()
+    conn.close()
+    return packages
+
+
+def get_special_package_by_id(package_id):
+    """Получить пакет по ID"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM special_packages WHERE id = ?", (package_id,))
+    package = c.fetchone()
+
+    conn.close()
+    return package
+
+
+def find_special_package_by_keywords(message: str):
+    """Найти подходящий спец. пакет по ключевым словам в сообщении"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    now = datetime.now().isoformat()
+    message_lower = message.lower()
+
+    c.execute("""SELECT * FROM special_packages 
+                 WHERE is_active = 1 
+                 AND valid_from <= ? 
+                 AND valid_until >= ?""", (now, now))
+
+    packages = c.fetchall()
+    conn.close()
+
+    # Ищем совпадения по ключевым словам
+    for package in packages:
+        # package = (id, name, name_ru, desc, desc_ru, orig_price, special_price, currency,
+        #           discount_percent, services_included, promo_code, keywords, valid_from, valid_until, 
+        #           is_active, usage_count, max_usage, created_at, updated_at)
+        keywords_str = package[11]  # keywords
+        if keywords_str:
+            keywords = [kw.strip().lower() for kw in keywords_str.split(',')]
+            for keyword in keywords:
+                if keyword in message_lower:
+                    return package
+    
+    return None
+
+
+def create_special_package(name, name_ru, original_price, special_price, currency,
+                           keywords, valid_from, valid_until, description=None,
+                           description_ru=None, services_included=None, promo_code=None,
+                           max_usage=None):
+    """Создать новый специальный пакет"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    now = datetime.now().isoformat()
+    discount_percent = int(((original_price - special_price) / original_price) * 100)
+    
+    services_str = ','.join(services_included) if services_included else ''
+    keywords_str = ','.join(keywords) if isinstance(keywords, list) else keywords
+
+    try:
+        c.execute("""INSERT INTO special_packages 
+                     (name, name_ru, description, description_ru, original_price, special_price,
+                      currency, discount_percent, services_included, promo_code, keywords,
+                      valid_from, valid_until, created_at, updated_at, max_usage)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  (name, name_ru, description, description_ru, original_price, special_price,
+                   currency, discount_percent, services_str, promo_code, keywords_str,
+                   valid_from, valid_until, now, now, max_usage))
+        conn.commit()
+        package_id = c.lastrowid
+        conn.close()
+        return package_id
+    except sqlite3.IntegrityError as e:
+        conn.close()
+        print(f"Ошибка создания пакета: {e}")
+        return None
+
+
+def update_special_package(package_id, **kwargs):
+    """Обновить специальный пакет"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    updates = []
+    params = []
+
+    for key, value in kwargs.items():
+        if key == 'services_included' and isinstance(value, list):
+            value = ','.join(value)
+        elif key == 'keywords' and isinstance(value, list):
+            value = ','.join(value)
+        updates.append(f"{key} = ?")
+        params.append(value)
+
+    updates.append("updated_at = ?")
+    params.append(datetime.now().isoformat())
+    params.append(package_id)
+
+    query = f"UPDATE special_packages SET {', '.join(updates)} WHERE id = ?"
+    c.execute(query, params)
+
+    conn.commit()
+    conn.close()
+    return True
+
+
+def delete_special_package(package_id):
+    """Удалить специальный пакет"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("DELETE FROM special_packages WHERE id = ?", (package_id,))
+
+    conn.commit()
+    conn.close()
+    return True
+
+
+def increment_package_usage(package_id):
+    """Увеличить счетчик использования пакета"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("UPDATE special_packages SET usage_count = usage_count + 1 WHERE id = ?", 
+              (package_id,))
+
+    conn.commit()
+    conn.close()
+
+
+# ===== ЯЗЫКОВЫЕ ФУНКЦИИ =====
+
+def detect_and_save_language(instagram_id: str, message: str):
+    """Определить язык сообщения и сохранить для клиента"""
+    # Простое определение языка по символам
+    import re
+    
+    # Проверка на кириллицу
+    if re.search('[а-яА-ЯёЁ]', message):
+        language = 'ru'
+    # Проверка на арабский
+    elif re.search('[\u0600-\u06FF]', message):
+        language = 'ar'
+    # По умолчанию английский
+    else:
+        language = 'en'
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("UPDATE clients SET detected_language = ? WHERE instagram_id = ?",
+              (language, instagram_id))
+    
+    conn.commit()
+    conn.close()
+    
+    return language
+
+
+def get_client_language(instagram_id: str) -> str:
+    """Получить предпочитаемый язык клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("SELECT detected_language FROM clients WHERE instagram_id = ?", (instagram_id,))
+    result = c.fetchone()
+    
+    conn.close()
+    
+    return result[0] if result and result[0] else 'ru'
+
+
+# ===== ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ ИЗ ОРИГИНАЛЬНОГО database.py =====
+# (копируем все остальные функции без изменений)
 
 def get_all_users():
     """Получить всех пользователей"""
@@ -336,7 +567,6 @@ def delete_service(service_id):
     conn.commit()
     conn.close()
     return True
-# ===== ФУНКЦИИ ДЛЯ РАБОТЫ С ПОЛЬЗОВАТЕЛЯМИ =====
 
 
 def create_user(username: str, password: str, full_name: str = None,
@@ -479,7 +709,7 @@ def reset_user_password(user_id: int, new_password: str):
     conn.commit()
     conn.close()
 
-    return True  # ✅ Просто возвращаем успех
+    return True
 
 
 def create_session(user_id: int) -> str:
@@ -557,8 +787,6 @@ def log_activity(user_id: int, action: str, entity_type: str,
     conn.commit()
     conn.close()
 
-# ===== ФУНКЦИИ ДЛЯ РАБОТЫ С КЛИЕНТАМИ =====
-
 
 def get_client_by_id(instagram_id: str):
     """Получить клиента по ID"""
@@ -567,7 +795,7 @@ def get_client_by_id(instagram_id: str):
 
     c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
                  last_contact, total_messages, labels, status, lifetime_value,
-                 profile_pic, notes, is_pinned 
+                 profile_pic, notes, is_pinned, detected_language
                  FROM clients WHERE instagram_id = ?""", (instagram_id,))
 
     client = c.fetchone()
@@ -633,8 +861,6 @@ def pin_client(instagram_id: str, pinned: bool = True):
     conn.commit()
     conn.close()
 
-# ===== ФУНКЦИИ ДЛЯ РАБОТЫ С СООБЩЕНИЯМИ =====
-
 
 def mark_messages_as_read(instagram_id: str, user_id: int = None):
     """Отметить сообщения как прочитанные"""
@@ -664,8 +890,6 @@ def get_unread_messages_count(instagram_id: str) -> int:
 
     return count
 
-# ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
-
 
 def get_or_create_client(instagram_id: str, username: str = None):
     """Получить или создать клиента"""
@@ -678,9 +902,9 @@ def get_or_create_client(instagram_id: str, username: str = None):
     if not client:
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO clients 
-                     (instagram_id, username, first_contact, last_contact, total_messages, labels, status)
-                     VALUES (?, ?, ?, ?, 0, ?, ?)""",
-                  (instagram_id, username, now, now, "Новый клиент", "new"))
+                     (instagram_id, username, first_contact, last_contact, total_messages, labels, status, detected_language)
+                     VALUES (?, ?, ?, ?, 0, ?, ?, ?)""",
+                  (instagram_id, username, now, now, "Новый клиент", "new", "ru"))
         conn.commit()
         print(f"✨ Новый клиент: {instagram_id}")
     else:
@@ -771,19 +995,23 @@ def clear_booking_progress(instagram_id: str):
     conn.close()
 
 
-def save_booking(instagram_id: str, service: str, datetime_str: str, phone: str, name: str):
+def save_booking(instagram_id: str, service: str, datetime_str: str, phone: str, name: str, special_package_id: int = None):
     """Сохранить завершённую запись"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
     now = datetime.now().isoformat()
     c.execute("""INSERT INTO bookings 
-                 (instagram_id, service_name, datetime, phone, name, status, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)""",
-              (instagram_id, service, datetime_str, phone, name, "pending", now))
+                 (instagram_id, service_name, datetime, phone, name, status, created_at, special_package_id)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+              (instagram_id, service, datetime_str, phone, name, "pending", now, special_package_id))
 
     c.execute("UPDATE clients SET status = 'lead', phone = ?, name = ? WHERE instagram_id = ?",
               (phone, name, instagram_id))
+    
+    # Увеличиваем счетчик использования пакета если это спец. пакет
+    if special_package_id:
+        increment_package_usage(special_package_id)
 
     conn.commit()
     conn.close()
@@ -1037,8 +1265,6 @@ def get_funnel_data():
         }
     }
 
-# Добавьте эти функции в конец вашего database.py
-
 
 def get_custom_statuses():
     """Получить все кастомные статусы"""
@@ -1124,9 +1350,7 @@ def update_custom_status(status_key: str, status_label: str = None,
         print(f"Ошибка обновления статуса: {e}")
         conn.close()
         return False
-    
 
-# backend/database.py - добавить в конец:
 
 def get_notification_settings(user_id: int):
     """Получить настройки уведомлений пользователя"""
