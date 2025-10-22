@@ -103,7 +103,7 @@ export default function AdminSettings() {
     }
   };
 
-  // Roles handlers
+    // Roles handlers
   const handleCreateRole = async () => {
     if (!createRoleForm.role_key || !createRoleForm.role_name) {
       toast.error('Заполните обязательные поля');
@@ -113,7 +113,7 @@ export default function AdminSettings() {
     try {
       setSavingRole(true);
       await api.createRole(createRoleForm);
-      toast.success('✅ Роль создана');
+      toast.success('✅ Роль создана! Теперь настройте права доступа.');
       setShowCreateRoleDialog(false);
       setCreateRoleForm({ role_key: '', role_name: '', role_description: '' });
       await loadRoles();

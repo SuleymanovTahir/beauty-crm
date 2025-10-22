@@ -132,7 +132,7 @@ export default function Bookings() {
 
   const handleAddBooking = async () => {
     if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
-      alert('Заполните все обязательные поля');
+      alert('Заполните все обязательные поля (клиент, услуга, дата, время)');
       return;
     }
 
@@ -141,7 +141,7 @@ export default function Bookings() {
       await api.createBooking({
         instagram_id: selectedClient.instagram_id,
         name: selectedClient.display_name,
-        phone: addForm.phone || selectedClient.phone,
+        phone: addForm.phone || selectedClient.phone || '',
         service: selectedService.name_ru,
         date: addForm.date,
         time: addForm.time,
@@ -158,7 +158,6 @@ export default function Bookings() {
       setAddingBooking(false);
     }
   };
-
   const resetForm = () => {
     setClientSearch('');
     setServiceSearch('');

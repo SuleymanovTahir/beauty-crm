@@ -7603,3 +7603,21 @@ jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path:
 2025-10-22 06:11:04 - crm - INFO - [middleware] 📤 OPTIONS /api/special-packages → 200 (0.00s)
 2025-10-22 06:11:04 - crm - INFO - [middleware] 🔥 GET /api/special-packages
 2025-10-22 06:11:04 - crm - INFO - [middleware] 📤 GET /api/special-packages → 200 (0.00s)
+2025-10-22 06:23:41 - crm - INFO - [middleware] 🔥 OPTIONS /api/special-packages
+2025-10-22 06:23:41 - crm - INFO - [middleware] 📤 OPTIONS /api/special-packages → 200 (0.00s)
+2025-10-22 06:23:41 - crm - INFO - [middleware] 🔥 GET /api/special-packages
+2025-10-22 06:23:41 - crm - INFO - [middleware] 📤 GET /api/special-packages → 200 (0.00s)
+2025-10-22 06:31:03 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-22 06:31:03 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-22 06:31:03 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-22 06:31:03 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-22 06:31:08 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:31:08 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:31:08 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:31:08 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:31:14 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 06:31:14 - crm - INFO - [middleware] 📤 GET /api/export/clients → 400 (0.00s)
+2025-10-22 06:31:15 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 06:31:15 - crm - INFO - [middleware] 📤 GET /api/export/clients → 400 (0.00s)
+2025-10-22 06:31:17 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 06:31:17 - crm - INFO - [middleware] 📤 GET /api/export/clients → 200 (0.00s)

@@ -304,6 +304,50 @@ export class ApiClient {
       method: 'DELETE',
     })
   }
+
+  // ===== РОЛИ И ПРАВА =====
+  async getRoles() {
+    return this.request<any>('/api/roles')
+  }
+
+  async createRole(data: { role_key: string; role_name: string; role_description?: string }) {
+    return this.request('/api/roles', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteRole(roleKey: string) {
+    return this.request(`/api/roles/${roleKey}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getRolePermissions(roleKey: string) {
+    return this.request<any>(`/api/roles/${roleKey}/permissions`)
+  }
+
+  async updateRolePermissions(roleKey: string, permissions: any) {
+    return this.request(`/api/roles/${roleKey}/permissions`, {
+      method: 'POST',
+      body: JSON.stringify({ permissions }),
+    })
+  }
+
+  async getAvailablePermissions() {
+    return this.request<any>('/api/permissions/available')
+  }
+
+  async getUserPermissions(userId: number) {
+    return this.request<any>(`/api/users/${userId}/permissions`)
+  }
+
+  async updateUserRole(userId: number, role: string) {
+    return this.request(`/api/users/${userId}/role`, {
+      method: 'POST',
+      body: JSON.stringify({ role }),
+    })
+  }
 }
 
 export const api = new ApiClient()

@@ -10,10 +10,15 @@ import {
   AlertCircle,
   Trash2,
   X,
+  Pin,
+  Download,
+  FileText,
+  FileSpreadsheet
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
@@ -41,10 +46,7 @@ interface Client {
 const statusConfig: Record<string, { label: string; color: string }> = {
   new: { label: "Новый", color: "bg-green-100 text-green-800" },
   contacted: { label: "Связались", color: "bg-blue-100 text-blue-800" },
-  interested: {
-    label: "Заинтересован",
-    color: "bg-yellow-100 text-yellow-800",
-  },
+  interested: { label: "Заинтересован", color: "bg-yellow-100 text-yellow-800" },
   lead: { label: "Лид", color: "bg-orange-100 text-orange-800" },
   customer: { label: "Клиент", color: "bg-purple-100 text-purple-800" },
   vip: { label: "VIP", color: "bg-pink-100 text-pink-800" },
@@ -57,10 +59,12 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   // СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -76,19 +80,25 @@ export default function Clients() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
 
+  // Export Menu
+  const [showExportMenu, setShowExportMenu] = useState(false);
+
   useEffect(() => {
     loadClients();
   }, []);
 
   useEffect(() => {
-    const filtered = clients.filter(
-      (client) =>
-        client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        client.phone.includes(searchTerm) ||
-        client.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = clients.filter(client => {
+      const matchesSearch = 
+        (client.display_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (client.phone || '').includes(searchTerm) ||
+        (client.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (client.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || client.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
     setFilteredClients(filtered);
-  }, [searchTerm, clients]);
+  }, [searchTerm, statusFilter, clients]);
 
   const loadClients = async () => {
     try {
@@ -103,8 +113,7 @@ export default function Clients() {
         toast.info("Клиентов не найдено");
       }
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Ошибка загрузки клиентов";
+      const message = err instanceof Error ? err.message : "Ошибка загрузки клиентов";
       setError(message);
       toast.error(`Ошибка: ${message}`);
       console.error("Error loading clients:", err);
@@ -121,17 +130,20 @@ export default function Clients() {
   };
 
   const handleCreateClient = async () => {
-    if (!createForm.name.trim() || !createForm.phone.trim()) {
-      toast.error("Заполните имя и телефон");
+    if (!createForm.name.trim()) {
+      toast.error("Заполните имя клиента");
       return;
     }
 
     try {
       setCreatingClient(true);
+      
+      const instagram_id = createForm.instagram_id.trim() || `manual_${Date.now()}`;
+      
       await api.createClient({
+        instagram_id,
         name: createForm.name,
-        phone: createForm.phone,
-        instagram_id: createForm.instagram_id || "",
+        phone: createForm.phone || '',
         notes: createForm.notes,
       });
 
@@ -172,6 +184,42 @@ export default function Clients() {
     }
   };
 
+  const handlePinClient = async (clientId: string) => {
+    try {
+      await api.pinClient(clientId);
+      await loadClients();
+      toast.success('Изменено');
+    } catch (err) {
+      toast.error('Ошибка');
+    }
+  };
+
+  const handleExport = async (format: 'csv' | 'pdf' | 'excel') => {
+    try {
+      setExporting(true);
+      const blob = await api.exportClients(format);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const ext = format === 'excel' ? 'xlsx' : format;
+      link.download = `clients_${new Date().toISOString().split('T')[0]}.${ext}`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`Файл ${format.toUpperCase()} успешно скачан`);
+      setShowExportMenu(false);
+    } catch (err) {
+      toast.error('Ошибка при экспорте');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const stats = {
     total: clients.length,
     vip: clients.filter((c) => c.status === "vip").length,
@@ -199,10 +247,7 @@ export default function Clients() {
             <div className="flex-1">
               <p className="text-red-800 font-medium">Ошибка загрузки</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
-              <Button
-                onClick={loadClients}
-                className="mt-4 bg-red-600 hover:bg-red-700"
-              >
+              <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
                 Попробовать еще раз
               </Button>
             </div>
@@ -223,9 +268,7 @@ export default function Clients() {
           <p className="text-gray-600">{filteredClients.length} клиентов</p>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
-          <RefreshCw
-            className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-          />
+          <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
           Обновить
         </Button>
       </div>
@@ -255,19 +298,66 @@ export default function Clients() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по имени, телефону..."
+              placeholder="Поиск по имени, телефону, Instagram..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Button
-            className="bg-pink-600 hover:bg-pink-700"
-            onClick={() => setShowCreateDialog(true)}
-          >
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full md:w-[200px]">
+              <SelectValue placeholder="Статус" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Все статусы</SelectItem>
+              <SelectItem value="new">Новые</SelectItem>
+              <SelectItem value="contacted">Связались</SelectItem>
+              <SelectItem value="interested">Заинтересованы</SelectItem>
+              <SelectItem value="lead">Лиды</SelectItem>
+              <SelectItem value="customer">Клиенты</SelectItem>
+              <SelectItem value="vip">VIP</SelectItem>
+              <SelectItem value="inactive">Неактивные</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button className="bg-pink-600 hover:bg-pink-700" onClick={() => setShowCreateDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Добавить клиента
           </Button>
+          <div className="relative">
+            <Button 
+              onClick={() => setShowExportMenu(!showExportMenu)} 
+              disabled={exporting} 
+              variant="outline"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              {exporting ? 'Экспорт...' : 'Экспорт'}
+            </Button>
+            {showExportMenu && (
+              <div className="absolute right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[180px]">
+                <button
+                  onClick={() => handleExport('csv')}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100"
+                >
+                  <FileText className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm text-gray-900">Экспорт в CSV</span>
+                </button>
+                <button
+                  onClick={() => handleExport('excel')}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100"
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                  <span className="text-sm text-gray-900">Экспорт в Excel</span>
+                </button>
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
+                >
+                  <FileText className="w-4 h-4 text-red-600" />
+                  <span className="text-sm text-gray-900">Экспорт в PDF</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -277,81 +367,47 @@ export default function Clients() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Клиент
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Контакты
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Сообщений
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    LTV
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Последний контакт
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Статус
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">
-                    Действия
-                  </th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Клиент</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Контакты</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Сообщений</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">LTV</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Последний контакт</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Статус</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredClients.map((client) => (
-                  <tr
-                    key={client.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                  <tr key={client.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
+                        {client.is_pinned === 1 && (
+                          <Pin className="w-4 h-4 text-pink-600 fill-pink-600" />
+                        )}
                         <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white">
-                          {client.name
-                            ? client.name.charAt(0).toUpperCase()
-                            : "?"}
+                          {client.name ? client.name.charAt(0).toUpperCase() : "?"}
                         </div>
                         <div>
-                          <p className="text-sm text-gray-900 font-medium">
-                            {client.display_name}
-                          </p>
+                          <p className="text-sm text-gray-900 font-medium">{client.display_name}</p>
                           {client.username && (
-                            <p className="text-xs text-gray-500">
-                              @{client.username}
-                            </p>
+                            <p className="text-xs text-gray-500">@{client.username}</p>
                           )}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-sm text-gray-900">
-                        {client.phone || "-"}
-                      </p>
+                      <p className="text-sm text-gray-900">{client.phone || "-"}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {client.total_messages}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{client.total_messages}</td>
                     <td className="px-6 py-4 text-sm text-green-600 font-medium">
                       {client.lifetime_value} AED
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
-                      {new Date(client.last_contact).toLocaleDateString(
-                        "ru-RU"
-                      )}
+                      {new Date(client.last_contact).toLocaleDateString("ru-RU")}
                     </td>
                     <td className="px-6 py-4">
-                      <Badge
-                        className={
-                          statusConfig[
-                            client.status as keyof typeof statusConfig
-                          ]?.color || "bg-gray-100 text-gray-800"
-                        }
-                      >
-                        {statusConfig[
-                          client.status as keyof typeof statusConfig
-                        ]?.label || client.status}
+                      <Badge className={statusConfig[client.status as keyof typeof statusConfig]?.color || "bg-gray-100 text-gray-800"}>
+                        {statusConfig[client.status as keyof typeof statusConfig]?.label || client.status}
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
@@ -359,9 +415,7 @@ export default function Clients() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() =>
-                            navigate(`/admin/clients/${client.id}`)
-                          }
+                          onClick={() => navigate(`/admin/clients/${client.id}`)}
                           title="Просмотр информации о клиенте"
                         >
                           <Eye className="w-4 h-4" />
@@ -370,12 +424,18 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           className="text-green-600 hover:bg-green-50"
-                          onClick={() =>
-                            navigate(`/admin/chat?client_id=${client.id}`)
-                          }
+                          onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
                           title="Написать сообщение"
                         >
                           <MessageSquare className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handlePinClient(client.id)}
+                          title="Закрепить клиента"
+                        >
+                          <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
                         </Button>
                         <Button
                           size="sm"
@@ -425,23 +485,25 @@ export default function Clients() {
             </div>
 
             <div>
-              <Label htmlFor="phone">Телефон *</Label>
+              <Label htmlFor="phone">Телефон</Label>
               <Input
                 id="phone"
                 value={createForm.phone}
                 onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
                 placeholder="+971 50 123 4567"
               />
+              <p className="text-xs text-gray-500 mt-1">Необязательно</p>
             </div>
 
             <div>
-              <Label htmlFor="instagram">Instagram ID (опционально)</Label>
+              <Label htmlFor="instagram">Instagram ID</Label>
               <Input
                 id="instagram"
                 value={createForm.instagram_id}
                 onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
-                placeholder="123456789"
+                placeholder="123456789 или @username"
               />
+              <p className="text-xs text-gray-500 mt-1">Необязательно, автоматически сгенерируется</p>
             </div>
 
             <div>
@@ -457,18 +519,10 @@ export default function Clients() {
           </div>
 
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowCreateDialog(false)}
-              disabled={creatingClient}
-            >
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)} disabled={creatingClient}>
               Отмена
             </Button>
-            <Button
-              onClick={handleCreateClient}
-              className="bg-pink-600 hover:bg-pink-700"
-              disabled={creatingClient}
-            >
+            <Button onClick={handleCreateClient} className="bg-pink-600 hover:bg-pink-700" disabled={creatingClient}>
               {creatingClient ? 'Создание...' : 'Создать'}
             </Button>
           </DialogFooter>
@@ -478,39 +532,24 @@ export default function Clients() {
       {/* Delete Confirmation Dialog */}
       {showDeleteDialog && clientToDelete && (
         <div style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '1rem'
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '1rem'
         }}>
           <div style={{
-            backgroundColor: '#fff',
-            borderRadius: '1rem',
+            backgroundColor: '#fff', borderRadius: '1rem',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-            width: '100%',
-            maxWidth: '420px',
-            overflow: 'hidden'
+            width: '100%', maxWidth: '420px', overflow: 'hidden'
           }}>
-            {/* Red Header */}
             <div style={{
-              backgroundColor: '#fef2f2',
-              borderBottom: '2px solid #fecaca',
+              backgroundColor: '#fef2f2', borderBottom: '2px solid #fecaca',
               padding: '1.5rem'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  backgroundColor: '#fee2e2',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
+                  width: '40px', height: '40px', borderRadius: '50%',
+                  backgroundColor: '#fee2e2', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0
                 }}>
                   <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />
                 </div>
@@ -520,18 +559,14 @@ export default function Clients() {
               </div>
             </div>
 
-            {/* Content */}
             <div style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
               <p style={{ color: '#1f2937', marginBottom: '1rem', fontSize: '0.95rem' }}>
                 Вы удаляете клиента <strong>"{clientToDelete.name}"</strong>
               </p>
 
               <div style={{
-                backgroundColor: '#fefce8',
-                borderLeft: '4px solid #facc15',
-                padding: '1rem',
-                marginBottom: '1rem',
-                borderRadius: '0.5rem'
+                backgroundColor: '#fefce8', borderLeft: '4px solid #facc15',
+                padding: '1rem', marginBottom: '1rem', borderRadius: '0.5rem'
               }}>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                   <AlertCircle style={{ width: '20px', height: '20px', color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
@@ -549,14 +584,10 @@ export default function Clients() {
               </div>
             </div>
 
-            {/* Footer */}
             <div style={{
-              backgroundColor: '#f9fafb',
-              borderTop: '1px solid #e5e7eb',
-              padding: '1rem 1.5rem',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '0.75rem'
+              backgroundColor: '#f9fafb', borderTop: '1px solid #e5e7eb',
+              padding: '1rem 1.5rem', display: 'flex',
+              justifyContent: 'flex-end', gap: '0.75rem'
             }}>
               <button
                 onClick={() => {
@@ -565,19 +596,12 @@ export default function Clients() {
                 }}
                 disabled={deletingId !== null}
                 style={{
-                  padding: '0.625rem 1.25rem',
-                  fontSize: '0.95rem',
-                  fontWeight: '500',
-                  color: '#374151',
-                  backgroundColor: '#fff',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
+                  padding: '0.625rem 1.25rem', fontSize: '0.95rem',
+                  fontWeight: '500', color: '#374151', backgroundColor: '#fff',
+                  border: '1px solid #d1d5db', borderRadius: '0.5rem',
                   cursor: deletingId !== null ? 'not-allowed' : 'pointer',
-                  opacity: deletingId !== null ? 0.5 : 1,
-                  transition: 'background-color 0.2s'
+                  opacity: deletingId !== null ? 0.5 : 1
                 }}
-                onMouseEnter={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#f3f4f6'; }}
-                onMouseLeave={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#fff'; }}
               >
                 Отмена
               </button>
@@ -585,23 +609,13 @@ export default function Clients() {
                 onClick={handleConfirmDelete}
                 disabled={deletingId !== null}
                 style={{
-                  padding: '0.625rem 1.25rem',
-                  fontSize: '0.95rem',
-                  fontWeight: '500',
-                  color: '#fff',
-                  backgroundColor: '#dc2626',
-                  border: '1px solid #dc2626',
-                  borderRadius: '0.5rem',
+                  padding: '0.625rem 1.25rem', fontSize: '0.95rem',
+                  fontWeight: '500', color: '#fff', backgroundColor: '#dc2626',
+                  border: '1px solid #dc2626', borderRadius: '0.5rem',
                   cursor: deletingId !== null ? 'not-allowed' : 'pointer',
                   opacity: deletingId !== null ? 0.5 : 1,
-                  transition: 'background-color 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  whiteSpace: 'nowrap'
+                  display: 'flex', alignItems: 'center', gap: '0.5rem'
                 }}
-                onMouseEnter={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#b91c1c'; }}
-                onMouseLeave={(e) => { if (deletingId === null) e.target.style.backgroundColor = '#dc2626'; }}
               >
                 {deletingId ? (
                   <>
@@ -614,12 +628,7 @@ export default function Clients() {
               </button>
             </div>
           </div>
-          <style>{`
-            @keyframes spin {
-              from { transform: rotate(0deg); }
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
+          <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
         </div>
       )}
     </div>
