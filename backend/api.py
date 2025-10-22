@@ -13,10 +13,10 @@ from database import (
     get_all_clients, get_client_by_id, get_all_bookings, 
     update_client_info, update_client_status, pin_client,
     get_chat_history, mark_messages_as_read, save_message,
-    get_all_messages, get_stats, get_analytics_data, get_funnel_data,
+     get_stats, get_analytics_data, get_funnel_data,
     get_all_services, update_booking_status, log_activity,
     get_unread_messages_count, get_or_create_client, save_booking,
-    get_all_users, delete_user, create_custom_status, delete_custom_status,
+    get_all_users, delete_user, create_custom_status, delete_custom_status,get_all_messages,
     get_custom_statuses, create_service, update_service, delete_service,
     delete_client, get_user_by_session, DATABASE_NAME,
     get_all_special_packages, create_special_package, 
@@ -26,8 +26,10 @@ from database import (
     get_salon_settings, update_salon_settings,  # ✅ ДОБАВЬТЕ
     get_bot_settings, update_bot_settings,
 )
-from config import CLIENT_STATUSES, SALON_INFO
+from config import CLIENT_STATUSES
 from instagram import send_message
+
+salon = get_salon_settings()
 
 # ===== ИМПОРТЫ ДЛЯ PDF И EXCEL =====
 try:
@@ -128,7 +130,7 @@ def export_clients_pdf(clients):
         alignment=1
     )
     
-    title = Paragraph(f"База клиентов - {SALON_INFO['name']}", title_style)
+    title = Paragraph(f"База клиентов - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     
@@ -259,7 +261,7 @@ def export_bookings_pdf(bookings):
         alignment=1
     )
     
-    title = Paragraph(f"Записи - {SALON_INFO['name']}", title_style)
+    title = Paragraph(f"Записи - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     

@@ -1,3 +1,6 @@
+# backend/config.py
+# ✅ Импортируйте get_salon_settings() из database.py когда нужны настройки салона
+
 import os
 from dotenv import load_dotenv
 from datetime import datetime
@@ -18,23 +21,6 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "taha")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 INSTAGRAM_BUSINESS_ID = os.getenv("INSTAGRAM_BUSINESS_ID", "17841448618072548")
-
-# ===== ИНФОРМАЦИЯ О САЛОНЕ (из .env) =====
-SALON_INFO = {
-    "name": os.getenv("SALON_NAME", "M.Le Diamant Beauty Lounge"),
-    "name_ar": "صالون M.Le Diamant للتجميل",
-    "address": os.getenv("SALON_ADDRESS", "Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai"),
-    "address_ar": "المحل 13، مستوى أمواج 3 بلازا، جميرا بيتش ريزيدنس، دبي",
-    "google_maps": "https://maps.app.goo.gl/r84DsemFhptY8RuC7",
-    "hours": "Daily 10:30 - 21:00",
-    "hours_ru": "Ежедневно 10:30 - 21:00",
-    "hours_ar": "يوميًا 10:30 - 21:00",
-    "booking_url": os.getenv("SALON_BOOKING_URL", "https://n1314037.alteg.io"),
-    "phone": os.getenv("SALON_PHONE", "+971 XX XXX XXXX"),
-    "bot_name": "Diamant",
-    "bot_name_en": "Diamant",
-    "bot_name_ar": "الماس"
-}
 
 # ===== EMAIL CONFIG (из .env) =====
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
@@ -61,6 +47,8 @@ CLIENT_STATUSES = {
 }
 
 # ===== ПОЛНЫЙ ПРАЙС-ЛИСТ УСЛУГ =====
+# ⚠️ ПРИМЕЧАНИЕ: Эти данные используются для миграции в БД при первом запуске
+# После миграции все данные берутся из БД через get_all_services()
 SERVICES = {
     # Permanent Makeup
     "permanent_lips": {
@@ -95,7 +83,6 @@ SERVICES = {
         "description_ru": "Деликатная прорисовка межресничного пространства",
         "benefits": ["Визуальная густота ресниц", "Естественный эффект", "Стойкость до 1.5 лет"]
     },
-    # ... (остальные услуги - скопируйте из вашего полного списка)
     "manicure_gelish": {
         "name": "Gelish manicure",
         "name_ru": "Маникюр гель-лак",
@@ -121,5 +108,5 @@ if missing_vars:
     raise ValueError(f"❌ Не установлены обязательные переменные окружения: {', '.join(missing_vars)}")
 
 print("✅ Config загружен успешно!")
-print(f"   Салон: {SALON_INFO['name']}")
 print(f"   Database: {DATABASE_NAME}")
+print(f"   ℹ️  Для настроек салона используйте: from database import get_salon_settings")

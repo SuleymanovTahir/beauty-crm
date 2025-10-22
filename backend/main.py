@@ -17,22 +17,27 @@ import ssl
 # ===== ИМПОРТ ЦЕНТРАЛИЗОВАННОГО ЛОГГЕРА =====
 from logger import logger, log_info, log_error, log_warning, log_critical
 
+
+
+
 # ===== ИМПОРТЫ КОНФИГУРАЦИИ =====
-from config import VERIFY_TOKEN, SALON_INFO, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
+from config import VERIFY_TOKEN, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
 
 # ===== ИМПОРТЫ DATABASE =====
 from database import (
     init_database, get_or_create_client, save_message,
-    get_chat_history, get_booking_progress, update_booking_progress,
-    clear_booking_progress, save_booking, get_stats,
-    verify_user, create_session, delete_session, create_user,
+    get_chat_history, get_booking_progress,get_stats,
+    verify_user, create_session, delete_session, create_user,DATABASE_NAME,
+    get_user_by_email, create_password_reset_token, verify_reset_token,
+    reset_user_password, mark_reset_token_used, get_salon_settings,
+    update_booking_progress,
+    clear_booking_progress, save_booking, 
     get_all_clients, get_all_bookings, get_analytics_data, 
     get_funnel_data, update_booking_status, get_client_by_id,
-    update_client_info, get_all_services, DATABASE_NAME, log_activity,
-    get_user_by_email, create_password_reset_token, verify_reset_token,
-    reset_user_password, mark_reset_token_used, get_all_users,
+    update_client_info, get_all_services,  log_activity,
+     get_all_users,
     detect_and_save_language, get_client_language,
-    find_special_package_by_keywords, increment_package_usage,get_salon_settings,
+    find_special_package_by_keywords, increment_package_usage,
 )
 
 # ===== ИМПОРТЫ BOT =====
@@ -64,9 +69,10 @@ def ensure_upload_directories():
 # Создаём директории сразу при импорте
 ensure_upload_directories()
 
+salon = get_salon_settings()
 
 # ===== ИНИЦИАЛИЗАЦИЯ FASTAPI =====
-app = FastAPI(title=f"💎 {SALON_INFO['name']} CRM")
+app = FastAPI(title=f"💎 {salon['name']} CRM")
 
 
 # ===== WEBSOCKET (опционально) =====
@@ -123,6 +129,7 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 
+  
 # ===== MIDDLEWARE ЛОГИРОВАНИЯ =====
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -167,8 +174,8 @@ async def root():
     """Главная страница API"""
     return {
         "status": "✅ CRM работает!",
-        "salon": SALON_INFO['name'],
-        "bot": SALON_INFO['bot_name'],
+        "salon": salon['name'],
+        "bot": salon['bot_name'],
         "version": "2.0.0",
         "features": [
             "AI-гений продаж (Gemini 2.0 Flash)",
@@ -257,7 +264,7 @@ async def login_page(request: Request, error: str = None, success: str = None):
         log_info("Открыта страница логина", "auth")
         return templates.TemplateResponse("admin/login.html", {
             "request": request,
-            "salon_info": SALON_INFO,
+            "salon": salon,
             "error": error,
             "success": success
         })
@@ -287,7 +294,7 @@ async def register_page(request: Request):
     try:
         return templates.TemplateResponse("admin/register.html", {
             "request": request,
-            "salon_info": SALON_INFO
+            "salon": salon
         })
     except Exception as e:
         log_error(f"Ошибка в register_page: {e}", "auth", exc_info=True)
@@ -310,7 +317,7 @@ async def register(
             log_warning(f"Логин слишком короткий: {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Логин должен быть минимум 3 символа"
             })
         
@@ -318,7 +325,7 @@ async def register(
             log_warning(f"Пароль слишком короткий для {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Пароль должен быть минимум 6 символов"
             })
         
@@ -326,7 +333,7 @@ async def register(
             log_warning(f"Имя слишком короткое для {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Полное имя должно быть минимум 2 символа"
             })
         
@@ -337,7 +344,7 @@ async def register(
             log_warning(f"Пользователь {username} уже существует", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Пользователь с таким именем уже существует"
             })
 
@@ -347,7 +354,7 @@ async def register(
         log_error(f"Ошибка при регистрации: {e}", "auth", exc_info=True)
         return templates.TemplateResponse("admin/register.html", {
             "request": request,
-            "salon_info": SALON_INFO,
+            "salon": salon,
             "error": f"Ошибка сервера: {str(e)}"
         })
 
@@ -358,7 +365,7 @@ async def forgot_password_page(request: Request):
     try:
         return templates.TemplateResponse("admin/forgot_password.html", {
             "request": request,
-            "salon_info": SALON_INFO
+            "salon": salon
         })
     except Exception as e:
         log_error(f"Ошибка в forgot_password_page: {e}", "auth", exc_info=True)
@@ -376,7 +383,7 @@ async def forgot_password(request: Request, email: str = Form(...)):
             log_warning(f"Email {email} не найден", "auth")
             return templates.TemplateResponse("admin/forgot_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "success": "Если email существует в системе, инструкции отправлены на почту"
             })
 
@@ -403,7 +410,7 @@ async def forgot_password(request: Request, email: str = Form(...)):
 
 ---
 M.Le Diamant Beauty Lounge
-{SALON_INFO['address']}
+{salon['address']}
             """
 
             html = f"""
@@ -422,7 +429,7 @@ M.Le Diamant Beauty Lounge
                   <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
                   <p style="font-size: 12px; color: #999;">
                     M.Le Diamant Beauty Lounge<br>
-                    {SALON_INFO['address']}
+                    {salon['address']}
                   </p>
                 </div>
               </body>
@@ -453,7 +460,7 @@ M.Le Diamant Beauty Lounge
 
         return templates.TemplateResponse("admin/forgot_password.html", {
             "request": request,
-            "salon_info": SALON_INFO,
+            "salon": salon,
             "success": "Если email существует в системе, инструкции отправлены на почту"
         })
     except Exception as e:
@@ -471,13 +478,13 @@ async def reset_password_page(request: Request, token: str = Query(...)):
             log_warning("Недействительный токен для сброса пароля", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Недействительная или истёкшая ссылка"
             })
 
         return templates.TemplateResponse("admin/reset_password.html", {
             "request": request,
-            "salon_info": SALON_INFO,
+            "salon": salon,
             "token": token
         })
     except Exception as e:
@@ -498,7 +505,7 @@ async def reset_password(
             log_warning("Пароли не совпадают", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "token": token,
                 "error": "Пароли не совпадают"
             })
@@ -507,7 +514,7 @@ async def reset_password(
             log_warning("Пароль слишком короткий", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "token": token,
                 "error": "Пароль должен быть минимум 6 символов"
             })
@@ -518,7 +525,7 @@ async def reset_password(
             log_warning("Недействительный токен при сбросе пароля", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "error": "Недействительная или истёкшая ссылка"
             })
 
@@ -532,7 +539,7 @@ async def reset_password(
             log_error(f"Ошибка сброса пароля для пользователя {user_id}", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
                 "request": request,
-                "salon_info": SALON_INFO,
+                "salon": salon,
                 "token": token,
                 "error": "Ошибка при сбросе пароля. Попробуйте позже."
             })
@@ -678,7 +685,7 @@ async def index(request: Request):
         return templates.TemplateResponse("index.html", {
             "request": request,
             "title": "Онлайн-запись",
-            "salon_info": salon  # ✅ Передаем из БД
+            "salon": salon  # ✅ Передаем из БД
         })
     except Exception as e:
         log_error(f"Ошибка: {e}", "api", exc_info=True)
@@ -697,7 +704,7 @@ async def book(request: Request, name: str = Form(...), phone: str = Form(...), 
                 "title": "Запись успешно отправлена",
                 "name": name,
                 "service": service,
-                "salon_info": SALON_INFO
+                "salon": salon
             },
         )
     except Exception as e:
@@ -717,7 +724,7 @@ async def privacy_policy(request: Request):
                 "We do not collect, store, or share personal user data. "
                 "If you want to delete your data, contact us at mladimontuae@gmail.com."
             ),
-            "salon_info": SALON_INFO
+            "salon": salon
         })
     except Exception as e:
         log_error(f"Ошибка в privacy_policy: {e}", "api", exc_info=True)
@@ -736,7 +743,7 @@ async def terms_of_service(request: Request):
                 "automatically reply to your inquiries about our salon services. "
                 "All conversations are confidential and not shared with third parties."
             ),
-            "salon_info": SALON_INFO
+            "salon": salon
         })
     except Exception as e:
         log_error(f"Ошибка в terms_of_service: {e}", "api", exc_info=True)

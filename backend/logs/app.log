@@ -11691,3 +11691,110 @@ sqlite3.OperationalError: no such table: custom_roles
 2025-10-22 16:01:49 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-22 16:01:49 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.01s)
 2025-10-22 16:01:49 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-22 19:37:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:37:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:37:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:37:01 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:37:01 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:37:01 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:37:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:37:01 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:37:01 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:37:01 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:37:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:38:09 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:38:09 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:38:09 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:38:09 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:38:09 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:38:09 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:38:09 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:38:09 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:38:09 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:38:09 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:38:09 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:38:45 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:38:45 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:38:45 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:38:45 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:38:45 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:38:45 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:38:45 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:38:45 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:38:45 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:38:45 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:38:45 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:52:24 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:52:37 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:52:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:52:50 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:53:55 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:53:55 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:53:55 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:53:55 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:53:55 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:53:55 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:53:55 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:53:55 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:53:55 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:53:55 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:53:55 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:27 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:54:27 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:27 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:54:27 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:54:27 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:54:27 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:54:27 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:54:27 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:54:27 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:54:27 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:54:27 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:29 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:54:29 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:29 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:54:29 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:54:29 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:54:29 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:54:29 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:54:29 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:54:29 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:54:29 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:54:29 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:54:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:54:38 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:54:38 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:54:38 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:54:38 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:54:38 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:54:38 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:54:38 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:54:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:47 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:54:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:54:47 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:54:47 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:54:47 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:54:47 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:54:47 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:54:47 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:54:47 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:54:47 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:54:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:55:00 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 19:55:00 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:55:00 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 19:55:00 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 19:55:00 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 19:55:00 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 19:55:00 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 19:55:00 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 19:55:00 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 19:55:00 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 19:55:00 - crm - INFO - [startup] ======================================================================
+2025-10-22 19:55:06 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-22 19:55:06 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-22 19:55:06 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-22 19:55:06 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)

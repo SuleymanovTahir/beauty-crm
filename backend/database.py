@@ -1841,12 +1841,60 @@ def get_bot_settings() -> dict:
         conn.close()
 
 
+# ========================================
+# ПАТЧ ДЛЯ backend/database.py
+# ========================================
+# Замените функцию update_bot_settings() на эту версию
+
 def update_bot_settings(data: dict) -> bool:
-    """Обновить настройки бота"""
+    """
+    Обновить настройки бота
+    ✅ ИСПРАВЛЕНО: теперь корректно обрабатывает все поля
+    ✅ ИСПРАВЛЕНО: мержит новые данные с текущими
+    """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
     try:
+        # ✅ Получаем текущие настройки чтобы заполнить пропущенные поля
+        c.execute("SELECT * FROM bot_settings LIMIT 1")
+        result = c.fetchone()
+        
+        if not result:
+            log_error("❌ Настройки бота не найдены! Запустите: python migrate_bot_settings.py", "database")
+            conn.close()
+            return False
+        
+        # Парсим текущие настройки
+        current = {
+            "bot_name": result[1],
+            "personality_traits": result[2],
+            "greeting_message": result[3],
+            "farewell_message": result[4],
+            "price_explanation": result[5],
+            "price_response_template": result[6],
+            "premium_justification": result[7],
+            "booking_redirect_message": result[8],
+            "fomo_messages": result[9],
+            "upsell_techniques": result[10],
+            "communication_style": result[11],
+            "max_message_length": result[12],
+            "emoji_usage": result[13],
+            "languages_supported": result[14],
+            "objection_handling": result[15],
+            "negative_handling": result[16],
+            "safety_guidelines": result[17],
+            "example_good_responses": result[18],
+            "algorithm_actions": result[19],
+            "location_features": result[20],
+            "seasonality": result[21],
+            "emergency_situations": result[22],
+            "success_metrics": result[23],
+        }
+        
+        # ✅ Мержим: новые данные поверх текущих
+        merged = {**current, **data}
+        
         c.execute("""UPDATE bot_settings SET
                     bot_name = ?,
                     personality_traits = ?,
@@ -1873,35 +1921,43 @@ def update_bot_settings(data: dict) -> bool:
                     success_metrics = ?,
                     updated_at = CURRENT_TIMESTAMP
                     WHERE id = 1""",
-                  (data.get('bot_name'),
-                   data.get('personality_traits'),
-                   data.get('greeting_message'),
-                   data.get('farewell_message'),
-                   data.get('price_explanation'),
-                   data.get('price_response_template'),
-                   data.get('premium_justification'),
-                   data.get('booking_redirect_message'),
-                   data.get('fomo_messages'),
-                   data.get('upsell_techniques'),
-                   data.get('communication_style'),
-                   data.get('max_message_length'),
-                   data.get('emoji_usage'),
-                   data.get('languages_supported'),
-                   data.get('objection_handling'),
-                   data.get('negative_handling'),
-                   data.get('safety_guidelines'),
-                   data.get('example_good_responses'),
-                   data.get('algorithm_actions'),
-                   data.get('location_features'),
-                   data.get('seasonality'),
-                   data.get('emergency_situations'),
-                   data.get('success_metrics')))
+                  (merged.get('bot_name'),
+                   merged.get('personality_traits'),
+                   merged.get('greeting_message'),
+                   merged.get('farewell_message'),
+                   merged.get('price_explanation'),
+                   merged.get('price_response_template'),
+                   merged.get('premium_justification'),
+                   merged.get('booking_redirect_message'),
+                   merged.get('fomo_messages'),
+                   merged.get('upsell_techniques'),
+                   merged.get('communication_style'),
+                   merged.get('max_message_length', 4),
+                   merged.get('emoji_usage'),
+                   merged.get('languages_supported'),
+                   merged.get('objection_handling'),
+                   merged.get('negative_handling'),
+                   merged.get('safety_guidelines'),
+                   merged.get('example_good_responses'),
+                   merged.get('algorithm_actions'),
+                   merged.get('location_features'),
+                   merged.get('seasonality'),
+                   merged.get('emergency_situations'),
+                   merged.get('success_metrics')))
         
         conn.commit()
-        log_info("✅ Настройки бота обновлены", "database")
-        return True
+        
+        if c.rowcount > 0:
+            log_info(f"✅ Настройки бота обновлены ({c.rowcount} записей)", "database")
+            return True
+        else:
+            log_error("⚠️ Не удалось обновить настройки бота (0 записей)", "database")
+            return False
+            
     except Exception as e:
-        log_error(f"Ошибка обновления настроек бота: {e}", "database")
+        log_error(f"❌ Ошибка обновления настроек бота: {e}", "database")
+        import traceback
+        log_error(traceback.format_exc(), "database")
         conn.rollback()
         return False
     finally:
