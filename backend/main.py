@@ -32,7 +32,7 @@ from database import (
     get_user_by_email, create_password_reset_token, verify_reset_token,
     reset_user_password, mark_reset_token_used, get_all_users,
     detect_and_save_language, get_client_language,
-    find_special_package_by_keywords, increment_package_usage
+    find_special_package_by_keywords, increment_package_usage,get_salon_settings,
 )
 
 # ===== ИМПОРТЫ BOT =====
@@ -101,16 +101,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ===== MIDDLEWARE TRUSTED HOSTS =====
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=[
-        "mlediamant.com", 
-        "*.mlediamant.com",
-        "localhost",
-        "127.0.0.1",
-    ]
-)
+# # ===== MIDDLEWARE TRUSTED HOSTS =====
+# app.add_middleware(
+#     TrustedHostMiddleware,
+#     allowed_hosts=[
+#         "mlediamant.com", 
+#         "*.mlediamant.com",
+#         "localhost",
+#         "127.0.0.1",
+#     ]
+# )
 
 
 # ===== MIDDLEWARE SECURITY HEADERS =====
@@ -674,13 +674,14 @@ async def handle_webhook(request: Request):
 async def index(request: Request):
     """HTML: Главная страница"""
     try:
+        salon = get_salon_settings()  # ✅ Берем из БД
         return templates.TemplateResponse("index.html", {
             "request": request,
             "title": "Онлайн-запись",
-            "salon_info": SALON_INFO
+            "salon_info": salon  # ✅ Передаем из БД
         })
     except Exception as e:
-        log_error(f"Ошибка в index: {e}", "api", exc_info=True)
+        log_error(f"Ошибка: {e}", "api", exc_info=True)
         raise
 
 
@@ -750,11 +751,15 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        log_info(f"💎 Салон: {SALON_INFO['name']}", "startup")
-        log_info(f"🤖 Бот-гений продаж: {SALON_INFO['bot_name']}", "startup")
-        log_info(f"📍 Адрес: {SALON_INFO['address']}", "startup")
-        log_info("=" * 70, "startup")
-
+        try:
+            salon = get_salon_settings()
+            log_info(f"💎 Салон: {salon['name']}", "startup")
+            log_info(f"🤖 Бот: {salon['bot_name']}", "startup")
+            log_info(f"📍 Адрес: {salon['address']}", "startup")
+        except Exception as e:
+            log_error("❌ Настройки не инициализированы!", "startup")
+            log_error("👉 Запустите: python migrate_bot_settings.py", "startup")
+            raise
         init_database()
 
         log_info("✅ CRM готова к работе!", "startup")

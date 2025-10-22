@@ -137,20 +137,31 @@ export default function Chat() {
   };
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !selectedClient) return;
+    // ✅ ИСПРАВЛЕНО: Проверяем есть ли текст ИЛИ файлы
+    if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
     try {
-      await api.sendMessage(selectedClient.id, message);
-      
-      const newMessage: Message = {
-        id: Date.now(),
-        message: message,
-        sender: 'bot',
-        timestamp: new Date().toISOString(),
-        type: 'text'
-      };
-      
-      setMessages([...messages, newMessage]);
+      // TODO: В будущем добавить отправку файлов на сервер
+      if (attachedFiles.length > 0) {
+        // Пока только предупреждение - отправка файлов требует доработки backend
+        toast.info('Отправка файлов будет добавлена в следующем обновлении');
+      }
+
+      // Отправляем текстовое сообщение
+      if (message.trim()) {
+        await api.sendMessage(selectedClient.id, message);
+        
+        const newMessage: Message = {
+          id: Date.now(),
+          message: message,
+          sender: 'bot',
+          timestamp: new Date().toISOString(),
+          type: 'text'
+        };
+        
+        setMessages([...messages, newMessage]);
+      }
+
       setMessage('');
       setAttachedFiles([]);
       toast.success('Сообщение отправлено');
@@ -161,15 +172,17 @@ export default function Chat() {
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...files]);
-      toast.success(`${files.length} файл(ов) добавлено`);
+      // ✅ ИСПРАВЛЕНО: Правильный текст toast
+      toast.success(`${files.length} ${files.length === 1 ? 'файл добавлен' : 'файла добавлено'}`);
     }
   };
 
   const handleRemoveFile = (index: number) => {
     setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
+    toast.info('Файл удален');
   };
 
   const handleSaveNotes = () => {
@@ -181,6 +194,9 @@ export default function Chat() {
     client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.phone.includes(searchTerm)
   );
+
+  // ✅ ДОБАВЛЕНО: Проверка можно ли отправить (есть текст ИЛИ файлы)
+  const canSend = message.trim().length > 0 || attachedFiles.length > 0;
 
   if (loading) {
     return (
@@ -426,7 +442,9 @@ export default function Chat() {
             {/* Attached Files */}
             {attachedFiles.length > 0 && (
               <div className="border-t border-gray-200 p-3 bg-gray-100 space-y-2">
-                <p className="text-xs font-semibold text-gray-700">Прикрепленные файлы:</p>
+                <p className="text-xs font-semibold text-gray-700">
+                  Прикрепленные файлы ({attachedFiles.length}):
+                </p>
                 <div className="space-y-1">
                   {attachedFiles.map((file, index) => (
                     <div key={index} className="flex items-center justify-between p-2 bg-white rounded border border-gray-200">
@@ -462,7 +480,9 @@ export default function Chat() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        handleSendMessage();
+                        if (canSend) {
+                          handleSendMessage();
+                        }
                       }
                     }}
                   />
@@ -485,10 +505,11 @@ export default function Chat() {
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
+                  {/* ✅ ИСПРАВЛЕНО: Кнопка активна если есть текст ИЛИ файлы */}
                   <Button
                     onClick={handleSendMessage}
                     className="bg-gradient-to-r from-pink-500 to-purple-600"
-                    disabled={!message.trim()}
+                    disabled={!canSend}
                     title="Отправить"
                   >
                     <Send className="w-4 h-4" />

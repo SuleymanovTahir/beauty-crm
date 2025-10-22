@@ -8917,3 +8917,1210 @@ sqlite3.OperationalError: no such table: custom_roles
 2025-10-22 11:56:57 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
 2025-10-22 11:57:48 - crm - INFO - [middleware] 🔥 POST /webhook
 2025-10-22 11:57:48 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:58:29 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:58:29 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:58:53 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 11:58:53 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:58:53 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 11:58:53 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 11:58:53 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 11:58:53 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 11:58:53 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:58:53 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 11:58:53 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 11:58:53 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 11:58:53 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 11:58:53 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:59:03 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:59:03 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:59:23 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:59:23 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:00:18 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:00:18 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:00:44 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:00:44 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:00:59 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:00:59 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:01:28 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:01:28 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:02:34 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:02:34 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:03:19 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:03:19 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:04:11 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:04:11 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:04:14 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:04:14 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:04:17 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:04:17 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 12:05:15 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:05:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:05:15 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:05:15 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:05:15 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:05:15 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:05:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:05:15 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 12:05:15 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 12:05:15 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 12:05:15 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 12:05:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:05:15 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:15 - crm - INFO - ======================================================================
+2025-10-22 12:05:15 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:15 - crm - INFO - 📦 RAW BODY (396 bytes):
+2025-10-22 12:05:15 - crm - INFO - {"object":"instagram","entry":[{"time":1761120314636,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761118805614,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkwNzg5MDU2NDUzMDQwNTYyNTUwNjU5NTYwMjQzMgZDZD","text":"hello"}}]}]}
+2025-10-22 12:05:15 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:15 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:15 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:15 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:15 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:05:15 - crm - INFO - 💬 Text: hello
+2025-10-22 12:05:16 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:05:18 - crm - INFO - ✅ AI: Hello! 😊 Добро пожаловать в M.Le Diamant Beauty Lounge! Чем могу помочь сегодня? Хотите узнать о наш
+2025-10-22 12:05:19 - crm - INFO - 📤 Sent!
+2025-10-22 12:05:19 - crm - INFO - ======================================================================
+2025-10-22 12:05:19 - crm - INFO - [middleware] 📤 POST /webhook → 200 (4.64s)
+2025-10-22 12:05:20 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:20 - crm - INFO - ======================================================================
+2025-10-22 12:05:20 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:20 - crm - INFO - 📦 RAW BODY (396 bytes):
+2025-10-22 12:05:20 - crm - INFO - {"object":"instagram","entry":[{"time":1761120320531,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761119488192,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkyMDQ4MTkxNzE4MjU2Mjg2NzY4NjcyNDg2MTk1MgZDZD","text":"hello"}}]}]}
+2025-10-22 12:05:20 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:20 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:20 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:20 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:20 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:05:20 - crm - INFO - 💬 Text: hello
+2025-10-22 12:05:20 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:20 - crm - INFO - ======================================================================
+2025-10-22 12:05:20 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:20 - crm - INFO - 📦 RAW BODY (1187 bytes):
+2025-10-22 12:05:20 - crm - INFO - {"object":"instagram","entry":[{"time":1761120320483,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120319551,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNTgxNzc2ODc2MjYwNzgyNjM2NjgxODY4MDgzMgZDZD","text":"Hello! \ud83d\ude0a \u0414\u043e\u0431\u0440\u043e \u043f\u043e\u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c \u04
+2025-10-22 12:05:20 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:20 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:20 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:20 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:20 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:05:20 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:05:20 - crm - INFO - ======================================================================
+2025-10-22 12:05:20 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:05:21 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:05:22 - crm - INFO - ✅ AI: Hello! 😊 Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in le
+2025-10-22 12:05:23 - crm - INFO - 📤 Sent!
+2025-10-22 12:05:23 - crm - INFO - ======================================================================
+2025-10-22 12:05:23 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.15s)
+2025-10-22 12:05:24 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:24 - crm - INFO - ======================================================================
+2025-10-22 12:05:24 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:24 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:24 - crm - INFO - ======================================================================
+2025-10-22 12:05:24 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:24 - crm - INFO - 📦 RAW BODY (607 bytes):
+2025-10-22 12:05:24 - crm - INFO - {"object":"instagram","entry":[{"time":1761120324201,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120323522,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNTg5MTAzNjg1MDQzODYxNTE5NzMwNTI3NDM2OAZDZD","text":"Hello! \ud83d\ude0a Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in learnin
+2025-10-22 12:05:24 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:24 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:24 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:24 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:24 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:05:24 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:05:24 - crm - INFO - ======================================================================
+2025-10-22 12:05:24 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:05:24 - crm - INFO - 📦 RAW BODY (396 bytes):
+2025-10-22 12:05:24 - crm - INFO - {"object":"instagram","entry":[{"time":1761120324356,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761119689292,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkyNDE5MTU0MzgwMjA4ODczMjExOTA1MzM2OTM0NAZDZD","text":"hello"}}]}]}
+2025-10-22 12:05:24 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:24 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:24 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:24 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:24 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:05:24 - crm - INFO - 💬 Text: hello
+2025-10-22 12:05:25 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:05:26 - crm - INFO - ✅ AI: Hello! 😊 Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in le
+2025-10-22 12:05:27 - crm - INFO - 📤 Sent!
+2025-10-22 12:05:27 - crm - INFO - ======================================================================
+2025-10-22 12:05:27 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.32s)
+2025-10-22 12:05:28 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:28 - crm - INFO - ======================================================================
+2025-10-22 12:05:28 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:28 - crm - INFO - 📦 RAW BODY (607 bytes):
+2025-10-22 12:05:28 - crm - INFO - {"object":"instagram","entry":[{"time":1761120328106,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120327535,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNTk2NTA0ODUyNjUyMzAxNTI1OTgxNzUwODg2NAZDZD","text":"Hello! \ud83d\ude0a Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in learnin
+2025-10-22 12:05:28 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:28 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:28 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:28 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:28 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:05:28 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:05:28 - crm - INFO - ======================================================================
+2025-10-22 12:05:28 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:05:28 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:28 - crm - INFO - ======================================================================
+2025-10-22 12:05:28 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:28 - crm - INFO - 📦 RAW BODY (396 bytes):
+2025-10-22 12:05:28 - crm - INFO - {"object":"instagram","entry":[{"time":1761120328474,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761119942274,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkyODg1ODI0NTYxMTQwMjQ4MDI3NDMwNzU0NzEzNgZDZD","text":"hello"}}]}]}
+2025-10-22 12:05:28 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:28 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:28 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:28 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:28 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:05:28 - crm - INFO - 💬 Text: hello
+2025-10-22 12:05:29 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:05:30 - crm - INFO - ✅ AI: Hello! 😊 Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in le
+2025-10-22 12:05:31 - crm - INFO - 📤 Sent!
+2025-10-22 12:05:31 - crm - INFO - ======================================================================
+2025-10-22 12:05:31 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.46s)
+2025-10-22 12:05:32 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:05:32 - crm - INFO - ======================================================================
+2025-10-22 12:05:32 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:05:32 - crm - INFO - 📦 RAW BODY (607 bytes):
+2025-10-22 12:05:32 - crm - INFO - {"object":"instagram","entry":[{"time":1761120332454,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120331775,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNjA0MzI2MTMxOTQ0Mjk5NDE1Njc0MzQyNjA0OAZDZD","text":"Hello! \ud83d\ude0a Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in learnin
+2025-10-22 12:05:32 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:05:32 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:05:32 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:05:32 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:05:32 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:05:32 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:05:32 - crm - INFO - ======================================================================
+2025-10-22 12:05:32 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:06:40 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:06:40 - crm - INFO - ======================================================================
+2025-10-22 12:06:40 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:06:40 - crm - INFO - 📦 RAW BODY (396 bytes):
+2025-10-22 12:06:40 - crm - INFO - {"object":"instagram","entry":[{"time":1761120400591,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761120399400,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNzI5MDcyNDY3NDgyMzg2NzcyNDc1OTgyNjQzMgZDZD","text":"hello"}}]}]}
+2025-10-22 12:06:40 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:06:40 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:06:40 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:06:40 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:06:40 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:06:40 - crm - INFO - 💬 Text: hello
+2025-10-22 12:06:41 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:06:43 - crm - INFO - ✅ AI: Hello! 😊 Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in le
+2025-10-22 12:06:44 - crm - INFO - 📤 Sent!
+2025-10-22 12:06:44 - crm - INFO - ======================================================================
+2025-10-22 12:06:44 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.94s)
+2025-10-22 12:06:45 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:06:45 - crm - INFO - ======================================================================
+2025-10-22 12:06:45 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:06:45 - crm - INFO - 📦 RAW BODY (607 bytes):
+2025-10-22 12:06:45 - crm - INFO - {"object":"instagram","entry":[{"time":1761120405476,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120404515,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzNzM4NTA4ODA3MTc5NTcyNTI1MDU3Mzg5MzYzMgZDZD","text":"Hello! \ud83d\ude0a Welcome to M.Le Diamant Beauty Lounge! How can I assist you today? Are you interested in learnin
+2025-10-22 12:06:45 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:06:45 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:06:45 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:06:45 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:06:45 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:06:45 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:06:45 - crm - INFO - ======================================================================
+2025-10-22 12:06:45 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:07:24 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:07:24 - crm - INFO - ======================================================================
+2025-10-22 12:07:24 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:07:24 - crm - INFO - 📦 RAW BODY (725 bytes):
+2025-10-22 12:07:24 - crm - INFO - {"object":"instagram","entry":[{"time":1761120443650,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761120442753,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzODA5MDQ1MTMzMjgyNTU1Mzc0MzgzNzY1OTEzNgZDZD","text":"\u0445\u043e\u0447\u0443 \u0437\u0430\u043f\u0438\u0441\u0430\u0442\u044c, \u043f\u043e\u0434\u0441\u043a\u0430\u043
+2025-10-22 12:07:24 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:07:24 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:07:24 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:07:24 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:07:24 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:07:24 - crm - INFO - 💬 Text: хочу записать, подскажите пожалуйста, какие процедуры у вас есть
+2025-10-22 12:07:24 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:07:26 - crm - INFO - ✅ AI: Здравствуйте! 😊 M.Le Diamant Beauty Lounge приветствует вас! У нас широкий спектр услуг, чтобы подче
+2025-10-22 12:07:27 - crm - INFO - 📤 Sent!
+2025-10-22 12:07:27 - crm - INFO - ======================================================================
+2025-10-22 12:07:27 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.89s)
+2025-10-22 12:07:28 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:07:28 - crm - INFO - ======================================================================
+2025-10-22 12:07:28 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:07:28 - crm - INFO - 📦 RAW BODY (1921 bytes):
+2025-10-22 12:07:28 - crm - INFO - {"object":"instagram","entry":[{"time":1761120448653,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120447635,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzODE4MDUwNzE3NTI0ODUyNzEzMTEyNTIxOTMyOAZDZD","text":"\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435! \ud83d\ude0a M.Le Diamant Beauty Lounge \u
+2025-10-22 12:07:28 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:07:28 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:07:28 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:07:28 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:07:28 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:07:28 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:07:28 - crm - INFO - ======================================================================
+2025-10-22 12:07:28 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:07:47 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:07:47 - crm - INFO - ======================================================================
+2025-10-22 12:07:47 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:07:47 - crm - INFO - 📦 RAW BODY (514 bytes):
+2025-10-22 12:07:47 - crm - INFO - {"object":"instagram","entry":[{"time":1761120467524,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761120466408,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzODUyNjgxNzMwOTU4Mzc1NDEzNTQ4MzcxMTQ4OAZDZD","text":"\u043c\u0430\u0440\u043e\u043a\u043a\u0430\u043d\u0441\u043a\u0430\u044f \u0431\u0430\u043d\u044f \u0435\u0441\u0442
+2025-10-22 12:07:47 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:07:47 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:07:47 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:07:47 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:07:47 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:07:47 - crm - INFO - 💬 Text: марокканская баня есть?
+2025-10-22 12:07:49 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:07:51 - crm - INFO - ✅ AI: К сожалению, марокканской бани у нас пока нет 😔 Но у нас есть восхитительная СПА-релакс программа дл
+2025-10-22 12:07:52 - crm - INFO - 📤 Sent!
+2025-10-22 12:07:52 - crm - INFO - ======================================================================
+2025-10-22 12:07:52 - crm - INFO - [middleware] 📤 POST /webhook → 200 (5.01s)
+2025-10-22 12:07:53 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:07:53 - crm - INFO - ======================================================================
+2025-10-22 12:07:53 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:07:53 - crm - INFO - 📦 RAW BODY (1828 bytes):
+2025-10-22 12:07:53 - crm - INFO - {"object":"instagram","entry":[{"time":1761120473601,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120472359,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzODYzNjU4MjA5NjA5NjkzNjU3Njc0NzA0NDg2NAZDZD","text":"\u041a \u0441\u043e\u0436\u0430\u043b\u0435\u043d\u0438\u044e, \u043c\u0430\u0440\u043e\u043a\u043a\u0430\u043d\u044
+2025-10-22 12:07:53 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:07:53 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:07:53 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:07:53 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:07:53 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:07:53 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:07:53 - crm - INFO - ======================================================================
+2025-10-22 12:07:53 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:08:14 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:08:14 - crm - INFO - ======================================================================
+2025-10-22 12:08:14 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:08:14 - crm - INFO - 📦 RAW BODY (566 bytes):
+2025-10-22 12:08:14 - crm - INFO - {"object":"instagram","entry":[{"time":1761120494535,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761120493559,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzOTAyNzY2MjE4MzE1MTE1MTQ4MzUyNDc0MzE2OAZDZD","text":"\u0434\u0430. \u043d\u0430 \u0437\u0430\u0432\u0442\u0440\u0430 \u0435\u0441\u0442\u044c \u0441\u0432\u043e\u0431\u0
+2025-10-22 12:08:14 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:08:14 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:08:14 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:08:14 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:08:14 - crm - INFO - 👤 Sender: 1533224231180483
+2025-10-22 12:08:14 - crm - INFO - 💬 Text: да. на завтра есть свободное время?
+2025-10-22 12:08:15 - crm - INFO - 🤖 Asking AI...
+2025-10-22 12:08:17 - crm - INFO - ✅ AI: Привет! ✨ M.Le Diamant всегда рад красоткам! 💖 К сожалению, я AI-ассистент и не могу проверить налич
+2025-10-22 12:08:18 - crm - INFO - 📤 Sent!
+2025-10-22 12:08:18 - crm - INFO - ======================================================================
+2025-10-22 12:08:18 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.96s)
+2025-10-22 12:08:19 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 12:08:19 - crm - INFO - ======================================================================
+2025-10-22 12:08:19 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-22 12:08:19 - crm - INFO - 📦 RAW BODY (1806 bytes):
+2025-10-22 12:08:19 - crm - INFO - {"object":"instagram","entry":[{"time":1761120499517,"id":"17841448618072548","messaging":[{"sender":{"id":"17841448618072548"},"recipient":{"id":"1533224231180483"},"timestamp":1761120498456,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ4NjkzOTExNzk5NDUwNTM3NDMwMTYyOTU3MTkyMzk2OAZDZD","text":"\u041f\u0440\u0438\u0432\u0435\u0442! \u2728 M.Le Diamant \u0432\u0441\u0435\u0433\u0434\u0430 \u0440\u0430\u0434 \u
+2025-10-22 12:08:19 - crm - INFO - ✅ JSON parsed
+2025-10-22 12:08:19 - crm - INFO - 📊 Keys: ['object', 'entry']
+2025-10-22 12:08:19 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-22 12:08:19 - crm - INFO - 📬 Entries: 1
+2025-10-22 12:08:19 - crm - INFO - 👤 Sender: 17841448618072548
+2025-10-22 12:08:19 - crm - INFO - ⏭️ Echo, skipping
+2025-10-22 12:08:19 - crm - INFO - ======================================================================
+2025-10-22 12:08:19 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-22 12:09:54 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 12:09:54 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 12:09:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 12:09:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 12:09:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 12:09:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 12:09:56 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-22 12:09:56 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-22 12:09:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-22 12:09:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-22 12:32:12 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 12:32:12 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 12:32:12 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 12:32:12 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-22 12:34:06 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:34:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:34:06 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:34:06 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:34:06 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:34:06 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:34:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:34:06 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 12:34:06 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 12:34:06 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 12:34:06 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 12:34:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:47:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:47:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:47:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:47:39 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:47:39 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:47:39 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:47:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:47:39 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'init_salon_settings' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ^^^^^^^^^^^^^^^^^^^
+NameError: name 'init_salon_settings' is not defined
+2025-10-22 12:48:03 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:48:03 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:48:03 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:48:03 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:48:03 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:48:03 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:48:03 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:48:03 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:50:09 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:50:09 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:50:09 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:50:09 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:50:09 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:50:09 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:50:09 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:50:09 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:50:11 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:50:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:50:11 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:50:11 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:50:11 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:50:11 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:50:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:50:11 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:53:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:53:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:53:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:53:38 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:53:38 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:53:38 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:53:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:53:38 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:54:19 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:54:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:19 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:54:19 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:54:19 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:54:19 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:54:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:19 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:54:34 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:54:34 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:34 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:54:34 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:54:34 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:54:34 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:54:34 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:34 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:54:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:54:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:54:54 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:54:54 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:54:54 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:54:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:54:54 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:55:22 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:55:22 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:55:22 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:55:22 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:55:22 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:55:22 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:55:22 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:55:22 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:56:26 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:56:26 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:26 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:56:26 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:56:26 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:56:26 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:56:26 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:26 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:56:36 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:56:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:36 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:56:36 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:56:36 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:56:36 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:56:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:36 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:56:41 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:56:41 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:41 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:56:41 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:56:41 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:56:41 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:56:41 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:56:41 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:57:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:57:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:57:01 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:57:01 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:57:01 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:57:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:01 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:57:02 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:57:02 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:02 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:57:02 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:57:02 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:57:02 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:57:02 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:02 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:57:20 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:57:20 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:20 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:57:20 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:57:20 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:57:20 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:57:20 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:20 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 12:57:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 12:57:40 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 12:57:40 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 12:57:40 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 12:57:40 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 12:57:40 - crm - INFO - [startup] ======================================================================
+2025-10-22 12:57:40 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 13:06:32 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:06:32 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:06:32 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:06:32 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:06:32 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:06:32 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:06:32 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:06:32 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_info' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 758, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 217, in init_database
+    init_salon_settings()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1750, in init_salon_settings
+    log_info("✅ Настройки салона инициализированы из config.py", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+2025-10-22 13:07:15 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:07:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:15 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:07:15 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:07:15 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:07:15 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:07:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:15 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:07:15 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:07:15 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:07:15 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:07:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 13:07:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 13:07:44 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:07:44 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:44 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:07:44 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:07:44 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:07:44 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:07:44 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:44 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:07:44 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:07:44 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:07:44 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:07:44 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:47 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:07:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:47 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:07:47 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:07:47 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:07:47 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:07:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:47 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:07:47 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:07:47 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:07:47 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:07:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:07:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:07:54 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:07:54 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:07:54 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:07:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:07:54 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:07:54 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:07:54 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:07:54 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:07:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:06 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:09:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:06 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:09:06 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:09:06 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:09:06 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:09:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:06 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:09:06 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:09:06 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:09:06 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:09:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:09:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:09:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:09:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:09:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:09:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:09:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:09:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:09:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:09:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:11 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:09:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:11 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:09:11 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:09:11 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:09:11 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:09:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:09:11 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:09:11 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:09:11 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:09:11 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:09:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:10:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:10:01 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:10:01 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:10:01 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:10:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:10:01 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:10:01 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:10:01 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:10:01 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:03 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:10:03 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:03 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:10:03 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:10:03 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:10:03 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:10:03 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:03 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:10:03 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:10:03 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:10:03 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:10:03 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:10:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:10:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:10:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:10:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:10:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:10:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:10:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:10:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:10:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:11 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:10:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:11 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:10:11 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:10:11 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:10:11 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:10:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:10:11 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:10:11 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:10:11 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:10:11 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:10:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:08 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:08 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:08 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:08 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:08 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:08 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:08 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:08 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:08 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:29 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:29 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:29 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:29 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:29 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:29 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:29 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:29 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:29 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:29 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:29 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:29 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:34 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:34 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:34 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:34 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:34 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:34 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:34 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:34 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:34 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:34 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:34 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:34 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:38 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:38 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:38 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:38 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:38 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:38 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:38 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:54 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:54 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:54 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:54 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:54 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:54 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:54 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:57 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:11:57 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:57 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:11:57 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:11:57 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:11:57 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:11:57 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:11:57 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:11:57 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:11:57 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:11:57 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:11:57 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:33 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:12:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:33 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:12:33 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:12:33 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:12:33 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:12:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:33 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:12:33 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:12:33 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:12:33 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:12:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:36 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:12:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:36 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:12:36 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:12:36 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:12:36 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:12:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:36 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:12:36 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:12:36 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:12:36 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:12:36 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:12:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:12:39 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:12:39 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:12:39 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:12:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:39 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:12:39 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:12:39 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:12:39 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:12:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:56 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:12:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:56 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:12:56 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:12:56 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:12:56 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:12:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:12:56 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:12:56 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:12:56 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:12:56 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:12:56 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:06 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:13:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:06 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:13:06 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:13:06 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:13:06 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:13:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:06 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:13:06 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:13:06 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:13:06 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:13:06 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:30 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:13:30 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:30 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:13:30 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:13:30 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:13:30 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:13:30 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:13:30 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:13:30 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:13:30 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:13:30 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:13:30 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:04 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:14:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:04 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:14:04 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:14:04 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:14:04 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:14:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:04 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:14:04 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:14:04 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:14:04 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:14:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:14:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:14:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:14:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:14:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:14:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:14:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:14:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:14:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:14:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:15 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:14:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:15 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:14:15 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:14:15 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:14:15 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:14:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:14:15 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:14:15 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:14:15 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:14:15 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:14:15 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:16:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:16:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:16:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:16:38 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:16:38 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:16:38 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:16:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:16:38 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:16:38 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:16:38 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:16:38 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:16:38 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:17:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:17:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:17:07 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:17:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:17:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:17:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:17:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:17:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:17:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:08 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:17:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:08 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:17:08 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:17:08 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:17:08 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:17:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:08 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:17:08 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:17:08 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:17:08 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:17:08 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:11 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:17:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:11 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:17:11 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:17:11 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:17:11 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:17:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:11 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:17:11 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:17:11 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:17:11 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:17:11 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:13 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:17:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:13 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:17:13 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:17:13 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:17:13 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:17:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:13 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:17:13 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:17:13 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:17:13 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:17:13 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:16 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:17:16 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:16 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:17:16 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:17:16 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:17:16 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:17:16 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:17:16 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:17:16 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:17:16 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:17:16 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:17:16 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:22 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:18:22 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:22 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:18:22 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:18:22 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:18:22 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:18:22 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:22 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:18:22 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:18:22 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:18:22 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:18:22 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:18:35 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:18:35 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 13:18:35 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 13:18:35 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 13:18:35 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:35 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:18:35 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:18:35 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:18:35 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:18:35 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:53 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:18:53 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:18:53 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:18:53 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:18:53 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:18:53 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:18:53 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:18:53 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:19 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:19:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:19 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:19:19 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:19:19 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:19:19 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:19:19 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:19:19 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:47 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:19:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:47 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:19:47 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:19:47 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:19:47 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:19:47 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:19:47 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:50 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:19:50 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:50 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:19:50 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 13:19:50 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 13:19:50 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 13:19:50 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 13:19:50 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:52 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:19:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:19:52 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:19:52 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:19:52 - crm - ERROR - [startup] 👉 Запустите: python init_settings.py
+2025-10-22 13:19:52 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 754, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1733, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:20:30 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:20:30 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:20:30 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:20:30 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:20:30 - crm - ERROR - [startup] 👉 Запустите: python init_settings.py
+2025-10-22 13:20:30 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 754, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1733, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:20:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:20:35 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:20:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:20:35 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:20:35 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:20:35 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 754, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1733, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:21:17 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:21:17 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:21:17 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:21:17 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:21:17 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:21:17 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1733, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:24:30 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:24:30 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:24:30 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:24:30 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:24:30 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:24:30 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1733, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:25:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:25:39 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:25:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:25:39 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:25:39 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:25:39 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'log_error' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1734, in get_salon_settings
+    log_error("❌ Настройки салона не найдены! Запустите init_settings.py", "database")
+    ^^^^^^^^^
+NameError: name 'log_error' is not defined
+2025-10-22 13:25:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:25:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:25:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:25:54 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите init_settings.py
+2025-10-22 13:25:54 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:25:54 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:25:54 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python init_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python init_settings.py")
+Exception: Salon settings not initialized. Run: python init_settings.py
+2025-10-22 13:26:42 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:26:42 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:26:42 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:26:42 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:26:42 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:26:42 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:26:42 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:27:23 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:27:23 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:27:23 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:27:23 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:27:23 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:27:23 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:27:23 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py

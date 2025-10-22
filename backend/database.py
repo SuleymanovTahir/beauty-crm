@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List
 import hashlib
 import secrets
+from logger import log_error
 from config import DATABASE_NAME, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
 
 
@@ -1684,3 +1685,224 @@ AVAILABLE_PERMISSIONS = {
     'messages': 'Сообщения',
     'calendar': 'Календарь'
 }
+
+
+# ========================================
+# НАСТРОЙКИ САЛОНА (ЕДИНЫЙ ИСТОЧНИК)
+# ========================================
+
+def get_salon_settings() -> dict:
+    """
+    Получить настройки салона из БД
+    
+    ВАЖНО: Это ЕДИНСТВЕННЫЙ источник настроек салона!
+    Используйте эту функцию везде вместо импорта SALON_INFO
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT * FROM salon_settings LIMIT 1")
+        result = c.fetchone()
+        
+        if result:
+            return {
+                "id": result[0],
+                "name": result[1],
+                "name_ar": result[2],
+                "address": result[3],
+                "address_ar": result[4],
+                "google_maps": result[5],
+                "hours": result[6],
+                "hours_ru": result[7],
+                "hours_ar": result[8],
+                "booking_url": result[9],
+                "phone": result[10],
+                "email": result[11],
+                "instagram": result[12],
+                "whatsapp": result[13],
+                "bot_name": result[14],
+                "bot_name_en": result[15],
+                "bot_name_ar": result[16],
+                "city": result[17],
+                "country": result[18],
+                "timezone": result[19],
+                "currency": result[20],
+                "updated_at": result[21]
+            }
+        else:
+            log_error("❌ Настройки салона не найдены! Запустите migrate_bot_settings.py", "database")
+            raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+    except sqlite3.OperationalError as e:
+        log_error(f"❌ Таблица salon_settings не существует! Запустите migrate_bot_settings.py", "database")
+        raise Exception("Salon settings table missing. Run: python migrate_bot_settings.py")
+    finally:
+        conn.close()
+
+
+def update_salon_settings(data: dict) -> bool:
+    """Обновить настройки салона"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("""UPDATE salon_settings SET
+                    name = ?, name_ar = ?, address = ?, address_ar = ?,
+                    google_maps = ?, hours = ?, hours_ru = ?, hours_ar = ?,
+                    booking_url = ?, phone = ?, email = ?, instagram = ?,
+                    whatsapp = ?, bot_name = ?, bot_name_en = ?, bot_name_ar = ?,
+                    city = ?, country = ?, timezone = ?, currency = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                    WHERE id = 1""",
+                  (data.get('name'),
+                   data.get('name_ar'),
+                   data.get('address'),
+                   data.get('address_ar'),
+                   data.get('google_maps'),
+                   data.get('hours'),
+                   data.get('hours_ru'),
+                   data.get('hours_ar'),
+                   data.get('booking_url'),
+                   data.get('phone'),
+                   data.get('email'),
+                   data.get('instagram'),
+                   data.get('whatsapp'),
+                   data.get('bot_name'),
+                   data.get('bot_name_en'),
+                   data.get('bot_name_ar'),
+                   data.get('city'),
+                   data.get('country'),
+                   data.get('timezone'),
+                   data.get('currency')))
+        
+        conn.commit()
+        log_info("✅ Настройки салона обновлены", "database")
+        return True
+    except Exception as e:
+        log_error(f"Ошибка обновления настроек салона: {e}", "database")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
+
+
+# ========================================
+# НАСТРОЙКИ БОТА (ЕДИНЫЙ ИСТОЧНИК)
+# ========================================
+
+def get_bot_settings() -> dict:
+    """
+    Получить настройки бота из БД
+    
+    ВАЖНО: Это ЕДИНСТВЕННЫЙ источник настроек бота!
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT * FROM bot_settings LIMIT 1")
+        result = c.fetchone()
+        
+        if result:
+            return {
+                "id": result[0],
+                "bot_name": result[1],
+                "personality_traits": result[2],
+                "greeting_message": result[3],
+                "farewell_message": result[4],
+                "price_explanation": result[5],
+                "price_response_template": result[6],
+                "premium_justification": result[7],
+                "booking_redirect_message": result[8],
+                "fomo_messages": result[9],
+                "upsell_techniques": result[10],
+                "communication_style": result[11],
+                "max_message_length": result[12],
+                "emoji_usage": result[13],
+                "languages_supported": result[14],
+                "objection_handling": result[15],
+                "negative_handling": result[16],
+                "safety_guidelines": result[17],
+                "example_good_responses": result[18],
+                "algorithm_actions": result[19],
+                "location_features": result[20],
+                "seasonality": result[21],
+                "emergency_situations": result[22],
+                "success_metrics": result[23],
+                "updated_at": result[24] if len(result) > 24 else None
+            }
+        else:
+            log_error("❌ Настройки бота не найдены! Запустите migrate_bot_settings.py", "database")
+            raise Exception("Bot settings not initialized. Run: python migrate_bot_settings.py")
+    except sqlite3.OperationalError as e:
+        log_error(f"❌ Таблица bot_settings не существует! Запустите migrate_bot_settings.py", "database")
+        raise Exception("Bot settings table missing. Run: python migrate_bot_settings.py")
+    finally:
+        conn.close()
+
+
+def update_bot_settings(data: dict) -> bool:
+    """Обновить настройки бота"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("""UPDATE bot_settings SET
+                    bot_name = ?,
+                    personality_traits = ?,
+                    greeting_message = ?,
+                    farewell_message = ?,
+                    price_explanation = ?,
+                    price_response_template = ?,
+                    premium_justification = ?,
+                    booking_redirect_message = ?,
+                    fomo_messages = ?,
+                    upsell_techniques = ?,
+                    communication_style = ?,
+                    max_message_length = ?,
+                    emoji_usage = ?,
+                    languages_supported = ?,
+                    objection_handling = ?,
+                    negative_handling = ?,
+                    safety_guidelines = ?,
+                    example_good_responses = ?,
+                    algorithm_actions = ?,
+                    location_features = ?,
+                    seasonality = ?,
+                    emergency_situations = ?,
+                    success_metrics = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                    WHERE id = 1""",
+                  (data.get('bot_name'),
+                   data.get('personality_traits'),
+                   data.get('greeting_message'),
+                   data.get('farewell_message'),
+                   data.get('price_explanation'),
+                   data.get('price_response_template'),
+                   data.get('premium_justification'),
+                   data.get('booking_redirect_message'),
+                   data.get('fomo_messages'),
+                   data.get('upsell_techniques'),
+                   data.get('communication_style'),
+                   data.get('max_message_length'),
+                   data.get('emoji_usage'),
+                   data.get('languages_supported'),
+                   data.get('objection_handling'),
+                   data.get('negative_handling'),
+                   data.get('safety_guidelines'),
+                   data.get('example_good_responses'),
+                   data.get('algorithm_actions'),
+                   data.get('location_features'),
+                   data.get('seasonality'),
+                   data.get('emergency_situations'),
+                   data.get('success_metrics')))
+        
+        conn.commit()
+        log_info("✅ Настройки бота обновлены", "database")
+        return True
+    except Exception as e:
+        log_error(f"Ошибка обновления настроек бота: {e}", "database")
+        conn.rollback()
+        return False
+    finally:
+        conn.close()

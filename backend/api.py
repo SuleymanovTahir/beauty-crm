@@ -22,7 +22,9 @@ from database import (
     get_all_special_packages, create_special_package, 
     update_special_package, delete_special_package,
     get_all_roles, create_custom_role, delete_custom_role,
-    get_role_permissions, update_role_permissions, AVAILABLE_PERMISSIONS
+    get_role_permissions, update_role_permissions, AVAILABLE_PERMISSIONS,
+    get_salon_settings, update_salon_settings,  # ✅ ДОБАВЬТЕ
+    get_bot_settings, update_bot_settings,
 )
 from config import CLIENT_STATUSES, SALON_INFO
 from instagram import send_message
@@ -1252,118 +1254,25 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
 
 # ===== НАСТРОЙКИ БОТА =====
 @router.get("/bot-settings")
-async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
-    """Получить настройки бота"""
+async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки бота (из БД)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
     try:
-        c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
-                     (id INTEGER PRIMARY KEY,
-                      bot_name TEXT,
-                      personality_traits TEXT,
-                      greeting_message TEXT,
-                      farewell_message TEXT,
-                      price_explanation TEXT,
-                      salon_name TEXT,
-                      salon_address TEXT,
-                      salon_phone TEXT,
-                      salon_hours TEXT,
-                      booking_url TEXT,
-                      google_maps_link TEXT,
-                      communication_style TEXT,
-                      max_message_length INTEGER,
-                      price_response_template TEXT,
-                      booking_redirect_message TEXT,
-                      premium_justification TEXT,
-                      fomo_messages TEXT,
-                      upsell_techniques TEXT,
-                      languages_supported TEXT,
-                      emoji_usage TEXT,
-                      objection_handling TEXT,
-                      safety_guidelines TEXT,
-                      example_good_responses TEXT,
-                      algorithm_actions TEXT,
-                      negative_handling TEXT,
-                      location_features TEXT,
-                      seasonality TEXT,
-                      emergency_situations TEXT,
-                      success_metrics TEXT)''')
-        conn.commit()
+        settings = get_bot_settings()  # ✅ Просто берем из БД!
+        return settings
     except Exception as e:
-        log_error(f"Error creating bot_settings table: {e}", "api")
-    
-    defaults = {
-        "bot_name": SALON_INFO.get('bot_name', 'M.Le Diamant Assistant'),
-        "personality_traits": "Обаятельная, уверенная, харизматичная",
-        "greeting_message": "Привет! Добро пожаловать в M.Le Diamant!",
-        "farewell_message": "Спасибо за визит! Ждём вас снова!",
-        "price_explanation": "Мы в премиум-сегменте",
-        "salon_name": SALON_INFO.get('name', 'M.Le Diamant Beauty Lounge'),
-        "salon_address": SALON_INFO.get('address', ''),
-        "salon_phone": SALON_INFO.get('phone', ''),
-        "salon_hours": SALON_INFO.get('hours_ru', 'Ежедневно 10:30 - 21:00'),
-        "booking_url": SALON_INFO.get('booking_url', ''),
-        "google_maps_link": SALON_INFO.get('google_maps', ''),
-        "communication_style": "Дружелюбный, экспертный, вдохновляющий",
-        "max_message_length": 4,
-        "price_response_template": "{SERVICE} - {PRICE} {CURRENCY}. Это включает {BENEFITS}!",
-        "booking_redirect_message": "Я AI-ассистент и не могу записать вас напрямую, но это легко сделать онлайн! 🎯\n\n📱 Запишитесь за 2 минуты: {BOOKING_URL}",
-        "premium_justification": "Да, мы в премиум-сегменте 💎",
-        "fomo_messages": "Кстати, на эту неделю уже мало свободных окон...",
-        "upsell_techniques": "Многие клиенты берут брови + ресницы со скидкой!",
-        "languages_supported": "ru,en,ar",
-        "emoji_usage": "Умеренное (2-3 на сообщение)",
-        "objection_handling": "\"Дорого\" → Подчеркни качество",
-        "safety_guidelines": "Не разглашай личную информацию",
-        "example_good_responses": "✅ ХОРОШО: Gelish маникюр - 130 AED",
-        "algorithm_actions": "ЭТАП 1: Поприветствуй",
-        "negative_handling": "При жалобе: извинись искренне",
-        "location_features": "JBR - престижный район Dubai",
-        "seasonality": "Лето: indoor процедуры",
-        "emergency_situations": "При агрессии: оставайся спокойной",
-        "success_metrics": "Клиент перешел на запись"
-    }
-    
-    try:
-        c.execute("SELECT * FROM bot_settings LIMIT 1")
-        result = c.fetchone()
-        
-        if result:
-            settings = {}
-            fields = [
-                "id", "bot_name", "personality_traits", "greeting_message",
-                "farewell_message", "price_explanation", "salon_name", "salon_address",
-                "salon_phone", "salon_hours", "booking_url", "google_maps_link",
-                "communication_style", "max_message_length", "price_response_template",
-                "booking_redirect_message", "premium_justification", "fomo_messages",
-                "upsell_techniques", "languages_supported", "emoji_usage",
-                "objection_handling", "safety_guidelines", "example_good_responses",
-                "algorithm_actions", "negative_handling", "location_features",
-                "seasonality", "emergency_situations", "success_metrics"
-            ]
-            
-            for i, field in enumerate(fields[1:], start=1):
-                if i < len(result):
-                    settings[field] = result[i] if result[i] is not None else defaults.get(field, "")
-                else:
-                    settings[field] = defaults.get(field, "")
-            
-            conn.close()
-            return settings
-    except Exception as e:
-        log_error(f"Error loading bot settings: {e}", "api")
-    finally:
-        conn.close()
-    
-    return defaults
+        log_error(f"Ошибка получения настроек бота: {e}", "api")
+        return JSONResponse(
+            {"error": str(e), "message": "Запустите init_settings.py"}, 
+            status_code=500
+        )
+
 
 @router.post("/bot-settings")
-async def update_bot_settings(
+async def update_bot_settings_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
@@ -1374,162 +1283,54 @@ async def update_bot_settings(
     
     data = await request.json()
     
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
+    success = update_bot_settings(data)  # ✅ Просто обновляем в БД!
+    
+    if success:
+        log_activity(user["id"], "update_bot_settings", "bot", "general", "Bot settings updated")
+        return {"success": True, "message": "Bot settings updated"}
+    else:
+        return JSONResponse({"error": "Update failed"}, status_code=500)
+    
+
+# ===== НАСТРОЙКИ САЛОНА =====
+@router.get("/salon-settings")
+async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки салона"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
-                     (id INTEGER PRIMARY KEY,
-                      bot_name TEXT,
-                      personality_traits TEXT,
-                      greeting_message TEXT,
-                      farewell_message TEXT,
-                      price_explanation TEXT,
-                      salon_name TEXT,
-                      salon_address TEXT,
-                      salon_phone TEXT,
-                      salon_hours TEXT,
-                      booking_url TEXT,
-                      google_maps_link TEXT,
-                      communication_style TEXT,
-                      max_message_length INTEGER,
-                      price_response_template TEXT,
-                      booking_redirect_message TEXT,
-                      premium_justification TEXT,
-                      fomo_messages TEXT,
-                      upsell_techniques TEXT,
-                      languages_supported TEXT,
-                      emoji_usage TEXT,
-                      objection_handling TEXT,
-                      safety_guidelines TEXT,
-                      example_good_responses TEXT,
-                      algorithm_actions TEXT,
-                      negative_handling TEXT,
-                      location_features TEXT,
-                      seasonality TEXT,
-                      emergency_situations TEXT,
-                      success_metrics TEXT)''')
-        
-        c.execute("SELECT COUNT(*) FROM bot_settings")
-        exists = c.fetchone()[0] > 0
-        
-        if exists:
-            c.execute("""UPDATE bot_settings SET
-                        bot_name = ?,
-                        personality_traits = ?,
-                        greeting_message = ?,
-                        farewell_message = ?,
-                        price_explanation = ?,
-                        salon_name = ?,
-                        salon_address = ?,
-                        salon_phone = ?,
-                        salon_hours = ?,
-                        booking_url = ?,
-                        google_maps_link = ?,
-                        communication_style = ?,
-                        max_message_length = ?,
-                        price_response_template = ?,
-                        booking_redirect_message = ?,
-                        premium_justification = ?,
-                        fomo_messages = ?,
-                        upsell_techniques = ?,
-                        languages_supported = ?,
-                        emoji_usage = ?,
-                        objection_handling = ?,
-                        safety_guidelines = ?,
-                        example_good_responses = ?,
-                        algorithm_actions = ?,
-                        negative_handling = ?,
-                        location_features = ?,
-                        seasonality = ?,
-                        emergency_situations = ?,
-                        success_metrics = ?
-                        WHERE id = 1""",
-                      (data.get('bot_name'),
-                       data.get('personality_traits'),
-                       data.get('greeting_message'),
-                       data.get('farewell_message'),
-                       data.get('price_explanation'),
-                       data.get('salon_name'),
-                       data.get('salon_address'),
-                       data.get('salon_phone'),
-                       data.get('salon_hours'),
-                       data.get('booking_url'),
-                       data.get('google_maps_link'),
-                       data.get('communication_style'),
-                       data.get('max_message_length', 4),
-                       data.get('price_response_template'),
-                       data.get('booking_redirect_message'),
-                       data.get('premium_justification'),
-                       data.get('fomo_messages'),
-                       data.get('upsell_techniques'),
-                       data.get('languages_supported'),
-                       data.get('emoji_usage'),
-                       data.get('objection_handling'),
-                       data.get('safety_guidelines'),
-                       data.get('example_good_responses'),
-                       data.get('algorithm_actions'),
-                       data.get('negative_handling'),
-                       data.get('location_features'),
-                       data.get('seasonality'),
-                       data.get('emergency_situations'),
-                       data.get('success_metrics')))
-        else:
-            c.execute("""INSERT INTO bot_settings
-                        (bot_name, personality_traits, greeting_message,
-                         farewell_message, price_explanation, salon_name,
-                         salon_address, salon_phone, salon_hours,
-                         booking_url, google_maps_link, communication_style,
-                         max_message_length, price_response_template,
-                         booking_redirect_message, premium_justification,
-                         fomo_messages, upsell_techniques, languages_supported,
-                         emoji_usage, objection_handling, safety_guidelines,
-                         example_good_responses, algorithm_actions,
-                         negative_handling, location_features, seasonality,
-                         emergency_situations, success_metrics)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                      (data.get('bot_name'),
-                       data.get('personality_traits'),
-                       data.get('greeting_message'),
-                       data.get('farewell_message'),
-                       data.get('price_explanation'),
-                       data.get('salon_name'),
-                       data.get('salon_address'),
-                       data.get('salon_phone'),
-                       data.get('salon_hours'),
-                       data.get('booking_url'),
-                       data.get('google_maps_link'),
-                       data.get('communication_style'),
-                       data.get('max_message_length', 4),
-                       data.get('price_response_template'),
-                       data.get('booking_redirect_message'),
-                       data.get('premium_justification'),
-                       data.get('fomo_messages'),
-                       data.get('upsell_techniques'),
-                       data.get('languages_supported'),
-                       data.get('emoji_usage'),
-                       data.get('objection_handling'),
-                       data.get('safety_guidelines'),
-                       data.get('example_good_responses'),
-                       data.get('algorithm_actions'),
-                       data.get('negative_handling'),
-                       data.get('location_features'),
-                       data.get('seasonality'),
-                       data.get('emergency_situations'),
-                       data.get('success_metrics')))
-        
-        conn.commit()
-        log_activity(user["id"], "update_bot_settings", "bot", "general",
-                    "Обновлены настройки бота")
-        
-        log_info("✅ Настройки бота успешно сохранены в БД", "api")
-        return {"success": True, "message": "Bot settings updated"}
+        settings = get_salon_settings()
+        return settings
     except Exception as e:
-        log_error(f"❌ Error updating bot settings: {e}", "api")
-        conn.rollback()
-        return JSONResponse({"error": str(e)}, status_code=500)
-    finally:
-        conn.close()
+        log_error(f"Ошибка получения настроек салона: {e}", "api")
+        return JSONResponse(
+            {"error": str(e), "message": "Запустите init_settings.py"}, 
+            status_code=500
+        )
+
+
+@router.post("/salon-settings")
+async def update_salon_settings_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки салона (только admin)"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    success = update_salon_settings(data)
+    
+    if success:
+        log_activity(user["id"], "update_salon_settings", "settings", "salon", "Salon settings updated")
+        return {"success": True, "message": "Salon settings updated"}
+    else:
+        return JSONResponse({"error": "Update failed"}, status_code=400)
+
 
 # ===== РОЛИ И ПРАВА ДОСТУПА =====
 @router.get("/roles")

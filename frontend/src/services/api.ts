@@ -13,7 +13,7 @@ export class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
-    
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -25,6 +25,7 @@ export class ApiClient {
       credentials: 'include',
       ...options,
     }
+
 
     try {
       const response = await fetch(url, defaultOptions)
@@ -46,6 +47,7 @@ export class ApiClient {
       console.error('API Error:', error)
       throw error
     }
+
   }
 
   // ===== АВТОРИЗАЦИЯ =====
@@ -88,6 +90,7 @@ export class ApiClient {
     return this.request<any>('/api/stats')
   }
 
+
   async getAnalytics(period: number = 30, dateFrom?: string, dateTo?: string) {
     let url = `/api/analytics?period=${period}`
     if (dateFrom && dateTo) {
@@ -99,7 +102,17 @@ export class ApiClient {
   async getFunnel() {
     return this.request<any>('/api/funnel')
   }
+  // ===== НАСТРОЙКИ САЛОНА =====
+  async getSalonSettings() {
+    return this.request<any>('/api/salon-settings')
+  }
 
+  async updateSalonSettings(data: any) {
+    return this.request('/api/salon-settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
   // ===== КЛИЕНТЫ =====
   async getClients() {
     return this.request<any>('/api/clients')
@@ -241,9 +254,9 @@ export class ApiClient {
     const response = await fetch(`${this.baseURL}/api/export/clients?format=${format}`, {
       credentials: 'include',
     })
-    
+
     if (!response.ok) throw new Error('Export failed')
-    
+
     return response.blob()
   }
 
@@ -251,23 +264,23 @@ export class ApiClient {
     const response = await fetch(`${this.baseURL}/api/export/analytics?format=${format}&period=${period}`, {
       credentials: 'include',
     })
-    
+
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: 'Export failed' }))
       throw new Error(error.error || 'Export failed')
     }
-    
+
     return response.blob()
   }
 
 
-  
+
 
   // ===== UNREAD COUNT =====
   async getUnreadCount() {
     return this.request<any>('/api/unread-count')
   }
-  
+
   // ===== BOT SETTINGS =====
   async getBotSettings() {
     return this.request<any>('/api/bot-settings')

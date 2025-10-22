@@ -37,6 +37,15 @@ export default function ManagerSettings() {
       toast.error('Ошибка сервера');
     }
   };
+  const [generalSettings, setGeneralSettings] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.getSalonSettings().then(data => {
+      setGeneralSettings(data);
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <div className="p-8">
@@ -64,7 +73,7 @@ export default function ManagerSettings() {
         <TabsContent value="notifications">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Уведомления</h2>
-            
+
             <form onSubmit={handleSaveNotifications} className="space-y-6">
               <div className="space-y-4">
                 <h3 className="text-lg text-gray-900 mb-4">Каналы уведомлений</h3>
@@ -160,7 +169,7 @@ export default function ManagerSettings() {
         <TabsContent value="security">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Безопасность</h2>
-            
+
             <div className="space-y-6">
               <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-start gap-3">
