@@ -1146,3 +1146,207 @@ async def update_bot_settings(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
+
+# backend/api.py - добавить в конец файла перед последней строкой
+
+# ===== РОЛИ И ПРАВА ДОСТУПА =====
+
+@router.get("/roles")
+async def list_roles(session_token: Optional[str] = Cookie(None)):
+    """Получить все роли"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    from database import get_all_roles
+    roles = get_all_roles()
+    
+    return {
+        "roles": roles,
+        "count": len(roles)
+    }
+
+
+@router.post("/roles")
+async def create_role(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Создать кастомную роль"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    if not data.get('role_key') or not data.get('role_name'):
+        return JSONResponse({"error": "Missing required fields"}, status_code=400)
+    
+    from database import create_custom_role
+    success = create_custom_role(
+        data['role_key'],
+        data['role_name'],
+        data.get('role_description', ''),
+        user["id"]
+    )
+    
+    if success:
+        log_activity(user["id"], "create_role", "role", data['role_key'], "Role created")
+        return {"success": True, "message": "Role created"}
+    else:
+        return JSONResponse({"error": "Role already exists"}, status_code=400)
+
+
+@router.delete("/roles/{role_key}")
+async def delete_role(
+    role_key: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить кастомную роль"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    from database import delete_custom_role
+    success = delete_custom_role(role_key)
+    
+    if success:
+        log_activity(user["id"], "delete_role", "role", role_key, "Role deleted")
+        return {"success": True, "message": "Role deleted"}
+    else:
+        return JSONResponse({"error": "Cannot delete built-in roles"}, status_code=400)
+
+
+@router.get("/roles/{role_key}/permissions")
+async def get_role_permissions_api(
+    role_key: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить права роли"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    from database import get_role_permissions, AVAILABLE_PERMISSIONS
+    permissions = get_role_permissions(role_key)
+    
+    return {
+        "role_key": role_key,
+        "permissions": permissions,
+        "available_permissions": AVAILABLE_PERMISSIONS
+    }
+
+
+@router.post("/roles/{role_key}/permissions")
+async def update_role_permissions_api(
+    role_key: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить права роли"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    permissions = data.get('permissions', {})
+    
+    from database import update_role_permissions
+    success = update_role_permissions(role_key, permissions)
+    
+    if success:
+        log_activity(user["id"], "update_permissions", "role", role_key, "Permissions updated")
+        return {"success": True, "message": "Permissions updated"}
+    else:
+        return JSONResponse({"error": "Update failed"}, status_code=400)
+
+
+@router.get("/permissions/available")
+async def list_available_permissions(session_token: Optional[str] = Cookie(None)):
+    """Получить список всех доступных прав"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    from database import AVAILABLE_PERMISSIONS
+    
+    return {
+        "permissions": [
+            {"key": key, "name": name}
+            for key, name in AVAILABLE_PERMISSIONS.items()
+        ]
+    }
+
+
+@router.get("/users/{user_id}/permissions")
+async def get_user_permissions(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить права конкретного пользователя"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+    result = c.fetchone()
+    
+    if not result:
+        conn.close()
+        return JSONResponse({"error": "User not found"}, status_code=404)
+    
+    role = result[0]
+    conn.close()
+    
+    from database import get_role_permissions
+    permissions = get_role_permissions(role)
+    
+    return {
+        "user_id": user_id,
+        "role": role,
+        "permissions": permissions
+    }
+
+
+@router.post("/users/{user_id}/role")
+async def update_user_role(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Изменить роль пользователя"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    if user["id"] == user_id:
+        return JSONResponse({"error": "Cannot change your own role"}, status_code=400)
+    
+    data = await request.json()
+    new_role = data.get('role')
+    
+    if not new_role:
+        return JSONResponse({"error": "Role required"}, status_code=400)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("UPDATE users SET role = ? WHERE id = ?", (new_role, user_id))
+        conn.commit()
+        
+        if c.rowcount > 0:
+            log_activity(user["id"], "update_user_role", "user", str(user_id), f"Role: {new_role}")
+            conn.close()
+            return {"success": True, "message": "Role updated"}
+        else:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error updating user role: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

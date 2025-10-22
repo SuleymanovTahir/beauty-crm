@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, Smartphone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, Smartphone, Plus, Edit, Trash2, Check, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -8,7 +7,8 @@ import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
 export default function AdminSettings() {
   const [generalSettings, setGeneralSettings] = useState({
@@ -28,6 +28,38 @@ export default function AdminSettings() {
     birthdayReminders: true,
     birthdayDaysAdvance: 7,
   });
+
+  // Roles state
+  const [roles, setRoles] = useState([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+  const [showCreateRoleDialog, setShowCreateRoleDialog] = useState(false);
+  const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [permissions, setPermissions] = useState({});
+  const [availablePermissions, setAvailablePermissions] = useState({});
+  const [savingRole, setSavingRole] = useState(false);
+  
+  const [createRoleForm, setCreateRoleForm] = useState({
+    role_key: '',
+    role_name: '',
+    role_description: ''
+  });
+
+  useEffect(() => {
+    loadRoles();
+  }, []);
+
+  const loadRoles = async () => {
+    try {
+      setLoadingRoles(true);
+      const data = await api.getRoles();
+      setRoles(data.roles || []);
+    } catch (err) {
+      console.error('Error loading roles:', err);
+    } finally {
+      setLoadingRoles(false);
+    }
+  };
 
   const handleSaveGeneral = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,27 +82,94 @@ export default function AdminSettings() {
     }
   };
 
-const handleSaveNotifications = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const response = await fetch('/api/notifications/settings', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(notificationSettings)
-    });
+  const handleSaveNotifications = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/notifications/settings', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notificationSettings)
+      });
 
-    if (response.ok) {
-      toast.success('Уведомления настроены');
-    } else {
-      toast.error('Ошибка при сохранении');
+      if (response.ok) {
+        toast.success('Уведомления настроены');
+      } else {
+        toast.error('Ошибка при сохранении');
+      }
+    } catch (err) {
+      console.error('Error saving notification settings:', err);
+      toast.error('Ошибка сервера');
     }
-  } catch (err) {
-    console.error('Error saving notification settings:', err);
-    toast.error('Ошибка сервера');
-  }
-};
-  
+  };
+
+  // Roles handlers
+  const handleCreateRole = async () => {
+    if (!createRoleForm.role_key || !createRoleForm.role_name) {
+      toast.error('Заполните обязательные поля');
+      return;
+    }
+
+    try {
+      setSavingRole(true);
+      await api.createRole(createRoleForm);
+      toast.success('✅ Роль создана');
+      setShowCreateRoleDialog(false);
+      setCreateRoleForm({ role_key: '', role_name: '', role_description: '' });
+      await loadRoles();
+    } catch (err) {
+      toast.error(`❌ Ошибка: ${err.message}`);
+    } finally {
+      setSavingRole(false);
+    }
+  };
+
+  const handleDeleteRole = async (roleKey: string, roleName: string) => {
+    if (!confirm(`Удалить роль "${roleName}"?`)) return;
+
+    try {
+      await api.deleteRole(roleKey);
+      toast.success('✅ Роль удалена');
+      await loadRoles();
+    } catch (err) {
+      toast.error(`❌ Ошибка: ${err.message}`);
+    }
+  };
+
+  const handleOpenPermissions = async (role: any) => {
+    try {
+      setSelectedRole(role);
+      setShowPermissionsDialog(true);
+      const data = await api.getRolePermissions(role.key);
+      setPermissions(data.permissions || {});
+      setAvailablePermissions(data.available_permissions || {});
+    } catch (err) {
+      toast.error(`❌ Ошибка: ${err.message}`);
+    }
+  };
+
+  const handleTogglePermission = (permKey: string, action: string) => {
+    setPermissions(prev => ({
+      ...prev,
+      [permKey]: {
+        ...(prev[permKey] || {}),
+        [action]: !prev[permKey]?.[action]
+      }
+    }));
+  };
+
+  const handleSavePermissions = async () => {
+    try {
+      setSavingRole(true);
+      await api.updateRolePermissions(selectedRole.key, permissions);
+      toast.success('✅ Права обновлены');
+      setShowPermissionsDialog(false);
+    } catch (err) {
+      toast.error(`❌ Ошибка: ${err.message}`);
+    } finally {
+      setSavingRole(false);
+    }
+  };
 
   return (
     <div className="p-8">
@@ -83,7 +182,7 @@ const handleSaveNotifications = async (e: React.FormEvent) => {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">Общие</span>
@@ -91,6 +190,10 @@ const handleSaveNotifications = async (e: React.FormEvent) => {
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
             <span className="hidden sm:inline">Уведомления</span>
+          </TabsTrigger>
+          <TabsTrigger value="roles" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            <span className="hidden sm:inline">Роли</span>
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -281,6 +384,86 @@ const handleSaveNotifications = async (e: React.FormEvent) => {
           </div>
         </TabsContent>
 
+        {/* Roles Tab */}
+        <TabsContent value="roles">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl text-gray-900 mb-2">Управление ролями</h2>
+                <p className="text-gray-600">Создавайте роли и назначайте права доступа</p>
+              </div>
+              <Button onClick={() => setShowCreateRoleDialog(true)} className="bg-pink-600 hover:bg-pink-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Создать роль
+              </Button>
+            </div>
+
+            {/* Info Alert */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-blue-800 font-medium text-sm mb-2">О системе ролей:</p>
+                  <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
+                    <li>Создавайте кастомные роли под нужды вашего бизнеса</li>
+                    <li>Назначайте детальные права: просмотр, создание, редактирование, удаление</li>
+                    <li>Встроенные роли (Админ, Менеджер, Сотрудник) нельзя удалить</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Roles Grid */}
+            {loadingRoles ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {roles.map((role: any) => (
+                  <div key={role.key} className="relative bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    {!role.is_custom && (
+                      <div className="absolute top-4 right-4 px-3 py-1 bg-yellow-100 border border-yellow-200 rounded-full text-xs font-semibold text-yellow-800">
+                        Встроенная
+                      </div>
+                    )}
+
+                    <div className="mb-4">
+                      <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
+                        <Shield className="w-6 h-6 text-pink-600" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{role.name}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">{role.description}</p>
+                    </div>
+
+                    <div className="flex gap-2 pt-4 border-t border-gray-200">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleOpenPermissions(role)}
+                        className="flex-1"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Права
+                      </Button>
+                      {role.is_custom && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteRole(role.key, role.name)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
         {/* Security */}
         <TabsContent value="security">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -316,6 +499,113 @@ const handleSaveNotifications = async (e: React.FormEvent) => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Create Role Dialog */}
+      {showCreateRoleDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">Создать роль</h3>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <Label htmlFor="roleKey">Ключ роли (латиница) *</Label>
+                <Input
+                  id="roleKey"
+                  placeholder="senior_master"
+                  value={createRoleForm.role_key}
+                  onChange={(e) => setCreateRoleForm({ ...createRoleForm, role_key: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="roleName">Название роли *</Label>
+                <Input
+                  id="roleName"
+                  placeholder="Старший мастер"
+                  value={createRoleForm.role_name}
+                  onChange={(e) => setCreateRoleForm({ ...createRoleForm, role_name: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="roleDesc">Описание</Label>
+                <Textarea
+                  id="roleDesc"
+                  placeholder="Описание роли..."
+                  value={createRoleForm.role_description}
+                  onChange={(e) => setCreateRoleForm({ ...createRoleForm, role_description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <Button variant="outline" onClick={() => setShowCreateRoleDialog(false)} className="flex-1">
+                Отмена
+              </Button>
+              <Button onClick={handleCreateRole} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
+                {savingRole ? 'Создание...' : 'Создать'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Permissions Dialog */}
+      {showPermissionsDialog && selectedRole && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-auto">
+          <div className="bg-white rounded-xl max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-auto">
+            <div className="p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+              <h3 className="text-xl font-bold text-gray-900">Права роли: {selectedRole.name}</h3>
+              <p className="text-sm text-gray-600 mt-1">Настройте детальные права доступа</p>
+            </div>
+
+            <div className="p-6">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="p-3 text-left text-sm font-semibold text-gray-600 border-b">Ресурс</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Просмотр</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Создание</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Редактирование</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Удаление</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(availablePermissions).map(([key, name]) => (
+                      <tr key={key} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="p-3 text-sm font-medium text-gray-900">{name as string}</td>
+                        {['can_view', 'can_create', 'can_edit', 'can_delete'].map(action => (
+                          <td key={action} className="p-3 text-center">
+                            <input
+                              type="checkbox"
+                              checked={permissions[key]?.[action] || false}
+                              onChange={() => handleTogglePermission(key, action)}
+                              className="w-5 h-5 cursor-pointer accent-pink-600"
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3 sticky bottom-0 bg-white">
+              <Button variant="outline" onClick={() => setShowPermissionsDialog(false)} className="flex-1">
+                Отмена
+              </Button>
+              <Button onClick={handleSavePermissions} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
+                {savingRole ? 'Сохранение...' : 'Сохранить права'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

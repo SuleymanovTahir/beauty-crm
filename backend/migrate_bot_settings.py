@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # migrate_bot_settings.py
-# Скрипт для добавления новых колонок в таблицу bot_settings
+# Скрипт для создания/обновления таблицы bot_settings
 
 import sqlite3
 import os
@@ -20,81 +20,59 @@ print("=" * 70)
 conn = sqlite3.connect(DATABASE_NAME)
 c = conn.cursor()
 
-# Список новых колонок с дефолтными значениями
-new_columns = [
-    ("price_response_template", "TEXT", None),
-    ("booking_redirect_message", "TEXT", None),
-    ("premium_justification", "TEXT", None),
-    ("fomo_messages", "TEXT", None),
-    ("upsell_techniques", "TEXT", None),
-    ("languages_supported", "TEXT", "'ru,en,ar'"),
-    ("emoji_usage", "TEXT", None),
-    ("objection_handling", "TEXT", None),
-    ("safety_guidelines", "TEXT", None),
-    ("example_good_responses", "TEXT", None),
-    ("algorithm_actions", "TEXT", None),
-    ("negative_handling", "TEXT", None),
-    ("location_features", "TEXT", None),
-    ("seasonality", "TEXT", None),
-    ("emergency_situations", "TEXT", None),
-    ("success_metrics", "TEXT", None)
-]
+# ===== ШАГ 1: СОЗДАТЬ ТАБЛИЦУ ЕСЛИ ЕЁ НЕТ =====
+print("\n📋 Шаг 1: Проверка существования таблицы bot_settings...")
 
-print("🔄 Начинаем миграцию...\n")
-
-success_count = 0
-skip_count = 0
-error_count = 0
-
-# Добавляем каждую колонку
-for column_name, column_type, default_value in new_columns:
-    try:
-        if default_value:
-            sql = f"ALTER TABLE bot_settings ADD COLUMN {column_name} {column_type} DEFAULT {default_value}"
-        else:
-            sql = f"ALTER TABLE bot_settings ADD COLUMN {column_name} {column_type}"
+try:
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='bot_settings'")
+    table_exists = c.fetchone() is not None
+    
+    if not table_exists:
+        print("⚠️  Таблица bot_settings не найдена. Создаём...")
         
-        c.execute(sql)
-        print(f"✅ Добавлена колонка: {column_name} ({column_type})")
-        success_count += 1
+        c.execute('''CREATE TABLE bot_settings
+                     (id INTEGER PRIMARY KEY,
+                      bot_name TEXT,
+                      personality_traits TEXT,
+                      greeting_message TEXT,
+                      farewell_message TEXT,
+                      price_explanation TEXT,
+                      salon_name TEXT,
+                      salon_address TEXT,
+                      salon_phone TEXT,
+                      salon_hours TEXT,
+                      booking_url TEXT,
+                      google_maps_link TEXT,
+                      communication_style TEXT,
+                      max_message_length INTEGER DEFAULT 4,
+                      price_response_template TEXT,
+                      booking_redirect_message TEXT,
+                      premium_justification TEXT,
+                      fomo_messages TEXT,
+                      upsell_techniques TEXT,
+                      languages_supported TEXT DEFAULT 'ru,en,ar',
+                      emoji_usage TEXT,
+                      objection_handling TEXT,
+                      safety_guidelines TEXT,
+                      example_good_responses TEXT,
+                      algorithm_actions TEXT,
+                      negative_handling TEXT,
+                      location_features TEXT,
+                      seasonality TEXT,
+                      emergency_situations TEXT,
+                      success_metrics TEXT)''')
         
-    except sqlite3.OperationalError as e:
-        if "duplicate column name" in str(e):
-            print(f"⚠️  Колонка уже существует: {column_name}")
-            skip_count += 1
-        else:
-            print(f"❌ Ошибка при добавлении {column_name}: {e}")
-            error_count += 1
-
-conn.commit()
-
-print("\n" + "=" * 70)
-print("📊 Результаты миграции:")
-print(f"   ✅ Успешно добавлено: {success_count} колонок")
-print(f"   ⚠️  Уже существовало:  {skip_count} колонок")
-print(f"   ❌ Ошибок:            {error_count}")
-
-# Проверяем финальную структуру таблицы
-print("\n" + "=" * 70)
-print("🔍 Проверка структуры таблицы bot_settings:\n")
-
-c.execute("PRAGMA table_info(bot_settings)")
-columns = c.fetchall()
-
-print(f"📋 Всего колонок: {len(columns)}\n")
-for col in columns:
-    col_id, col_name, col_type, not_null, default_val, pk = col
-    default_str = f" DEFAULT {default_val}" if default_val else ""
-    print(f"   {col_id:2d}. {col_name:30s} {col_type:10s}{default_str}")
-
-conn.close()
-
-print("\n" + "=" * 70)
-if error_count == 0:
-    print("✅ Миграция успешно завершена!")
-else:
-    print("⚠️  Миграция завершена с ошибками. Проверьте вывод выше.")
-
-print("\n💡 Теперь можно запустить приложение:")
-print("   python main.py")
-print("=" * 70)
+        conn.commit()
+        print("✅ Таблица bot_settings успешно создана со всеми полями!")
+        
+        # Вставить дефолтные значения
+        print("\n📝 Вставка дефолтных значений...")
+        c.execute("""INSERT INTO bot_settings (id) VALUES (1)""")
+        conn.commit()
+        print("✅ Дефолтная запись создана (id=1)")
+    else:
+        print("✅ Таблица bot_settings уже существует")
+        
+except Exception as e:
+    print(f"❌ Ошибка при создании таблицы: {e}")
+    conn.rollback()

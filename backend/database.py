@@ -558,15 +558,21 @@ def update_service(service_id, **kwargs):
 
 
 def delete_service(service_id):
-    """Удалить услугу (мягкое удаление)"""
+    """Удалить услугу ПОЛНОСТЬЮ (не мягкое удаление)"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
-    c.execute("UPDATE services SET is_active = 0 WHERE id = ?", (service_id,))
+    # Реальное удаление из базы
+    c.execute("DELETE FROM services WHERE id = ?", (service_id,))
 
     conn.commit()
+    affected = c.rowcount
     conn.close()
-    return True
+    
+    if affected > 0:
+        print(f"✅ Услуга {service_id} удалена из БД")
+    
+    return affected > 0
 
 
 def create_user(username: str, password: str, full_name: str = None,
@@ -1462,3 +1468,219 @@ def delete_client(instagram_id: str) -> bool:
         print(f"❌ Ошибка удаления клиента: {e}")
         conn.close()
         return False
+    
+def init_roles_table():
+    """Создать таблицы для ролей и прав"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    # Таблица кастомных ролей
+    c.execute('''CREATE TABLE IF NOT EXISTS custom_roles
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  role_key TEXT UNIQUE NOT NULL,
+                  role_name TEXT NOT NULL,
+                  role_description TEXT,
+                  created_at TEXT,
+                  created_by INTEGER,
+                  FOREIGN KEY (created_by) REFERENCES users(id))''')
+    
+    # Таблица прав доступа
+    c.execute('''CREATE TABLE IF NOT EXISTS role_permissions
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  role_key TEXT NOT NULL,
+                  permission_key TEXT NOT NULL,
+                  can_view INTEGER DEFAULT 0,
+                  can_create INTEGER DEFAULT 0,
+                  can_edit INTEGER DEFAULT 0,
+                  can_delete INTEGER DEFAULT 0,
+                  UNIQUE(role_key, permission_key))''')
+    
+    conn.commit()
+    conn.close()
+
+
+def get_all_roles():
+    """Получить все роли (встроенные + кастомные)"""
+    builtin_roles = [
+        {
+            'key': 'admin',
+            'name': 'Администратор',
+            'description': 'Полный доступ ко всем функциям',
+            'is_custom': False
+        },
+        {
+            'key': 'manager',
+            'name': 'Менеджер',
+            'description': 'Работа с клиентами и аналитикой',
+            'is_custom': False
+        },
+        {
+            'key': 'employee',
+            'name': 'Сотрудник',
+            'description': 'Базовые права - свои записи',
+            'is_custom': False
+        }
+    ]
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    custom_roles = c.fetchall()
+    
+    conn.close()
+    
+    for role in custom_roles:
+        builtin_roles.append({
+            'key': role[0],
+            'name': role[1],
+            'description': role[2],
+            'is_custom': True
+        })
+    
+    return builtin_roles
+
+
+def create_custom_role(role_key: str, role_name: str, role_description: str, created_by: int) -> bool:
+    """Создать кастомную роль"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        now = datetime.now().isoformat()
+        c.execute("""INSERT INTO custom_roles 
+                     (role_key, role_name, role_description, created_at, created_by)
+                     VALUES (?, ?, ?, ?, ?)""",
+                  (role_key, role_name, role_description, now, created_by))
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False
+
+
+def delete_custom_role(role_key: str) -> bool:
+    """Удалить кастомную роль"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    # Проверить что это кастомная роль
+    if role_key in ['admin', 'manager', 'employee']:
+        conn.close()
+        return False
+    
+    try:
+        c.execute("DELETE FROM custom_roles WHERE role_key = ?", (role_key,))
+        c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        return success
+    except Exception as e:
+        print(f"Ошибка удаления роли: {e}")
+        conn.close()
+        return False
+
+
+def get_role_permissions(role_key: str):
+    """Получить права роли"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""SELECT permission_key, can_view, can_create, can_edit, can_delete
+                 FROM role_permissions WHERE role_key = ?""", (role_key,))
+    
+    permissions = {}
+    for row in c.fetchall():
+        permissions[row[0]] = {
+            'can_view': bool(row[1]),
+            'can_create': bool(row[2]),
+            'can_edit': bool(row[3]),
+            'can_delete': bool(row[4])
+        }
+    
+    conn.close()
+    return permissions
+
+
+def update_role_permissions(role_key: str, permissions: dict) -> bool:
+    """Обновить права роли"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Удалить старые права
+        c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
+        
+        # Добавить новые
+        for perm_key, perms in permissions.items():
+            c.execute("""INSERT INTO role_permissions 
+                        (role_key, permission_key, can_view, can_create, can_edit, can_delete)
+                        VALUES (?, ?, ?, ?, ?, ?)""",
+                      (role_key, perm_key,
+                       1 if perms.get('can_view') else 0,
+                       1 if perms.get('can_create') else 0,
+                       1 if perms.get('can_edit') else 0,
+                       1 if perms.get('can_delete') else 0))
+        
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Ошибка обновления прав: {e}")
+        conn.rollback()
+        conn.close()
+        return False
+
+
+def check_user_permission(user_id: int, permission_key: str, action: str) -> bool:
+    """Проверить есть ли у пользователя право на действие
+    
+    Args:
+        user_id: ID пользователя
+        permission_key: ключ ресурса (clients, bookings, services и т.д.)
+        action: действие (view, create, edit, delete)
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    # Получить роль пользователя
+    c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+    result = c.fetchone()
+    
+    if not result:
+        conn.close()
+        return False
+    
+    role = result[0]
+    
+    # Админ имеет все права
+    if role == 'admin':
+        conn.close()
+        return True
+    
+    # Проверить права роли
+    column = f"can_{action}"
+    c.execute(f"""SELECT {column} FROM role_permissions 
+                  WHERE role_key = ? AND permission_key = ?""",
+              (role, permission_key))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    return bool(result[0]) if result else False
+
+
+# Список доступных прав (ресурсов)
+AVAILABLE_PERMISSIONS = {
+    'clients': 'Клиенты',
+    'bookings': 'Записи',
+    'services': 'Услуги',
+    'analytics': 'Аналитика',
+    'users': 'Пользователи',
+    'settings': 'Настройки',
+    'bot_settings': 'Настройки бота',
+    'messages': 'Сообщения',
+    'calendar': 'Календарь'
+}

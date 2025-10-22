@@ -207,12 +207,26 @@ export class ApiClient {
     return this.request<any>('/api/users')
   }
 
-  async createUser(data: any) {
-    return this.request('/register', {
+  async createUser(data: { username: string; password: string; full_name: string; email?: string; role: string }) {
+    const formData = new FormData()
+    formData.append('username', data.username)
+    formData.append('password', data.password)
+    formData.append('full_name', data.full_name)
+    if (data.email) formData.append('email', data.email)
+    formData.append('role', data.role)
+
+    const response = await fetch(`${this.baseURL}/register`, {
       method: 'POST',
-      body: new FormData(data as any),
-      headers: {},
+      credentials: 'include',
+      body: formData,
     })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: response.statusText }))
+      throw new Error(error.error || 'Ошибка создания пользователя')
+    }
+
+    return response.json().catch(() => ({ success: true }))
   }
 
   async deleteUser(userId: number) {
@@ -220,6 +234,7 @@ export class ApiClient {
       method: 'POST',
     })
   }
+
 
   // ===== ЭКСПОРТ =====
   async exportClients(format: string = 'csv') {
@@ -231,6 +246,22 @@ export class ApiClient {
     
     return response.blob()
   }
+
+  async exportAnalytics(format: string = 'csv', period: number = 30) {
+    const response = await fetch(`${this.baseURL}/api/export/analytics?format=${format}&period=${period}`, {
+      credentials: 'include',
+    })
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Export failed' }))
+      throw new Error(error.error || 'Export failed')
+    }
+    
+    return response.blob()
+  }
+
+
+  
 
   // ===== UNREAD COUNT =====
   async getUnreadCount() {
