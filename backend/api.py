@@ -1,10 +1,7 @@
-# backend/api.py - ИСПРАВЛЕННАЯ ВЕРСИЯ
-# ✅ ФИКС: Расширена таблица bot_settings для всех полей из фронтенда
-
 from fastapi import APIRouter, Request, Query, Cookie, HTTPException, Form
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 import io
 import time
@@ -21,16 +18,37 @@ from database import (
     get_unread_messages_count, get_or_create_client, save_booking,
     get_all_users, delete_user, create_custom_status, delete_custom_status,
     get_custom_statuses, create_service, update_service, delete_service,
-    delete_client, get_user_by_session,
-    # Special packages
+    delete_client, get_user_by_session, DATABASE_NAME,
     get_all_special_packages, create_special_package, 
-    update_special_package, delete_special_package
+    update_special_package, delete_special_package,
+    get_all_roles, create_custom_role, delete_custom_role,
+    get_role_permissions, update_role_permissions, AVAILABLE_PERMISSIONS
 )
-from config import CLIENT_STATUSES, SALON_INFO, DATABASE_NAME
+from config import CLIENT_STATUSES, SALON_INFO
 from instagram import send_message
 
-router = APIRouter(prefix="/api", tags=["API"])
+# ===== ИМПОРТЫ ДЛЯ PDF И EXCEL =====
+try:
+    from reportlab.lib.pagesizes import A4, letter
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    PDF_AVAILABLE = True
+except ImportError:
+    PDF_AVAILABLE = False
+    log_warning("ReportLab не установлен. Экспорт в PDF недоступен.", "api")
 
+try:
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    EXCEL_AVAILABLE = True
+except ImportError:
+    EXCEL_AVAILABLE = False
+    log_warning("openpyxl не установлен. Экспорт в Excel недоступен.", "api")
+
+router = APIRouter(prefix="/api", tags=["API"])
 
 # ===== MIDDLEWARE АВТОРИЗАЦИИ =====
 def require_auth(session_token: Optional[str] = Cookie(None)):
@@ -45,7 +63,6 @@ def get_total_unread():
     clients = get_all_clients()
     return sum(get_unread_messages_count(c[0]) for c in clients)
 
-
 def get_all_statuses():
     """Получить все статусы"""
     statuses = CLIENT_STATUSES.copy()
@@ -57,7 +74,6 @@ def get_all_statuses():
         }
     return statuses
 
-
 def get_client_display_name(client):
     """Форматировать имя клиента"""
     if client[3]:  # name
@@ -67,9 +83,276 @@ def get_client_display_name(client):
     else:
         return client[0][:15] + "..."
 
+# ===== ФУНКЦИИ ЭКСПОРТА =====
+def export_clients_csv(clients):
+    """Экспорт клиентов в CSV"""
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(['ID', 'Имя', 'Username', 'Телефон', 'Статус', 'Сообщений', 'LTV', 'Первый контакт', 'Последний контакт'])
+    
+    for c in clients:
+        writer.writerow([
+            c[0],  # id
+            c[3] or '',  # name
+            c[1] or '',  # username
+            c[2] or '',  # phone
+            c[8] if len(c) > 8 else 'new',  # status
+            c[6],  # total_messages
+            c[9] if len(c) > 9 else 0,  # lifetime_value
+            c[4],  # first_contact
+            c[5]   # last_contact
+        ])
+    
+    output.seek(0)
+    return output.getvalue().encode('utf-8')
+
+def export_clients_pdf(clients):
+    """Экспорт клиентов в PDF"""
+    if not PDF_AVAILABLE:
+        raise HTTPException(status_code=500, detail="PDF экспорт недоступен")
+    
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        textColor=colors.HexColor('#ec4899'),
+        spaceAfter=30,
+        alignment=1
+    )
+    
+    title = Paragraph(f"База клиентов - {SALON_INFO['name']}", title_style)
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+    
+    date_text = Paragraph(f"Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}", styles['Normal'])
+    elements.append(date_text)
+    elements.append(Spacer(1, 20))
+    
+    data = [['ID', 'Имя', 'Телефон', 'Статус', 'Сообщений', 'LTV']]
+    
+    for c in clients:
+        data.append([
+            str(c[0])[:15],
+            (c[3] or c[1] or 'N/A')[:25],
+            (c[2] or '-')[:15],
+            (c[8] if len(c) > 8 else 'new')[:10],
+            str(c[6]),
+            f"{c[9] if len(c) > 9 else 0} AED"
+        ])
+    
+    table = Table(data, colWidths=[60, 120, 80, 60, 60, 80])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ec4899')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+    ]))
+    
+    elements.append(table)
+    
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+def export_clients_excel(clients):
+    """Экспорт клиентов в Excel"""
+    if not EXCEL_AVAILABLE:
+        raise HTTPException(status_code=500, detail="Excel экспорт недоступен")
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Клиенты"
+    
+    headers = ['ID', 'Имя', 'Username', 'Телефон', 'Статус', 'Сообщений', 'LTV (AED)', 'Первый контакт', 'Последний контакт']
+    ws.append(headers)
+    
+    header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+    
+    for c in clients:
+        ws.append([
+            c[0],
+            c[3] or '',
+            c[1] or '',
+            c[2] or '',
+            c[8] if len(c) > 8 else 'new',
+            c[6],
+            c[9] if len(c) > 9 else 0,
+            c[4],
+            c[5]
+        ])
+    
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+def export_bookings_csv(bookings):
+    """Экспорт записей в CSV"""
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(['ID', 'Клиент', 'Услуга', 'Дата/Время', 'Телефон', 'Статус', 'Доход (AED)', 'Создана'])
+    
+    for b in bookings:
+        writer.writerow([
+            b[0],  # id
+            b[5] or '',  # name
+            b[2] or '',  # service_name
+            b[3],  # datetime
+            b[4] or '',  # phone
+            b[6],  # status
+            b[8] if len(b) > 8 else 0,  # revenue
+            b[7]  # created_at
+        ])
+    
+    output.seek(0)
+    return output.getvalue().encode('utf-8')
+
+def export_bookings_pdf(bookings):
+    """Экспорт записей в PDF"""
+    if not PDF_AVAILABLE:
+        raise HTTPException(status_code=500, detail="PDF экспорт недоступен")
+    
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        textColor=colors.HexColor('#ec4899'),
+        spaceAfter=30,
+        alignment=1
+    )
+    
+    title = Paragraph(f"Записи - {SALON_INFO['name']}", title_style)
+    elements.append(title)
+    elements.append(Spacer(1, 12))
+    
+    date_text = Paragraph(f"Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}", styles['Normal'])
+    elements.append(date_text)
+    elements.append(Spacer(1, 20))
+    
+    data = [['ID', 'Клиент', 'Услуга', 'Дата', 'Статус', 'Доход']]
+    
+    for b in bookings:
+        try:
+            date_obj = datetime.fromisoformat(b[3])
+            date_str = date_obj.strftime('%d.%m %H:%M')
+        except:
+            date_str = str(b[3])[:16]
+            
+        data.append([
+            str(b[0]),
+            (b[5] or 'N/A')[:20],
+            (b[2] or 'N/A')[:25],
+            date_str,
+            (b[6] or '')[:10],
+            f"{b[8] if len(b) > 8 else 0} AED"
+        ])
+    
+    table = Table(data, colWidths=[30, 80, 100, 70, 60, 60])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ec4899')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+    ]))
+    
+    elements.append(table)
+    
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+def export_bookings_excel(bookings):
+    """Экспорт записей в Excel"""
+    if not EXCEL_AVAILABLE:
+        raise HTTPException(status_code=500, detail="Excel экспорт недоступен")
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Записи"
+    
+    headers = ['ID', 'Клиент', 'Услуга', 'Дата/Время', 'Телефон', 'Статус', 'Доход (AED)', 'Создана']
+    ws.append(headers)
+    
+    header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+    
+    for b in bookings:
+        ws.append([
+            b[0],
+            b[5] or '',
+            b[2] or '',
+            b[3],
+            b[4] or '',
+            b[6],
+            b[8] if len(b) > 8 else 0,
+            b[7]
+        ])
+    
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer.getvalue()
 
 # ===== ОСНОВНЫЕ API ENDPOINTS =====
-
 @router.get("/dashboard")
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
@@ -89,7 +372,6 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     }
 
 # ===== КЛИЕНТЫ =====
-
 @router.post("/clients")
 async def create_client_api(
     request: Request,
@@ -103,10 +385,10 @@ async def create_client_api(
     data = await request.json()
     
     try:
-        instagram_id = data.get('instagram_id') or str(time.time())
+        instagram_id = data.get('instagram_id') or f"manual_{int(time.time())}"
         get_or_create_client(instagram_id, username=data.get('name'))
         
-        if data.get('phone') or data.get('notes'):
+        if data.get('phone') or data.get('notes') or data.get('name'):
             update_client_info(
                 instagram_id,
                 name=data.get('name'),
@@ -119,7 +401,6 @@ async def create_client_api(
     except Exception as e:
         log_error(f"Error creating client: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
-
 
 @router.get("/clients")
 async def list_clients(session_token: Optional[str] = Cookie(None)):
@@ -195,12 +476,12 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
                 "service": b[2],
                 "datetime": b[3],
                 "phone": b[4],
-                "status": b[6]
+                "status": b[6],
+                "revenue": b[8] if len(b) > 8 else 0
             }
             for b in bookings
         ]
     }
-
 
 @router.post("/clients/{client_id}/delete")
 async def delete_client_api(
@@ -225,8 +506,6 @@ async def delete_client_api(
         log_error(f"Error deleting client: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
-
 @router.post("/clients/{client_id}/status")
 async def update_client_status_api(
     client_id: str,
@@ -248,7 +527,6 @@ async def update_client_status_api(
     log_activity(user["id"], "update_client_status", "client", client_id, f"Status: {status}")
     
     return {"success": True, "message": "Client status updated"}
-
 
 @router.post("/clients/{client_id}/update")
 async def update_client_api(
@@ -274,7 +552,6 @@ async def update_client_api(
         return {"success": True, "message": "Client updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
-
 
 @router.post("/clients/{client_id}/pin")
 async def pin_client_api(
@@ -302,9 +579,7 @@ async def pin_client_api(
         "message": "Pinned" if not is_pinned else "Unpinned"
     }
 
-
 # ===== ЗАПИСИ =====
-
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить все записи"""
@@ -331,7 +606,6 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
         "count": len(bookings)
     }
 
-
 @router.post("/bookings")
 async def create_booking_api(
     request: Request,
@@ -348,7 +622,7 @@ async def create_booking_api(
         instagram_id = data.get('instagram_id')
         service = data.get('service')
         datetime_str = f"{data.get('date')} {data.get('time')}"
-        phone = data.get('phone')
+        phone = data.get('phone', '')
         name = data.get('name')
         
         get_or_create_client(instagram_id, username=name)
@@ -360,7 +634,6 @@ async def create_booking_api(
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
-
 
 @router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(
@@ -385,7 +658,6 @@ async def update_booking_status_api(
         return {"success": True, "message": "Booking status updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
-
 
 @router.get("/bookings/{booking_id}")
 async def get_booking_detail(
@@ -416,7 +688,6 @@ async def get_booking_detail(
     }
 
 # ===== ЧАТ =====
-
 @router.get("/chat/messages")
 async def get_chat_messages(
     client_id: str = Query(...),
@@ -470,9 +741,7 @@ async def send_chat_message(
     
     return JSONResponse({"error": "Send failed"}, status_code=500)
 
-
 # ===== АНАЛИТИКА =====
-
 @router.get("/analytics")
 async def get_analytics_api(
     period: int = Query(30),
@@ -490,7 +759,6 @@ async def get_analytics_api(
     else:
         return get_analytics_data(days=period)
 
-
 @router.get("/funnel")
 async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     """Получить данные воронки"""
@@ -499,7 +767,6 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return get_funnel_data()
-
 
 @router.get("/stats")
 async def get_stats_api(session_token: Optional[str] = Cookie(None)):
@@ -510,9 +777,7 @@ async def get_stats_api(session_token: Optional[str] = Cookie(None)):
     
     return get_stats()
 
-
 # ===== УСЛУГИ =====
-
 @router.get("/services")
 async def list_services(
     active_only: bool = Query(True),
@@ -542,7 +807,6 @@ async def list_services(
         ],
         "count": len(services)
     }
-
 
 @router.post("/services")
 async def create_service_api(
@@ -578,7 +842,6 @@ async def create_service_api(
         log_error(f"Error creating service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/services/{service_id}/update")
 async def update_service_api(
     service_id: int,
@@ -600,7 +863,6 @@ async def update_service_api(
         log_error(f"Error updating service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/services/{service_id}/delete")
 async def delete_service_api(
     service_id: int,
@@ -619,9 +881,7 @@ async def delete_service_api(
         log_error(f"Error deleting service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
-
 @router.get("/special-packages")
 async def list_special_packages(
     active_only: bool = Query(True),
@@ -659,7 +919,6 @@ async def list_special_packages(
         ],
         "count": len(packages)
     }
-
 
 @router.post("/special-packages")
 async def create_special_package_api(
@@ -699,7 +958,6 @@ async def create_special_package_api(
         log_error(f"Error creating package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/special-packages/{package_id}")
 async def update_special_package_api(
     package_id: int,
@@ -721,7 +979,6 @@ async def update_special_package_api(
         log_error(f"Error updating package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.delete("/special-packages/{package_id}")
 async def delete_special_package_api(
     package_id: int,
@@ -740,9 +997,7 @@ async def delete_special_package_api(
         log_error(f"Error deleting package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 # ===== ПОЛЬЗОВАТЕЛИ =====
-
 @router.get("/users")
 async def list_users(session_token: Optional[str] = Cookie(None)):
     """Получить пользователей (только для admin)"""
@@ -767,7 +1022,6 @@ async def list_users(session_token: Optional[str] = Cookie(None)):
         "count": len(users)
     }
 
-
 @router.post("/users/{user_id}/delete")
 async def delete_user_api(
     user_id: int,
@@ -789,63 +1043,203 @@ async def delete_user_api(
     
     return JSONResponse({"error": "Delete failed"}, status_code=400)
 
-
-# ===== ЭКСПОРТ =====
-
+# ===== ЭКСПОРТ (ВСЕ ФОРМАТЫ) =====
 @router.get("/export/clients")
 async def export_clients(
     format: str = Query("csv"),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Экспортировать клиентов"""
+    """Экспортировать клиентов в CSV, PDF или Excel"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    if format != "csv":
-        return JSONResponse({"error": "Only CSV supported in API"}, status_code=400)
-    
     clients = get_all_clients()
-    output = io.StringIO()
-    writer = csv.writer(output)
     
-    writer.writerow(['ID', 'Name', 'Username', 'Phone', 'Status', 'Messages', 'LTV'])
-    for c in clients:
-        writer.writerow([c[0], c[3] or '', c[1] or '', c[2] or '', c[8], c[6], c[9]])
-    
-    output.seek(0)
-    
-    return StreamingResponse(
-        iter([output.getvalue().encode('utf-8')]),
-        media_type="text/csv",
-        headers={"Content-Disposition": f"attachment; filename=clients_{datetime.now().strftime('%Y%m%d')}.csv"}
-    )
+    try:
+        if format == "csv":
+            content = export_clients_csv(clients)
+            media_type = "text/csv"
+            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.csv"
+        elif format == "pdf":
+            content = export_clients_pdf(clients)
+            media_type = "application/pdf"
+            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.pdf"
+        elif format == "excel":
+            content = export_clients_excel(clients)
+            media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        else:
+            return JSONResponse({"error": "Invalid format"}, status_code=400)
+        
+        return StreamingResponse(
+            iter([content]),
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        log_error(f"Export error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
+@router.get("/export/bookings")
+async def export_bookings(
+    format: str = Query("csv"),
+    date_from: str = Query(None),
+    date_to: str = Query(None),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Экспортировать записи в CSV, PDF или Excel с фильтрацией по дате"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    all_bookings = get_all_bookings()
+    
+    if date_from and date_to:
+        filtered_bookings = []
+        for b in all_bookings:
+            try:
+                booking_date = datetime.fromisoformat(b[3])
+                start_date = datetime.fromisoformat(date_from)
+                end_date = datetime.fromisoformat(date_to)
+                
+                if start_date <= booking_date <= end_date:
+                    filtered_bookings.append(b)
+            except:
+                continue
+        bookings = filtered_bookings
+    else:
+        bookings = all_bookings
+    
+    try:
+        if format == "csv":
+            content = export_bookings_csv(bookings)
+            media_type = "text/csv"
+            filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.csv"
+        elif format == "pdf":
+            content = export_bookings_pdf(bookings)
+            media_type = "application/pdf"
+            filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.pdf"
+        elif format == "excel":
+            content = export_bookings_excel(bookings)
+            media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        else:
+            return JSONResponse({"error": "Invalid format"}, status_code=400)
+        
+        return StreamingResponse(
+            iter([content]),
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        log_error(f"Export error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/export/analytics")
 async def export_analytics(
     format: str = Query("csv"),
     period: int = Query(30),
+    date_from: str = Query(None),
+    date_to: str = Query(None),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Экспортировать аналитику"""
+    """Экспортировать аналитику в CSV, PDF или Excel"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    if format != "csv":
-        return JSONResponse({"error": "Only CSV supported"}, status_code=400)
+    if date_from and date_to:
+        analytics = get_analytics_data(date_from=date_from, date_to=date_to)
+    else:
+        analytics = get_analytics_data(days=period)
     
-    analytics = get_analytics_data(days=period)
-    
-    output = io.StringIO()
-    writer = csv.writer(output)
-    
-    return StreamingResponse(
-        iter([output.getvalue().encode('utf-8')]),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=analytics.csv"}
-    )
+    try:
+        if format == "csv":
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            writer.writerow(['Дата', 'Записей'])
+            for date, count in analytics.get('bookings_by_day', []):
+                writer.writerow([date, count])
+            
+            writer.writerow([])
+            writer.writerow(['Услуга', 'Количество', 'Доход'])
+            for name, count, revenue in analytics.get('services_stats', []):
+                writer.writerow([name, count, revenue])
+            
+            output.seek(0)
+            content = output.getvalue().encode('utf-8')
+            media_type = "text/csv"
+            filename = f"analytics_{datetime.now().strftime('%Y%m%d')}.csv"
+        
+        elif format == "pdf":
+            if not PDF_AVAILABLE:
+                return JSONResponse({"error": "PDF export not available"}, status_code=500)
+            
+            buffer = io.BytesIO()
+            doc = SimpleDocTemplate(buffer, pagesize=A4)
+            elements = []
+            
+            styles = getSampleStyleSheet()
+            title = Paragraph("Аналитика", styles['Heading1'])
+            elements.append(title)
+            elements.append(Spacer(1, 20))
+            
+            data = [['Дата', 'Записей']]
+            for date, count in analytics.get('bookings_by_day', []):
+                data.append([date, str(count)])
+            
+            table = Table(data)
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ]))
+            elements.append(table)
+            
+            doc.build(elements)
+            buffer.seek(0)
+            content = buffer.getvalue()
+            media_type = "application/pdf"
+            filename = f"analytics_{datetime.now().strftime('%Y%m%d')}.pdf"
+        
+        elif format == "excel":
+            if not EXCEL_AVAILABLE:
+                return JSONResponse({"error": "Excel export not available"}, status_code=500)
+            
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Аналитика"
+            
+            ws.append(['Дата', 'Записей'])
+            for date, count in analytics.get('bookings_by_day', []):
+                ws.append([date, count])
+            
+            ws.append([])
+            ws.append(['Услуга', 'Количество', 'Доход'])
+            for name, count, revenue in analytics.get('services_stats', []):
+                ws.append([name, count, revenue])
+            
+            buffer = io.BytesIO()
+            wb.save(buffer)
+            buffer.seek(0)
+            content = buffer.getvalue()
+            media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            filename = f"analytics_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        
+        else:
+            return JSONResponse({"error": "Invalid format"}, status_code=400)
+        
+        return StreamingResponse(
+            iter([content]),
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        log_error(f"Export analytics error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
@@ -856,9 +1250,7 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     
     return {"count": get_total_unread()}
 
-
-# ===== НАСТРОЙКИ БОТА (ИСПРАВЛЕННАЯ ВЕРСИЯ) =====
-
+# ===== НАСТРОЙКИ БОТА =====
 @router.get("/bot-settings")
 async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота"""
@@ -869,7 +1261,6 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Создаем расширенную таблицу если её нет
     try:
         c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
                      (id INTEGER PRIMARY KEY,
@@ -906,7 +1297,6 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         log_error(f"Error creating bot_settings table: {e}", "api")
     
-    # Дефолтные значения
     defaults = {
         "bot_name": SALON_INFO.get('bot_name', 'M.Le Diamant Assistant'),
         "personality_traits": "Обаятельная, уверенная, харизматичная",
@@ -944,7 +1334,6 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
         result = c.fetchone()
         
         if result:
-            # Создаем словарь из результата
             settings = {}
             fields = [
                 "id", "bot_name", "personality_traits", "greeting_message",
@@ -958,7 +1347,7 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
                 "seasonality", "emergency_situations", "success_metrics"
             ]
             
-            for i, field in enumerate(fields[1:], start=1):  # Пропускаем id
+            for i, field in enumerate(fields[1:], start=1):
                 if i < len(result):
                     settings[field] = result[i] if result[i] is not None else defaults.get(field, "")
                 else:
@@ -972,7 +1361,6 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
         conn.close()
     
     return defaults
-
 
 @router.post("/bot-settings")
 async def update_bot_settings(
@@ -990,7 +1378,6 @@ async def update_bot_settings(
     c = conn.cursor()
     
     try:
-        # Создать расширенную таблицу если её нет
         c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
                      (id INTEGER PRIMARY KEY,
                       bot_name TEXT,
@@ -1023,12 +1410,10 @@ async def update_bot_settings(
                       emergency_situations TEXT,
                       success_metrics TEXT)''')
         
-        # Проверить есть ли уже запись
         c.execute("SELECT COUNT(*) FROM bot_settings")
         exists = c.fetchone()[0] > 0
         
         if exists:
-            # Обновить ВСЕ поля
             c.execute("""UPDATE bot_settings SET
                         bot_name = ?,
                         personality_traits = ?,
@@ -1090,7 +1475,6 @@ async def update_bot_settings(
                        data.get('emergency_situations'),
                        data.get('success_metrics')))
         else:
-            # Вставить новую запись со ВСЕМИ полями
             c.execute("""INSERT INTO bot_settings
                         (bot_name, personality_traits, greeting_message,
                          farewell_message, price_explanation, salon_name,
@@ -1147,10 +1531,7 @@ async def update_bot_settings(
     finally:
         conn.close()
 
-# backend/api.py - добавить в конец файла перед последней строкой
-
 # ===== РОЛИ И ПРАВА ДОСТУПА =====
-
 @router.get("/roles")
 async def list_roles(session_token: Optional[str] = Cookie(None)):
     """Получить все роли"""
@@ -1158,14 +1539,12 @@ async def list_roles(session_token: Optional[str] = Cookie(None)):
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    from database import get_all_roles
     roles = get_all_roles()
     
     return {
         "roles": roles,
         "count": len(roles)
     }
-
 
 @router.post("/roles")
 async def create_role(
@@ -1182,7 +1561,6 @@ async def create_role(
     if not data.get('role_key') or not data.get('role_name'):
         return JSONResponse({"error": "Missing required fields"}, status_code=400)
     
-    from database import create_custom_role
     success = create_custom_role(
         data['role_key'],
         data['role_name'],
@@ -1196,7 +1574,6 @@ async def create_role(
     else:
         return JSONResponse({"error": "Role already exists"}, status_code=400)
 
-
 @router.delete("/roles/{role_key}")
 async def delete_role(
     role_key: str,
@@ -1207,7 +1584,6 @@ async def delete_role(
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    from database import delete_custom_role
     success = delete_custom_role(role_key)
     
     if success:
@@ -1215,7 +1591,6 @@ async def delete_role(
         return {"success": True, "message": "Role deleted"}
     else:
         return JSONResponse({"error": "Cannot delete built-in roles"}, status_code=400)
-
 
 @router.get("/roles/{role_key}/permissions")
 async def get_role_permissions_api(
@@ -1227,7 +1602,6 @@ async def get_role_permissions_api(
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    from database import get_role_permissions, AVAILABLE_PERMISSIONS
     permissions = get_role_permissions(role_key)
     
     return {
@@ -1235,7 +1609,6 @@ async def get_role_permissions_api(
         "permissions": permissions,
         "available_permissions": AVAILABLE_PERMISSIONS
     }
-
 
 @router.post("/roles/{role_key}/permissions")
 async def update_role_permissions_api(
@@ -1251,7 +1624,6 @@ async def update_role_permissions_api(
     data = await request.json()
     permissions = data.get('permissions', {})
     
-    from database import update_role_permissions
     success = update_role_permissions(role_key, permissions)
     
     if success:
@@ -1260,7 +1632,6 @@ async def update_role_permissions_api(
     else:
         return JSONResponse({"error": "Update failed"}, status_code=400)
 
-
 @router.get("/permissions/available")
 async def list_available_permissions(session_token: Optional[str] = Cookie(None)):
     """Получить список всех доступных прав"""
@@ -1268,15 +1639,12 @@ async def list_available_permissions(session_token: Optional[str] = Cookie(None)
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    from database import AVAILABLE_PERMISSIONS
-    
     return {
         "permissions": [
             {"key": key, "name": name}
             for key, name in AVAILABLE_PERMISSIONS.items()
         ]
     }
-
 
 @router.get("/users/{user_id}/permissions")
 async def get_user_permissions(
@@ -1301,7 +1669,6 @@ async def get_user_permissions(
     role = result[0]
     conn.close()
     
-    from database import get_role_permissions
     permissions = get_role_permissions(role)
     
     return {
@@ -1309,7 +1676,6 @@ async def get_user_permissions(
         "role": role,
         "permissions": permissions
     }
-
 
 @router.post("/users/{user_id}/role")
 async def update_user_role(

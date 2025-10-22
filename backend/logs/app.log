@@ -7621,3 +7621,641 @@ jinja2.exceptions.TemplateNotFound: 'admin/login.html' not found in search path:
 2025-10-22 06:31:15 - crm - INFO - [middleware] 📤 GET /api/export/clients → 400 (0.00s)
 2025-10-22 06:31:17 - crm - INFO - [middleware] 🔥 GET /api/export/clients
 2025-10-22 06:31:17 - crm - INFO - [middleware] 📤 GET /api/export/clients → 200 (0.00s)
+2025-10-22 06:32:57 - crm - INFO - [middleware] 🔥 OPTIONS /api/roles
+2025-10-22 06:32:57 - crm - INFO - [middleware] 📤 OPTIONS /api/roles → 200 (0.00s)
+2025-10-22 06:32:57 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-10-22 06:32:57 - crm - ERROR - [middleware] ❌ ОШИБКА: GET /api/roles
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 151, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream from None
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 137, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 119, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/api.py", line 1162, in list_roles
+    roles = get_all_roles()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1528, in get_all_roles
+    c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: custom_roles
+2025-10-22 06:32:57 - crm - CRITICAL - [exception_handler] ❌ НЕОБРАБОТАННАЯ ОШИБКА: no such table: custom_roles
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 137, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 119, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    |     await self.simple_response(scope, receive, send, request_headers=headers)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/api.py", line 1162, in list_roles
+    |     roles = get_all_roles()
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1528, in get_all_roles
+    |     c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    |     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | sqlite3.OperationalError: no such table: custom_roles
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 137, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 119, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/api.py", line 1162, in list_roles
+    roles = get_all_roles()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1528, in get_all_roles
+    c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: custom_roles
+2025-10-22 06:32:58 - crm - ERROR - [exception_handler] 📍 URL: http://localhost:8000/api/roles
+2025-10-22 06:32:58 - crm - ERROR - [exception_handler] 📋 Traceback:
+  + Exception Group Traceback (most recent call last):
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 79, in collapse_excgroups
+  |     yield
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 183, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 781, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 137, in log_requests
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 119, in add_security_headers
+    |     response = await call_next(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    |     raise app_exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    |     await self.app(scope, receive_or_disconnect, send_no_error)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    |     await self.simple_response(scope, receive, send, request_headers=headers)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    |     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    |     await route.handle(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    |     await self.app(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    |     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    |     raise exc
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    |     await app(scope, receive, sender)
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    |     response = await f(request)
+    |                ^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    |     raw_response = await run_endpoint_function(
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    |     return await dependant.call(**values)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/api.py", line 1162, in list_roles
+    |     roles = get_all_roles()
+    |   File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1528, in get_all_roles
+    |     c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    |     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    | sqlite3.OperationalError: no such table: custom_roles
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 137, in log_requests
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 182, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+                                   ~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 184, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 119, in add_security_headers
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 159, in call_next
+    raise app_exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/trustedhost.py", line 51, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 109, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 389, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 288, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/api.py", line 1162, in list_roles
+    roles = get_all_roles()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1528, in get_all_roles
+    c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: custom_roles
+
+2025-10-22 06:33:29 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-22 06:33:29 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:33:29 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-22 06:33:29 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-22 06:33:29 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-22 06:33:29 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-22 06:34:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:34:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:35:28 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 06:35:28 - crm - INFO - [middleware] 📤 GET /api/export/clients → 400 (0.00s)
+2025-10-22 06:35:55 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients/jj
+2025-10-22 06:35:55 - crm - INFO - [middleware] 📤 OPTIONS /api/clients/jj → 200 (0.00s)
+2025-10-22 06:35:55 - crm - INFO - [middleware] 🔥 GET /api/clients/jj
+2025-10-22 06:35:55 - crm - INFO - [middleware] 📤 GET /api/clients/jj → 200 (0.00s)
+2025-10-22 06:36:01 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:36:01 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:36:01 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-22 06:36:01 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-22 06:36:01 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-22 06:36:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-22 06:36:01 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-22 06:36:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-22 06:36:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-22 06:36:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-22 06:36:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:36:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:36:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:36:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:36:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-22 06:36:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 06:53:02 - crm - INFO - [startup] ======================================================================
+2025-10-22 06:53:02 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 06:53:02 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 06:53:02 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 06:53:02 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 06:53:02 - crm - INFO - [startup] ======================================================================
+2025-10-22 06:53:02 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 06:53:02 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 06:53:02 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 06:53:02 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 06:53:02 - crm - INFO - [startup] ======================================================================
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 06:53:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:29 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:29 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-22 06:53:32 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 06:53:32 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 06:53:39 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 06:53:39 - crm - INFO - [middleware] 📤 GET /api/export/clients → 400 (0.00s)
+2025-10-22 06:55:33 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 06:55:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 06:55:33 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 06:55:33 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 06:55:33 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 06:55:33 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 06:55:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 06:55:33 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 06:55:33 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 06:55:33 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 06:55:33 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 06:55:33 - crm - INFO - [startup] ======================================================================
+2025-10-22 07:02:04 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 07:02:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 07:02:04 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 07:02:04 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 07:02:04 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 07:02:04 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 07:02:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 07:02:04 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 07:02:04 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 07:02:04 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 07:02:04 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 07:02:04 - crm - INFO - [startup] ======================================================================
+2025-10-22 07:02:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 07:02:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-22 07:02:10 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 07:02:10 - crm - INFO - [middleware] 📤 GET /api/export/clients → 200 (0.01s)
+2025-10-22 07:02:13 - crm - INFO - [middleware] 🔥 GET /api/export/clients
+2025-10-22 07:02:13 - crm - INFO - [middleware] 📤 GET /api/export/clients → 200 (0.00s)
+2025-10-22 07:02:43 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients/jj
+2025-10-22 07:02:43 - crm - INFO - [middleware] 📤 OPTIONS /api/clients/jj → 200 (0.00s)
+2025-10-22 07:02:43 - crm - INFO - [middleware] 🔥 GET /api/clients/jj
+2025-10-22 07:02:43 - crm - INFO - [middleware] 📤 GET /api/clients/jj → 200 (0.00s)
+2025-10-22 07:02:50 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-22 07:02:50 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-22 07:02:50 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-22 07:02:50 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-22 07:02:50 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-22 07:02:50 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-22 07:02:50 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-22 07:02:50 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)

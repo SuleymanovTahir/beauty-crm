@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Trash2, X, Check } from 'lucide-react';
+import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Trash2, X, Check, Download } from 'lucide-react';
+import { toast } from 'sonner';
 
 const api = {
   baseURL: 'http://localhost:8000',
@@ -20,7 +21,7 @@ const api = {
     return res.json();
   },
   
-  async createBooking(data) {
+  async createBooking(data: any) {
     const res = await fetch(`${this.baseURL}/api/bookings`, {
       method: 'POST',
       credentials: 'include',
@@ -30,7 +31,7 @@ const api = {
     return res.json();
   },
   
-  async updateBookingStatus(id, status) {
+  async updateBookingStatus(id: number, status: string) {
     const res = await fetch(`${this.baseURL}/api/bookings/${id}/status`, {
       method: 'POST',
       credentials: 'include',
@@ -38,6 +39,16 @@ const api = {
       body: JSON.stringify({ status })
     });
     return res.json();
+  },
+
+  async exportBookings(format: string, dateFrom?: string, dateTo?: string) {
+    let url = `${this.baseURL}/api/export/bookings?format=${format}`;
+    if (dateFrom && dateTo) {
+      url += `&date_from=${dateFrom}&date_to=${dateTo}`;
+    }
+    const res = await fetch(url, { credentials: 'include' });
+    if (!res.ok) throw new Error('Export failed');
+    return res.blob();
   }
 };
 
@@ -64,14 +75,13 @@ export default function Bookings() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
   
-  // Автокомплит состояния
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState<any>(null);
   
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<any>(null);
   
   const [addForm, setAddForm] = useState({
     phone: '',
@@ -80,12 +90,18 @@ export default function Bookings() {
     revenue: 0,
   });
 
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportDateFrom, setExportDateFrom] = useState('');
+  const [exportDateTo, setExportDateTo] = useState('');
+  const [showExportDialog, setShowExportDialog] = useState(false);
+
   useEffect(() => {
     loadData();
   }, []);
 
   useEffect(() => {
-    const filtered = bookings.filter(booking => {
+    const filtered = bookings.filter((booking: any) => {
       const matchesSearch = 
         (booking.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (booking.service_name || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -108,8 +124,9 @@ export default function Bookings() {
       setBookings(bookingsData.bookings || []);
       setClients(clientsData.clients || []);
       setServices(servicesData.services || []);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
+      toast.error(`Ошибка: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -121,18 +138,19 @@ export default function Bookings() {
     setRefreshing(false);
   };
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await api.updateBookingStatus(id, newStatus);
-      setBookings(bookings.map(b => b.id === id ? { ...b, status: newStatus } : b));
+      setBookings(bookings.map((b: any) => b.id === id ? { ...b, status: newStatus } : b));
+      toast.success('Статус обновлён');
     } catch (err) {
-      alert('Ошибка обновления статуса');
+      toast.error('Ошибка обновления статуса');
     }
   };
 
   const handleAddBooking = async () => {
     if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
-      alert('Заполните все обязательные поля (клиент, услуга, дата, время)');
+      toast.error('Заполните все обязательные поля (клиент, услуга, дата, время)');
       return;
     }
 
@@ -148,16 +166,17 @@ export default function Bookings() {
         revenue: addForm.revenue || selectedService.price,
       });
 
-      alert('Запись создана ✅');
+      toast.success('Запись создана ✅');
       setShowAddDialog(false);
       resetForm();
       await loadData();
-    } catch (err) {
-      alert(`❌ Ошибка: ${err.message}`);
+    } catch (err: any) {
+      toast.error(`❌ Ошибка: ${err.message}`);
     } finally {
       setAddingBooking(false);
     }
   };
+
   const resetForm = () => {
     setClientSearch('');
     setServiceSearch('');
@@ -166,17 +185,17 @@ export default function Bookings() {
     setAddForm({ phone: '', date: '', time: '', revenue: 0 });
   };
 
-  const filteredClients = clients.filter(c =>
+  const filteredClients = clients.filter((c: any) =>
     (c.display_name || '').toLowerCase().includes(clientSearch.toLowerCase()) ||
     (c.phone || '').includes(clientSearch)
   );
 
-  const filteredServices = services.filter(s =>
+  const filteredServices = services.filter((s: any) =>
     (s.name_ru || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
-  const formatDateTime = (datetime) => {
+  const formatDateTime = (datetime: string) => {
     try {
       const date = new Date(datetime);
       return date.toLocaleDateString('ru-RU') + ' ' + 
@@ -186,11 +205,38 @@ export default function Bookings() {
     }
   };
 
+  const handleExport = async (format: 'csv' | 'pdf' | 'excel') => {
+    try {
+      setExporting(true);
+      const blob = await api.exportBookings(format, exportDateFrom, exportDateTo);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const ext = format === 'excel' ? 'xlsx' : format;
+      link.download = `bookings_${new Date().toISOString().split('T')[0]}.${ext}`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`Файл ${format.toUpperCase()} успешно скачан`);
+      setShowExportDialog(false);
+      setShowExportMenu(false);
+    } catch (err) {
+      toast.error('Ошибка при экспорте');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const stats = {
-    pending: bookings.filter(b => b.status === 'pending' || b.status === 'new').length,
-    completed: bookings.filter(b => b.status === 'completed').length,
+    pending: bookings.filter((b: any) => b.status === 'pending' || b.status === 'new').length,
+    completed: bookings.filter((b: any) => b.status === 'completed').length,
     total: bookings.length,
-    revenue: bookings.filter(b => b.status === 'completed').reduce((sum, b) => sum + (b.revenue || 0), 0)
+    revenue: bookings.filter((b: any) => b.status === 'completed').reduce((sum: number, b: any) => sum + (b.revenue || 0), 0)
   };
 
   if (loading) {
@@ -289,6 +335,22 @@ export default function Bookings() {
             <Plus style={{ width: '16px', height: '16px' }} />
             Добавить
           </button>
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setShowExportDialog(true)} 
+              disabled={exporting} 
+              style={{
+                padding: '0.625rem 1.25rem', backgroundColor: '#2563eb', color: '#fff',
+                border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
+                fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                opacity: exporting ? 0.5 : 1
+              }}
+            >
+              <Download style={{ width: '16px', height: '16px' }} />
+              {exporting ? 'Экспорт...' : 'Экспорт'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -309,7 +371,7 @@ export default function Bookings() {
                 </tr>
               </thead>
               <tbody>
-                {filteredBookings.map((booking, idx) => (
+                {filteredBookings.map((booking: any, idx: number) => (
                   <tr key={booking.id} style={{ borderBottom: idx !== filteredBookings.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
                     <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111', fontWeight: '500' }}>#{booking.id}</td>
                     <td style={{ padding: '1rem 1.5rem' }}>
@@ -338,15 +400,15 @@ export default function Bookings() {
                           fontSize: '0.8125rem',
                           fontWeight: '500',
                           cursor: 'pointer',
-                          ...( statusConfig[booking.status] ? {
+                          ...(statusConfig[booking.status] ? {
                             backgroundColor: statusConfig[booking.status].color.split(' ')[0].replace('bg-', '').includes('yellow') ? '#fef3c7' :
                                              statusConfig[booking.status].color.split(' ')[0].replace('bg-', '').includes('green') ? '#d1fae5' :
                                              statusConfig[booking.status].color.split(' ')[0].replace('bg-', '').includes('blue') ? '#dbeafe' :
-                                             statusConfig[booking.status].color.split(' ')[0].replace('bg-', '').includes('red') ? '#fee2e2' : '#f3f4f6',
+                                             statusConfig[booking.status].color.split(' ')[0].replace('bg-', '').includes('red') ? '#fee2e2' : '#f3e8ff',
                             color: statusConfig[booking.status].color.split(' ')[1].replace('text-', '').includes('yellow') ? '#92400e' :
                                    statusConfig[booking.status].color.split(' ')[1].replace('text-', '').includes('green') ? '#065f46' :
                                    statusConfig[booking.status].color.split(' ')[1].replace('text-', '').includes('blue') ? '#1e40af' :
-                                   statusConfig[booking.status].color.split(' ')[1].replace('text-', '').includes('red') ? '#991b1b' : '#374151'
+                                   statusConfig[booking.status].color.split(' ')[1].replace('text-', '').includes('red') ? '#991b1b' : '#5b21b6'
                           } : {})
                         }}
                       >
@@ -414,7 +476,6 @@ export default function Bookings() {
             width: '100%', maxWidth: '500px', maxHeight: '90vh',
             overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
           }}>
-            {/* Header */}
             <div style={{
               padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
@@ -427,10 +488,7 @@ export default function Bookings() {
                 cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
               }}>×</button>
             </div>
-
-            {/* Body */}
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {/* Client Autocomplete */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   Клиент *
@@ -473,7 +531,6 @@ export default function Bookings() {
                       </button>
                     </div>
                   )}
-                  
                   {showClientDropdown && !selectedClient && clientSearch && (
                     <div style={{
                       position: 'absolute', top: '100%', left: 0, right: 0,
@@ -483,7 +540,7 @@ export default function Bookings() {
                       maxHeight: '300px', overflowY: 'auto', zIndex: 10
                     }}>
                       {filteredClients.length > 0 ? (
-                        filteredClients.map(client => (
+                        filteredClients.map((client: any) => (
                           <button
                             key={client.id}
                             onClick={() => {
@@ -532,8 +589,6 @@ export default function Bookings() {
                   )}
                 </div>
               </div>
-
-              {/* Service Autocomplete */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   Услуга *
@@ -576,7 +631,6 @@ export default function Bookings() {
                       </button>
                     </div>
                   )}
-                  
                   {showServiceDropdown && !selectedService && serviceSearch && (
                     <div style={{
                       position: 'absolute', top: '100%', left: 0, right: 0,
@@ -586,7 +640,7 @@ export default function Bookings() {
                       maxHeight: '300px', overflowY: 'auto', zIndex: 10
                     }}>
                       {filteredServices.length > 0 ? (
-                        filteredServices.map(service => (
+                        filteredServices.map((service: any) => (
                           <button
                             key={service.id}
                             onClick={() => {
@@ -628,8 +682,6 @@ export default function Bookings() {
                   )}
                 </div>
               </div>
-
-              {/* Phone */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   Телефон {!selectedClient?.phone && '*'}
@@ -646,8 +698,6 @@ export default function Bookings() {
                   }}
                 />
               </div>
-
-              {/* Date & Time */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
@@ -680,8 +730,6 @@ export default function Bookings() {
                   />
                 </div>
               </div>
-
-              {/* Revenue */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   Сумма (AED)
@@ -699,8 +747,6 @@ export default function Bookings() {
                 />
               </div>
             </div>
-
-            {/* Footer */}
             <div style={{
               padding: '1rem 1.5rem',
               borderTop: '1px solid #e5e7eb',
@@ -730,6 +776,120 @@ export default function Bookings() {
                 }}
               >
                 {addingBooking ? 'Создание...' : 'Создать'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Export Dialog */}
+      {showExportDialog && (
+        <div style={{
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff', borderRadius: '1rem',
+            width: '100%', maxWidth: '400px', overflow: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{
+              padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
+                Экспорт записей
+              </h3>
+              <button onClick={() => setShowExportDialog(false)} style={{
+                backgroundColor: 'transparent', border: 'none',
+                cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
+              }}>×</button>
+            </div>
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Дата с
+                </label>
+                <input
+                  type="date"
+                  value={exportDateFrom}
+                  onChange={(e) => setExportDateFrom(e.target.value)}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.95rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Дата по
+                </label>
+                <input
+                  type="date"
+                  value={exportDateTo}
+                  onChange={(e) => setExportDateTo(e.target.value)}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.95rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleExport('csv')}
+                  disabled={exporting}
+                  style={{
+                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                    color: '#fff', border: 'none', borderRadius: '0.5rem',
+                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                    opacity: exporting ? 0.5 : 1
+                  }}
+                >
+                  CSV
+                </button>
+                <button
+                  onClick={() => handleExport('pdf')}
+                  disabled={exporting}
+                  style={{
+                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                    color: '#fff', border: 'none', borderRadius: '0.5rem',
+                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                    opacity: exporting ? 0.5 : 1
+                  }}
+                >
+                  PDF
+                </button>
+                <button
+                  onClick={() => handleExport('excel')}
+                  disabled={exporting}
+                  style={{
+                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                    color: '#fff', border: 'none', borderRadius: '0.5rem',
+                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                    opacity: exporting ? 0.5 : 1
+                  }}
+                >
+                  Excel
+                </button>
+              </div>
+            </div>
+            <div style={{
+              padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb',
+              display: 'flex', justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={() => setShowExportDialog(false)}
+                disabled={exporting}
+                style={{
+                  padding: '0.75rem 1.5rem', backgroundColor: '#f3f4f6',
+                  border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                  fontWeight: '500', color: '#374151', cursor: 'pointer'
+                }}
+              >
+                Отмена
               </button>
             </div>
           </div>
