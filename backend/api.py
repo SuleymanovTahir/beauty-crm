@@ -1,5 +1,5 @@
-# backend/api.py - ИСПРАВЛЕННАЯ ВЕРСИЯ
-# Удалены дубликаты эндпоинтов, исправлены пути
+# backend/api.py - REST API endpoints для React фронтенда
+# Чистый FastAPI без HTML templates
 
 from fastapi import APIRouter, Request, Query, Cookie, HTTPException, Form
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -7,8 +7,8 @@ from typing import Optional
 from datetime import datetime
 import csv
 import io
-import time
-import sqlite3
+import time  # ← ДОБАВИТЬ
+import sqlite3  # ← ДОБАВИТЬ
 
 # ===== ИМПОРТЫ =====
 from logger import logger, log_info, log_error, log_warning
@@ -20,11 +20,7 @@ from database import (
     get_all_services, update_booking_status, log_activity,
     get_unread_messages_count, get_or_create_client, save_booking,
     get_all_users, delete_user, create_custom_status, delete_custom_status,
-    get_custom_statuses, create_service, update_service, delete_service,
-    delete_client, get_user_by_session,
-    # Special packages
-    get_all_special_packages, create_special_package, 
-    update_special_package, delete_special_package
+    get_custom_statuses, create_service, update_service, delete_service
 )
 from config import CLIENT_STATUSES, SALON_INFO, DATABASE_NAME
 from instagram import send_message
@@ -37,6 +33,7 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     """Проверить авторизацию"""
     if not session_token:
         return None
+    from database import get_user_by_session
     user = get_user_by_session(session_token)
     return user if user else None
 
@@ -73,7 +70,11 @@ def get_client_display_name(client):
 @router.get("/dashboard")
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
-    user = require_auth(session_token)
+    # БЫЛ ОШИБОЧНЫЙ КОД:
+    # user = await require_auth(session_token)  # ❌ НЕПРАВИЛЬНО - require_auth НЕ async!
+    
+    # ПРАВИЛЬНЫЙ КОД:
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -90,7 +91,7 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
 
 # ===== КЛИЕНТЫ =====
 
-@router.post("/clients")
+@router.post("/clients")  # ← ДОБАВИТЬ НОВЫЙ ЭНДПОИНТ
 async def create_client_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -103,7 +104,7 @@ async def create_client_api(
     data = await request.json()
     
     try:
-        instagram_id = data.get('instagram_id') or str(time.time())
+        instagram_id = data.get('instagram_id') or str(time.time())  # Генерируем ID если не задан
         get_or_create_client(instagram_id, username=data.get('name'))
         
         if data.get('phone') or data.get('notes'):
@@ -124,7 +125,7 @@ async def create_client_api(
 @router.get("/clients")
 async def list_clients(session_token: Optional[str] = Cookie(None)):
     """Получить всех клиентов"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -153,7 +154,7 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
         "unread_count": get_total_unread()
     }
 
-@router.get("/clients/{client_id}")
+@router.get("/clients/{client_id}")  # ← УЖЕ ЕСТЬ, но проверьте чтобы возвращал все данные
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить деталь клиента"""
     user = require_auth(session_token)
@@ -234,7 +235,7 @@ async def update_client_status_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус клиента"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -257,7 +258,7 @@ async def update_client_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить информацию клиента"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -282,7 +283,7 @@ async def pin_client_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Закрепить/открепить клиента"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -308,7 +309,7 @@ async def pin_client_api(
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить все записи"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -338,7 +339,7 @@ async def create_booking_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать запись"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -369,7 +370,7 @@ async def update_booking_status_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус записи"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -424,7 +425,7 @@ async def get_chat_messages(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить сообщения чата"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ БЕЗ await!
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -450,7 +451,7 @@ async def send_chat_message(
     session_token: Optional[str] = Cookie(None)
 ):
     """Отправить сообщение клиенту"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -481,7 +482,7 @@ async def get_analytics_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить аналитику"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -494,7 +495,7 @@ async def get_analytics_api(
 @router.get("/funnel")
 async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     """Получить данные воронки"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -504,7 +505,7 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
 @router.get("/stats")
 async def get_stats_api(session_token: Optional[str] = Cookie(None)):
     """Получить статистику"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -519,7 +520,7 @@ async def list_services(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить услуги"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -544,209 +545,12 @@ async def list_services(
     }
 
 
-@router.post("/services")
-async def create_service_api(
-    request: Request,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Создать новую услугу"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    data = await request.json()
-    
-    try:
-        success = create_service(
-            service_key=data.get('key'),
-            name=data.get('name'),
-            name_ru=data.get('name_ru'),
-            price=float(data.get('price', 0)),
-            currency=data.get('currency', 'AED'),
-            category=data.get('category'),
-            description=data.get('description'),
-            description_ru=data.get('description_ru'),
-            benefits=data.get('benefits', [])
-        )
-        
-        if success:
-            log_activity(user["id"], "create_service", "service", data.get('key'), "Service created")
-            return {"success": True, "message": "Service created"}
-        else:
-            return JSONResponse({"error": "Service key already exists"}, status_code=400)
-    except Exception as e:
-        log_error(f"Error creating service: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-@router.post("/services/{service_id}/update")
-async def update_service_api(
-    service_id: int,
-    request: Request,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Обновить услугу"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    data = await request.json()
-    
-    try:
-        update_service(service_id, **data)
-        log_activity(user["id"], "update_service", "service", str(service_id), "Service updated")
-        return {"success": True, "message": "Service updated"}
-    except Exception as e:
-        log_error(f"Error updating service: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-@router.post("/services/{service_id}/delete")
-async def delete_service_api(
-    service_id: int,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Удалить услугу"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    try:
-        delete_service(service_id)
-        log_activity(user["id"], "delete_service", "service", str(service_id), "Service deleted")
-        return {"success": True, "message": "Service deleted"}
-    except Exception as e:
-        log_error(f"Error deleting service: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-# ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
-
-@router.get("/special-packages")
-async def list_special_packages(
-    active_only: bool = Query(True),
-    session_token: Optional[str] = Cookie(None)
-):
-    """Получить специальные пакеты"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    packages = get_all_special_packages(active_only=active_only)
-    
-    return {
-        "packages": [
-            {
-                "id": p[0],
-                "name": p[1],
-                "name_ru": p[2],
-                "description": p[3],
-                "description_ru": p[4],
-                "original_price": p[5],
-                "special_price": p[6],
-                "currency": p[7],
-                "discount_percent": p[8],
-                "services_included": p[9].split(',') if p[9] else [],
-                "promo_code": p[10],
-                "keywords": p[11].split(',') if p[11] else [],
-                "valid_from": p[12],
-                "valid_until": p[13],
-                "is_active": p[14],
-                "usage_count": p[15],
-                "max_usage": p[16]
-            }
-            for p in packages
-        ],
-        "count": len(packages)
-    }
-
-
-@router.post("/special-packages")
-async def create_special_package_api(
-    request: Request,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Создать специальный пакет"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    data = await request.json()
-    
-    try:
-        package_id = create_special_package(
-            name=data.get('name'),
-            name_ru=data.get('name_ru'),
-            original_price=float(data.get('original_price')),
-            special_price=float(data.get('special_price')),
-            currency=data.get('currency', 'AED'),
-            keywords=data.get('keywords', []),
-            valid_from=data.get('valid_from'),
-            valid_until=data.get('valid_until'),
-            description=data.get('description'),
-            description_ru=data.get('description_ru'),
-            services_included=data.get('services_included', []),
-            promo_code=data.get('promo_code'),
-            max_usage=data.get('max_usage')
-        )
-        
-        if package_id:
-            log_activity(user["id"], "create_special_package", "package", str(package_id), "Package created")
-            return {"success": True, "message": "Package created", "id": package_id}
-        else:
-            return JSONResponse({"error": "Failed to create package"}, status_code=400)
-    except Exception as e:
-        log_error(f"Error creating package: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-@router.post("/special-packages/{package_id}")
-async def update_special_package_api(
-    package_id: int,
-    request: Request,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Обновить специальный пакет"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    data = await request.json()
-    
-    try:
-        update_special_package(package_id, **data)
-        log_activity(user["id"], "update_special_package", "package", str(package_id), "Package updated")
-        return {"success": True, "message": "Package updated"}
-    except Exception as e:
-        log_error(f"Error updating package: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
-@router.delete("/special-packages/{package_id}")
-async def delete_special_package_api(
-    package_id: int,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Удалить специальный пакет"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    try:
-        delete_special_package(package_id)
-        log_activity(user["id"], "delete_special_package", "package", str(package_id), "Package deleted")
-        return {"success": True, "message": "Package deleted"}
-    except Exception as e:
-        log_error(f"Error deleting package: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
-
-
 # ===== ПОЛЬЗОВАТЕЛИ =====
 
 @router.get("/users")
 async def list_users(session_token: Optional[str] = Cookie(None)):
     """Получить пользователей (только для admin)"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
@@ -774,7 +578,7 @@ async def delete_user_api(
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить пользователя"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
@@ -798,7 +602,7 @@ async def export_clients(
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать клиентов"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
@@ -822,6 +626,8 @@ async def export_clients(
     )
 
 
+# backend/api.py - убедитесь что есть:
+
 @router.get("/export/analytics")
 async def export_analytics(
     format: str = Query("csv"),
@@ -836,10 +642,13 @@ async def export_analytics(
     if format != "csv":
         return JSONResponse({"error": "Only CSV supported"}, status_code=400)
     
+    # Получить данные
     analytics = get_analytics_data(days=period)
     
+    # Преобразовать в CSV
     output = io.StringIO()
     writer = csv.writer(output)
+    # Написать заголовки и данные...
     
     return StreamingResponse(
         iter([output.getvalue().encode('utf-8')]),
@@ -850,16 +659,89 @@ async def export_analytics(
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных"""
-    user = require_auth(session_token)
+    user = require_auth(session_token)  # ✅ ИСПРАВЛЕНО: убран await
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return {"count": get_total_unread()}
 
 
-# ===== НАСТРОЙКИ БОТА (ЕДИНСТВЕННАЯ ВЕРСИЯ БЕЗ ДУБЛИКАТОВ) =====
 
 @router.get("/bot-settings")
+async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки бота"""
+    user = require_auth(session_token)  # ✅ БЕЗ await!
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    return {
+        "bot_name": SALON_INFO.get('bot_name', 'Diamant'),
+        "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
+        "farewell_message": "Спасибо за визит! Ждём вас снова! 💖",
+        "price_message": "Мы в премиум-сегменте 💎",
+        "booking_url": SALON_INFO.get('booking_url'),
+        "salon_address": SALON_INFO.get('address'),
+        "salon_phone": SALON_INFO.get('phone'),
+        "salon_hours": SALON_INFO.get('hours_ru'),
+        "google_maps_link": SALON_INFO.get('google_maps'),
+        "personality": "Обаятельная, уверенная, харизматичная. Эксперт в beauty-индустрии."
+    }
+
+
+@router.post("/bot-settings")
+async def update_bot_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки бота"""
+    user = require_auth(session_token)  # ✅ БЕЗ await!
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        log_activity(
+            user["id"],
+            "update_bot_settings",
+            "bot",
+            "general",
+            f"Обновлены настройки: {data.get('bot_name')}"
+        )
+        
+        return {"success": True, "message": "Bot settings updated"}
+    except Exception as e:
+        log_error(f"Error updating bot settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    
+@router.get("/api/notifications/settings")
+async def get_notification_settings(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    # Получить из БД
+    settings = get_notification_settings(user["id"])
+    return settings
+
+@router.post("/api/notifications/settings")
+async def update_notification_settings(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    save_notification_settings(user["id"], data)
+    return {"success": True, "message": "Notification settings updated"}
+
+# backend/api.py - ДОБАВИТЬ ДО конца файла:
+
+@router.get("/api/bot-settings")
 async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота"""
     user = require_auth(session_token)
@@ -869,6 +751,7 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    # Получить из базы или из конфига
     try:
         c.execute("SELECT * FROM bot_settings LIMIT 1")
         result = c.fetchone()
@@ -888,12 +771,13 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
                 "communication_style": result[12],
                 "max_message_length": result[13]
             }
-    except Exception as e:
-        log_error(f"Error loading bot settings: {e}", "api")
+    except:
+        pass
     finally:
         conn.close()
     
-    # Дефолтные значения из конфига
+    # Если нет в БД, вернуть defaults
+    from config import SALON_INFO
     return {
         "bot_name": SALON_INFO.get('bot_name', 'M.Le Diamant Assistant'),
         "personality_traits": "Обаятельная, уверенная, харизматичная",
@@ -911,7 +795,7 @@ async def get_bot_settings(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.post("/bot-settings")
+@router.post("/api/bot-settings")
 async def update_bot_settings(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -1001,12 +885,122 @@ async def update_bot_settings(
         
         conn.commit()
         log_activity(user["id"], "update_bot_settings", "bot", "general",
-                    "Обновлены настройки бота")
+                    f"Обновлены настройки бота")
         
-        log_info("✅ Настройки бота успешно сохранены в БД", "api")
         return {"success": True, "message": "Bot settings updated"}
     except Exception as e:
         log_error(f"Error updating bot settings: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
+
+
+# backend/api.py - добавить:
+
+@router.get("/api/notifications/settings")
+async def get_notification_settings_api(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from database import get_notification_settings
+    settings = get_notification_settings(user["id"])
+    return settings
+
+
+@router.post("/api/notifications/settings")
+async def update_notification_settings_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки уведомлений"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    data = await request.json()
+    
+    from database import save_notification_settings
+    save_notification_settings(user["id"], data)
+    
+    log_activity(user["id"], "update_notifications", "settings", "notifications",
+                "Обновлены настройки уведомлений")
+    
+    return {"success": True, "message": "Notification settings updated"}
+
+
+@router.post("/services")  # ← ДОБАВИТЬ: был только GET
+async def create_service_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Создать новую услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        success = create_service(
+            service_key=data.get('key'),
+            name=data.get('name'),
+            name_ru=data.get('name_ru'),
+            price=float(data.get('price', 0)),
+            currency=data.get('currency', 'AED'),
+            category=data.get('category'),
+            description=data.get('description'),
+            description_ru=data.get('description_ru'),
+            benefits=data.get('benefits', [])
+        )
+        
+        if success:
+            log_activity(user["id"], "create_service", "service", data.get('key'), "Service created")
+            return {"success": True, "message": "Service created"}
+        else:
+            return JSONResponse({"error": "Service key already exists"}, status_code=400)
+    except Exception as e:
+        log_error(f"Error creating service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@router.post("/services/{service_id}/update")  # ← ДОБАВИТЬ
+async def update_service_api(
+    service_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    try:
+        update_service(service_id, **data)
+        log_activity(user["id"], "update_service", "service", str(service_id), "Service updated")
+        return {"success": True, "message": "Service updated"}
+    except Exception as e:
+        log_error(f"Error updating service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@router.post("/services/{service_id}/delete")  # ← ДОБАВИТЬ
+async def delete_service_api(
+    service_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить услугу"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        delete_service(service_id)
+        log_activity(user["id"], "delete_service", "service", str(service_id), "Service deleted")
+        return {"success": True, "message": "Service deleted"}
+    except Exception as e:
+        log_error(f"Error deleting service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
