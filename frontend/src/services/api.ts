@@ -248,6 +248,31 @@ export class ApiClient {
       body: JSON.stringify(data),
     })
   }
+
+  // ===== SPECIAL PACKAGES =====
+  async getSpecialPackages() {
+    return this.request<any>('/api/special-packages')
+  }
+
+  async createSpecialPackage(data: any) {
+    return this.request('/api/special-packages', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateSpecialPackage(packageId: number, data: any) {
+    return this.request(`/api/special-packages/${packageId}`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteSpecialPackage(packageId: number) {
+    return this.request(`/api/special-packages/${packageId}`, {
+      method: 'DELETE',
+    })
+  }
 }
 
 export const api = new ApiClient()
