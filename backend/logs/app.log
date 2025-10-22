@@ -8833,3 +8833,87 @@ sqlite3.OperationalError: no such table: custom_roles
 2025-10-22 11:40:06 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
 2025-10-22 11:40:18 - crm - INFO - [middleware] 🔥 POST /webhook
 2025-10-22 11:40:18 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:41:07 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:41:07 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:41:21 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:41:21 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:42:15 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:42:15 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:42:39 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:42:39 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:43:33 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:43:33 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:44:37 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:44:37 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:45:07 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:45:07 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:46:19 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:46:19 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:46:53 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:46:53 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:47:41 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:47:41 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:50:52 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 11:50:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:50:52 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 11:50:52 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 11:50:52 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 11:50:52 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 11:50:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:50:52 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 11:50:52 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 11:50:52 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 11:50:52 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 11:50:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:51:09 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-22 11:51:09 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-22 11:51:09 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-22 11:51:09 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 11:51:29 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:51:29 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:51:43 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:51:43 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:52:42 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:52:42 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:13 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:13 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:14 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:14 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:15 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:15 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:16 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:16 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:17 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:17 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:18 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:18 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:21 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:21 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:53:29 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:53:29 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:54:31 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 11:54:31 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:54:31 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 11:54:31 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 11:54:31 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 11:54:31 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 11:54:31 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:54:31 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 11:54:31 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 11:54:31 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 11:54:31 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 11:54:31 - crm - INFO - [startup] ======================================================================
+2025-10-22 11:54:35 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:54:35 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:54:50 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:54:50 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:55:36 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:55:36 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:56:13 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:56:13 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:56:15 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:56:15 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:56:57 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:56:57 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:57:48 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:57:48 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)

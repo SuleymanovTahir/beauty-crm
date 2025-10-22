@@ -541,6 +541,11 @@ async def reset_password(
         raise
 # ===== ВЕБХУКИ INSTAGRAM =====
 
+# ========================================
+# УЛУЧШЕННЫЕ WEBHOOK HANDLERS для main.py
+# Замените существующие обработчики на эти
+# ========================================
+
 @app.get("/webhook")
 async def verify_webhook(request: Request):
     """Верификация webhook от Meta"""
@@ -548,6 +553,13 @@ async def verify_webhook(request: Request):
         mode = request.query_params.get("hub.mode")
         token = request.query_params.get("hub.verify_token")
         challenge = request.query_params.get("hub.challenge")
+
+        log_info("=" * 70, "webhook")
+        log_info("🔍 ВЕРИФИКАЦИЯ WEBHOOK", "webhook")
+        log_info(f"Mode: {mode}", "webhook")
+        log_info(f"Token: {token}", "webhook")
+        log_info(f"Challenge: {challenge}", "webhook")
+        log_info("=" * 70, "webhook")
 
         if mode == "subscribe" and token == VERIFY_TOKEN:
             log_info("✅ Webhook верифицирован!", "webhook")
@@ -560,181 +572,103 @@ async def verify_webhook(request: Request):
         raise
 
 
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-
-limiter = Limiter(key_func=get_remote_address)
-
-
 @app.post("/webhook")
-@limiter.limit("10/minute")
 async def handle_webhook(request: Request):
-    """Обработка входящих сообщений от Instagram с поддержкой языков и спец. пакетов"""
+    """
+    МИНИМАЛЬНЫЙ РАБОЧИЙ WEBHOOK - Всегда возвращает 200 OK
+    """
+    import traceback
+    import json
+    
     try:
-        data = await request.json()
-        log_info("=" * 70, "webhook")
-        log_info("📨 НОВОЕ СООБЩЕНИЕ", "webhook")
-        log_info("=" * 70, "webhook")
-
-        if data.get("object") == "instagram":
-            for entry in data.get("entry", []):
-                for messaging in entry.get("messaging", []):
-                    sender_id = messaging.get("sender", {}).get("id")
-
-                    if "message" in messaging:
-                        if messaging["message"].get("is_echo"):
-                            continue
-
-                        # ===== ОБРАБОТКА ГОЛОСОВЫХ СООБЩЕНИЙ =====
-                        if "attachments" in messaging["message"]:
-                            attachments = messaging["message"]["attachments"]
-                            for attachment in attachments:
-                                if attachment.get("type") == "audio":
-                                    log_info(f"🎤 Получено голосовое сообщение от {sender_id}", "webhook")
-                                    
-                                    # Сохраняем в историю как голосовое
-                                    get_or_create_client(sender_id)
-                                    save_message(sender_id, "[Voice message]", "client", message_type="voice")
-                                    
-                                    # Определяем язык клиента (из предыдущих сообщений)
-                                    client_language = get_client_language(sender_id)
-                                    
-                                    # Формируем ответ на языке клиента
-                                    if client_language == 'ru':
-                                        voice_response = (
-                                            "Извините, я AI-помощник и не могу прослушивать голосовые сообщения 😊\n\n"
-                                            "Пожалуйста, напишите текстом - я с удовольствием отвечу на все ваши вопросы!"
-                                        )
-                                    elif client_language == 'en':
-                                        voice_response = (
-                                            "Sorry, I'm an AI assistant and cannot listen to voice messages 😊\n\n"
-                                            "Please write in text - I'll be happy to answer all your questions!"
-                                        )
-                                    elif client_language == 'ar':
-                                        voice_response = (
-                                            "عذراً، أنا مساعد ذكاء اصطناعي ولا أستطيع الاستماع إلى الرسائل الصوتية 😊\n\n"
-                                            "من فضلك اكتب رسالة نصية - سأكون سعيداً بالإجابة على جميع أسئلتك!"
-                                        )
-                                    else:
-                                        voice_response = (
-                                            "Sorry, I'm an AI assistant and cannot listen to voice messages 😊\n\n"
-                                            "Please write in text - I'll be happy to help!"
-                                        )
-                                    
-                                    save_message(sender_id, voice_response, "bot")
-                                    await send_message(sender_id, voice_response)
-                                    log_info("✅ Отправлен ответ на голосовое сообщение", "webhook")
-                                    continue
-
-                        # ===== ОБРАБОТКА ТЕКСТОВЫХ СООБЩЕНИЙ =====
-                        message_text = messaging["message"].get("text", "")
-                        if not message_text.strip():
-                            continue
-
-                        log_info(f"👤 От клиента: {sender_id}", "webhook")
-                        log_info(f"💬 Текст: {message_text}", "webhook")
-
-                        # Создаем/получаем клиента
-                        get_or_create_client(sender_id)
-                        
-                        # ===== ОПРЕДЕЛЕНИЕ И СОХРАНЕНИЕ ЯЗЫКА =====
-                        detected_language = detect_and_save_language(sender_id, message_text)
-                        log_info(f"🌍 Определен язык: {detected_language}", "webhook")
-                        
-                        # Сохраняем сообщение с языком
-                        save_message(sender_id, message_text, "client", language=detected_language)
-                        await send_typing_indicator(sender_id)
-
-                        # ===== ПРОВЕРКА СПЕЦИАЛЬНЫХ ПАКЕТОВ =====
-                        special_package = find_special_package_by_keywords(message_text)
-                        
-                        if special_package:
-                            log_info(f"🎁 Найден специальный пакет: {special_package[2]}", "webhook")
-                            
-                            # Формируем специальное сообщение о пакете
-                            pkg_name = special_package[2]  # name_ru
-                            orig_price = special_package[5]
-                            special_price = special_package[6]
-                            currency = special_package[7]
-                            discount = special_package[8]
-                            desc = special_package[4] or ""  # description_ru
-                            
-                            if detected_language == 'ru':
-                                package_info_text = (
-                                    f"🔥 Отличная новость! У нас есть специальное предложение!\n\n"
-                                    f"**{pkg_name}**\n"
-                                    f"~~{orig_price} {currency}~~ → **{special_price} {currency}**\n"
-                                    f"💰 Экономия {orig_price - special_price} {currency} (скидка {discount}%!)\n\n"
-                                )
-                                if desc:
-                                    package_info_text += f"{desc}\n\n"
-                                package_info_text += (
-                                    f"📱 Запишитесь онлайн за 2 минуты: {SALON_INFO['booking_url']}\n\n"
-                                    f"Специальное предложение действует ограниченное время! ⏰"
-                                )
-                            elif detected_language == 'en':
-                                package_info_text = (
-                                    f"🔥 Great news! We have a special offer for you!\n\n"
-                                    f"**{pkg_name}**\n"
-                                    f"~~{orig_price} {currency}~~ → **{special_price} {currency}**\n"
-                                    f"💰 Save {orig_price - special_price} {currency} ({discount}% discount!)\n\n"
-                                )
-                                if desc:
-                                    package_info_text += f"{desc}\n\n"
-                                package_info_text += (
-                                    f"📱 Book online in 2 minutes: {SALON_INFO['booking_url']}\n\n"
-                                    f"Limited time offer! ⏰"
-                                )
-                            else:
-                                package_info_text = (
-                                    f"🔥 أخبار رائعة! لدينا عرض خاص لك!\n\n"
-                                    f"**{pkg_name}**\n"
-                                    f"{orig_price} {currency} → **{special_price} {currency}**\n"
-                                    f"💰 وفر {orig_price - special_price} {currency} (خصم {discount}%!)\n\n"
-                                )
-                                if desc:
-                                    package_info_text += f"{desc}\n\n"
-                                package_info_text += (
-                                    f"📱 احجز عبر الإنترنت: {SALON_INFO['booking_url']}\n\n"
-                                    f"عرض لفترة محدودة! ⏰"
-                                )
-                            
-                            save_message(sender_id, package_info_text, "bot")
-                            await send_message(sender_id, package_info_text)
-                            log_info("✅ Отправлена информация о специальном пакете", "webhook")
-                            
-                            # Инкрементируем счетчик просмотров пакета
-                            # (можно добавить отдельную статистику)
-                            continue
-
-                        # ===== ОБЫЧНЫЙ ОТВЕТ ЧЕРЕЗ AI =====
-                        history = get_chat_history(sender_id, limit=10)
-                        progress = get_booking_progress(sender_id)
-                        
-                        # Передаем язык в промпт
-                        genius_prompt = build_genius_prompt(
-                            sender_id, 
-                            history, 
-                            progress,
-                            client_language=detected_language
-                        )
-
-                        log_info("🤖 Спрашиваю Gemini AI...", "webhook")
-                        ai_response = await ask_gemini(message_text, genius_prompt)
-                        log_info(f"✅ Ответ AI: {ai_response[:150]}...", "webhook")
-
-                        # Сохраняем и отправляем ответ
-                        save_message(sender_id, ai_response, "bot", language=detected_language)
-                        await send_message(sender_id, ai_response)
-
-                        log_info("📤 Отправлено клиенту!", "webhook")
-
-        log_info("=" * 70, "webhook")
+        # Читаем body
+        logger.info("=" * 70)
+        logger.info("📨 WEBHOOK: POST request received")
+        
+        try:
+            body_bytes = await request.body()
+            body_str = body_bytes.decode('utf-8')
+            logger.info(f"📦 RAW BODY ({len(body_str)} bytes):")
+            logger.info(body_str[:500])
+        except Exception as e:
+            logger.error(f"❌ Cannot read body: {e}")
+            return {"status": "ok"}  # Всё равно 200 OK!
+        
+        # Парсим JSON
+        try:
+            data = json.loads(body_str)
+            logger.info("✅ JSON parsed")
+            logger.info(f"📊 Keys: {list(data.keys())}")
+        except Exception as e:
+            logger.error(f"❌ JSON parse error: {e}")
+            return {"status": "ok"}  # Всё равно 200 OK!
+        
+        # Проверяем Instagram
+        if data.get("object") != "instagram":
+            logger.warning(f"⚠️ Not Instagram: {data.get('object')}")
+            return {"status": "ok"}
+        
+        logger.info("✅ Instagram webhook confirmed")
+        
+        # Обрабатываем entries
+        entries = data.get("entry", [])
+        logger.info(f"📬 Entries: {len(entries)}")
+        
+        for entry in entries:
+            for messaging in entry.get("messaging", []):
+                sender_id = messaging.get("sender", {}).get("id")
+                
+                if not sender_id:
+                    continue
+                
+                logger.info(f"👤 Sender: {sender_id}")
+                
+                if "message" not in messaging:
+                    continue
+                
+                message_data = messaging["message"]
+                
+                if message_data.get("is_echo"):
+                    logger.info("⏭️ Echo, skipping")
+                    continue
+                
+                message_text = message_data.get("text", "")
+                logger.info(f"💬 Text: {message_text}")
+                
+                if not message_text.strip():
+                    continue
+                
+                try:
+                    # Обработка
+                    get_or_create_client(sender_id)
+                    save_message(sender_id, message_text, "client")
+                    await send_typing_indicator(sender_id)
+                    
+                    history = get_chat_history(sender_id, limit=10)
+                    progress = get_booking_progress(sender_id)
+                    genius_prompt = build_genius_prompt(sender_id, history, progress)
+                    
+                    logger.info("🤖 Asking AI...")
+                    ai_response = await ask_gemini(message_text, genius_prompt)
+                    logger.info(f"✅ AI: {ai_response[:100]}")
+                    
+                    save_message(sender_id, ai_response, "bot")
+                    await send_message(sender_id, ai_response)
+                    logger.info("📤 Sent!")
+                    
+                except Exception as e:
+                    logger.error(f"❌ Processing error: {e}")
+                    logger.error(traceback.format_exc())
+        
+        logger.info("=" * 70)
         return {"status": "ok"}
+        
     except Exception as e:
-        log_error(f"❌ Ошибка в handle_webhook: {e}", "webhook", exc_info=True)
-        raise
-# ===== ПУБЛИЧНЫЕ СТРАНИЦЫ =====
+        logger.error("=" * 70)
+        logger.error(f"❌ CRITICAL ERROR: {e}")
+        logger.error(traceback.format_exc())
+        logger.error("=" * 70)
+        return {"status": "ok"}  # ВСЕГДА 200 OK!
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
