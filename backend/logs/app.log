@@ -10124,3 +10124,94 @@ Traceback (most recent call last):
   File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
     raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
 Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:31:26 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:31:26 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:31:26 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:31:26 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:31:26 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:31:26 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:31:26 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:31:28 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:31:28 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:31:28 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:31:28 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:31:28 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:31:28 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:31:28 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:31:42 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:31:42 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:31:42 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:31:42 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:31:42 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:31:42 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:31:42 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:34:52 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:34:52 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:34:52 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:34:52 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:34:52 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:34:52 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:34:52 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:36:45 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:36:45 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:36:45 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:36:46 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:36:46 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:36:46 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:36:46 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:36:54 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:36:54 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:36:54 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:36:54 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:36:54 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:36:54 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:36:54 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py
+2025-10-22 13:37:10 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 13:37:10 - crm - INFO - [startup] ======================================================================
+2025-10-22 13:37:10 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 13:37:10 - crm - ERROR - [database] ❌ Настройки салона не найдены! Запустите migrate_bot_settings.py
+2025-10-22 13:37:10 - crm - ERROR - [startup] ❌ Настройки не инициализированы!
+2025-10-22 13:37:10 - crm - ERROR - [startup] 👉 Запустите: python migrate_bot_settings.py
+2025-10-22 13:37:10 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: Salon settings not initialized. Run: python migrate_bot_settings.py
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 755, in startup_event
+    salon = get_salon_settings()
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1735, in get_salon_settings
+    raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+Exception: Salon settings not initialized. Run: python migrate_bot_settings.py

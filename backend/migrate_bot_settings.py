@@ -1,6 +1,6 @@
 """
 Скрипт для первичной инициализации настроек салона и бота в БД
-Запустить один раз: python init_settings.py
+Запустить один раз: python migrate_bot_settings.py
 """
 
 import sqlite3
@@ -106,12 +106,13 @@ INITIAL_BOT_SETTINGS = {
 
 
 def init_salon_settings_table():
-    """Создать таблицу salon_settings"""
+    """Создать таблицу salon_settings и заполнить начальными данными"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    log_info("📦 Создание таблицы salon_settings...", "init")
+    log_info("📦 Создание/проверка таблицы salon_settings...", "init")
     
+    # Создаем таблицу если её нет
     c.execute('''CREATE TABLE IF NOT EXISTS salon_settings
                  (id INTEGER PRIMARY KEY,
                   name TEXT NOT NULL,
@@ -136,12 +137,12 @@ def init_salon_settings_table():
                   currency TEXT DEFAULT 'AED',
                   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     
-    # Проверяем, есть ли уже данные
+    # ✅ КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: Проверяем ДАННЫЕ, а не просто существование таблицы
     c.execute("SELECT COUNT(*) FROM salon_settings")
     count = c.fetchone()[0]
     
     if count == 0:
-        log_info("➕ Заполнение начальными значениями...", "init")
+        log_info("➕ Заполнение начальными значениями salon_settings...", "init")
         
         c.execute("""INSERT INTO salon_settings 
                     (name, name_ar, address, address_ar, google_maps, 
@@ -171,21 +172,22 @@ def init_salon_settings_table():
                    INITIAL_SALON_SETTINGS['timezone'],
                    INITIAL_SALON_SETTINGS['currency']))
         
-        log_info("✅ salon_settings заполнена!", "init")
+        log_info("✅ salon_settings заполнена начальными данными!", "init")
     else:
-        log_warning("⚠️ salon_settings уже содержит данные, пропускаю...", "init")
+        log_info(f"ℹ️ salon_settings уже содержит {count} записей, пропускаю...", "init")
     
     conn.commit()
     conn.close()
 
 
 def init_bot_settings_table():
-    """Создать таблицу bot_settings"""
+    """Создать таблицу bot_settings и заполнить начальными данными"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    log_info("📦 Создание таблицы bot_settings...", "init")
+    log_info("📦 Создание/проверка таблицы bot_settings...", "init")
     
+    # Создаем таблицу если её нет
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings
                  (id INTEGER PRIMARY KEY,
                   bot_name TEXT,
@@ -213,12 +215,12 @@ def init_bot_settings_table():
                   success_metrics TEXT,
                   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     
-    # Проверяем, есть ли уже данные
+    # ✅ КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: Проверяем ДАННЫЕ
     c.execute("SELECT COUNT(*) FROM bot_settings")
     count = c.fetchone()[0]
     
     if count == 0:
-        log_info("➕ Заполнение начальными значениями...", "init")
+        log_info("➕ Заполнение начальными значениями bot_settings...", "init")
         
         c.execute("""INSERT INTO bot_settings
                     (bot_name, personality_traits, greeting_message, farewell_message,
@@ -253,11 +255,37 @@ def init_bot_settings_table():
                    INITIAL_BOT_SETTINGS['emergency_situations'],
                    INITIAL_BOT_SETTINGS['success_metrics']))
         
-        log_info("✅ bot_settings заполнена!", "init")
+        log_info("✅ bot_settings заполнена начальными данными!", "init")
     else:
-        log_warning("⚠️ bot_settings уже содержит данные, пропускаю...", "init")
+        log_info(f"ℹ️ bot_settings уже содержит {count} записей, пропускаю...", "init")
     
     conn.commit()
+    conn.close()
+
+
+def verify_data():
+    """Проверить что данные действительно есть"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    log_info("🔍 Проверка наличия данных...", "verify")
+    
+    # Проверка salon_settings
+    c.execute("SELECT COUNT(*), name FROM salon_settings")
+    salon_result = c.fetchone()
+    if salon_result[0] > 0:
+        log_info(f"✅ salon_settings: {salon_result[0]} записей. Название салона: {salon_result[1]}", "verify")
+    else:
+        log_error("❌ salon_settings ПУСТАЯ!", "verify")
+    
+    # Проверка bot_settings
+    c.execute("SELECT COUNT(*), bot_name FROM bot_settings")
+    bot_result = c.fetchone()
+    if bot_result[0] > 0:
+        log_info(f"✅ bot_settings: {bot_result[0]} записей. Имя бота: {bot_result[1]}", "verify")
+    else:
+        log_error("❌ bot_settings ПУСТАЯ!", "verify")
+    
     conn.close()
 
 
@@ -272,6 +300,9 @@ def main():
         init_salon_settings_table()
         init_bot_settings_table()
         
+        # Проверяем что данные действительно записались
+        verify_data()
+        
         print("\n" + "=" * 70)
         print("✅ ВСЕ НАСТРОЙКИ УСПЕШНО ИНИЦИАЛИЗИРОВАНЫ!")
         print("=" * 70)
@@ -279,7 +310,7 @@ def main():
         print("1. Запустите основное приложение: uvicorn main:app --reload")
         print("2. Перейдите в админку → Настройки для редактирования")
         print("3. Все изменения будут храниться в БД")
-        print("\n⚠️ ВАЖНО: Этот скрипт нужно запускать только ОДИН РАЗ!")
+        print("\n⚠️ ВАЖНО: Этот скрипт можно запускать повторно безопасно")
         print("=" * 70 + "\n")
         
     except Exception as e:
