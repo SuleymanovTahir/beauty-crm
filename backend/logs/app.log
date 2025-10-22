@@ -5887,3 +5887,15 @@ sqlite3.OperationalError: table notification_settings already exists
 2025-10-22 04:46:47 - crm - INFO - [middleware] 🔥 GET /api/bookings
 2025-10-22 04:46:47 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
 2025-10-22 04:46:47 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-22 05:08:10 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 05:08:10 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:08:10 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 05:08:10 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 05:08:10 - crm - INFO - [startup] 🤖 Бот-гений продаж: Diamant
+2025-10-22 05:08:10 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 05:08:10 - crm - INFO - [startup] ======================================================================
+2025-10-22 05:08:10 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 05:08:10 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 05:08:10 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 05:08:10 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 05:08:10 - crm - INFO - [startup] ======================================================================
