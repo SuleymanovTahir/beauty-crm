@@ -8801,3 +8801,35 @@ sqlite3.OperationalError: no such table: custom_roles
 2025-10-22 11:33:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
 2025-10-22 11:34:10 - crm - INFO - [middleware] 🔥 GET /api/clients
 2025-10-22 11:34:10 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-22 11:37:30 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:30 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:31 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:31 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:32 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:32 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:33 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:33 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:33 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:33 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:34 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:34 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:38 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:38 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:49 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:49 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:37:53 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:37:53 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:38:12 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:38:12 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:38:21 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:38:21 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:38:57 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:38:57 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:39:13 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:39:13 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:39:55 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:39:55 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:40:06 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:40:06 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
+2025-10-22 11:40:18 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-22 11:40:18 - crm - INFO - [middleware] 📤 POST /webhook → 400 (0.00s)
