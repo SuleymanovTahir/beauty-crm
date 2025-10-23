@@ -18044,3 +18044,53 @@ sqlite3.OperationalError: no such table: users
 2025-10-23 09:34:38 - crm - INFO - [startup] ======================================================================
 2025-10-23 09:34:39 - crm - INFO - [middleware] 🔥 GET /api/clients
 2025-10-23 09:34:39 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 09:40:05 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:40:05 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:40:05 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:40:05 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:40:05 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:40:05 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:40:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:40:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 09:40:12 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:40:12 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 09:40:52 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:40:52 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 09:40:53 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 09:40:53 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:40:53 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 09:40:53 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 09:40:53 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 09:40:53 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-23 09:41:17 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 09:41:17 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 09:41:17 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:41:17 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-23 09:41:17 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 09:41:17 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-23 09:41:17 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 09:41:17 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.01s)
+2025-10-23 09:41:26 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:41:26 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 09:41:26 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-23 09:41:26 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-23 09:41:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-23 09:41:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-23 09:41:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-23 09:41:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-23 09:41:41 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 09:41:41 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 09:41:41 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 09:41:41 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 09:42:18 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 09:42:18 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 09:42:18 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 09:42:18 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 09:42:19 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 09:42:19 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:42:19 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 09:42:19 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 09:42:19 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 09:42:19 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 09:42:28 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 09:42:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)

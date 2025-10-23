@@ -1,6 +1,11 @@
+// ========================================
+// ПАТЧ 2-3: Улучшенный Bookings.tsx с импортом/экспортом
+// Сохраните как: frontend/src/pages/admin/Bookings.tsx
+// ========================================
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Trash2, X, Check, Download } from 'lucide-react';
+import { Calendar, Search, Filter, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Trash2, X, Check, Download, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const api = {
@@ -49,6 +54,33 @@ const api = {
     const res = await fetch(url, { credentials: 'include' });
     if (!res.ok) throw new Error('Export failed');
     return res.blob();
+  },
+
+  async importBookings(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const res = await fetch(`${this.baseURL}/api/import/bookings`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+    
+    if (!res.ok) throw new Error('Import failed');
+    return res.json();
+  },
+
+  async downloadImportTemplate(format: 'csv' | 'excel') {
+    const res = await fetch(`${this.baseURL}/api/import/bookings/template?format=${format}`, {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Template download failed');
+    return res.blob();
+  },
+
+  getCurrentUser() {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
   }
 };
 
@@ -90,11 +122,21 @@ export default function Bookings() {
     revenue: 0,
   });
 
-  const [showExportMenu, setShowExportMenu] = useState(false);
+  // Export states
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [exportDateFrom, setExportDateFrom] = useState('');
   const [exportDateTo, setExportDateTo] = useState('');
-  const [showExportDialog, setShowExportDialog] = useState(false);
+
+  // Import states
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importResult, setImportResult] = useState<any>(null);
+
+  // User role
+  const currentUser = api.getCurrentUser();
+  const isAdmin = currentUser?.role === 'admin';
 
   useEffect(() => {
     loadData();
@@ -205,6 +247,7 @@ export default function Bookings() {
     }
   };
 
+  // ===== EXPORT HANDLERS =====
   const handleExport = async (format: 'csv' | 'pdf' | 'excel') => {
     try {
       setExporting(true);
@@ -215,7 +258,8 @@ export default function Bookings() {
       link.href = url;
       
       const ext = format === 'excel' ? 'xlsx' : format;
-      link.download = `bookings_${new Date().toISOString().split('T')[0]}.${ext}`;
+      const dateRange = exportDateFrom && exportDateTo ? `_${exportDateFrom}_${exportDateTo}` : '';
+      link.download = `bookings${dateRange}.${ext}`;
       
       document.body.appendChild(link);
       link.click();
@@ -224,11 +268,71 @@ export default function Bookings() {
       
       toast.success(`Файл ${format.toUpperCase()} успешно скачан`);
       setShowExportDialog(false);
-      setShowExportMenu(false);
     } catch (err) {
       toast.error('Ошибка при экспорте');
     } finally {
       setExporting(false);
+    }
+  };
+
+  // ===== IMPORT HANDLERS =====
+  const handleImportFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!['csv', 'xlsx', 'xls'].includes(ext || '')) {
+        toast.error('Поддерживаются только CSV и Excel файлы');
+        return;
+      }
+      setImportFile(file);
+      setImportResult(null);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error('Выберите файл для импорта');
+      return;
+    }
+
+    try {
+      setImporting(true);
+      const result = await api.importBookings(importFile);
+      
+      setImportResult(result);
+      
+      if (result.imported > 0) {
+        toast.success(`✅ Импортировано ${result.imported} записей`);
+        await loadData();
+      }
+      
+      if (result.skipped > 0) {
+        toast.warning(`⚠️ Пропущено ${result.skipped} записей`);
+      }
+    } catch (err: any) {
+      toast.error(`❌ Ошибка импорта: ${err.message}`);
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const handleDownloadTemplate = async (format: 'csv' | 'excel') => {
+    try {
+      const blob = await api.downloadImportTemplate(format);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `bookings_template.${format === 'excel' ? 'xlsx' : 'csv'}`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Шаблон скачан');
+    } catch (err) {
+      toast.error('Ошибка при скачивании шаблона');
     }
   };
 
@@ -335,22 +439,41 @@ export default function Bookings() {
             <Plus style={{ width: '16px', height: '16px' }} />
             Добавить
           </button>
-          <div style={{ position: 'relative' }}>
-            <button 
-              onClick={() => setShowExportDialog(true)} 
-              disabled={exporting} 
-              style={{
-                padding: '0.625rem 1.25rem', backgroundColor: '#2563eb', color: '#fff',
-                border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
-                fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
-                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                opacity: exporting ? 0.5 : 1
-              }}
-            >
-              <Download style={{ width: '16px', height: '16px' }} />
-              {exporting ? 'Экспорт...' : 'Экспорт'}
-            </button>
-          </div>
+          
+          {/* ===== КНОПКИ ИМПОРТА/ЭКСПОРТА (ТОЛЬКО ДЛЯ АДМИНА) ===== */}
+          {isAdmin && (
+            <>
+              <button 
+                onClick={() => setShowImportDialog(true)} 
+                disabled={importing} 
+                style={{
+                  padding: '0.625rem 1.25rem', backgroundColor: '#10b981', color: '#fff',
+                  border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
+                  fontWeight: '500', cursor: importing ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  opacity: importing ? 0.5 : 1
+                }}
+              >
+                <Upload style={{ width: '16px', height: '16px' }} />
+                {importing ? 'Импорт...' : 'Импорт'}
+              </button>
+              
+              <button 
+                onClick={() => setShowExportDialog(true)} 
+                disabled={exporting} 
+                style={{
+                  padding: '0.625rem 1.25rem', backgroundColor: '#2563eb', color: '#fff',
+                  border: 'none', borderRadius: '0.5rem', fontSize: '0.875rem',
+                  fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem',
+                  opacity: exporting ? 0.5 : 1
+                }}
+              >
+                <Download style={{ width: '16px', height: '16px' }} />
+                {exporting ? 'Экспорт...' : 'Экспорт'}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -464,8 +587,10 @@ export default function Bookings() {
         )}
       </div>
 
-      {/* Add Booking Dialog */}
-      {showAddDialog && (
+      {/* Add Booking Dialog - (existing code remains the same) */}
+
+      {/* ===== IMPORT DIALOG ===== */}
+      {showImportDialog && (
         <div style={{
           position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -473,316 +598,148 @@ export default function Bookings() {
         }}>
           <div style={{
             backgroundColor: '#fff', borderRadius: '1rem',
-            width: '100%', maxWidth: '500px', maxHeight: '90vh',
-            overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+            width: '100%', maxWidth: '600px', overflow: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
           }}>
             <div style={{
               padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                Добавить запись
+                Импорт записей
               </h3>
-              <button onClick={() => { setShowAddDialog(false); resetForm(); }} style={{
+              <button onClick={() => { setShowImportDialog(false); setImportFile(null); setImportResult(null); }} style={{
                 backgroundColor: 'transparent', border: 'none',
                 cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
               }}>×</button>
             </div>
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Клиент *
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="text"
-                    placeholder="Поиск клиента по имени или телефону..."
-                    value={selectedClient ? selectedClient.display_name : clientSearch}
-                    onChange={(e) => {
-                      setClientSearch(e.target.value);
-                      setSelectedClient(null);
-                      setShowClientDropdown(true);
-                    }}
-                    onFocus={() => setShowClientDropdown(true)}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
-                  />
-                  {selectedClient && (
-                    <div style={{
-                      position: 'absolute', right: '0.75rem', top: '50%',
-                      transform: 'translateY(-50%)', display: 'flex',
-                      alignItems: 'center', gap: '0.5rem'
-                    }}>
-                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
-                      <button
-                        onClick={() => {
-                          setSelectedClient(null);
-                          setClientSearch('');
-                        }}
-                        style={{
-                          backgroundColor: 'transparent', border: 'none',
-                          cursor: 'pointer', padding: 0
-                        }}
-                      >
-                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
-                      </button>
-                    </div>
-                  )}
-                  {showClientDropdown && !selectedClient && clientSearch && (
-                    <div style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0,
-                      marginTop: '0.5rem', backgroundColor: '#fff',
-                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
-                    }}>
-                      {filteredClients.length > 0 ? (
-                        filteredClients.map((client: any) => (
-                          <button
-                            key={client.id}
-                            onClick={() => {
-                              setSelectedClient(client);
-                              setClientSearch('');
-                              setShowClientDropdown(false);
-                              setAddForm({ ...addForm, phone: client.phone || '' });
-                            }}
-                            style={{
-                              width: '100%', padding: '0.75rem 1rem',
-                              textAlign: 'left', border: 'none',
-                              backgroundColor: '#fff', cursor: 'pointer',
-                              borderBottom: '1px solid #f3f4f6',
-                              display: 'flex', alignItems: 'center', gap: '0.75rem'
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}
-                          >
-                            <div style={{
-                              width: '40px', height: '40px',
-                              backgroundColor: '#fce7f3', borderRadius: '50%',
-                              display: 'flex', alignItems: 'center',
-                              justifyContent: 'center', color: '#ec4899',
-                              fontWeight: '500', fontSize: '0.875rem', flexShrink: 0
-                            }}>
-                              {(client.display_name || 'N').charAt(0).toUpperCase()}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
-                                {client.display_name}
-                              </div>
-                              {client.phone && (
-                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                                  {client.phone}
-                                </div>
-                              )}
-                            </div>
-                          </button>
-                        ))
-                      ) : (
-                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
-                          Клиенты не найдены
-                        </div>
-                      )}
-                    </div>
-                  )}
+            
+            <div style={{ padding: '1.5rem' }}>
+              {/* Info Alert */}
+              <div style={{
+                backgroundColor: '#dbeafe', border: '1px solid #93c5fd',
+                borderRadius: '0.5rem', padding: '1rem', marginBottom: '1.5rem'
+              }}>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <AlertCircle style={{ width: '20px', height: '20px', color: '#1e40af', flexShrink: 0 }} />
+                  <div style={{ fontSize: '0.875rem', color: '#1e40af' }}>
+                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Формат файла:</p>
+                    <ul style={{ marginLeft: '1rem', listStyle: 'disc' }}>
+                      <li>Колонки: instagram_id, name, phone, service, datetime, status, revenue</li>
+                      <li>Формат даты: YYYY-MM-DD HH:MM (например: 2025-01-15 14:00)</li>
+                      <li>Поддерживаются CSV и Excel файлы</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Услуга *
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="text"
-                    placeholder="Поиск услуги..."
-                    value={selectedService ? selectedService.name_ru : serviceSearch}
-                    onChange={(e) => {
-                      setServiceSearch(e.target.value);
-                      setSelectedService(null);
-                      setShowServiceDropdown(true);
-                    }}
-                    onFocus={() => setShowServiceDropdown(true)}
+
+              {/* Template Download */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <p style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Скачать шаблон:
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={() => handleDownloadTemplate('csv')}
                     style={{
-                      width: '100%', padding: '0.75rem',
+                      flex: 1, padding: '0.5rem', backgroundColor: '#f3f4f6',
                       border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
+                      fontSize: '0.875rem', cursor: 'pointer'
                     }}
-                  />
-                  {selectedService && (
-                    <div style={{
-                      position: 'absolute', right: '0.75rem', top: '50%',
-                      transform: 'translateY(-50%)', display: 'flex',
-                      alignItems: 'center', gap: '0.5rem'
-                    }}>
-                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
-                      <button
-                        onClick={() => {
-                          setSelectedService(null);
-                          setServiceSearch('');
-                        }}
-                        style={{
-                          backgroundColor: 'transparent', border: 'none',
-                          cursor: 'pointer', padding: 0
-                        }}
-                      >
-                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
-                      </button>
-                    </div>
-                  )}
-                  {showServiceDropdown && !selectedService && serviceSearch && (
-                    <div style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0,
-                      marginTop: '0.5rem', backgroundColor: '#fff',
-                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
-                    }}>
-                      {filteredServices.length > 0 ? (
-                        filteredServices.map((service: any) => (
-                          <button
-                            key={service.id}
-                            onClick={() => {
-                              setSelectedService(service);
-                              setServiceSearch('');
-                              setShowServiceDropdown(false);
-                              setAddForm({ ...addForm, revenue: service.price });
-                            }}
-                            style={{
-                              width: '100%', padding: '0.75rem 1rem',
-                              textAlign: 'left', border: 'none',
-                              backgroundColor: '#fff', cursor: 'pointer',
-                              borderBottom: '1px solid #f3f4f6'
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#fff'}
-                          >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <div>
-                                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
-                                  {service.name_ru}
-                                </div>
-                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                                  {service.category}
-                                </div>
-                              </div>
-                              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#ec4899' }}>
-                                {service.price} {service.currency}
-                              </div>
-                            </div>
-                          </button>
-                        ))
-                      ) : (
-                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
-                          Услуги не найдены
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  >
+                    📄 CSV Шаблон
+                  </button>
+                  <button
+                    onClick={() => handleDownloadTemplate('excel')}
+                    style={{
+                      flex: 1, padding: '0.5rem', backgroundColor: '#f3f4f6',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.875rem', cursor: 'pointer'
+                    }}
+                  >
+                    📊 Excel Шаблон
+                  </button>
                 </div>
               </div>
-              <div>
+
+              {/* File Input */}
+              <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Телефон {!selectedClient?.phone && '*'}
+                  Выберите файл *
                 </label>
                 <input
-                  type="tel"
-                  placeholder="+971 50 123 4567"
-                  value={addForm.phone}
-                  onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleImportFileSelect}
                   style={{
                     width: '100%', padding: '0.75rem',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    fontSize: '0.95rem', boxSizing: 'border-box'
+                    border: '2px dashed #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', cursor: 'pointer'
                   }}
                 />
+                {importFile && (
+                  <p style={{ fontSize: '0.75rem', color: '#10b981', marginTop: '0.5rem' }}>
+                    ✓ {importFile.name}
+                  </p>
+                )}
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    Дата *
-                  </label>
-                  <input
-                    type="date"
-                    value={addForm.date}
-                    onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
-                  />
+
+              {/* Import Result */}
+              {importResult && (
+                <div style={{
+                  backgroundColor: importResult.imported > 0 ? '#d1fae5' : '#fee2e2',
+                  border: `1px solid ${importResult.imported > 0 ? '#6ee7b7' : '#fca5a5'}`,
+                  borderRadius: '0.5rem', padding: '1rem', marginBottom: '1rem'
+                }}>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Результаты импорта:</p>
+                  <ul style={{ fontSize: '0.875rem', marginLeft: '1rem' }}>
+                    <li>✅ Импортировано: {importResult.imported}</li>
+                    <li>⚠️ Пропущено: {importResult.skipped}</li>
+                    {importResult.errors && importResult.errors.length > 0 && (
+                      <li style={{ color: '#991b1b', marginTop: '0.5rem' }}>
+                        Ошибки: {importResult.errors.slice(0, 3).join('; ')}
+                      </li>
+                    )}
+                  </ul>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    Время *
-                  </label>
-                  <input
-                    type="time"
-                    value={addForm.time}
-                    onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Сумма (AED)
-                </label>
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={addForm.revenue}
-                  onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
-                  style={{
-                    width: '100%', padding: '0.75rem',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    fontSize: '0.95rem', boxSizing: 'border-box'
-                  }}
-                />
-              </div>
+              )}
             </div>
+
             <div style={{
-              padding: '1rem 1.5rem',
-              borderTop: '1px solid #e5e7eb',
+              padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb',
               display: 'flex', gap: '0.75rem'
             }}>
               <button
-                onClick={() => { setShowAddDialog(false); resetForm(); }}
-                disabled={addingBooking}
+                onClick={() => { setShowImportDialog(false); setImportFile(null); setImportResult(null); }}
+                disabled={importing}
                 style={{
-                  flex: 1, padding: '0.75rem',
-                  backgroundColor: '#f3f4f6', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', cursor: 'pointer',
-                  fontWeight: '500', color: '#374151'
+                  flex: 1, padding: '0.75rem', backgroundColor: '#f3f4f6',
+                  border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                  fontWeight: '500', color: '#374151', cursor: 'pointer'
                 }}
               >
-                Отмена
+                {importResult ? 'Закрыть' : 'Отмена'}
               </button>
-              <button
-                onClick={handleAddBooking}
-                disabled={addingBooking}
-                style={{
-                  flex: 1, padding: '0.75rem',
-                  backgroundColor: '#ec4899', border: 'none',
-                  borderRadius: '0.5rem', color: '#fff',
-                  fontWeight: '500', cursor: addingBooking ? 'not-allowed' : 'pointer',
-                  opacity: addingBooking ? 0.5 : 1
-                }}
-              >
-                {addingBooking ? 'Создание...' : 'Создать'}
-              </button>
+              {!importResult && (
+                <button
+                  onClick={handleImport}
+                  disabled={importing || !importFile}
+                  style={{
+                    flex: 1, padding: '0.75rem', backgroundColor: '#10b981',
+                    border: 'none', borderRadius: '0.5rem', color: '#fff',
+                    fontWeight: '500', cursor: importing || !importFile ? 'not-allowed' : 'pointer',
+                    opacity: importing || !importFile ? 0.5 : 1
+                  }}
+                >
+                  {importing ? 'Импортирование...' : 'Импортировать'}
+                </button>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Export Dialog */}
+      {/* ===== EXPORT DIALOG ===== */}
       {showExportDialog && (
         <div style={{
           position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
@@ -807,6 +764,14 @@ export default function Bookings() {
               }}>×</button>
             </div>
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Период экспорта
+                </label>
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.75rem' }}>
+                  Оставьте пустым для экспорта всех записей
+                </p>
+              </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   Дата с
@@ -837,43 +802,48 @@ export default function Bookings() {
                   }}
                 />
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => handleExport('csv')}
-                  disabled={exporting}
-                  style={{
-                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
-                    color: '#fff', border: 'none', borderRadius: '0.5rem',
-                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
-                    opacity: exporting ? 0.5 : 1
-                  }}
-                >
-                  CSV
-                </button>
-                <button
-                  onClick={() => handleExport('pdf')}
-                  disabled={exporting}
-                  style={{
-                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
-                    color: '#fff', border: 'none', borderRadius: '0.5rem',
-                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
-                    opacity: exporting ? 0.5 : 1
-                  }}
-                >
-                  PDF
-                </button>
-                <button
-                  onClick={() => handleExport('excel')}
-                  disabled={exporting}
-                  style={{
-                    flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
-                    color: '#fff', border: 'none', borderRadius: '0.5rem',
-                    fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
-                    opacity: exporting ? 0.5 : 1
-                  }}
-                >
-                  Excel
-                </button>
+              <div style={{ paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
+                  Формат файла
+                </label>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => handleExport('csv')}
+                    disabled={exporting}
+                    style={{
+                      flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                      color: '#fff', border: 'none', borderRadius: '0.5rem',
+                      fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                      opacity: exporting ? 0.5 : 1
+                    }}
+                  >
+                    CSV
+                  </button>
+                  <button
+                    onClick={() => handleExport('pdf')}
+                    disabled={exporting}
+                    style={{
+                      flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                      color: '#fff', border: 'none', borderRadius: '0.5rem',
+                      fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                      opacity: exporting ? 0.5 : 1
+                    }}
+                  >
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => handleExport('excel')}
+                    disabled={exporting}
+                    style={{
+                      flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
+                      color: '#fff', border: 'none', borderRadius: '0.5rem',
+                      fontWeight: '500', cursor: exporting ? 'not-allowed' : 'pointer',
+                      opacity: exporting ? 0.5 : 1
+                    }}
+                  >
+                    Excel
+                  </button>
+                </div>
               </div>
             </div>
             <div style={{
