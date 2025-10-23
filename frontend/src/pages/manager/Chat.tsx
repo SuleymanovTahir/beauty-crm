@@ -1,3 +1,4 @@
+// frontend/src/pages/manager/Chat.tsx - УЛУЧШЕННАЯ ВЕРСИЯ БЕЗ ПРЫЖКОВ
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
@@ -12,8 +13,9 @@ import {
   StickyNote,
   Info,
   Eye,
-  Download,
-  FileText
+  FileText,
+  Check,
+  Clock
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -50,13 +52,24 @@ export default function Chat() {
   const [searchTerm, setSearchTerm] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true);
+  
+  // ✅ ИСПРАВЛЕНО: Разделяем первичную загрузку и фоновые обновления
+  const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [isRefreshingMessages, setIsRefreshingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
   const [showNotes, setShowNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [notes, setNotes] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  
+  // ✅ НОВОЕ: Состояние для редактирования информации о клиенте
+  const [isEditingClient, setIsEditingClient] = useState(false);
+  const [editedClientName, setEditedClientName] = useState('');
+  const [editedClientPhone, setEditedClientPhone] = useState('');
+  const [isSavingClient, setIsSavingClient] = useState(false);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +94,7 @@ export default function Chat() {
         const client = clients.find(c => c.id === selectedClientId);
         if (client) {
           setSelectedClient(client);
-          loadMessages(selectedClientId);
+          loadMessages(selectedClientId, true);
           localStorage.removeItem('selectedClientId');
         }
       }
@@ -92,21 +105,20 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // ✅ УЛУЧШЕННОЕ АВТООБНОВЛЕНИЕ: без прыжков
   useEffect(() => {
-  if (!selectedClient) return;
+    if (!selectedClient) return;
 
-  // ✅ Автообновление сообщений каждые 5 секунд
-  const interval = setInterval(() => {
-    loadMessages(selectedClient.id);
-  }, 5000);
+    const interval = setInterval(() => {
+      loadMessages(selectedClient.id, false); // silent refresh
+    }, 5000);
 
-  // Очистка при размонтировании или смене клиента
-  return () => clearInterval(interval);
-}, [selectedClient]);
+    return () => clearInterval(interval);
+  }, [selectedClient]);
 
   const loadClients = async () => {
     try {
-      setLoading(true);
+      setInitialLoading(true);
       setError(null);
       const data = await api.getClients();
       
@@ -115,51 +127,113 @@ export default function Chat() {
       
       if (clientsArray.length > 0 && !selectedClient) {
         setSelectedClient(clientsArray[0]);
-        loadMessages(clientsArray[0].id);
+        loadMessages(clientsArray[0].id, true);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
       setError(message);
       toast.error(`Ошибка: ${message}`);
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
     }
   };
 
-  const loadMessages = async (clientId: string) => {
+  // ✅ УЛУЧШЕННАЯ ЗАГРУЗКА СООБЩЕНИЙ: с параметром isInitial
+  const loadMessages = async (clientId: string, isInitial: boolean = false) => {
     try {
-      setLoadingMessages(true);
+      if (isInitial) {
+        setLoadingMessages(true);
+      } else {
+        setIsRefreshingMessages(true);
+      }
+
       const data = await api.getChatMessages(clientId, 50);
-      
       const messagesArray = data.messages || (Array.isArray(data) ? data : []);
       setMessages(messagesArray);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
-      toast.error(`Ошибка: ${message}`);
+      // Показываем ошибку только при первичной загрузке
+      if (isInitial) {
+        const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
+        toast.error(`Ошибка: ${message}`);
+      }
     } finally {
-      setLoadingMessages(false);
+      if (isInitial) {
+        setLoadingMessages(false);
+      } else {
+        setIsRefreshingMessages(false);
+      }
     }
   };
 
   const handleSelectClient = (client: Client) => {
     setSelectedClient(client);
-    loadMessages(client.id);
+    loadMessages(client.id, true);
     setShowNotes(false);
     setShowClientInfo(false);
+    setIsEditingClient(false);
+    
+    // ✅ НОВОЕ: Инициализируем поля для редактирования
+    setEditedClientName(client.name || '');
+    setEditedClientPhone(client.phone || '');
+  };
+
+  // ✅ НОВОЕ: Функция сохранения информации о клиенте
+  const handleSaveClientInfo = async () => {
+    if (!selectedClient) return;
+
+    try {
+      setIsSavingClient(true);
+      
+      await api.updateClient(selectedClient.id, {
+        name: editedClientName.trim() || null,
+        phone: editedClientPhone.trim() || null,
+      });
+
+      // Обновляем локальное состояние
+      setClients(clients.map(c => 
+        c.id === selectedClient.id 
+          ? { 
+              ...c, 
+              name: editedClientName.trim() || '',
+              phone: editedClientPhone.trim() || '',
+              display_name: editedClientName.trim() || c.username || c.id.substring(0, 15) + '...'
+            }
+          : c
+      ));
+
+      setSelectedClient({
+        ...selectedClient,
+        name: editedClientName.trim() || '',
+        phone: editedClientPhone.trim() || '',
+        display_name: editedClientName.trim() || selectedClient.username || selectedClient.id.substring(0, 15) + '...'
+      });
+
+      setIsEditingClient(false);
+      toast.success('Информация обновлена');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Ошибка сохранения';
+      toast.error(`Ошибка: ${errorMsg}`);
+    } finally {
+      setIsSavingClient(false);
+    }
+  };
+
+  // ✅ НОВОЕ: Функция отмены редактирования
+  const handleCancelEdit = () => {
+    if (!selectedClient) return;
+    setEditedClientName(selectedClient.name || '');
+    setEditedClientPhone(selectedClient.phone || '');
+    setIsEditingClient(false);
   };
 
   const handleSendMessage = async () => {
-    // ✅ ИСПРАВЛЕНО: Проверяем есть ли текст ИЛИ файлы
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
     try {
-      // TODO: В будущем добавить отправку файлов на сервер
       if (attachedFiles.length > 0) {
-        // Пока только предупреждение - отправка файлов требует доработки backend
         toast.info('Отправка файлов будет добавлена в следующем обновлении');
       }
 
-      // Отправляем текстовое сообщение
       if (message.trim()) {
         await api.sendMessage(selectedClient.id, message);
         
@@ -187,7 +261,6 @@ export default function Chat() {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...files]);
-      // ✅ ИСПРАВЛЕНО: Правильный текст toast
       toast.success(`${files.length} ${files.length === 1 ? 'файл добавлен' : 'файла добавлено'}`);
     }
   };
@@ -207,10 +280,10 @@ export default function Chat() {
     client.phone.includes(searchTerm)
   );
 
-  // ✅ ДОБАВЛЕНО: Проверка можно ли отправить (есть текст ИЛИ файлы)
   const canSend = message.trim().length > 0 || attachedFiles.length > 0;
 
-  if (loading) {
+  // ✅ ПОКАЗЫВАЕМ СПИННЕР ТОЛЬКО ПРИ ПЕРВИЧНОЙ ЗАГРУЗКЕ
+  if (initialLoading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
@@ -251,6 +324,10 @@ export default function Chat() {
                 <MessageCircle className="w-5 h-5" />
                 Чаты ({clients.length})
               </h3>
+              {/* ✅ ИНДИКАТОР ОБНОВЛЕНИЯ */}
+              {isRefreshingMessages && (
+                <Loader className="w-4 h-4 text-pink-600 animate-spin" />
+              )}
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -334,7 +411,15 @@ export default function Chat() {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => setShowClientInfo(!showClientInfo)}
+                    onClick={() => {
+                      setShowClientInfo(!showClientInfo);
+                      if (!showClientInfo) {
+                        // Инициализируем поля при открытии
+                        setEditedClientName(selectedClient.name || '');
+                        setEditedClientPhone(selectedClient.phone || '');
+                        setIsEditingClient(false);
+                      }
+                    }}
                     title="Информация о клиенте"
                   >
                     <Info className="w-4 h-4" />
@@ -388,66 +473,224 @@ export default function Chat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Client Info Panel */}
+            {/* Client Info Panel - УЛУЧШЕННЫЙ ДИЗАЙН */}
             {showClientInfo && (
-              <div className="border-t border-gray-200 p-4 bg-blue-50 max-h-[200px] overflow-y-auto">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm text-gray-900 font-medium">Информация о клиенте</h4>
-                  <Button size="sm" variant="ghost" onClick={() => setShowClientInfo(false)}>
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Имя:</span>
-                    <span className="font-medium">{selectedClient.display_name}</span>
+              <div className="border-t border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
+                <div className="p-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <Info className="w-4 h-4 text-white" />
+                      </div>
+                      <h4 className="text-sm text-gray-900 font-semibold">Информация о клиенте</h4>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        setShowClientInfo(false);
+                        setIsEditingClient(false);
+                        handleCancelEdit();
+                      }}
+                      className="h-8 w-8 p-0 hover:bg-white/50"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Телефон:</span>
-                    <span className="font-medium">{selectedClient.phone || '-'}</span>
+
+                  {/* Avatar & ID */}
+                  <div className="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg shadow-sm">
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+                      {selectedClient.display_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500 mb-0.5">Instagram ID</p>
+                      <p className="text-xs text-gray-900 font-mono truncate" title={selectedClient.id}>
+                        {selectedClient.id}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Instagram:</span>
-                    <span className="font-medium">@{selectedClient.username || '-'}</span>
+
+                  {/* Editable Fields */}
+                  <div className="space-y-3">
+                    {/* Name Field */}
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
+                        <span>👤</span> Имя клиента
+                      </label>
+                      {isEditingClient ? (
+                        <Input
+                          value={editedClientName}
+                          onChange={(e) => setEditedClientName(e.target.value)}
+                          placeholder="Введите имя..."
+                          className="text-sm"
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-900 font-medium">
+                          {selectedClient.name || (
+                            <span className="text-gray-400 italic">Не указано</span>
+                          )}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Phone Field */}
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
+                        <Phone className="w-3 h-3" /> Телефон
+                      </label>
+                      {isEditingClient ? (
+                        <Input
+                          value={editedClientPhone}
+                          onChange={(e) => setEditedClientPhone(e.target.value)}
+                          placeholder="+971 XX XXX XXXX"
+                          className="text-sm"
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-900 font-medium">
+                          {selectedClient.phone || (
+                            <span className="text-gray-400 italic">Не указан</span>
+                          )}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Instagram Username */}
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
+                        <Instagram className="w-3 h-3" /> Instagram
+                      </label>
+                      {selectedClient.username ? (
+                        <a
+                          href={`https://instagram.com/${selectedClient.username}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-pink-600 hover:text-pink-700 font-medium flex items-center gap-1 hover:underline"
+                        >
+                          @{selectedClient.username}
+                          <span className="text-gray-400">↗</span>
+                        </a>
+                      ) : (
+                        <p className="text-sm text-gray-400 italic">Не указан</p>
+                      )}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white rounded-lg p-3 shadow-sm">
+                        <p className="text-xs text-gray-500 mb-1">Сообщений</p>
+                        <p className="text-lg font-bold text-gray-900">{selectedClient.total_messages}</p>
+                      </div>
+                      <div className="bg-white rounded-lg p-3 shadow-sm">
+                        <p className="text-xs text-gray-500 mb-1">Статус</p>
+                        <Badge className="bg-pink-600 text-xs">{selectedClient.status}</Badge>
+                      </div>
+                    </div>
+
+                    {/* Last Contact */}
+                    <div className="bg-white rounded-lg p-3 shadow-sm">
+                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
+                        <Clock className="w-3 h-3" /> Последний контакт
+                      </label>
+                      <p className="text-sm text-gray-900">
+                        {new Date(selectedClient.last_contact).toLocaleString('ru-RU')}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Сообщений:</span>
-                    <span className="font-medium">{selectedClient.total_messages}</span>
+
+                  {/* Action Buttons */}
+                  <div className="mt-4 space-y-2">
+                    {isEditingClient ? (
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSaveClientInfo}
+                          disabled={isSavingClient}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white shadow-md"
+                          size="sm"
+                        >
+                          {isSavingClient ? (
+                            <>
+                              <Loader className="w-4 h-4 mr-2 animate-spin" />
+                              Сохранение...
+                            </>
+                          ) : (
+                            <>
+                              <Check className="w-4 h-4 mr-2" />
+                              Сохранить
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          onClick={handleCancelEdit}
+                          disabled={isSavingClient}
+                          variant="outline"
+                          size="sm"
+                          className="px-4"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setIsEditingClient(true)}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                        size="sm"
+                      >
+                        <span className="mr-2">✏️</span>
+                        Редактировать
+                      </Button>
+                    )}
+
+                    <Button
+                      onClick={() => navigate(`/manager/clients/${selectedClient.id}`)}
+                      variant="outline"
+                      className="w-full shadow-sm"
+                      size="sm"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Полный профиль
+                    </Button>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Статус:</span>
-                    <Badge className="bg-pink-600">{selectedClient.status}</Badge>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    className="w-full mt-3 bg-blue-600 hover:bg-blue-700 gap-2"
-                    onClick={() => navigate(`/admin/clients/${selectedClient.id}`)}
-                  >
-                    <Eye className="w-4 h-4" />
-                    Полный профиль
-                  </Button>
                 </div>
               </div>
             )}
 
-            {/* Notes Panel */}
+            {/* Notes Panel - УЛУЧШЕННЫЙ ДИЗАЙН */}
             {showNotes && (
-              <div className="border-t border-gray-200 p-4 bg-yellow-50">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm text-gray-900 font-medium">Заметки о клиенте</h4>
-                  <Button size="sm" variant="ghost" onClick={() => setShowNotes(false)}>
-                    <X className="w-4 h-4" />
+              <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50">
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-lg flex items-center justify-center">
+                        <StickyNote className="w-4 h-4 text-white" />
+                      </div>
+                      <h4 className="text-sm text-gray-900 font-semibold">Заметки о клиенте</h4>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => setShowNotes(false)}
+                      className="h-8 w-8 p-0 hover:bg-white/50"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Введите заметки о клиенте..."
+                    className="min-h-[100px] mb-3 bg-white shadow-sm"
+                  />
+                  <Button 
+                    size="sm" 
+                    onClick={handleSaveNotes} 
+                    className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white shadow-md"
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Сохранить заметки
                   </Button>
                 </div>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Введите заметки..."
-                  className="min-h-[80px] mb-2"
-                />
-                <Button size="sm" onClick={handleSaveNotes} className="bg-pink-600 hover:bg-pink-700">
-                  Сохранить заметки
-                </Button>
               </div>
             )}
 
@@ -517,7 +760,6 @@ export default function Chat() {
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
-                  {/* ✅ ИСПРАВЛЕНО: Кнопка активна если есть текст ИЛИ файлы */}
                   <Button
                     onClick={handleSendMessage}
                     className="bg-gradient-to-r from-pink-500 to-purple-600"

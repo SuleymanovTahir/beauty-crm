@@ -1,6 +1,4 @@
-// frontend/src/pages/manager/Messages.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// Замени весь файл на этот код:
-
+// frontend/src/pages/manager/Messages.tsx - УЛУЧШЕННАЯ ВЕРСИЯ БЕЗ ПРЫЖКОВ
 import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
@@ -73,15 +71,27 @@ export default function Messages() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // ✅ ИСПРАВЛЕНО: Разделяем первичную загрузку и фоновые обновления
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // ✅ НОВОЕ: Состояние для диалога удаления
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<{ id: string; name: string } | null>(null);
 
+  // ✅ ПЕРВИЧНАЯ ЗАГРУЗКА
   useEffect(() => {
-    loadMessages();
+    loadMessages(true);
+  }, []);
+
+  // ✅ АВТООБНОВЛЕНИЕ КАЖДЫЕ 10 СЕКУНД (без прыжков)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadMessages(false); // silent refresh
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -104,9 +114,15 @@ export default function Messages() {
     setFilteredMessages(filtered);
   }, [searchTerm, categoryFilter, statusFilter, messages]);
 
-  const loadMessages = async () => {
+  // ✅ УЛУЧШЕННАЯ ЗАГРУЗКА: с параметром isInitial
+  const loadMessages = async (isInitial: boolean = false) => {
     try {
-      setLoading(true);
+      if (isInitial) {
+        setInitialLoading(true);
+      } else {
+        setIsRefreshing(true);
+      }
+      
       setError(null);
 
       const data = await api.getClients();
@@ -133,17 +149,25 @@ export default function Messages() {
 
       setMessages(extendedMessages);
 
-      if (extendedMessages.length === 0) {
+      if (isInitial && extendedMessages.length === 0) {
         toast.info("Сообщений не найдено");
       }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Ошибка загрузки сообщений";
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      
+      // Показываем тост только при первой загрузке
+      if (isInitial) {
+        toast.error(`Ошибка: ${message}`);
+      }
       console.error("Error loading messages:", err);
     } finally {
-      setLoading(false);
+      if (isInitial) {
+        setInitialLoading(false);
+      } else {
+        setIsRefreshing(false);
+      }
     }
   };
 
@@ -203,13 +227,11 @@ export default function Messages() {
     toast.success("Восстановлено из архива");
   };
 
-  // ✅ НОВОЕ: Функция для открытия диалога удаления
   const handleOpenDeleteDialog = (id: string, name: string) => {
     setMessageToDelete({ id, name });
     setShowDeleteDialog(true);
   };
 
-  // ✅ НОВОЕ: Функция подтверждения удаления
   const handleConfirmDelete = () => {
     if (!messageToDelete) return;
     
@@ -239,7 +261,8 @@ export default function Messages() {
     }
   };
 
-  if (loading) {
+  // ✅ ПОКАЗЫВАЕМ СПИННЕР ТОЛЬКО ПРИ ПЕРВИЧНОЙ ЗАГРУЗКЕ
+  if (initialLoading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
@@ -260,7 +283,7 @@ export default function Messages() {
               <p className="text-red-800 font-medium">Ошибка загрузки</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button
-                onClick={loadMessages}
+                onClick={() => loadMessages(true)}
                 className="mt-4 bg-red-600 hover:bg-red-700"
               >
                 Попробовать еще раз
@@ -276,14 +299,37 @@ export default function Messages() {
     <div className="p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <MessageSquare className="w-8 h-8 text-pink-600" />
-          Сообщения
-          {unreadCount > 0 && (
-            <Badge className="bg-pink-600 text-white">{unreadCount}</Badge>
-          )}
-        </h1>
-        <p className="text-gray-600">История общения с клиентами</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl text-gray-900 flex items-center gap-3">
+              <MessageSquare className="w-8 h-8 text-pink-600" />
+              Сообщения
+              {unreadCount > 0 && (
+                <Badge className="bg-pink-600 text-white">{unreadCount}</Badge>
+              )}
+            </h1>
+            {/* ✅ ИНДИКАТОР ФОНОВОГО ОБНОВЛЕНИЯ */}
+            {isRefreshing && (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Loader className="w-4 h-4 animate-spin" />
+                <span>Обновление...</span>
+              </div>
+            )}
+          </div>
+          
+          {/* ✅ КНОПКА РУЧНОГО ОБНОВЛЕНИЯ */}
+          <Button
+            onClick={() => loadMessages(false)}
+            variant="outline"
+            size="sm"
+            disabled={isRefreshing}
+            className="gap-2"
+          >
+            <Clock className="w-4 h-4" />
+            Обновить
+          </Button>
+        </div>
+        <p className="text-gray-600 mt-2">История общения с клиентами</p>
       </div>
 
       {/* Stats */}
@@ -516,7 +562,6 @@ export default function Messages() {
                       >
                         <ArchiveRestore className="w-4 h-4" />
                       </Button>
-                      {/* ✅ ИСПРАВЛЕНО: Открываем диалог вместо confirm() */}
                       <Button
                         size="sm"
                         variant="outline"
@@ -540,11 +585,10 @@ export default function Messages() {
         </div>
       </div>
 
-      {/* ✅ НОВОЕ: Красивый диалог удаления */}
+      {/* Диалог удаления */}
       {showDeleteDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-            {/* Red Header */}
             <div className="px-6 py-4 border-b border-gray-200 bg-red-50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -556,7 +600,6 @@ export default function Messages() {
               </div>
             </div>
 
-            {/* Content */}
             <div className="px-6 py-6">
               <p className="text-gray-700 mb-4">
                 Вы собираетесь удалить сообщение с клиентом <span className="font-bold">"{messageToDelete?.name}"</span>.
@@ -573,7 +616,6 @@ export default function Messages() {
               </div>
             </div>
 
-            {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-3 justify-end rounded-b-2xl">
               <button
                 onClick={() => {
