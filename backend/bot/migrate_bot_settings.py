@@ -1,325 +1,312 @@
 #!/usr/bin/env python3
 # backend/migrate_bot_settings.py
-# ========================================
-# ПРАВИЛЬНАЯ МИГРАЦИЯ: bot_instructions_file.txt → БД
-# ========================================
-# ✅ Читает bot_instructions_file.txt
-# ✅ Читает bot_config.py (дефолты)
-# ✅ Заполняет БД ОДИН РАЗ при первом запуске
-# ✅ После этого БД = единственный источник истины
-# ✅ Добавляет недостающие поля в bot_settings
+"""
+ПОЛНАЯ миграция настроек бота из bot/bot_instructions_file.txt в БД
+Включает ВСЕ поля включая возражения
+"""
 
 import sqlite3
 import os
+import re
 from datetime import datetime
 
 DATABASE_NAME = os.getenv("DATABASE_NAME", "salon_bot.db")
+INSTRUCTIONS_FILE = "bot/bot_instructions_file.txt"
 
-def parse_instructions_file():
-    """
-    Парсит bot_instructions_file.txt и извлекает секции
-    
-    Возвращает dict с ключами:
-    - personality_traits
-    - greeting_message
-    - price_explanation
-    - и т.д.
-    """
-    
-    # Читаем файл
+
+# ===== ДЕФОЛТНЫЕ ЗНАЧЕНИЯ =====
+DEFAULT_SETTINGS = {
+    "bot_name": "M.Le Diamant Assistant",
+    "salon_name": "M.Le Diamant Beauty Lounge",
+    "salon_address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+    "salon_phone": "+971 50 123 4567",
+    "salon_hours": "Ежедневно 10:30 - 21:00",
+    "booking_url": "https://n1234567.yclients.com",
+    "google_maps_link": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+    "personality_traits": "Обаятельная, уверенная, харизматичная",
+    "greeting_message": "Привет! 😊 Добро пожаловать!",
+    "farewell_message": "Спасибо за визит! 💖",
+    "price_explanation": "Мы в премиум-сегменте 💎",
+    "communication_style": "Дружелюбный, экспертный",
+    "max_message_length": 4,
+    "emoji_usage": "Умеренное (2-3 на сообщение)",
+    "languages_supported": "ru,en,ar",
+}
+
+
+def parse_section(content: str, section_name: str, next_section: str = None) -> str:
+    """Извлечь текст между секциями"""
     try:
-        with open('bot_instructions_file.txt', 'r', encoding='utf-8') as f:
-            content = f.read()
-    except FileNotFoundError:
-        print("⚠️  Файл bot_instructions_file.txt не найден!")
-        print("   Используются дефолтные значения из bot_config.py")
-        return None
-    
-    # Парсим секции
-    settings = {}
-    
-    # === ЛИЧНОСТЬ БОТА ===
-    if '[ЛИЧНОСТЬ БОТА 2.0]' in content:
-        section_start = content.find('[ЛИЧНОСТЬ БОТА 2.0]')
-        section_end = content.find('[ПРАВИЛА О ПРИВЕТСТВИИ', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
+        start = content.find(f'[{section_name}]')
+        if start == -1:
+            start = content.find(section_name)
+        if start == -1:
+            return ""
         
-        # Извлекаем traits
-        traits_lines = []
-        for line in section.split('\n'):
+        if next_section:
+            end = content.find(f'[{next_section}]', start)
+            if end == -1:
+                end = content.find(next_section, start)
+        else:
+            end = len(content)
+        
+        if end == -1:
+            end = len(content)
+        
+        return content[start:end].strip()
+    except:
+        return ""
+
+
+def extract_quotes(text: str) -> list:
+    """Извлечь фразы в кавычках"""
+    return re.findall(r'"([^"]*)"', text)
+
+
+def extract_objection(content: str, objection_keyword: str) -> str:
+    """Извлечь конкретное возражение"""
+    pattern = f'ВОЗРАЖЕНИЕ.*?{objection_keyword}.*?✅ ГЕНИАЛЬНО:(.*?)(?:---|ВОЗРАЖЕНИЕ|$)'
+    match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+    if match:
+        response = match.group(1).strip()
+        
+        # ✅ УБИРАЕМ повторяющиеся "✅ ГЕНИАЛЬНО:"
+        response = re.sub(r'✅ ГЕНИАЛЬНО:\s*', '', response)
+        
+        # Очистить от лишних символов
+        response = re.sub(r'^["\s]+|["\s]+$', '', response)
+        
+        # ✅ Обрезаем до первого встречного заголовка
+        response = re.split(r'\n\n(?=[А-ЯA-Z])', response)[0]
+        
+        return response[:1000].strip()
+    return ""
+
+
+def parse_instructions_file() -> dict:
+    """ПОЛНЫЙ парсинг файла"""
+    
+    if not os.path.exists(INSTRUCTIONS_FILE):
+        print(f"⚠️  Файл {INSTRUCTIONS_FILE} не найден!")
+        return DEFAULT_SETTINGS.copy()
+    
+    print(f"📖 Читаю {INSTRUCTIONS_FILE}...")
+    
+    with open(INSTRUCTIONS_FILE, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    settings = DEFAULT_SETTINGS.copy()
+    
+    # === ЛИЧНОСТЬ ===
+    personality_section = parse_section(content, 'ЛИЧНОСТЬ БОТА', 'ПРАВИЛА О ПРИВЕТСТВИИ')
+    if personality_section:
+        traits = []
+        for line in personality_section.split('\n'):
             line = line.strip()
-            if line.startswith('- ') and any(word in line for word in ['Обаятельная', 'Эксперт', 'Знаешь']):
-                traits_lines.append(line[2:])  # Убираем "- "
-        
-        if traits_lines:
-            settings['personality_traits'] = '\n'.join(traits_lines)
+            if (line.startswith('- ') or line.startswith('• ')) and len(line) > 3:
+                traits.append(line[2:])
+        if traits:
+            settings['personality_traits'] = '\n'.join(traits[:10])
     
     # === ПРИВЕТСТВИЕ ===
-    if '**Примеры:**' in content and 'первое сообщение' in content:
-        greeting_start = content.find('✅ "Привет! 😊')
-        if greeting_start != -1:
-            greeting_end = content.find('"', greeting_start + 3)
-            if greeting_end != -1:
-                settings['greeting_message'] = content[greeting_start+3:greeting_end]
+    greeting_section = parse_section(content, 'ПРАВИЛА О ПРИВЕТСТВИИ', 'ПРАВИЛА О ЦЕНАХ')
+    greeting_quotes = extract_quotes(greeting_section)
+    for quote in greeting_quotes:
+        if 'Привет' in quote or 'Hello' in quote:
+            settings['greeting_message'] = quote
+            break
     
     # === ПРОЩАНИЕ ===
-    if '[МИССИЯ]' in content:
-        if 'Спасибо за визит' in content:
-            farewell_start = content.find('Спасибо за визит')
-            farewell_end = content.find('"', farewell_start)
-            if farewell_end == -1:
-                farewell_end = content.find('\n', farewell_start)
-            settings['farewell_message'] = content[farewell_start:farewell_end].strip()
+    if 'Спасибо за визит' in content:
+        farewell_match = re.search(r'(Спасибо за визит[^"\n]{0,100})', content)
+        if farewell_match:
+            settings['farewell_message'] = farewell_match.group(1).strip()
     
     # === ЦЕНЫ ===
-    if '[ПРАВИЛА О ЦЕНАХ' in content:
-        section_start = content.find('[ПРАВИЛА О ЦЕНАХ')
-        section_end = content.find('[ПРАВИЛА О ЗАПИСИ', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
-        
-        # Price explanation
-        if '**P (Price)**' in section:
-            if 'Мы в премиум-сегменте' in section:
-                settings['price_explanation'] = 'Мы в премиум-сегменте 💎\nНаши цены отражают высокое качество услуг, профессионализм мастеров и используемые материалы.'
+    pricing_section = parse_section(content, 'ПРАВИЛА О ЦЕНАХ', 'ПРАВИЛА О ЗАПИСИ')
+    if pricing_section:
+        settings['price_explanation'] = 'Мы в премиум-сегменте 💎\nНаши цены отражают качество.'
         
         # Price response template
-        if '**Структура ответа:**' in section:
-            template_lines = []
-            in_structure = False
-            for line in section.split('\n'):
-                if '**Структура ответа:**' in line:
-                    in_structure = True
-                    continue
-                if in_structure and line.strip().startswith(('1.', '2.', '3.', '4.', '5.', '6.', '7.')):
-                    template_lines.append(line.strip())
-                if in_structure and line.strip().startswith('**Примеры'):
-                    break
-            
-            if template_lines:
-                settings['price_response_template'] = '\n'.join(template_lines)
+        if 'Структура ответа' in pricing_section:
+            settings['price_response_template'] = '{SERVICE} - {PRICE} {CURRENCY} 💎\n\nВключает: {BENEFITS}\nРезультат: {DURATION}\n\n{EMOTIONAL_HOOK}'
         
         # Premium justification
-        if '❌ ПЛОХО: "Это нормальная цена"' in section:
-            justif_start = section.find('✅ ГЕНИАЛЬНО:', section.find('❌ ПЛОХО: "Это нормальная цена"'))
-            if justif_start != -1:
-                justif_end = section.find('---', justif_start)
-                if justif_end == -1:
-                    justif_end = section.find('**ВОЗРАЖЕНИЕ', justif_start)
-                if justif_end != -1:
-                    justification = section[justif_start:justif_end].strip()
-                    justification = justification.replace('✅ ГЕНИАЛЬНО:', '').strip()
-                    if '"' in justification:
-                        quote_start = justification.find('"')
-                        quote_end = justification.rfind('"')
-                        settings['premium_justification'] = justification[quote_start+1:quote_end]
+        premium_quotes = extract_quotes(pricing_section)
+        for quote in premium_quotes:
+            if 'премиум' in quote and len(quote) > 100:
+                settings['premium_justification'] = quote
+                break
     
     # === ЗАПИСЬ ===
-    if '[ПРАВИЛА О ЗАПИСИ' in content:
-        section_start = content.find('[ПРАВИЛА О ЗАПИСИ')
-        section_end = content.find('[ИНФОРМАЦИЯ О САЛОНЕ]', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
-        
-        # Booking redirect message
-        if '**Формула ответа о записи:**' in section:
-            msg_start = section.find('"', section.find('**Формула ответа о записи:**'))
-            if msg_start != -1:
-                msg_end = section.find('"', msg_start + 1)
-                if msg_end != -1:
-                    settings['booking_redirect_message'] = section[msg_start+1:msg_end]
+    booking_section = parse_section(content, 'ПРАВИЛА О ЗАПИСИ', 'ИНФОРМАЦИЯ О САЛОНЕ')
+    booking_quotes = extract_quotes(booking_section)
+    for quote in booking_quotes:
+        if 'AI-ассистент' in quote and 'запись' in quote:
+            settings['booking_redirect_message'] = quote
+            break
     
     # === FOMO ===
-    if '[FOMO ТЕХНИКИ' in content:
-        section_start = content.find('[FOMO ТЕХНИКИ')
-        section_end = content.find('[UPSELL ТЕХНИКИ', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
-        
-        fomo_messages = []
-        for line in section.split('\n'):
-            if line.strip().startswith('🔥 "'):
-                msg = line.strip()[3:].strip('"')
+    fomo_section = parse_section(content, 'FOMO ТЕХНИКИ', 'UPSELL')
+    fomo_messages = []
+    for line in fomo_section.split('\n'):
+        if '🔥' in line:
+            msg = line.strip().lstrip('🔥 ').strip('"')
+            if msg and len(msg) > 10:
                 fomo_messages.append(msg)
-        
-        if fomo_messages:
-            settings['fomo_messages'] = '|'.join(fomo_messages)
+    if fomo_messages:
+        settings['fomo_messages'] = '|'.join(fomo_messages)
     
     # === UPSELL ===
-    if '[UPSELL ТЕХНИКИ' in content:
-        section_start = content.find('[UPSELL ТЕХНИКИ')
-        section_end = content.find('[СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
-        
-        upsell_messages = []
-        for line in section.split('\n'):
-            if '"' in line and ('→' in line or 'Кстати' in line):
-                start = line.find('"')
-                end = line.rfind('"')
-                if start != -1 and end != -1 and start != end:
-                    upsell_messages.append(line[start+1:end])
-        
-        if upsell_messages:
-            settings['upsell_techniques'] = '|'.join(upsell_messages)
+    upsell_section = parse_section(content, 'UPSELL ТЕХНИКИ', 'СОЦИАЛЬНОЕ')
+    upsell_quotes = extract_quotes(upsell_section)
+    if upsell_quotes:
+        settings['upsell_techniques'] = '|'.join(upsell_quotes[:5])
     
-    # === СТИЛЬ ОБЩЕНИЯ ===
-    if '[СТИЛЬ ОБЩЕНИЯ]' in content:
-        section_start = content.find('[СТИЛЬ ОБЩЕНИЯ]')
-        section_end = content.find('[ЯЗЫКОВАЯ АДАПТАЦИЯ]', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        section = content[section_start:section_end]
-        
-        comm_style_parts = []
-        for line in section.split('\n'):
-            if line.strip().startswith('**') and ':' in line:
-                comm_style_parts.append(line.strip().replace('**', ''))
-        
-        if comm_style_parts:
-            settings['communication_style'] = '\n'.join(comm_style_parts)
+    # === СТИЛЬ ===
+    comm_section = parse_section(content, 'СТИЛЬ ОБЩЕНИЯ', 'ЯЗЫКОВАЯ')
+    if comm_section:
+        style_parts = []
+        for line in comm_section.split('\n'):
+            if '**' in line and ':' in line:
+                style_parts.append(line.strip().replace('**', ''))
+        if style_parts:
+            settings['communication_style'] = '\n'.join(style_parts)
     
-    # === ЭМОДЗИ ===
-    if 'эмодзи' in content.lower():
-        settings['emoji_usage'] = 'Умеренное использование (2-3 эмодзи на сообщение). Только уместные эмодзи (💎✨💅🏻💖😊). НЕ перегружай сообщения.'
+    # === ВОЗРАЖЕНИЯ (ДЕТАЛЬНО) ===
+    settings['objection_expensive'] = extract_objection(content, 'Дорого')
+    settings['objection_think_about_it'] = extract_objection(content, 'Подумаю')
+    settings['objection_no_time'] = extract_objection(content, 'Нет времени')
+    settings['objection_pain'] = extract_objection(content, 'боли')
+    settings['objection_result_doubt'] = extract_objection(content, 'не уверен')
+    settings['objection_cheaper_elsewhere'] = extract_objection(content, 'дешевле')
+    settings['objection_too_far'] = extract_objection(content, 'далеко')
+    settings['objection_consult_husband'] = extract_objection(content, 'мужем')
+    settings['objection_first_time'] = extract_objection(content, 'первый раз')
+    settings['objection_not_happy'] = extract_objection(content, 'не понравится')
     
-    # === ЯЗЫКИ ===
-    if 'РУССКИЙ (основной)' in content:
-        settings['languages_supported'] = 'ru,en,ar'
+    # === ЭМОЦИОНАЛЬНЫЕ ТРИГГЕРЫ ===
+    triggers_section = parse_section(content, 'ЭМОЦИОНАЛЬНЫЕ ТРИГГЕРЫ', 'СОЦИАЛЬНОЕ')
+    if triggers_section:
+        triggers = []
+        for line in triggers_section.split('\n'):
+            if '💖' in line or '⏰' in line or '💰' in line:
+                triggers.append(line.strip())
+        if triggers:
+            settings['emotional_triggers'] = '\n'.join(triggers)
     
-    # === ВОЗРАЖЕНИЯ ===
-    if '[РАБОТА С ВОЗРАЖЕНИЯМИ]' in content or 'ВОЗРАЖЕНИЕ:' in content:
-        section_start = content.find('ВОЗРАЖЕНИЕ:')
-        section_end = content.find('[РАБОТА С НЕГАТИВОМ]', section_start)
-        if section_end == -1:
-            section_end = content.find('[НЕ ДЕЛАЙ', section_start)
-        if section_end != -1:
-            settings['objection_handling'] = content[section_start:section_end].strip()
+    # === СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО ===
+    social_section = parse_section(content, 'СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО', 'ПЕРСОНАЛИЗАЦИЯ')
+    if social_section:
+        proofs = []
+        for line in social_section.split('\n'):
+            if line.strip().startswith('✅'):
+                proofs.append(line.strip())
+        if proofs:
+            settings['social_proof_phrases'] = '\n'.join(proofs)
     
-    # === НЕГАТИВ ===
-    if '[ОБРАБОТКА НЕГАТИВА]' in content or '[РАБОТА С НЕГАТИВОМ]' in content:
-        section_start = content.find('[РАБОТА С НЕГАТИВОМ]')
-        if section_start == -1:
-            section_start = content.find('[ОБРАБОТКА НЕГАТИВА]')
-        section_end = content.find('[БЕЗОПАСНОСТЬ', section_start)
-        if section_end == -1:
-            section_end = content.find('[НЕ ДЕЛАЙ', section_start)
-        if section_end != -1:
-            settings['negative_handling'] = content[section_start:section_end].strip()
+    # === ПЕРСОНАЛИЗАЦИЯ ===
+    person_section = parse_section(content, 'ПЕРСОНАЛИЗАЦИЯ', 'РАБОТА С ЭМОЦИЯМИ')
+    if person_section:
+        rules = []
+        for line in person_section.split('\n'):
+            if line.strip().startswith('-'):
+                rules.append(line.strip())
+        if rules:
+            settings['personalization_rules'] = '\n'.join(rules)
+    
+    # === ПРИМЕРЫ ДИАЛОГОВ ===
+    dialogues_section = parse_section(content, 'СУПЕР-ПРИМЕРЫ ДИАЛОГОВ', 'ФИНАЛЬНЫЙ')
+    if dialogues_section:
+        settings['example_dialogues'] = dialogues_section[:2000]
+    
+    # === ЭМОЦИОНАЛЬНЫЕ ОТВЕТЫ ===
+    emotional_section = parse_section(content, 'РАБОТА С ЭМОЦИЯМИ', 'НЕ ДЕЛАЙ')
+    if emotional_section:
+        settings['emotional_responses'] = emotional_section[:800]
+    
+    # === АНТИПАТТЕРНЫ ===
+    anti_section = parse_section(content, 'НЕ ДЕЛАЙ', 'СТИЛЬ ОБЩЕНИЯ')
+    if anti_section:
+        antipatterns = []
+        for line in anti_section.split('\n'):
+            if line.strip().startswith('❌'):
+                antipatterns.append(line.strip())
+        if antipatterns:
+            settings['anti_patterns'] = '\n'.join(antipatterns)
+    
+    # === ГОЛОСОВЫЕ ===
+    if 'ГОЛОСОВОЕ СООБЩЕНИЕ' in content:
+        voice_match = re.search(r'ГОЛОСОВОЕ СООБЩЕНИЕ.*?"([^"]+)"', content, re.DOTALL)
+        if voice_match:
+            settings['voice_message_response'] = voice_match.group(1)
+    
+    # === КОНТЕКСТНЫЕ ПРАВИЛА ===
+    contextual_section = parse_section(content, 'СЕЗОННОСТЬ', 'ЛОКАЦИЯ')
+    if contextual_section:
+        settings['contextual_rules'] = contextual_section[:800]
     
     # === БЕЗОПАСНОСТЬ ===
-    if 'ЗАПРЕЩЕНО:' in content:
-        section_start = content.find('ЗАПРЕЩЕНО:')
-        section_end = content.find('ОБЯЗАТЕЛЬНО:', section_start)
-        if section_end != -1:
-            section_end2 = content.find('[', section_end + 200)
-            settings['safety_guidelines'] = content[section_start:section_end2].strip()
+    safety_section = parse_section(content, 'БЕЗОПАСНОСТЬ И ЭТИКА', 'СЕЗОННОСТЬ')
+    if safety_section:
+        settings['safety_guidelines'] = safety_section[:1000]
     
-    # === ПРИМЕРЫ ===
-    if '[ПРИМЕРЫ ХОРОШИХ ОТВЕТОВ]' in content or '✅ ОТЛИЧНО:' in content:
-        section_start = content.find('✅ ОТЛИЧНО:')
-        section_end = content.find('ПРАВИЛО:', section_start)
-        if section_end == -1:
-            section_end = content.find('[АЛГОРИТМ', section_start)
-        if section_end != -1:
-            settings['example_good_responses'] = content[section_start:section_end].strip()
+    # === ПРИМЕРЫ ОТВЕТОВ ===
+    examples_section = parse_section(content, 'ПРИМЕРЫ', 'АЛГОРИТМ')
+    if examples_section:
+        settings['example_good_responses'] = examples_section[:1000]
     
     # === АЛГОРИТМ ===
-    if '[АЛГОРИТМ ДЕЙСТВИЙ]' in content or 'ЭТАП 1:' in content:
-        section_start = content.find('ЭТАП 1:')
-        section_end = content.find('[ЛОКАЦИЯ', section_start)
-        if section_end == -1:
-            section_end = content.find('ВАЖНО:', section_start)
-        if section_end != -1:
-            settings['algorithm_actions'] = content[section_start:section_end].strip()
+    algo_section = parse_section(content, 'АЛГОРИТМ', 'РАБОТА С ВОЗРАЖЕНИЯМИ')
+    if algo_section:
+        settings['algorithm_actions'] = algo_section[:1200]
     
     # === ЛОКАЦИЯ ===
-    if '[ЛОКАЦИЯ' in content:
-        section_start = content.find('[ЛОКАЦИЯ')
-        section_end = content.find('[СЕЗОННОСТЬ]', section_start)
-        if section_end == -1:
-            section_end = content.find('[', section_start + 100)
-        if section_end != -1:
-            settings['location_features'] = content[section_start:section_end].strip()
+    location_section = parse_section(content, 'ЛОКАЦИЯ', 'СЕЗОННОСТЬ')
+    if location_section:
+        settings['location_features'] = location_section[:600]
     
     # === СЕЗОННОСТЬ ===
-    if '[СЕЗОННОСТЬ]' in content:
-        section_start = content.find('[СЕЗОННОСТЬ]')
-        section_end = content.find('[ЭКСТРЕННЫЕ', section_start)
-        if section_end == -1:
-            section_end = content.find('[', section_start + 100)
-        if section_end != -1:
-            settings['seasonality'] = content[section_start:section_end].strip()
+    season_section = parse_section(content, 'СЕЗОННОСТЬ', 'ЭКСТРЕННЫЕ')
+    if season_section:
+        settings['seasonality'] = season_section[:600]
     
     # === ЭКСТРЕННЫЕ ===
-    if '[ЭКСТРЕННЫЕ СИТУАЦИИ]' in content:
-        section_start = content.find('[ЭКСТРЕННЫЕ СИТУАЦИИ]')
-        section_end = content.find('[МЕТРИКИ', section_start)
-        if section_end == -1:
-            section_end = content.find('[', section_start + 100)
-        if section_end != -1:
-            settings['emergency_situations'] = content[section_start:section_end].strip()
+    emergency_section = parse_section(content, 'ЭКСТРЕННЫЕ СИТУАЦИИ', 'МЕТРИКИ')
+    if emergency_section:
+        settings['emergency_situations'] = emergency_section[:600]
     
     # === МЕТРИКИ ===
-    if '[МЕТРИКИ УСПЕХА]' in content:
-        section_start = content.find('[МЕТРИКИ УСПЕХА]')
-        section_end = content.find('=== КОНЕЦ', section_start)
-        if section_end == -1:
-            section_end = len(content)
-        settings['success_metrics'] = content[section_start:section_end].strip()
+    metrics_section = parse_section(content, 'МЕТРИКИ УСПЕХА', 'КОНЕЦ')
+    if metrics_section:
+        settings['success_metrics'] = metrics_section[:600]
     
+    print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
     return settings
 
 
-def load_default_settings():
-    """Загрузить дефолтные настройки из bot_config.py"""
-    try:
-        import sys
-        sys.path.append('.')
-        from integrations.bot_config import BOT_DEFAULT_SETTINGS, SALON_DEFAULT_SETTINGS
-        return BOT_DEFAULT_SETTINGS, SALON_DEFAULT_SETTINGS
-    except ImportError:
-        print("⚠️  Не удалось импортировать bot_config.py")
-        return None, None
-
-
 def create_tables(conn):
-    """Создать таблицы если их нет"""
+    """Создать таблицы"""
     c = conn.cursor()
     
-    # Таблица salon_settings
     c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
         name TEXT NOT NULL,
-        name_ar TEXT,
         address TEXT,
-        address_ar TEXT,
         google_maps TEXT,
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
         booking_url TEXT,
         phone TEXT,
-        email TEXT,
-        instagram TEXT,
-        whatsapp TEXT,
         bot_name TEXT,
-        bot_name_en TEXT,
-        bot_name_ar TEXT,
-        city TEXT,
-        country TEXT,
-        timezone TEXT,
+        city TEXT DEFAULT 'Dubai',
+        country TEXT DEFAULT 'UAE',
+        timezone TEXT DEFAULT 'Asia/Dubai',
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
     
-    # Таблица bot_settings
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
         bot_name TEXT NOT NULL,
@@ -369,454 +356,118 @@ def create_tables(conn):
     conn.commit()
 
 
-def add_missing_fields(conn):
-    """Добавить недостающие поля в bot_settings"""
-    c = conn.cursor()
-    
-    new_fields = [
-        ("objection_expensive", "TEXT", """Да, мы в премиум-сегменте 💎 И знаете почему?
-
-Наши мастера - с международными сертификатами (Лондон, Париж, Beverly Hills)
-Материалы - топ-1 в мире (те же, что в салонах знаменитостей)
-Результат - превосходит ожидания!
-
-Это инвестиция в себя, которая окупается эмоциями каждый день! 🌟"""),
-        ("objection_think_about_it", "TEXT", """Конечно, понимаю! 😊
-
-Кстати, окна на эту неделю быстро разбирают, особенно у топовых мастеров.
-Может быть вопросы остались? Помогу определиться!"""),
-        ("objection_no_time", "TEXT", """О, я вас понимаю! Dubai - это вечная гонка 🏃‍♀️
-
-Поэтому мы:
-✅ Работаем до 21:00 (можно после работы!)
-✅ В субботу и воскресенье!
-✅ Онлайн-запись за 2 минуты!"""),
-        ("objection_pain", "TEXT", """Отличный вопрос! Расскажу честно 😊
-
-Мы используем качественную анестезию. Большинство клиенток говорят, что ощущения минимальные - как лёгкое покалывание.
-
-Результат того стоит - забудете о ежедневном макияже!"""),
-        ("objection_result_doubt", "TEXT", """Понимаю ваши сомнения! 💎
-
-🏆 Мастера с международными сертификатами
-📸 Портфолио работ в Instagram
-⭐ Топ-рейтинг в Google (4.9/5)
-✅ Бесплатная коррекция в течение месяца
-
-Мы настолько уверены в качестве, что даём гарантию!"""),
-        ("objection_cheaper_elsewhere", "TEXT", """Вы правы, есть салоны с более низкими ценами 😊
-
-Но в beauty-индустрии экономия может обойтись дороже - переделки стоят больше!
-
-Это как разница между iPhone и No-Name смартфоном - оба звонят, но опыт разный 😉"""),
-        ("objection_too_far", "TEXT", """Многие наши клиентки специально приезжают из Sharjah, Ajman и даже Abu Dhabi! 🚗
-
-✨ Качество, которого нет рядом
-🌊 JBR - можно совместить с прогулкой по пляжу
-💰 Цены адекватнее чем в Abu Dhabi премиум-салонах!"""),
-        ("objection_consult_husband", "TEXT", """Конечно, понимаю! 😊
-
-Кстати, могу помочь с аргументами:
-💰 Долгосрочная инвестиция
-⏰ Экономия времени на макияже
-💖 Уверенность в себе 24/7
-
-Окна на эту неделю уже почти заполнены! ⚡"""),
-        ("objection_first_time", "TEXT", """Отлично что спросили! Первый раз - это всегда волнительно 😊
-
-1️⃣ КОНСУЛЬТАЦИЯ (бесплатно!)
-2️⃣ ЭСКИЗ - увидите как будет ДО процедуры
-3️⃣ ПРОЦЕДУРА - с анестезией, комфортно
-4️⃣ РЕЗУЛЬТАТ - сразу красиво!
-5️⃣ КОРРЕКЦИЯ - бесплатная через месяц
-
-Есть ещё вопросы?"""),
-        ("objection_not_happy", "TEXT", """Супер-важный вопрос! Вот наши гарантии:
-
-✅ Консультация ДО процедуры - одобрите эскиз
-✅ Бесплатная коррекция в течение месяца
-✅ Профессионализм мастеров с опытом 5+ лет
-✅ Консервативный подход - лучше добавить потом
-
-За 2 года НИ ОДИН клиент не пожалел! Наоборот - приводят подруг 😊"""),
-        ("emotional_triggers", "TEXT", """💖 УВЕРЕННОСТЬ: Просыпаться красивой - невероятное чувство!
-⏰ ЭКОНОМИЯ ВРЕМЕНИ: Забудете о ежедневном макияже - лишние 30 минут сна!
-💰 ЭКОНОМИЯ ДЕНЕГ: Не нужна косметика - помада больше не нужна!
-📸 ВСЕГДА НА ФОТО: Идеально выглядите без фильтров!
-🌊 ОБРАЗ ЖИЗНИ: Пляж, бассейн, спортзал - всегда в форме!
-💫 КОМПЛИМЕНТЫ: Приготовьтесь к комплиментам каждый день!"""),
-        ("social_proof_phrases", "TEXT", """✅ Это одна из наших самых популярных процедур!
-✅ Многие клиентки возвращаются за коррекцией
-✅ Топ-1 по отзывам в Google!
-✅ Клиентки приводят подруг
-✅ Сотни довольных клиентов за 2 года
-✅ 4.9 из 5 звёзд в Google Reviews!
-✅ Единственный салон в JBR с такой технологией
-✅ Мастера обучались в Лондоне и Париже"""),
-        ("personalization_rules", "TEXT", """- Если клиент упомянул имя - используй его
-- Если упомянул профессию - подстройся под неё
-- Если упомянул проблему - реши её
-- Для business woman: Всегда презентабельный вид!
-- Для молодой мамы: Нет времени на макияж!
-- Перед свадьбой: На фото будете идеальны!"""),
-        ("example_dialogues", "TEXT", """ДИАЛОГ 1 (Новый клиент):
-Клиент: Сколько стоит permanent makeup бровей?
-Ты: Permanent Brows - 700 AED 💎 Это работа топ-мастера! Результат держится до 2 лет. Многие говорят что жалеют только об одном - что не сделали раньше!
-
-ДИАЛОГ 2 (Возражение дорого):
-Клиент: 700 AED это дорого
-Ты: Понимаю! 700 AED на 2 года = ~1 AED в день. Плюс экономия на косметике! Это инвестиция которая окупается! 💎
-
-ДИАЛОГ 3 (Upsell):
-Клиент: Хочу маникюр
-Ты: Gelish - 130 AED 💅 Держится 3 недели! Кстати, многие берут маникюр + педикюр вместе - экономия времени 😊
-
-ДИАЛОГ 4 (Из другого эмирата):
-Клиент: Я из Sharjah
-Ты: Многие специально приезжают! JBR - можно совместить с прогулкой. Превращают в мини-отпуск! 🚗
-
-ДИАЛОГ 5 (Закрытие):
-Клиент: Хочу записаться
-Ты: Супер! 🎉 Я AI-ассистент, запись онлайн. Вот ссылка: [URL]. Занимает 2 минуты! До встречи! 💖"""),
-        ("emotional_responses", "TEXT", """ВОСТОРГ: Я рада что нравится! 💖 Результат точно не разочарует!
-СОМНЕНИЯ: Понимаю переживания 😊 Давайте разберём вопросы?
-РАЗОЧАРОВАНИЕ: Жаль что был плохой опыт 😔 У нас другой подход!
-СПЕШКА: Записаться можно за 2 минуты! ⚡
-АГРЕССИЯ: Я здесь, чтобы помочь 😊 Если вопросы - отвечу!"""),
-        ("anti_patterns", "TEXT", """❌ НЕ повторяй приветствия
-❌ НЕ пиши длинные простыни
-❌ НЕ собирай данные для записи
-❌ НЕ придумывай цены
-❌ НЕ обещай то чего нет
-❌ НЕ критикуй конкурентов
-❌ НЕ используй слишком много эмодзи
-❌ НЕ придумывай мастеров
-❌ НЕ называй даты/время если не знаешь"""),
-        ("voice_message_response", "TEXT", """Извините, я AI-помощник и не могу прослушивать голосовые 😊
-Пожалуйста, напишите текстом - я с удовольствием помогу!"""),
-        ("contextual_rules", "TEXT", """ЛЕТО: После процедуры - отдых в кондиционированном салоне, спасение от жары! ❄️
-ЗИМА: После процедуры можно прогуляться по пляжу - погода идеальная! 🌊
-ПРАЗДНИКИ: Готовитесь к празднику? Сделайте образ идеальным! 💫
-СВАДЕБНЫЙ СЕЗОН: Permanent makeup - must-have перед свадьбой!"""),
-    ]
-    
-    print("🔧 Добавление недостающих полей в bot_settings...")
-    
-    for field_name, field_type, default_value in new_fields:
-        try:
-            c.execute(f"SELECT {field_name} FROM bot_settings LIMIT 1")
-            print(f"  ⏭️  Поле '{field_name}' уже существует")
-        except sqlite3.OperationalError:
-            try:
-                c.execute(f"ALTER TABLE bot_settings ADD COLUMN {field_name} {field_type}")
-                c.execute(f"UPDATE bot_settings SET {field_name} = ?", (default_value,))
-                conn.commit()
-                print(f"  ✅ Добавлено поле '{field_name}'")
-            except Exception as e:
-                print(f"  ❌ Ошибка при добавлении '{field_name}': {e}")
-    
-    print("✅ Все поля добавлены")
-
-
 def migrate_settings():
-    """
-    Главная функция миграции:
-    1. Парсит bot_instructions_file.txt
-    2. Берёт дефолты из bot_config.py
-    3. Заполняет БД
-    4. Добавляет недостающие поля
-    """
+    """Главная функция"""
     
     print("=" * 70)
-    print("🚀 МИГРАЦИЯ НАСТРОЕК БОТА В БД")
+    print("🚀 ПОЛНАЯ МИГРАЦИЯ НАСТРОЕК БОТА")
     print("=" * 70)
     print()
     
     if not os.path.exists(DATABASE_NAME):
-        print(f"❌ База данных {DATABASE_NAME} не найдена!")
-        print("   Сначала запустите: python main.py (чтобы создать БД)")
+        print(f"❌ БД {DATABASE_NAME} не найдена!")
         return 1
     
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Создать таблицы
-    print("📋 Создаю таблицы...")
     create_tables(conn)
     
-    # Добавить недостающие поля
-    add_missing_fields(conn)
-    
-    # Проверить не заполнены ли уже настройки
     c.execute("SELECT COUNT(*) FROM bot_settings")
     if c.fetchone()[0] > 0:
-        print("⚠️  Настройки бота уже существуют в БД!")
-        print()
+        print("⚠️  Настройки уже есть в БД!")
         response = input("   Перезаписать? (yes/no): ")
-        if response.lower() not in ['yes', 'y', 'да']:
-            print("❌ Миграция отменена")
+        if response.lower() not in ['yes', 'y']:
             conn.close()
             return 0
-        print()
     
-    # === ШАГ 1: Парсим bot_instructions_file.txt ===
-    print("📖 Читаю bot_instructions_file.txt...")
-    parsed_settings = parse_instructions_file()
-    
-    if parsed_settings:
-        print(f"   ✅ Извлечено {len(parsed_settings)} настроек из файла")
-    else:
-        print("   ⚠️  Файл не найден или пуст")
-    
-    # === ШАГ 2: Загружаем дефолты из bot_config.py ===
-    print("📖 Читаю bot_config.py...")
-    bot_defaults, salon_defaults = load_default_settings()
-    
-    
-    # === ШАГ 3: Мержим (приоритет: parsed > defaults) ===
-    print()
-    print("🔧 Объединяю настройки...")
-    
-    final_settings = {}
-    
-    # Начинаем с дефолтов
-    if bot_defaults:
-        final_settings = bot_defaults.copy()
-    
-    # Перезаписываем тем что нашли в файле
-    if parsed_settings:
-        final_settings.update(parsed_settings)
-    
-    # === ШАГ 4: Заполняем salon_settings ===
-    if salon_defaults:
-        print("💾 Заполняю salon_settings...")
-        now = datetime.now().isoformat()
-        
-        c.execute("""INSERT OR REPLACE INTO salon_settings (
-            id, name, name_ar, address, address_ar, google_maps,
-            hours, hours_ru, hours_ar, booking_url, phone, email,
-            instagram, whatsapp, bot_name, bot_name_en, bot_name_ar,
-            city, country, timezone, currency, updated_at
-        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (
-            salon_defaults.get('name'),
-            salon_defaults.get('name_ar'),
-            salon_defaults.get('address'),
-            salon_defaults.get('address_ar'),
-            salon_defaults.get('google_maps'),
-            salon_defaults.get('hours'),
-            salon_defaults.get('hours_ru'),
-            salon_defaults.get('hours_ar'),
-            salon_defaults.get('booking_url'),
-            salon_defaults.get('phone'),
-            salon_defaults.get('email'),
-            salon_defaults.get('instagram'),
-            salon_defaults.get('whatsapp'),
-            salon_defaults.get('bot_name'),
-            salon_defaults.get('bot_name_en'),
-            salon_defaults.get('bot_name_ar'),
-            salon_defaults.get('city'),
-            salon_defaults.get('country'),
-            salon_defaults.get('timezone'),
-            salon_defaults.get('currency'),
-            now
-        ))
-        print("   ✅ salon_settings заполнена")
-    
-    # === ШАГ 5: Заполняем bot_settings ===
-    print("💾 Заполняю bot_settings...")
+    settings = parse_instructions_file()
     now = datetime.now().isoformat()
     
+    # Salon settings
+    print("💾 Заполняю salon_settings...")
+    c.execute("""INSERT OR REPLACE INTO salon_settings (
+        id, name, address, google_maps, hours, booking_url, phone, bot_name, updated_at
+    ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)""",
+    (
+        settings['salon_name'],
+        settings['salon_address'],
+        settings['google_maps_link'],
+        settings['salon_hours'],
+        settings['booking_url'],
+        settings['salon_phone'],
+        settings['bot_name'],
+        now
+    ))
+    
+    # Bot settings (ВСЕ ПОЛЯ)
+    print("💾 Заполняю bot_settings...")
     c.execute("""INSERT OR REPLACE INTO bot_settings (
         id, bot_name, personality_traits, greeting_message, farewell_message,
         price_explanation, price_response_template, premium_justification,
         booking_redirect_message, fomo_messages, upsell_techniques,
         communication_style, max_message_length, emoji_usage, languages_supported,
-        objection_handling, negative_handling, safety_guidelines,
-        example_good_responses, algorithm_actions, location_features,
-        seasonality, emergency_situations, success_metrics,
         objection_expensive, objection_think_about_it, objection_no_time,
         objection_pain, objection_result_doubt, objection_cheaper_elsewhere,
         objection_too_far, objection_consult_husband, objection_first_time,
         objection_not_happy, emotional_triggers, social_proof_phrases,
         personalization_rules, example_dialogues, emotional_responses,
-        anti_patterns, voice_message_response, contextual_rules, updated_at
-    ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        anti_patterns, voice_message_response, contextual_rules,
+        safety_guidelines, example_good_responses, algorithm_actions,
+        location_features, seasonality, emergency_situations, success_metrics,
+        updated_at
+    ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
     (
-        final_settings.get('bot_name', 'Diamant Assistant'),
-        final_settings.get('personality_traits', ''),
-        final_settings.get('greeting_message', ''),
-        final_settings.get('farewell_message', ''),
-        final_settings.get('price_explanation', ''),
-        final_settings.get('price_response_template', ''),
-        final_settings.get('premium_justification', ''),
-        final_settings.get('booking_redirect_message', ''),
-        final_settings.get('fomo_messages', ''),
-        final_settings.get('upsell_techniques', ''),
-        final_settings.get('communication_style', ''),
-        final_settings.get('max_message_length', 4),
-        final_settings.get('emoji_usage', ''),
-        final_settings.get('languages_supported', 'ru,en,ar'),
-        final_settings.get('objection_handling', ''),
-        final_settings.get('negative_handling', ''),
-        final_settings.get('safety_guidelines', ''),
-        final_settings.get('example_good_responses', ''),
-        final_settings.get('algorithm_actions', ''),
-        final_settings.get('location_features', ''),
-        final_settings.get('seasonality', ''),
-        final_settings.get('emergency_situations', ''),
-        final_settings.get('success_metrics', ''),
-        final_settings.get('objection_expensive', """Да, мы в премиум-сегменте 💎 И знаете почему?
-
-Наши мастера - с международными сертификатами (Лондон, Париж, Beverly Hills)
-Материалы - топ-1 в мире (те же, что в салонах знаменитостей)
-Результат - превосходит ожидания!
-
-Это инвестиция в себя, которая окупается эмоциями каждый день! 🌟"""),
-        final_settings.get('objection_think_about_it', """Конечно, понимаю! 😊
-
-Кстати, окна на эту неделю быстро разбирают, особенно у топовых мастеров.
-Может быть вопросы остались? Помогу определиться!"""),
-        final_settings.get('objection_no_time', """О, я вас понимаю! Dubai - это вечная гонка 🏃‍♀️
-
-Поэтому мы:
-✅ Работаем до 21:00 (можно после работы!)
-✅ В субботу и воскресенье!
-✅ Онлайн-запись за 2 минуты!"""),
-        final_settings.get('objection_pain', """Отличный вопрос! Расскажу честно 😊
-
-Мы используем качественную анестезию. Большинство клиенток говорят, что ощущения минимальные - как лёгкое покалывание.
-
-Результат того стоит - забудете о ежедневном макияже!"""),
-        final_settings.get('objection_result_doubt', """Понимаю ваши сомнения! 💎
-
-🏆 Мастера с международными сертификатами
-📸 Портфолио работ в Instagram
-⭐ Топ-рейтинг в Google (4.9/5)
-✅ Бесплатная коррекция в течение месяца
-
-Мы настолько уверены в качестве, что даём гарантию!"""),
-        final_settings.get('objection_cheaper_elsewhere', """Вы правы, есть салоны с более низкими ценами 😊
-
-Но в beauty-индустрии экономия может обойтись дороже - переделки стоят больше!
-
-Это как разница между iPhone и No-Name смартфоном - оба звонят, но опыт разный 😉"""),
-        final_settings.get('objection_too_far', """Многие наши клиентки специально приезжают из Sharjah, Ajman и даже Abu Dhabi! 🚗
-
-✨ Качество, которого нет рядом
-🌊 JBR - можно совместить с прогулкой по пляжу
-💰 Цены адекватнее чем в Abu Dhabi премиум-салонах!"""),
-        final_settings.get('objection_consult_husband', """Конечно, понимаю! 😊
-
-Кстати, могу помочь с аргументами:
-💰 Долгосрочная инвестиция
-⏰ Экономия времени на макияже
-💖 Уверенность в себе 24/7
-
-Окна на эту неделю уже почти заполнены! ⚡"""),
-        final_settings.get('objection_first_time', """Отлично что спросили! Первый раз - это всегда волнительно 😊
-
-1️⃣ КОНСУЛЬТАЦИЯ (бесплатно!)
-2️⃣ ЭСКИЗ - увидите как будет ДО процедуры
-3️⃣ ПРОЦЕДУРА - с анестезией, комфортно
-4️⃣ РЕЗУЛЬТАТ - сразу красиво!
-5️⃣ КОРРЕКЦИЯ - бесплатная через месяц
-
-Есть ещё вопросы?"""),
-        final_settings.get('objection_not_happy', """Супер-важный вопрос! Вот наши гарантии:
-
-✅ Консультация ДО процедуры - одобрите эскиз
-✅ Бесплатная коррекция в течение месяца
-✅ Профессионализм мастеров с опытом 5+ лет
-✅ Консервативный подход - лучше добавить потом
-
-За 2 года НИ ОДИН клиент не пожалел! Наоборот - приводят подруг 😊"""),
-        final_settings.get('emotional_triggers', """💖 УВЕРЕННОСТЬ: Просыпаться красивой - невероятное чувство!
-⏰ ЭКОНОМИЯ ВРЕМЕНИ: Забудете о ежедневном макияже - лишние 30 минут сна!
-💰 ЭКОНОМИЯ ДЕНЕГ: Не нужна косметика - помада больше не нужна!
-📸 ВСЕГДА НА ФОТО: Идеально выглядите без фильтров!
-🌊 ОБРАЗ ЖИЗНИ: Пляж, бассейн, спортзал - всегда в форме!
-💫 КОМПЛИМЕНТЫ: Приготовьтесь к комплиментам каждый день!"""),
-        final_settings.get('social_proof_phrases', """✅ Это одна из наших самых популярных процедур!
-✅ Многие клиентки возвращаются за коррекцией
-✅ Топ-1 по отзывам в Google!
-✅ Клиентки приводят подруг
-✅ Сотни довольных клиентов за 2 года
-✅ 4.9 из 5 звёзд в Google Reviews!
-✅ Единственный салон в JBR с такой технологией
-✅ Мастера обучались в Лондоне и Париже"""),
-        final_settings.get('personalization_rules', """- Если клиент упомянул имя - используй его
-- Если упомянул профессию - подстройся под неё
-- Если упомянул проблему - реши её
-- Для business woman: Всегда презентабельный вид!
-- Для молодой мамы: Нет времени на макияж!
-- Перед свадьбой: На фото будете идеальны!"""),
-        final_settings.get('example_dialogues', """ДИАЛОГ 1 (Новый клиент):
-Клиент: Сколько стоит permanent makeup бровей?
-Ты: Permanent Brows - 700 AED 💎 Это работа топ-мастера! Результат держится до 2 лет. Многие говорят что жалеют только об одном - что не сделали раньше!
-
-ДИАЛОГ 2 (Возражение дорого):
-Клиент: 700 AED это дорого
-Ты: Понимаю! 700 AED на 2 года = ~1 AED в день. Плюс экономия на косметике! Это инвестиция которая окупается! 💎
-
-ДИАЛОГ 3 (Upsell):
-Клиент: Хочу маникюр
-Ты: Gelish - 130 AED 💅 Держится 3 недели! Кстати, многие берут маникюр + педикюр вместе - экономия времени 😊
-
-ДИАЛОГ 4 (Из другого эмирата):
-Клиент: Я из Sharjah
-Ты: Многие специально приезжают! JBR - можно совместить с прогулкой. Превращают в мини-отпуск! 🚗
-
-ДИАЛОГ 5 (Закрытие):
-Клиент: Хочу записаться
-Ты: Супер! 🎉 Я AI-ассистент, запись онлайн. Вот ссылка: [URL]. Занимает 2 минуты! До встречи! 💖"""),
-        final_settings.get('emotional_responses', """ВОСТОРГ: Я рада что нравится! 💖 Результат точно не разочарует!
-СОМНЕНИЯ: Понимаю переживания 😊 Давайте разберём вопросы?
-РАЗОЧАРОВАНИЕ: Жаль что был плохой опыт 😔 У нас другой подход!
-СПЕШКА: Записаться можно за 2 минуты! ⚡
-АГРЕССИЯ: Я здесь, чтобы помочь 😊 Если вопросы - отвечу!"""),
-        final_settings.get('anti_patterns', """❌ НЕ повторяй приветствия
-❌ НЕ пиши длинные простыни
-❌ НЕ собирай данные для записи
-❌ НЕ придумывай цены
-❌ НЕ обещай то чего нет
-❌ НЕ критикуй конкурентов
-❌ НЕ используй слишком много эмодзи
-❌ НЕ придумывай мастеров
-❌ НЕ называй даты/время если не знаешь"""),
-        final_settings.get('voice_message_response', """Извините, я AI-помощник и не могу прослушивать голосовые 😊
-Пожалуйста, напишите текстом - я с удовольствием помогу!"""),
-        final_settings.get('contextual_rules', """ЛЕТО: После процедуры - отдых в кондиционированном салоне, спасение от жары! ❄️
-ЗИМА: После процедуры можно прогуляться по пляжу - погода идеальная! 🌊
-ПРАЗДНИКИ: Готовитесь к празднику? Сделайте образ идеальным! 💫
-СВАДЕБНЫЙ СЕЗОН: Permanent makeup - must-have перед свадьбой!"""),
+        settings['bot_name'],
+        settings['personality_traits'],
+        settings['greeting_message'],
+        settings['farewell_message'],
+        settings['price_explanation'],
+        settings.get('price_response_template', ''),
+        settings.get('premium_justification', ''),
+        settings.get('booking_redirect_message', ''),
+        settings.get('fomo_messages', ''),
+        settings.get('upsell_techniques', ''),
+        settings['communication_style'],
+        settings['max_message_length'],
+        settings['emoji_usage'],
+        settings['languages_supported'],
+        settings.get('objection_expensive', ''),
+        settings.get('objection_think_about_it', ''),
+        settings.get('objection_no_time', ''),
+        settings.get('objection_pain', ''),
+        settings.get('objection_result_doubt', ''),
+        settings.get('objection_cheaper_elsewhere', ''),
+        settings.get('objection_too_far', ''),
+        settings.get('objection_consult_husband', ''),
+        settings.get('objection_first_time', ''),
+        settings.get('objection_not_happy', ''),
+        settings.get('emotional_triggers', ''),
+        settings.get('social_proof_phrases', ''),
+        settings.get('personalization_rules', ''),
+        settings.get('example_dialogues', ''),
+        settings.get('emotional_responses', ''),
+        settings.get('anti_patterns', ''),
+        settings.get('voice_message_response', ''),
+        settings.get('contextual_rules', ''),
+        settings.get('safety_guidelines', ''),
+        settings.get('example_good_responses', ''),
+        settings.get('algorithm_actions', ''),
+        settings.get('location_features', ''),
+        settings.get('seasonality', ''),
+        settings.get('emergency_situations', ''),
+        settings.get('success_metrics', ''),
         now
     ))
     
     conn.commit()
-    print("   ✅ bot_settings заполнена")
-    
-    # === Финал ===
-    print()
-    print("=" * 70)
-    print("✅ МИГРАЦИЯ ЗАВЕРШЕНА УСПЕШНО!")
-    print("=" * 70)
-    print()
-    print("📋 Что дальше:")
-    print("   1. Запустите сервер: uvicorn main:app --reload")
-    print("   2. Откройте админ-панель: /admin/bot-settings")
-    print("   3. Отредактируйте настройки через UI")
-    print()
-    print("⚠️  ВАЖНО:")
-    print("   • БД теперь единственный источник истины")
-    print("   • Бот читает настройки ТОЛЬКО из БД")
-    print("   • bot_instructions_file.txt больше не используется")
-    print("   • bot_config.py больше не используется (только для дефолтов)")
-    print()
-    print("📝 Обновите BotSettings.tsx для отображения новых полей")
-    print("=" * 70)
-    
     conn.close()
+    
+    print()
+    print("✅ МИГРАЦИЯ ЗАВЕРШЕНА!")
+    print("📋 Теперь запустите сервер и откройте /admin/bot-settings")
+    print()
+    
     return 0
 
 

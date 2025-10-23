@@ -11,7 +11,21 @@ def init_database():
     """Создать базу данных"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+    c.execute('''CREATE TABLE IF NOT EXISTS clients
+             (instagram_id TEXT PRIMARY KEY,
+              username TEXT,
+              phone TEXT,
+              name TEXT,
+              first_contact TEXT,
+              last_contact TEXT,
+              total_messages INTEGER DEFAULT 0,
+              labels TEXT,
+              status TEXT DEFAULT 'new',
+              lifetime_value REAL DEFAULT 0,
+              profile_pic TEXT,
+              notes TEXT,
+              is_pinned INTEGER DEFAULT 0,
+              detected_language TEXT DEFAULT 'ru')''')    
 
     # Таблица клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
@@ -39,8 +53,52 @@ def init_database():
     seasonality TEXT,
     emergency_situations TEXT,
     success_metrics TEXT,
+    objection_expensive TEXT,
+    objection_think_about_it TEXT,
+    objection_no_time TEXT,
+    objection_pain TEXT,
+    objection_result_doubt TEXT,
+    objection_cheaper_elsewhere TEXT,
+    objection_too_far TEXT,
+    objection_consult_husband TEXT,
+    objection_first_time TEXT,
+    objection_not_happy TEXT,
+    emotional_triggers TEXT,
+    social_proof_phrases TEXT,
+    personalization_rules TEXT,
+    example_dialogues TEXT,
+    emotional_responses TEXT,
+    anti_patterns TEXT,
+    voice_message_response TEXT,
+    contextual_rules TEXT,
     updated_at TEXT
 )''')
+
+    # Таблица настроек салона
+    c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        name TEXT NOT NULL,
+        name_ar TEXT,
+        address TEXT,
+        address_ar TEXT,
+        google_maps TEXT,
+        hours TEXT,
+        hours_ru TEXT,
+        hours_ar TEXT,
+        booking_url TEXT,
+        phone TEXT,
+        email TEXT,
+        instagram TEXT,
+        whatsapp TEXT,
+        bot_name TEXT,
+        bot_name_en TEXT,
+        bot_name_ar TEXT,
+        city TEXT,
+        country TEXT,
+        timezone TEXT,
+        currency TEXT DEFAULT 'AED',
+        updated_at TEXT
+    )''')
 
     # Проверяем и добавляем новые колонки если их нет
     try:
@@ -617,13 +675,17 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
     c = conn.cursor()
 
     password_hash = hashlib.sha256(password.encode()).hexdigest()
-
+    # ✅ ДОБАВЬ ОТЛАДКУ
+    print(f"🔐 Проверка логина: {username}")
+    print(f"🔑 Hash: {password_hash[:20]}...")
     c.execute("""SELECT id, username, full_name, email, role 
                  FROM users 
                  WHERE username = ? AND password_hash = ? AND is_active = 1""",
               (username, password_hash))
 
     user = c.fetchone()
+     # ✅ ДОБАВЬ ОТЛАДКУ
+    print(f"👤 Найден: {user is not None}")
     conn.close()
 
     if user:
@@ -1704,12 +1766,6 @@ AVAILABLE_PERMISSIONS = {
 # ========================================
 
 def get_salon_settings() -> dict:
-    """
-    Получить настройки салона из БД
-    
-    ВАЖНО: Это ЕДИНСТВЕННЫЙ источник настроек салона!
-    Используйте эту функцию везде вместо импорта SALON_INFO
-    """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
@@ -1717,40 +1773,65 @@ def get_salon_settings() -> dict:
         c.execute("SELECT * FROM salon_settings LIMIT 1")
         result = c.fetchone()
         
-        if result:
+        if not result:
+            log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
             return {
-                "id": result[0],
-                "name": result[1],
-                "name_ar": result[2],
-                "address": result[3],
-                "address_ar": result[4],
-                "google_maps": result[5],
-                "hours": result[6],
-                "hours_ru": result[7],
-                "hours_ar": result[8],
-                "booking_url": result[9],
-                "phone": result[10],
-                "email": result[11],
-                "instagram": result[12],
-                "whatsapp": result[13],
-                "bot_name": result[14],
-                "bot_name_en": result[15],
-                "bot_name_ar": result[16],
-                "city": result[17],
-                "country": result[18],
-                "timezone": result[19],
-                "currency": result[20],
-                "updated_at": result[21]
+                "id": 1,
+                "name": "M.Le Diamant Beauty Lounge",
+                "address": "Shop 13, Amwaj 3 Plaza, JBR, Dubai",
+                "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+                "hours": "Ежедневно 10:30 - 21:00",
+                "hours_ru": "Ежедневно 10:30 - 21:00",
+                "hours_ar": "يوميًا 10:30 - 21:00",
+                "booking_url": "https://n1234567.yclients.com",
+                "phone": "+971 XX XXX XXXX",
+                "email": None,
+                "instagram": None,
+                "whatsapp": None,
+                "bot_name": "M.Le Diamant Assistant",
+                "bot_name_en": "M.Le Diamant Assistant",
+                "bot_name_ar": "مساعد M.Le Diamant",
+                "city": "Dubai",
+                "country": "UAE",
+                "timezone": "Asia/Dubai",
+                "currency": "AED",
+                "updated_at": None
             }
-        else:
-            log_error("❌ Настройки салона не найдены! Запустите migrate_bot_settings.py", "database")
-            raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+        
+        # Парсинг результата
+        return {
+            "id": result[0] if len(result) > 0 else 1,
+            "name": result[1] if len(result) > 1 else "M.Le Diamant",
+            "name_ar": result[2] if len(result) > 2 else None,
+            "address": result[3] if len(result) > 3 else "",
+            "address_ar": result[4] if len(result) > 4 else None,
+            "google_maps": result[5] if len(result) > 5 else "",
+            "hours": result[6] if len(result) > 6 else "",
+            "hours_ru": result[7] if len(result) > 7 else "",
+            "hours_ar": result[8] if len(result) > 8 else "",
+            "booking_url": result[9] if len(result) > 9 else "",
+            "phone": result[10] if len(result) > 10 else "",
+            "email": result[11] if len(result) > 11 else None,
+            "instagram": result[12] if len(result) > 12 else None,
+            "whatsapp": result[13] if len(result) > 13 else None,
+            "bot_name": result[14] if len(result) > 14 else "Assistant",
+            "bot_name_en": result[15] if len(result) > 15 else "Assistant",
+            "bot_name_ar": result[16] if len(result) > 16 else "مساعد",
+            "city": result[17] if len(result) > 17 else "Dubai",
+            "country": result[18] if len(result) > 18 else "UAE",
+            "timezone": result[19] if len(result) > 19 else "Asia/Dubai",
+            "currency": result[20] if len(result) > 20 else "AED",
+            "updated_at": result[21] if len(result) > 21 else None
+        }
+        
     except sqlite3.OperationalError as e:
-        log_error(f"❌ Таблица salon_settings не существует! Запустите migrate_bot_settings.py", "database")
+        log_error("❌ Таблица salon_settings не существует! Запустите migrate_bot_settings.py", "database")
         raise Exception("Salon settings table missing. Run: python migrate_bot_settings.py")
+    except Exception as e:
+        log_error("❌ Настройки салона не найдены! Запустите migrate_bot_settings.py", "database")
+        raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
     finally:
         conn.close()
-
 
 def update_salon_settings(data: dict) -> bool:
     """Обновить настройки салона"""
@@ -1841,6 +1922,24 @@ def get_bot_settings() -> dict:
                 "seasonality": result[21],
                 "emergency_situations": result[22],
                 "success_metrics": result[23],
+                "objection_expensive": result[24] if len(result) > 24 else "",
+                "objection_think_about_it": result[25] if len(result) > 25 else "",
+                "objection_no_time": result[26] if len(result) > 26 else "",
+                "objection_pain": result[27] if len(result) > 27 else "",
+                "objection_result_doubt": result[28] if len(result) > 28 else "",
+                "objection_cheaper_elsewhere": result[29] if len(result) > 29 else "",
+                "objection_too_far": result[30] if len(result) > 30 else "",
+                "objection_consult_husband": result[31] if len(result) > 31 else "",
+                "objection_first_time": result[32] if len(result) > 32 else "",
+                "objection_not_happy": result[33] if len(result) > 33 else "",
+                "emotional_triggers": result[34] if len(result) > 34 else "",
+                "social_proof_phrases": result[35] if len(result) > 35 else "",
+                "personalization_rules": result[36] if len(result) > 36 else "",
+                "example_dialogues": result[37] if len(result) > 37 else "",
+                "emotional_responses": result[38] if len(result) > 38 else "",
+                "anti_patterns": result[39] if len(result) > 39 else "",
+                "voice_message_response": result[40] if len(result) > 40 else "",
+                "contextual_rules": result[41] if len(result) > 41 else "",
                 "updated_at": result[24] if len(result) > 24 else None
             }
         else:
@@ -1908,54 +2007,90 @@ def update_bot_settings(data: dict) -> bool:
         merged = {**current, **data}
         
         c.execute("""UPDATE bot_settings SET
-                    bot_name = ?,
-                    personality_traits = ?,
-                    greeting_message = ?,
-                    farewell_message = ?,
-                    price_explanation = ?,
-                    price_response_template = ?,
-                    premium_justification = ?,
-                    booking_redirect_message = ?,
-                    fomo_messages = ?,
-                    upsell_techniques = ?,
-                    communication_style = ?,
-                    max_message_length = ?,
-                    emoji_usage = ?,
-                    languages_supported = ?,
-                    objection_handling = ?,
-                    negative_handling = ?,
-                    safety_guidelines = ?,
-                    example_good_responses = ?,
-                    algorithm_actions = ?,
-                    location_features = ?,
-                    seasonality = ?,
-                    emergency_situations = ?,
-                    success_metrics = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                    WHERE id = 1""",
-                  (merged.get('bot_name'),
-                   merged.get('personality_traits'),
-                   merged.get('greeting_message'),
-                   merged.get('farewell_message'),
-                   merged.get('price_explanation'),
-                   merged.get('price_response_template'),
-                   merged.get('premium_justification'),
-                   merged.get('booking_redirect_message'),
-                   merged.get('fomo_messages'),
-                   merged.get('upsell_techniques'),
-                   merged.get('communication_style'),
-                   merged.get('max_message_length', 4),
-                   merged.get('emoji_usage'),
-                   merged.get('languages_supported'),
-                   merged.get('objection_handling'),
-                   merged.get('negative_handling'),
-                   merged.get('safety_guidelines'),
-                   merged.get('example_good_responses'),
-                   merged.get('algorithm_actions'),
-                   merged.get('location_features'),
-                   merged.get('seasonality'),
-                   merged.get('emergency_situations'),
-                   merged.get('success_metrics')))
+            bot_name = ?,
+            personality_traits = ?,
+            greeting_message = ?,
+            farewell_message = ?,
+            price_explanation = ?,
+            price_response_template = ?,
+            premium_justification = ?,
+            booking_redirect_message = ?,
+            fomo_messages = ?,
+            upsell_techniques = ?,
+            communication_style = ?,
+            max_message_length = ?,
+            emoji_usage = ?,
+            languages_supported = ?,
+            objection_handling = ?,
+            negative_handling = ?,
+            safety_guidelines = ?,
+            example_good_responses = ?,
+            algorithm_actions = ?,
+            location_features = ?,
+            seasonality = ?,
+            emergency_situations = ?,
+            success_metrics = ?,
+            objection_expensive = ?,
+            objection_think_about_it = ?,
+            objection_no_time = ?,
+            objection_pain = ?,
+            objection_result_doubt = ?,
+            objection_cheaper_elsewhere = ?,
+            objection_too_far = ?,
+            objection_consult_husband = ?,
+            objection_first_time = ?,
+            objection_not_happy = ?,
+            emotional_triggers = ?,
+            social_proof_phrases = ?,
+            personalization_rules = ?,
+            example_dialogues = ?,
+            emotional_responses = ?,
+            anti_patterns = ?,
+            voice_message_response = ?,
+            contextual_rules = ?,
+            updated_at = CURRENT_TIMESTAMP
+            WHERE id = 1""",
+          (merged.get('bot_name'),
+           merged.get('personality_traits'),
+           merged.get('greeting_message'),
+           merged.get('farewell_message'),
+           merged.get('price_explanation'),
+           merged.get('price_response_template'),
+           merged.get('premium_justification'),
+           merged.get('booking_redirect_message'),
+           merged.get('fomo_messages'),
+           merged.get('upsell_techniques'),
+           merged.get('communication_style'),
+           merged.get('max_message_length', 4),
+           merged.get('emoji_usage'),
+           merged.get('languages_supported'),
+           merged.get('objection_handling'),
+           merged.get('negative_handling'),
+           merged.get('safety_guidelines'),
+           merged.get('example_good_responses'),
+           merged.get('algorithm_actions'),
+           merged.get('location_features'),
+           merged.get('seasonality'),
+           merged.get('emergency_situations'),
+           merged.get('success_metrics'),
+           merged.get('objection_expensive', ''),
+           merged.get('objection_think_about_it', ''),
+           merged.get('objection_no_time', ''),
+           merged.get('objection_pain', ''),
+           merged.get('objection_result_doubt', ''),
+           merged.get('objection_cheaper_elsewhere', ''),
+           merged.get('objection_too_far', ''),
+           merged.get('objection_consult_husband', ''),
+           merged.get('objection_first_time', ''),
+           merged.get('objection_not_happy', ''),
+           merged.get('emotional_triggers', ''),
+           merged.get('social_proof_phrases', ''),
+           merged.get('personalization_rules', ''),
+           merged.get('example_dialogues', ''),
+           merged.get('emotional_responses', ''),
+           merged.get('anti_patterns', ''),
+           merged.get('voice_message_response', ''),
+           merged.get('contextual_rules', '')))
         
         conn.commit()
         

@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -11,7 +10,6 @@ import traceback
 from typing import Optional
 import time
 import os
-import sqlite3
 import ssl
 
 # ===== ИМПОРТ ЦЕНТРАЛИЗОВАННОГО ЛОГГЕРА =====
@@ -26,18 +24,11 @@ from config import VERIFY_TOKEN, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PAS
 # ===== ИМПОРТЫ DATABASE =====
 from database import (
     init_database, get_or_create_client, save_message,
-    get_chat_history, get_booking_progress,get_stats,
+    get_chat_history, get_stats,
     verify_user, create_session, delete_session, create_user,DATABASE_NAME,
     get_user_by_email, create_password_reset_token, verify_reset_token,
     reset_user_password, mark_reset_token_used, get_salon_settings,get_user_by_session,
-    update_booking_progress,
-    clear_booking_progress, save_booking, 
-    get_all_clients, get_all_bookings, get_analytics_data, 
-    get_funnel_data, update_booking_status, get_client_by_id,
-    update_client_info, get_all_services,  log_activity,
-     get_all_users,
     detect_and_save_language, get_client_language,
-    find_special_package_by_keywords, increment_package_usage,
 )
 
 # ===== ИМПОРТЫ BOT =====

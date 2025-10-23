@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Request, Query, Cookie, HTTPException, Form
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional
-from datetime import datetime, timedelta
+from datetime import datetime
 import csv
 import io
 import time
 import sqlite3
 
 # ===== ИМПОРТЫ =====
-from logger import logger, log_info, log_error, log_warning
+from logger import logger, log_error, log_warning
 from database import (
     get_all_clients, get_client_by_id, get_all_bookings, 
     update_client_info, update_client_status, pin_client,
@@ -16,7 +16,7 @@ from database import (
      get_stats, get_analytics_data, get_funnel_data,
     get_all_services, update_booking_status, log_activity,
     get_unread_messages_count, get_or_create_client, save_booking,
-    get_all_users, delete_user, create_custom_status, delete_custom_status,get_all_messages,
+    get_all_users, delete_user, 
     get_custom_statuses, create_service, update_service, delete_service,
     delete_client, get_user_by_session, DATABASE_NAME,
     get_all_special_packages, create_special_package, 
@@ -29,7 +29,6 @@ from database import (
 from config import CLIENT_STATUSES
 from integrations import send_message
 
-salon = get_salon_settings()
 
 # ===== ИМПОРТЫ ДЛЯ PDF И EXCEL =====
 try:
@@ -37,8 +36,6 @@ try:
     from reportlab.lib import colors
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-    from reportlab.pdfbase import pdfmetrics
-    from reportlab.pdfbase.ttfonts import TTFont
     PDF_AVAILABLE = True
 except ImportError:
     PDF_AVAILABLE = False
@@ -46,7 +43,7 @@ except ImportError:
 
 try:
     from openpyxl import Workbook
-    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.styles import Font, PatternFill, Alignment
     EXCEL_AVAILABLE = True
 except ImportError:
     EXCEL_AVAILABLE = False
@@ -130,7 +127,7 @@ def export_clients_pdf(clients):
         alignment=1
     )
     
-    title = Paragraph(f"База клиентов - {salon['name']}", title_style)
+    title = Paragraph(f"База клиентов - {get_salon_settings['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     
@@ -261,7 +258,7 @@ def export_bookings_pdf(bookings):
         alignment=1
     )
     
-    title = Paragraph(f"Записи - {salon['name']}", title_style)
+    title = Paragraph(f"Записи - {get_salon_settings['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     
@@ -1259,19 +1256,15 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
 async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота (из БД)"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    if not user or user["role"] not in ["admin", "manager"]:  # ✅ ВЕРНИ обратно
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        settings = get_bot_settings()  # ✅ Просто берем из БД!
+        settings = get_bot_settings()
         return settings
     except Exception as e:
-        log_error(f"Ошибка получения настроек бота: {e}", "api")
-        return JSONResponse(
-            {"error": str(e), "message": "Запустите init_settings.py"}, 
-            status_code=500
-        )
-
+        log_error(f"Ошибка: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/bot-settings")
 async def update_bot_settings_api(
