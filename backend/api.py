@@ -1256,14 +1256,18 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
 async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота (из БД)"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:  # ✅ ВЕРНИ обратно
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # ✅ ИСПРАВЛЕНО: admin И manager могут просматривать настройки
+    if user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
         settings = get_bot_settings()
         return settings
     except Exception as e:
-        log_error(f"Ошибка: {e}", "api")
+        log_error(f"Ошибка получения настроек бота: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/bot-settings")
@@ -1273,19 +1277,22 @@ async def update_bot_settings_api(
 ):
     """Обновить настройки бота"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager"]:
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # ✅ ИСПРАВЛЕНО: admin И manager могут редактировать
+    if user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
     
-    success = update_bot_settings(data)  # ✅ Просто обновляем в БД!
+    success = update_bot_settings(data)
     
     if success:
         log_activity(user["id"], "update_bot_settings", "bot", "general", "Bot settings updated")
         return {"success": True, "message": "Bot settings updated"}
     else:
         return JSONResponse({"error": "Update failed"}, status_code=500)
-    
 
 # ===== НАСТРОЙКИ САЛОНА =====
 @router.get("/salon-settings")

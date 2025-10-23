@@ -64,23 +64,66 @@ def extract_quotes(text: str) -> list:
 
 
 def extract_objection(content: str, objection_keyword: str) -> str:
-    """Извлечь конкретное возражение"""
-    pattern = f'ВОЗРАЖЕНИЕ.*?{objection_keyword}.*?✅ ГЕНИАЛЬНО:(.*?)(?:---|ВОЗРАЖЕНИЕ|$)'
+    """Извлечь конкретное возражение - только ответ бота"""
+    
+    # Ищем блок возражения
+    pattern = rf'\*\*ВОЗРАЖЕНИЕ.*?{re.escape(objection_keyword)}.*?\*\*'
     match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
-    if match:
-        response = match.group(1).strip()
-        
-        # ✅ УБИРАЕМ повторяющиеся "✅ ГЕНИАЛЬНО:"
-        response = re.sub(r'✅ ГЕНИАЛЬНО:\s*', '', response)
-        
-        # Очистить от лишних символов
-        response = re.sub(r'^["\s]+|["\s]+$', '', response)
-        
-        # ✅ Обрезаем до первого встречного заголовка
-        response = re.split(r'\n\n(?=[А-ЯA-Z])', response)[0]
-        
-        return response[:1000].strip()
-    return ""
+    
+    if not match:
+        return ""
+    
+    # Начинаем искать от найденного возражения
+    start_pos = match.end()
+    
+    # Ищем "✅ ГЕНИАЛЬНО:" после возражения
+    genius_pattern = r'✅\s*ГЕНИАЛЬНО:\s*\n'
+    genius_match = re.search(genius_pattern, content[start_pos:])
+    
+    if not genius_match:
+        return ""
+    
+    # Начало ответа - сразу после "✅ ГЕНИАЛЬНО:"
+    answer_start = start_pos + genius_match.end()
+    
+    # Конец ответа - до следующего "**ВОЗРАЖЕНИЕ" или "---"
+    rest_content = content[answer_start:]
+    
+    # Ищем конец блока
+    end_patterns = [
+        r'\n\n\*\*ВОЗРАЖЕНИЕ',  # Следующее возражение
+        r'\n---',                 # Разделитель
+        r'\n\n\[',                # Новая секция
+        r'\n\n#',                 # Заголовок
+    ]
+    
+    end_pos = len(rest_content)
+    for pattern in end_patterns:
+        match = re.search(pattern, rest_content)
+        if match and match.start() < end_pos:
+            end_pos = match.start()
+    
+    response = rest_content[:end_pos].strip()
+    
+    # Очистка от артефактов
+    lines = []
+    for line in response.split('\n'):
+        # Пропускаем служебные строки
+        if line.strip().startswith('✅ ГЕНИАЛЬНО:'):
+            continue
+        if line.strip().startswith('❌'):
+            continue
+        if line.strip().startswith('**ВОЗРАЖЕНИЕ'):
+            break
+        lines.append(line)
+    
+    response = '\n'.join(lines).strip()
+    
+    # Обрезаем до 1000 символов если слишком длинно
+    if len(response) > 1000:
+        response = response[:997] + '...'
+    
+    return response
 
 
 def parse_instructions_file() -> dict:

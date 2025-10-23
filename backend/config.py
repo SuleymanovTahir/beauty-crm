@@ -46,56 +46,6 @@ CLIENT_STATUSES = {
     "blocked": {"label": "Заблокирован", "color": "#ef4444", "icon": "ban"}
 }
 
-# ===== ПОЛНЫЙ ПРАЙС-ЛИСТ УСЛУГ =====
-# ⚠️ ПРИМЕЧАНИЕ: Эти данные используются для миграции в БД при первом запуске
-# После миграции все данные берутся из БД через get_all_services()
-SERVICES = {
-    # Permanent Makeup
-    "permanent_lips": {
-        "name": "Permanent Lips",
-        "name_ru": "Перманентный макияж губ",
-        "name_ar": "شفاه دائمة",
-        "price": 800,
-        "currency": "AED",
-        "category": "Permanent Makeup",
-        "description": "Long-lasting lip color enhancement",
-        "description_ru": "Долговременное окрашивание губ с естественным эффектом",
-        "benefits": ["Стойкий результат до 2 лет", "Естественный цвет", "Коррекция формы губ"]
-    },
-    "permanent_brows": {
-        "name": "Permanent Brows",
-        "name_ru": "Перманентный макияж бровей",
-        "name_ar": "حواجب دائمة",
-        "price": 700,
-        "currency": "AED",
-        "category": "Permanent Makeup",
-        "description": "Perfect eyebrows that last",
-        "description_ru": "Идеальные брови навсегда - микроблейдинг или пудровое напыление",
-        "benefits": ["Стойкость до 2 лет", "Естественная форма", "Без ежедневного макияжа"]
-    },
-    "lashliner": {
-        "name": "Lashliner",
-        "name_ru": "Межресничная стрелка",
-        "price": 500,
-        "currency": "AED",
-        "category": "Permanent Makeup",
-        "description": "Natural lash enhancement",
-        "description_ru": "Деликатная прорисовка межресничного пространства",
-        "benefits": ["Визуальная густота ресниц", "Естественный эффект", "Стойкость до 1.5 лет"]
-    },
-    "manicure_gelish": {
-        "name": "Gelish manicure",
-        "name_ru": "Маникюр гель-лак",
-        "price": 130,
-        "currency": "AED",
-        "category": "Nails",
-        "description": "Long-lasting gel manicure",
-        "description_ru": "Стойкий маникюр гель-лаком до 3 недель",
-        "benefits": ["Стойкость до 3 недель", "Глянцевый блеск", "Быстрая сушка"]
-    },
-    # Добавьте остальные услуги...
-}
-
 # ===== ПРОВЕРКА ОБЯЗАТЕЛЬНЫХ ПЕРЕМЕННЫХ =====
 required_vars = {
     "PAGE_ACCESS_TOKEN": PAGE_ACCESS_TOKEN,

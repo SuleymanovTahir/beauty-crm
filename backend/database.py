@@ -11,6 +11,8 @@ def init_database():
     """Создать базу данных"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
+    
+    # Таблица клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS clients
              (instagram_id TEXT PRIMARY KEY,
               username TEXT,
@@ -25,9 +27,9 @@ def init_database():
               profile_pic TEXT,
               notes TEXT,
               is_pinned INTEGER DEFAULT 0,
-              detected_language TEXT DEFAULT 'ru')''')    
+              detected_language TEXT DEFAULT 'ru')''')
 
-    # Таблица клиентов
+    # Таблица настроек бота
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
     id INTEGER PRIMARY KEY CHECK (id = 1),
     bot_name TEXT NOT NULL,
@@ -116,7 +118,6 @@ def init_database():
     except sqlite3.OperationalError:
         pass
     
-    # Добавляем колонку для определенного языка
     try:
         c.execute("ALTER TABLE clients ADD COLUMN detected_language TEXT DEFAULT 'ru'")
     except sqlite3.OperationalError:
@@ -132,10 +133,8 @@ def init_database():
                   is_read INTEGER DEFAULT 0,
                   message_type TEXT DEFAULT 'text')''')
 
-    # Добавляем колонку message_type если её нет
     try:
-        c.execute(
-            "ALTER TABLE chat_history ADD COLUMN message_type TEXT DEFAULT 'text'")
+        c.execute("ALTER TABLE chat_history ADD COLUMN message_type TEXT DEFAULT 'text'")
     except sqlite3.OperationalError:
         pass
 
@@ -153,7 +152,6 @@ def init_database():
                   notes TEXT,
                   special_package_id INTEGER)''')
     
-    # Добавляем колонку special_package_id если её нет
     try:
         c.execute("ALTER TABLE bookings ADD COLUMN special_package_id INTEGER")
     except sqlite3.OperationalError:
@@ -175,7 +173,6 @@ def init_database():
                   timestamp TEXT,
                   metadata TEXT)''')
 
-    # Таблица пользователей системы
     c.execute('''CREATE TABLE IF NOT EXISTS users
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   username TEXT UNIQUE NOT NULL,
@@ -187,7 +184,6 @@ def init_database():
                   last_login TEXT,
                   is_active INTEGER DEFAULT 1)''')
 
-    # Таблица сессий
     c.execute('''CREATE TABLE IF NOT EXISTS sessions
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   user_id INTEGER,
@@ -196,7 +192,6 @@ def init_database():
                   expires_at TEXT,
                   FOREIGN KEY (user_id) REFERENCES users(id))''')
 
-    # Таблица логов активности
     c.execute('''CREATE TABLE IF NOT EXISTS activity_log
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   user_id INTEGER,
@@ -207,7 +202,6 @@ def init_database():
                   timestamp TEXT,
                   FOREIGN KEY (user_id) REFERENCES users(id))''')
 
-    # Таблица пользовательских статусов
     c.execute('''CREATE TABLE IF NOT EXISTS custom_statuses
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   status_key TEXT UNIQUE NOT NULL,
@@ -229,7 +223,6 @@ def init_database():
                   ('admin', password_hash, 'Администратор', 'admin', now))
         print("✅ Создан дефолтный пользователь: admin / admin123")
 
-    # Таблица услуг
     c.execute('''CREATE TABLE IF NOT EXISTS services
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   service_key TEXT UNIQUE NOT NULL,
@@ -258,7 +251,6 @@ def init_database():
       FOREIGN KEY (user_id) REFERENCES users(id)
     );''')
     
-    # ===== НОВАЯ ТАБЛИЦА: СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
     c.execute('''CREATE TABLE IF NOT EXISTS special_packages
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   name TEXT NOT NULL,
@@ -280,44 +272,84 @@ def init_database():
                   created_at TEXT,
                   updated_at TEXT)''')
     
+    c.execute('''CREATE TABLE IF NOT EXISTS custom_roles
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  role_key TEXT UNIQUE NOT NULL,
+                  role_name TEXT NOT NULL,
+                  role_description TEXT,
+                  created_at TEXT,
+                  created_by INTEGER,
+                  FOREIGN KEY (created_by) REFERENCES users(id))''')
+    
+    c.execute('''CREATE TABLE IF NOT EXISTS role_permissions
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  role_key TEXT NOT NULL,
+                  permission_key TEXT NOT NULL,
+                  can_view INTEGER DEFAULT 0,
+                  can_create INTEGER DEFAULT 0,
+                  can_edit INTEGER DEFAULT 0,
+                  can_delete INTEGER DEFAULT 0,
+                  UNIQUE(role_key, permission_key))''')
+    
+    # ===== СОЗДАТЬ ДЕФОЛТНЫЕ НАСТРОЙКИ САЛОНА =====
+    c.execute("SELECT COUNT(*) FROM salon_settings")
+    if c.fetchone()[0] == 0:
+        log_info("📝 Создание дефолтных настроек салона...", "database")
+        now = datetime.now().isoformat()
+        c.execute("""INSERT INTO salon_settings 
+                     (id, name, address, google_maps, hours, hours_ru, hours_ar,
+                      booking_url, phone, bot_name, bot_name_en, bot_name_ar,
+                      city, country, timezone, currency, updated_at)
+                     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  ("M.Le Diamant Beauty Lounge",
+                   "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+                   "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+                   "Daily 10:30 - 21:00",
+                   "Ежедневно 10:30 - 21:00",
+                   "يوميًا 10:30 - 21:00",
+                   "https://n1234567.yclients.com",
+                   "+971 XX XXX XXXX",
+                   "M.Le Diamant Assistant",
+                   "M.Le Diamant Assistant",
+                   "مساعد M.Le Diamant",
+                   "Dubai",
+                   "UAE",
+                   "Asia/Dubai",
+                   "AED",
+                   now))
+        log_info("✅ Дефолтные настройки салона созданы", "database")
+    
+    # ===== СОЗДАТЬ ДЕФОЛТНЫЕ НАСТРОЙКИ БОТА =====
+    c.execute("SELECT COUNT(*) FROM bot_settings")
+    if c.fetchone()[0] == 0:
+        log_info("📝 Создание дефолтных настроек бота...", "database")
+        now = datetime.now().isoformat()
+        c.execute("""INSERT INTO bot_settings 
+                     (id, bot_name, personality_traits, greeting_message, farewell_message,
+                      price_explanation, communication_style, max_message_length, 
+                      emoji_usage, languages_supported, booking_redirect_message,
+                      voice_message_response, updated_at)
+                     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  ("M.Le Diamant Assistant",
+                   "Обаятельная, уверенная, харизматичная, экспертная",
+                   "Привет! 😊 Добро пожаловать в M.Le Diamant!",
+                   "Спасибо за визит! 💖",
+                   "Мы в премиум-сегменте 💎",
+                   "Дружелюбный, экспертный, вдохновляющий",
+                   4,
+                   "Умеренное (2-3 на сообщение)",
+                   "ru,en,ar",
+                   "Я AI-ассистент, запись онлайн за 2 минуты!\nВыбирайте мастера и время здесь: {BOOKING_URL}",
+                   "Извините, я AI-помощник и не могу прослушивать голосовые 😊\nПожалуйста, напишите текстом!",
+                   now))
+        log_info("✅ Дефолтные настройки бота созданы", "database")
+    
     conn.commit()
     conn.close()
     print("✅ База данных инициализирована")
+    
     # Мигрируем данные из config.py в БД при первом запуске
-    migrate_services_to_db()
 
-
-def migrate_services_to_db():
-    """Перенести услуги из config.py в базу данных (выполняется один раз)"""
-    from config import SERVICES
-
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-
-    # Проверяем, есть ли уже услуги
-    c.execute("SELECT COUNT(*) FROM services")
-    if c.fetchone()[0] > 0:
-        conn.close()
-        return
-
-    now = datetime.now().isoformat()
-
-    for key, service in SERVICES.items():
-        benefits_json = '|'.join(service.get('benefits', []))
-
-        c.execute("""INSERT INTO services 
-                     (service_key, name, name_ru, name_ar, price, currency, category,
-                      description, description_ru, benefits, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                  (key, service['name'], service.get('name_ru'), service.get('name_ar'),
-                   service['price'], service.get(
-                       'currency', 'AED'), service['category'],
-                   service.get('description'), service.get('description_ru'),
-                   benefits_json, now, now))
-
-    conn.commit()
-    conn.close()
-    print("✅ Услуги перенесены в базу данных")
 
 
 # ===== ФУНКЦИИ ДЛЯ РАБОТЫ С СПЕЦИАЛЬНЫМИ ПАКЕТАМИ =====
@@ -1766,6 +1798,10 @@ AVAILABLE_PERMISSIONS = {
 # ========================================
 
 def get_salon_settings() -> dict:
+    """
+    Получить настройки салона из БД
+    Возвращает дефолты если таблица не существует или пуста
+    """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
@@ -1778,9 +1814,11 @@ def get_salon_settings() -> dict:
             return {
                 "id": 1,
                 "name": "M.Le Diamant Beauty Lounge",
-                "address": "Shop 13, Amwaj 3 Plaza, JBR, Dubai",
+                "name_ar": None,
+                "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+                "address_ar": None,
                 "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
-                "hours": "Ежедневно 10:30 - 21:00",
+                "hours": "Daily 10:30 - 21:00",
                 "hours_ru": "Ежедневно 10:30 - 21:00",
                 "hours_ar": "يوميًا 10:30 - 21:00",
                 "booking_url": "https://n1234567.yclients.com",
@@ -1825,11 +1863,36 @@ def get_salon_settings() -> dict:
         }
         
     except sqlite3.OperationalError as e:
-        log_error("❌ Таблица salon_settings не существует! Запустите migrate_bot_settings.py", "database")
-        raise Exception("Salon settings table missing. Run: python migrate_bot_settings.py")
+        log_error(f"❌ Таблица salon_settings не существует: {e}", "database")
+        log_warning("⚠️ Используются дефолтные настройки. Запустите: python backend/bot/migrate_bot_settings.py для полной конфигурации", "database")
+        
+        return {
+            "id": 1,
+            "name": "M.Le Diamant Beauty Lounge",
+            "name_ar": None,
+            "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+            "address_ar": None,
+            "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+            "hours": "Daily 10:30 - 21:00",
+            "hours_ru": "Ежедневно 10:30 - 21:00",
+            "hours_ar": "يوميًا 10:30 - 21:00",
+            "booking_url": "https://n1234567.yclients.com",
+            "phone": "+971 XX XXX XXXX",
+            "email": None,
+            "instagram": None,
+            "whatsapp": None,
+            "bot_name": "M.Le Diamant Assistant",
+            "bot_name_en": "M.Le Diamant Assistant",
+            "bot_name_ar": "مساعد M.Le Diamant",
+            "city": "Dubai",
+            "country": "UAE",
+            "timezone": "Asia/Dubai",
+            "currency": "AED",
+            "updated_at": None
+        }
     except Exception as e:
-        log_error("❌ Настройки салона не найдены! Запустите migrate_bot_settings.py", "database")
-        raise Exception("Salon settings not initialized. Run: python migrate_bot_settings.py")
+        log_error(f"❌ Непредвиденная ошибка: {e}", "database")
+        raise
     finally:
         conn.close()
 
@@ -1886,8 +1949,7 @@ def update_salon_settings(data: dict) -> bool:
 def get_bot_settings() -> dict:
     """
     Получить настройки бота из БД
-    
-    ВАЖНО: Это ЕДИНСТВЕННЫЙ источник настроек бота!
+    Возвращает дефолты если таблица не существует или пуста
     """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -1940,17 +2002,70 @@ def get_bot_settings() -> dict:
                 "anti_patterns": result[39] if len(result) > 39 else "",
                 "voice_message_response": result[40] if len(result) > 40 else "",
                 "contextual_rules": result[41] if len(result) > 41 else "",
-                "updated_at": result[24] if len(result) > 24 else None
+                "updated_at": result[42] if len(result) > 42 else None
             }
         else:
-            log_error("❌ Настройки бота не найдены! Запустите migrate_bot_settings.py", "database")
-            raise Exception("Bot settings not initialized. Run: python migrate_bot_settings.py")
+            log_warning("⚠️ Настройки бота пусты, используются дефолты", "database")
+            return _get_default_bot_settings()
+            
     except sqlite3.OperationalError as e:
-        log_error(f"❌ Таблица bot_settings не существует! Запустите migrate_bot_settings.py", "database")
-        raise Exception("Bot settings table missing. Run: python migrate_bot_settings.py")
+        log_error(f"❌ Таблица bot_settings не существует: {e}", "database")
+        log_warning("⚠️ Используются дефолтные настройки бота. Запустите: python backend/bot/migrate_bot_settings.py для полной конфигурации", "database")
+        return _get_default_bot_settings()
+    except Exception as e:
+        log_error(f"❌ Непредвиденная ошибка: {e}", "database")
+        raise
     finally:
         conn.close()
 
+
+def _get_default_bot_settings() -> dict:
+    """Дефолтные настройки бота"""
+    return {
+        "id": 1,
+        "bot_name": "M.Le Diamant Assistant",
+        "personality_traits": "Обаятельная, уверенная, харизматичная, экспертная",
+        "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
+        "farewell_message": "Спасибо за визит! 💖",
+        "price_explanation": "Мы в премиум-сегменте 💎",
+        "price_response_template": "{SERVICE} - {PRICE} {CURRENCY} 💎",
+        "premium_justification": "",
+        "booking_redirect_message": "Я AI-ассистент, запись онлайн за 2 минуты!\nВыбирайте мастера и время здесь: {BOOKING_URL}",
+        "fomo_messages": "",
+        "upsell_techniques": "",
+        "communication_style": "Дружелюбный, экспертный, вдохновляющий",
+        "max_message_length": 4,
+        "emoji_usage": "Умеренное (2-3 на сообщение)",
+        "languages_supported": "ru,en,ar",
+        "objection_handling": "",
+        "negative_handling": "",
+        "safety_guidelines": "",
+        "example_good_responses": "",
+        "algorithm_actions": "",
+        "location_features": "",
+        "seasonality": "",
+        "emergency_situations": "",
+        "success_metrics": "",
+        "objection_expensive": "",
+        "objection_think_about_it": "",
+        "objection_no_time": "",
+        "objection_pain": "",
+        "objection_result_doubt": "",
+        "objection_cheaper_elsewhere": "",
+        "objection_too_far": "",
+        "objection_consult_husband": "",
+        "objection_first_time": "",
+        "objection_not_happy": "",
+        "emotional_triggers": "",
+        "social_proof_phrases": "",
+        "personalization_rules": "",
+        "example_dialogues": "",
+        "emotional_responses": "",
+        "anti_patterns": "",
+        "voice_message_response": "Извините, я AI-помощник и не могу прослушивать голосовые 😊\nПожалуйста, напишите текстом!",
+        "contextual_rules": "",
+        "updated_at": None
+    }
 
 # ========================================
 # ПАТЧ ДЛЯ backend/database.py
