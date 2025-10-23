@@ -1276,6 +1276,11 @@ def get_stats():
     }
 
 
+# ========================================
+# ПАТЧ 2: Реальное среднее время ответа из БД
+# ========================================
+# Замените функцию get_analytics_data в backend/database.py
+
 def get_analytics_data(days=30, date_from=None, date_to=None):
     """Получить данные для аналитики с периодом"""
     conn = sqlite3.connect(DATABASE_NAME)
@@ -1317,28 +1322,42 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     if not status_stats:
         status_stats = [("pending", 0)]
 
-    c.execute("""SELECT 
-                    AVG((julianday(bot.timestamp) - julianday(client.timestamp)) * 24 * 60) as avg_minutes
-                 FROM chat_history client
-                 JOIN chat_history bot ON client.instagram_id = bot.instagram_id
-                 WHERE client.sender = 'client' 
-                 AND bot.sender = 'bot'
-                 AND bot.id > client.id
-                 AND bot.timestamp >= ? AND bot.timestamp <= ?
-                 LIMIT 100""", (start_date, end_date))
+    # ✅ ИСПРАВЛЕНО: Реальный расчет среднего времени ответа бота
+    # Берем сообщения клиентов и следующие за ними сообщения бота
+    c.execute("""
+        WITH client_messages AS (
+            SELECT 
+                id,
+                instagram_id,
+                timestamp,
+                LEAD(timestamp) OVER (PARTITION BY instagram_id ORDER BY timestamp) as next_timestamp,
+                LEAD(sender) OVER (PARTITION BY instagram_id ORDER BY timestamp) as next_sender
+            FROM chat_history
+            WHERE sender = 'client'
+            AND timestamp >= ?
+            AND timestamp <= ?
+        )
+        SELECT 
+            AVG(
+                (julianday(next_timestamp) - julianday(timestamp)) * 24 * 60
+            ) as avg_minutes
+        FROM client_messages
+        WHERE next_sender = 'bot'
+        AND next_timestamp IS NOT NULL
+    """, (start_date, end_date))
 
     result = c.fetchone()
-    avg_response = result[0] if result and result[0] else 2.5
-
     conn.close()
+    
+    # Если есть данные - используем их, иначе 0
+    avg_response = result[0] if result and result[0] else 0
 
     return {
         "bookings_by_day": bookings_by_day,
         "services_stats": services_stats,
         "status_stats": status_stats,
-        "avg_response_time": round(avg_response, 2) if avg_response else 2.5
+        "avg_response_time": round(avg_response, 2) if avg_response else 0
     }
-
 
 def get_funnel_data():
     """Получить данные воронки продаж"""

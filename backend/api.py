@@ -636,6 +636,8 @@ async def create_booking_api(
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
+
+
 @router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(
     booking_id: int,
@@ -1048,28 +1050,52 @@ async def delete_user_api(
 @router.get("/export/clients")
 async def export_clients(
     format: str = Query("csv"),
+    date_from: str = Query(None),
+    date_to: str = Query(None),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Экспортировать клиентов в CSV, PDF или Excel"""
+    """Экспортировать клиентов в CSV, PDF или Excel с фильтром по дате"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    clients = get_all_clients()
+    # ✅ ДОБАВЛЕНО: Фильтрация по дате регистрации
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    if date_from and date_to:
+        # Фильтруем по first_contact
+        c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
+                     last_contact, total_messages, labels, status, lifetime_value,
+                     profile_pic, notes, is_pinned 
+                     FROM clients 
+                     WHERE first_contact >= ? AND first_contact <= ?
+                     ORDER BY is_pinned DESC, last_contact DESC""",
+                  (date_from, date_to))
+    else:
+        # Все клиенты
+        c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
+                     last_contact, total_messages, labels, status, lifetime_value,
+                     profile_pic, notes, is_pinned 
+                     FROM clients 
+                     ORDER BY is_pinned DESC, last_contact DESC""")
+    
+    clients = c.fetchall()
+    conn.close()
     
     try:
         if format == "csv":
             content = export_clients_csv(clients)
             media_type = "text/csv"
-            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.csv"
+            filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
             content = export_clients_pdf(clients)
             media_type = "application/pdf"
-            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.pdf"
+            filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
             content = export_clients_excel(clients)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            filename = f"clients_{datetime.now().strftime('%Y%m%d')}.xlsx"
+            filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.xlsx"
         else:
             return JSONResponse({"error": "Invalid format"}, status_code=400)
         
@@ -1081,6 +1107,8 @@ async def export_clients(
     except Exception as e:
         log_error(f"Export error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
 
 @router.get("/export/bookings")
 async def export_bookings(
@@ -1250,6 +1278,239 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return {"count": get_total_unread()}
+
+
+@router.post("/import/bookings")
+async def import_bookings(
+    file: UploadFile = File(...),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Импортировать записи из CSV или Excel файла"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        # Проверяем формат файла
+        if not file.filename:
+            return JSONResponse({"error": "No file provided"}, status_code=400)
+        
+        file_ext = file.filename.split('.')[-1].lower()
+        
+        if file_ext not in ['csv', 'xlsx', 'xls']:
+            return JSONResponse({"error": "Invalid file format. Use CSV or Excel"}, status_code=400)
+        
+        # Читаем содержимое файла
+        content = await file.read()
+        
+        imported_count = 0
+        skipped_count = 0
+        errors = []
+        
+        # Обработка CSV
+        if file_ext == 'csv':
+            import csv
+            import io
+            
+            csv_content = content.decode('utf-8')
+            csv_reader = csv.DictReader(io.StringIO(csv_content))
+            
+            for row in csv_reader:
+                try:
+                    # Ожидаемые колонки: instagram_id, name, phone, service, datetime, status
+                    instagram_id = row.get('instagram_id') or row.get('ID') or f"import_{int(time.time())}_{imported_count}"
+                    name = row.get('name') or row.get('Имя') or 'Импортированный клиент'
+                    phone = row.get('phone') or row.get('Телефон') or ''
+                    service = row.get('service') or row.get('Услуга') or 'Неизвестно'
+                    datetime_str = row.get('datetime') or row.get('Дата/Время') or datetime.now().isoformat()
+                    status = row.get('status') or row.get('Статус') or 'pending'
+                    revenue = float(row.get('revenue') or row.get('Доход') or 0)
+                    
+                    # Создаем/получаем клиента
+                    get_or_create_client(instagram_id, username=name)
+                    
+                    # Обновляем информацию клиента
+                    if phone or name:
+                        update_client_info(instagram_id, name=name, phone=phone)
+                    
+                    # Создаем запись
+                    conn = sqlite3.connect(DATABASE_NAME)
+                    c = conn.cursor()
+                    
+                    c.execute("""INSERT INTO bookings 
+                                 (instagram_id, service_name, datetime, phone, name, status, created_at, revenue)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                              (instagram_id, service, datetime_str, phone, name, status, 
+                               datetime.now().isoformat(), revenue))
+                    
+                    conn.commit()
+                    conn.close()
+                    
+                    imported_count += 1
+                    
+                except Exception as e:
+                    skipped_count += 1
+                    errors.append(f"Строка {imported_count + skipped_count}: {str(e)}")
+        
+        # Обработка Excel
+        elif file_ext in ['xlsx', 'xls']:
+            if not EXCEL_AVAILABLE:
+                return JSONResponse({"error": "Excel support not available"}, status_code=500)
+            
+            import io
+            from openpyxl import load_workbook
+            
+            wb = load_workbook(io.BytesIO(content))
+            ws = wb.active
+            
+            # Предполагаем, что первая строка - заголовки
+            headers = [cell.value for cell in ws[1]]
+            
+            for row in ws.iter_rows(min_row=2, values_only=True):
+                try:
+                    # Создаем словарь из заголовков и значений
+                    row_dict = dict(zip(headers, row))
+                    
+                    instagram_id = row_dict.get('instagram_id') or row_dict.get('ID') or f"import_{int(time.time())}_{imported_count}"
+                    name = row_dict.get('name') or row_dict.get('Имя') or 'Импортированный клиент'
+                    phone = str(row_dict.get('phone') or row_dict.get('Телефон') or '')
+                    service = row_dict.get('service') or row_dict.get('Услуга') or 'Неизвестно'
+                    datetime_str = str(row_dict.get('datetime') or row_dict.get('Дата/Время') or datetime.now().isoformat())
+                    status = row_dict.get('status') or row_dict.get('Статус') or 'pending'
+                    revenue = float(row_dict.get('revenue') or row_dict.get('Доход') or 0)
+                    
+                    # Создаем/получаем клиента
+                    get_or_create_client(instagram_id, username=name)
+                    
+                    # Обновляем информацию клиента
+                    if phone or name:
+                        update_client_info(instagram_id, name=name, phone=phone)
+                    
+                    # Создаем запись
+                    conn = sqlite3.connect(DATABASE_NAME)
+                    c = conn.cursor()
+                    
+                    c.execute("""INSERT INTO bookings 
+                                 (instagram_id, service_name, datetime, phone, name, status, created_at, revenue)
+                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                              (instagram_id, service, datetime_str, phone, name, status, 
+                               datetime.now().isoformat(), revenue))
+                    
+                    conn.commit()
+                    conn.close()
+                    
+                    imported_count += 1
+                    
+                except Exception as e:
+                    skipped_count += 1
+                    errors.append(f"Строка {imported_count + skipped_count + 1}: {str(e)}")
+        
+        log_activity(user["id"], "import_bookings", "bookings", str(imported_count), 
+                     f"Imported {imported_count} bookings")
+        
+        return {
+            "success": True,
+            "imported": imported_count,
+            "skipped": skipped_count,
+            "errors": errors[:10] if errors else []  # Показываем первые 10 ошибок
+        }
+        
+    except Exception as e:
+        log_error(f"Import error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# ===== ШАБЛОН ДЛЯ ИМПОРТА =====
+
+@router.get("/import/bookings/template")
+async def download_import_template(
+    format: str = Query("csv"),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Скачать шаблон для импорта записей"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        if format == "csv":
+            template = "instagram_id,name,phone,service,datetime,status,revenue\n"
+            template += "example_user_1,Анна Иванова,+971501234567,Маникюр,2025-01-15 14:00,pending,150\n"
+            template += "example_user_2,Мария Петрова,+971507654321,Педикюр,2025-01-16 15:30,confirmed,200\n"
+            
+            return StreamingResponse(
+                iter([template.encode('utf-8')]),
+                media_type="text/csv",
+                headers={"Content-Disposition": "attachment; filename=bookings_template.csv"}
+            )
+        
+        elif format == "excel":
+            if not EXCEL_AVAILABLE:
+                return JSONResponse({"error": "Excel support not available"}, status_code=500)
+            
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Записи"
+            
+            # Заголовки
+            headers = ['instagram_id', 'name', 'phone', 'service', 'datetime', 'status', 'revenue']
+            ws.append(headers)
+            
+            # Примеры
+            ws.append(['example_user_1', 'Анна Иванова', '+971501234567', 'Маникюр', '2025-01-15 14:00', 'pending', 150])
+            ws.append(['example_user_2', 'Мария Петрова', '+971507654321', 'Педикюр', '2025-01-16 15:30', 'confirmed', 200])
+            
+            # Стилизация
+            from openpyxl.styles import Font, PatternFill
+            header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
+            header_font = Font(bold=True, color="FFFFFF")
+            
+            for cell in ws[1]:
+                cell.fill = header_fill
+                cell.font = header_font
+            
+            buffer = io.BytesIO()
+            wb.save(buffer)
+            buffer.seek(0)
+            
+            return StreamingResponse(
+                iter([buffer.getvalue()]),
+                media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                headers={"Content-Disposition": "attachment; filename=bookings_template.xlsx"}
+            )
+        
+        else:
+            return JSONResponse({"error": "Invalid format"}, status_code=400)
+            
+    except Exception as e:
+        log_error(f"Template download error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/services/{service_key}/price")
+async def get_service_price(
+    service_key: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить цену услуги по ключу"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    service = get_service_by_key(service_key)
+    
+    if not service:
+        return JSONResponse({"error": "Service not found"}, status_code=404)
+    
+    return {
+        "service_key": service[1],
+        "name": service[2],
+        "name_ru": service[3] if len(service) > 3 else service[2],
+        "price": service[5] if len(service) > 5 else 0,
+        "currency": service[6] if len(service) > 6 else "AED"
+    }
+
+
 
 # ===== НАСТРОЙКИ БОТА =====
 @router.get("/bot-settings")
@@ -1518,4 +1779,100 @@ async def update_user_role(
         conn.rollback()
         conn.close()
         log_error(f"Error updating user role: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    
+@router.get("/users/pending")
+async def get_pending_users(session_token: Optional[str] = Cookie(None)):
+    """Получить пользователей, ожидающих подтверждения (только admin)"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""SELECT id, username, full_name, email, role, created_at 
+                 FROM users 
+                 WHERE is_active = 0 
+                 ORDER BY created_at DESC""")
+    
+    pending_users = c.fetchall()
+    conn.close()
+    
+    return {
+        "users": [
+            {
+                "id": u[0],
+                "username": u[1],
+                "full_name": u[2],
+                "email": u[3],
+                "role": u[4],
+                "created_at": u[5]
+            }
+            for u in pending_users
+        ],
+        "count": len(pending_users)
+    }
+
+
+@router.post("/users/{user_id}/approve")
+async def approve_user(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Активировать пользователя"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("UPDATE users SET is_active = 1 WHERE id = ?", (user_id,))
+        conn.commit()
+        
+        if c.rowcount > 0:
+            log_activity(user["id"], "approve_user", "user", str(user_id), "User approved")
+            conn.close()
+            return {"success": True, "message": "User approved"}
+        else:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error approving user: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/users/{user_id}/reject")
+async def reject_user(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Отклонить регистрацию пользователя"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Удаляем пользователя
+        c.execute("DELETE FROM users WHERE id = ? AND is_active = 0", (user_id,))
+        conn.commit()
+        
+        if c.rowcount > 0:
+            log_activity(user["id"], "reject_user", "user", str(user_id), "User rejected")
+            conn.close()
+            return {"success": True, "message": "User rejected"}
+        else:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error rejecting user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

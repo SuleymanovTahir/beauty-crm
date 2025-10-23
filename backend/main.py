@@ -254,8 +254,22 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         if not user:
             log_warning(f"Invalid credentials for {username}", "auth")
             return JSONResponse(
-                {"error": "Invalid username or password"}, 
+                {"error": "Неверное имя пользователя или пароль"}, 
                 status_code=401
+            )
+        
+        # ✅ ДОБАВЛЕНО: Проверка активации
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        c.execute("SELECT is_active FROM users WHERE id = ?", (user["id"],))
+        result = c.fetchone()
+        conn.close()
+        
+        if not result or result[0] == 0:
+            log_warning(f"User {username} not activated yet", "auth")
+            return JSONResponse(
+                {"error": "Ваш аккаунт еще не активирован администратором"}, 
+                status_code=403
             )
         
         session_token = create_session(user["id"])
@@ -288,6 +302,7 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
     except Exception as e:
         log_error(f"Error in api_login: {e}", "auth", exc_info=True)
         return JSONResponse({"error": str(e)}, status_code=500)
+
 
 
 @app.get("/login", response_class=HTMLResponse)
@@ -343,7 +358,7 @@ async def register(
     email: str = Form(None),
     role: str = Form("employee")
 ):
-    """HTML: Регистрация нового пользователя"""
+    """HTML: Регистрация нового пользователя (требует подтверждения админа)"""
     try:
         # Валидация
         if len(username) < 3:
@@ -371,18 +386,39 @@ async def register(
             })
         
         log_info(f"Регистрация нового пользователя: {username}", "auth")
-        user_id = create_user(username, password, full_name, email, role)
-
-        if not user_id:
+        
+        # ✅ ИЗМЕНЕНО: Создаем пользователя с is_active=0
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        now = datetime.now().isoformat()
+        
+        try:
+            c.execute("""INSERT INTO users 
+                         (username, password_hash, full_name, email, role, created_at, is_active)
+                         VALUES (?, ?, ?, ?, ?, ?, 0)""",
+                      (username, password_hash, full_name, email, role, now))
+            conn.commit()
+            user_id = c.lastrowid
+            conn.close()
+            
+            log_info(f"✅ Пользователь {username} создан (ID: {user_id}), ожидает подтверждения", "auth")
+            
+            # ✅ ИЗМЕНЕНО: Сообщение о необходимости подтверждения
+            return RedirectResponse(
+                url="/login?success=Регистрация отправлена! Ожидайте подтверждения администратора", 
+                status_code=302
+            )
+        except sqlite3.IntegrityError:
+            conn.close()
             log_warning(f"Пользователь {username} уже существует", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
                 "salon": salon,
                 "error": "Пользователь с таким именем уже существует"
             })
-
-        log_info(f"✅ Пользователь {username} успешно создан (ID: {user_id})", "auth")
-        return RedirectResponse(url="/login?success=Аккаунт создан! Можете войти", status_code=302)
+            
     except Exception as e:
         log_error(f"Ошибка при регистрации: {e}", "auth", exc_info=True)
         return templates.TemplateResponse("admin/register.html", {
@@ -390,7 +426,7 @@ async def register(
             "salon": salon,
             "error": f"Ошибка сервера: {str(e)}"
         })
-
+    
 
 @app.get("/forgot-password", response_class=HTMLResponse)
 async def forgot_password_page(request: Request):
@@ -846,7 +882,7 @@ async def startup_event():
         raise
 
 
-# ... (остальной код без изменений)
+
 
 
 if __name__ == "__main__":
