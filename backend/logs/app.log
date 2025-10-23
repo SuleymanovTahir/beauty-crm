@@ -11798,3 +11798,248 @@ sqlite3.OperationalError: no such table: custom_roles
 2025-10-22 19:55:06 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
 2025-10-22 19:55:06 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
 2025-10-22 19:55:06 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-22 20:04:23 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:04:23 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:04:23 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:04:23 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:04:23 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:04:23 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:04:23 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:04:23 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:04:23 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:04:23 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:04:23 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:04:37 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-22 20:04:37 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-22 20:04:37 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.01s)
+2025-10-22 20:04:37 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-22 20:04:40 - crm - INFO - [middleware] 🔥 OPTIONS /api/bot-settings
+2025-10-22 20:04:40 - crm - INFO - [middleware] 📤 OPTIONS /api/bot-settings → 200 (0.00s)
+2025-10-22 20:04:40 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 20:04:40 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-22 20:05:10 - crm - INFO - [middleware] 🔥 POST /api/bot-settings
+2025-10-22 20:05:10 - crm - ERROR - [database] ❌ Ошибка обновления настроек бота: name 'log_info' is not defined
+2025-10-22 20:05:10 - crm - ERROR - [database] Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 1951, in update_bot_settings
+    log_info(f"✅ Настройки бота обновлены ({c.rowcount} записей)", "database")
+    ^^^^^^^^
+NameError: name 'log_info' is not defined
+
+2025-10-22 20:05:10 - crm - INFO - [middleware] 📤 POST /api/bot-settings → 500 (0.01s)
+2025-10-22 20:10:23 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:10:23 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:10:23 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:10:23 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:10:23 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:10:23 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:10:23 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:10:23 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:10:23 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:10:23 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:10:23 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:10:25 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:10:25 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:10:25 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:10:25 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:10:25 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:10:25 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:10:25 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:10:25 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:10:25 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:10:25 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:10:25 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:20:59 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:20:59 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:20:59 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:20:59 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:20:59 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:20:59 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:20:59 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:20:59 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:20:59 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:20:59 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:20:59 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:22:31 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:22:31 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:22:31 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:22:31 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:22:31 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:22:31 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:22:31 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:22:31 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:22:31 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:22:31 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:22:31 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:26:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-22 20:26:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:26:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-22 20:26:07 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-22 20:26:07 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-22 20:26:07 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-22 20:26:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-22 20:26:07 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-22 20:26:07 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-22 20:26:07 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-22 20:26:07 - crm - INFO - [startup] ======================================================================
+2025-10-22 20:27:52 - crm - INFO - [middleware] 🔥 OPTIONS /api/bot-settings
+2025-10-22 20:27:52 - crm - INFO - [middleware] 📤 OPTIONS /api/bot-settings → 200 (0.00s)
+2025-10-22 20:27:52 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-10-22 20:27:52 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-10-23 04:32:25 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:32:25 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:32:25 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:32:25 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:32:25 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:32:25 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:32:25 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 04:32:25 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-23 04:32:25 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-23 04:32:25 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-23 04:32:25 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:36:27 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:36:27 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:36:27 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:36:27 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:36:27 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:36:27 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:36:27 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: name 'cursor' is not defined
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 770, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 15, in init_database
+    cursor.execute("""
+    ^^^^^^
+NameError: name 'cursor' is not defined
+2025-10-23 04:36:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:36:35 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:36:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:36:35 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:36:35 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:36:35 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:36:35 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: 'sqlite3.Cursor' object is not callable
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 770, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 15, in init_database
+        c("""
+        ~^^^^
+        CREATE TABLE IF NOT EXISTS bot_settings (
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        )
+        ^
+    """)
+    ^^^^
+TypeError: 'sqlite3.Cursor' object is not callable
+2025-10-23 04:37:53 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:37:53 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:37:53 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:37:53 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:37:53 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:37:53 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:37:53 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 04:37:53 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-23 04:37:53 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-23 04:37:53 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-23 04:37:53 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:38:08 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:38:08 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:38:08 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:38:08 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:38:08 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:38:08 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:38:08 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: near "REATE": syntax error
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 770, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 98, in init_database
+    c.execute('''REATE TABLE IF NOT EXISTS bot_settings (
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        id INTEGER PRIMARY KEY DEFAULT 1,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        UNIQUE(id))''')
+        ^^^^^^^^^^^^^^^
+sqlite3.OperationalError: near "REATE": syntax error
+2025-10-23 04:39:19 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:39:19 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:39:19 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:39:19 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:39:19 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:39:19 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:39:19 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: near "REATE": syntax error
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 770, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 98, in init_database
+    c.execute('''REATE TABLE IF NOT EXISTS bot_settings (
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        id INTEGER PRIMARY KEY DEFAULT 1,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        UNIQUE(id))''')
+        ^^^^^^^^^^^^^^^
+sqlite3.OperationalError: near "REATE": syntax error
+2025-10-23 04:39:24 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:39:24 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:39:24 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:39:24 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:39:24 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:39:24 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:39:24 - crm - CRITICAL - [startup] ❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: near "REATE": syntax error
+Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/main.py", line 770, in startup_event
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/database.py", line 98, in init_database
+    c.execute('''REATE TABLE IF NOT EXISTS bot_settings (
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        id INTEGER PRIMARY KEY DEFAULT 1,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        UNIQUE(id))''')
+        ^^^^^^^^^^^^^^^
+sqlite3.OperationalError: near "REATE": syntax error
+2025-10-23 04:40:02 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:40:02 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:40:02 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:40:02 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:40:02 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:40:02 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:40:02 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 04:40:02 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-23 04:40:02 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-23 04:40:02 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-23 04:40:02 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:40:04 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:40:04 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:40:04 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:40:04 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:40:04 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:40:04 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:40:04 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 04:40:04 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-23 04:40:04 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-23 04:40:04 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-23 04:40:04 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:40:21 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 04:40:21 - crm - INFO - [startup] ======================================================================
+2025-10-23 04:40:21 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 04:40:21 - crm - INFO - [startup] 💎 Салон: M.Le Diamant Beauty Lounge
+2025-10-23 04:40:21 - crm - INFO - [startup] 🤖 Бот: Diamant
+2025-10-23 04:40:21 - crm - INFO - [startup] 📍 Адрес: Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai
+2025-10-23 04:40:21 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 04:40:21 - crm - INFO - [startup] 🔐 Логин: http://localhost:8000/login
+2025-10-23 04:40:21 - crm - INFO - [startup] 📊 API Docs: http://localhost:8000/docs
+2025-10-23 04:40:21 - crm - INFO - [startup] 🎨 React фронтенд: http://localhost:5173
+2025-10-23 04:40:21 - crm - INFO - [startup] ======================================================================

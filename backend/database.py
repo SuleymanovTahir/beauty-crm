@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List
 import hashlib
 import secrets
-from logger import log_error
+from logger import log_error, log_info, log_warning
 from config import DATABASE_NAME, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
 
 
@@ -11,24 +11,36 @@ def init_database():
     """Создать базу данных"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
+    
 
     # Таблица клиентов
-    c.execute('''CREATE TABLE IF NOT EXISTS clients
-                 (instagram_id TEXT PRIMARY KEY,
-                  username TEXT,
-                  language TEXT,
-                  first_contact TEXT,
-                  last_contact TEXT,
-                  total_messages INTEGER DEFAULT 0,
-                  labels TEXT,
-                  phone TEXT,
-                  name TEXT,
-                  status TEXT DEFAULT 'new',
-                  source TEXT DEFAULT 'instagram',
-                  lifetime_value REAL DEFAULT 0,
-                  profile_pic TEXT,
-                  notes TEXT,
-                  is_pinned INTEGER DEFAULT 0)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    bot_name TEXT NOT NULL,
+    personality_traits TEXT,
+    greeting_message TEXT,
+    farewell_message TEXT,
+    price_explanation TEXT,
+    price_response_template TEXT,
+    premium_justification TEXT,
+    booking_redirect_message TEXT,
+    fomo_messages TEXT,
+    upsell_techniques TEXT,
+    communication_style TEXT,
+    max_message_length INTEGER DEFAULT 4,
+    emoji_usage TEXT,
+    languages_supported TEXT DEFAULT 'ru,en,ar',
+    objection_handling TEXT,
+    negative_handling TEXT,
+    safety_guidelines TEXT,
+    example_good_responses TEXT,
+    algorithm_actions TEXT,
+    location_features TEXT,
+    seasonality TEXT,
+    emergency_situations TEXT,
+    success_metrics TEXT,
+    updated_at TEXT
+)''')
 
     # Проверяем и добавляем новые колонки если их нет
     try:
@@ -1752,7 +1764,7 @@ def update_salon_settings(data: dict) -> bool:
                     booking_url = ?, phone = ?, email = ?, instagram = ?,
                     whatsapp = ?, bot_name = ?, bot_name_en = ?, bot_name_ar = ?,
                     city = ?, country = ?, timezone = ?, currency = ?,
-                    updated_at = CURRENT_TIMESTAMP
+                    updated_at = ?
                     WHERE id = 1""",
                   (data.get('name'),
                    data.get('name_ar'),

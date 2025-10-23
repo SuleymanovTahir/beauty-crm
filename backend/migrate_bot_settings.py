@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# fix_bot_settings_table.py
+# migrate_bot_settings_fixed.py
 # ========================================
-# ИСПРАВЛЕНИЕ СТРУКТУРЫ ТАБЛИЦЫ bot_settings
+# ИСПРАВЛЕННАЯ ВЕРСИЯ: FIX для updated_at
 # ========================================
 
 import sqlite3
@@ -17,7 +17,7 @@ REQUIRED_COLUMNS = [
     ('greeting_message', 'TEXT'),
     ('farewell_message', 'TEXT'),
     ('price_explanation', 'TEXT'),
-    ('price_response_template', 'TEXT'),  # ← Эта колонка отсутствует
+    ('price_response_template', 'TEXT'),
     ('premium_justification', 'TEXT'),
     ('booking_redirect_message', 'TEXT'),
     ('fomo_messages', 'TEXT'),
@@ -35,7 +35,7 @@ REQUIRED_COLUMNS = [
     ('seasonality', 'TEXT'),
     ('emergency_situations', 'TEXT'),
     ('success_metrics', 'TEXT'),
-    ('updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'),
+    ('updated_at', 'TEXT'),  # ✅ ИЗМЕНЕНО: TEXT вместо TIMESTAMP
 ]
 
 def get_existing_columns(conn, table_name):
@@ -57,7 +57,11 @@ def add_missing_columns(conn, table_name):
         if col_name not in existing_columns:
             print(f"   ➕ Добавляю колонку: {col_name}")
             try:
-                c.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type}")
+                # ✅ ИЗМЕНЕНИЕ: для updated_at используем TEXT с текущей датой
+                if col_name == 'updated_at':
+                    c.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} TEXT DEFAULT '{datetime.now().isoformat()}'")
+                else:
+                    c.execute(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type}")
                 conn.commit()
                 added += 1
             except sqlite3.OperationalError as e:
@@ -65,68 +69,9 @@ def add_missing_columns(conn, table_name):
     
     return added
 
-def recreate_table(conn):
-    """Пересоздать таблицу с правильной структурой"""
-    c = conn.cursor()
-    
-    print("🔄 Создаю резервную копию данных...")
-    
-    # Сохраняем существующие данные
-    c.execute("SELECT * FROM bot_settings")
-    old_data = c.fetchone()
-    
-    print("🗑️  Удаляю старую таблицу...")
-    c.execute("DROP TABLE IF EXISTS bot_settings")
-    
-    print("📦 Создаю новую таблицу с правильной структурой...")
-    c.execute('''CREATE TABLE bot_settings (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        bot_name TEXT NOT NULL,
-        personality_traits TEXT,
-        greeting_message TEXT,
-        farewell_message TEXT,
-        price_explanation TEXT,
-        price_response_template TEXT,
-        premium_justification TEXT,
-        booking_redirect_message TEXT,
-        fomo_messages TEXT,
-        upsell_techniques TEXT,
-        communication_style TEXT,
-        max_message_length INTEGER DEFAULT 4,
-        emoji_usage TEXT,
-        languages_supported TEXT DEFAULT 'ru,en,ar',
-        objection_handling TEXT,
-        negative_handling TEXT,
-        safety_guidelines TEXT,
-        example_good_responses TEXT,
-        algorithm_actions TEXT,
-        location_features TEXT,
-        seasonality TEXT,
-        emergency_situations TEXT,
-        success_metrics TEXT,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-    
-    if old_data:
-        print("💾 Восстанавливаю данные...")
-        # Восстанавливаем то что можно
-        # (используем только те колонки которые были в старой таблице)
-        c.execute("""INSERT INTO bot_settings 
-                     (id, bot_name, personality_traits, greeting_message, 
-                      farewell_message, price_explanation)
-                     VALUES (1, ?, ?, ?, ?, ?)""",
-                  (old_data[1] if len(old_data) > 1 else 'Diamant Assistant',
-                   old_data[2] if len(old_data) > 2 else None,
-                   old_data[3] if len(old_data) > 3 else None,
-                   old_data[4] if len(old_data) > 4 else None,
-                   old_data[5] if len(old_data) > 5 else None))
-    
-    conn.commit()
-    print("✅ Таблица пересоздана!")
-
 def main():
     print("=" * 70)
-    print("🔧 ИСПРАВЛЕНИЕ СТРУКТУРЫ ТАБЛИЦЫ bot_settings")
+    print("🔧 ИСПРАВЛЕНИЕ СТРУКТУРЫ ТАБЛИЦЫ bot_settings (FIXED)")
     print("=" * 70)
     print(f"📂 База данных: {DATABASE_NAME}\n")
     
@@ -166,34 +111,19 @@ def main():
             print(f"   • {col}")
         print()
         
-        # Предлагаем варианты исправления
-        print("Выберите метод исправления:")
-        print("1) Добавить недостающие колонки (рекомендуется)")
-        print("2) Пересоздать таблицу (все данные будут потеряны!)")
-        print("3) Отмена")
+        print("🔧 Добавляю недостающие колонки...\n")
+        added = add_missing_columns(conn, 'bot_settings')
+        print(f"\n✅ Добавлено колонок: {added}")
         
-        choice = input("\nВаш выбор (1/2/3): ").strip()
+        # ✅ НОВОЕ: Обновляем updated_at для существующих записей
+        if 'updated_at' in missing_columns:
+            print("\n📝 Обновляю updated_at для существующих записей...")
+            c.execute("UPDATE bot_settings SET updated_at = ? WHERE updated_at IS NULL", 
+                     (datetime.now().isoformat(),))
+            conn.commit()
+            print("✅ updated_at обновлён!")
         
-        if choice == '1':
-            print("\n🔧 Добавляю недостающие колонки...\n")
-            added = add_missing_columns(conn, 'bot_settings')
-            print(f"\n✅ Добавлено колонок: {added}")
-            
-        elif choice == '2':
-            confirm = input("\n⚠️  ВСЕ ДАННЫЕ БУДУТ УДАЛЕНЫ! Продолжить? (yes/no): ").strip().lower()
-            if confirm == 'yes':
-                recreate_table(conn)
-            else:
-                print("❌ Отменено")
-                conn.close()
-                return 1
-                
-        else:
-            print("❌ Отменено")
-            conn.close()
-            return 1
-        
-        # Проверка
+        # Финальная проверка
         print("\n🔍 Финальная проверка...\n")
         existing_columns = get_existing_columns(conn, 'bot_settings')
         missing_columns = [col for col in required_column_names if col not in existing_columns]
@@ -203,11 +133,10 @@ def main():
         
         if not missing_columns:
             print("\n" + "=" * 70)
-            print("✅ СТРУКТУРА ТАБЛИЦЫ ИСПРАВЛЕНА!")
+            print("✅ СТРУКТУРА ТАБЛИЦЫ ПОЛНОСТЬЮ ИСПРАВЛЕНА!")
             print("=" * 70)
-            print("\n📋 Следующие шаги:")
-            print("1. Запустите: python migrate_bot_settings.py")
-            print("2. Выберите 'y' для обновления данных")
+            print("\n📋 Можете запускать сервер:")
+            print("   uvicorn main:app --reload")
             print("=" * 70 + "\n")
         else:
             print(f"\n⚠️  Всё ещё отсутствуют колонки: {missing_columns}")
