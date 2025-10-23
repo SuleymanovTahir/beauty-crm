@@ -1,6 +1,6 @@
-// frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ
+// frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import React, { useState, useEffect } from 'react';
-import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar } from 'lucide-react';
+import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
@@ -17,6 +17,9 @@ interface Service {
   name: string;
   name_ru: string;
   price: number;
+  min_price?: number;
+  max_price?: number;
+  duration?: string;
   currency: string;
   category: string;
   description?: string;
@@ -58,6 +61,14 @@ const categories = [
   'Waxing'
 ];
 
+// Форматирование цены
+const formatPrice = (service: Service) => {
+  if (service.min_price && service.max_price) {
+    return `${service.min_price} - ${service.max_price} ${service.currency}`;
+  }
+  return `${service.price} ${service.currency}`;
+};
+
 export default function Services() {
   const [activeTab, setActiveTab] = useState<TabType>('services');
   
@@ -86,6 +97,9 @@ export default function Services() {
     name: '',
     name_ru: '',
     price: 0,
+    min_price: '',
+    max_price: '',
+    duration: '',
     currency: 'AED',
     category: '',
     description: '',
@@ -166,6 +180,9 @@ export default function Services() {
       name: '',
       name_ru: '',
       price: 0,
+      min_price: '',
+      max_price: '',
+      duration: '',
       currency: 'AED',
       category: '',
       description: '',
@@ -182,6 +199,9 @@ export default function Services() {
       name: service.name,
       name_ru: service.name_ru,
       price: service.price,
+      min_price: service.min_price?.toString() || '',
+      max_price: service.max_price?.toString() || '',
+      duration: service.duration || '',
       currency: service.currency,
       category: service.category,
       description: service.description || '',
@@ -200,31 +220,26 @@ export default function Services() {
 
       setSaving(true);
 
+      const serviceData = {
+        key: serviceFormData.key,
+        name: serviceFormData.name,
+        name_ru: serviceFormData.name_ru,
+        price: serviceFormData.price,
+        min_price: serviceFormData.min_price ? Number(serviceFormData.min_price) : null,
+        max_price: serviceFormData.max_price ? Number(serviceFormData.max_price) : null,
+        duration: serviceFormData.duration || null,
+        currency: serviceFormData.currency,
+        category: serviceFormData.category,
+        description: serviceFormData.description,
+        description_ru: serviceFormData.description_ru,
+        benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
+      };
+
       if (editingService) {
-        await api.updateService(editingService.id, {
-          key: serviceFormData.key,
-          name: serviceFormData.name,
-          name_ru: serviceFormData.name_ru,
-          price: serviceFormData.price,
-          currency: serviceFormData.currency,
-          category: serviceFormData.category,
-          description: serviceFormData.description,
-          description_ru: serviceFormData.description_ru,
-          benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
-        });
+        await api.updateService(editingService.id, serviceData);
         toast.success('Услуга обновлена');
       } else {
-        await api.createService({
-          key: serviceFormData.key,
-          name: serviceFormData.name,
-          name_ru: serviceFormData.name_ru,
-          price: serviceFormData.price,
-          currency: serviceFormData.currency,
-          category: serviceFormData.category,
-          description: serviceFormData.description,
-          description_ru: serviceFormData.description_ru,
-          benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
-        });
+        await api.createService(serviceData);
         toast.success('Услуга добавлена');
       }
 
@@ -234,6 +249,18 @@ export default function Services() {
       toast.error(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleToggleServiceActive = async (service: Service) => {
+    try {
+      await api.updateService(service.id, { is_active: !service.is_active });
+      setServices(services.map(s => 
+        s.id === service.id ? { ...s, is_active: !s.is_active } : s
+      ));
+      toast.success(service.is_active ? 'Услуга деактивирована' : 'Услуга активирована');
+    } catch (err) {
+      toast.error('Ошибка изменения статуса');
     }
   };
 
@@ -470,6 +497,7 @@ export default function Services() {
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Название</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Цена</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Длительность</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Категория</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Статус</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Действия</th>
@@ -484,8 +512,20 @@ export default function Services() {
                             <p className="text-xs text-gray-500">{service.name_ru}</p>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                          {service.price} {service.currency}
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-semibold text-gray-900">
+                            {formatPrice(service)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          {service.duration ? (
+                            <Badge className="bg-blue-100 text-blue-800 flex items-center gap-1 w-fit">
+                              <Clock className="w-3 h-3" />
+                              {service.duration}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-gray-400">—</span>
+                          )}
                         </td>
                         <td className="px-6 py-4">
                           <Badge className="bg-purple-100 text-purple-800">
@@ -493,9 +533,16 @@ export default function Services() {
                           </Badge>
                         </td>
                         <td className="px-6 py-4">
-                          <Badge className={service.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                          <button
+                            onClick={() => handleToggleServiceActive(service)}
+                            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                              service.is_active 
+                                ? 'bg-green-100 text-green-800 hover:bg-green-200' 
+                                : 'bg-red-100 text-red-800 hover:bg-red-200'
+                            }`}
+                          >
                             {service.is_active ? 'Активна' : 'Неактивна'}
-                          </Badge>
+                          </button>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
@@ -761,7 +808,7 @@ export default function Services() {
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">Цена *</Label>
+                <Label htmlFor="price">Базовая цена *</Label>
                 <Input
                   id="price"
                   type="number"
@@ -780,6 +827,38 @@ export default function Services() {
                     <SelectItem value="USD">USD</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="minPrice">Мин. цена</Label>
+                <Input
+                  id="minPrice"
+                  type="number"
+                  value={serviceFormData.min_price}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
+                  placeholder="Опционально"
+                />
+              </div>
+              <div>
+                <Label htmlFor="maxPrice">Макс. цена</Label>
+                <Input
+                  id="maxPrice"
+                  type="number"
+                  value={serviceFormData.max_price}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
+                  placeholder="Опционально"
+                />
+              </div>
+              <div>
+                <Label htmlFor="duration">Длительность</Label>
+                <Input
+                  id="duration"
+                  value={serviceFormData.duration}
+                  onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
+                  placeholder="1h, 30min"
+                />
               </div>
             </div>
             
