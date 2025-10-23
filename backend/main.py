@@ -41,11 +41,10 @@ from database import (
 )
 
 # ===== ИМПОРТЫ BOT =====
-from bot import ask_gemini, build_genius_prompt, extract_booking_info, is_booking_complete
-from ai_bot import bot
+from bot import get_bot
+from integrations import send_message, send_typing_indicator 
 
-# ===== ИМПОРТЫ INSTAGRAM =====
-from instagram import send_message, send_typing_indicator
+
 
 # ===== ИМПОРТЫ API ROUTER =====
 from api import router as api_router, get_client_display_name
@@ -625,100 +624,90 @@ async def verify_webhook(request: Request):
 @app.post("/webhook")
 async def handle_webhook(request: Request):
     """
-    МИНИМАЛЬНЫЙ РАБОЧИЙ WEBHOOK - Всегда возвращает 200 OK
+    WEBHOOK с новой структурой бота
     """
-    import traceback
-    import json
-    
     try:
-        # Читаем body
         logger.info("=" * 70)
         logger.info("📨 WEBHOOK: POST request received")
         
-        try:
-            body_bytes = await request.body()
-            body_str = body_bytes.decode('utf-8')
-            logger.info(f"📦 RAW BODY ({len(body_str)} bytes):")
-            logger.info(body_str[:500])
-        except Exception as e:
-            logger.error(f"❌ Cannot read body: {e}")
-            return {"status": "ok"}  # Всё равно 200 OK!
+        # Читаем body
+        body_bytes = await request.body()
+        body_str = body_bytes.decode('utf-8')
         
-        # Парсим JSON
-        try:
-            data = json.loads(body_str)
-            logger.info("✅ JSON parsed")
-            logger.info(f"📊 Keys: {list(data.keys())}")
-        except Exception as e:
-            logger.error(f"❌ JSON parse error: {e}")
-            return {"status": "ok"}  # Всё равно 200 OK!
+        import json
+        data = json.loads(body_str)
         
-        # Проверяем Instagram
         if data.get("object") != "instagram":
             logger.warning(f"⚠️ Not Instagram: {data.get('object')}")
             return {"status": "ok"}
         
         logger.info("✅ Instagram webhook confirmed")
         
-        # Обрабатываем entries
-        entries = data.get("entry", [])
-        logger.info(f"📬 Entries: {len(entries)}")
+        # ✅ ПОЛУЧАЕМ ЭКЗЕМПЛЯР БОТА
+        bot = get_bot()
         
-        for entry in entries:
+        # Обрабатываем entries
+        for entry in data.get("entry", []):
             for messaging in entry.get("messaging", []):
                 sender_id = messaging.get("sender", {}).get("id")
                 
-                if not sender_id:
-                    continue
-                
-                logger.info(f"👤 Sender: {sender_id}")
-                
-                if "message" not in messaging:
+                if not sender_id or "message" not in messaging:
                     continue
                 
                 message_data = messaging["message"]
                 
+                # Пропускаем эхо
                 if message_data.get("is_echo"):
-                    logger.info("⏭️ Echo, skipping")
                     continue
                 
-                message_text = message_data.get("text", "")
-                logger.info(f"💬 Text: {message_text}")
+                message_text = message_data.get("text", "").strip()
                 
-                if not message_text.strip():
+                if not message_text:
                     continue
                 
                 try:
-                    # Обработка
+                    # Создать/получить клиента
                     get_or_create_client(sender_id)
                     save_message(sender_id, message_text, "client")
+                    
+                    # Определить язык
+                    detect_and_save_language(sender_id, message_text)
+                    client_language = get_client_language(sender_id)
+                    
+                    # Показать typing
                     await send_typing_indicator(sender_id)
                     
+                    # Получить историю
                     history = get_chat_history(sender_id, limit=10)
-                    progress = get_booking_progress(sender_id)
-                    genius_prompt = build_genius_prompt(sender_id, history, progress)
                     
-                    logger.info("🤖 Asking AI...")
-                    ai_response = await ask_gemini(message_text, genius_prompt)
-                    logger.info(f"✅ AI: {ai_response[:100]}")
+                    # ✅ ГЕНЕРИРУЕМ ОТВЕТ ЧЕРЕЗ НОВОГО БОТА
+                    logger.info("🤖 Generating AI response...")
+                    ai_response = await bot.generate_response(
+                        user_message=message_text,
+                        instagram_id=sender_id,
+                        history=history,
+                        client_language=client_language
+                    )
                     
+                    logger.info(f"✅ AI response: {ai_response[:100]}")
+                    
+                    # Сохранить и отправить
                     save_message(sender_id, ai_response, "bot")
                     await send_message(sender_id, ai_response)
-                    logger.info("📤 Sent!")
+                    
+                    logger.info("📤 Message sent!")
                     
                 except Exception as e:
                     logger.error(f"❌ Processing error: {e}")
                     logger.error(traceback.format_exc())
         
-        logger.info("=" * 70)
         return {"status": "ok"}
         
     except Exception as e:
         logger.error("=" * 70)
         logger.error(f"❌ CRITICAL ERROR: {e}")
         logger.error(traceback.format_exc())
-        logger.error("=" * 70)
-        return {"status": "ok"}  # ВСЕГДА 200 OK!
+        return {"status": "ok"} 
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -736,20 +725,32 @@ async def index(request: Request):
 
 
 @app.post("/api/bot-settings/reload")
-async def reload_bot_settings(current_user: dict = Depends(get_current_user)):
+async def reload_bot_settings(session_token: Optional[str] = Cookie(None)):
     """
     Перезагрузить настройки бота из БД
-    (только для авторизованных пользователей)
+    Вызывается после обновления настроек в админке
     """
+    user = get_user_by_session(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
     try:
+        # ✅ ПЕРЕЗАГРУЖАЕМ НАСТРОЙКИ БОТА
+        bot = get_bot()
+        bot.reload_settings()
+        
+        log_info("Настройки бота перезагружены", "api")
+        
         return {
             "success": True,
-            "message": "Настройки будут применены при следующем запросе к боту"
+            "message": "Настройки бота перезагружены из БД",
+            "salon": bot.salon['name']
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Ошибка перезагрузки: {str(e)}"
+        log_error(f"Ошибка перезагрузки настроек: {e}", "api")
+        return JSONResponse(
+            {"error": str(e)}, 
+            status_code=500
         )
 
 @app.delete("/api/services/{service_id}")
@@ -839,25 +840,22 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        try:
-            salon = get_salon_settings()
-            log_info(f"💎 Салон: {salon['name']}", "startup")
-            log_info(f"🤖 Бот: {salon['bot_name']}", "startup")
-            log_info(f"📍 Адрес: {salon['address']}", "startup")
-        except Exception as e:
-            log_error("❌ Настройки не инициализированы!", "startup")
-            log_error("👉 Запустите: python migrate_bot_settings.py", "startup")
-            raise
+        
+        # Инициализация БД
         init_database()
-
+        
+        # ✅ ИНИЦИАЛИЗАЦИЯ БОТА
+        bot = get_bot()
+        log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
+        
         log_info("✅ CRM готова к работе!", "startup")
-        log_info("🔐 Логин: http://localhost:8000/login", "startup")
-        log_info("📊 API Docs: http://localhost:8000/docs", "startup")
-        log_info("🎨 React фронтенд: http://localhost:5173", "startup")
         log_info("=" * 70, "startup")
     except Exception as e:
-        log_critical(f"❌ КРИТИЧЕСКАЯ ОШИБКА ПРИ ЗАПУСКЕ: {e}", "startup")
+        log_critical(f"❌ ОШИБКА ПРИ ЗАПУСКЕ: {e}", "startup")
         raise
+
+
+# ... (остальной код без изменений)
 
 
 if __name__ == "__main__":

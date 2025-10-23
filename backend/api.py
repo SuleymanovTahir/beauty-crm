@@ -27,7 +27,7 @@ from database import (
     get_bot_settings, update_bot_settings,
 )
 from config import CLIENT_STATUSES
-from instagram import send_message
+from integrations import send_message
 
 salon = get_salon_settings()
 
