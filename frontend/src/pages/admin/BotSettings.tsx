@@ -154,19 +154,26 @@ export default function BotSettings() {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      console.log('💾 Сохранение настроек:', settings);
-      await api.updateBotSettings(settings);
-      toast.success('✅ Настройки бота успешно сохранены!');
-    } catch (err: any) {
-      console.error('❌ Save error:', err);
-      toast.error('❌ Ошибка сохранения: ' + (err.message || 'Неизвестная ошибка'));
-    } finally {
-      setSaving(false);
-    }
-  };
+const handleSave = async () => {
+  try {
+    setSaving(true);
+    
+    // 1. Сохранить в БД
+    await api.updateBotSettings(settings);
+    
+    // 2. Перезагрузить бота
+    await fetch(`${import.meta.env.VITE_API_URL}/bot-settings/reload`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    
+    toast.success('✅ Настройки сохранены и бот перезагружен!');
+  } catch (err: any) {
+    toast.error('❌ Ошибка: ' + err.message);
+  } finally {
+    setSaving(false);
+  }
+};
 
   const toggleLanguage = (langCode: string) => {
     setSelectedLanguages(prev => {

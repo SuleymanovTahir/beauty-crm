@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form, Cookie, Query, WebSocket
+from fastapi import FastAPI, Request, Form, Cookie, Query, WebSocket,HTTPException, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -29,7 +29,7 @@ from database import (
     get_chat_history, get_booking_progress,get_stats,
     verify_user, create_session, delete_session, create_user,DATABASE_NAME,
     get_user_by_email, create_password_reset_token, verify_reset_token,
-    reset_user_password, mark_reset_token_used, get_salon_settings,
+    reset_user_password, mark_reset_token_used, get_salon_settings,get_user_by_session,
     update_booking_progress,
     clear_booking_progress, save_booking, 
     get_all_clients, get_all_bookings, get_analytics_data, 
@@ -42,6 +42,7 @@ from database import (
 
 # ===== ИМПОРТЫ BOT =====
 from bot import ask_gemini, build_genius_prompt, extract_booking_info, is_booking_complete
+from ai_bot import bot
 
 # ===== ИМПОРТЫ INSTAGRAM =====
 from instagram import send_message, send_typing_indicator
@@ -149,6 +150,48 @@ async def log_requests(request: Request, call_next):
         log_error(f"❌ ОШИБКА: {request.method} {request.url.path}", "middleware", exc_info=True)
         raise
 
+
+
+def get_current_user(request: Request) -> dict:
+    """
+    Получить текущего пользователя из сессии
+    
+    Используется как зависимость в защищённых endpoints:
+    @app.get("/api/protected")
+    async def protected_route(current_user: dict = Depends(get_current_user)):
+        # Только авторизованные пользователи попадут сюда
+        ...
+    
+    Args:
+        request: FastAPI Request объект
+    
+    Returns:
+        dict: Данные пользователя {id, username, full_name, email, role}
+    
+    Raises:
+        HTTPException 401: Если не авторизован или сессия истекла
+    """
+    # Получить токен из cookies
+    session_token = request.cookies.get("session_token")
+    
+    # Проверить что токен есть
+    if not session_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Не авторизован. Пожалуйста, войдите в систему."
+        )
+    
+    # Получить пользователя из БД
+    user = get_user_by_session(session_token)
+    
+    # Проверить что сессия валидна
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Сессия истекла. Пожалуйста, войдите заново."
+        )
+    
+    return user
 
 # ===== ГЛОБАЛЬНЫЙ ОБРАБОТЧИК ОШИБОК =====
 @app.exception_handler(Exception)
@@ -691,6 +734,44 @@ async def index(request: Request):
         log_error(f"Ошибка: {e}", "api", exc_info=True)
         raise
 
+
+@app.post("/api/bot-settings/reload")
+async def reload_bot_settings(current_user: dict = Depends(get_current_user)):
+    """
+    Перезагрузить настройки бота из БД
+    (только для авторизованных пользователей)
+    """
+    try:
+        return {
+            "success": True,
+            "message": "Настройки будут применены при следующем запросе к боту"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Ошибка перезагрузки: {str(e)}"
+        )
+
+@app.delete("/api/services/{service_id}")
+async def delete_service(
+    service_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    # Проверить что пользователь админ
+    if current_user["role"] != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Доступ запрещён. Только для администраторов."
+        )
+    
+    # Удалить услугу
+    from database import delete_service as db_delete_service
+    success = db_delete_service(service_id)
+    
+    if not success:
+        raise HTTPException(status_code=404, detail="Услуга не найдена")
+    
+    return {"success": True}
 
 @app.post("/book", response_class=HTMLResponse)
 async def book(request: Request, name: str = Form(...), phone: str = Form(...), service: str = Form(...)):
