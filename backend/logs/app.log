@@ -17669,3 +17669,100 @@ sqlite3.OperationalError: no such table: users
 2025-10-23 08:28:56 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
 2025-10-23 08:30:07 - crm - INFO - [middleware] 🔥 GET /api/clients
 2025-10-23 08:30:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:33:44 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:33:44 - crm - INFO - ======================================================================
+2025-10-23 08:33:44 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:33:45 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:33:46 - crm - INFO - 🤖 Generating AI response...
+2025-10-23 08:33:48 - crm - INFO - ✅ AI response: Привет! 😊 Доброе утро! ☀️ Чем могу помочь сегодня в M.Le Diamant Beauty Lounge? Может быть, интересу
+2025-10-23 08:33:52 - crm - INFO - 📤 Message sent!
+2025-10-23 08:33:52 - crm - INFO - [middleware] 📤 POST /webhook → 200 (7.75s)
+2025-10-23 08:33:54 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:33:54 - crm - INFO - ======================================================================
+2025-10-23 08:33:54 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:33:54 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:33:54 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-23 08:34:13 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:34:13 - crm - INFO - ======================================================================
+2025-10-23 08:34:13 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:34:13 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:34:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:34:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:34:14 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/messages
+2025-10-23 08:34:14 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/messages → 200 (0.00s)
+2025-10-23 08:34:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-23 08:34:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-23 08:34:16 - crm - INFO - 🤖 Generating AI response...
+2025-10-23 08:34:19 - crm - INFO - ✅ AI response: К сожалению, марокканской бани у нас пока нет 😔 Но я уверена, что вам понравится наш спа-программа! 
+2025-10-23 08:34:21 - crm - INFO - 📤 Message sent!
+2025-10-23 08:34:21 - crm - INFO - [middleware] 📤 POST /webhook → 200 (7.94s)
+2025-10-23 08:34:22 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:34:22 - crm - INFO - ======================================================================
+2025-10-23 08:34:22 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:34:22 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:34:22 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-23 08:34:55 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:34:55 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:34:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-23 08:34:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-23 08:35:33 - crm - INFO - [middleware] 🔥 OPTIONS /api/stats
+2025-10-23 08:35:33 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:35:33 - crm - INFO - [middleware] 📤 OPTIONS /api/stats → 200 (0.00s)
+2025-10-23 08:35:33 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 08:35:33 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 08:35:33 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 08:35:35 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 08:35:35 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 08:35:35 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-23 08:35:35 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-23 08:35:35 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-23 08:35:35 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-23 08:35:42 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 08:35:42 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:35:42 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 08:35:42 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 08:35:43 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:35:43 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:35:43 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:35:43 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 08:35:43 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 08:35:43 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 08:35:46 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-23 08:35:46 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-23 08:35:46 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:35:46 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:35:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:35:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:35:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-23 08:35:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-23 08:36:05 - crm - INFO - [middleware] 🔥 OPTIONS /api/chat/send
+2025-10-23 08:36:05 - crm - INFO - [middleware] 📤 OPTIONS /api/chat/send → 200 (0.00s)
+2025-10-23 08:36:05 - crm - INFO - [middleware] 🔥 POST /api/chat/send
+2025-10-23 08:36:07 - crm - INFO - [middleware] 📤 POST /api/chat/send → 200 (1.92s)
+2025-10-23 08:36:07 - crm - INFO - [middleware] 🔥 POST /api/chat/send
+2025-10-23 08:36:08 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:36:08 - crm - INFO - ======================================================================
+2025-10-23 08:36:08 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:36:08 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:36:08 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.01s)
+2025-10-23 08:36:08 - crm - INFO - [middleware] 📤 POST /api/chat/send → 200 (1.54s)
+2025-10-23 08:36:09 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:36:09 - crm - INFO - ======================================================================
+2025-10-23 08:36:09 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:36:09 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:36:09 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-23 08:36:46 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:36:46 - crm - INFO - ======================================================================
+2025-10-23 08:36:46 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:36:46 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:36:47 - crm - INFO - 🤖 Generating AI response...
+2025-10-23 08:36:49 - crm - INFO - ✅ AI response: Спа программа длится 2 часа полного релакса 💖
+
+За это время вы успеете отдохнуть душой и телом, а ко
+2025-10-23 08:36:51 - crm - INFO - 📤 Message sent!
+2025-10-23 08:36:51 - crm - INFO - [middleware] 📤 POST /webhook → 200 (4.87s)
+2025-10-23 08:36:52 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-23 08:36:52 - crm - INFO - ======================================================================
+2025-10-23 08:36:52 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-23 08:36:52 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-23 08:36:52 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
