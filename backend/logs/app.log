@@ -17766,3 +17766,73 @@ sqlite3.OperationalError: no such table: users
 2025-10-23 08:36:52 - crm - INFO - 📨 WEBHOOK: POST request received
 2025-10-23 08:36:52 - crm - INFO - ✅ Instagram webhook confirmed
 2025-10-23 08:36:52 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-23 08:50:33 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 08:50:33 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:33 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 08:50:33 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 08:50:33 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 08:50:33 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 08:50:39 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 08:50:39 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 08:50:39 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 08:50:39 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:42 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 08:50:42 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:42 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 08:50:42 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 08:50:42 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 08:50:42 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:43 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 08:50:43 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:50:43 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 08:50:43 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 08:50:43 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 08:50:43 - crm - INFO - [startup] ======================================================================
+2025-10-23 08:52:02 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-23 08:52:02 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-23 08:52:02 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:52:02 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 09:02:32 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:02:32 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:02:32 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:02:32 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:02:32 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:02:32 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:02:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:02:38 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:02:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:02:38 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:02:38 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:02:38 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:08 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:04:08 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:08 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:04:08 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:04:08 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:04:08 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:11 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:04:11 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:11 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:04:11 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:04:11 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:04:11 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:13 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:04:13 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:13 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:04:13 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:04:13 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:04:13 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:20 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:04:20 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:20 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:04:20 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:04:20 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:04:20 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:26 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-23 09:04:26 - crm - INFO - [startup] ======================================================================
+2025-10-23 09:04:26 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-23 09:04:26 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-23 09:04:26 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-23 09:04:26 - crm - INFO - [startup] ======================================================================

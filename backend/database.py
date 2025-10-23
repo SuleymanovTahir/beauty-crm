@@ -230,6 +230,8 @@ def init_database():
                   name_ru TEXT,
                   name_ar TEXT,
                   price REAL NOT NULL,
+                  min_price REAL, 
+                  max_price REAL, 
                   currency TEXT DEFAULT 'AED',
                   category TEXT NOT NULL,
                   description TEXT,
@@ -237,6 +239,7 @@ def init_database():
                   description_ar TEXT,
                   benefits TEXT,
                   is_active INTEGER DEFAULT 1,
+                  duration TEXT,
                   created_at TEXT,
                   updated_at TEXT)''')
 
