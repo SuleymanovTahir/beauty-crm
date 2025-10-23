@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit, Check, X, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -13,7 +13,7 @@ interface Booking {
   status: string;
   created_at: string;
   revenue: number;
-  master?: string; // Новое поле
+  master?: string;
 }
 
 interface Service {
@@ -24,6 +24,14 @@ interface Service {
   price: number;
   currency: string;
   category: string;
+}
+
+interface Client {
+  id: string;
+  instagram_id: string;
+  display_name: string;
+  phone?: string;
+  namejt: string;
 }
 
 interface User {
@@ -73,19 +81,31 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [masters, setMasters] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState({ 
-    name: '', 
-    service: '', 
-    phone: '', 
-    date: '', 
+  const [addingBooking, setAddingBooking] = useState(false);
+  
+  // Client search
+  const [clientSearch, setClientSearch] = useState('');
+  const [showClientDropdown, setShowClientDropdown] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  
+  // Service search
+  const [serviceSearch, setServiceSearch] = useState('');
+  const [showServiceDropdown, setShowServiceDropdown] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  
+  const [addForm, setAddForm] = useState({
+    phone: '',
+    date: '',
     time: '',
-    master: '' 
+    revenue: 0,
+    master: ''
   });
   
   const statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
@@ -97,14 +117,16 @@ export default function Calendar() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [bookingsData, servicesData, usersData] = await Promise.all([
+      const [bookingsData, servicesData, clientsData, usersData] = await Promise.all([
         api.getBookings(),
         api.getServices(true),
+        api.getClients(),
         api.getUsers()
       ]);
       
       setBookings(bookingsData.bookings || []);
       setServices(servicesData.services || []);
+      setClients(clientsData.clients || []);
       setMasters(usersData.users?.filter((u: User) => 
         u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
       ) || []);
@@ -171,26 +193,23 @@ export default function Calendar() {
   };
 
   const openCreateModal = () => {
-    setForm({
-      name: '',
-      service: services[0]?.name_ru || '',
-      phone: '',
-      date: currentDate.toISOString().split('T')[0],
-      time: TIME_SLOTS[0].display,
-      master: masters[0]?.full_name || ''
-    });
+    resetForm();
     setIsEditing(false);
     setShowCreateModal(true);
   };
 
   const openEditModal = (booking: Booking) => {
     const bookingDate = new Date(booking.datetime);
-    setForm({
-      name: booking.name,
-      service: booking.service,
+    const client = clients.find(c => c.instagram_id === booking.client_id) || null;
+    const service = services.find(s => s.name_ru === booking.service) || null;
+    
+    setSelectedClient(client);
+    setSelectedService(service);
+    setAddForm({
       phone: booking.phone,
       date: bookingDate.toISOString().split('T')[0],
       time: bookingDate.toTimeString().slice(0, 5),
+      revenue: booking.revenue,
       master: booking.master || masters[0]?.full_name || ''
     });
     setIsEditing(true);
@@ -198,47 +217,62 @@ export default function Calendar() {
     setShowCreateModal(true);
   };
 
+  const resetForm = () => {
+    setClientSearch('');
+    setServiceSearch('');
+    setSelectedClient(null);
+    setSelectedService(null);
+    setAddForm({
+      phone: '',
+      date: currentDate.toISOString().split('T')[0],
+      time: TIME_SLOTS[0].display,
+      revenue: 0,
+      master: masters[0]?.full_name || ''
+    });
+  };
+
   const handleSaveBooking = async () => {
-    if (!form.name || !form.service || !form.phone || !form.date || !form.time) {
-      toast.error('Заполните все поля');
+    if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
+      toast.error('Заполните все обязательные поля (клиент, услуга, дата, время)');
       return;
     }
 
     try {
+      setAddingBooking(true);
       if (isEditing && selectedBooking) {
-        // Обновление (пока через удаление и создание заново)
         await api.updateBookingStatus(selectedBooking.id, 'cancelled');
         await api.createBooking({
-          name: form.name,
-          service: form.service,
-          phone: form.phone,
-          date: form.date,
-          time: form.time,
-          master: form.master,
-          instagram_id: selectedBooking.client_id,
+          instagram_id: selectedClient.instagram_id,
+          name: selectedClient.display_name,
+          phone: addForm.phone || selectedClient.phone || '',
+          service: selectedService.name_ru,
+          date: addForm.date,
+          time: addForm.time,
+          revenue: addForm.revenue || selectedService.price,
+          master: addForm.master,
         });
         toast.success('Запись обновлена');
       } else {
-        // Создание
         await api.createBooking({
-          name: form.name,
-          service: form.service,
-          phone: form.phone,
-          date: form.date,
-          time: form.time,
-          master: form.master,
-          instagram_id: `manual_${Date.now()}`,
+          instagram_id: selectedClient.instagram_id,
+          name: selectedClient.display_name,
+          phone: addForm.phone || selectedClient.phone || '',
+          service: selectedService.name_ru,
+          date: addForm.date,
+          time: addForm.time,
+          revenue: addForm.revenue || selectedService.price,
+          master: addForm.master,
         });
-        toast.success('Запись создана');
+        toast.success('Запись создана ✅');
       }
       
       setShowCreateModal(false);
-      setIsEditing(false);
-      setSelectedBooking(null);
+      resetForm();
       await loadData();
-    } catch (err) {
-      toast.error('Ошибка сохранения');
-      console.error(err);
+    } catch (err: any) {
+      toast.error(`❌ Ошибка: ${err.message}`);
+    } finally {
+      setAddingBooking(false);
     }
   };
 
@@ -271,6 +305,16 @@ export default function Calendar() {
       toast.error('Ошибка');
     }
   };
+
+  const filteredClients = clients.filter((c: Client) =>
+    (c.display_name || '').toLowerCase().includes(clientSearch.toLowerCase()) ||
+    (c.phone || '').includes(clientSearch)
+  );
+
+  const filteredServices = services.filter((s: Service) =>
+    (s.name_ru || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
+    (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
+  );
 
   const isToday = (date: Date) => date.toDateString() === today.toDateString();
   const isCurrentDate = (date: Date) => date.toDateString() === currentDate.toDateString();
@@ -376,7 +420,7 @@ export default function Calendar() {
                 fontSize: '0.65rem', fontWeight: '600',
                 color: isCurrent ? '#fff' : '#6b7280', marginBottom: '0.125rem'
               }}>
-                {DAYS[day.getDay()]}
+                {DAYS[day.getDay() === 0 ? 6 : day.getDay() - 1]}
               </div>
               <div style={{
                 fontSize: '0.9rem', fontWeight: 'bold',
@@ -442,124 +486,352 @@ export default function Calendar() {
       {/* Create/Edit Modal */}
       {showCreateModal && (
         <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 9999, padding: '1rem'
         }}>
           <div style={{
             backgroundColor: '#fff', borderRadius: '1rem',
-            width: '100%', maxWidth: '450px',
-            boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)'
+            width: '100%', maxWidth: '500px', maxHeight: '90vh',
+            overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
           }}>
             <div style={{
               padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>
-                {isEditing ? 'Редактировать запись' : 'Создать запись'}
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
+                {isEditing ? 'Редактировать запись' : 'Добавить запись'}
               </h3>
-              <button onClick={() => {
-                setShowCreateModal(false);
-                setIsEditing(false);
-                setSelectedBooking(null);
-              }} style={{
+              <button onClick={() => { setShowCreateModal(false); resetForm(); }} style={{
                 backgroundColor: 'transparent', border: 'none',
                 cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
-              }}>
-                ×
-              </button>
+              }}>×</button>
             </div>
-
+            
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Имя клиента" style={{
-                  padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem', boxSizing: 'border-box'
-                }}
-              />
+              {/* Client Search */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Клиент *
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    placeholder="Поиск клиента по имени или телефону..."
+                    value={selectedClient ? selectedClient.display_name : clientSearch}
+                    onChange={(e) => {
+                      setClientSearch(e.target.value);
+                      setSelectedClient(null);
+                      setShowClientDropdown(true);
+                    }}
+                    onFocus={() => setShowClientDropdown(true)}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.95rem', boxSizing: 'border-box'
+                    }}
+                  />
+                  {selectedClient && (
+                    <div style={{
+                      position: 'absolute', right: '0.75rem', top: '50%',
+                      transform: 'translateY(-50%)', display: 'flex',
+                      alignItems: 'center', gap: '0.5rem'
+                    }}>
+                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
+                      <button
+                        onClick={() => {
+                          setSelectedClient(null);
+                          setClientSearch('');
+                        }}
+                        style={{
+                          backgroundColor: 'transparent', border: 'none',
+                          cursor: 'pointer', padding: 0
+                        }}
+                      >
+                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                      </button>
+                    </div>
+                  )}
+                  {showClientDropdown && !selectedClient && clientSearch && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0,
+                      marginTop: '0.5rem', backgroundColor: '#fff',
+                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
+                    }}>
+                      {filteredClients.length > 0 ? (
+                        filteredClients.map((client) => (
+                          <button
+                            key={client.id}
+                            onClick={() => {
+                              setSelectedClient(client);
+                              setClientSearch('');
+                              setShowClientDropdown(false);
+                              setAddForm({ ...addForm, phone: client.phone || '' });
+                            }}
+                            style={{
+                              width: '100%', padding: '0.75rem 1rem',
+                              textAlign: 'left', border: 'none',
+                              backgroundColor: '#fff', cursor: 'pointer',
+                              borderBottom: '1px solid #f3f4f6',
+                              display: 'flex', alignItems: 'center', gap: '0.75rem'
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+                          >
+                            <div style={{
+                              width: '40px', height: '40px',
+                              backgroundColor: '#fce7f3', borderRadius: '50%',
+                              display: 'flex', alignItems: 'center',
+                              justifyContent: 'center', color: '#ec4899',
+                              fontWeight: '500', fontSize: '0.875rem', flexShrink: 0
+                            }}>
+                              {(client.display_name || 'N').charAt(0).toUpperCase()}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
+                                {client.display_name}
+                              </div>
+                              {client.phone && (
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                  {client.phone}
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        ))
+                      ) : (
+                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
+                          Клиенты не найдены
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
 
-              <select value={form.service}
-                onChange={(e) => setForm({ ...form, service: e.target.value })}
-                style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem',
-                  boxSizing: 'border-box', backgroundColor: '#fff', cursor: 'pointer'
-                }}
-              >
-                <option value="">Выберите услугу</option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.name_ru}>
-                    {s.name_ru} - {s.price} {s.currency}
-                  </option>
-                ))}
-              </select>
+              {/* Service Search */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Услуга *
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    placeholder="Поиск услуги..."
+                    value={selectedService ? selectedService.name_ru : serviceSearch}
+                    onChange={(e) => {
+                      setServiceSearch(e.target.value);
+                      setSelectedService(null);
+                      setShowServiceDropdown(true);
+                    }}
+                    onFocus={() => setShowServiceDropdown(true)}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.95rem', boxSizing: 'border-box'
+                    }}
+                  />
+                  {selectedService && (
+                    <div style={{
+                      position: 'absolute', right: '0.75rem', top: '50%',
+                      transform: 'translateY(-50%)', display: 'flex',
+                      alignItems: 'center', gap: '0.5rem'
+                    }}>
+                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
+                      <button
+                        onClick={() => {
+                          setSelectedService(null);
+                          setServiceSearch('');
+                        }}
+                        style={{
+                          backgroundColor: 'transparent', border: 'none',
+                          cursor: 'pointer', padding: 0
+                        }}
+                      >
+                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                      </button>
+                    </div>
+                  )}
+                  {showServiceDropdown && !selectedService && serviceSearch && (
+                    <div style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0,
+                      marginTop: '0.5rem', backgroundColor: '#fff',
+                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
+                    }}>
+                      {filteredServices.length > 0 ? (
+                        filteredServices.map((service) => (
+                          <button
+                            key={service.id}
+                            onClick={() => {
+                              setSelectedService(service);
+                              setServiceSearch('');
+                              setShowServiceDropdown(false);
+                              setAddForm({ ...addForm, revenue: service.price });
+                            }}
+                            style={{
+                              width: '100%', padding: '0.75rem 1rem',
+                              textAlign: 'left', border: 'none',
+                              backgroundColor: '#fff', cursor: 'pointer',
+                              borderBottom: '1px solid #f3f4f6'
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div>
+                                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
+                                  {service.name_ru}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                  {service.category}
+                                </div>
+                              </div>
+                              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#ec4899' }}>
+                                {service.price} {service.currency}
+                              </div>
+                            </div>
+                          </button>
+                        ))
+                      ) : (
+                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
+                          Услуги не найдены
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
 
-              <select value={form.master}
-                onChange={(e) => setForm({ ...form, master: e.target.value })}
-                style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem',
-                  boxSizing: 'border-box', backgroundColor: '#fff', cursor: 'pointer'
-                }}
-              >
-                <option value="">Выберите мастера</option>
-                {masters.map((m) => (
-                  <option key={m.id} value={m.full_name}>
-                    {m.full_name} ({m.role})
-                  </option>
-                ))}
-              </select>
+              {/* Master Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Мастер
+                </label>
+                <select
+                  value={addForm.master}
+                  onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.95rem', boxSizing: 'border-box',
+                    backgroundColor: '#fff', cursor: 'pointer'
+                  }}
+                >
+                  <option value="">Выберите мастера</option>
+                  {masters.map((m) => (
+                    <option key={m.id} value={m.full_name}>
+                      {m.full_name} ({m.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <input type="tel" value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="Телефон" style={{
-                  padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem', boxSizing: 'border-box'
-                }}
-              />
+              {/* Phone */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Телефон {!selectedClient?.phone && '*'}
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+971 50 123 4567"
+                  value={addForm.phone}
+                  onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.95rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
 
-              <input type="date" value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-                style={{
-                  padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem', boxSizing: 'border-box'
-                }}
-              />
+              {/* Date and Time */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                    Дата *
+                  </label>
+                  <input
+                    type="date"
+                    value={addForm.date}
+                    onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.95rem', boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                    Время *
+                  </label>
+                  <select
+                    value={addForm.time}
+                    onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.95rem', boxSizing: 'border-box',
+                      backgroundColor: '#fff', cursor: 'pointer'
+                    }}
+                  >
+                    {TIME_SLOTS.map((slot, idx) => (
+                      <option key={idx} value={slot.display}>
+                        {slot.display}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-              <select value={form.time}
-                onChange={(e) => setForm({ ...form, time: e.target.value })}
-                style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', fontSize: '0.95rem',
-                  boxSizing: 'border-box', backgroundColor: '#fff', cursor: 'pointer'
-                }}
-              >
-                {TIME_SLOTS.map((slot, idx) => (
-                  <option key={idx} value={slot.display}>
-                    {slot.display}
-                  </option>
-                ))}
-              </select>
+              {/* Revenue */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Сумма (AED)
+                </label>
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={addForm.revenue}
+                  onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.95rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
 
+              {/* Buttons */}
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-                <button onClick={() => {
-                  setShowCreateModal(false);
-                  setIsEditing(false);
-                  setSelectedBooking(null);
-                }} style={{
-                  flex: 1, padding: '0.75rem', backgroundColor: '#f3f4f6',
-                  border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                  cursor: 'pointer', fontWeight: '500'
-                }}>
+                <button
+                  onClick={() => { setShowCreateModal(false); resetForm(); }}
+                  disabled={addingBooking}
+                  style={{
+                    flex: 1, padding: '0.75rem',
+                    backgroundColor: '#f3f4f6', border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem', cursor: 'pointer',
+                    fontWeight: '500', color: '#374151'
+                  }}
+                >
                   Отмена
                 </button>
-                <button onClick={handleSaveBooking} style={{
-                  flex: 1, padding: '0.75rem', backgroundColor: '#2563eb',
-                  border: 'none', borderRadius: '0.5rem', color: '#fff',
-                  fontWeight: '500', cursor: 'pointer'
-                }}>
-                  {isEditing ? 'Сохранить' : 'Создать'}
+                <button
+                  onClick={handleSaveBooking}
+                  disabled={addingBooking}
+                  style={{
+                    flex: 1, padding: '0.75rem',
+                    backgroundColor: '#ec4899', border: 'none',
+                    borderRadius: '0.5rem', color: '#fff',
+                    fontWeight: '500', cursor: addingBooking ? 'not-allowed' : 'pointer',
+                    opacity: addingBooking ? 0.5 : 1
+                  }}
+                >
+                  {addingBooking ? 'Создание...' : isEditing ? 'Сохранить' : 'Создать'}
                 </button>
               </div>
             </div>
@@ -570,14 +842,14 @@ export default function Calendar() {
       {/* Event Detail Modal */}
       {selectedBooking && !showCreateModal && (
         <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 9999, padding: '1rem'
         }}>
           <div style={{
             backgroundColor: '#fff', borderRadius: '1rem',
             width: '100%', maxWidth: '450px',
-            boxShadow: '0 20px 25px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
             maxHeight: '90vh', overflow: 'auto'
           }}>
             <div style={{

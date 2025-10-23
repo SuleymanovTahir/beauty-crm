@@ -17605,3 +17605,67 @@ sqlite3.OperationalError: no such table: users
 2025-10-23 08:19:07 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
 2025-10-23 08:19:11 - crm - INFO - [middleware] 🔥 GET /api/services
 2025-10-23 08:19:11 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 08:19:38 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:19:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:19:38 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:19:38 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 08:19:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 08:19:38 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-23 08:24:54 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:24:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:24:54 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:24:54 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 08:24:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 08:24:54 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-23 08:24:56 - crm - INFO - [middleware] 🔥 OPTIONS /api/clients
+2025-10-23 08:24:56 - crm - INFO - [middleware] 📤 OPTIONS /api/clients → 200 (0.00s)
+2025-10-23 08:24:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:24:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:24:58 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 08:24:58 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:24:58 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 08:24:58 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 08:25:01 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:25:01 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:25:01 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:25:01 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:25:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:25:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:25:03 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-23 08:25:03 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-23 08:25:03 - crm - INFO - [middleware] 🔥 OPTIONS /api/analytics
+2025-10-23 08:25:03 - crm - INFO - [middleware] 📤 OPTIONS /api/analytics → 200 (0.00s)
+2025-10-23 08:25:03 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-23 08:25:03 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-23 08:27:12 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:27:12 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:27:12 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:27:12 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 08:27:12 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:27:12 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 08:27:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:27:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:28:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:28:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 OPTIONS /api/bookings
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 OPTIONS /api/services
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 OPTIONS /api/users
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 OPTIONS /api/bookings → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 OPTIONS /api/services → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 OPTIONS /api/users → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:28:37 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-23 08:28:37 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-10-23 08:28:56 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-23 08:28:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:28:56 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-23 08:28:56 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-23 08:28:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-23 08:28:56 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-23 08:30:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-23 08:30:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
