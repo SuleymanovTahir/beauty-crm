@@ -1876,3 +1876,177 @@ async def reject_user(
         conn.close()
         log_error(f"Error rejecting user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+    
+
+# backend/api.py
+# Добавьте эти эндпоинты в конец файла перед последней строкой
+
+@router.post("/users/{user_id}/change-password")
+async def change_user_password(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    Изменить пароль пользователя
+    - Админ может менять всем
+    - Пользователь может менять только себе
+    """
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Проверка прав: админ ИЛИ сам пользователь
+    if user["role"] != "admin" and user["id"] != user_id:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    new_password = data.get('new_password')
+    old_password = data.get('old_password')  # Только для non-admin
+    
+    if not new_password or len(new_password) < 6:
+        return JSONResponse(
+            {"error": "Пароль должен быть минимум 6 символов"}, 
+            status_code=400
+        )
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Если не админ - проверяем старый пароль
+        if user["role"] != "admin":
+            old_password_hash = hashlib.sha256(old_password.encode()).hexdigest()
+            c.execute("SELECT id FROM users WHERE id = ? AND password_hash = ?", 
+                     (user_id, old_password_hash))
+            if not c.fetchone():
+                conn.close()
+                return JSONResponse(
+                    {"error": "Неверный текущий пароль"}, 
+                    status_code=400
+                )
+        
+        # Меняем пароль
+        new_password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+        c.execute("UPDATE users SET password_hash = ? WHERE id = ?", 
+                 (new_password_hash, user_id))
+        conn.commit()
+        
+        log_activity(user["id"], "change_password", "user", str(user_id), 
+                    "Password changed")
+        
+        conn.close()
+        return {"success": True, "message": "Пароль успешно изменён"}
+        
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error changing password: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/users/{user_id}/update-profile")
+async def update_user_profile(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """
+    Обновить профиль пользователя (логин, имя, email)
+    - Админ может менять всем
+    - Пользователь может менять только себе
+    """
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Проверка прав
+    if user["role"] != "admin" and user["id"] != user_id:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    username = data.get('username')
+    full_name = data.get('full_name')
+    email = data.get('email')
+    
+    if not username or len(username) < 3:
+        return JSONResponse(
+            {"error": "Логин должен быть минимум 3 символа"}, 
+            status_code=400
+        )
+    
+    if not full_name or len(full_name) < 2:
+        return JSONResponse(
+            {"error": "Имя должно быть минимум 2 символа"}, 
+            status_code=400
+        )
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Проверяем что логин не занят (кроме текущего пользователя)
+        c.execute("SELECT id FROM users WHERE username = ? AND id != ?", 
+                 (username, user_id))
+        if c.fetchone():
+            conn.close()
+            return JSONResponse(
+                {"error": "Логин уже занят"}, 
+                status_code=400
+            )
+        
+        # Обновляем профиль
+        c.execute("""UPDATE users 
+                    SET username = ?, full_name = ?, email = ?
+                    WHERE id = ?""",
+                 (username, full_name, email, user_id))
+        conn.commit()
+        
+        log_activity(user["id"], "update_profile", "user", str(user_id), 
+                    f"Profile updated: {username}")
+        
+        conn.close()
+        return {"success": True, "message": "Профиль обновлён"}
+        
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error updating profile: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/users/{user_id}/profile")
+async def get_user_profile(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить профиль пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Админ может смотреть всех, остальные только себя
+    if user["role"] != "admin" and user["id"] != user_id:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login
+                 FROM users WHERE id = ?""", (user_id,))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    if not result:
+        return JSONResponse({"error": "User not found"}, status_code=404)
+    
+    return {
+        "id": result[0],
+        "username": result[1],
+        "full_name": result[2],
+        "email": result[3],
+        "role": result[4],
+        "created_at": result[5],
+        "last_login": result[6]
+    }

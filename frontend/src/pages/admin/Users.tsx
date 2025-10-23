@@ -50,10 +50,10 @@ export default function Users() {
       setLoading(true);
       setError(null);
       const data = await api.getUsers();
-      
+
       const usersArray = data.users || (Array.isArray(data) ? data : []);
       setUsers(usersArray);
-      
+
       if (usersArray.length === 0) {
         toast.info('Пользователей не найдено');
       }
@@ -154,7 +154,7 @@ export default function Users() {
               className="pl-10"
             />
           </div>
-          <Button 
+          <Button
             className="bg-pink-600 hover:bg-pink-700"
             onClick={() => navigate('/admin/users/create')}
           >
@@ -203,12 +203,16 @@ export default function Users() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/admin/users/${user.id}/edit`)}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
+                        <Button
+                          size="sm"
+                          variant="outline"
                           className="text-red-600 hover:text-red-700"
                           onClick={() => handleDeleteUser(user.id)}
                         >

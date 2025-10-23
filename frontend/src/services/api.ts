@@ -113,6 +113,24 @@ export class ApiClient {
       body: JSON.stringify(data),
     })
   }
+
+   async getUserProfile(userId: number) {
+    return this.request<any>(`/api/users/${userId}/profile`)
+  }
+
+  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string }) {
+    return this.request(`/api/users/${userId}/update-profile`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async changePassword(userId: number, data: { new_password: string; old_password?: string }) {
+    return this.request(`/api/users/${userId}/change-password`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
   // ===== КЛИЕНТЫ =====
   async getClients() {
     return this.request<any>('/api/clients')

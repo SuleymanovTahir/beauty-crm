@@ -1,3 +1,6 @@
+// frontend/src/pages/auth/Login.tsx
+// Замените весь файл на этот код:
+
 import React, { useState } from "react";
 import { Lock, User, Loader } from "lucide-react";
 import { Button } from "../../components/ui/button";
@@ -39,18 +42,15 @@ export default function Login({ onLogin }: LoginProps) {
       setLoading(true);
       setError("");
 
-      // Вызываем реальный API
       const response = await api.login(
         credentials.username,
         credentials.password
       );
 
       if (response.success && response.token) {
-        // Сохраняем токен в localStorage
         localStorage.setItem("session_token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
 
-        // Вызываем callback
         onLogin({
           ...response.user,
           token: response.token,
@@ -69,7 +69,6 @@ export default function Login({ onLogin }: LoginProps) {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка входа";
 
-      // Проверяем если это ошибка валидации
       if (message.includes("Unauthorized") || message.includes("401")) {
         setError("Неверное имя пользователя или пароль");
       } else {
@@ -114,13 +113,10 @@ export default function Login({ onLogin }: LoginProps) {
                   onChange={(e) =>
                     setCredentials({ ...credentials, username: e.target.value })
                   }
-                  placeholder="admin"
+                  placeholder="Введите логин"
                   className="pl-10"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                По умолчанию: <code className="bg-gray-100 px-2">admin</code>
-              </p>
             </div>
 
             <div>
@@ -136,13 +132,10 @@ export default function Login({ onLogin }: LoginProps) {
                   onChange={(e) =>
                     setCredentials({ ...credentials, password: e.target.value })
                   }
-                  placeholder="••••••"
+                  placeholder="Введите пароль"
                   className="pl-10"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                По умолчанию: <code className="bg-gray-100 px-2">admin123</code>
-              </p>
             </div>
 
             <Button
@@ -179,14 +172,6 @@ export default function Login({ onLogin }: LoginProps) {
           <Button variant="outline" onClick={() => navigate("/")}>
             Вернуться на главную
           </Button>
-        </div>
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg text-xs text-blue-800">
-          <strong>💡 Тестовые учетные данные:</strong>
-          <br />
-          Username: <code className="bg-blue-100 px-1">admin</code>
-          <br />
-          Password: <code className="bg-blue-100 px-1">admin123</code>
         </div>
       </div>
     </div>

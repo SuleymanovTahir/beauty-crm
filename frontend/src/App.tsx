@@ -42,6 +42,7 @@ import Contacts from './pages/public/Contacts';
 import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
 import UserCabinet from './pages/public/UserCabinet';
+import EditUser from './pages/admin/EditUser';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -203,6 +204,7 @@ export default function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="bot-settings" element={<BotSettings />} />
             <Route path="" element={<Navigate to="dashboard" replace />} />
+            <Route path="users/:id/edit" element={<EditUser />} />
           </Route>
 
           {/* Manager Routes - Protected */}

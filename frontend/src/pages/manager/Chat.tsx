@@ -92,6 +92,18 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+  if (!selectedClient) return;
+
+  // ✅ Автообновление сообщений каждые 5 секунд
+  const interval = setInterval(() => {
+    loadMessages(selectedClient.id);
+  }, 5000);
+
+  // Очистка при размонтировании или смене клиента
+  return () => clearInterval(interval);
+}, [selectedClient]);
+
   const loadClients = async () => {
     try {
       setLoading(true);
