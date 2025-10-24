@@ -1,7 +1,8 @@
+# backend/auth.py
 """
-Модуль авторизации и регистрации
+API Endpoints для авторизации и админ-панели
 """
-from fastapi import APIRouter, Request, Form, Cookie
+from fastapi import APIRouter, Request, Form, Cookie, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
@@ -14,27 +15,180 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
 from db import (
-    verify_user, create_session, delete_session, create_user,
-    get_user_by_email, create_password_reset_token, verify_reset_token,
-    reset_user_password, mark_reset_token_used
+    verify_user, create_session, delete_session, get_user_by_email,
+    create_password_reset_token, verify_reset_token, reset_user_password,
+    mark_reset_token_used, get_user_by_session
 )
 from db.settings import get_salon_settings
-from config import (
-    DATABASE_NAME, SMTP_SERVER, SMTP_PORT, 
-    SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
-)
-from logger import log_info, log_warning, log_error
+from config import DATABASE_NAME, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
+from logger import log_info, log_error, log_warning
+from utils import require_auth
 
-templates = Jinja2Templates(directory="templates")
 router = APIRouter(tags=["Auth"])
+templates = Jinja2Templates(directory="templates")
 
+
+# ===== MIDDLEWARE =====
+
+def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
+    """Получить пользователя или редирект на логин"""
+    user = require_auth(session_token)
+    if not user:
+        return None
+    return user
+
+
+# ===== АДМИН-ПАНЕЛЬ =====
+
+@router.get("/admin", response_class=HTMLResponse)
+@router.get("/admin/", response_class=HTMLResponse)
+async def admin_dashboard(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Главная страница админ-панели"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/dashboard.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_dashboard: {e}", "auth")
+        raise
+
+
+@router.get("/admin/clients", response_class=HTMLResponse)
+async def admin_clients(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница клиентов"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/clients.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_clients: {e}", "auth")
+        raise
+
+
+@router.get("/admin/bookings", response_class=HTMLResponse)
+async def admin_bookings(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница записей"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/bookings.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_bookings: {e}", "auth")
+        raise
+
+
+@router.get("/admin/analytics", response_class=HTMLResponse)
+async def admin_analytics(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница аналитики"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/analytics.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_analytics: {e}", "auth")
+        raise
+
+
+@router.get("/admin/services", response_class=HTMLResponse)
+async def admin_services(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница услуг"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/services.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_services: {e}", "auth")
+        raise
+
+
+@router.get("/admin/settings", response_class=HTMLResponse)
+async def admin_settings(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница настроек"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    # Только админ может видеть настройки
+    if user["role"] != "admin":
+        return RedirectResponse(url="/admin", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/settings.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_settings: {e}", "auth")
+        raise
+
+
+@router.get("/admin/users", response_class=HTMLResponse)
+async def admin_users(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Страница пользователей"""
+    user = require_auth(session_token)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+    
+    # Только админ
+    if user["role"] != "admin":
+        return RedirectResponse(url="/admin", status_code=302)
+    
+    try:
+        salon = get_salon_settings()
+        return templates.TemplateResponse("admin/users.html", {
+            "request": request,
+            "user": user,
+            "salon": salon
+        })
+    except Exception as e:
+        log_error(f"Ошибка в admin_users: {e}", "auth")
+        raise
+
+
+# ===== АВТОРИЗАЦИЯ =====
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request, error: str = None, success: str = None):
-    """HTML: Страница входа"""
+    """Страница входа"""
     try:
         salon = get_salon_settings()
-        log_info("Открыта страница логина", "auth")
         return templates.TemplateResponse("admin/login.html", {
             "request": request,
             "salon": salon,
@@ -48,7 +202,7 @@ async def login_page(request: Request, error: str = None, success: str = None):
 
 @router.post("/api/login")
 async def api_login(username: str = Form(...), password: str = Form(...)):
-    """API: Логин для фронтенда"""
+    """API: Логин"""
     try:
         log_info(f"API Login attempt: {username}", "auth")
         user = verify_user(username, password)
@@ -90,7 +244,6 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         }
         
         response = JSONResponse(response_data)
-        
         response.set_cookie(
             key="session_token",
             value=session_token,
@@ -122,9 +275,11 @@ async def logout_api(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+# ===== РЕГИСТРАЦИЯ =====
+
 @router.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
-    """HTML: Страница регистрации"""
+    """Страница регистрации"""
     try:
         salon = get_salon_settings()
         return templates.TemplateResponse("admin/register.html", {
@@ -145,13 +300,12 @@ async def register(
     email: str = Form(None),
     role: str = Form("employee")
 ):
-    """HTML: Регистрация нового пользователя"""
+    """Регистрация нового пользователя"""
     salon = get_salon_settings()
     
     try:
         # Валидация
         if len(username) < 3:
-            log_warning(f"Логин слишком короткий: {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
                 "salon": salon,
@@ -159,7 +313,6 @@ async def register(
             })
         
         if len(password) < 6:
-            log_warning(f"Пароль слишком короткий для {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
                 "salon": salon,
@@ -167,16 +320,12 @@ async def register(
             })
         
         if not full_name or len(full_name.strip()) < 2:
-            log_warning(f"Имя слишком короткое для {username}", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
                 "salon": salon,
                 "error": "Полное имя должно быть минимум 2 символа"
             })
         
-        log_info(f"Регистрация нового пользователя: {username}", "auth")
-        
-        # Создаем пользователя с is_active=0
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
         
@@ -200,7 +349,6 @@ async def register(
             )
         except sqlite3.IntegrityError:
             conn.close()
-            log_warning(f"Пользователь {username} уже существует", "auth")
             return templates.TemplateResponse("admin/register.html", {
                 "request": request,
                 "salon": salon,
@@ -216,9 +364,11 @@ async def register(
         })
 
 
+# ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+
 @router.get("/forgot-password", response_class=HTMLResponse)
 async def forgot_password_page(request: Request):
-    """HTML: Страница восстановления пароля"""
+    """Страница восстановления пароля"""
     try:
         salon = get_salon_settings()
         return templates.TemplateResponse("admin/forgot_password.html", {
@@ -232,13 +382,13 @@ async def forgot_password_page(request: Request):
 
 @router.post("/forgot-password")
 async def forgot_password(request: Request, email: str = Form(...)):
-    """HTML: Обработка восстановления пароля"""
+    """Обработка восстановления пароля"""
     salon = get_salon_settings()
     
     try:
         log_info(f"Запрос на восстановление пароля для {email}", "auth")
         user = get_user_by_email(email)
-        
+
         if not user:
             log_warning(f"Email {email} не найден", "auth")
             return templates.TemplateResponse("admin/forgot_password.html", {
@@ -246,20 +396,20 @@ async def forgot_password(request: Request, email: str = Form(...)):
                 "salon": salon,
                 "success": "Если email существует в системе, инструкции отправлены на почту"
             })
-        
+
         token = create_password_reset_token(user["id"])
         reset_link = f"https://mlediamant.com/reset-password?token={token}"
-        
+
         try:
             msg = MIMEMultipart('alternative')
-            msg['Subject'] = "Восстановление пароля - M.Le Diamant CRM"
+            msg['Subject'] = f"Восстановление пароля - {salon['name']} CRM"
             msg['From'] = FROM_EMAIL
             msg['To'] = email
-            
+
             text = f"""
 Здравствуйте, {user['full_name']}!
 
-Вы запросили восстановление пароля для CRM системы M.Le Diamant.
+Вы запросили восстановление пароля для CRM системы {salon['name']}.
 
 Для сброса пароля перейдите по ссылке:
 {reset_link}
@@ -269,17 +419,17 @@ async def forgot_password(request: Request, email: str = Form(...)):
 Если вы не запрашивали восстановление пароля, проигнорируйте это письмо.
 
 ---
-M.Le Diamant Beauty Lounge
+{salon['name']}
 {salon['address']}
             """
-            
+
             html = f"""
             <html>
               <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                   <h2 style="color: #667eea;">Восстановление пароля</h2>
                   <p>Здравствуйте, <strong>{user['full_name']}</strong>!</p>
-                  <p>Вы запросили восстановление пароля для CRM системы M.Le Diamant.</p>
+                  <p>Вы запросили восстановление пароля для CRM системы {salon['name']}.</p>
                   <p>Для сброса пароля нажмите на кнопку ниже:</p>
                   <div style="text-align: center; margin: 30px 0;">
                     <a href="{reset_link}" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Сбросить пароль</a>
@@ -288,20 +438,20 @@ M.Le Diamant Beauty Lounge
                   <p style="font-size: 12px; color: #666;">Если вы не запрашивали восстановление пароля, проигнорируйте это письмо.</p>
                   <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
                   <p style="font-size: 12px; color: #999;">
-                    M.Le Diamant Beauty Lounge<br>
+                    {salon['name']}<br>
                     {salon['address']}
                   </p>
                 </div>
               </body>
             </html>
             """
-            
+
             part1 = MIMEText(text, 'plain', 'utf-8')
             part2 = MIMEText(html, 'html', 'utf-8')
-            
+
             msg.attach(part1)
             msg.attach(part2)
-            
+
             context = ssl.create_default_context()
             
             log_info(f"📧 Попытка отправить email на {email}...", "email")
@@ -312,12 +462,12 @@ M.Le Diamant Beauty Lounge
                 server.ehlo()
                 server.login(SMTP_USERNAME, SMTP_PASSWORD)
                 server.send_message(msg)
-            
+
             log_info(f"✅ Email успешно отправлен на {email}", "email")
             
         except Exception as e:
             log_error(f"❌ Ошибка отправки email: {e}", "email")
-        
+
         return templates.TemplateResponse("admin/forgot_password.html", {
             "request": request,
             "salon": salon,
@@ -330,12 +480,12 @@ M.Le Diamant Beauty Lounge
 
 @router.get("/reset-password", response_class=HTMLResponse)
 async def reset_password_page(request: Request, token: str):
-    """HTML: Страница сброса пароля"""
+    """Страница сброса пароля"""
     salon = get_salon_settings()
     
     try:
         user_id = verify_reset_token(token)
-        
+
         if not user_id:
             log_warning("Недействительный токен для сброса пароля", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
@@ -343,7 +493,7 @@ async def reset_password_page(request: Request, token: str):
                 "salon": salon,
                 "error": "Недействительная или истёкшая ссылка"
             })
-        
+
         return templates.TemplateResponse("admin/reset_password.html", {
             "request": request,
             "salon": salon,
@@ -361,7 +511,7 @@ async def reset_password(
     password: str = Form(...),
     confirm_password: str = Form(...)
 ):
-    """HTML: Обработка сброса пароля"""
+    """Обработка сброса пароля"""
     salon = get_salon_settings()
     
     try:
@@ -373,7 +523,7 @@ async def reset_password(
                 "token": token,
                 "error": "Пароли не совпадают"
             })
-        
+
         if len(password) < 6:
             log_warning("Пароль слишком короткий", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
@@ -382,9 +532,9 @@ async def reset_password(
                 "token": token,
                 "error": "Пароль должен быть минимум 6 символов"
             })
-        
+
         user_id = verify_reset_token(token)
-        
+
         if not user_id:
             log_warning("Недействительный токен при сбросе пароля", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
@@ -392,14 +542,13 @@ async def reset_password(
                 "salon": salon,
                 "error": "Недействительная или истёкшая ссылка"
             })
-        
+
         success = reset_user_password(user_id, password)
         
         if success:
             mark_reset_token_used(token)
             log_info(f"Пароль успешно сброшен для пользователя {user_id}", "auth")
-            return RedirectResponse(url="/login?success=Пароль успешно изменён", 
-                                  status_code=302)
+            return RedirectResponse(url="/login?success=Пароль успешно изменён", status_code=302)
         else:
             log_error(f"Ошибка сброса пароля для пользователя {user_id}", "auth")
             return templates.TemplateResponse("admin/reset_password.html", {
