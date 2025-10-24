@@ -1,29 +1,15 @@
+
 """
-API модуль - REST endpoints для CRM системы
+Bot модуль - AI-бот для Instagram
+
+Экспортирует:
+- SalonBot: главный класс бота
+- get_bot: функция для получения синглтона бота
 """
-from fastapi import APIRouter
-from api.clients import router as clients_router
-from api.bookings import router as bookings_router
-from api.services import router as services_router
-from api.analytics import router as analytics_router
-from api.users import router as users_router
-from api.settings import router as settings_router
-from api.export import router as export_router
-from api.chat import router as chat_router
-from api.roles import router as roles_router
 
-# Главный роутер API
-router = APIRouter(prefix="/api", tags=["API"])
+# ВАЖНО: НЕ импортируйте ничего из api/ здесь!
+# Это вызывает циклический импорт: bot -> api -> bot
 
-# Подключаем все роутеры
-router.include_router(clients_router)
-router.include_router(bookings_router)
-router.include_router(services_router)
-router.include_router(analytics_router)
-router.include_router(users_router)
-router.include_router(settings_router)
-router.include_router(export_router)
-router.include_router(chat_router)
-router.include_router(roles_router)
+from .core import SalonBot, get_bot
 
-__all__ = ["router"]
+__all__ = ["SalonBot", "get_bot"]

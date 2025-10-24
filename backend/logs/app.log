@@ -18526,3 +18526,12 @@ sqlite3.OperationalError: no such table: users
 2025-10-23 14:42:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
 2025-10-23 14:43:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
 2025-10-23 14:43:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 09:18:26 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 09:24:57 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 09:25:10 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 09:27:52 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 09:27:52 - crm - INFO - [startup] ======================================================================
+2025-10-24 09:27:52 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 09:27:52 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 09:27:52 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 09:27:52 - crm - INFO - [startup] ======================================================================

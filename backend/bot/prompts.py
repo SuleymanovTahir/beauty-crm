@@ -5,12 +5,11 @@
 from typing import Dict, List, Tuple
 from datetime import datetime
 
-from database import (
+from db import (
     get_all_services,
     get_all_special_packages,
     find_special_package_by_keywords
 )
-
 
 class PromptBuilder:
     """Построитель промптов для AI-бота"""
