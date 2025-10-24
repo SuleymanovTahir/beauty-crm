@@ -13,10 +13,10 @@ from db import (
 from utils import require_auth
 from logger import log_error
 
-router = APIRouter(prefix="/roles", tags=["Roles"])
+router = APIRouter(tags=["Roles"])
 
 
-@router.get("")
+@router.get("/roles")
 async def list_roles(session_token: Optional[str] = Cookie(None)):
     """Получить все роли"""
     user = require_auth(session_token)
@@ -31,7 +31,7 @@ async def list_roles(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.post("")
+@router.post("/roles")
 async def create_role(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -61,7 +61,7 @@ async def create_role(
         return JSONResponse({"error": "Role already exists"}, status_code=400)
 
 
-@router.delete("/{role_key}")
+@router.delete("/roles/{role_key}")
 async def delete_role(
     role_key: str,
     session_token: Optional[str] = Cookie(None)
@@ -81,7 +81,7 @@ async def delete_role(
                           status_code=400)
 
 
-@router.get("/{role_key}/permissions")
+@router.get("/roles/{role_key}/permissions")
 async def get_role_permissions_api(
     role_key: str,
     session_token: Optional[str] = Cookie(None)
@@ -100,7 +100,7 @@ async def get_role_permissions_api(
     }
 
 
-@router.post("/{role_key}/permissions")
+@router.post("/roles/{role_key}/permissions")
 async def update_role_permissions_api(
     role_key: str,
     request: Request,
@@ -124,7 +124,7 @@ async def update_role_permissions_api(
         return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
-@router.get("/permissions/available")
+@router.get("/roles/permissions/available")
 async def list_available_permissions(session_token: Optional[str] = Cookie(None)):
     """Получить список всех доступных прав"""
     user = require_auth(session_token)

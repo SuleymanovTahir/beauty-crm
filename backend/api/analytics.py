@@ -8,7 +8,7 @@ from typing import Optional
 from db import get_stats, get_analytics_data, get_funnel_data
 from utils import require_auth, get_total_unread
 
-router = APIRouter(prefix="/analytics", tags=["Analytics"])
+router = APIRouter(tags=["Analytics"])
 
 
 @router.get("/dashboard")
@@ -30,7 +30,7 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.get("")
+@router.get("/analytics")
 async def get_analytics_api(
     period: int = Query(30),
     date_from: str = Query(None),

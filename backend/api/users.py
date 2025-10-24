@@ -12,10 +12,10 @@ from config import DATABASE_NAME
 from utils import require_auth
 from logger import log_error
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(tags=["Users"])
 
 
-@router.get("")
+@router.get("/users")
 async def list_users(session_token: Optional[str] = Cookie(None)):
     """Получить всех пользователей (только для admin)"""
     user = require_auth(session_token)
@@ -40,7 +40,7 @@ async def list_users(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.get("/pending")
+@router.get("/users/pending")
 async def get_pending_users(session_token: Optional[str] = Cookie(None)):
     """Получить пользователей, ожидающих подтверждения"""
     user = require_auth(session_token)
@@ -74,7 +74,7 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.post("/{user_id}/approve")
+@router.post("/users/{user_id}/approve")
 async def approve_user(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -106,7 +106,7 @@ async def approve_user(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/{user_id}/reject")
+@router.post("/users/{user_id}/reject")
 async def reject_user(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -138,7 +138,7 @@ async def reject_user(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/{user_id}/delete")
+@router.post("/users/{user_id}/delete")
 async def delete_user_api(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -161,7 +161,7 @@ async def delete_user_api(
     return JSONResponse({"error": "Delete failed"}, status_code=400)
 
 
-@router.post("/{user_id}/role")
+@router.post("/users/{user_id}/role")
 async def update_user_role(
     user_id: int,
     request: Request,
@@ -204,7 +204,7 @@ async def update_user_role(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/{user_id}/profile")
+@router.get("/users/{user_id}/profile")
 async def get_user_profile(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -241,7 +241,7 @@ async def get_user_profile(
     }
 
 
-@router.post("/{user_id}/change-password")
+@router.post("/users/{user_id}/change-password")
 async def change_user_password(
     user_id: int,
     request: Request,
@@ -301,7 +301,7 @@ async def change_user_password(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/{user_id}/update-profile")
+@router.post("/users/{user_id}/update-profile")
 async def update_user_profile(
     user_id: int,
     request: Request,

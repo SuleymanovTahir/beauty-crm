@@ -34,7 +34,7 @@ except ImportError:
     EXCEL_AVAILABLE = False
     log_warning("openpyxl не установлен. Экспорт в Excel недоступен.", "export")
 
-router = APIRouter(prefix="/export", tags=["Export"])
+router = APIRouter(tags=["Export"])
 
 
 # ===== ФУНКЦИИ ЭКСПОРТА КЛИЕНТОВ =====
@@ -296,7 +296,7 @@ def export_bookings_excel(bookings):
 
 # ===== ENDPOINTS =====
 
-@router.get("/clients")
+@router.get("/export/clients")
 async def export_clients(
     format: str = Query("csv"),
     date_from: str = Query(None),
@@ -355,7 +355,7 @@ async def export_clients(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/bookings")
+@router.get("/export/bookings")
 async def export_bookings(
     format: str = Query("csv"),
     date_from: str = Query(None),
@@ -411,7 +411,7 @@ async def export_bookings(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/analytics")
+@router.get("/export/analytics")
 async def export_analytics(
     format: str = Query("csv"),
     period: int = Query(30),
@@ -486,7 +486,7 @@ async def export_analytics(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/bookings/template")
+@router.get("/export/bookings/template")
 async def download_import_template(
     format: str = Query("csv"),
     session_token: Optional[str] = Cookie(None)

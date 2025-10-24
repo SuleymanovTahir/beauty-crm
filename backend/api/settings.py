@@ -15,12 +15,12 @@ from utils import require_auth
 from logger import log_error, log_info
 from bot import get_bot
 
-router = APIRouter(prefix="/settings", tags=["Settings"])
+router = APIRouter(tags=["Settings"])
 
 
 # ===== НАСТРОЙКИ САЛОНА =====
 
-@router.get("/salon")
+@router.get("/settings/salon")
 async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     """Получить настройки салона"""
     user = require_auth(session_token)
@@ -38,7 +38,7 @@ async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
         )
 
 
-@router.post("/salon")
+@router.post("/settings/salon")
 async def update_salon_settings_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -62,7 +62,7 @@ async def update_salon_settings_api(
 
 # ===== НАСТРОЙКИ БОТА =====
 
-@router.get("/bot")
+@router.get("/settings/bot")
 async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота"""
     user = require_auth(session_token)
@@ -80,7 +80,7 @@ async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/bot")
+@router.post("/settings/bot")
 async def update_bot_settings_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -105,7 +105,7 @@ async def update_bot_settings_api(
         return JSONResponse({"error": "Update failed"}, status_code=500)
 
 
-@router.post("/bot/reload")
+@router.post("/settings/bot/reload")
 async def reload_bot_settings(session_token: Optional[str] = Cookie(None)):
     """Перезагрузить настройки бота из БД"""
     user = require_auth(session_token)
@@ -130,7 +130,7 @@ async def reload_bot_settings(session_token: Optional[str] = Cookie(None)):
 
 # ===== КАСТОМНЫЕ СТАТУСЫ =====
 
-@router.get("/statuses")
+@router.get("/settings/statuses")
 async def list_custom_statuses(session_token: Optional[str] = Cookie(None)):
     """Получить все кастомные статусы"""
     user = require_auth(session_token)
@@ -155,7 +155,7 @@ async def list_custom_statuses(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.post("/statuses")
+@router.post("/settings/statuses")
 async def create_custom_status_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -184,7 +184,7 @@ async def create_custom_status_api(
                           status_code=400)
 
 
-@router.post("/statuses/{status_key}/update")
+@router.post("/settings/statuses/{status_key}/update")
 async def update_custom_status_api(
     status_key: str,
     request: Request,
@@ -212,7 +212,7 @@ async def update_custom_status_api(
         return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
-@router.post("/statuses/{status_key}/delete")
+@router.post("/settings/statuses/{status_key}/delete")
 async def delete_custom_status_api(
     status_key: str,
     session_token: Optional[str] = Cookie(None)

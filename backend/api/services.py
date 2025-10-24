@@ -14,10 +14,10 @@ from db import (
 from utils import require_auth
 from logger import log_error
 
-router = APIRouter(prefix="/services", tags=["Services"])
+router = APIRouter(tags=["Services"])
 
 
-@router.get("")
+@router.get("/services")
 async def list_services(
     active_only: bool = Query(True),
     session_token: Optional[str] = Cookie(None)
@@ -48,7 +48,7 @@ async def list_services(
     }
 
 
-@router.get("/{service_key}/price")
+@router.get("/services/{service_key}/price")
 async def get_service_price(
     service_key: str,
     session_token: Optional[str] = Cookie(None)
@@ -72,7 +72,7 @@ async def get_service_price(
     }
 
 
-@router.post("")
+@router.post("/services")
 async def create_service_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -109,7 +109,7 @@ async def create_service_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.post("/{service_id}/update")
+@router.post("/services/{service_id}/update")
 async def update_service_api(
     service_id: int,
     request: Request,
@@ -132,7 +132,7 @@ async def update_service_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.post("/{service_id}/delete")
+@router.post("/services/{service_id}/delete")
 async def delete_service_api(
     service_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -154,7 +154,7 @@ async def delete_service_api(
 
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
 
-@router.get("/special-packages")
+@router.get("/services/special-packages")
 async def list_special_packages(
     active_only: bool = Query(True),
     session_token: Optional[str] = Cookie(None)
@@ -193,7 +193,7 @@ async def list_special_packages(
     }
 
 
-@router.post("/special-packages")
+@router.post("/services/special-packages")
 async def create_special_package_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -234,7 +234,7 @@ async def create_special_package_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.post("/special-packages/{package_id}")
+@router.post("/services/special-packages/{package_id}")
 async def update_special_package_api(
     package_id: int,
     request: Request,
@@ -257,7 +257,7 @@ async def update_special_package_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.delete("/special-packages/{package_id}")
+@router.delete("/services/special-packages/{package_id}")
 async def delete_special_package_api(
     package_id: int,
     session_token: Optional[str] = Cookie(None)

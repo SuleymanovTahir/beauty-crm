@@ -2,7 +2,7 @@
 Главный файл FastAPI приложения (упрощенный)
 """
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -152,57 +152,13 @@ async def health():
             "error": str(e)
         }
 
+@app.get("/privacy-policy")
+async def privacy_policy():
+    return RedirectResponse(url="/#/privacy-policy")
 
-@app.get("/index", response_class=HTMLResponse)
-async def index(request: Request):
-    """HTML: Главная страница"""
-    try:
-        return templates.TemplateResponse("index.html", {
-            "request": request,
-            "title": "Онлайн-запись",
-            "salon": salon
-        })
-    except Exception as e:
-        log_error(f"Ошибка: {e}", "api")
-        raise
-
-
-@app.get("/privacy-policy", response_class=HTMLResponse)
-async def privacy_policy(request: Request):
-    """HTML: Политика конфиденциальности"""
-    try:
-        return templates.TemplateResponse("privacy-policy.html", {
-            "request": request,
-            "title": "Privacy Policy",
-            "content": (
-                "This app automatically replies to Instagram messages. "
-                "We do not collect, store, or share personal user data. "
-                "If you want to delete your data, contact us at mladimontuae@gmail.com."
-            ),
-            "salon": salon
-        })
-    except Exception as e:
-        log_error(f"Ошибка в privacy_policy: {e}", "api")
-        raise
-
-
-@app.get("/terms", response_class=HTMLResponse)
-async def terms_of_service(request: Request):
-    """HTML: Пользовательское соглашение"""
-    try:
-        return templates.TemplateResponse("terms.html", {
-            "request": request,
-            "title": "Terms of Service",
-            "content": (
-                "By messaging our Instagram page, you agree that our system may "
-                "automatically reply to your inquiries about our salon services. "
-                "All conversations are confidential and not shared with third parties."
-            ),
-            "salon": salon
-        })
-    except Exception as e:
-        log_error(f"Ошибка в terms_of_service: {e}", "api")
-        raise
+@app.get("/terms")
+async def terms():
+    return RedirectResponse(url="/#/terms")
 
 
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====

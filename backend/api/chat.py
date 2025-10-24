@@ -13,10 +13,10 @@ from integrations import send_message
 from utils import require_auth, get_total_unread
 from logger import log_error
 
-router = APIRouter(prefix="/chat", tags=["Chat"])
+router = APIRouter(tags=["Chat"])
 
 
-@router.get("/messages")
+@router.get("/chat/messages")
 async def get_chat_messages(
     client_id: str = Query(...),
     limit: int = Query(50),
@@ -44,7 +44,7 @@ async def get_chat_messages(
     }
 
 
-@router.post("/send")
+@router.post("/chat/send")
 async def send_chat_message(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -86,7 +86,7 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     return {"count": get_total_unread()}
 
 
-@router.get("/unread/{client_id}")
+@router.get("/chat/unread/{client_id}")
 async def get_client_unread_count(
     client_id: str,
     session_token: Optional[str] = Cookie(None)

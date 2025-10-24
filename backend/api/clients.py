@@ -15,10 +15,10 @@ from db import (
 from utils import require_auth, get_total_unread, get_client_display_name
 from logger import log_error
 
-router = APIRouter(prefix="/clients", tags=["Clients"])
+router = APIRouter(tags=["Clients"])
 
 
-@router.get("")
+@router.get("/clients")
 async def list_clients(session_token: Optional[str] = Cookie(None)):
     """Получить всех клиентов"""
     user = require_auth(session_token)
@@ -51,7 +51,7 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.get("/{client_id}")
+@router.get("/clients/{client_id}")
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить детальную информацию о клиенте"""
     user = require_auth(session_token)
@@ -101,7 +101,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     }
 
 
-@router.post("")
+@router.post("/clients")
 async def create_client_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -133,7 +133,7 @@ async def create_client_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.post("/{client_id}/update")
+@router.post("/clients/{client_id}/update")
 async def update_client_api(
     client_id: str,
     request: Request,
@@ -160,7 +160,7 @@ async def update_client_api(
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
-@router.post("/{client_id}/status")
+@router.post("/clients/{client_id}/status")
 async def update_client_status_api(
     client_id: str,
     request: Request,
@@ -184,7 +184,7 @@ async def update_client_status_api(
     return {"success": True, "message": "Client status updated"}
 
 
-@router.post("/{client_id}/pin")
+@router.post("/clients/{client_id}/pin")
 async def pin_client_api(
     client_id: str,
     session_token: Optional[str] = Cookie(None)
@@ -211,7 +211,7 @@ async def pin_client_api(
     }
 
 
-@router.post("/{client_id}/delete")
+@router.post("/clients/{client_id}/delete")
 async def delete_client_api(
     client_id: str,
     session_token: Optional[str] = Cookie(None)

@@ -15,10 +15,10 @@ from config import DATABASE_NAME
 from utils import require_auth
 from logger import log_error, log_warning
 
-router = APIRouter(prefix="/bookings", tags=["Bookings"])
+router = APIRouter(tags=["Bookings"])
 
 
-@router.get("")
+@router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить все записи"""
     user = require_auth(session_token)
@@ -45,7 +45,7 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.get("/{booking_id}")
+@router.get("/bookings/{booking_id}")
 async def get_booking_detail(
     booking_id: int,
     session_token: Optional[str] = Cookie(None)
@@ -74,7 +74,7 @@ async def get_booking_detail(
     }
 
 
-@router.post("")
+@router.post("/bookings")
 async def create_booking_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -105,7 +105,7 @@ async def create_booking_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-@router.post("/{booking_id}/status")
+@router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(
     booking_id: int,
     request: Request,
@@ -131,7 +131,7 @@ async def update_booking_status_api(
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
-@router.post("/import")
+@router.post("/bookings/import")
 async def import_bookings(
     file: UploadFile = File(...),
     session_token: Optional[str] = Cookie(None)
