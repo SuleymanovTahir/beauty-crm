@@ -32,6 +32,10 @@ FROM_EMAIL = os.getenv("FROM_EMAIL", os.getenv("SMTP_USERNAME"))
 # ===== DATABASE =====
 DATABASE_NAME = os.getenv("DATABASE_NAME", "salon_bot.db")
 
+
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "static", "uploads")
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+
 # ===== СТАТУСЫ КЛИЕНТОВ =====
 CLIENT_STATUSES = {
     "new": {"label": "Новый", "color": "#3b82f6", "icon": "user-plus"},

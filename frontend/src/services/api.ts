@@ -204,6 +204,19 @@ export class ApiClient {
     })
   }
 
+  // ✅ НОВОЕ: Отправка файлов
+  async sendFile(instagramId: string, fileUrl: string, fileType: string = 'image') {
+    return this.request('/api/chat/send-file', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        instagram_id: instagramId, 
+        file_url: fileUrl,
+        file_type: fileType 
+      }),
+    })
+  }
+
+
   async getChatMessages(clientId: string, limit: number = 50) {
     return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}`)
   }

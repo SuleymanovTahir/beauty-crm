@@ -30,7 +30,8 @@ async def fetch_username_from_api(user_id: str) -> str:
         url = f"https://graph.facebook.com/v18.0/{user_id}"
         params = {
             "fields": "username,name",
-            "access_token": PAGE_ACCESS_TOKEN
+            "access_token": PAGE_ACCESS_TOKEN,
+            "fields": "username,name,profile_pic",
         }
         
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -40,10 +41,11 @@ async def fetch_username_from_api(user_id: str) -> str:
                 data = response.json()
                 username = data.get("username", "")
                 name = data.get("name", "")
+                profile_pic = data.get("profile_pic", "")  # ✅ НОВОЕ
                 
                 if username:
                     log_info(f"✅ Username найден: @{username}", "webhook")
-                    return username
+                    return username, name, profile_pic 
                 elif name:
                     log_info(f"✅ Name найден: {name}", "webhook")
                     return name
@@ -147,6 +149,31 @@ async def handle_webhook(request: Request):
                 # Пропускаем эхо
                 if message_data.get("is_echo"):
                     continue
+
+                attachments = message_data.get("attachments", [])
+                if attachments:
+                    for attachment in attachments:
+                        attachment_type = attachment.get("type")
+                        payload = attachment.get("payload", {})
+                        file_url = payload.get("url")
+                        
+                        log_info(f"📎 Получено вложение: {attachment_type}", "webhook")
+                        
+                        # Сохраняем информацию о файле
+                        save_message(
+                            sender_id, 
+                            f"[{attachment_type.upper()}]: {file_url}", 
+                            "client",
+                            message_type=attachment_type
+                        )
+                    
+                    # Отправляем подтверждение
+                    await send_typing_indicator(sender_id)
+                    await send_message(
+                        sender_id, 
+                        "Спасибо! Я получил ваш файл. Наш менеджер скоро свяжется с вами! 😊"
+                    )
+                    continue
                 
                 message_text = message_data.get("text", "").strip()
                 
@@ -154,15 +181,21 @@ async def handle_webhook(request: Request):
                     continue
                 
                 try:
-                    # ✅ УЛУЧШЕННАЯ ЛОГИКА: Получаем username
+                    # ✅ УЛУЧШЕННАЯ ЛОГИКА: Получаем username и фото
                     username = ""
+                    name = ""
+                    profile_pic = ""
                     
                     # 1. Пробуем из webhook payload
                     username = await extract_username_from_webhook(messaging)
                     
                     # 2. Если не нашли - пробуем API
                     if not username:
-                        username = await fetch_username_from_api(sender_id)
+                        try:
+                            username, name, profile_pic = await fetch_username_from_api(sender_id)
+                        except Exception as api_err:
+                            log_error(f"❌ API fetch error: {api_err}", "webhook")
+                            username, name, profile_pic = "", "", ""
                     
                     # 3. Если всё равно не нашли - используем fallback
                     if not username:
@@ -174,9 +207,9 @@ async def handle_webhook(request: Request):
                     # Создать/получить клиента с username
                     get_or_create_client(sender_id, username=username)
                     
-                    # ✅ НОВОЕ: Обновляем username в БД если нашли
-                    if username and not username.startswith("user_"):
-                        update_client_info(sender_id, name=username)
+                    # ✅ НОВОЕ: Обновляем фото профиля и имя если нашли
+                    if profile_pic or name:
+                        update_client_info(sender_id, name=name, profile_pic=profile_pic)
                     
                     save_message(sender_id, message_text, "client")
                     

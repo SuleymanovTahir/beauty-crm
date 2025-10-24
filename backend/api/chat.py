@@ -4,6 +4,7 @@ API Endpoints для работы с чатом
 from fastapi import APIRouter, Request, Query, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
+from integrations.instagram import send_file
 
 from db import (
     get_chat_history, mark_messages_as_read, save_message,
@@ -11,7 +12,7 @@ from db import (
 )
 from integrations import send_message
 from utils import require_auth, get_total_unread
-from logger import log_error
+from logger import log_error,log_info
 
 router = APIRouter(tags=["Chat"])
 
@@ -73,6 +74,42 @@ async def send_chat_message(
         return JSONResponse({"error": "Send failed"}, status_code=500)
     except Exception as e:
         log_error(f"Error sending message: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    
+
+@router.post("/chat/send-file")
+async def send_chat_file(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Отправить файл клиенту"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    data = await request.json()
+    instagram_id = data.get('instagram_id')
+    file_url = data.get('file_url')
+    file_type = data.get('file_type', 'image')
+    
+    if not instagram_id or not file_url:
+        return JSONResponse({"error": "Missing data"}, status_code=400)
+    
+    try:
+        log_info(f"📤 Отправка файла от {user['username']} клиенту {instagram_id}", "api")
+        result = await send_file(instagram_id, file_url, file_type)
+        
+        if "error" not in result:
+            # Сохраняем в историю
+            save_message(instagram_id, f"[Файл: {file_type}]", "bot", message_type=file_type)
+            log_activity(user["id"], "send_file", "client", instagram_id, 
+                        f"File sent: {file_type}")
+            return {"success": True, "message": "File sent"}
+        
+        log_error(f"❌ Send file failed: {result.get('error')}", "api")
+        return JSONResponse({"error": result.get("error", "Send failed")}, status_code=500)
+    except Exception as e:
+        log_error(f"❌ Error sending file: {e}", "api", exc_info=True)
         return JSONResponse({"error": str(e)}, status_code=500)
 
 

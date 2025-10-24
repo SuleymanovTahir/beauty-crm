@@ -11,6 +11,7 @@ from .settings import router as settings_router
 from .export import router as export_router
 from .chat import router as chat_router
 from .roles import router as roles_router
+from .uploads import router as uploads_router 
 
 
 # Главный роутер API
@@ -26,5 +27,6 @@ router.include_router(settings_router)
 router.include_router(export_router)
 router.include_router(chat_router)
 router.include_router(roles_router)
+router.include_router(uploads_router)
 
 __all__ = ["router"]

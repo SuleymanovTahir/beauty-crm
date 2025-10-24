@@ -76,7 +76,8 @@ def get_or_create_client(instagram_id: str, username: str = None):
 
 
 def update_client_info(instagram_id: str, name: str = None, 
-                      phone: str = None, notes: str = None) -> bool:
+                      phone: str = None, notes: str = None,
+                      profile_pic: str = None) -> bool: 
     """Обновить информацию о клиенте"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -96,6 +97,10 @@ def update_client_info(instagram_id: str, name: str = None,
         if notes is not None:
             updates.append("notes = ?")
             params.append(notes)
+
+        if profile_pic is not None:
+            updates.append("profile_pic = ?")
+            params.append(profile_pic)
         
         if updates:
             params.append(instagram_id)
