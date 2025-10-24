@@ -120,13 +120,13 @@ export const apiClient = {
     }),
 
   updateService: (id: number, data: any) =>
-    apiCall(`/api/services/${id}`, {
+    apiCall(`/api/services/{id}/update`, {
       method: 'POST',
       body: data,
     }),
 
   deleteService: (id: number) =>
-    apiCall(`/api/services/${id}`, {
+    apiCall(`/api/services/{id}/delete`, {
       method: 'DELETE',
     }),
 
@@ -164,6 +164,98 @@ export const apiClient = {
     apiCall('/api/bot-settings', {
       method: 'POST',
       body: data,
+    }),
+
+  // ===== SPECIAL PACKAGES ===== (ДОБАВЛЕНО)
+  getSpecialPackages: (activeOnly: boolean = true) =>
+    apiCall(`/api/services/special-packages?active_only=${activeOnly}`),
+
+  createSpecialPackage: (data: any) =>
+    apiCall('/api/services/special-packages', {
+      method: 'POST',
+      body: data,
+    }),
+
+  updateSpecialPackage: (id: number, data: any) =>
+    apiCall(`/api/services/special-packages/${id}`, {
+      method: 'POST',
+      body: data,
+    }),
+
+  deleteSpecialPackage: (id: number) =>
+    apiCall(`/api/services/special-packages/${id}`, {
+      method: 'DELETE',
+    }),
+
+  // ===== ROLES ===== (ДОБАВЛЕНО)
+  getRoles: () =>
+    apiCall('/api/roles'),
+
+  createRole: (data: any) =>
+    apiCall('/api/roles', {
+      method: 'POST',
+      body: data,
+    }),
+
+  deleteRole: (roleKey: string) =>
+    apiCall(`/api/roles/${roleKey}`, {
+      method: 'DELETE',
+    }),
+
+  getRolePermissions: (roleKey: string) =>
+    apiCall(`/api/roles/${roleKey}/permissions`),
+
+  updateRolePermissions: (roleKey: string, permissions: any) =>
+    apiCall(`/api/roles/${roleKey}/permissions`, {
+      method: 'POST',
+      body: { permissions },
+    }),
+
+  getAvailablePermissions: () =>
+    apiCall('/api/permissions/available'),
+
+  // ===== USER PROFILE ===== (ДОБАВЛЕНО)
+  getUserProfile: (userId: number) =>
+    apiCall(`/api/users/${userId}/profile`),
+
+  updateUserProfile: (userId: number, data: any) =>
+    apiCall(`/api/users/${userId}/update-profile`, {
+      method: 'POST',
+      body: data,
+    }),
+
+  changePassword: (userId: number, data: any) =>
+    apiCall(`/api/users/${userId}/change-password`, {
+      method: 'POST',
+      body: data,
+    }),
+
+  updateUserRole: (userId: number, role: string) =>
+    apiCall(`/api/users/${userId}/role`, {
+      method: 'POST',
+      body: { role },
+    }),
+
+  // ===== SALON SETTINGS ===== (ДОБАВЛЕНО)
+  getSalonSettings: () =>
+    apiCall('/api/salon-settings'),
+
+  updateSalonSettings: (data: any) =>
+    apiCall('/api/salon-settings', {
+      method: 'POST',
+      body: data,
+    }),
+
+  // ===== CLIENT OPERATIONS ===== (ДОБАВЛЕНО)
+  createClient: (data: any) =>
+    apiCall('/api/clients', {
+      method: 'POST',
+      body: data,
+    }),
+
+  deleteClient: (id: string) =>
+    apiCall(`/api/clients/${id}/delete`, {
+      method: 'POST',
     }),
 
   // ===== UNREAD =====

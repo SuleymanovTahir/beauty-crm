@@ -41,8 +41,8 @@ import About from './pages/public/About';
 import Contacts from './pages/public/Contacts';
 import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
-import UserCabinet from './pages/public/UserCabinet';
 import EditUser from './pages/admin/EditUser';
+import UserCabinet from './pages/public/UserCabinet';
 
 // Auth Pages
 import Login from './pages/auth/Login';

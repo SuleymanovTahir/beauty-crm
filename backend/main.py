@@ -20,6 +20,8 @@ from auth import router as auth_router
 from webhooks import router as webhooks_router
 
 
+
+
 # Создаём директории для загрузок
 ensure_upload_directories()
 
