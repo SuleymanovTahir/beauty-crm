@@ -121,3 +121,4 @@ async def mark_as_seen(recipient_id: str) -> None:
             await client.post(url, params=params, json=data)
         except Exception as e:
             print(f"⚠️ Не удалось отметить как прочитанное: {e}")
+

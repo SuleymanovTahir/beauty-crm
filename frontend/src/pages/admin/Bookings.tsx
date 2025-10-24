@@ -865,7 +865,260 @@ export default function Bookings() {
           </div>
         </div>
       )}
+{/* Add Booking Dialog */}
+      {showAddDialog && (
+        <div style={{
+          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999, padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#fff', borderRadius: '1rem',
+            width: '100%', maxWidth: '600px', overflow: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{
+              padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
+                Добавить запись
+              </h3>
+              <button onClick={() => { setShowAddDialog(false); resetForm(); }} style={{
+                backgroundColor: 'transparent', border: 'none',
+                cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
+              }}>×</button>
+            </div>
+            
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {/* Client Search */}
+              <div style={{ position: 'relative' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Клиент *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Поиск клиента..."
+                  value={clientSearch}
+                  onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
+                  onFocus={() => setShowClientDropdown(true)}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', boxSizing: 'border-box'
+                  }}
+                />
+                {selectedClient && (
+                  <div style={{
+                    marginTop: '0.5rem', padding: '0.5rem',
+                    backgroundColor: '#f3f4f6', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', display: 'flex',
+                    justifyContent: 'space-between', alignItems: 'center'
+                  }}>
+                    <span>{selectedClient.display_name}</span>
+                    <button
+                      onClick={() => { setSelectedClient(null); setClientSearch(''); }}
+                      style={{
+                        backgroundColor: 'transparent', border: 'none',
+                        cursor: 'pointer', color: '#6b7280'
+                      }}
+                    >×</button>
+                  </div>
+                )}
+                {showClientDropdown && clientSearch && !selectedClient && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0,
+                    backgroundColor: '#fff', border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem', marginTop: '0.25rem',
+                    maxHeight: '200px', overflowY: 'auto', zIndex: 10,
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                  }}>
+                    {filteredClients.length > 0 ? (
+                      filteredClients.map((c: any) => (
+                        <div
+                          key={c.instagram_id}
+                          onClick={() => {
+                            setSelectedClient(c);
+                            setClientSearch('');
+                            setShowClientDropdown(false);
+                            setAddForm({ ...addForm, phone: c.phone || '' });
+                          }}
+                          style={{
+                            padding: '0.75rem', cursor: 'pointer',
+                            borderBottom: '1px solid #f3f4f6',
+                            fontSize: '0.875rem'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                        >
+                          {c.display_name} {c.phone && `(${c.phone})`}
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        Клиенты не найдены
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
+              {/* Service Search */}
+              <div style={{ position: 'relative' }}>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Услуга *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Поиск услуги..."
+                  value={serviceSearch}
+                  onChange={(e) => { setServiceSearch(e.target.value); setShowServiceDropdown(true); }}
+                  onFocus={() => setShowServiceDropdown(true)}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', boxSizing: 'border-box'
+                  }}
+                />
+                {selectedService && (
+                  <div style={{
+                    marginTop: '0.5rem', padding: '0.5rem',
+                    backgroundColor: '#f3f4f6', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', display: 'flex',
+                    justifyContent: 'space-between', alignItems: 'center'
+                  }}>
+                    <span>{selectedService.name_ru} ({selectedService.price} AED)</span>
+                    <button
+                      onClick={() => { setSelectedService(null); setServiceSearch(''); }}
+                      style={{
+                        backgroundColor: 'transparent', border: 'none',
+                        cursor: 'pointer', color: '#6b7280'
+                      }}
+                    >×</button>
+                  </div>
+                )}
+                {showServiceDropdown && serviceSearch && !selectedService && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0,
+                    backgroundColor: '#fff', border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem', marginTop: '0.25rem',
+                    maxHeight: '200px', overflowY: 'auto', zIndex: 10,
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                  }}>
+                    {filteredServices.length > 0 ? (
+                      filteredServices.map((s: any) => (
+                        <div
+                          key={s.id}
+                          onClick={() => {
+                            setSelectedService(s);
+                            setServiceSearch('');
+                            setShowServiceDropdown(false);
+                            setAddForm({ ...addForm, revenue: s.price });
+                          }}
+                          style={{
+                            padding: '0.75rem', cursor: 'pointer',
+                            borderBottom: '1px solid #f3f4f6',
+                            fontSize: '0.875rem'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                        >
+                          {s.name_ru} - {s.price} AED
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        Услуги не найдены
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Date & Time */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                    Дата *
+                  </label>
+                  <input
+                    type="date"
+                    value={addForm.date}
+                    onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.875rem', boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                    Время *
+                  </label>
+                  <input
+                    type="time"
+                    value={addForm.time}
+                    onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
+                    style={{
+                      width: '100%', padding: '0.75rem',
+                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                      fontSize: '0.875rem', boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  Телефон
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+971 XX XXX XXXX"
+                  value={addForm.phone}
+                  onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{
+              padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb',
+              display: 'flex', gap: '0.75rem'
+            }}>
+              <button
+                onClick={() => { setShowAddDialog(false); resetForm(); }}
+                disabled={addingBooking}
+                style={{
+                  flex: 1, padding: '0.75rem', backgroundColor: '#f3f4f6',
+                  border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                  fontWeight: '500', color: '#374151', cursor: 'pointer'
+                }}
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleAddBooking}
+                disabled={addingBooking}
+                style={{
+                  flex: 1, padding: '0.75rem', backgroundColor: '#ec4899',
+                  border: 'none', borderRadius: '0.5rem', color: '#fff',
+                  fontWeight: '500', cursor: addingBooking ? 'not-allowed' : 'pointer',
+                  opacity: addingBooking ? 0.5 : 1
+                }}
+              >
+                {addingBooking ? 'Создание...' : 'Создать запись'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }

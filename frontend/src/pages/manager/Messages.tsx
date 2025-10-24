@@ -71,12 +71,12 @@ export default function Messages() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-  
+
   // ✅ ИСПРАВЛЕНО: Разделяем первичную загрузку и фоновые обновления
   const [initialLoading, setInitialLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [messageToDelete, setMessageToDelete] = useState<{ id: string; name: string } | null>(null);
 
@@ -122,7 +122,7 @@ export default function Messages() {
       } else {
         setIsRefreshing(true);
       }
-      
+
       setError(null);
 
       const data = await api.getClients();
@@ -156,7 +156,7 @@ export default function Messages() {
       const message =
         err instanceof Error ? err.message : "Ошибка загрузки сообщений";
       setError(message);
-      
+
       // Показываем тост только при первой загрузке
       if (isInitial) {
         toast.error(`Ошибка: ${message}`);
@@ -234,7 +234,7 @@ export default function Messages() {
 
   const handleConfirmDelete = () => {
     if (!messageToDelete) return;
-    
+
     setMessages(messages.filter((msg) => msg.id !== messageToDelete.id));
     localStorage.removeItem(`archived_${messageToDelete.id}`);
     toast.success("Удалено безвозвратно");
@@ -316,7 +316,7 @@ export default function Messages() {
               </div>
             )}
           </div>
-          
+
           {/* ✅ КНОПКА РУЧНОГО ОБНОВЛЕНИЯ */}
           <Button
             onClick={() => loadMessages(false)}
@@ -473,9 +473,8 @@ export default function Messages() {
             filteredMessages.map((message) => (
               <div
                 key={message.id}
-                className={`px-6 py-4 hover:bg-gray-50 transition-colors ${
-                  message.unread ? "bg-blue-50" : message.archived ? "bg-gray-50 opacity-75" : ""
-                }`}
+                className={`px-6 py-4 hover:bg-gray-50 transition-colors ${message.unread ? "bg-blue-50" : message.archived ? "bg-gray-50 opacity-75" : ""
+                  }`}
               >
                 <div className="flex items-start gap-4">
                   {!message.archived ? (
@@ -494,11 +493,10 @@ export default function Messages() {
                         className="mt-1"
                       >
                         <Star
-                          className={`w-5 h-5 ${
-                            message.starred
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300 hover:text-yellow-400"
-                          }`}
+                          className={`w-5 h-5 ${message.starred
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300 hover:text-yellow-400"
+                            }`}
                         />
                       </button>
                     </>
@@ -510,19 +508,21 @@ export default function Messages() {
                     {message.avatar}
                   </div>
 
-                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => {
-                    if (!message.archived) {
-                      navigate(`/manager/chat?client_id=${message.id}`);
-                    }
-                  }}>
+                  <div
+                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => {
+                      if (!message.archived) {
+                        navigate(`/admin/chat?client_id=${message.id}`);
+                      }
+                    }}
+                  >
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <p
-                          className={`text-sm ${
-                            message.unread
-                              ? "text-gray-900 font-medium"
-                              : "text-gray-700"
-                          }`}
+                          className={`text-sm ${message.unread
+                            ? "text-gray-900 font-medium"
+                            : "text-gray-700"
+                            }`}
                         >
                           {message.display_name}
                         </p>
@@ -540,9 +540,8 @@ export default function Messages() {
                       </span>
                     </div>
                     <p
-                      className={`text-sm ${
-                        message.unread ? "text-gray-900" : "text-gray-600"
-                      }`}
+                      className={`text-sm ${message.unread ? "text-gray-900" : "text-gray-600"
+                        }`}
                     >
                       {message.phone}
                     </p>

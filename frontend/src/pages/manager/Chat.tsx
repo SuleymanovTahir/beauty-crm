@@ -356,7 +356,9 @@ export default function Chat() {
                       {client.display_name.charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 truncate font-medium">{client.display_name}</p>
+                      <p className="text-xs text-gray-900 font-mono truncate" title={selectedClient.username || selectedClient.id}>
+  {selectedClient.username ? `@${selectedClient.username}` : selectedClient.id}
+</p>
                       <p className="text-xs text-gray-600 truncate">{client.phone}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {client.total_messages} сообщений
