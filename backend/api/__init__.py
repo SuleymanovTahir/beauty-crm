@@ -2,15 +2,15 @@
 API модуль - REST endpoints для CRM системы
 """
 from fastapi import APIRouter
-from api.clients import router as clients_router
-from api.bookings import router as bookings_router
-from api.services import router as services_router
-from api.analytics import router as analytics_router
-from api.users import router as users_router
-from api.settings import router as settings_router
-from api.export import router as export_router
-from api.chat import router as chat_router
-from api.roles import router as roles_router
+from .clients import router as clients_router
+from .bookings import router as bookings_router
+from .services import router as services_router
+from .analytics import router as analytics_router
+from .users import router as users_router
+from .settings import router as settings_router
+from .export import router as export_router
+from .chat import router as chat_router
+from .roles import router as roles_router
 
 # Главный роутер API
 router = APIRouter(prefix="/api", tags=["API"])

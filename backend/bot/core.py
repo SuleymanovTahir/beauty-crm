@@ -7,7 +7,7 @@ from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 
 from config import GEMINI_API_KEY
-from database import (
+from db import (
     get_salon_settings, 
     get_bot_settings,
     get_all_services,
