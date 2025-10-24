@@ -1690,3 +1690,33 @@ ValueError: too many values to unpack (expected 4, got 5)
 2025-10-24 21:13:55 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
 2025-10-24 21:13:55 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-10-24 21:13:55 - crm - INFO - [startup] ======================================================================
+2025-10-24 21:41:55 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:41:55 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:41:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 21:41:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 21:41:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:41:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:41:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 21:41:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 21:41:58 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:41:58 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:41:59 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:41:59 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:42:00 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-24 21:42:00 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:42:00 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-24 21:42:00 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-24 21:42:00 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-24 21:42:00 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-24 21:42:01 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-24 21:42:01 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-24 21:42:01 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-24 21:42:01 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-24 21:42:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:42:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:42:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 21:42:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 21:42:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 21:42:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 21:42:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 21:42:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
