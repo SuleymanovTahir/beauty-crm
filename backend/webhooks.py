@@ -1,21 +1,89 @@
 """
-Обработчики вебхуков Instagram
+Обработчики вебхуков Instagram - С УЛУЧШЕННОЙ ОБРАБОТКОЙ USERNAME
 """
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 import json
 import traceback
+import httpx
 
-from config import VERIFY_TOKEN
+from config import VERIFY_TOKEN, PAGE_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ID
 from db import (
     get_or_create_client, save_message, get_chat_history,
-    detect_and_save_language, get_client_language
+    detect_and_save_language, get_client_language, update_client_info
 )
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
 from logger import logger, log_info, log_warning, log_error
 
 router = APIRouter(tags=["Webhooks"])
+
+
+async def fetch_username_from_api(user_id: str) -> str:
+    """
+    Попытка получить username из Instagram API
+    
+    Returns:
+        str: username или пустая строка
+    """
+    try:
+        url = f"https://graph.facebook.com/v18.0/{user_id}"
+        params = {
+            "fields": "username,name",
+            "access_token": PAGE_ACCESS_TOKEN
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url, params=params)
+            
+            if response.status_code == 200:
+                data = response.json()
+                username = data.get("username", "")
+                name = data.get("name", "")
+                
+                if username:
+                    log_info(f"✅ Username найден: @{username}", "webhook")
+                    return username
+                elif name:
+                    log_info(f"✅ Name найден: {name}", "webhook")
+                    return name
+                    
+            else:
+                log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
+                
+    except Exception as e:
+        log_error(f"❌ Ошибка получения username: {e}", "webhook")
+    
+    return ""
+
+
+async def extract_username_from_webhook(messaging_event: dict) -> str:
+    """
+    Извлечь username из webhook payload
+    
+    В некоторых случаях Instagram отправляет username в самом событии
+    """
+    try:
+        # Проверяем различные места где может быть username
+        sender = messaging_event.get("sender", {})
+        
+        # Иногда username есть в sender
+        if "username" in sender:
+            return sender["username"]
+        
+        # Или в user_ref
+        if "user_ref" in sender:
+            return sender["user_ref"]
+            
+        # Или в message metadata
+        message = messaging_event.get("message", {})
+        if "metadata" in message and "username" in message["metadata"]:
+            return message["metadata"]["username"]
+            
+    except Exception as e:
+        log_error(f"❌ Ошибка извлечения username из webhook: {e}", "webhook")
+    
+    return ""
 
 
 @router.get("/webhook")
@@ -86,8 +154,30 @@ async def handle_webhook(request: Request):
                     continue
                 
                 try:
-                    # Создать/получить клиента
-                    get_or_create_client(sender_id)
+                    # ✅ УЛУЧШЕННАЯ ЛОГИКА: Получаем username
+                    username = ""
+                    
+                    # 1. Пробуем из webhook payload
+                    username = await extract_username_from_webhook(messaging)
+                    
+                    # 2. Если не нашли - пробуем API
+                    if not username:
+                        username = await fetch_username_from_api(sender_id)
+                    
+                    # 3. Если всё равно не нашли - используем fallback
+                    if not username:
+                        username = f"user_{sender_id[:8]}"
+                        log_warning(f"⚠️ Username не найден для {sender_id}, используем fallback", "webhook")
+                    
+                    log_info(f"👤 Username: {username}", "webhook")
+                    
+                    # Создать/получить клиента с username
+                    get_or_create_client(sender_id, username=username)
+                    
+                    # ✅ НОВОЕ: Обновляем username в БД если нашли
+                    if username and not username.startswith("user_"):
+                        update_client_info(sender_id, name=username)
+                    
                     save_message(sender_id, message_text, "client")
                     
                     # Определить язык

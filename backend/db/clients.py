@@ -211,3 +211,35 @@ def get_client_language(instagram_id: str) -> str:
     conn.close()
     
     return result[0] if result and result[0] else 'ru'
+
+
+# В конец файла backend/db/clients.py
+def update_client(instagram_id: str, data: dict):
+    """Обновить данные клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    update_fields = []
+    values = []
+    
+    allowed_fields = ['username', 'name', 'phone', 'status', 'notes']
+    
+    for field in allowed_fields:
+        if field in data:
+            update_fields.append(f"{field} = ?")
+            values.append(data[field])
+    
+    if not update_fields:
+        conn.close()
+        return
+    
+    values.append(instagram_id)
+    query = f"UPDATE clients SET {', '.join(update_fields)} WHERE instagram_id = ?"
+    
+    try:
+        c.execute(query, values)
+        conn.commit()
+    except Exception as e:
+        print(f"❌ Ошибка обновления: {e}")
+    finally:
+        conn.close()

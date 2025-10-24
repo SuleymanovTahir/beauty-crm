@@ -14,7 +14,8 @@ from .clients import (
     pin_client,
     delete_client,
     detect_and_save_language,
-    get_client_language
+    get_client_language,
+    update_client,
 )
 
 # Записи

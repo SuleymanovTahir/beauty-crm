@@ -230,12 +230,21 @@ Google Maps: {self.salon['google_maps']}
         return services_text
     
     def _build_history(self, history: List[Tuple]) -> str:
-        """История диалога"""
+        """История диалога - ИСПРАВЛЕНО для работы с 5 элементами"""
         if not history:
             return ""
         
         history_text = "💬 ИСТОРИЯ РАЗГОВОРА (последние 5):\n"
-        for msg, sender, timestamp, msg_type in history[-5:]:
+        
+        # ✅ ИСПРАВЛЕНИЕ: Обрабатываем как 4, так и 5 элементов
+        for item in history[-5:]:
+            # Если 5 элементов: (msg, sender, timestamp, msg_type, id)
+            # Если 4 элемента: (msg, sender, timestamp, msg_type)
+            if len(item) >= 5:
+                msg, sender, timestamp, msg_type, msg_id = item
+            else:
+                msg, sender, timestamp, msg_type = item
+            
             role = "Клиент" if sender == "client" else "Ты"
             if msg_type == 'voice':
                 history_text += f"{role}: [Голосовое сообщение]\n"

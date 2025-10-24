@@ -306,3 +306,535 @@
 2025-10-24 15:24:52 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
 2025-10-24 15:24:52 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-10-24 15:24:52 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:31:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 19:31:35 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:31:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 19:31:35 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 19:31:35 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 19:31:35 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:32:36 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-24 19:32:36 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-24 19:32:36 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-24 19:32:36 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-24 19:32:39 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-24 19:32:39 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:32:39 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-24 19:32:39 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-10-24 19:32:39 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-24 19:32:39 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-24 19:32:40 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:32:40 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:32:43 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:32:43 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:32:53 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:32:53 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:33:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:33:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:33:13 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:33:13 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:33:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:33:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:33:33 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:33:33 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:36:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 19:36:49 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:36:49 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 19:36:49 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 19:36:49 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 19:36:49 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:36:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:36:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:36:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:36:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:36:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:36:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:36:49 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:36:49 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:37:11 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:37:11 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:37:13 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:37:13 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:37:13 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:37:13 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:37:15 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:37:15 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:37:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:37:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:37:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:37:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:38:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:38:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:38:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:38:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:38:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:38:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:38:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:38:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:38:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:38:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:39:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:39:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:40:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:40:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:41:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:41:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:42:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:42:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:43:02 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 19:43:02 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:43:02 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 19:43:02 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 19:43:02 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 19:43:02 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:43:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:43:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:44:21 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-24 19:44:21 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-24 19:44:21 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-24 19:44:21 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-24 19:44:21 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-24 19:44:21 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-24 19:44:26 - crm - INFO - [middleware] 🔥 GET /webhook
+2025-10-24 19:44:26 - crm - INFO - [webhook] ======================================================================
+2025-10-24 19:44:26 - crm - INFO - [webhook] 🔍 ВЕРИФИКАЦИЯ WEBHOOK
+2025-10-24 19:44:26 - crm - INFO - [webhook] Mode: subscribe
+2025-10-24 19:44:26 - crm - INFO - [webhook] Token: taha
+2025-10-24 19:44:26 - crm - INFO - [webhook] Challenge: 924473948
+2025-10-24 19:44:26 - crm - INFO - [webhook] ======================================================================
+2025-10-24 19:44:26 - crm - INFO - [webhook] ✅ Webhook верифицирован!
+2025-10-24 19:44:26 - crm - INFO - [middleware] 📤 GET /webhook → 200 (0.00s)
+2025-10-24 19:44:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:44:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:45:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:46 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:45:46 - crm - INFO - ======================================================================
+2025-10-24 19:45:46 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:45:46 - crm - INFO - 📦 RAW WEBHOOK PAYLOAD:
+2025-10-24 19:45:46 - crm - INFO - {"object":"instagram","entry":[{"time":1761320745324,"id":"17841448618072548","messaging":[{"sender":{"id":"1533224231180483"},"recipient":{"id":"17841448618072548"},"timestamp":1761320743915,"message":{"mid":"aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjQ5MDYzMjk5NDcyMzM5ODg5MTQ2ODg3MzU5MDExMjI1NgZDZD","text":"\u041f\u0440\u0438\u0432\u0435\u0442, \u0431\u043e\u0442 \u043a\u0430\u043a \u0442\u0435\u0431\u044f \u0437\u043e\u0432\u0443\u0442?"}}]}]}
+2025-10-24 19:45:46 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:45:46 - crm - INFO - 📋 Processing entry: 17841448618072548
+2025-10-24 19:45:46 - crm - INFO - 💬 Processing messaging event
+2025-10-24 19:45:46 - crm - INFO - 📝 Message from 1533224231180483: Привет, бот как тебя зовут?
+2025-10-24 19:45:46 - crm - INFO - ℹ️ Username не найден в webhook, пробуем API...
+2025-10-24 19:45:46 - crm - INFO - 🔍 Запрос username для user_id: 1533224231180483
+2025-10-24 19:45:46 - crm - INFO - 📥 API Response [400]: {"error":{"message":"Invalid OAuth access token - Cannot parse access token","type":"OAuthException","code":190,"fbtrace_id":"AAWxrAeWnN0lnO9RFHEoha2"}}
+2025-10-24 19:45:46 - crm - ERROR - ❌ HTTP 400: {"error":{"message":"Invalid OAuth access token - Cannot parse access token","type":"OAuthException","code":190,"fbtrace_id":"AAWxrAeWnN0lnO9RFHEoha2"}}
+2025-10-24 19:45:46 - crm - WARNING - ⚠️ User 1533224231180483: Возможно, бизнес-аккаунт или нет прав
+2025-10-24 19:45:46 - crm - WARNING - ⚠️ Не удалось получить username для 1533224231180483
+2025-10-24 19:45:48 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:45:48 - crm - ERROR - ❌ Processing error: too many values to unpack (expected 4, got 5)
+2025-10-24 19:45:48 - crm - ERROR - Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/webhooks.py", line 227, in handle_webhook
+    ai_response = await bot.generate_response(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/core.py", line 98, in generate_response
+    system_prompt = self.build_system_prompt(
+        instagram_id=instagram_id,
+    ...<2 lines>...
+        client_language=client_language
+    )
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/core.py", line 69, in build_system_prompt
+    return builder.build_full_prompt(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        instagram_id=instagram_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        client_language=client_language
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/prompts.py", line 50, in build_full_prompt
+    self._build_history(history),
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/prompts.py", line 238, in _build_history
+    for msg, sender, timestamp, msg_type in history[-5:]:
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 4, got 5)
+
+2025-10-24 19:45:48 - crm - INFO - [middleware] 📤 POST /webhook → 200 (1.82s)
+2025-10-24 19:45:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:45:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:45:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:46:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:46:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:46:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:47:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:47:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:47:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:47:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.02s)
+2025-10-24 19:48:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:48:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:49:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:49:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:49:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:49:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:49:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:49:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:49:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:13 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 19:50:13 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:50:13 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 19:50:13 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 19:50:13 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 19:50:13 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:50:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:50:33 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:50:33 - crm - INFO - ======================================================================
+2025-10-24 19:50:33 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:50:33 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:50:34 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:50:35 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:50:35 - crm - ERROR - ❌ Processing error: too many values to unpack (expected 4, got 5)
+2025-10-24 19:50:35 - crm - ERROR - Traceback (most recent call last):
+  File "/Users/tahir/Desktop/beauty-crm/backend/webhooks.py", line 164, in handle_webhook
+    ai_response = await bot.generate_response(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/core.py", line 98, in generate_response
+    system_prompt = self.build_system_prompt(
+        instagram_id=instagram_id,
+    ...<2 lines>...
+        client_language=client_language
+    )
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/core.py", line 69, in build_system_prompt
+    return builder.build_full_prompt(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        instagram_id=instagram_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        client_language=client_language
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/prompts.py", line 50, in build_full_prompt
+    self._build_history(history),
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/tahir/Desktop/beauty-crm/backend/bot/prompts.py", line 238, in _build_history
+    for msg, sender, timestamp, msg_type in history[-5:]:
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 4, got 5)
+
+2025-10-24 19:50:35 - crm - INFO - [middleware] 📤 POST /webhook → 200 (1.67s)
+2025-10-24 19:50:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:50:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:51:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:51:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:52:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:52:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:53:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 19:53:01 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:53:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 19:53:01 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 19:53:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 19:53:01 - crm - INFO - [startup] ======================================================================
+2025-10-24 19:53:12 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:53:12 - crm - INFO - ======================================================================
+2025-10-24 19:53:12 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:53:12 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:53:13 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:53:14 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:53:28 - crm - INFO - ✅ AI response: Hello! 👋 Welcome to M.Le Diamant Beauty Lounge! 💎 How can I pamper you today? ✨ Are you interested i
+2025-10-24 19:53:30 - crm - INFO - 📤 Message sent!
+2025-10-24 19:53:30 - crm - INFO - [middleware] 📤 POST /webhook → 200 (18.14s)
+2025-10-24 19:53:32 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:53:32 - crm - INFO - ======================================================================
+2025-10-24 19:53:32 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:53:32 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:53:32 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:53:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:53:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 19:53:48 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:53:48 - crm - INFO - ======================================================================
+2025-10-24 19:53:48 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:53:48 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:53:48 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:54:30 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:54:30 - crm - INFO - ======================================================================
+2025-10-24 19:54:30 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:54:30 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:54:31 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:54:36 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:54:45 - crm - INFO - ✅ AI response: Я AI-ассистент M.Le Diamant Beauty Lounge! 💎 Всегда рада помочь с выбором услуг и ответить на вопрос
+2025-10-24 19:54:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:54:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:54:47 - crm - INFO - 📤 Message sent!
+2025-10-24 19:54:47 - crm - INFO - [middleware] 📤 POST /webhook → 200 (16.81s)
+2025-10-24 19:54:48 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:54:48 - crm - INFO - ======================================================================
+2025-10-24 19:54:48 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:54:48 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:54:48 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:55:37 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:55:37 - crm - INFO - ======================================================================
+2025-10-24 19:55:37 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:55:37 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:55:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:55:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:55:37 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:55:38 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:55:47 - crm - INFO - ✅ AI response: В честь Нового Года у нас действует специальное предложение на комплексные услуги! ✨ Например, маник
+2025-10-24 19:55:48 - crm - INFO - 📤 Message sent!
+2025-10-24 19:55:48 - crm - INFO - [middleware] 📤 POST /webhook → 200 (11.84s)
+2025-10-24 19:55:49 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:55:49 - crm - INFO - ======================================================================
+2025-10-24 19:55:49 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:55:49 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:55:49 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:56:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:56:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:56:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:56:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:56:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:56:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:56:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:56:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:56:20 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:56:20 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:56:21 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:56:21 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 19:56:23 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-24 19:56:23 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-10-24 19:57:32 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:57:32 - crm - INFO - ======================================================================
+2025-10-24 19:57:32 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:57:32 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:57:32 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:57:55 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:57:55 - crm - INFO - ======================================================================
+2025-10-24 19:57:55 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:57:55 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:57:56 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:57:57 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:58:04 - crm - INFO - ✅ AI response: Супер! Я AI-ассистент, поэтому запись онлайн 😊 К сожалению, скидки на эту услугу уже не действуют. 
+
+2025-10-24 19:58:06 - crm - INFO - 📤 Message sent!
+2025-10-24 19:58:06 - crm - INFO - [middleware] 📤 POST /webhook → 200 (10.43s)
+2025-10-24 19:58:07 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:58:07 - crm - INFO - ======================================================================
+2025-10-24 19:58:07 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:58:07 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:58:07 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:58:10 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 19:58:10 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-24 19:58:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:39 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:58:39 - crm - INFO - ======================================================================
+2025-10-24 19:58:39 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:58:39 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:58:39 - crm - WARNING - ⚠️ User 1533224231180483: username недоступен (возможно бизнес-аккаунт)
+2025-10-24 19:58:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:40 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 19:58:49 - crm - INFO - ✅ AI response: Извините, я AI-помощник элитного салона красоты и специализируюсь на услугах салона, а не на задачах
+2025-10-24 19:58:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:58:51 - crm - INFO - 📤 Message sent!
+2025-10-24 19:58:51 - crm - INFO - [middleware] 📤 POST /webhook → 200 (12.08s)
+2025-10-24 19:58:52 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 19:58:52 - crm - INFO - ======================================================================
+2025-10-24 19:58:52 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 19:58:52 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 19:58:52 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 19:58:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:58:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 19:59:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 19:59:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:00:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:00:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:00:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 20:00:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 20:00:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-24 20:00:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:00:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:00:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:00:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:01:34 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 20:01:34 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:01:34 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 20:01:34 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 20:01:34 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 20:01:34 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:01:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:01:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:01:38 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 20:01:38 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:01:38 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 20:01:38 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 20:01:38 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 20:01:38 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:01:42 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 20:01:42 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:01:42 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 20:01:42 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 20:01:42 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 20:01:42 - crm - INFO - [startup] ======================================================================
+2025-10-24 20:02:28 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 20:02:28 - crm - INFO - ======================================================================
+2025-10-24 20:02:28 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 20:02:28 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 20:02:29 - crm - INFO - [webhook] ✅ Username найден: @stz_192
+2025-10-24 20:02:29 - crm - INFO - [webhook] 👤 Username: stz_192
+2025-10-24 20:02:30 - crm - INFO - 🤖 Generating AI response...
+2025-10-24 20:02:39 - crm - INFO - ✅ AI response: Понимаю ваше желание! 😊 Но, к сожалению, я AI-ассистент и не могу записывать клиентов напрямую.
+
+Но 
+2025-10-24 20:02:39 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:02:39 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:02:46 - crm - INFO - 📤 Message sent!
+2025-10-24 20:02:46 - crm - INFO - [middleware] 📤 POST /webhook → 200 (17.21s)
+2025-10-24 20:02:47 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 20:02:47 - crm - INFO - ======================================================================
+2025-10-24 20:02:47 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 20:02:47 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 20:02:47 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.08s)
+2025-10-24 20:02:49 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-24 20:02:49 - crm - INFO - ======================================================================
+2025-10-24 20:02:49 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-24 20:02:49 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-24 20:02:49 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-24 20:03:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-24 20:03:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-24 20:03:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-24 20:03:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-24 20:03:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
