@@ -18535,3 +18535,27 @@ sqlite3.OperationalError: no such table: users
 2025-10-24 09:27:52 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
 2025-10-24 09:27:52 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-10-24 09:27:52 - crm - INFO - [startup] ======================================================================
+2025-10-24 09:28:17 - crm - INFO - [middleware] 🔥 GET /admin/
+2025-10-24 09:28:17 - crm - INFO - [middleware] 📤 GET /admin/ → 404 (0.00s)
+2025-10-24 09:28:17 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-24 09:28:17 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-24 09:28:42 - crm - INFO - [middleware] 🔥 GET /.well-known/appspecific/com.chrome.devtools.json
+2025-10-24 09:28:42 - crm - INFO - [middleware] 📤 GET /.well-known/appspecific/com.chrome.devtools.json → 404 (0.00s)
+2025-10-24 09:29:02 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-24 09:29:02 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-24 09:29:02 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-24 09:29:02 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-24 09:29:02 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-24 09:29:02 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-24 09:29:02 - crm - INFO - [middleware] 🔥 GET /admin/
+2025-10-24 09:29:02 - crm - INFO - [middleware] 📤 GET /admin/ → 404 (0.00s)
+2025-10-24 09:30:54 - crm - INFO - [middleware] 🔥 GET /admin/
+2025-10-24 09:30:54 - crm - INFO - [middleware] 📤 GET /admin/ → 404 (0.00s)
+2025-10-24 09:30:55 - crm - INFO - [middleware] 🔥 GET /admin/
+2025-10-24 09:30:55 - crm - INFO - [middleware] 📤 GET /admin/ → 404 (0.00s)
+2025-10-24 09:31:34 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-24 09:31:34 - crm - INFO - [startup] ======================================================================
+2025-10-24 09:31:34 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-24 09:31:34 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-24 09:31:34 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-24 09:31:34 - crm - INFO - [startup] ======================================================================
