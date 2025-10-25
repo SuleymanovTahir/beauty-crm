@@ -500,7 +500,7 @@ export default function Chat() {
                         </span>
                       )}
                       {selectedClient.username && (
-                        
+                        <a
                           href={`https://instagram.com/${selectedClient.username}`}
                           target="_blank"
                           rel="noopener noreferrer"

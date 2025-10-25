@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -14,9 +14,11 @@ import {
   CalendarDays,
   Scissors,
   MessageCircle,
-  TrendingUp
+  TrendingUp,
+  Bell
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { api } from '../../services/api';
 
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -26,12 +28,13 @@ interface AdminLayoutProps {
 export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
     { icon: ShoppingCart, label: 'Записи', path: '/admin/bookings' },
     { icon: Users, label: 'Клиенты', path: '/admin/clients' },
-    { icon: MessageCircle, label: 'Сообщения', path: '/admin/messages' },
+    { icon: MessageCircle, label: 'Сообщения', path: '/admin/messages', badge: unreadCount },
     { icon: MessageSquare, label: 'Чат', path: '/admin/chat' },
     { icon: BarChart3, label: 'Аналитика', path: '/admin/analytics' },
     { icon: Scissors, label: 'Услуги', path: '/admin/services' },
@@ -40,6 +43,24 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     { icon: Settings, label: 'Настройки', path: '/admin/settings' },
     { icon: Wrench, label: 'Настройки бота', path: '/admin/bot-settings' },
   ];
+
+  // Загружаем количество непрочитанных при монтировании
+  useEffect(() => {
+    loadUnreadCount();
+    
+    // Обновляем каждые 10 секунд
+    const interval = setInterval(loadUnreadCount, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadUnreadCount = async () => {
+    try {
+      const data = await api.getUnreadCount();
+      setUnreadCount(data.count || 0);
+    } catch (err) {
+      console.error('Failed to load unread count:', err);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -66,6 +87,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
           <p className="text-sm text-gray-500 mt-1">Администратор</p>
         </div>
         {/* Navigation */}
+       {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-1">
             {menuItems.map((item) => {
@@ -76,7 +98,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
                       isActive
                         ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 shadow-sm'
                         : 'text-gray-700 hover:bg-gray-50'
@@ -84,6 +106,13 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-pink-600' : 'text-gray-500'}`} />
                     <span className={isActive ? 'font-semibold' : 'font-medium'}>{item.label}</span>
+                    
+                    {/* 🔔 Badge с количеством непрочитанных */}
+                    {item.badge && item.badge > 0 && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                        {item.badge > 99 ? '99+' : item.badge}
+                      </span>
+                    )}
                   </Link>
                 </li>
               );
