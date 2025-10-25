@@ -613,17 +613,38 @@ export default function Chat() {
                         : 'bg-white text-gray-900 border border-gray-200'
                         }`}
                     >
-                      {msg.type === 'image' && msg.message.startsWith('http') ? (
+                      {(msg.type === 'image' || msg.message.includes('[Файл: image]')) ? (
                         <div className="relative">
-                          <img
-                            src={msg.message}
-                            alt="Отправленное изображение"
-                            className="max-w-full h-auto rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity"
-                            onClick={() => window.open(msg.message, '_blank')}
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
+                          {(() => {
+                            // Извлекаем URL из текста "[Файл: image] filename.jpg"
+                            let imageUrl = msg.message;
+
+                            if (msg.message.includes('[Файл: image]')) {
+                              const filename = msg.message.split('] ')[1]?.trim();
+                              if (filename) {
+                                imageUrl = `${import.meta.env.VITE_API_URL}/static/uploads/images/${filename}`;
+                              }
+                            }
+
+                            return (
+                              <>
+                                <img
+                                  src={imageUrl}
+                                  alt="Изображение"
+                                  className="max-w-full max-h-96 h-auto rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity object-contain"
+                                  onClick={() => window.open(imageUrl, '_blank')}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    const fallback = e.currentTarget.nextElementSibling;
+                                    if (fallback) fallback.style.display = 'block';
+                                  }}
+                                />
+                                <div style={{ display: 'none' }} className="px-4 py-3 text-sm text-gray-500">
+                                  📷 Изображение не загрузилось
+                                </div>
+                              </>
+                            );
+                          })()}
                           <div className={`px-4 py-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
                             <p className="text-xs">
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
