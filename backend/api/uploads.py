@@ -1,87 +1,97 @@
-"""
-API для загрузки файлов
-"""
-from fastapi import APIRouter, UploadFile, File, Cookie
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-from typing import Optional
 import os
 import uuid
 from pathlib import Path
+from typing import Optional
 
-from utils import require_auth, sanitize_filename
-from logger import log_info, log_error
+router = APIRouter(tags=["Upload"])
 
-router = APIRouter(tags=["Uploads"])
+# ✅ ВАЖНО: Укажите ваш реальный домен или публичный IP
+# Для production:
+PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-domain.com")  
+# Для разработки с ngrok (если используете):
+# PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-ngrok-url.ngrok-free.app")
+
+UPLOAD_DIR = Path("static/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Создаем подпапки
+(UPLOAD_DIR / "images").mkdir(exist_ok=True)
+(UPLOAD_DIR / "videos").mkdir(exist_ok=True)
+(UPLOAD_DIR / "audio").mkdir(exist_ok=True)
+(UPLOAD_DIR / "files").mkdir(exist_ok=True)
 
 
-@router.post("/upload")
-async def upload_file(
-    file: UploadFile = File(...),
-    session_token: Optional[str] = Cookie(None)
-):
-    """Загрузить файл на сервер"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+def get_file_category(content_type: str) -> str:
+    """Определить категорию файла по MIME типу"""
+    if content_type.startswith('image/'):
+        return 'images'
+    elif content_type.startswith('video/'):
+        return 'videos'
+    elif content_type.startswith('audio/'):
+        return 'audio'
+    else:
+        return 'files'
+
+
+@router.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """
+    Загрузить файл и получить публичный URL
     
+    Returns:
+        {
+            "file_url": "https://your-domain.com/static/uploads/images/file.jpg",
+            "filename": "file.jpg",
+            "content_type": "image/jpeg",
+            "size": 12345
+        }
+    """
     try:
-        log_info(f"📤 Upload request: {file.filename} ({file.content_type})", "uploads")
+        # Проверка размера (максимум 25MB)
+        contents = await file.read()
+        file_size = len(contents)
+        
+        if file_size > 25 * 1024 * 1024:  # 25MB
+            raise HTTPException(
+                status_code=413,
+                detail="File too large. Maximum size is 25MB"
+            )
+        
+        # Определяем категорию
+        category = get_file_category(file.content_type or 'application/octet-stream')
         
         # Генерируем уникальное имя файла
-        file_ext = Path(file.filename).suffix
-        safe_name = sanitize_filename(file.filename)
-        unique_name = f"{uuid.uuid4().hex}{file_ext}"
+        file_extension = os.path.splitext(file.filename)[1] if file.filename else '.jpg'
+        unique_filename = f"{uuid.uuid4()}{file_extension}"
         
-        log_info(f"   Original: {file.filename}", "uploads")
-        log_info(f"   Safe name: {safe_name}", "uploads")
-        log_info(f"   Unique name: {unique_name}", "uploads")
-        
-        # Определяем папку по типу файла
-        if file.content_type and file.content_type.startswith('image/'):
-            folder = 'images'
-        elif file.content_type and file.content_type.startswith('audio/'):
-            folder = 'voice'
-        elif file.content_type and file.content_type.startswith('video/'):
-            folder = 'videos'
-        else:
-            folder = 'files'
-        
-        log_info(f"   Folder: {folder}", "uploads")
-        
-        # Полный путь (относительно backend/)
-        base_dir = Path(__file__).parent.parent  # /backend/
-        file_dir = base_dir / 'static' / 'uploads' / folder
-        file_dir.mkdir(parents=True, exist_ok=True)
-        file_path = file_dir / unique_name
-        
-        log_info(f"   Path: {file_path}", "uploads")
+        # Полный путь для сохранения
+        file_path = UPLOAD_DIR / category / unique_filename
         
         # Сохраняем файл
-        contents = await file.read()
-        log_info(f"   Size: {len(contents)} bytes", "uploads")
-        
         with open(file_path, 'wb') as f:
             f.write(contents)
         
-        # ✅ ПРОВЕРЯЕМ что файл действительно сохранился
-        if not file_path.exists():
-            raise Exception(f"Файл не создан: {file_path}")
+        # ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Формируем ПУБЛИЧНЫЙ URL
+        public_file_url = f"{PUBLIC_URL}/static/uploads/{category}/{unique_filename}"
         
-        # Формируем URL
-        from config import BASE_URL
-        file_url = f"{BASE_URL}/static/uploads/{folder}/{unique_name}"
-        
-        log_info(f"✅ File uploaded successfully!", "uploads")
-        log_info(f"   URL: {file_url}", "uploads")
+        print(f"✅ File uploaded: {unique_filename}")
+        print(f"📍 Public URL: {public_file_url}")
         
         return {
-            "success": True,
-            "file_url": file_url,
-            "filename": safe_name,
-            "size": len(contents),
-            "content_type": file.content_type
+            "file_url": public_file_url,
+            "filename": unique_filename,
+            "content_type": file.content_type,
+            "size": file_size,
+            "category": category
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
-        log_error(f"❌ Ошибка загрузки файла: {e}", "uploads", exc_info=True)
-        return JSONResponse({"error": str(e)}, status_code=500)
+        print(f"❌ Upload error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Upload failed: {str(e)}"
+        )

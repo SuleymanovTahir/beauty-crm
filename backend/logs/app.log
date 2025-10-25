@@ -7916,3 +7916,2404 @@ sqlite3.OperationalError: no such table: users
 2025-10-25 11:26:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
 2025-10-25 11:26:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
 2025-10-25 11:26:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:26:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:26:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:26:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:26:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:26:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:26:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:26:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:26:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:26:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:26:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:27:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:27:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:27:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:27:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:27:37 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 11:27:37 - crm - INFO - ======================================================================
+2025-10-25 11:27:37 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 11:27:37 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 11:27:37 - crm - INFO - [webhook] 📎 Получено вложение: image
+2025-10-25 11:27:39 - crm - INFO - [middleware] 📤 POST /webhook → 200 (2.29s)
+2025-10-25 11:27:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:27:41 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 11:27:41 - crm - INFO - ======================================================================
+2025-10-25 11:27:41 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 11:27:41 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 11:27:41 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-25 11:27:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:27:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:27:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:27:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:27:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:27:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:28:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:28:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:28:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:28:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:28:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:28:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:28:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:28:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:28:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:28:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:28:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:28:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:28:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:29:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:29:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:29:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:29:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:30:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:30:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:30:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:30:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:02 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:02 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:31:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:31:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:31:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:31:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:31:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:31:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:31:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:32:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:32:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:32:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:32:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:32:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:32:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:32:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:32:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:32:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:32:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:33:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:33:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:33:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:33:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:34:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:34:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:34:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:34:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:35:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:35:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:35:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:35:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:36:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:36:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:36:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:36:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:37:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:37:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:37:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:37:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:38:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:38:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:38:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:38:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:39:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:39:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:39:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:39:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:40:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-25 11:40:40 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-25 11:40:40 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-25 11:40:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-25 11:40:40 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:41 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-25 11:40:41 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:41 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-25 11:40:41 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-25 11:40:41 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-25 11:40:41 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:42 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-25 11:40:42 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:42 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-25 11:40:42 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-25 11:40:42 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-25 11:40:42 - crm - INFO - [startup] ======================================================================
+2025-10-25 11:40:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:40:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:40:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:40:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:41:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:41:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:41:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:41:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:42:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:42:07 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:42:07 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:42:08 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:42:08 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:42:08 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:42:08 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:42:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:29 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:29 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:34 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:34 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:42:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:42:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:42:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:42:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:42:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:42:57 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:42:57 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:42:58 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:42:58 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:42:58 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:42:58 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:01 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:01 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:43:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:43:22 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:43:22 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:43:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:43:23 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:43:23 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:29 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:43:29 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:43:29 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:43:29 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:43:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:43:34 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:43:34 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:43:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:43:36 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:43:36 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:43:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:43:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:43:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:43:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:43:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:44:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:44:22 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:44:22 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:44:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:44:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:44:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:44:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:44:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:35 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:45:35 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:45:35 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:45:35 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:45:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:45:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:45:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:45:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:45:41 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:41 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:46 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:45:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:46 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:45:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:46 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:45:46 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:45:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:45:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:45:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:45:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:45:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:26 - crm - INFO - [middleware] 🔥 POST /api/upload
+2025-10-25 11:46:26 - crm - INFO - [uploads] 📤 Upload request: 72f3fb6c7c3cd431fa494513e7b498ea.jpg (image/jpeg)
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Original: 72f3fb6c7c3cd431fa494513e7b498ea.jpg
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Safe name: 72f3fb6c7c3cd431fa494513e7b498ea.jpg
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Unique name: 937f46bb73c749dfb94424ca3fc22009.jpg
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Folder: images
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Path: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/937f46bb73c749dfb94424ca3fc22009.jpg
+2025-10-25 11:46:26 - crm - INFO - [uploads]    Size: 91107 bytes
+2025-10-25 11:46:26 - crm - INFO - [uploads] ✅ File uploaded successfully!
+2025-10-25 11:46:26 - crm - INFO - [uploads]    URL: http://localhost:8000/static/uploads/images/937f46bb73c749dfb94424ca3fc22009.jpg
+2025-10-25 11:46:26 - crm - INFO - [middleware] 📤 POST /api/upload → 200 (0.00s)
+2025-10-25 11:46:26 - crm - INFO - [middleware] 🔥 POST /api/chat/send-file
+2025-10-25 11:46:26 - crm - INFO - [api] 📤 Отправка файла от admin клиенту 1533224231180483
+2025-10-25 11:46:26 - crm - INFO - [api]    URL: http://localhost:8000/static/uploads/images/937f46bb73c749dfb94424ca3fc22009.jpg
+2025-10-25 11:46:26 - crm - INFO - [api]    Type: image
+2025-10-25 11:46:26 - crm - INFO - [api]    File check: HTTP 200
+2025-10-25 11:46:26 - crm - INFO - [api]    File size: 0.09 MB
+2025-10-25 11:46:26 - crm - INFO - [instagram] 📤 Отправка файла (image): http://localhost:8000/static/uploads/images/937f46...
+2025-10-25 11:46:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:29 - crm - INFO - [instagram] ✅ Файл отправлен успешно
+2025-10-25 11:46:29 - crm - INFO - [api] ✅ Файл успешно отправлен клиенту 1533224231180483
+2025-10-25 11:46:29 - crm - INFO - [middleware] 📤 POST /api/chat/send-file → 200 (3.21s)
+2025-10-25 11:46:29 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 11:46:29 - crm - INFO - ======================================================================
+2025-10-25 11:46:29 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 11:46:29 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 11:46:29 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-25 11:46:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:46:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:43 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 11:46:43 - crm - INFO - ======================================================================
+2025-10-25 11:46:43 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 11:46:43 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 11:46:43 - crm - INFO - [webhook] 📎 Получено вложение: image
+2025-10-25 11:46:43 - crm - INFO - [webhook] 📎 URL файла: https://lookaside.fbsbx.com/ig_messaging_cdn/?asset_id=836135455458057&signature=AYe7Pjc1vdNu3GAK2clbyLCE4u_t2Xn6Ok6-rZ6NJM3AHAo4RowOl5gP8qdrO2U-ZrTvVDbYsiXw2hq4oj-ephWRVZc8vgkHFi6hhN93YFvHqjEhH0WgftxRWRSnruzA-wjL5syxKAt8j8i9oGchgZZEmBtxX3ogL31heTVpDfhR95iKehIDEko0tNCmhYhnZaTzKPTjvVPMMZwU3Qn3M_-wUQC39A
+2025-10-25 11:46:46 - crm - INFO - [middleware] 📤 POST /webhook → 200 (3.28s)
+2025-10-25 11:46:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:47 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 11:46:47 - crm - INFO - ======================================================================
+2025-10-25 11:46:47 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 11:46:47 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 11:46:47 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-25 11:46:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:46:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:46:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:46:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:46:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:47:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:47:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:47:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:47:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:47:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:47:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:48:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:48:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:48:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:48:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:48:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:48:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:48:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:48:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:48:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:48:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:49:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:49:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:49:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:49:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:49:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:49:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:49:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:49:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:50:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:50:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:05 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:50:05 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:50:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:50:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:50:36 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:50:36 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:50:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:50:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:50:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:50:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:50:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:10 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:10 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:10 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:10 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:20 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:20 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:20 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:20 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:25 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:25 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:25 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:25 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:26 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:26 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:26 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:26 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:28 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:28 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:28 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:28 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:39 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:39 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:39 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:39 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:44 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:44 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:46 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:51:46 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:51:46 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:51:46 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:51:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:51:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:51:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:51:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:51:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:52:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:52:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:52:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:52:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:52:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:53:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:53:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:53:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:53:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:53:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:53:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:53:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:53:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:53:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:53:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:54:27 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:54:27 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:54:27 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:54:27 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:54:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:54:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:54:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:54:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:54:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:54:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:54:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:54:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:54:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:54:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:54:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:54:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:55:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:55:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:55:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:55:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:56:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:56:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:56:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 11:56:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 11:57:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:57:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:57:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:57:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:09 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:58:09 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:58:09 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:58:09 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:58:10 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:58:10 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:58:10 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:58:10 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:58:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:58:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:58:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:58:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:58:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:44 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:58:44 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:58:44 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:58:44 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:58:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:58:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:58:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:54 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:54 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:58:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:58:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:58:59 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:58:59 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:00 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:59:00 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:59:00 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:59:00 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:59:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 11:59:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 11:59:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 11:59:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 11:59:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 11:59:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 11:59:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 11:59:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 11:59:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:00:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:00:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:42 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:00:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:42 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:00:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:00:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:00:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:00:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:00:48 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:00:48 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:00:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:00:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:00:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:00:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:00:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:01:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:01:34 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:01:34 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:01:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:01:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:01:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:01:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:01:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:01:52 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:01:52 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:01:52 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:01:52 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:01:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:01:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:01:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:01:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:02:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:02:47 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:02:47 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:02:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:02:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:02:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:02:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:02:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:03:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:03:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:03:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:03:39 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:03:39 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:03:39 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:03:39 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:03:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:03:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:03:55 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:03:55 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:03:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:03:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:03:55 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:03:55 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:03:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:03:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:03:56 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:03:56 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:04:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:04:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:04:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:04:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:04:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:04:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:04:48 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:04:48 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:04:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:04:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:04:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:04:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:04:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:05:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:05:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:05:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:05:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:05:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:05:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:05:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:05:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:05:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:05:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:05:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:05:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:06:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:06:05 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:06:05 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:06:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:06:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:06:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:06:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:06:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:06:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:06:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:06:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:06:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:06:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:06:56 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:06:56 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:06:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:06:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:06:57 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:06:57 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:07:00 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:07:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:00 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:07:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:00 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:07:00 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:07:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:11 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:11 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:31 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:31 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:31 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:07:31 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:07:31 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:07:31 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:07:32 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:07:32 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:07:32 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:07:32 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:07:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:07:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:07:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:36 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:07:36 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:07:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:07:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:07:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:07:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:07:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:08:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:11 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:08:11 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:08:11 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:08:11 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:08:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:42 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:08:42 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:08:42 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:08:42 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:08:43 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:08:43 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:08:43 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:08:43 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:08:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:54 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:54 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:08:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:08:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:08:59 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:08:59 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:02 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:02 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:03 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:03 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:09 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:09 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:09 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:09 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:14 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:14 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:29 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:29 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:34 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:34 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:39 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:39 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:42 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:42 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:42 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:42 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:43 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:09:43 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:09:43 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:09:43 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:09:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:09:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:09:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:09:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:09:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:10:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:10:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:10:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:10:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:11:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:11:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:11:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:11:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:11:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:11:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:11:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:11:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:11:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:11:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:12:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:12:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:12:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:12:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:13:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:13:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:13:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:13:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:14:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:14:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:14:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:14:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:15:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:15:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:15:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:15:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:15:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:15:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:15:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:15:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:15:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:15:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:15:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:15:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:16:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:16:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:16:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:16:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:17:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:17:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:17:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:17:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:18:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:18:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:18:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:18:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:19:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:19:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:19:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:19:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:20:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:20:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:20:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:20:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:20:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:21:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:21:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:21:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:21:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:22:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:22:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:22:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:22:14 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:22:14 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:22:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:22:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:29 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:29 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:22:34 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:34 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:39 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:39 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:22:44 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:44 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:22:54 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:22:54 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:22:59 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:22:59 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:23:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:23:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:23:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:23:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:29 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:29 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:34 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:23:34 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:23:39 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:39 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:44 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:23:44 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:23:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:23:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:23:59 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:23:59 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:29 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:29 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:34 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:34 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:39 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:39 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:44 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:44 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:49 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:49 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:24:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:24:54 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:54 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:24:59 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:24:59 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:25:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:25:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:25:05 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:25:05 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:25:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:25:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:25:07 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:25:07 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:25:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:25:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:24 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:25:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:24 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 12:25:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:25:24 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:25:24 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:25:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:25:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:25:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:25:30 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:25:30 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:25:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:25:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:25:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:25:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:25:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:25:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:26:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:26:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:26:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:26:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:26:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:27:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:27:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:27:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:27:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:27:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:28:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:28:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:28:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:28:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:28:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:28:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:29:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:29:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:29:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:29:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:30:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:30:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:30:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:30:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:30:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:30:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:30:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:30:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:31:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:31:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:31:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:31:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:32:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:32:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:32:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:32:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:33:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:33:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:33:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:33:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:34:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:34:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:34:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:34:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:35:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:35:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:35:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:35:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:36:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:36:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:36:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:36:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:37:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:37:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:37:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:37:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:38:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:38:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:38:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:38:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:39:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:39:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:39:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:39:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:40:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:40:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:40:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:40:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:40:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:40:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:40:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:40:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:41:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:41:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:41:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:41:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:41:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:41:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:41:41 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:41:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:41:41 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:41:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:42:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:42:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:42:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:42:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:43:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:43:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:43:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:43:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:44:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:44:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:44:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:44:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:45:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:45:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:45:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:45:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:46:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:46:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:46:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:46:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:47:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:47:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:47:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:47:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:48:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:48:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:48:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:48:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:49:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:49:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:49:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:49:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:50:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:50:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:50:17 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 12:50:17 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 12:50:17 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 12:50:17 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 12:50:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:50:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:51:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:51:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:37 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:51:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:37 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:51:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:51:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:51:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:51:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:51:57 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:51:57 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:52:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:52:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:52:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:52:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:52:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:52:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:52:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:52:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:52:52 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:52:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:52:52 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:52:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:53:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:53:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:53:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:53:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:54:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:54:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:54:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:54:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:55:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:55:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:55:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:55:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:56:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:56:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:56:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:56:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:57:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:57:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:57:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 12:57:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 12:58:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:58:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 12:58:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:58:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:59:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 12:59:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 12:59:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 12:59:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:00:41 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-25 13:00:41 - crm - INFO - [startup] ======================================================================
+2025-10-25 13:00:41 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-25 13:00:41 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-25 13:00:41 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-25 13:00:41 - crm - INFO - [startup] ======================================================================
+2025-10-25 13:00:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:00:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:00:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:00:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:02:01 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-10-25 13:02:01 - crm - INFO - [startup] ======================================================================
+2025-10-25 13:02:01 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-10-25 13:02:01 - crm - INFO - [startup] 🤖 Бот инициализирован: M.Le Diamant Beauty Lounge
+2025-10-25 13:02:01 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-10-25 13:02:01 - crm - INFO - [startup] ======================================================================
+2025-10-25 13:02:01 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:02:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:02:01 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:02:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:02:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:02:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:02:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 13:02:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:03:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:03:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:03:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:03:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:04:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:04:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:04:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 13:04:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:05:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:05:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:05:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:05:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:05:44 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:44 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:44 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:44 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:05:45 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:45 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:45 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:45 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:05:50 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:50 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:50 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:50 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:05:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:54 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:54 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:05:57 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:57 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:57 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:57 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:05:58 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:05:58 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:05:58 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:05:58 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:06:04 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:04 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:06:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:06:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:14 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:06:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:06:24 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:24 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:06:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:06:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:06:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 13:06:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 13:07:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:07:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:07:23 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:07:23 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:07:24 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:07:24 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:07:24 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:07:24 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:07:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:07:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:07:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:07:42 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:07:42 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:07:42 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:07:42 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:07:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:07:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:07:44 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:07:44 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:07:44 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:07:44 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:07:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:07:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:07:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:07:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:07:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:07:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:07:48 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:07:48 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:07:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:07:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:07:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:07:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:07:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:07:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:08:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-10-25 13:08:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 13:08:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:08:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:08:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:08:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:08:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:36 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:08:36 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:08:36 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:08:36 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:08:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:08:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:08:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:08:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:08:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:08:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:08:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:08:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:08:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:08:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:08:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:09:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:37 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:09:37 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:09:37 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:09:37 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:09:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:09:38 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:09:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:09:38 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:09:38 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:09:38 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:09:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:09:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:09:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:09:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:09:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:09:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:09:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:09:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:09:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:10:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:10:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:10:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:10:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:10:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:10:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:10:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:10:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:10:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:10:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:10:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:11:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:11:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:11:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:11:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:12:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:12:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:12:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:12:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:13:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:13:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:13:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:13:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:14:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 13:14:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:14:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:14:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:14:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:14:07 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:14:07 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:14:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:38 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:38 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:14:53 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:53 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:14:58 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:14:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:14:58 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 13:14:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:03 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:03 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:08 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:08 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:13 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:13 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:18 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:18 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:21 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:15:21 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 13:15:21 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:15:21 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:15:22 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:15:22 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:15:22 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:15:22 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:15:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:43 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:43 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:15:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:15:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:15:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:15:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:16:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:16:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:16:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:16:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 13:16:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 13:16:07 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:16:07 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:16:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:16 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-10-25 13:16:16 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-10-25 13:16:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:21 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:21 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:26 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:26 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:28 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:28 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:31 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:31 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:33 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:33 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:36 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:36 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:41 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:41 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:48 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:48 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:16:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:16:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:16:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:16:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:17:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:17:06 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:17:06 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:17:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:17:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:17:16 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:17:16 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 13:17:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-10-25 13:17:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-10-25 13:17:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 13:17:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)

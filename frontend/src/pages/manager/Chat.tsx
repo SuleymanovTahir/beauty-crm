@@ -267,11 +267,13 @@ export default function Chat() {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
     try {
+      // ✅ ИСПРАВЛЕНИЕ: Отправляем файлы ПЕРВЫМИ
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
 
         for (const file of attachedFiles) {
           try {
+            // 1. Загружаем файл на сервер
             const formData = new FormData();
             formData.append('file', file);
 
@@ -282,10 +284,13 @@ export default function Chat() {
             });
 
             if (!uploadResponse.ok) {
+              const errorText = await uploadResponse.text();
+              console.error('Upload error:', errorText);
               throw new Error(`Ошибка загрузки: ${uploadResponse.status}`);
             }
 
             const uploadResult = await uploadResponse.json();
+            console.log('Upload result:', uploadResult);
 
             if (!uploadResult.file_url) {
               throw new Error('Не получен URL файла');
@@ -293,28 +298,49 @@ export default function Chat() {
 
             const { file_url } = uploadResult;
 
+            // 2. Определяем тип файла
             const fileType = file.type.startsWith('image/') ? 'image' :
               file.type.startsWith('video/') ? 'video' :
                 file.type.startsWith('audio/') ? 'audio' : 'file';
 
+            console.log('Sending file:', { file_url, fileType });
+
+            // 3. Отправляем через Instagram API
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
+            console.log('Send result:', sendResult);
 
             if (sendResult.error) {
               throw new Error(sendResult.error);
             }
 
+            // ✅ Добавляем сообщение в локальный стейт СРАЗУ
+            const newFileMessage: Message = {
+              id: Date.now() + Math.random(),
+              message: file_url,
+              sender: 'bot',
+              timestamp: new Date().toISOString(),
+              type: fileType
+            };
+
+            setMessages(prev => [...prev, newFileMessage]);
+
             toast.success(`Файл "${file.name}" отправлен`);
           } catch (err) {
             const errorMsg = err instanceof Error ? err.message : 'Ошибка';
+            console.error('File send error:', err);
             toast.error(`Не удалось отправить "${file.name}": ${errorMsg}`);
           }
         }
 
-        setIsUploadingFile(false);
+        // ✅ ОЧИЩАЕМ attachedFiles СРАЗУ после отправки
         setAttachedFiles([]);
+        setIsUploadingFile(false);
       }
 
+      // Отправляем текстовое сообщение (если есть)
       if (message.trim()) {
+        console.log('Sending text message:', message);
+
         await api.sendMessage(selectedClient.id, message);
 
         const newMessage: Message = {
@@ -325,18 +351,20 @@ export default function Chat() {
           type: 'text'
         };
 
-        setMessages([...messages, newMessage]);
+        setMessages(prev => [...prev, newMessage]);
+        setMessage('');
+        toast.success('Сообщение отправлено');
       }
 
-      setMessage('');
-      setAttachedFiles([]);
-      toast.success('Сообщение отправлено');
-
+      // Обновляем историю через 1 секунду
       setTimeout(() => {
-        loadMessages(selectedClient.id, false);
+        if (selectedClient) {
+          loadMessages(selectedClient.id, false);
+        }
       }, 1000);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Ошибка отправки';
+      console.error('Send error:', err);
       toast.error(`Ошибка: ${errorMsg}`);
     } finally {
       setIsUploadingFile(false);
@@ -605,65 +633,160 @@ export default function Chat() {
                   <div
                     key={msg.id}
                     ref={(el) => messageRefs.current[index] = el}
-                    className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                   >
+                    {/* ✅ ИСПРАВЛЕНО: Убран max-w-md, чтобы изображения не ограничивались */}
                     <div
-                      className={`max-w-md rounded-2xl shadow-sm ${msg.sender === 'bot'
+                      className={`rounded-2xl shadow-md overflow-hidden ${msg.sender === 'bot'
                         ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
                         : 'bg-white text-gray-900 border border-gray-200'
                         }`}
                     >
-                      {(msg.type === 'image' || msg.message.includes('[Файл: image]')) ? (
+                      {/* ✅ ИСПРАВЛЕННАЯ ОБРАБОТКА ИЗОБРАЖЕНИЙ */}
+                      {msg.type === 'image' ? (
                         <div className="relative">
-                          {(() => {
-                            // Извлекаем URL из текста "[Файл: image] filename.jpg"
-                            let imageUrl = msg.message;
+                          <img
+                            src={msg.message}
+                            alt="Изображение" loading="lazy"
+                            className={`h-auto rounded-t-2xl cursor-pointer hover:scale-105 transition-transform duration-200 ${msg.sender === 'bot'
+                              ? 'w-[250px]'  // Исходящие меньше (250px)
+                              : 'w-[350px]'  // Входящие больше (350px)
+                              }`}
 
-                            if (msg.message.includes('[Файл: image]')) {
-                              const filename = msg.message.split('] ')[1]?.trim();
-                              if (filename) {
-                                imageUrl = `${import.meta.env.VITE_API_URL}/static/uploads/images/${filename}`;
-                              }
-                            }
+                            // Вариант 2: Одинаковый размер 300px
+                            // className="w-[300px] h-auto rounded-t-2xl cursor-pointer hover:scale-105 transition-transform duration-200"
 
-                            return (
-                              <>
-                                <img
-                                  src={imageUrl}
-                                  alt="Изображение"
-                                  className="max-w-full max-h-96 h-auto rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity object-contain"
-                                  onClick={() => window.open(imageUrl, '_blank')}
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                    const fallback = e.currentTarget.nextElementSibling;
-                                    if (fallback) fallback.style.display = 'block';
-                                  }}
-                                />
-                                <div style={{ display: 'none' }} className="px-4 py-3 text-sm text-gray-500">
-                                  📷 Изображение не загрузилось
-                                </div>
-                              </>
-                            );
-                          })()}
+                            // Вариант 3: Маленький 200px
+                            // className="w-[200px] h-auto rounded-t-2xl cursor-pointer hover:scale-105 transition-transform duration-200"
+
+                            // Вариант 4: Большой 400px
+                            // className="w-[400px] h-auto rounded-t-2xl cursor-pointer hover:scale-105 transition-transform duration-200"
+
+                            onClick={() => window.open(msg.message, '_blank')}
+                            onError={(e) => {
+                              console.error('❌ Ошибка загрузки изображения:', msg.message);
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling;
+                              if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                            }}
+                          />
+
+                          {/* Fallback при ошибке загрузки */}
+                          <div
+                            style={{ display: 'none' }}
+                            className={`px-4 py-3 text-sm flex flex-col items-center justify-center min-h-[100px] ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'
+                              }`}
+                          >
+                            <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p>📷 Изображение недоступно</p>
+                            <p className="text-xs opacity-75 mt-1 break-all max-w-[200px]">{msg.message.substring(0, 50)}...</p>
+                          </div>
+
+                          {/* Иконка увеличения при наведении */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-2">
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                            </svg>
+                          </div>
+
+                          {/* Время */}
                           <div className={`px-4 py-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
                             <p className="text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      ) : msg.type === 'video' ? (
+                        <div className="relative">
+                          <video
+                            src={msg.message}
+                            controls
+                            className="w-[400px] h-auto rounded-t-2xl"
+                            onError={(e) => {
+                              console.error('❌ Ошибка загрузки видео:', msg.message);
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling;
+                              if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                            }}
+                          />
+                          <div
+                            style={{ display: 'none' }}
+                            className={`px-4 py-3 text-sm flex flex-col items-center ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'
+                              }`}
+                          >
+                            <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <p>🎥 Видео недоступно</p>
+                          </div>
+                          <div className={`px-4 py-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs">
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      ) : msg.type === 'audio' ? (
+                        <div className="px-4 py-3 min-w-[250px]">
+                          <audio
+                            src={msg.message}
+                            controls
+                            className="w-full"
+                            onError={(e) => {
+                              console.error('❌ Ошибка загрузки аудио:', msg.message);
+                            }}
+                          />
+                          <div className={`mt-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs">
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      ) : msg.type === 'file' ? (
+                        <div className="px-4 py-3 min-w-[200px]">
+                          <a
+                            href={msg.message}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center gap-2 hover:underline group ${msg.sender === 'bot' ? 'text-pink-100' : 'text-blue-600'
+                              }`}
+                          >
+                            <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            <span>Открыть файл</span>
+                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                          <div className={`mt-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs">
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
                             </p>
                           </div>
                         </div>
                       ) : (
-                        <div className="px-4 py-3">
+                        // Текстовое сообщение
+                        <div className="px-4 py-3 max-w-md">
                           <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
                           <div className="flex items-center justify-between mt-2">
                             <p className={`text-xs ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
                             </p>
-                            {/* {msg.id && (
-                              <MessageReactions
-                                messageId={typeof msg.id === 'number' ? msg.id : parseInt(String(msg.id))}
-                                initialReactions={{}}
-                              />
-                            )} */}
                           </div>
                         </div>
                       )}
@@ -682,25 +805,23 @@ export default function Chat() {
             </div>
 
             {/* ✅ ИСПРАВЛЕНО: Client Info Panel */}
-            {showClientInfo && (
+            {showClientInfo && selectedClient && (
               <div className="border-t border-gray-200 bg-white p-6 max-h-[500px] overflow-y-auto">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <User className="w-5 h-5 text-pink-600" />
                     Информация о клиенте
                   </h3>
-                  <Button
-                    size="sm"
-                    variant="ghost"
+                  <button
                     onClick={() => {
                       setShowClientInfo(false);
                       setIsEditingClient(false);
                       handleCancelEdit();
                     }}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
                   >
                     <X className="w-4 h-4" />
-                  </Button>
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
@@ -725,16 +846,18 @@ export default function Chat() {
                 </div>
 
                 <div className="space-y-4">
+                  {/* ✅ ИСПРАВЛЕНО: Имя клиента - НАТИВНЫЙ INPUT */}
                   <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                       <span className="text-lg">👤</span> Имя клиента
                     </label>
                     {isEditingClient ? (
-                      <Input
+                      <input
+                        type="text"
                         value={editedClientName}
                         onChange={(e) => setEditedClientName(e.target.value)}
                         placeholder="Введите имя..."
-                        className="bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                       />
                     ) : (
                       <p className="text-gray-900 font-medium">
@@ -745,16 +868,21 @@ export default function Chat() {
                     )}
                   </div>
 
+                  {/* Телефон */}
                   <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                      <Phone className="w-4 h-4" /> Телефон
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      Телефон
                     </label>
                     {isEditingClient ? (
-                      <Input
+                      <input
+                        type="text"
                         value={editedClientPhone}
                         onChange={(e) => setEditedClientPhone(e.target.value)}
                         placeholder="+971 XX XXX XXXX"
-                        className="bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                       />
                     ) : (
                       <p className="text-gray-900 font-medium">
@@ -765,9 +893,13 @@ export default function Chat() {
                     )}
                   </div>
 
+                  {/* Instagram */}
                   <div className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                      <Instagram className="w-4 h-4 text-pink-600" /> Instagram
+                      <svg className="w-4 h-4 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                      Instagram
                     </label>
                     {selectedClient.username ? (
                       <a
@@ -786,6 +918,7 @@ export default function Chat() {
                     )}
                   </div>
 
+                  {/* Статистика */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
                       <p className="text-sm text-gray-600 mb-1">Сообщений</p>
@@ -809,7 +942,7 @@ export default function Chat() {
                               toast.error('Ошибка обновления статуса');
                             }
                           }}
-                          className="w-full p-2 border border-gray-300 rounded-lg bg-white text-sm"
+                          className="w-full p-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                         >
                           <option value="new">Новый</option>
                           <option value="contacted">Связались</option>
@@ -820,16 +953,20 @@ export default function Chat() {
                           <option value="inactive">Неактивен</option>
                         </select>
                       ) : (
-                        <Badge className="bg-green-600 text-white font-semibold">
+                        <span className="inline-block px-3 py-1 bg-green-600 text-white font-semibold rounded-full text-sm">
                           {selectedClient.status}
-                        </Badge>
+                        </span>
                       )}
                     </div>
                   </div>
 
+                  {/* Последний контакт */}
                   <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                      <Clock className="w-4 h-4" /> Последний контакт
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Последний контакт
                     </label>
                     <p className="text-gray-900">
                       {new Date(selectedClient.last_contact).toLocaleString('ru-RU', {
@@ -843,61 +980,67 @@ export default function Chat() {
                   </div>
                 </div>
 
+                {/* Кнопки действий */}
                 <div className="mt-6 space-y-3">
                   {isEditingClient ? (
                     <div className="flex gap-2">
-                      <Button
+                      <button
                         onClick={handleSaveClientInfo}
                         disabled={isSavingClient}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white shadow-md"
-                        size="sm"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isSavingClient ? (
                           <>
-                            <Loader className="w-4 h-4 mr-2 animate-spin" />
+                            <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
                             Сохранение...
                           </>
                         ) : (
                           <>
-                            <Check className="w-4 h-4 mr-2" />
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
                             Сохранить
                           </>
                         )}
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         onClick={handleCancelEdit}
                         disabled={isSavingClient}
-                        variant="outline"
-                        size="sm"
-                        className="px-4"
+                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <X className="w-4 h-4" />
-                      </Button>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
                   ) : (
-                    <Button
+                    <button
                       onClick={() => setIsEditingClient(true)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-                      size="sm"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition flex items-center justify-center gap-2"
                     >
-                      <Edit2 className="w-4 h-4 mr-2" />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
                       Редактировать
-                    </Button>
+                    </button>
                   )}
 
-                  <Button
+                  <button
                     onClick={() => {
                       const role = JSON.parse(localStorage.getItem('user') || '{}').role;
                       const prefix = role === 'admin' ? '/admin' : '/manager';
                       navigate(`${prefix}/clients/${selectedClient.id}`);
                     }}
-                    variant="outline"
-                    className="w-full shadow-sm"
-                    size="sm"
+                    className="w-full border border-gray-300 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg shadow-sm transition flex items-center justify-center gap-2"
                   >
-                    <Eye className="w-4 h-4 mr-2" />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                     Полный профиль
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
@@ -967,33 +1110,79 @@ export default function Chat() {
 
             {/* Attached Files */}
             {attachedFiles.length > 0 && (
-              <div className="border-t border-gray-200 p-3 bg-gray-100 space-y-2">
-                <p className="text-xs font-semibold text-gray-700">
-                  Прикрепленные файлы ({attachedFiles.length}):
-                </p>
-                <div className="space-y-1">
+              <div className="border-t border-gray-200 p-3 bg-gradient-to-r from-blue-50 to-purple-50">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-700 flex items-center gap-2">
+                    <Paperclip className="w-3 h-3" />
+                    Прикрепленные файлы ({attachedFiles.length})
+                  </p>
+                  {/* ✅ НОВОЕ: Кнопка "Очистить все" */}
+                  <button
+                    onClick={() => {
+                      setAttachedFiles([]);
+                      toast.info('Файлы очищены');
+                    }}
+                    className="text-xs text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Очистить все
+                  </button>
+                </div>
+
+                {/* ✅ ИСПРАВЛЕНО: Компактное горизонтальное отображение */}
+                <div className="flex gap-2 overflow-x-auto pb-2">
                   {attachedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-white rounded border border-gray-200">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <FileText className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                        <span className="text-xs text-gray-700 truncate">{file.name}</span>
-                        <span className="text-xs text-gray-500 flex-shrink-0">({(file.size / 1024).toFixed(1)}KB)</span>
+                    <div
+                      key={index}
+                      className="relative flex-shrink-0 group"
+                    >
+                      {/* Превью файла */}
+                      <div className="w-20 h-20 bg-white rounded-lg border-2 border-gray-200 overflow-hidden flex items-center justify-center">
+                        {file.type.startsWith('image/') ? (
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : file.type.startsWith('video/') ? (
+                          <div className="flex flex-col items-center justify-center">
+                            <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span className="text-xs text-gray-500 mt-1">Видео</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center">
+                            <FileText className="w-8 h-8 text-gray-400" />
+                            <span className="text-xs text-gray-500 mt-1">Файл</span>
+                          </div>
+                        )}
                       </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
+
+                      {/* Название файла */}
+                      <p className="text-xs text-gray-600 mt-1 w-20 truncate text-center" title={file.name}>
+                        {file.name}
+                      </p>
+
+                      {/* Размер */}
+                      <p className="text-xs text-gray-500 text-center">
+                        {(file.size / 1024).toFixed(0)}KB
+                      </p>
+
+                      {/* Кнопка удаления */}
+                      <button
                         onClick={() => handleRemoveFile(index)}
-                        className="h-6 w-6 p-0"
+                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-md transition opacity-0 group-hover:opacity-100"
+                        title="Удалить"
                       >
                         <X className="w-3 h-3" />
-                      </Button>
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Chat Input */}
+            {/* Chat Input - БЕЗ ИЗМЕНЕНИЙ, но убедитесь что disabled правильно работает */}
             <div className="p-4 border-t border-gray-200 bg-white">
               <div className="flex items-end gap-2">
                 <div className="flex-1">
@@ -1007,7 +1196,9 @@ export default function Chat() {
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        if (canSend && !isUploadingFile) {
+                        // ✅ ИСПРАВЛЕНО: проверяем canSend без учета attachedFiles
+                        const canSendNow = message.trim().length > 0 || attachedFiles.length > 0;
+                        if (canSendNow && !isUploadingFile) {
                           handleSendMessage();
                         }
                       }

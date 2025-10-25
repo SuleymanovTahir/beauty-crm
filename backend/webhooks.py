@@ -1,5 +1,5 @@
 """
-Обработчики вебхуков Instagram - С УЛУЧШЕННОЙ ОБРАБОТКОЙ USERNAME
+Обработчики вебхуков Instagram - ИСПРАВЛЕНИЕ СОХРАНЕНИЯ ИЗОБРАЖЕНИЙ
 """
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -20,12 +20,7 @@ router = APIRouter(tags=["Webhooks"])
 
 
 async def fetch_username_from_api(user_id: str) -> tuple:
-    """
-    Попытка получить username из Instagram API
-    
-    Returns:
-        tuple: (username, name, profile_pic) или ("", "", "")
-    """
+    """Попытка получить username из Instagram API"""
     try:
         url = f"https://graph.facebook.com/v18.0/{user_id}"
         params = {
@@ -57,24 +52,16 @@ async def fetch_username_from_api(user_id: str) -> tuple:
 
 
 async def extract_username_from_webhook(messaging_event: dict) -> str:
-    """
-    Извлечь username из webhook payload
-    
-    В некоторых случаях Instagram отправляет username в самом событии
-    """
+    """Извлечь username из webhook payload"""
     try:
-        # Проверяем различные места где может быть username
         sender = messaging_event.get("sender", {})
         
-        # Иногда username есть в sender
         if "username" in sender:
             return sender["username"]
         
-        # Или в user_ref
         if "user_ref" in sender:
             return sender["user_ref"]
             
-        # Или в message metadata
         message = messaging_event.get("message", {})
         if "metadata" in message and "username" in message["metadata"]:
             return message["metadata"]["username"]
@@ -118,7 +105,6 @@ async def handle_webhook(request: Request):
         logger.info("=" * 70)
         logger.info("📨 WEBHOOK: POST request received")
         
-        # Читаем body
         body_bytes = await request.body()
         body_str = body_bytes.decode('utf-8')
         
@@ -130,10 +116,8 @@ async def handle_webhook(request: Request):
         
         logger.info("✅ Instagram webhook confirmed")
         
-        # Получаем экземпляр бота
         bot = get_bot()
         
-        # Обрабатываем entries
         for entry in data.get("entry", []):
             for messaging in entry.get("messaging", []):
                 sender_id = messaging.get("sender", {}).get("id")
@@ -143,7 +127,6 @@ async def handle_webhook(request: Request):
                 
                 message_data = messaging["message"]
                 
-                # Пропускаем эхо
                 if message_data.get("is_echo"):
                     continue
 
@@ -155,16 +138,16 @@ async def handle_webhook(request: Request):
                         file_url = payload.get("url")
                         
                         log_info(f"📎 Получено вложение: {attachment_type}", "webhook")
+                        log_info(f"📎 URL файла: {file_url}", "webhook")
                         
-                        # Сохраняем информацию о файле
+                        # ✅ ИСПРАВЛЕНИЕ: Сохраняем ТОЛЬКО URL, без текста "[Файл: image]"
                         save_message(
                             sender_id, 
-                            f"[{attachment_type.upper()}]: {file_url}", 
+                            file_url,  # Сохраняем прямой URL
                             "client",
                             message_type=attachment_type
                         )
                     
-                    # Отправляем подтверждение
                     await send_typing_indicator(sender_id)
                     await send_message(
                         sender_id, 
@@ -178,15 +161,12 @@ async def handle_webhook(request: Request):
                     continue
                 
                 try:
-                    # ✅ УЛУЧШЕННАЯ ЛОГИКА: Получаем username и фото
                     username = ""
                     name = ""
                     profile_pic = ""
                     
-                    # 1. Пробуем из webhook payload
                     username = await extract_username_from_webhook(messaging)
                     
-                    # 2. Если не нашли - пробуем API
                     if not username:
                         try:
                             api_result = await fetch_username_from_api(sender_id)
@@ -199,33 +179,26 @@ async def handle_webhook(request: Request):
                             log_error(f"❌ API fetch error: {api_err}", "webhook", exc_info=True)
                             username, name, profile_pic = "", "", ""
                     
-                    # 3. Если всё равно не нашли - используем fallback
                     if not username:
                         username = f"user_{sender_id[:8]}"
                         log_warning(f"⚠️ Username не найден для {sender_id}, используем fallback", "webhook")
                     
                     log_info(f"👤 Username: {username}", "webhook")
                     
-                    # Создать/получить клиента с username
                     get_or_create_client(sender_id, username=username)
                     
-                    # ✅ НОВОЕ: Обновляем фото профиля и имя если нашли
                     if profile_pic or name:
                         update_client_info(sender_id, name=name, profile_pic=profile_pic)
                     
                     save_message(sender_id, message_text, "client")
                     
-                    # Определить язык
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
                     
-                    # Показать typing
                     await send_typing_indicator(sender_id)
                     
-                    # Получить историю
                     history = get_chat_history(sender_id, limit=10)
                     
-                    # Генерируем ответ через бота
                     logger.info("🤖 Generating AI response...")
                     ai_response = await bot.generate_response(
                         user_message=message_text,
@@ -236,7 +209,6 @@ async def handle_webhook(request: Request):
                     
                     logger.info(f"✅ AI response: {ai_response[:100]}")
                     
-                    # Сохранить и отправить
                     save_message(sender_id, ai_response, "bot")
                     await send_message(sender_id, ai_response)
                     
