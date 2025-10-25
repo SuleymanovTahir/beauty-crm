@@ -396,6 +396,64 @@ export class ApiClient {
       body: JSON.stringify({ role }),
     })
   }
+
+  // ===== РЕАКЦИИ =====
+  async reactToMessage(messageId: number, emoji: string) {
+    return this.request('/api/chat/react', {
+      method: 'POST',
+      body: JSON.stringify({ message_id: messageId, emoji }),
+    })
+  }
+
+  async getMessageReactions(messageId: number) {
+    return this.request<any>(`/api/chat/reactions/${messageId}`)
+  }
+
+  // ===== ШАБЛОНЫ СООБЩЕНИЙ =====
+  async getMessageTemplates() {
+    return this.request<any>('/api/chat/templates')
+  }
+
+  async createMessageTemplate(data: { name: string; content: string; category: string }) {
+    return this.request('/api/chat/templates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateMessageTemplate(templateId: number, data: { name?: string; content?: string; category?: string }) {
+    return this.request(`/api/chat/templates/${templateId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteMessageTemplate(templateId: number) {
+    return this.request(`/api/chat/templates/${templateId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  // ===== ОТЛОЖЕННЫЕ СООБЩЕНИЯ =====
+  async scheduleMessage(clientId: string, message: string, sendAt: string) {
+    return this.request('/api/chat/schedule', {
+      method: 'POST',
+      body: JSON.stringify({ client_id: clientId, message, send_at: sendAt }),
+    })
+  }
+
+  async getScheduledMessages() {
+    return this.request<any>('/api/chat/scheduled')
+  }
+
+  async cancelScheduledMessage(messageId: number) {
+    return this.request(`/api/chat/scheduled/${messageId}/cancel`, {
+      method: 'POST',
+    })
+  }
+
+  // ===== UNREAD COUNT =====
+
 }
 
 export const api = new ApiClient()

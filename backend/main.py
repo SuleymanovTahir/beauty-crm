@@ -6,6 +6,8 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from api.reactions import router as reactions_router
+from api.templates import router as templates_router
 import time
 
 from logger import logger, log_info, log_error, log_critical
@@ -39,6 +41,8 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(api_router)
 app.include_router(auth_router)
 app.include_router(webhooks_router)
+app.include_router(reactions_router)
+app.include_router(templates_router)
 
 
 # ===== MIDDLEWARE =====

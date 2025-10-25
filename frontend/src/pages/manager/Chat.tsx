@@ -1,4 +1,4 @@
-// frontend/src/pages/manager/Chat.tsx - ПОЛНАЯ ВЕРСИЯ
+// frontend/src/pages/manager/Chat.tsx - ПОЛНАЯ ВЕРСИЯ С ИСПРАВЛЕНИЯМИ
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
@@ -15,13 +15,18 @@ import {
   Eye,
   FileText,
   Check,
-  Clock
+  Clock,
+  Zap
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
-import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import MessageReactions from '../../components/chat/MessageReactions';
+import MessageTemplates from '../../components/chat/MessageSearch';
+import QuickReplies from '../../components/chat/QuickReplies';
+import MessageSearch from '../../components/chat/MessageSearch';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -62,6 +67,10 @@ export default function Chat() {
 
   const [showNotes, setShowNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
+  
   const [notes, setNotes] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
@@ -74,6 +83,7 @@ export default function Chat() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -184,6 +194,7 @@ export default function Chat() {
     loadMessages(client.id, true);
     setShowNotes(false);
     setShowClientInfo(false);
+    setShowTemplates(false);
     setIsEditingClient(false);
 
     setEditedClientName(client.name || '');
@@ -245,8 +256,6 @@ export default function Chat() {
 
         for (const file of attachedFiles) {
           try {
-            console.log(`📤 Uploading file: ${file.name} (${file.size} bytes)`);
-            
             const formData = new FormData();
             formData.append('file', file);
 
@@ -256,16 +265,11 @@ export default function Chat() {
               body: formData,
             });
 
-            console.log(`📥 Upload response status: ${uploadResponse.status}`);
-
             if (!uploadResponse.ok) {
-              const errorText = await uploadResponse.text();
-              console.error(`❌ Upload failed: ${errorText}`);
               throw new Error(`Ошибка загрузки: ${uploadResponse.status}`);
             }
 
             const uploadResult = await uploadResponse.json();
-            console.log(`✅ Upload result:`, uploadResult);
             
             if (!uploadResult.file_url) {
               throw new Error('Не получен URL файла');
@@ -277,12 +281,8 @@ export default function Chat() {
                            file.type.startsWith('video/') ? 'video' :
                            file.type.startsWith('audio/') ? 'audio' : 'file';
 
-            console.log(`📤 Sending file via Instagram: ${fileType} - ${file_url}`);
-
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
             
-            console.log(`✅ Send result:`, sendResult);
-
             if (sendResult.error) {
               throw new Error(sendResult.error);
             }
@@ -290,7 +290,6 @@ export default function Chat() {
             toast.success(`Файл "${file.name}" отправлен`);
           } catch (err) {
             const errorMsg = err instanceof Error ? err.message : 'Ошибка';
-            console.error(`❌ File send error:`, err);
             toast.error(`Не удалось отправить "${file.name}": ${errorMsg}`);
           }
         }
@@ -416,8 +415,7 @@ export default function Chat() {
                 <div
                   key={client.id}
                   onClick={() => handleSelectClient(client)}
-                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedClient?.id === client.id ? 'bg-pink-50' : ''
-                    }`}
+                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedClient?.id === client.id ? 'bg-pink-50' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     {client.profile_pic ? (
@@ -517,6 +515,15 @@ export default function Chat() {
                   <Button
                     size="sm"
                     variant="outline"
+                    onClick={() => setShowSearch(!showSearch)}
+                    title="Поиск по сообщениям"
+                    className={showSearch ? 'bg-yellow-100 border-yellow-300' : ''}
+                  >
+                    <Search className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => {
                       setShowClientInfo(!showClientInfo);
                       if (!showClientInfo) {
@@ -532,6 +539,21 @@ export default function Chat() {
                   <Button
                     size="sm"
                     variant="outline"
+                    onClick={() => {
+                      setShowTemplates(!showTemplates);
+                      if (showTemplates) {
+                        setShowNotes(false);
+                        setShowClientInfo(false);
+                      }
+                    }}
+                    title="Шаблоны сообщений"
+                    className={showTemplates ? 'bg-pink-100 border-pink-300' : ''}
+                  >
+                    <FileText className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => setShowNotes(!showNotes)}
                     title="Заметки"
                   >
@@ -541,6 +563,20 @@ export default function Chat() {
               </div>
             </div>
 
+            {/* Search Panel */}
+            {showSearch && (
+              <MessageSearch
+                messages={messages}
+                onJumpToMessage={(index) => {
+                  messageRefs.current[index]?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
+                }}
+                onClose={() => setShowSearch(false)}
+              />
+            )}
+
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
               {loadingMessages ? (
@@ -548,9 +584,10 @@ export default function Chat() {
                   <Loader className="w-6 h-6 text-pink-600 animate-spin" />
                 </div>
               ) : messages.length > 0 ? (
-                messages.map((msg) => (
+                messages.map((msg, index) => (
                   <div
                     key={msg.id}
+                    ref={(el) => messageRefs.current[index] = el}
                     className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
@@ -581,9 +618,17 @@ export default function Chat() {
                       ) : (
                         <div className="px-4 py-3">
                           <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
-                          <p className={`text-xs mt-1 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
-                            {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                          </p>
+                          <div className="flex items-center justify-between mt-2">
+                            <p className={`text-xs ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            {msg.id && (
+                              <MessageReactions 
+                                messageId={typeof msg.id === 'number' ? msg.id : parseInt(String(msg.id))} 
+                                initialReactions={{}}
+                              />
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -687,7 +732,7 @@ export default function Chat() {
                         <Instagram className="w-4 h-4 text-pink-600" /> Instagram
                       </label>
                       {selectedClient.username ? (
-                        
+                        <a
                           href={`https://instagram.com/${selectedClient.username}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -786,6 +831,17 @@ export default function Chat() {
               </div>
             )}
 
+            {/* Templates Panel */}
+            {showTemplates && (
+              <MessageTemplates 
+                onSelect={(content) => {
+                  setMessage(content);
+                  setShowTemplates(false);
+                  toast.success('Шаблон вставлен');
+                }}
+              />
+            )}
+
             {/* Notes Panel */}
             {showNotes && (
               <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50">
@@ -822,6 +878,11 @@ export default function Chat() {
                   </Button>
                 </div>
               </div>
+            )}
+
+            {/* Quick Replies */}
+            {showQuickReplies && selectedClient && (
+              <QuickReplies onSelect={(text) => setMessage(text)} />
             )}
 
             {/* Attached Files */}

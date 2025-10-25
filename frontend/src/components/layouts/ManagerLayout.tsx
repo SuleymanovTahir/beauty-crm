@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -10,7 +11,8 @@ import {
   LogOut,
   Filter
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { api } from '../../services/api';
 
 interface ManagerLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -21,16 +23,33 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = React.useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Панель управления', path: '/manager/dashboard' },
-    { icon: MessageSquare, label: 'Сообщения', path: '/manager/messages' },
-    { icon: MessageCircle, label: 'Чат', path: '/manager/chat' },
+    { icon: MessageSquare, label: 'Сообщения', path: '/manager/messages', badge: unreadCount },
+    { icon: MessageCircle, label: 'Чат', path: '/manager/chat', badge: unreadCount },
     { icon: Users, label: 'Клиенты', path: '/manager/clients' },
     { icon: BarChart3, label: 'Аналитика', path: '/manager/analytics' },
     { icon: Filter, label: 'Воронка продаж', path: '/manager/funnel' },
     { icon: Settings, label: 'Настройки', path: '/manager/settings' },
   ];
+  // Загружаем количество непрочитанных при монтировании
+  useEffect(() => {
+    loadUnreadCount();
+    
+    // Обновляем каждые 10 секунд
+    const interval = setInterval(loadUnreadCount, 10000);
+    return () => clearInterval(interval);
+  }, []);
+  const loadUnreadCount = async () => {
+    try {
+      const data = await api.getUnreadCount();
+      setUnreadCount(data.count || 0);
+    } catch (err) {
+      console.error('Failed to load unread count:', err);
+    }
+  };
 
   const handleLogout = async () => {
     setLoggingOut(true);
