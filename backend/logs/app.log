@@ -1720,3 +1720,133 @@ ValueError: too many values to unpack (expected 4, got 5)
 2025-10-24 21:42:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
 2025-10-24 21:42:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
 2025-10-24 21:42:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:42:51 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-25 05:42:51 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-25 05:42:51 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-25 05:42:51 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-25 05:42:51 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-25 05:42:51 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-25 05:44:07 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-10-25 05:44:07 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-10-25 05:44:07 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-10-25 05:44:07 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-10-25 05:44:07 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-10-25 05:44:07 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-10-25 05:44:16 - crm - INFO - [middleware] 🔥 GET /webhook
+2025-10-25 05:44:16 - crm - INFO - [webhook] ======================================================================
+2025-10-25 05:44:16 - crm - INFO - [webhook] 🔍 ВЕРИФИКАЦИЯ WEBHOOK
+2025-10-25 05:44:16 - crm - INFO - [webhook] Mode: subscribe
+2025-10-25 05:44:16 - crm - INFO - [webhook] Token: taha
+2025-10-25 05:44:16 - crm - INFO - [webhook] Challenge: 1523952967
+2025-10-25 05:44:16 - crm - INFO - [webhook] ======================================================================
+2025-10-25 05:44:16 - crm - INFO - [webhook] ✅ Webhook верифицирован!
+2025-10-25 05:44:16 - crm - INFO - [middleware] 📤 GET /webhook → 200 (0.00s)
+2025-10-25 05:55:58 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-25 05:55:58 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-25 05:55:58 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-25 05:55:58 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-25 05:56:02 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-25 05:56:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 05:56:02 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-10-25 05:56:02 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-25 05:56:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 05:56:02 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-10-25 05:56:03 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 05:56:03 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 05:56:04 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 05:56:04 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-10-25 05:56:05 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 05:56:05 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 05:56:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 05:56:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 05:56:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:56:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:56:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:04 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 05:57:04 - crm - INFO - ======================================================================
+2025-10-25 05:57:04 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 05:57:04 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 05:57:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:06 - crm - INFO - [webhook] ✅ Username найден: @stz_192
+2025-10-25 05:57:06 - crm - INFO - [webhook] 👤 Username: stz_192
+2025-10-25 05:57:09 - crm - INFO - 🤖 Generating AI response...
+2025-10-25 05:57:11 - crm - INFO - ✅ AI response: Hello! 💎 Welcome to M.Le Diamant Beauty Lounge! How can I help you sparkle today? ✨ Are you interest
+2025-10-25 05:57:11 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:11 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-10-25 05:57:15 - crm - INFO - 📤 Message sent!
+2025-10-25 05:57:15 - crm - INFO - [middleware] 📤 POST /webhook → 200 (10.44s)
+2025-10-25 05:57:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:16 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-10-25 05:57:16 - crm - INFO - ======================================================================
+2025-10-25 05:57:16 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-10-25 05:57:16 - crm - INFO - ✅ Instagram webhook confirmed
+2025-10-25 05:57:16 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.00s)
+2025-10-25 05:57:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:43 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-25 05:57:43 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-10-25 05:57:43 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-25 05:57:43 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-10-25 05:57:46 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-10-25 05:57:46 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-10-25 05:57:46 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-10-25 05:57:46 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-10-25 05:57:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-10-25 05:57:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-10-25 05:57:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:57:57 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:57:57 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:02 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:02 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:12 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:12 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:17 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:17 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:22 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:22 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:27 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:27 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:32 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:32 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:37 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:37 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:42 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:42 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:47 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:47 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-10-25 05:58:52 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-10-25 05:58:52 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
