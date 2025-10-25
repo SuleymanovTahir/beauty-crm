@@ -136,6 +136,10 @@ export class ApiClient {
     return this.request<any>('/api/clients')
   }
 
+  async getClientUnreadCount(clientId: string) {
+    return this.request<any>(`/api/chat/unread/${clientId}`)
+  }
+
   async getClient(clientId: string) {
     return this.request<any>(`/api/clients/${clientId}`)
   }

@@ -19,19 +19,18 @@ from logger import logger, log_info, log_warning, log_error
 router = APIRouter(tags=["Webhooks"])
 
 
-async def fetch_username_from_api(user_id: str) -> str:
+async def fetch_username_from_api(user_id: str) -> tuple:
     """
     Попытка получить username из Instagram API
     
     Returns:
-        str: username или пустая строка
+        tuple: (username, name, profile_pic) или ("", "", "")
     """
     try:
         url = f"https://graph.facebook.com/v18.0/{user_id}"
         params = {
-            "fields": "username,name",
-            "access_token": PAGE_ACCESS_TOKEN,
             "fields": "username,name,profile_pic",
+            "access_token": PAGE_ACCESS_TOKEN,
         }
         
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -41,22 +40,20 @@ async def fetch_username_from_api(user_id: str) -> str:
                 data = response.json()
                 username = data.get("username", "")
                 name = data.get("name", "")
-                profile_pic = data.get("profile_pic", "")  # ✅ НОВОЕ
+                profile_pic = data.get("profile_pic", "")
                 
-                if username:
-                    log_info(f"✅ Username найден: @{username}", "webhook")
-                    return username, name, profile_pic 
-                elif name:
-                    log_info(f"✅ Name найден: {name}", "webhook")
-                    return name
-                    
+                log_info(f"✅ API data: username={username}, name={name}, has_pic={bool(profile_pic)}", "webhook")
+                return username, name, profile_pic
             else:
                 log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
+                return "", "", ""
                 
+    except httpx.TimeoutException:
+        log_error(f"⏱️ Timeout при запросе к Instagram API для {user_id}", "webhook")
+        return "", "", ""
     except Exception as e:
-        log_error(f"❌ Ошибка получения username: {e}", "webhook")
-    
-    return ""
+        log_error(f"❌ Ошибка получения username: {e}", "webhook", exc_info=True)
+        return "", "", ""
 
 
 async def extract_username_from_webhook(messaging_event: dict) -> str:
@@ -192,9 +189,14 @@ async def handle_webhook(request: Request):
                     # 2. Если не нашли - пробуем API
                     if not username:
                         try:
-                            username, name, profile_pic = await fetch_username_from_api(sender_id)
+                            api_result = await fetch_username_from_api(sender_id)
+                            if isinstance(api_result, tuple) and len(api_result) == 3:
+                                username, name, profile_pic = api_result
+                            else:
+                                log_error(f"❌ Неверный формат ответа API: {api_result}", "webhook")
+                                username, name, profile_pic = "", "", ""
                         except Exception as api_err:
-                            log_error(f"❌ API fetch error: {api_err}", "webhook")
+                            log_error(f"❌ API fetch error: {api_err}", "webhook", exc_info=True)
                             username, name, profile_pic = "", "", ""
                     
                     # 3. Если всё равно не нашли - используем fallback

@@ -1,4 +1,4 @@
-// frontend/src/pages/manager/Chat.tsx - УЛУЧШЕННАЯ ВЕРСИЯ БЕЗ ПРЫЖКОВ
+// frontend/src/pages/manager/Chat.tsx - ПОЛНАЯ ВЕРСИЯ
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
@@ -34,6 +34,8 @@ interface Client {
   last_contact: string;
   total_messages: number;
   status: string;
+  profile_pic?: string;
+  unread_count?: number;
 }
 
 interface Message {
@@ -53,7 +55,6 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
 
-  // ✅ ИСПРАВЛЕНО: Разделяем первичную загрузку и фоновые обновления
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [isRefreshingMessages, setIsRefreshingMessages] = useState(false);
@@ -66,7 +67,6 @@ export default function Chat() {
 
   const [isUploadingFile, setIsUploadingFile] = useState(false);
 
-  // ✅ НОВОЕ: Состояние для редактирования информации о клиенте
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [editedClientName, setEditedClientName] = useState('');
   const [editedClientPhone, setEditedClientPhone] = useState('');
@@ -107,12 +107,11 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ✅ УЛУЧШЕННОЕ АВТООБНОВЛЕНИЕ: без прыжков
   useEffect(() => {
     if (!selectedClient) return;
 
     const interval = setInterval(() => {
-      loadMessages(selectedClient.id, false); // silent refresh
+      loadMessages(selectedClient.id, false);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -125,11 +124,26 @@ export default function Chat() {
       const data = await api.getClients();
 
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
-      setClients(clientsArray);
+      
+      const clientsWithUnread = await Promise.all(
+        clientsArray.map(async (client: any) => {
+          try {
+            const unreadData = await api.getClientUnreadCount(client.id);
+            return {
+              ...client,
+              unread_count: unreadData?.unread_count || 0
+            };
+          } catch {
+            return { ...client, unread_count: 0 };
+          }
+        })
+      );
+      
+      setClients(clientsWithUnread);
 
-      if (clientsArray.length > 0 && !selectedClient) {
-        setSelectedClient(clientsArray[0]);
-        loadMessages(clientsArray[0].id, true);
+      if (clientsWithUnread.length > 0 && !selectedClient) {
+        setSelectedClient(clientsWithUnread[0]);
+        loadMessages(clientsWithUnread[0].id, true);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
@@ -140,7 +154,6 @@ export default function Chat() {
     }
   };
 
-  // ✅ УЛУЧШЕННАЯ ЗАГРУЗКА СООБЩЕНИЙ: с параметром isInitial
   const loadMessages = async (clientId: string, isInitial: boolean = false) => {
     try {
       if (isInitial) {
@@ -153,7 +166,6 @@ export default function Chat() {
       const messagesArray = data.messages || (Array.isArray(data) ? data : []);
       setMessages(messagesArray);
     } catch (err) {
-      // Показываем ошибку только при первичной загрузке
       if (isInitial) {
         const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
         toast.error(`Ошибка: ${message}`);
@@ -174,12 +186,10 @@ export default function Chat() {
     setShowClientInfo(false);
     setIsEditingClient(false);
 
-    // ✅ НОВОЕ: Инициализируем поля для редактирования
     setEditedClientName(client.name || '');
     setEditedClientPhone(client.phone || '');
   };
 
-  // ✅ НОВОЕ: Функция сохранения информации о клиенте
   const handleSaveClientInfo = async () => {
     if (!selectedClient) return;
 
@@ -191,7 +201,6 @@ export default function Chat() {
         phone: editedClientPhone.trim() || null,
       });
 
-      // Обновляем локальное состояние
       setClients(clients.map(c =>
         c.id === selectedClient.id
           ? {
@@ -220,7 +229,6 @@ export default function Chat() {
     }
   };
 
-  // ✅ НОВОЕ: Функция отмены редактирования
   const handleCancelEdit = () => {
     if (!selectedClient) return;
     setEditedClientName(selectedClient.name || '');
@@ -232,13 +240,13 @@ export default function Chat() {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
     try {
-      // ✅ УЛУЧШЕНО: Загрузка и отправка файлов
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
 
         for (const file of attachedFiles) {
           try {
-            // 1. Загружаем файл на сервер (нужен endpoint для загрузки)
+            console.log(`📤 Uploading file: ${file.name} (${file.size} bytes)`);
+            
             const formData = new FormData();
             formData.append('file', file);
 
@@ -248,25 +256,47 @@ export default function Chat() {
               body: formData,
             });
 
+            console.log(`📥 Upload response status: ${uploadResponse.status}`);
+
             if (!uploadResponse.ok) {
-              throw new Error('Ошибка загрузки файла');
+              const errorText = await uploadResponse.text();
+              console.error(`❌ Upload failed: ${errorText}`);
+              throw new Error(`Ошибка загрузки: ${uploadResponse.status}`);
             }
 
-            const { file_url } = await uploadResponse.json();
+            const uploadResult = await uploadResponse.json();
+            console.log(`✅ Upload result:`, uploadResult);
+            
+            if (!uploadResult.file_url) {
+              throw new Error('Не получен URL файла');
+            }
 
-            // 2. Отправляем файл через Instagram API
-            const fileType = file.type.startsWith('image/') ? 'image' : 'file';
+            const { file_url } = uploadResult;
 
-            await api.sendFile(selectedClient.id, file_url, fileType);
+            const fileType = file.type.startsWith('image/') ? 'image' : 
+                           file.type.startsWith('video/') ? 'video' :
+                           file.type.startsWith('audio/') ? 'audio' : 'file';
+
+            console.log(`📤 Sending file via Instagram: ${fileType} - ${file_url}`);
+
+            const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
+            
+            console.log(`✅ Send result:`, sendResult);
+
+            if (sendResult.error) {
+              throw new Error(sendResult.error);
+            }
 
             toast.success(`Файл "${file.name}" отправлен`);
           } catch (err) {
             const errorMsg = err instanceof Error ? err.message : 'Ошибка';
+            console.error(`❌ File send error:`, err);
             toast.error(`Не удалось отправить "${file.name}": ${errorMsg}`);
           }
         }
 
         setIsUploadingFile(false);
+        setAttachedFiles([]);
       }
 
       if (message.trim()) {
@@ -286,6 +316,10 @@ export default function Chat() {
       setMessage('');
       setAttachedFiles([]);
       toast.success('Сообщение отправлено');
+      
+      setTimeout(() => {
+        loadMessages(selectedClient.id, false);
+      }, 1000);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Ошибка отправки';
       toast.error(`Ошибка: ${errorMsg}`);
@@ -293,7 +327,6 @@ export default function Chat() {
       setIsUploadingFile(false);
     }
   };
-
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -320,7 +353,6 @@ export default function Chat() {
 
   const canSend = message.trim().length > 0 || attachedFiles.length > 0;
 
-  // ✅ ПОКАЗЫВАЕМ СПИННЕР ТОЛЬКО ПРИ ПЕРВИЧНОЙ ЗАГРУЗКЕ
   if (initialLoading) {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
@@ -362,7 +394,6 @@ export default function Chat() {
                 <MessageCircle className="w-5 h-5" />
                 Чаты ({clients.length})
               </h3>
-              {/* ✅ ИНДИКАТОР ОБНОВЛЕНИЯ */}
               {isRefreshingMessages && (
                 <Loader className="w-4 h-4 text-pink-600 animate-spin" />
               )}
@@ -389,14 +420,38 @@ export default function Chat() {
                     }`}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
+                    {client.profile_pic ? (
+                      <div className="relative">
+                        <img
+                          src={client.profile_pic}
+                          alt={client.display_name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.parentElement?.querySelector('.avatar-fallback') as HTMLElement;
+                            if (fallback) fallback.classList.remove('hidden');
+                          }}
+                        />
+                        {client.unread_count && client.unread_count > 0 && (
+                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold">{client.unread_count}</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : null}
+                    <div 
+                      className={`avatar-fallback w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm relative ${client.profile_pic ? 'hidden' : ''}`}
+                    >
                       {client.display_name.charAt(0).toUpperCase()}
+                      {client.unread_count && client.unread_count > 0 && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">{client.unread_count}</span>
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-900 font-mono truncate" title={selectedClient.username || selectedClient.id}>
-                        {selectedClient.username ? `@${selectedClient.username}` : selectedClient.id}
-                      </p>
-                      <p className="text-xs text-gray-600 truncate">{client.phone}</p>
+                      <p className="text-sm text-gray-900 font-medium truncate">{client.display_name}</p>
+                      <p className="text-xs text-gray-600 truncate">{client.phone || 'Нет телефона'}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {client.total_messages} сообщений
                       </p>
@@ -420,25 +475,21 @@ export default function Chat() {
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                    {selectedClient.display_name.charAt(0).toUpperCase()}
-                  </div>
-                  {/* ✅ НОВОЕ: Показываем фото профиля если есть */}
                   {selectedClient.profile_pic ? (
                     <img
                       src={selectedClient.profile_pic}
                       alt={selectedClient.display_name}
                       className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
                       onError={(e) => {
-                        // Fallback если изображение не загрузилось
                         e.currentTarget.style.display = 'none';
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.classList.remove('hidden');
                       }}
                     />
-                  ) : (
-                    <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                      {selectedClient.display_name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  ) : null}
+                  <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm ${selectedClient.profile_pic ? 'hidden' : ''}`}>
+                    {selectedClient.display_name.charAt(0).toUpperCase()}
+                  </div>
                   <div>
                     <p className="text-sm text-gray-900 font-medium">{selectedClient.display_name}</p>
                     <div className="flex items-center gap-3 text-xs text-gray-600">
@@ -449,7 +500,7 @@ export default function Chat() {
                         </span>
                       )}
                       {selectedClient.username && (
-                        <a
+                        
                           href={`https://instagram.com/${selectedClient.username}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -469,7 +520,6 @@ export default function Chat() {
                     onClick={() => {
                       setShowClientInfo(!showClientInfo);
                       if (!showClientInfo) {
-                        // Инициализируем поля при открытии
                         setEditedClientName(selectedClient.name || '');
                         setEditedClientPhone(selectedClient.phone || '');
                         setIsEditingClient(false);
@@ -504,15 +554,38 @@ export default function Chat() {
                     className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-md px-4 py-3 rounded-2xl ${msg.sender === 'bot'
+                      className={`max-w-md rounded-2xl overflow-hidden ${msg.sender === 'bot'
                         ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
                         : 'bg-white text-gray-900 border border-gray-200'
                         }`}
                     >
-                      <p className="text-sm">{msg.message}</p>
-                      <p className={`text-xs mt-1 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
-                        {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                      </p>
+                      {msg.type === 'image' && msg.message.startsWith('http') ? (
+                        <div className="relative">
+                          <img 
+                            src={msg.message} 
+                            alt="Отправленное изображение"
+                            className="max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(msg.message, '_blank')}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) parent.classList.add('hidden');
+                            }}
+                          />
+                          <div className={`px-4 py-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs">
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-4 py-3">
+                          <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                          <p className={`text-xs mt-1 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
+                            {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
@@ -527,18 +600,12 @@ export default function Chat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Client Info Panel - УЛУЧШЕННЫЙ ДИЗАЙН */}
+            {/* Client Info Panel */}
             {showClientInfo && (
-              <div className="border-t border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
-                <div className="p-4">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <Info className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="text-sm text-gray-900 font-semibold">Информация о клиенте</h4>
-                    </div>
+              <div className="border-t border-gray-200 bg-white max-h-[500px] overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-gray-900">Информация о клиенте</h3>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -547,41 +614,47 @@ export default function Chat() {
                         setIsEditingClient(false);
                         handleCancelEdit();
                       }}
-                      className="h-8 w-8 p-0 hover:bg-white/50"
+                      className="h-8 w-8 p-0"
                     >
                       <X className="w-4 h-4" />
                     </Button>
                   </div>
 
-                  {/* Avatar & ID */}
-                  <div className="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg shadow-sm">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-                      {selectedClient.display_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500 mb-0.5">Instagram ID</p>
-                      <p className="text-xs text-gray-900 font-mono truncate" title={selectedClient.id}>
-                        {selectedClient.id}
-                      </p>
+                  <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                    {selectedClient.profile_pic ? (
+                      <img
+                        src={selectedClient.profile_pic}
+                        alt={selectedClient.display_name}
+                        className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                        {selectedClient.display_name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="text-xl font-bold text-gray-900">{selectedClient.display_name}</p>
+                      <p className="text-sm text-gray-500">ID: {selectedClient.id.substring(0, 12)}...</p>
                     </div>
                   </div>
 
-                  {/* Editable Fields */}
-                  <div className="space-y-3">
-                    {/* Name Field */}
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
-                        <span>👤</span> Имя клиента
+                  <div className="space-y-4">
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <span className="text-lg">👤</span> Имя клиента
                       </label>
                       {isEditingClient ? (
                         <Input
                           value={editedClientName}
                           onChange={(e) => setEditedClientName(e.target.value)}
                           placeholder="Введите имя..."
-                          className="text-sm"
+                          className="bg-white"
                         />
                       ) : (
-                        <p className="text-sm text-gray-900 font-medium">
+                        <p className="text-gray-900 font-medium">
                           {selectedClient.name || (
                             <span className="text-gray-400 italic">Не указано</span>
                           )}
@@ -589,20 +662,19 @@ export default function Chat() {
                       )}
                     </div>
 
-                    {/* Phone Field */}
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
-                        <Phone className="w-3 h-3" /> Телефон
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <Phone className="w-4 h-4" /> Телефон
                       </label>
                       {isEditingClient ? (
                         <Input
                           value={editedClientPhone}
                           onChange={(e) => setEditedClientPhone(e.target.value)}
                           placeholder="+971 XX XXX XXXX"
-                          className="text-sm"
+                          className="bg-white"
                         />
                       ) : (
-                        <p className="text-sm text-gray-900 font-medium">
+                        <p className="text-gray-900 font-medium">
                           {selectedClient.phone || (
                             <span className="text-gray-400 italic">Не указан</span>
                           )}
@@ -610,51 +682,55 @@ export default function Chat() {
                       )}
                     </div>
 
-                    {/* Instagram Username */}
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
-                        <Instagram className="w-3 h-3" /> Instagram
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <Instagram className="w-4 h-4 text-pink-600" /> Instagram
                       </label>
                       {selectedClient.username ? (
-                        <a
+                        
                           href={`https://instagram.com/${selectedClient.username}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-pink-600 hover:text-pink-700 font-medium flex items-center gap-1 hover:underline"
+                          className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-base transition-colors group"
                         >
-                          @{selectedClient.username}
-                          <span className="text-gray-400">↗</span>
+                          <span>@{selectedClient.username}</span>
+                          <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
                         </a>
                       ) : (
-                        <p className="text-sm text-gray-400 italic">Не указан</p>
+                        <p className="text-gray-400 italic">Не указан</p>
                       )}
                     </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white rounded-lg p-3 shadow-sm">
-                        <p className="text-xs text-gray-500 mb-1">Сообщений</p>
-                        <p className="text-lg font-bold text-gray-900">{selectedClient.total_messages}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                        <p className="text-sm text-gray-600 mb-1">Сообщений</p>
+                        <p className="text-2xl font-bold text-blue-600">{selectedClient.total_messages}</p>
                       </div>
-                      <div className="bg-white rounded-lg p-3 shadow-sm">
-                        <p className="text-xs text-gray-500 mb-1">Статус</p>
-                        <Badge className="bg-pink-600 text-xs">{selectedClient.status}</Badge>
+                      <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
+                        <p className="text-sm text-gray-600 mb-1">Статус</p>
+                        <Badge className="bg-green-600 text-white font-semibold">{selectedClient.status}</Badge>
                       </div>
                     </div>
 
-                    {/* Last Contact */}
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <label className="flex items-center gap-2 text-xs font-medium text-gray-600 mb-2">
-                        <Clock className="w-3 h-3" /> Последний контакт
+                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <Clock className="w-4 h-4" /> Последний контакт
                       </label>
-                      <p className="text-sm text-gray-900">
-                        {new Date(selectedClient.last_contact).toLocaleString('ru-RU')}
+                      <p className="text-gray-900">
+                        {new Date(selectedClient.last_contact).toLocaleString('ru-RU', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                       </p>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-6 space-y-3">
                     {isEditingClient ? (
                       <div className="flex gap-2">
                         <Button
@@ -710,7 +786,7 @@ export default function Chat() {
               </div>
             )}
 
-            {/* Notes Panel - УЛУЧШЕННЫЙ ДИЗАЙН */}
+            {/* Notes Panel */}
             {showNotes && (
               <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50">
                 <div className="p-4">
@@ -786,10 +862,11 @@ export default function Chat() {
                     placeholder="Введите сообщение..."
                     className="resize-none"
                     rows={2}
+                    disabled={isUploadingFile}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
-                        if (canSend) {
+                        if (canSend && !isUploadingFile) {
                           handleSendMessage();
                         }
                       }
@@ -802,7 +879,7 @@ export default function Chat() {
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
-                    accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx"
+                    accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.xls,.xlsx"
                     multiple
                     onChange={handleFileSelect}
                   />
@@ -810,6 +887,7 @@ export default function Chat() {
                     size="sm"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingFile}
                     title="Прикрепить файл"
                   >
                     <Paperclip className="w-4 h-4" />
@@ -817,10 +895,14 @@ export default function Chat() {
                   <Button
                     onClick={handleSendMessage}
                     className="bg-gradient-to-r from-pink-500 to-purple-600"
-                    disabled={!canSend}
-                    title="Отправить"
+                    disabled={!canSend || isUploadingFile}
+                    title={isUploadingFile ? "Загрузка файла..." : "Отправить"}
                   >
-                    <Send className="w-4 h-4" />
+                    {isUploadingFile ? (
+                      <Loader className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
               </div>
