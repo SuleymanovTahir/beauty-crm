@@ -1,3 +1,4 @@
+// frontend/src/pages/admin/Clients.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
 import React, { useState, useEffect } from "react";
 import {
   Users,
@@ -13,7 +14,8 @@ import {
   Pin,
   Download,
   FileText,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Edit2 // ✅ ДОБАВЛЕНО
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -65,6 +67,16 @@ export default function Clients() {
   const [refreshing, setRefreshing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+
+  // ✅ НОВОЕ: Состояния для редактирования
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    phone: '',
+    notes: ''
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // СОСТОЯНИЯ ДЛЯ ДИАЛОГОВ
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -127,6 +139,55 @@ export default function Clients() {
     await loadClients();
     setRefreshing(false);
     toast.success("Данные обновлены");
+  };
+
+  // ✅ НОВОЕ: Открытие диалога редактирования
+  const handleOpenEditDialog = (client: Client) => {
+    setEditingClient(client);
+    setEditForm({
+      name: client.name || '',
+      phone: client.phone || '',
+      notes: client.notes || ''
+    });
+    setShowEditDialog(true);
+  };
+
+  // ✅ НОВОЕ: Сохранение редактирования
+  const handleSaveEdit = async () => {
+    if (!editingClient) return;
+
+    try {
+      setSavingEdit(true);
+      
+      await api.updateClient(editingClient.id, {
+        name: editForm.name.trim() || null,
+        phone: editForm.phone.trim() || null,
+        notes: editForm.notes.trim() || null
+      });
+
+      // Обновляем локальное состояние
+      setClients(clients.map(c =>
+        c.id === editingClient.id
+          ? {
+            ...c,
+            name: editForm.name.trim() || '',
+            phone: editForm.phone.trim() || '',
+            notes: editForm.notes.trim() || '',
+            display_name: editForm.name.trim() || c.username || c.id.substring(0, 15) + '...'
+          }
+          : c
+      ));
+
+      toast.success("✅ Клиент обновлён");
+      setShowEditDialog(false);
+      setEditingClient(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ошибка обновления";
+      toast.error(`❌ Ошибка: ${message}`);
+      console.error("Error:", err);
+    } finally {
+      setSavingEdit(false);
+    }
   };
 
   const handleCreateClient = async () => {
@@ -420,6 +481,16 @@ export default function Clients() {
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
+                        {/* ✅ ДОБАВЛЕНО: Кнопка редактирования */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-blue-600 hover:bg-blue-50"
+                          onClick={() => handleOpenEditDialog(client)}
+                          title="Редактировать клиента"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
@@ -465,6 +536,75 @@ export default function Clients() {
           </div>
         )}
       </div>
+
+      {/* ✅ НОВОЕ: Edit Client Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Редактировать клиента</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="edit_name">Имя</Label>
+              <Input
+                id="edit_name"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="Анна Петрова"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit_phone">Телефон</Label>
+              <Input
+                id="edit_phone"
+                value={editForm.phone}
+                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                placeholder="+971 50 123 4567"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit_notes">Заметки</Label>
+              <Textarea
+                id="edit_notes"
+                value={editForm.notes}
+                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                placeholder="Добавьте любые заметки о клиенте..."
+                className="min-h-[80px]"
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowEditDialog(false);
+                setEditingClient(null);
+              }} 
+              disabled={savingEdit}
+            >
+              Отмена
+            </Button>
+            <Button 
+              onClick={handleSaveEdit} 
+              className="bg-blue-600 hover:bg-blue-700" 
+              disabled={savingEdit}
+            >
+              {savingEdit ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Сохранение...
+                </>
+              ) : (
+                'Сохранить'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Client Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>

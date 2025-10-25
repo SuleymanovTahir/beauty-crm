@@ -190,6 +190,11 @@ async def startup_event():
 
 if __name__ == "__main__":
     import uvicorn
+    from db.migrations.migrate_services import migrate_services
+    from db.migrations.migrate_bot_settings import migrate_settings
+
+    migrate_services()
+    migrate_settings()
     uvicorn.run(
         app,
         host="0.0.0.0",

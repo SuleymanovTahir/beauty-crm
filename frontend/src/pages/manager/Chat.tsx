@@ -1,4 +1,4 @@
-// frontend/src/pages/manager/Chat.tsx - ПОЛНАЯ ВЕРСИЯ С ИСПРАВЛЕНИЯМИ
+// frontend/src/pages/manager/Chat.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
@@ -16,7 +16,8 @@ import {
   FileText,
   Check,
   Clock,
-  Zap
+  Edit2,
+  User
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -68,12 +69,11 @@ export default function Chat() {
   const [showNotes, setShowNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
-  const [showQuickReplies, setShowQuickReplies] = useState(true);
+  const [showQuickReplies, setShowQuickReplies] = useState(false); // ✅ ИЗМЕНЕНО: по умолчанию скрыты
   const [showSearch, setShowSearch] = useState(false);
-  
+
   const [notes, setNotes] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-
   const [isUploadingFile, setIsUploadingFile] = useState(false);
 
   const [isEditingClient, setIsEditingClient] = useState(false);
@@ -127,6 +127,15 @@ export default function Chat() {
     return () => clearInterval(interval);
   }, [selectedClient]);
 
+  // ✅ НОВОЕ: Обработка слэша для показа подсказок
+  useEffect(() => {
+    if (message.startsWith('/')) {
+      setShowQuickReplies(true);
+    } else {
+      setShowQuickReplies(false);
+    }
+  }, [message]);
+
   const loadClients = async () => {
     try {
       setInitialLoading(true);
@@ -134,7 +143,7 @@ export default function Chat() {
       const data = await api.getClients();
 
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
-      
+
       const clientsWithUnread = await Promise.all(
         clientsArray.map(async (client: any) => {
           try {
@@ -148,7 +157,7 @@ export default function Chat() {
           }
         })
       );
-      
+
       setClients(clientsWithUnread);
 
       if (clientsWithUnread.length > 0 && !selectedClient) {
@@ -174,6 +183,13 @@ export default function Chat() {
 
       const data = await api.getChatMessages(clientId, 50);
       const messagesArray = data.messages || (Array.isArray(data) ? data : []);
+
+      // ✅ ДОБАВИТЬ: Проверка изменений
+      if (!isInitial && JSON.stringify(messagesArray) === JSON.stringify(messages)) {
+        // Нет изменений - не обновляем состояние
+        return;
+      }
+
       setMessages(messagesArray);
     } catch (err) {
       if (isInitial) {
@@ -270,19 +286,19 @@ export default function Chat() {
             }
 
             const uploadResult = await uploadResponse.json();
-            
+
             if (!uploadResult.file_url) {
               throw new Error('Не получен URL файла');
             }
 
             const { file_url } = uploadResult;
 
-            const fileType = file.type.startsWith('image/') ? 'image' : 
-                           file.type.startsWith('video/') ? 'video' :
-                           file.type.startsWith('audio/') ? 'audio' : 'file';
+            const fileType = file.type.startsWith('image/') ? 'image' :
+              file.type.startsWith('video/') ? 'video' :
+                file.type.startsWith('audio/') ? 'audio' : 'file';
 
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
-            
+
             if (sendResult.error) {
               throw new Error(sendResult.error);
             }
@@ -315,7 +331,7 @@ export default function Chat() {
       setMessage('');
       setAttachedFiles([]);
       toast.success('Сообщение отправлено');
-      
+
       setTimeout(() => {
         loadMessages(selectedClient.id, false);
       }, 1000);
@@ -389,8 +405,8 @@ export default function Chat() {
         <div className="w-80 border-r border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg text-gray-900 flex items-center gap-2 font-semibold">
-                <MessageCircle className="w-5 h-5" />
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-pink-600" />
                 Чаты ({clients.length})
               </h3>
               {isRefreshingMessages && (
@@ -415,40 +431,38 @@ export default function Chat() {
                 <div
                   key={client.id}
                   onClick={() => handleSelectClient(client)}
-                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedClient?.id === client.id ? 'bg-pink-50' : ''}`}
+                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedClient?.id === client.id ? 'bg-pink-50 border-l-4 border-l-pink-600' : ''
+                    }`}
                 >
                   <div className="flex items-start gap-3">
-                    {client.profile_pic ? (
-                      <div className="relative">
+                    <div className="relative">
+                      {client.profile_pic ? (
                         <img
                           src={client.profile_pic}
                           alt={client.display_name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm flex-shrink-0"
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             const fallback = e.currentTarget.parentElement?.querySelector('.avatar-fallback') as HTMLElement;
-                            if (fallback) fallback.classList.remove('hidden');
+                            if (fallback) fallback.style.display = 'flex';
                           }}
                         />
-                        {client.unread_count && client.unread_count > 0 && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">{client.unread_count}</span>
-                          </div>
-                        )}
+                      ) : null}
+                      <div
+                        className={`avatar-fallback w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm ${client.profile_pic ? 'hidden' : ''
+                          }`}
+                      >
+                        {client.display_name.charAt(0).toUpperCase()}
                       </div>
-                    ) : null}
-                    <div 
-                      className={`avatar-fallback w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white flex-shrink-0 font-medium text-sm relative ${client.profile_pic ? 'hidden' : ''}`}
-                    >
-                      {client.display_name.charAt(0).toUpperCase()}
+                      {/* ✅ ИСПРАВЛЕНО: Показываем только если есть непрочитанные */}
                       {client.unread_count && client.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center border-2 border-white">
                           <span className="text-white text-xs font-bold">{client.unread_count}</span>
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 font-medium truncate">{client.display_name}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{client.display_name}</p>
                       <p className="text-xs text-gray-600 truncate">{client.phone || 'Нет телефона'}</p>
                       <p className="text-xs text-gray-500 mt-1">
                         {client.total_messages} сообщений
@@ -470,7 +484,7 @@ export default function Chat() {
         {selectedClient ? (
           <div className="flex-1 flex flex-col">
             {/* Chat Header */}
-            <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-pink-50 to-purple-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {selectedClient.profile_pic ? (
@@ -481,15 +495,16 @@ export default function Chat() {
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                         const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                        if (fallback) fallback.classList.remove('hidden');
+                        if (fallback) fallback.style.display = 'flex';
                       }}
                     />
                   ) : null}
-                  <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm ${selectedClient.profile_pic ? 'hidden' : ''}`}>
+                  <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md ${selectedClient.profile_pic ? 'hidden' : ''
+                    }`}>
                     {selectedClient.display_name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-900 font-medium">{selectedClient.display_name}</p>
+                    <p className="text-sm font-semibold text-gray-900">{selectedClient.display_name}</p>
                     <div className="flex items-center gap-3 text-xs text-gray-600">
                       {selectedClient.phone && (
                         <span className="flex items-center gap-1">
@@ -521,18 +536,17 @@ export default function Chat() {
                   >
                     <Search className="w-4 h-4" />
                   </Button>
+                  {/* ✅ ИСПРАВЛЕНО: Кнопка информации */}
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => {
                       setShowClientInfo(!showClientInfo);
-                      if (!showClientInfo) {
-                        setEditedClientName(selectedClient.name || '');
-                        setEditedClientPhone(selectedClient.phone || '');
-                        setIsEditingClient(false);
-                      }
+                      setShowTemplates(false);
+                      setShowNotes(false);
                     }}
                     title="Информация о клиенте"
+                    className={showClientInfo ? 'bg-blue-100 border-blue-300' : ''}
                   >
                     <Info className="w-4 h-4" />
                   </Button>
@@ -541,10 +555,8 @@ export default function Chat() {
                     variant="outline"
                     onClick={() => {
                       setShowTemplates(!showTemplates);
-                      if (showTemplates) {
-                        setShowNotes(false);
-                        setShowClientInfo(false);
-                      }
+                      setShowClientInfo(false);
+                      setShowNotes(false);
                     }}
                     title="Шаблоны сообщений"
                     className={showTemplates ? 'bg-pink-100 border-pink-300' : ''}
@@ -554,8 +566,13 @@ export default function Chat() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setShowNotes(!showNotes)}
+                    onClick={() => {
+                      setShowNotes(!showNotes);
+                      setShowClientInfo(false);
+                      setShowTemplates(false);
+                    }}
                     title="Заметки"
+                    className={showNotes ? 'bg-yellow-100 border-yellow-300' : ''}
                   >
                     <StickyNote className="w-4 h-4" />
                   </Button>
@@ -568,9 +585,9 @@ export default function Chat() {
               <MessageSearch
                 messages={messages}
                 onJumpToMessage={(index) => {
-                  messageRefs.current[index]?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
+                  messageRefs.current[index]?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
                   });
                 }}
                 onClose={() => setShowSearch(false)}
@@ -578,7 +595,7 @@ export default function Chat() {
             )}
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
               {loadingMessages ? (
                 <div className="flex items-center justify-center h-full">
                   <Loader className="w-6 h-6 text-pink-600 animate-spin" />
@@ -591,22 +608,20 @@ export default function Chat() {
                     className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-md rounded-2xl overflow-hidden ${msg.sender === 'bot'
+                      className={`max-w-md rounded-2xl shadow-sm ${msg.sender === 'bot'
                         ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
                         : 'bg-white text-gray-900 border border-gray-200'
                         }`}
                     >
                       {msg.type === 'image' && msg.message.startsWith('http') ? (
                         <div className="relative">
-                          <img 
-                            src={msg.message} 
+                          <img
+                            src={msg.message}
                             alt="Отправленное изображение"
-                            className="max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                            className="max-w-full h-auto rounded-t-2xl cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => window.open(msg.message, '_blank')}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
-                              const parent = e.currentTarget.parentElement;
-                              if (parent) parent.classList.add('hidden');
                             }}
                           />
                           <div className={`px-4 py-2 ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-600'}`}>
@@ -617,17 +632,17 @@ export default function Chat() {
                         </div>
                       ) : (
                         <div className="px-4 py-3">
-                          <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
+                          <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
                           <div className="flex items-center justify-between mt-2">
                             <p className={`text-xs ${msg.sender === 'bot' ? 'text-pink-100' : 'text-gray-500'}`}>
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                             </p>
-                            {msg.id && (
-                              <MessageReactions 
-                                messageId={typeof msg.id === 'number' ? msg.id : parseInt(String(msg.id))} 
+                            {/* {msg.id && (
+                              <MessageReactions
+                                messageId={typeof msg.id === 'number' ? msg.id : parseInt(String(msg.id))}
                                 initialReactions={{}}
                               />
-                            )}
+                            )} */}
                           </div>
                         </div>
                       )}
@@ -645,201 +660,238 @@ export default function Chat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Client Info Panel */}
+            {/* ✅ ИСПРАВЛЕНО: Client Info Panel */}
             {showClientInfo && (
-              <div className="border-t border-gray-200 bg-white max-h-[500px] overflow-y-auto">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold text-gray-900">Информация о клиенте</h3>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        setShowClientInfo(false);
-                        setIsEditingClient(false);
-                        handleCancelEdit();
-                      }}
-                      className="h-8 w-8 p-0"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
+              <div className="border-t border-gray-200 bg-white p-6 max-h-[500px] overflow-y-auto">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <User className="w-5 h-5 text-pink-600" />
+                    Информация о клиенте
+                  </h3>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setShowClientInfo(false);
+                      setIsEditingClient(false);
+                      handleCancelEdit();
+                    }}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
 
-                  <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
-                    {selectedClient.profile_pic ? (
-                      <img
-                        src={selectedClient.profile_pic}
-                        alt={selectedClient.display_name}
-                        className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
+                <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                  {selectedClient.profile_pic ? (
+                    <img
+                      src={selectedClient.profile_pic}
+                      alt={selectedClient.display_name}
+                      className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                      {selectedClient.display_name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-xl font-bold text-gray-900">{selectedClient.display_name}</p>
+                    <p className="text-sm text-gray-500">ID: {selectedClient.id.substring(0, 12)}...</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <span className="text-lg">👤</span> Имя клиента
+                    </label>
+                    {isEditingClient ? (
+                      <Input
+                        value={editedClientName}
+                        onChange={(e) => setEditedClientName(e.target.value)}
+                        placeholder="Введите имя..."
+                        className="bg-white"
                       />
                     ) : (
-                      <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                        {selectedClient.display_name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="text-xl font-bold text-gray-900">{selectedClient.display_name}</p>
-                      <p className="text-sm text-gray-500">ID: {selectedClient.id.substring(0, 12)}...</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <span className="text-lg">👤</span> Имя клиента
-                      </label>
-                      {isEditingClient ? (
-                        <Input
-                          value={editedClientName}
-                          onChange={(e) => setEditedClientName(e.target.value)}
-                          placeholder="Введите имя..."
-                          className="bg-white"
-                        />
-                      ) : (
-                        <p className="text-gray-900 font-medium">
-                          {selectedClient.name || (
-                            <span className="text-gray-400 italic">Не указано</span>
-                          )}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <Phone className="w-4 h-4" /> Телефон
-                      </label>
-                      {isEditingClient ? (
-                        <Input
-                          value={editedClientPhone}
-                          onChange={(e) => setEditedClientPhone(e.target.value)}
-                          placeholder="+971 XX XXX XXXX"
-                          className="bg-white"
-                        />
-                      ) : (
-                        <p className="text-gray-900 font-medium">
-                          {selectedClient.phone || (
-                            <span className="text-gray-400 italic">Не указан</span>
-                          )}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <Instagram className="w-4 h-4 text-pink-600" /> Instagram
-                      </label>
-                      {selectedClient.username ? (
-                        <a
-                          href={`https://instagram.com/${selectedClient.username}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-base transition-colors group"
-                        >
-                          <span>@{selectedClient.username}</span>
-                          <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </a>
-                      ) : (
-                        <p className="text-gray-400 italic">Не указан</p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
-                        <p className="text-sm text-gray-600 mb-1">Сообщений</p>
-                        <p className="text-2xl font-bold text-blue-600">{selectedClient.total_messages}</p>
-                      </div>
-                      <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
-                        <p className="text-sm text-gray-600 mb-1">Статус</p>
-                        <Badge className="bg-green-600 text-white font-semibold">{selectedClient.status}</Badge>
-                      </div>
-                    </div>
-
-                    <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <Clock className="w-4 h-4" /> Последний контакт
-                      </label>
-                      <p className="text-gray-900">
-                        {new Date(selectedClient.last_contact).toLocaleString('ru-RU', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                      <p className="text-gray-900 font-medium">
+                        {selectedClient.name || (
+                          <span className="text-gray-400 italic">Не указано</span>
+                        )}
                       </p>
+                    )}
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <Phone className="w-4 h-4" /> Телефон
+                    </label>
+                    {isEditingClient ? (
+                      <Input
+                        value={editedClientPhone}
+                        onChange={(e) => setEditedClientPhone(e.target.value)}
+                        placeholder="+971 XX XXX XXXX"
+                        className="bg-white"
+                      />
+                    ) : (
+                      <p className="text-gray-900 font-medium">
+                        {selectedClient.phone || (
+                          <span className="text-gray-400 italic">Не указан</span>
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <Instagram className="w-4 h-4 text-pink-600" /> Instagram
+                    </label>
+                    {selectedClient.username ? (
+                      <a
+                        href={`https://instagram.com/${selectedClient.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-base transition-colors group"
+                      >
+                        <span>@{selectedClient.username}</span>
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    ) : (
+                      <p className="text-gray-400 italic">Не указан</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
+                      <p className="text-sm text-gray-600 mb-1">Сообщений</p>
+                      <p className="text-2xl font-bold text-blue-600">{selectedClient.total_messages}</p>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
+                      <p className="text-sm text-gray-600 mb-2">Статус</p>
+                      {isEditingClient ? (
+                        <select
+                          value={selectedClient.status}
+                          onChange={async (e) => {
+                            const newStatus = e.target.value;
+                            try {
+                              await api.updateClientStatus(selectedClient.id, newStatus);
+                              setSelectedClient({ ...selectedClient, status: newStatus });
+                              setClients(clients.map(c =>
+                                c.id === selectedClient.id ? { ...c, status: newStatus } : c
+                              ));
+                              toast.success('Статус обновлён');
+                            } catch (err) {
+                              toast.error('Ошибка обновления статуса');
+                            }
+                          }}
+                          className="w-full p-2 border border-gray-300 rounded-lg bg-white text-sm"
+                        >
+                          <option value="new">Новый</option>
+                          <option value="contacted">Связались</option>
+                          <option value="interested">Заинтересован</option>
+                          <option value="lead">Лид</option>
+                          <option value="customer">Клиент</option>
+                          <option value="vip">VIP</option>
+                          <option value="inactive">Неактивен</option>
+                        </select>
+                      ) : (
+                        <Badge className="bg-green-600 text-white font-semibold">
+                          {selectedClient.status}
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
-                  <div className="mt-6 space-y-3">
-                    {isEditingClient ? (
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={handleSaveClientInfo}
-                          disabled={isSavingClient}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white shadow-md"
-                          size="sm"
-                        >
-                          {isSavingClient ? (
-                            <>
-                              <Loader className="w-4 h-4 mr-2 animate-spin" />
-                              Сохранение...
-                            </>
-                          ) : (
-                            <>
-                              <Check className="w-4 h-4 mr-2" />
-                              Сохранить
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          onClick={handleCancelEdit}
-                          disabled={isSavingClient}
-                          variant="outline"
-                          size="sm"
-                          className="px-4"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ) : (
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <Clock className="w-4 h-4" /> Последний контакт
+                    </label>
+                    <p className="text-gray-900">
+                      {new Date(selectedClient.last_contact).toLocaleString('ru-RU', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-3">
+                  {isEditingClient ? (
+                    <div className="flex gap-2">
                       <Button
-                        onClick={() => setIsEditingClient(true)}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                        onClick={handleSaveClientInfo}
+                        disabled={isSavingClient}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white shadow-md"
                         size="sm"
                       >
-                        <span className="mr-2">✏️</span>
-                        Редактировать
+                        {isSavingClient ? (
+                          <>
+                            <Loader className="w-4 h-4 mr-2 animate-spin" />
+                            Сохранение...
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4 mr-2" />
+                            Сохранить
+                          </>
+                        )}
                       </Button>
-                    )}
-
+                      <Button
+                        onClick={handleCancelEdit}
+                        disabled={isSavingClient}
+                        variant="outline"
+                        size="sm"
+                        className="px-4"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
                     <Button
-                      onClick={() => navigate(`/manager/clients/${selectedClient.id}`)}
-                      variant="outline"
-                      className="w-full shadow-sm"
+                      onClick={() => setIsEditingClient(true)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md"
                       size="sm"
                     >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Полный профиль
+                      <Edit2 className="w-4 h-4 mr-2" />
+                      Редактировать
                     </Button>
-                  </div>
+                  )}
+
+                  <Button
+                    onClick={() => {
+                      const role = JSON.parse(localStorage.getItem('user') || '{}').role;
+                      const prefix = role === 'admin' ? '/admin' : '/manager';
+                      navigate(`${prefix}/clients/${selectedClient.id}`);
+                    }}
+                    variant="outline"
+                    className="w-full shadow-sm"
+                    size="sm"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Полный профиль
+                  </Button>
                 </div>
               </div>
             )}
 
             {/* Templates Panel */}
             {showTemplates && (
-              <MessageTemplates 
-                onSelect={(content) => {
-                  setMessage(content);
-                  setShowTemplates(false);
-                  toast.success('Шаблон вставлен');
-                }}
-              />
+              <div className="border-t border-gray-200 bg-white p-6">
+                <MessageTemplates
+                  onSelect={(content) => {
+                    setMessage(content);
+                    setShowTemplates(false);
+                    toast.success('Шаблон вставлен');
+                  }}
+                />
+              </div>
             )}
 
             {/* Notes Panel */}
@@ -880,9 +932,16 @@ export default function Chat() {
               </div>
             )}
 
-            {/* Quick Replies */}
+            {/* ✅ ИСПРАВЛЕНО: Quick Replies показываются только при вводе "/" */}
             {showQuickReplies && selectedClient && (
-              <QuickReplies onSelect={(text) => setMessage(text)} />
+              <div className="border-t border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 p-3">
+                <QuickReplies
+                  onSelect={(text) => {
+                    setMessage(text);
+                    setShowQuickReplies(false);
+                  }}
+                />
+              </div>
             )}
 
             {/* Attached Files */}
@@ -920,7 +979,7 @@ export default function Chat() {
                   <Textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Введите сообщение..."
+                    placeholder="Введите сообщение или / для быстрых ответов..."
                     className="resize-none"
                     rows={2}
                     disabled={isUploadingFile}
@@ -955,7 +1014,7 @@ export default function Chat() {
                   </Button>
                   <Button
                     onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600"
+                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                     disabled={!canSend || isUploadingFile}
                     title={isUploadingFile ? "Загрузка файла..." : "Отправить"}
                   >
@@ -973,7 +1032,8 @@ export default function Chat() {
           <div className="flex-1 flex items-center justify-center text-gray-500">
             <div className="text-center">
               <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p>Выберите клиента для начала чата</p>
+              <p className="text-lg font-medium">Выберите клиента для начала чата</p>
+              <p className="text-sm text-gray-400 mt-2">Выберите диалог из списка слева</p>
             </div>
           </div>
         )}

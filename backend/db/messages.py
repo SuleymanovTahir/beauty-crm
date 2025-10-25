@@ -82,3 +82,32 @@ def get_unread_messages_count(instagram_id: str) -> int:
     conn.close()
     
     return count
+
+def save_reaction(message_id: int, emoji: str, user_id: int = None):
+    """Сохранить реакцию на сообщение"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Проверяем существует ли таблица reactions
+        c.execute("""CREATE TABLE IF NOT EXISTS message_reactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            message_id INTEGER NOT NULL,
+            emoji TEXT NOT NULL,
+            user_id INTEGER,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (message_id) REFERENCES chat_history(id)
+        )""")
+        
+        c.execute("""INSERT INTO message_reactions 
+                     (message_id, emoji, user_id, created_at)
+                     VALUES (?, ?, ?, ?)""",
+                  (message_id, emoji, user_id, datetime.now().isoformat()))
+        
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"❌ Ошибка сохранения реакции: {e}")
+        return False
+    finally:
+        conn.close()
