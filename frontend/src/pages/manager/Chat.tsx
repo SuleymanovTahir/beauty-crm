@@ -619,63 +619,6 @@ export default function Chat() {
                   >
                     <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
-                  <div className="relative lg:hidden">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const menu = document.getElementById('mobile-chat-menu');
-                        if (menu) menu.classList.toggle('hidden');
-                      }}
-                      className="h-8 w-8 sm:h-9 sm:w-9 p-0"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                      </svg>
-                    </Button>
-                    <div
-                      id="mobile-chat-menu"
-                      className="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                      onClick={(e) => {
-                        const menu = document.getElementById('mobile-chat-menu');
-                        if (menu) menu.classList.add('hidden');
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          setShowClientInfo(!showClientInfo);
-                          setShowTemplates(false);
-                          setShowNotes(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <Info className="w-4 h-4" />
-                        Информация
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowTemplates(!showTemplates);
-                          setShowClientInfo(false);
-                          setShowNotes(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 md:hidden"
-                      >
-                        <FileText className="w-4 h-4" />
-                        Шаблоны
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowNotes(!showNotes);
-                          setShowClientInfo(false);
-                          setShowTemplates(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <StickyNote className="w-4 h-4" />
-                        Заметки
-                      </button>
-                    </div>
-                  </div>
 
                   {/* Кнопка закрытия чата */}
                   {!isMobileView && (
@@ -1259,16 +1202,86 @@ export default function Chat() {
                     multiple
                     onChange={handleFileSelect}
                   />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingFile}
-                    title="Прикрепить файл"
-                    className="h-9 w-9 p-0"
-                  >
-                    <Paperclip className="w-4 h-4" />
-                  </Button>
+                  <div className="relative h-9">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const menu = document.getElementById('chat-input-menu');
+                        if (menu) menu.classList.toggle('hidden');
+                      }}
+                      title="Меню"
+                      className="h-9 w-9 p-0"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                      </svg>
+                    </Button>
+                    <div
+                      id="chat-input-menu"
+                      className="hidden fixed bottom-auto w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                      style={{
+                        transform: 'translateY(-100%)',
+                        marginTop: '-0.5rem'
+                      }}
+                      onClick={(e) => {
+                        const menu = document.getElementById('chat-input-menu');
+                        const button = e.currentTarget;
+                        if (menu) {
+                          if (menu.classList.contains('hidden')) {
+                            const rect = button.getBoundingClientRect();
+                            menu.style.top = `${rect.top}px`;
+                            menu.style.right = `${window.innerWidth - rect.right}px`;
+                            menu.classList.remove('hidden');
+                          } else {
+                            menu.classList.add('hidden');
+                          }
+                        }
+                      }}
+                    >
+                      <button
+                        onClick={() => {
+                          setShowClientInfo(!showClientInfo);
+                          setShowTemplates(false);
+                          setShowNotes(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Info className="w-4 h-4" />
+                        Информация
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowTemplates(!showTemplates);
+                          setShowClientInfo(false);
+                          setShowNotes(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Шаблоны
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowNotes(!showNotes);
+                          setShowClientInfo(false);
+                          setShowTemplates(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <StickyNote className="w-4 h-4" />
+                        Заметки
+                      </button>
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploadingFile}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                        Прикрепить файл
+                      </button>
+                    </div>
+                  </div>
                   <Button
                     onClick={handleSendMessage}
                     className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 h-9 w-9 p-0"

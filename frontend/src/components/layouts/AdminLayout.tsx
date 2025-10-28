@@ -111,8 +111,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="mobile-burger-button fixed top-4 right-4 z-50 w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center border border-gray-200 hover:bg-gray-50 transition-colors"
-        aria-label="Toggle menu"
+         className="mobile-burger-button fixed top-4 right-4 z-[45] w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center border border-gray-200 hover:bg-gray-50 transition-colors"
       >
         <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

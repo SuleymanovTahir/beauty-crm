@@ -317,16 +317,19 @@ export default function Analytics() {
                   ))}
                 </Pie>
                 <Tooltip />
-                {window.innerWidth < 1004 ? null : (
-                  <Legend
-                    content={customPieLegend}
-                    verticalAlign="bottom"
-                    height={window.innerWidth < 640 ? 100 : 80}
-                    wrapperStyle={{
-                      fontSize: window.innerWidth < 640 ? '10px' : '12px',
-                      paddingTop: '10px'
-                    }}
-                  />
+                {window.innerWidth < 1004 && (
+                  <div className="mt-4 space-y-2 px-2">
+                    {servicesData.map((entry, index) => (
+                      <div key={index} className="flex items-center gap-3 text-xs">
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: entry.color }}
+                        />
+                        <span className="truncate flex-1">{entry.name}</span>
+                        <span className="text-gray-700 font-semibold flex-shrink-0 ml-2">{entry.value}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </PieChart>
             </ResponsiveContainer>
