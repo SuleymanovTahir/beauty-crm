@@ -189,7 +189,7 @@ export default function Analytics() {
 
       {/* Filters */}
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div className="flex flex-col md:flex-row gap-4 flex-wrap items-end">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 flex-wrap items-stretch sm:items-end">
           <PeriodFilter
             period={period}
             dateFrom={dateFrom}
@@ -201,7 +201,7 @@ export default function Analytics() {
           />
 
           {period === 'custom' && (
-            <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700">
+            <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto">
               Применить
             </Button>
           )}
@@ -300,51 +300,54 @@ export default function Analytics() {
         {/* Services Distribution */}
         {servicesData.length > 0 && (
           <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
-          <h2 className="text-lg sm:text-xl text-gray-900 mb-4 sm:mb-6">Распределение услуг</h2>
-          <ResponsiveContainer width="100%" height={window.innerWidth < 432 ? 350 : 450}>
-            <PieChart>
-              <Pie
-                data={servicesData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy={window.innerWidth < 432 ? "40%" : "45%"}
-                outerRadius={window.innerWidth < 432 ? 70 : 100}
-                label={window.innerWidth < 432 ? undefined : customPiePercentLabel}
-              >
-                {servicesData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-              {window.innerWidth < 432 ? null : (
-                <Legend
-                  content={customPieLegend}
-                  verticalAlign="bottom"
-                  height={window.innerWidth < 640 ? 100 : 80}
-                  wrapperStyle={{
-                    fontSize: window.innerWidth < 640 ? '10px' : '12px',
-                    paddingTop: '10px'
-                  }}
-                />
-              )}
-            </PieChart>
-          </ResponsiveContainer>
-          {/* Показываем упрощенную легенду на очень маленьких экранах */}
-          {window.innerWidth < 432 && (
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              {servicesData.map((entry, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  <div 
-                    className="w-3 h-3 rounded-full flex-shrink-0" 
-                    style={{ backgroundColor: entry.color }}
+            <h2 className="text-lg sm:text-xl text-gray-900 mb-4 sm:mb-6">Распределение услуг</h2>
+            <ResponsiveContainer width="100%" height={window.innerWidth < 432 ? 350 : 450}>
+              <PieChart>
+                <Pie
+                  data={servicesData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy={window.innerWidth < 432 ? "40%" : "45%"}
+                  outerRadius={window.innerWidth < 432 ? 70 : 100}
+                  label={window.innerWidth < 432 ? undefined : customPiePercentLabel}
+                >
+                  {servicesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                {window.innerWidth < 1004 ? null : (
+                  <Legend
+                    content={customPieLegend}
+                    verticalAlign="bottom"
+                    height={window.innerWidth < 640 ? 100 : 80}
+                    wrapperStyle={{
+                      fontSize: window.innerWidth < 640 ? '10px' : '12px',
+                      paddingTop: '10px'
+                    }}
                   />
-                  <span className="truncate">{entry.name}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                )}
+              </PieChart>
+            </ResponsiveContainer>
+            {/* Показываем упрощенную легенду на очень маленьких экранах */}
+            {window.innerWidth < 1004 && (
+              <div className="mt-4 space-y-2 px-2">
+                {servicesData.map((entry, index) => (
+                  <div key={index} className="flex items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <div
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: entry.color }}
+                      />
+                      <span className="truncate">{entry.name}</span>
+                    </div>
+                    <span className="text-gray-700 font-semibold flex-shrink-0">{entry.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         {/* Status Chart */}

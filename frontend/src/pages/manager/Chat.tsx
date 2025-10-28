@@ -79,9 +79,9 @@ export default function Chat() {
   const [editedClientPhone, setEditedClientPhone] = useState('');
   const [isSavingClient, setIsSavingClient] = useState(false);
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();
-  
+
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 800);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -444,7 +444,7 @@ export default function Chat() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex overflow-hidden">
         {/* Clients List */}
         <div className={`
-          w-full sm:w-80 border-r border-gray-200 flex flex-col
+           w-full sm:w-96 border-r border-gray-200 flex flex-col
           ${selectedClient && isMobileView ? 'hidden' : 'flex'}
         `}>
           <div className="p-4 border-b border-gray-200">
@@ -539,7 +539,7 @@ export default function Chat() {
                     <ArrowLeft className="w-5 h-5 text-gray-700" />
                   </button>
                 )}
-                
+
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
                     <img
@@ -554,9 +554,8 @@ export default function Chat() {
                       }}
                     />
                   ) : null}
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md flex-shrink-0 ${
-                    selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
-                  }`}>
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
+                    }`}>
                     {selectedClient.display_name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -583,7 +582,7 @@ export default function Chat() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                   <Button
                     size="sm"
@@ -620,19 +619,76 @@ export default function Chat() {
                   >
                     <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setShowNotes(!showNotes);
-                      setShowClientInfo(false);
-                      setShowTemplates(false);
-                    }}
-                    title="Заметки"
-                    className={`h-8 w-8 sm:h-9 sm:w-9 p-0 hidden lg:flex ${showNotes ? 'bg-yellow-100 border-yellow-300' : ''}`}
-                  >
-                    <StickyNote className="w-3 h-3 sm:w-4 sm:h-4" />
-                  </Button>
+                  <div className="relative lg:hidden">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const menu = document.getElementById('mobile-chat-menu');
+                        if (menu) menu.classList.toggle('hidden');
+                      }}
+                      className="h-8 w-8 sm:h-9 sm:w-9 p-0"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                      </svg>
+                    </Button>
+                    <div
+                      id="mobile-chat-menu"
+                      className="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                      onClick={(e) => {
+                        const menu = document.getElementById('mobile-chat-menu');
+                        if (menu) menu.classList.add('hidden');
+                      }}
+                    >
+                      <button
+                        onClick={() => {
+                          setShowClientInfo(!showClientInfo);
+                          setShowTemplates(false);
+                          setShowNotes(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <Info className="w-4 h-4" />
+                        Информация
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowTemplates(!showTemplates);
+                          setShowClientInfo(false);
+                          setShowNotes(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 md:hidden"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Шаблоны
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowNotes(!showNotes);
+                          setShowClientInfo(false);
+                          setShowTemplates(false);
+                        }}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <StickyNote className="w-4 h-4" />
+                        Заметки
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Кнопка закрытия чата */}
+                  {!isMobileView && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleBackToList}
+                      title="Закрыть чат"
+                      className="h-8 w-8 sm:h-9 sm:w-9 p-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1026,6 +1082,18 @@ export default function Chat() {
             {/* Templates Panel */}
             {showTemplates && (
               <div className="border-t border-gray-200 bg-white p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-pink-600" />
+                    Шаблоны сообщений
+                  </h3>
+                  <button
+                    onClick={() => setShowTemplates(false)}
+                    className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
                 <MessageTemplates
                   onSelect={(content) => {
                     setMessage(content);
@@ -1035,6 +1103,7 @@ export default function Chat() {
                 />
               </div>
             )}
+
 
             {/* Notes Panel */}
             {showNotes && (
@@ -1218,7 +1287,7 @@ export default function Chat() {
           </div>
         ) : (
           <div className={`
-            flex-1 flex items-center justify-center text-gray-500
+            flex-1 flex items-center justify-center text-gray-500 px-8
             ${isMobileView ? 'hidden' : 'flex'}
           `}>
             <div className="text-center">

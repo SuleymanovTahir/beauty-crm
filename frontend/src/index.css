@@ -3404,7 +3404,7 @@ html {
 /* Hide mobile menu elements on screens > 1100px */
 @media (min-width: 1101px) {
   .mobile-burger-button {
-    display: none !important;
+    display: flex !important;
   }
   
   .mobile-overlay {

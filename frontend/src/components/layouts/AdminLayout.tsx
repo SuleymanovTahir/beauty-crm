@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
+import {
+  LayoutDashboard,
   Users,
   ShoppingCart,
   BarChart3,
@@ -66,7 +66,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     } else {
       document.body.style.overflow = '';
     }
-    
+
     return () => {
       document.body.style.overflow = '';
     };
@@ -111,7 +111,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="mobile-burger-button fixed top-4 left-4 z-50 w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center border border-gray-200 hover:bg-gray-50 transition-colors"
+        className="mobile-burger-button fixed top-4 right-4 z-50 w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center border border-gray-200 hover:bg-gray-50 transition-colors"
         aria-label="Toggle menu"
       >
         <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,9 +128,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       )}
 
       {/* Sidebar */}
-      <aside className={`mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${
-        isMobileMenuOpen ? 'is-open' : ''
-      }`}>
+      <aside className={`mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'is-open' : ''
+        }`}>
         {/* Header */}
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div>
@@ -153,20 +152,19 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname.startsWith(item.path);
-              
+
               return (
                 <li key={item.path}>
                   <button
                     onClick={() => handleMenuItemClick(item.path)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
-                      isActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${isActive
                         ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 shadow-sm'
                         : 'text-gray-700 hover:bg-gray-50'
-                    }`}
+                      }`}
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-pink-600' : 'text-gray-500'}`} />
                     <span className={isActive ? 'font-semibold' : 'font-medium'}>{item.label}</span>
-                    
+
                     {item.badge && item.badge > 0 && (
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
                         {item.badge > 99 ? '99+' : item.badge}
@@ -190,7 +188,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
               <p className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</p>
             </div>
           </div>
-          
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium text-sm"
