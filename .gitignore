@@ -6,8 +6,6 @@ __pycache__/
 
 # Node
 node_modules/
-dist/
-build/
 
 # Environment
 .env
