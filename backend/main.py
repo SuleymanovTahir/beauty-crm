@@ -2,12 +2,11 @@
 Главный файл FastAPI приложения
 """
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import time
-import os
 
 from logger import logger, log_info, log_error, log_critical
 from db import init_database
@@ -23,7 +22,7 @@ from api.reactions import router as reactions_router
 from api.templates import router as templates_router
 from api.statuses import router as statuses_router
 from api.uploads import router as upload_router
-from api.proxy import router as proxy_router
+from api.proxy import router as proxy_router  # ✅ НОВЫЙ РОУТЕР
 from api.reminders import router as reminders_router
 from api.notifications import router as notifications_router
 from api.tags import router as tags_router
@@ -41,9 +40,9 @@ salon = get_salon_settings()
 # Инициализация FastAPI
 app = FastAPI(title=f"💎 {salon['name']} CRM")
 
-# Если нужны шаблоны Jinja
+# Подключение статики и шаблонов
+app.mount("/static", StaticFiles(directory="static"), name="static/dist")
 templates = Jinja2Templates(directory="templates")
-
 
 # Подключение роутеров
 app.include_router(api_router)
@@ -53,7 +52,7 @@ app.include_router(reactions_router)
 app.include_router(templates_router)
 app.include_router(statuses_router, prefix="/api")
 app.include_router(upload_router)
-app.include_router(proxy_router)
+app.include_router(proxy_router)  # ✅ ПОДКЛЮЧАЕМ ПРОКСИ
 app.include_router(reminders_router)
 app.include_router(notifications_router)
 app.include_router(tags_router)
@@ -134,6 +133,27 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # ===== ОСНОВНЫЕ ENDPOINTS =====
 
+@app.get("/")
+async def root():
+    """API информация"""
+    return {
+        "status": "✅ CRM работает!",
+        "salon": salon['name'],
+        "bot": salon['bot_name'],
+        "version": "2.0.0",
+        "features": [
+            "AI-гений продаж (Gemini 2.0 Flash)",
+            "Автоматическая запись клиентов",
+            "Полноценная CRM с дашбордом",
+            "Воронка продаж с аналитикой",
+            "История диалогов",
+            "Графики и отчеты",
+            "Многоязычность (RU/EN/AR)",
+            "Прокси для изображений Instagram"  # ✅ НОВАЯ ФИЧА
+        ]
+    }
+
+
 @app.get("/health")
 async def health():
     """Проверка здоровья сервиса"""
@@ -144,7 +164,7 @@ async def health():
             "status": "healthy",
             "database": "connected",
             "gemini_ai": "active",
-            "image_proxy": "active",
+            "image_proxy": "active",  # ✅ НОВАЯ ПРОВЕРКА
             "total_clients": stats['total_clients'],
             "total_bookings": stats['total_bookings']
         }
@@ -162,40 +182,6 @@ async def privacy_policy():
 @app.get("/terms")
 async def terms():
     return RedirectResponse(url="/#/terms")
-
-
-# ===== СТАТИЧЕСКИЕ ФАЙЛЫ =====
-
-# Раздаём старые статики (uploads и т.д.)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-# React build - проверяем существование
-frontend_dist = os.path.join(os.path.dirname(__file__), "../frontend/dist")
-if os.path.exists(frontend_dist):
-    log_info(f"✅ Frontend dist found: {frontend_dist}", "startup")
-    
-    # Catch-all роут для SPA (React Router)
-    @app.get("/{full_path:path}")
-    async def serve_spa(full_path: str):
-        """Отдаём index.html для всех неизвестных путей (SPA routing)"""
-        # Если это API запрос - пропускаем
-        if full_path.startswith("api/") or full_path.startswith("webhook/") or full_path.startswith("static/"):
-            return JSONResponse({"detail": "Not Found"}, status_code=404)
-        
-        # Проверяем, существует ли файл в dist
-        file_path = os.path.join(frontend_dist, full_path)
-        if os.path.isfile(file_path):
-            return FileResponse(file_path)
-        
-        # Иначе отдаём index.html (для React Router)
-        index_path = os.path.join(frontend_dist, "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
-        
-        return JSONResponse({"detail": "Frontend not built"}, status_code=404)
-else:
-    log_error(f"⚠️  Frontend dist not found at: {frontend_dist}", "startup")
-    log_error("   Build it with: cd frontend && npm run build", "startup")
 
 
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
@@ -221,7 +207,7 @@ async def startup_event():
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
         
         log_info("✅ CRM готова к работе!", "startup")
-        log_info("🔄 Прокси для изображений активирован", "startup")
+        log_info("🔄 Прокси для изображений активирован", "startup")  # ✅ НОВОЕ
         log_info("=" * 70, "startup")
     except Exception as e:
         log_critical(f"❌ ОШИБКА ПРИ ЗАПУСКЕ: {e}", "startup")
@@ -237,3 +223,5 @@ if __name__ == "__main__":
         port=8000,
         log_level="info"
     )
+
+    
