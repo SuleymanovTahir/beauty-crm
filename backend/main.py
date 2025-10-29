@@ -4,7 +4,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import time
 
@@ -42,7 +41,6 @@ app = FastAPI(title=f"💎 {salon['name']} CRM")
 
 # Подключение статики и шаблонов
 app.mount("/static", StaticFiles(directory="static"), name="static/dist")
-templates = Jinja2Templates(directory="templates")
 
 # Подключение роутеров
 app.include_router(api_router)
