@@ -44,7 +44,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static/dist")
 
 # Подключение роутеров
 app.include_router(api_router)
-app.include_router(auth_router)
+app.include_router(auth_router, prefix="/api")
 app.include_router(webhooks_router)
 app.include_router(reactions_router)
 app.include_router(templates_router)

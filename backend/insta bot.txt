@@ -90,39 +90,53 @@ sudo netstat -tuln | grep 8000
 sudo nano /etc/nginx/sites-available/mlediamant
 
 содержимое этого файла
+# Перенаправление с HTTP на HTTPS
 server {
     listen 80;
     server_name mlediamant.com www.mlediamant.com;
-
-    # Перенаправление HTTP → HTTPS
     return 301 https://$host$request_uri;
 }
 
+# HTTPS сервер
 server {
     listen 443 ssl;
     server_name mlediamant.com www.mlediamant.com;
 
+    # SSL сертификаты
     ssl_certificate /etc/letsencrypt/live/mlediamant.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/mlediamant.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-    location / {
-        proxy_pass http://127.0.0.1:8000;
+    # Прокси FastAPI для API
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
     }
 
-    location /static/ {
-        alias /home/ubuntu/beauty_crm/static/dist;
-        expires 30d;
+    # Статика фронта (JS, CSS, изображения)
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot)$ {
+        root /home/ubuntu/beauty_crm/frontend/dist;
+        expires 7d;
         add_header Cache-Control "public, no-transform";
     }
+
+    # React SPA (все маршруты, включая /admin)
+    location / {
+        root /home/ubuntu/beauty_crm/frontend/dist;
+        index index.html;
+        try_files $uri /index.html;
+    }
+
+    # Логи
+    access_log /var/log/nginx/beauty_crm.access.log;
+    error_log /var/log/nginx/beauty_crm.error.log;
 }
+
 
 
 Сохранить изменения:
