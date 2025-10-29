@@ -40,7 +40,7 @@ def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
 
 
 
-@router.post("/api/login")
+@router.post("/login")
 async def api_login(username: str = Form(...), password: str = Form(...)):
     """API: Логин"""
     try:
