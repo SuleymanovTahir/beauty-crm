@@ -43,20 +43,23 @@ app = FastAPI(title=f"💎 {salon['name']} CRM")
 app.mount("/static", StaticFiles(directory="static"), name="static/dist")
 
 # Подключение роутеров
-app.include_router(api_router)
-app.include_router(auth_router)
-app.include_router(webhooks_router)
-app.include_router(reactions_router)
-app.include_router(templates_router)
-app.include_router(statuses_router)
-app.include_router(upload_router)
-app.include_router(proxy_router)  # ✅ ПОДКЛЮЧАЕМ ПРОКСИ
-app.include_router(reminders_router)
-app.include_router(notifications_router)
-app.include_router(tags_router)
-app.include_router(automation_router)
-app.include_router(reports_router)
-app.include_router(settings_router) 
+# API роутеры (все через /api)
+app.include_router(api_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(reactions_router, prefix="/api")
+app.include_router(templates_router, prefix="/api")
+app.include_router(statuses_router, prefix="/api")
+app.include_router(upload_router, prefix="/api")
+app.include_router(reminders_router, prefix="/api")
+app.include_router(notifications_router, prefix="/api")
+app.include_router(tags_router, prefix="/api")
+app.include_router(automation_router, prefix="/api")
+app.include_router(reports_router, prefix="/api")
+app.include_router(settings_router, prefix="/api")
+
+# Специальные роутеры (БЕЗ /api)
+app.include_router(webhooks_router)  # для Instagram webhook
+app.include_router(proxy_router)     # для прокси изображений
 
 
 # ===== MIDDLEWARE =====
