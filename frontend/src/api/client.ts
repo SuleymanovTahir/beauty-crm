@@ -1,7 +1,7 @@
 // frontend/src/api/client.ts
 // Универсальный API клиент для всех endpoints
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const BASE_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mlediamant.com')
 
 interface FetchOptions extends RequestInit {
   body?: any

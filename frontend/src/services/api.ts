@@ -1,5 +1,5 @@
 // frontend/src/services/api.ts
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mlediamant.com')
 
 export class ApiClient {
   private baseURL: string
