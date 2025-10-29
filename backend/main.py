@@ -40,9 +40,15 @@ salon = get_salon_settings()
 # Инициализация FastAPI
 app = FastAPI(title=f"💎 {salon['name']} CRM")
 
-# Подключение статики и шаблонов
+# Раздаём старые статики (если нужны)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Подключаем React build к корню
+app.mount("/", StaticFiles(directory="../frontend/dist", html=True), name="frontend")
+
+# Если нужны шаблоны Jinja
 templates = Jinja2Templates(directory="templates")
+
 
 # Подключение роутеров
 app.include_router(api_router)

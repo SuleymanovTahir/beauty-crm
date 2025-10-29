@@ -16,17 +16,19 @@ bashsudo apt update && sudo apt install openssh-client
 powershellAdd-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
 
 
-mkdir -p /home/ubuntu/my_crm/inst_bot
-sudo chown -R /home/ubuntu/my_crm/inst_bot
+mkdir -p /home/ubuntu/my_crm/beauty_crm
+sudo chown -R /home/ubuntu/my_crm/beauty_crm
 
 добавление папки в ftp без venv
 
-1. Создай временную папку без venv на локальной машине:
-robocopy "C:\Users\Admin\Desktop\My_crm\inst bot" "C:\Users\Admin\Desktop\my_crm\temp_inst_bot" /MIR /XD venv .git
-2. Залей временную папку на сервер:
-scp -r C:\Users\Admin\Desktop\My_crm\temp_inst_bot ubuntu@91.201.215.32:/home/ubuntu/inst_bot
-3. удаление временной папки на компьюторе после загрузки на сервер
-rmdir /S /Q "C:\Users\Admin\Desktop\My_crm\temp_inst_bot"
+# 1. Создай временную папку без venv на локальной машине (Mac):
+rsync -av --exclude='venv' --exclude='.git' --exclude='node_modules' "/Users/tahir/Desktop/beauty-crm/" "/Users/tahir/Desktop/beauty-crm/temp_beauty_crm/"
+
+# 2. Залей временную папку на сервер:
+scp -r "/Users/tahir/Desktop/beauty-crm/temp_beauty_crm" ubuntu@91.201.215.32:/home/ubuntu/beauty_crm
+
+# 3. Удаление временной папки на компьютере после загрузки на сервер:
+rm -rf "/Users/tahir/Desktop/beauty-crm/temp_beauty_crm"
 
 если не создается через терминал компьютера, то удаляем последние три ключа 
 ssh-keygen -R 91.201.215.32
@@ -36,7 +38,7 @@ ssh ubuntu@91.201.215.32 "rm -rf /home/ubuntu/my_crm/inst\ bot"
 
 
 заходим в директорию проекта
-cd /home/ubuntu/inst_bot
+cd /home/ubuntu/beauty_crm
 
 устанавлиеваем питон и создаем виртуальное окружение с установкой файлов библиотек из проекта
 sudo apt update && sudo apt install python3 python3-pip python3-venv git nginx certbot python3-certbot-nginx net-tools -y
@@ -52,12 +54,12 @@ rm -rf venv
 uvicorn main:app --reload
 
 Запусти Uvicorn в фоновом режиме если нужно какие-то команды параллельно выполнять:
-screen -S inst_bot
-/home/ubuntu/inst_bot/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1
+screen -S beauty_crm
+/home/ubuntu/beauty_crm/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1
 
 Вернуться в сессию screen
 Чтобы вернуться в сессию:
-screen -r inst_bot
+screen -r beauty_crm
 Завершить процесс в screen
 Внутри сессии:
 
@@ -116,7 +118,7 @@ server {
     }
 
     location /static/ {
-        alias /home/ubuntu/inst_bot/static/;
+        alias /home/ubuntu/beauty_crm/static/dist;
         expires 30d;
         add_header Cache-Control "public, no-transform";
     }
@@ -142,10 +144,10 @@ sudo apt install certbot python3-certbot-nginx -y
 sudo certbot --nginx -d mlediamant.com
 
 
-sudo nano /etc/systemd/system/inst_bot.service
+sudo nano /etc/systemd/system/beauty_crm.service
 
 
-Содержимое файла (inst_bot.service):
+Содержимое файла (beauty_crm.service):
 [Unit]
 Description=Inst Bot FastAPI with Gunicorn
 After=network.target
@@ -153,9 +155,9 @@ After=network.target
 [Service]
 User=ubuntu
 Group=ubuntu
-WorkingDirectory=/home/ubuntu/inst_bot
-Environment="PATH=/home/ubuntu/inst_bot/venv/bin"
-ExecStart=/home/ubuntu/inst_bot/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000 --access-logfile /home/ubuntu/inst_bot/access.log --error-logfile /home/ubuntu/inst_bot/error.log
+WorkingDirectory=/home/ubuntu/beauty_crm
+Environment="PATH=/home/ubuntu/beauty_crm/venv/bin"
+ExecStart=/home/ubuntu/beauty_crm/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000 --access-logfile /home/ubuntu/beauty_crm/access.log --error-logfile /home/ubuntu/beauty_crm/error.log
 Restart=always
 RestartSec=10
 
@@ -165,13 +167,13 @@ WantedBy=multi-user.target
 
 3. Активация и запуск сервиса
 sudo systemctl daemon-reload  # Перезагрузи systemd для чтения нового сервиса
-sudo systemctl enable inst_bot  # Автозапуск при загрузке сервера
-sudo systemctl start inst_bot   # Запуск сервиса
-sudo systemctl status inst_bot  # Проверка статуса (должен быть "active (running)")
+sudo systemctl enable beauty_crm  # Автозапуск при загрузке сервера
+sudo systemctl start beauty_crm   # Запуск сервиса
+sudo systemctl status beauty_crm  # Проверка статуса (должен быть "active (running)")
 
 Пример вывода status (если всё OK):
-● inst_bot.service - Inst Bot FastAPI with Gunicorn + Uvicorn
-   Loaded: loaded (/etc/systemd/system/inst_bot.service; enabled; vendor preset: enabled)
+● beauty_crm.service - Inst Bot FastAPI with Gunicorn + Uvicorn
+   Loaded: loaded (/etc/systemd/system/beauty_crm.service; enabled; vendor preset: enabled)
    Active: active (running) since ...
    
    
