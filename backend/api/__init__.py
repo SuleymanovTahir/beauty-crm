@@ -15,7 +15,7 @@ from .uploads import router as uploads_router
 
 
 # Главный роутер API
-router = APIRouter(prefix="/api")
+router = APIRouter(tags=["API"])
 
 # Подключаем все роутеры
 router.include_router(clients_router)
