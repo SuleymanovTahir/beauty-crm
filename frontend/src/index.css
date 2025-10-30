@@ -478,8 +478,8 @@
   .pointer-events-none {
     pointer-events: none;
   }
-
-  .sr-only {
+/* только у нас */
+  /* .sr-only {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
@@ -489,7 +489,7 @@
     padding: 0;
     position: absolute;
     overflow: hidden;
-  }
+  } */
 
   .absolute {
     position: absolute;
@@ -510,6 +510,11 @@
   .inset-0 {
     inset: calc(var(--spacing) * 0);
   }
+/* только у них */
+  .inset-y-0 {
+    inset-block: calc(var(--spacing) * 0);
+  }
+
 
   .top-0 {
     top: calc(var(--spacing) * 0);
@@ -522,25 +527,33 @@
   .top-4 {
     top: calc(var(--spacing) * 4);
   }
-
-  .top-\[50\%\] {
+/* только у нас */
+  /* .top-\[50\%\] {
     top: 50%;
-  }
+  } */
 
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
-
-  .right-2 {
+/* только у нас */
+  /* .right-2 {
     right: calc(var(--spacing) * 2);
   }
 
   .right-4 {
     right: calc(var(--spacing) * 4);
-  }
+  } */
 
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
+  }
+/* только у них */
+  .left-0 {
+    left: calc(var(--spacing) * 0);
+  }
+/* только у них */
+  .left-2 {
+    left: calc(var(--spacing) * 2);
   }
 
   .left-3 {
@@ -550,9 +563,18 @@
   .left-4 {
     left: calc(var(--spacing) * 4);
   }
-
-  .left-\[50\%\] {
+/* только у нас */
+  /* .left-\[50\%\] {
     left: 50%;
+  } */
+
+/* только у них */
+  .z-30 {
+    z-index: 30;
+  }
+/* только у них */
+  .z-40 {
+    z-index: 40;
   }
 
   .z-50 {
@@ -566,6 +588,10 @@
   .mx-auto {
     margin-inline: auto;
   }
+  /* только у них */
+  .my-1 {
+    margin-block: calc(var(--spacing) * 1);
+  }
 
   .my-1 {
     margin-block: calc(var(--spacing) * 1);
@@ -575,7 +601,8 @@
     margin-top: calc(var(--spacing) * 1);
   }
 
-  .mt-2 {
+/* только у нас */
+  /* .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
 
@@ -597,7 +624,7 @@
 
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
-  }
+  } */
 
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
@@ -618,8 +645,8 @@
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
-
-  .mb-6 {
+/* только у нас */
+  /* .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
 
@@ -633,11 +660,16 @@
 
   .mb-16 {
     margin-bottom: calc(var(--spacing) * 16);
-  }
+  } */
 
-  .ml-4 {
-    margin-left: calc(var(--spacing) * 4);
+  /* только у них */
+  .ml-2 {
+    margin-left: calc(var(--spacing) * 2);
   }
+/* только у нас */
+  /* .ml-4 {
+    margin-left: calc(var(--spacing) * 4);
+  } */
 
   .block {
     display: block;
@@ -654,14 +686,14 @@
   .hidden {
     display: none;
   }
-
-  .inline-block {
+/* только у нас */
+  /* .inline-block {
     display: inline-block;
   }
 
   .inline-flex {
     display: inline-flex;
-  }
+  } 
 
   .table {
     display: table;
@@ -670,6 +702,14 @@
   .field-sizing-content {
     field-sizing: content;
   }
+*/
+
+/* только у них */
+.size-2 {
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+}
+
 
   .size-3\.5 {
     width: calc(var(--spacing) * 3.5);
@@ -680,10 +720,15 @@
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
-
-  .size-9 {
+/* только у нас */
+  /* .size-9 {
     width: calc(var(--spacing) * 9);
     height: calc(var(--spacing) * 9);
+  } */
+
+  /* только у них */
+  .h-2\.5 {
+    height: calc(var(--spacing) * 2.5);
   }
 
   .h-2 {
@@ -3405,3 +3450,5 @@ html {
     display: none;
   }
 }
+
+

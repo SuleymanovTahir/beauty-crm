@@ -288,14 +288,22 @@ async def handle_webhook(request: Request):
                     history = get_chat_history(sender_id, limit=10)
                     
                     logger.info("🤖 Generating AI response...")
-                    ai_response = await bot.generate_response(
-                        user_message=message_text,
-                        instagram_id=sender_id,
-                        history=history,
-                        client_language=client_language
-                    )
-                    
-                    logger.info(f"✅ AI response: {ai_response[:100]}")
+                    try:
+                        ai_response = await bot.generate_response(
+                            user_message=message_text,
+                            instagram_id=sender_id,
+                            history=history,
+                            client_language=client_language
+                        )
+                        logger.info(f"✅ AI response: {ai_response[:100]}")
+                    except Exception as gen_error:
+                        logger.error(f"❌ AI generation failed: {gen_error}")
+                        logger.error(f"📋 Error type: {type(gen_error).__name__}")
+                        import traceback
+                        logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
+                        
+                        # Вернем дефолтный ответ
+                        ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
                     
                     save_message(
                         sender_id, 

@@ -187,6 +187,9 @@ async def privacy_policy():
 async def terms():
     return RedirectResponse(url="/#/terms")
 
+@app.get("/data-deletion")
+async def data_deletion():
+    return RedirectResponse(url="/#/data-deletion")
 
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
 

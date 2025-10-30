@@ -42,6 +42,7 @@ import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
 import EditUser from './pages/admin/EditUser';
 import UserCabinet from './pages/public/UserCabinet';
+import DataDeletion from './pages/public/DataDeletion';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -266,6 +267,7 @@ export default function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="cooperation" element={<Cooperation />} />
             <Route path="faq" element={<FAQ />} />
+            <Route path="data-deletion" element={<DataDeletion />} />
             <Route 
               path="cabinet" 
               element={
