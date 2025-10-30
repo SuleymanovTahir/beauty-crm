@@ -41,7 +41,21 @@ def migrate_salon_settings():
     
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+    try:
+        c.execute("PRAGMA table_info(salon_settings)")
+        columns = [row[1] for row in c.fetchall()]
+        
+        if 'hours_weekdays' not in columns:
+            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
+            print("✅ Добавлена колонка hours_weekdays")
+        
+        if 'hours_weekends' not in columns:
+            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
+            print("✅ Добавлена колонка hours_weekends")
+        
+        conn.commit()
+    except Exception as e:
+        print(f"⚠️  Ошибка при добавлении колонок: {e}")
     # Проверяем существующие настройки
     c.execute("SELECT COUNT(*) FROM salon_settings")
     existing = c.fetchone()[0]
