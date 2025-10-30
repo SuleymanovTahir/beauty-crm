@@ -41,6 +41,36 @@ def migrate_salon_settings():
     
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        name TEXT NOT NULL,
+        name_ar TEXT,
+        address TEXT,
+        address_ar TEXT,
+        google_maps TEXT,
+        hours TEXT,
+        hours_ru TEXT,
+        hours_ar TEXT,
+        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
+        hours_weekends TEXT DEFAULT '10:30 - 21:00',
+        booking_url TEXT,
+        phone TEXT,
+        email TEXT,
+        instagram TEXT,
+        whatsapp TEXT,
+        bot_name TEXT NOT NULL,
+        bot_name_en TEXT,
+        bot_name_ar TEXT,
+        city TEXT DEFAULT 'Dubai',
+        country TEXT DEFAULT 'UAE',
+        timezone TEXT DEFAULT 'Asia/Dubai',
+        currency TEXT DEFAULT 'AED',
+        updated_at TEXT
+    )''')
+    conn.commit()
+    print("✅ Таблица salon_settings проверена/создана")
+    
+    # ===== ДОБАВЛЯЕМ КОЛОНКИ ЕСЛИ ИХ НЕТ =====
     try:
         c.execute("PRAGMA table_info(salon_settings)")
         columns = [row[1] for row in c.fetchall()]
