@@ -18,12 +18,6 @@ INSTRUCTIONS_FILE = "bot/bot_instructions_file.txt"
 # ===== ДЕФОЛТНЫЕ ЗНАЧЕНИЯ =====
 DEFAULT_SETTINGS = {
     "bot_name": SALON_BOT_NAME,
-    "salon_name": SALON_NAME,
-    "salon_address": SALON_ADDRESS,
-    "salon_phone": SALON_PHONE,
-    "salon_hours": SALON_WORKING_HOURS_WEEKDAYS,
-    "booking_url": SALON_BOOKING_URL,
-    "google_maps_link": SALON_LOCATION,
     "personality_traits": "Обаятельная, уверенная, харизматичная",
     "greeting_message": "Привет! 😊 Добро пожаловать!",
     "farewell_message": "Спасибо за визит! 💖",
@@ -425,50 +419,8 @@ def migrate_settings():
     now = datetime.now().isoformat()
     
     # === SALON SETTINGS ===
-    print("\n💾 Заполняю salon_settings...")
-    try:
-        c.execute("SELECT COUNT(*) FROM salon_settings")
-        salon_exists = c.fetchone()[0] > 0
-        
-        if salon_exists:
-            c.execute("""UPDATE salon_settings SET
-                name = ?,
-                address = ?,
-                google_maps = ?,
-                hours = ?,
-                booking_url = ?,
-                phone = ?,
-                bot_name = ?,
-                updated_at = ?
-                WHERE id = 1""",
-            (
-                settings['salon_name'],
-                settings['salon_address'],
-                settings['google_maps_link'],
-                settings['salon_hours'],
-                settings['booking_url'],
-                settings['salon_phone'],
-                settings['bot_name'],
-                now
-            ))
-            print("   ✅ salon_settings обновлены")
-        else:
-            c.execute("""INSERT INTO salon_settings (
-                id, name, address, google_maps, hours, booking_url, phone, bot_name, updated_at
-            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                settings['salon_name'],
-                settings['salon_address'],
-                settings['google_maps_link'],
-                settings['salon_hours'],
-                settings['booking_url'],
-                settings['salon_phone'],
-                settings['bot_name'],
-                now
-            ))
-            print("   ✅ salon_settings созданы")
-    except Exception as e:
-        print(f"   ❌ Ошибка salon_settings: {e}")
+    print("\n⏭️  Пропускаем salon_settings (используй migrate_salon_settings.py)")
+
     
     # === BOT SETTINGS ===
     print("\n💾 Заполняю bot_settings (все поля)...")

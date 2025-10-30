@@ -241,85 +241,85 @@ export default function AdminSettings() {
                 <Loader className="w-8 h-8 text-pink-600 animate-spin" />
               </div>
             ) : (
-            <form onSubmit={handleSaveGeneral} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSaveGeneral} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="salonName">Название салона *</Label>
+                    <Input
+                      id="salonName"
+                      value={generalSettings.salonName}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, salonName: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="language">Язык системы</Label>
+                    <Select value={generalSettings.language} onValueChange={(value) => setGeneralSettings({ ...generalSettings, language: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ru">🇷🇺 Русский</SelectItem>
+                        <SelectItem value="en">🇬🇧 English</SelectItem>
+                        <SelectItem value="ar">🇦🇪 العربية</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="city">Город</Label>
+                    <Input
+                      id="city"
+                      value={generalSettings.city}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="phone">Телефон</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={generalSettings.phone}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, phone: e.target.value })}
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="salonName">Название салона *</Label>
+                  <Label htmlFor="address">Адрес</Label>
                   <Input
-                    id="salonName"
-                    value={generalSettings.salonName}
-                    onChange={(e) => setGeneralSettings({ ...generalSettings, salonName: e.target.value })}
-                    required
+                    id="address"
+                    value={generalSettings.address}
+                    onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })}
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="language">Язык системы</Label>
-                  <Select value={generalSettings.language} onValueChange={(value) => setGeneralSettings({ ...generalSettings, language: value })}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ru">🇷🇺 Русский</SelectItem>
-                      <SelectItem value="en">🇬🇧 English</SelectItem>
-                      <SelectItem value="ar">🇦🇪 العربية</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={generalSettings.email}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="city">Город</Label>
-                  <Input
-                    id="city"
-                    value={generalSettings.city}
-                    onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
-                  />
+                  <div>
+                    <Label htmlFor="instagram">Instagram</Label>
+                    <Input
+                      id="instagram"
+                      value={generalSettings.instagram}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, instagram: e.target.value })}
+                      placeholder="@username"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="phone">Телефон</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={generalSettings.phone}
-                    onChange={(e) => setGeneralSettings({ ...generalSettings, phone: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="address">Адрес</Label>
-                <Input
-                  id="address"
-                  value={generalSettings.address}
-                  onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={generalSettings.email}
-                    onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="instagram">Instagram</Label>
-                  <Input
-                    id="instagram"
-                    value={generalSettings.instagram}
-                    onChange={(e) => setGeneralSettings({ ...generalSettings, instagram: e.target.value })}
-                    placeholder="@username"
-                  />
-                </div>
-
-                {/* ДОБАВИТЬ: */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="weekdays">Часы работы (Пн-Пт)</Label>
@@ -347,12 +347,11 @@ export default function AdminSettings() {
                     />
                   </div>
                 </div>
-              </div>
 
-              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
-                Сохранить изменения
-              </Button>
-            </form>
+                <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
+                  Сохранить изменения
+                </Button>
+              </form>
             )}
           </div>
         </TabsContent>

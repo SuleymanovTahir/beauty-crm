@@ -238,6 +238,8 @@ async def delete_custom_status_api(
 
 # ===== АЛЬТЕРНАТИВНЫЕ ЭНДПОИНТЫ (для обратной совместимости) =====
 
+# ===== АЛЬТЕРНАТИВНЫЕ ЭНДПОИНТЫ (для обратной совместимости) =====
+
 @router.get("/bot-settings")
 async def get_bot_settings_legacy(session_token: Optional[str] = Cookie(None)):
     """Получить настройки бота (альтернативный путь)"""
@@ -257,3 +259,20 @@ async def update_bot_settings_legacy(
 async def reload_bot_settings_legacy(session_token: Optional[str] = Cookie(None)):
     """Перезагрузить настройки бота (альтернативный путь)"""
     return await reload_bot_settings(session_token)
+
+
+# ===== SALON SETTINGS ENDPOINTS =====
+
+@router.get("/salon-settings")
+async def get_salon_settings_legacy(session_token: Optional[str] = Cookie(None)):
+    """Получить настройки салона (альтернативный путь)"""
+    return await get_salon_settings_api(session_token)
+
+
+@router.post("/salon-settings")
+async def update_salon_settings_legacy(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки салона (альтернативный путь)"""
+    return await update_salon_settings_api(request, session_token)

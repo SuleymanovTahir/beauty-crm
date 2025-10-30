@@ -218,6 +218,11 @@ def get_bot_settings() -> dict:
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
+    try:
+        salon = get_salon_settings()
+        bot_name = salon.get('bot_name', 'M.Le Diamant Assistant')
+    except:
+        bot_name = 'M.Le Diamant Assistant'
     return {
         "id": 1,
         "bot_name": "M.Le Diamant Assistant",

@@ -201,9 +201,11 @@ async def startup_event():
         init_database()
         
         # Раскомментируйте следующие строки для первичной миграции:
+        # from db.migrations.migrate_salon_settings import migrate_salon_settings
         # from db.migrations.migrate_services import migrate_services
         # from db.migrations.migrate_bot_settings import migrate_settings
         # from db.migrations.create_employees import create_employees_tables
+        # migrate_salon_settings()  # <- Запустить ПЕРВЫМ
         # migrate_services()
         # migrate_settings()
         # create_employees_tables()
