@@ -4,7 +4,7 @@ import { apiClient } from '../../api/client';
 
 export default function PrivacyPolicy() {
   const [salonInfo, setSalonInfo] = React.useState<any>({});
-  const location = useLocation();
+  
   React.useEffect(() => {
     apiClient.getSalonInfo()
       .then(setSalonInfo)

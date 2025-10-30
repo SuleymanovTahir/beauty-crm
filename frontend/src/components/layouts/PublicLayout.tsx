@@ -30,6 +30,9 @@ export default function PublicLayout() {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
+            {/* <img src="./logo.png" 
+                alt={salonInfo.name || "Logo"} 
+                className="w-12 h-12 object-contain rounded-full"/> */}
               <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xl">✨</span>
               </div>
