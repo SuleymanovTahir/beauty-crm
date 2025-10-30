@@ -5,6 +5,7 @@
 import httpx
 from config import PAGE_ACCESS_TOKEN
 from logger import log_error,log_info
+import os
 
 
 async def send_message(recipient_id: str, message: str) -> dict:
@@ -27,7 +28,10 @@ async def send_message(recipient_id: str, message: str) -> dict:
         "message": {"text": message}
     }
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(
+        proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+        timeout=30.0
+    ) as client:
         try:
             response = await client.post(url, params=params, json=data)
             response.raise_for_status()
@@ -95,7 +99,10 @@ async def send_file(recipient_id: str, file_url: str, file_type: str = "image") 
         "message": {"attachment": attachment}
     }
     
-    async with httpx.AsyncClient(timeout=120.0) as client:  # ✅ Увеличен timeout до 120 секунд
+    async with httpx.AsyncClient(
+        proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+        timeout=120.0
+    ) as client:  # ✅ Увеличен timeout до 120 секунд
         try:
             log_info(f"📤 Отправка файла ({file_type}): {file_url[:80]}...", "instagram")
             log_info(f"📦 Payload: {data}", "instagram")  # ✅ Логируем payload
@@ -139,7 +146,10 @@ async def send_typing_indicator(recipient_id: str) -> None:
         "sender_action": "typing_on"
     }
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(
+        proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+        timeout=30.0
+    ) as client:
         try:
             await client.post(url, params=params, json=data)
         except Exception as e:
@@ -162,7 +172,10 @@ async def mark_as_seen(recipient_id: str) -> None:
         "sender_action": "mark_seen"
     }
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(
+        proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+        timeout=30.0
+    ) as client:
         try:
             await client.post(url, params=params, json=data)
         except Exception as e:
@@ -195,7 +208,10 @@ async def send_reaction(recipient_id: str, message_id: str, reaction: str = "❤
         }
     }
     
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(
+        proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+        timeout=30.0
+    ) as client:
         try:
             log_info(f"❤️ Отправка реакции {reaction} на сообщение {message_id}", "instagram")
             response = await client.post(url, params=params, json=data)

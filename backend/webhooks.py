@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 import json
 import traceback
 import httpx
+import os
 from datetime import datetime
 import urllib.parse
 
@@ -31,8 +32,12 @@ async def fetch_username_from_api(user_id: str) -> tuple:
             "access_token": PAGE_ACCESS_TOKEN,
         }
         
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(
+            proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО: прокси для API запросов
+            timeout=10.0
+        ) as client:
             response = await client.get(url, params=params)
+
             
             if response.status_code == 200:
                 data = response.json()
@@ -118,7 +123,10 @@ async def get_instagram_scoped_id(sender_id: str) -> str:
             "access_token": PAGE_ACCESS_TOKEN,
         }
         
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        async with httpx.AsyncClient(
+            proxy=os.getenv("PROXY_URL"),  # ✅ ДОБАВЛЕНО
+            timeout=10.0
+            ) as client:
             response = await client.get(url, params=params)
             
             if response.status_code == 200:
@@ -301,7 +309,7 @@ async def handle_webhook(request: Request):
                         logger.error(f"📋 Error type: {type(gen_error).__name__}")
                         import traceback
                         logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
-                        
+
                         # Вернем дефолтный ответ
                         ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
                     

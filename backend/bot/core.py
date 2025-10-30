@@ -126,13 +126,8 @@ class SalonBot:
             print(f"🌐 Language: {client_language}")
             print(f"📊 History length: {len(history) if history else 0}")
             
-            # ✅ Используем прокси если настроен
-            if self.proxy_url:
-                ai_response = await self._generate_via_proxy(full_prompt)
-            else:
-                # Fallback без прокси (будет ошибка в Казахстане)
-                response = self.model.generate_content(full_prompt)
-                ai_response = response.text.strip()
+            # ✅ ВСЕГДА используем REST API через прокси
+            ai_response = await self._generate_via_proxy(full_prompt)
             
             print(f"✅ AI response generated: {ai_response[:100]}")
             print("=" * 50)
@@ -146,17 +141,6 @@ class SalonBot:
             
             import traceback
             print(f"📋 Полный traceback:\n{traceback.format_exc()}")
-            
-            # Проверка конкретных ошибок
-            if "API_KEY" in str(e).upper():
-                print("⚠️ ПРОБЛЕМА: Неверный или отсутствующий GEMINI_API_KEY")
-            elif "QUOTA" in str(e).upper() or "LIMIT" in str(e).upper():
-                print("⚠️ ПРОБЛЕМА: Превышен лимит Gemini API")
-            elif "SAFETY" in str(e).upper():
-                print("⚠️ ПРОБЛЕМА: Сообщение заблокировано фильтром безопасности")
-            elif "location" in str(e).lower():
-                print("⚠️ ПРОБЛЕМА: Геоблокировка - проверьте прокси!")
-            
             print("=" * 50)
             
             return self._get_fallback_response(client_language)
@@ -183,12 +167,19 @@ class SalonBot:
             }
         }
         
-        # ✅ HTTP клиент с прокси
-        async with httpx.AsyncClient(
-            proxies=self.proxy_url,
-            timeout=60.0,  # Увеличен timeout для прокси
-            follow_redirects=True
-        ) as client:
+        # ✅ КРИТИЧЕСКИ ВАЖНО: Используем прокси если настроен
+        client_kwargs = {
+            "timeout": 60.0,
+            "follow_redirects": True
+        }
+        
+        if self.proxy_url:
+            client_kwargs["proxy"] = self.proxy_url
+            print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
+        else:
+            print("⚠️ Прокси НЕ настроен!")
+        
+        async with httpx.AsyncClient(**client_kwargs) as client:
             response = await client.post(url, json=payload)
             response.raise_for_status()
             
