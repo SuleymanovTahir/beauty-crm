@@ -1,23 +1,17 @@
-    #!/usr/bin/env python3
-    # backend/migrate_bot_settings.py
-
 import sqlite3
 import os
 import re
 from datetime import datetime
-import sqlite3
-from datetime import datetime
-import os
-from config import (
-    DATABASE_NAME, SALON_NAME, SALON_ADDRESS, SALON_PHONE,
-    SALON_BOOKING_URL, SALON_EMAIL, SALON_INSTAGRAM, SALON_ABOUT,
-    SALON_WORKING_HOURS_WEEKDAYS, SALON_WORKING_HOURS_WEEKENDS,
-    SALON_BOT_NAME, SALON_LOCATION
-)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from config import DATABASE_NAME
+
 INSTRUCTIONS_FILE = "bot/bot_instructions_file.txt"
 # ===== ДЕФОЛТНЫЕ ЗНАЧЕНИЯ =====
 DEFAULT_SETTINGS = {
-    "bot_name": SALON_BOT_NAME,
+    "bot_name": "Assistant",
     "personality_traits": "Обаятельная, уверенная, харизматичная",
     "greeting_message": "Привет! 😊 Добро пожаловать!",
     "farewell_message": "Спасибо за визит! 💖",
@@ -584,7 +578,6 @@ def migrate_settings():
     print("=" * 70)
     print("✅ МИГРАЦИЯ ЗАВЕРШЕНА!")
     print("📋 Результат:")
-    print(f"   • salon_settings: {'обновлены' if salon_exists else 'созданы'}")
     print(f"   • bot_settings: {'обновлены' if existing > 0 else 'созданы'}")
     print()
     print("🔧 Что дальше:")

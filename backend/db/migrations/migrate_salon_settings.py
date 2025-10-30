@@ -5,16 +5,33 @@
 """
 import sqlite3
 from datetime import datetime
-from config import (
-    DATABASE_NAME, SALON_NAME, SALON_ADDRESS, SALON_PHONE,
-    SALON_BOOKING_URL, SALON_EMAIL, SALON_INSTAGRAM,
-    SALON_WORKING_HOURS_WEEKDAYS, SALON_WORKING_HOURS_WEEKENDS,
-    SALON_BOT_NAME, SALON_LOCATION
-)
+import os
+
+from config import DATABASE_NAME
+
+# ===== ДЕФОЛТНЫЕ ДАННЫЕ САЛОНА =====
+# После миграции редактируются в /admin/settings
+DEFAULT_SALON_DATA = {
+    "name": "M.Le Diamant Beauty Lounge",
+    "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+    "phone": "+971 52 696 1100",
+    "booking_url": "https://n1314037.alteg.io",
+    "email": "mladiamontuae@gmail.com",
+    "instagram": "@mlediamant",
+    "bot_name": "M.Le Diamant Assistant",
+    "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+    "working_hours": "Ежедневно 10:30 - 21:00",
+    "working_hours_ru": "Ежедневно 10:30 - 21:00",
+    "working_hours_ar": "يوميًا 10:30 - 21:00",
+    "city": "Dubai",
+    "country": "UAE",
+    "timezone": "Asia/Dubai",
+    "currency": "AED"
+}
 
 
 def migrate_salon_settings():
-    """Заполнить salon_settings из конфига"""
+    """Заполнить salon_settings дефолтными данными"""
     
     print("=" * 70)
     print("🏪 МИГРАЦИЯ НАСТРОЕК САЛОНА")
@@ -29,7 +46,7 @@ def migrate_salon_settings():
     
     if existing > 0:
         print("⚠️  Настройки салона уже существуют!")
-        response = input("   Перезаписать из config.py? (yes/no): ")
+        response = input("   Перезаписать дефолтными значениями? (yes/no): ")
         if response.lower() not in ['yes', 'y']:
             conn.close()
             print("❌ Миграция отменена")
@@ -50,25 +67,33 @@ def migrate_salon_settings():
             bot_name = ?,
             bot_name_en = ?,
             bot_name_ar = ?,
+            city = ?,
+            country = ?,
+            timezone = ?,
+            currency = ?,
             updated_at = ?
             WHERE id = 1""",
         (
-            SALON_NAME,
-            SALON_ADDRESS,
-            SALON_LOCATION,
-            f"{SALON_WORKING_HOURS_WEEKDAYS}",
-            SALON_WORKING_HOURS_WEEKDAYS,
-            "يوميًا 10:30 - 21:00",  # дефолт AR
-            SALON_BOOKING_URL,
-            SALON_PHONE,
-            SALON_EMAIL if SALON_EMAIL else None,
-            SALON_INSTAGRAM if SALON_INSTAGRAM else None,
-            SALON_BOT_NAME,
-            SALON_BOT_NAME,
-            f"مساعد {SALON_NAME}",  # дефолт AR имя
+            DEFAULT_SALON_DATA["name"],
+            DEFAULT_SALON_DATA["address"],
+            DEFAULT_SALON_DATA["google_maps"],
+            DEFAULT_SALON_DATA["working_hours"],
+            DEFAULT_SALON_DATA["working_hours_ru"],
+            DEFAULT_SALON_DATA["working_hours_ar"],
+            DEFAULT_SALON_DATA["booking_url"],
+            DEFAULT_SALON_DATA["phone"],
+            DEFAULT_SALON_DATA["email"],
+            DEFAULT_SALON_DATA["instagram"],
+            DEFAULT_SALON_DATA["bot_name"],
+            DEFAULT_SALON_DATA["bot_name"],
+            f"مساعد {DEFAULT_SALON_DATA['name']}",
+            DEFAULT_SALON_DATA["city"],
+            DEFAULT_SALON_DATA["country"],
+            DEFAULT_SALON_DATA["timezone"],
+            DEFAULT_SALON_DATA["currency"],
             datetime.now().isoformat()
         ))
-        print("✅ salon_settings обновлены из config.py")
+        print("✅ salon_settings обновлены")
     else:
         # Создаём новые
         c.execute("""INSERT INTO salon_settings (
@@ -76,24 +101,28 @@ def migrate_salon_settings():
             booking_url, phone, email, instagram, 
             bot_name, bot_name_en, bot_name_ar,
             city, country, timezone, currency, updated_at
-        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Dubai', 'UAE', 'Asia/Dubai', 'AED', ?)""",
+        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
-            SALON_NAME,
-            SALON_ADDRESS,
-            SALON_LOCATION,
-            f"{SALON_WORKING_HOURS_WEEKDAYS}",
-            SALON_WORKING_HOURS_WEEKDAYS,
-            "يوميًا 10:30 - 21:00",
-            SALON_BOOKING_URL,
-            SALON_PHONE,
-            SALON_EMAIL if SALON_EMAIL else None,
-            SALON_INSTAGRAM if SALON_INSTAGRAM else None,
-            SALON_BOT_NAME,
-            SALON_BOT_NAME,
-            f"мساعد {SALON_NAME}",
+            DEFAULT_SALON_DATA["name"],
+            DEFAULT_SALON_DATA["address"],
+            DEFAULT_SALON_DATA["google_maps"],
+            DEFAULT_SALON_DATA["working_hours"],
+            DEFAULT_SALON_DATA["working_hours_ru"],
+            DEFAULT_SALON_DATA["working_hours_ar"],
+            DEFAULT_SALON_DATA["booking_url"],
+            DEFAULT_SALON_DATA["phone"],
+            DEFAULT_SALON_DATA["email"],
+            DEFAULT_SALON_DATA["instagram"],
+            DEFAULT_SALON_DATA["bot_name"],
+            DEFAULT_SALON_DATA["bot_name"],
+            f"مساعد {DEFAULT_SALON_DATA['name']}",
+            DEFAULT_SALON_DATA["city"],
+            DEFAULT_SALON_DATA["country"],
+            DEFAULT_SALON_DATA["timezone"],
+            DEFAULT_SALON_DATA["currency"],
             datetime.now().isoformat()
         ))
-        print("✅ salon_settings созданы из config.py")
+        print("✅ salon_settings созданы")
     
     conn.commit()
     conn.close()
@@ -101,10 +130,14 @@ def migrate_salon_settings():
     print()
     print("=" * 70)
     print("✅ МИГРАЦИЯ ЗАВЕРШЕНА!")
-    print("📋 Теперь настройки салона можно редактировать в /admin/settings")
+    print()
+    print("📝 Данные салона:")
+    for key, value in DEFAULT_SALON_DATA.items():
+        print(f"   • {key}: {value}")
+    print()
+    print("📋 Теперь настройки можно редактировать в /admin/settings")
     print("=" * 70)
     return 0
-
 
 if __name__ == "__main__":
     migrate_salon_settings()

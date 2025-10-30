@@ -4,51 +4,53 @@
 from fastapi import APIRouter
 from db.settings import get_salon_settings
 from db.services import get_all_services
-from config import (
-    SALON_NAME, SALON_ADDRESS, SALON_PHONE, SALON_EMAIL,
-    SALON_INSTAGRAM, SALON_BOOKING_URL, SALON_ABOUT,
-    SALON_WORKING_HOURS_WEEKDAYS, SALON_WORKING_HOURS_WEEKENDS,
-    SALON_BOT_NAME
-)
 
 router = APIRouter(tags=["Public"])
 
 
 @router.get("/salon-info")
 async def get_salon_info():
-    """Публичная информация о салоне (из БД или config)"""
+    """Публичная информация о салоне (из БД)"""
     try:
-        # Пытаемся получить из БД
         salon = get_salon_settings()
+        
         return {
-            "name": salon.get("name", SALON_NAME),
-            "address": salon.get("address", SALON_ADDRESS),
-            "phone": salon.get("phone", SALON_PHONE),
-            "email": salon.get("email", SALON_EMAIL),
-            "instagram": salon.get("instagram", SALON_INSTAGRAM),
-            "booking_url": salon.get("booking_url", SALON_BOOKING_URL),
-            "working_hours": salon.get("working_hours", {
-                "weekdays": SALON_WORKING_HOURS_WEEKDAYS,
-                "weekends": SALON_WORKING_HOURS_WEEKENDS
-            }),
-            "about": salon.get("about", SALON_ABOUT),
-            "bot_name": salon.get("bot_name", SALON_BOT_NAME)
-        }
-    except Exception:
-        # Если БД недоступна, используем config.py
-        return {
-            "name": SALON_NAME,
-            "address": SALON_ADDRESS,
-            "phone": SALON_PHONE,
-            "email": SALON_EMAIL,
-            "instagram": SALON_INSTAGRAM,
-            "booking_url": SALON_BOOKING_URL,
+            "name": salon.get("name", "Beauty Salon"),
+            "address": salon.get("address", ""),
+            "phone": salon.get("phone", ""),
+            "email": salon.get("email"),
+            "instagram": salon.get("instagram"),
+            "booking_url": salon.get("booking_url", ""),
+            "google_maps": salon.get("google_maps", ""),
             "working_hours": {
-                "weekdays": SALON_WORKING_HOURS_WEEKDAYS,
-                "weekends": SALON_WORKING_HOURS_WEEKENDS
+                "weekdays": salon.get("hours_ru", salon.get("hours", "")),
+                "weekends": salon.get("hours_ru", salon.get("hours", ""))
             },
-            "about": SALON_ABOUT,
-            "bot_name": SALON_BOT_NAME
+            "about": salon.get("about", "Премиальный салон красоты"),
+            "bot_name": salon.get("bot_name", "Assistant"),
+            "city": salon.get("city", "Dubai"),
+            "country": salon.get("country", "UAE"),
+            "currency": salon.get("currency", "AED")
+        }
+    except Exception as e:
+        # Если БД недоступна, возвращаем минимальный набор
+        return {
+            "name": "Beauty Salon",
+            "address": "",
+            "phone": "",
+            "email": None,
+            "instagram": None,
+            "booking_url": "",
+            "google_maps": "",
+            "working_hours": {
+                "weekdays": "10:00 - 21:00",
+                "weekends": "10:00 - 21:00"
+            },
+            "about": "Премиальный салон красоты",
+            "bot_name": "Assistant",
+            "city": "Dubai",
+            "country": "UAE",
+            "currency": "AED"
         }
 
 
