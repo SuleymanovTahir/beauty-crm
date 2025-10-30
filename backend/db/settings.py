@@ -32,19 +32,19 @@ def get_salon_settings() -> dict:
                 "hours_ar": result[8] if len(result) > 8 else "",
                 "hours_weekdays": result[9] if len(result) > 9 else "10:30 - 21:00",
                 "hours_weekends": result[10] if len(result) > 10 else "10:30 - 21:00",
-                "booking_url": result[9] if len(result) > 9 else "",
-                "phone": result[10] if len(result) > 10 else "",
-                "email": result[11] if len(result) > 11 else None,
-                "instagram": result[12] if len(result) > 12 else None,
-                "whatsapp": result[13] if len(result) > 13 else None,
-                "bot_name": result[14] if len(result) > 14 else "Assistant",
-                "bot_name_en": result[15] if len(result) > 15 else "Assistant",
-                "bot_name_ar": result[16] if len(result) > 16 else "مساعد",
-                "city": result[17] if len(result) > 17 else "Dubai",
-                "country": result[18] if len(result) > 18 else "UAE",
-                "timezone": result[19] if len(result) > 19 else "Asia/Dubai",
-                "currency": result[20] if len(result) > 20 else "AED",
-                "updated_at": result[21] if len(result) > 21 else None
+                "booking_url": result[11] if len(result) > 11 else "",
+                "phone": result[12] if len(result) > 12 else "",
+                "email": result[13] if len(result) > 13 else None,
+                "instagram": result[14] if len(result) > 14 else None,
+                "whatsapp": result[15] if len(result) > 15 else None,
+                "bot_name": result[16] if len(result) > 16 else "Assistant",
+                "bot_name_en": result[17] if len(result) > 17 else "Assistant",
+                "bot_name_ar": result[18] if len(result) > 18 else "مساعد",
+                "city": result[19] if len(result) > 19 else "Dubai",
+                "country": result[20] if len(result) > 20 else "UAE",
+                "timezone": result[21] if len(result) > 21 else "Asia/Dubai",
+                "currency": result[22] if len(result) > 22 else "AED",
+                "updated_at": result[23] if len(result) > 23 else None
             }
         else:
             log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
@@ -71,11 +71,11 @@ def _get_default_salon_settings() -> dict:
         "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
         "hours": "Daily 10:30 - 21:00",
         "hours_ru": "Ежедневно 10:30 - 21:00",
+        "hours_ar": "يوميًا 10:30 - 21:00",
         "hours_weekdays": "10:30 - 21:00",
         "hours_weekends": "10:30 - 21:00",
-        "hours_ar": "يوميًا 10:30 - 21:00",
         "booking_url": "https://n1234567.yclients.com",
-        "phone": "+971 XX XXX XXXX",
+        "phone": "+971 52 696 1100",
         "email": None,
         "instagram": None,
         "whatsapp": None,
@@ -137,8 +137,6 @@ def update_salon_settings(data: dict) -> bool:
         return False
     finally:
         conn.close()
-
-
 # ===== НАСТРОЙКИ БОТА =====
 
 # backend/db/settings.py - строки 150-240
