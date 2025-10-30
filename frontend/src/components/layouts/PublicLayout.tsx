@@ -1,10 +1,18 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';
+import { apiClient } from '../../api/client';
 
 export default function PublicLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [salonInfo, setSalonInfo] = React.useState<any>({});
+
+  React.useEffect(() => {
+    apiClient.getSalonInfo()
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
+  }, []);
 
   const menuItems = [
     { label: 'Главная', path: '/' },
@@ -26,8 +34,8 @@ export default function PublicLayout() {
                 <span className="text-white text-xl">✨</span>
               </div>
               <div>
-                <h1 className="text-xl text-gray-900">Luxury Beauty Salon</h1>
-                <p className="text-xs text-gray-500">Красота и совершенство</p>
+                <h1 className="text-xl text-gray-900">{salonInfo.name}</h1>
+                <p className="text-xs text-gray-500">{salonInfo.tagline}</p>
               </div>
             </Link>
 
@@ -37,11 +45,10 @@ export default function PublicLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`transition-colors ${
-                    location.pathname === item.path
-                      ? 'text-pink-600'
-                      : 'text-gray-700 hover:text-pink-600'
-                  }`}
+                  className={`transition-colors ${location.pathname === item.path
+                    ? 'text-pink-600'
+                    : 'text-gray-700 hover:text-pink-600'
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -52,7 +59,7 @@ export default function PublicLayout() {
             <div className="hidden lg:flex items-center gap-4">
               <div className="flex items-center gap-2 text-gray-600">
                 <Phone className="w-4 h-4" />
-                <span className="text-sm">+971 50 123 4567</span>
+                <span className="text-sm">{salonInfo.phone}</span>
               </div>
               <Link
                 to="/cabinet"
@@ -80,11 +87,10 @@ export default function PublicLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`block px-4 py-3 rounded-lg ${
-                    location.pathname === item.path
-                      ? 'bg-pink-50 text-pink-600'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
+                  className={`block px-4 py-3 rounded-lg ${location.pathname === item.path
+                    ? 'bg-pink-50 text-pink-600'
+                    : 'text-gray-700 hover:bg-gray-50'
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.label}
@@ -113,10 +119,9 @@ export default function PublicLayout() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* About */}
             <div>
-              <h3 className="text-lg mb-4">Luxury Beauty Salon</h3>
+              <h3 className="text-lg mb-4">{salonInfo.name}</h3>
               <p className="text-gray-400 text-sm">
-                Премиальные услуги красоты в самом сердце города. 
-                Профессиональные мастера и индивидуальный подход.
+                {salonInfo.description || 'Премиальные услуги красоты в самом сердце города. Профессиональные мастера и индивидуальный подход.'}
               </p>
             </div>
 
@@ -137,15 +142,15 @@ export default function PublicLayout() {
               <ul className="space-y-3 text-sm text-gray-400">
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  <span>+971 50 123 4567</span>
+                  <span>{salonInfo.phone}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  <span>info@luxurybeauty.ae</span>
+                  <span>{salonInfo.email}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Instagram className="w-4 h-4" />
-                  <span>@luxurybeauty_dubai</span>
+                  <span>{salonInfo.instagram}</span>
                 </li>
               </ul>
             </div>
@@ -154,14 +159,14 @@ export default function PublicLayout() {
             <div>
               <h3 className="text-lg mb-4">Часы работы</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Пн-Пт: 9:00 - 21:00</li>
-                <li>Сб-Вс: 10:00 - 20:00</li>
+                <li>Пн-Пт: {salonInfo.working_hours?.weekdays}</li>
+                <li>Сб-Вс: {salonInfo.working_hours?.weekends}</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <p>© 2025 Luxury Beauty Salon. Все права защищены.</p>
+            <p>© 2025 {salonInfo.name }. Все права защищены.</p>
             <div className="flex gap-6">
               <Link to="/privacy-policy" className="hover:text-white">Политика конфиденциальности</Link>
               <Link to="/terms" className="hover:text-white">Условия использования</Link>

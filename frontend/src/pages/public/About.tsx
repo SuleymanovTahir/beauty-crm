@@ -3,6 +3,7 @@ import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { Heart, Award, Users, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../../api/client';
 
 interface TeamMember {
   id: number;
@@ -19,34 +20,38 @@ export default function About() {
   const [salonInfo, setSalonInfo] = useState<any>({});
 
   useEffect(() => {
-    const fetchSalonInfo = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.getSalonInfo();
-        setSalonInfo(response);
+        // Загружаем информацию о салоне
+        const salonData = await apiClient.getSalonInfo();
+        setSalonInfo(salonData);
+
+        // Загружаем команду из API employees
+        const data = await apiClient.getPublicEmployees();
+
+        if (data.employees && data.employees.length > 0) {
+          const teamData = data.employees.map((e: any) => ({
+            id: e.id,
+            name: e.full_name,
+            role: e.position || 'Мастер',
+            experience: e.experience || '',
+            avatar: e.photo || e.full_name.charAt(0).toUpperCase()
+          }));
+          setTeam(teamData);
+        } else {
+          // Если команды нет - оставляем пустой массив
+          setTeam([]);
+        }
       } catch (err) {
-        console.error('Error fetching salon info:', err);
-      }
-    };
-    const fetchTeam = async () => {
-      try {
-        // Попытаемся загрузить команду
-        // Если нет специального API, используем захардкодированные данные
-        const hardcodedTeam: TeamMember[] = [
-          { id: 1, name: 'Анна Петрова', role: 'Мастер перманентного макияжа', experience: '8 лет опыта', avatar: 'А' },
-          { id: 2, name: 'Мария Иванова', role: 'Косметолог', experience: '6 лет опыта', avatar: 'М' },
-          { id: 3, name: 'Елена Сидорова', role: 'Мастер маникюра', experience: '5 лет опыта', avatar: 'Е' },
-          { id: 4, name: 'Ольга Козлова', role: 'Парикмахер-стилист', experience: '10 лет опыта', avatar: 'О' },
-          { id: 5, name: 'София Николаева', role: 'Lash-мастер', experience: '4 года опыта', avatar: 'С' },
-          { id: 6, name: 'Ирина Волкова', role: 'Массажист', experience: '7 лет опыта', avatar: 'И' },
-        ];
-        setTeam(hardcodedTeam);
-      } catch (err) {
-        console.error('Error fetching team:', err);
+        console.error('Error loading data:', err);
+        // При ошибке тоже оставляем пустым
+        setTeam([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchTeam();
+
+    fetchData();
   }, []);
 
   return (
@@ -158,18 +163,36 @@ export default function About() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {team.map((member) => (
-              <div key={member.id} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6">
-                  {member.avatar}
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Загрузка команды...</p>
+            </div>
+          ) : team.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {team.map((member) => (
+                <div key={member.id} className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-8 text-center">
+                  <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6">
+                    {member.avatar}
+                  </div>
+                  <h3 className="text-xl text-gray-900 mb-2">{member.name}</h3>
+                  <p className="text-pink-600 mb-2">{member.role}</p>
+                  <p className="text-sm text-gray-600">{member.experience}</p>
                 </div>
-                <h3 className="text-xl text-gray-900 mb-2">{member.name}</h3>
-                <p className="text-pink-600 mb-2">{member.role}</p>
-                <p className="text-sm text-gray-600">{member.experience}</p>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl">
+              <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-white" />
               </div>
-            ))}
-          </div>
+              <h3 className="text-2xl text-gray-900 mb-4">Наша команда профессионалов</h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                В нашем салоне работают опытные мастера с международными сертификатами.
+                Каждый специалист имеет богатый опыт и регулярно повышает свою квалификацию,
+                чтобы предоставлять вам услуги высочайшего качества.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

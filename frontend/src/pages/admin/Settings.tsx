@@ -12,14 +12,20 @@ import { api } from '../../services/api';
 
 export default function AdminSettings() {
   const [generalSettings, setGeneralSettings] = useState({
-    salonName: 'M.Le Diamant Beauty Lounge',
-    city: 'Dubai',
-    address: 'Shop 13, Amwaj 3 Plaza Level, Jumeirah Beach Residence, Dubai',
-    phone: '+971 50 123 4567',
-    email: 'info@luxurybeauty.ae',
-    instagram: '@luxurybeauty_dubai',
-    language: 'ru'
+    salonName: '',
+    city: '',
+    address: '',
+    phone: '',
+    email: '',
+    instagram: '',
+    language: 'ru',
+    working_hours: {
+      weekdays: '',
+      weekends: ''
+    }
   });
+  const [loading, setLoading] = useState(true);
+
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -38,7 +44,7 @@ export default function AdminSettings() {
   const [permissions, setPermissions] = useState({});
   const [availablePermissions, setAvailablePermissions] = useState({});
   const [savingRole, setSavingRole] = useState(false);
-  
+
   const [createRoleForm, setCreateRoleForm] = useState({
     role_key: '',
     role_name: '',
@@ -47,7 +53,32 @@ export default function AdminSettings() {
 
   useEffect(() => {
     loadRoles();
+    loadSalonSettings(); // ДОБАВИТЬ
   }, []);
+
+  // ДОБАВИТЬ эту функцию:
+  const loadSalonSettings = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getSalonSettings();
+      setGeneralSettings({
+        salonName: data.name || '',
+        city: data.city || '',
+        address: data.address || '',
+        phone: data.phone || '',
+        email: data.email || '',
+        instagram: data.instagram || '',
+        language: data.language || 'ru',
+        working_hours: data.working_hours || { weekdays: '', weekends: '' }
+      });
+    } catch (err) {
+      console.error('Error loading salon settings:', err);
+      toast.error('Ошибка загрузки настроек');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const loadRoles = async () => {
     try {
@@ -64,18 +95,18 @@ export default function AdminSettings() {
   const handleSaveGeneral = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/settings/general', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(generalSettings)
+      await api.updateSalonSettings({
+        name: generalSettings.salonName,
+        city: generalSettings.city,
+        address: generalSettings.address,
+        phone: generalSettings.phone,
+        email: generalSettings.email,
+        instagram: generalSettings.instagram,
+        language: generalSettings.language,
+        working_hours: generalSettings.working_hours
       });
 
-      if (response.ok) {
-        toast.success('Основные настройки сохранены ✅');
-      } else {
-        toast.error('Ошибка при сохранении');
-      }
+      toast.success('Основные настройки сохранены ✅');
     } catch (err) {
       console.error('Error saving general settings:', err);
       toast.error('Ошибка сервера');
@@ -103,7 +134,7 @@ export default function AdminSettings() {
     }
   };
 
-    // Roles handlers
+  // Roles handlers
   const handleCreateRole = async () => {
     if (!createRoleForm.role_key || !createRoleForm.role_name) {
       toast.error('Заполните обязательные поля');
@@ -205,7 +236,11 @@ export default function AdminSettings() {
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Основные настройки</h2>
-            
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : (
             <form onSubmit={handleSaveGeneral} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -283,12 +318,42 @@ export default function AdminSettings() {
                     placeholder="@username"
                   />
                 </div>
+
+                {/* ДОБАВИТЬ: */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="weekdays">Часы работы (Пн-Пт)</Label>
+                    <Input
+                      id="weekdays"
+                      value={generalSettings.working_hours.weekdays}
+                      onChange={(e) => setGeneralSettings({
+                        ...generalSettings,
+                        working_hours: { ...generalSettings.working_hours, weekdays: e.target.value }
+                      })}
+                      placeholder="9:00 - 21:00"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="weekends">Часы работы (Сб-Вс)</Label>
+                    <Input
+                      id="weekends"
+                      value={generalSettings.working_hours.weekends}
+                      onChange={(e) => setGeneralSettings({
+                        ...generalSettings,
+                        working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
+                      })}
+                      placeholder="10:30 - 21:00"
+                    />
+                  </div>
+                </div>
               </div>
 
               <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
                 Сохранить изменения
               </Button>
             </form>
+            )}
           </div>
         </TabsContent>
 
@@ -296,7 +361,7 @@ export default function AdminSettings() {
         <TabsContent value="notifications">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Настройки уведомлений</h2>
-            
+
             <form onSubmit={handleSaveNotifications} className="space-y-6">
               <div className="space-y-4">
                 <h3 className="text-lg text-gray-900 mb-4">Каналы уведомлений</h3>
@@ -355,12 +420,12 @@ export default function AdminSettings() {
                       onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, birthdayReminders: checked })}
                     />
                   </div>
-                  
+
                   {notificationSettings.birthdayReminders && (
                     <div>
                       <Label htmlFor="birthdayDays">Напоминать за (дней)</Label>
-                      <Select 
-                        value={notificationSettings.birthdayDaysAdvance.toString()} 
+                      <Select
+                        value={notificationSettings.birthdayDaysAdvance.toString()}
                         onValueChange={(value) => setNotificationSettings({ ...notificationSettings, birthdayDaysAdvance: parseInt(value) })}
                       >
                         <SelectTrigger>
@@ -468,7 +533,7 @@ export default function AdminSettings() {
         <TabsContent value="security">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">Безопасность и доступ</h2>
-            
+
             <div className="space-y-6">
               <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <div className="flex items-start gap-3">

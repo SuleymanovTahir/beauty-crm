@@ -220,6 +220,9 @@ export const apiClient = {
   getPublicServices: () =>
     apiCall('/public/services'),
 
+  getPublicEmployees: () =>
+    apiCall('/api/employees?active_only=true'),
+
   // ===== USER PROFILE ===== (ДОБАВЛЕНО)
   getUserProfile: (userId: number) =>
     apiCall(`/api/users/${userId}/profile`),

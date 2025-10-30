@@ -191,7 +191,7 @@ export default function Cooperation() {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+971 50 123 4567"
+                    placeholder="+971 52 696 1100"
                   />
                 </div>
               </div>
@@ -218,8 +218,11 @@ export default function Cooperation() {
           <div className="mt-8 text-center text-gray-600">
             <p>
               Или свяжитесь с нами напрямую: <br />
-              <a href={`mailto:${salonInfo.email || 'partnership@salon.ae'}`} className="text-pink-600 hover:underline">
-                {salonInfo.email || 'partnership@salon.ae'}
+              {salonInfo.email && (
+                <a href={`mailto:${salonInfo.email}`} className="text-pink-600 hover:underline">
+                  {salonInfo.email}
+                </a>
+              )}
             </p>
           </div>
         </div>

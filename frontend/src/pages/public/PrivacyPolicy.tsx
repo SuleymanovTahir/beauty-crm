@@ -1,7 +1,16 @@
 import React from 'react';
 import { Shield } from 'lucide-react';
+import { apiClient } from '../../api/client';
 
 export default function PrivacyPolicy() {
+  const [salonInfo, setSalonInfo] = React.useState<any>({});
+  const location = useLocation();
+  React.useEffect(() => {
+    apiClient.getSalonInfo()
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
+  }, []);
+
   return (
     <div className="py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,15 +121,15 @@ export default function PrivacyPolicy() {
                 По вопросам, касающимся данной Политики конфиденциальности, вы можете связаться с нами:
               </p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Телефон: +971 50 123 4567</li>
-                <li>Email: privacy@luxurybeauty.ae</li>
-                <li>Адрес: Dubai, UAE</li>
+                <li>Телефон: {salonInfo.phone }</li>
+                <li>Email: {salonInfo.email}</li>
+                <li>Адрес: {salonInfo.address}</li>
               </ul>
             </section>
           </div>
 
           <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-            <p>Дата последнего обновления: 19 октября 2025</p>
+          <p>Дата последнего обновления: {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
       </div>

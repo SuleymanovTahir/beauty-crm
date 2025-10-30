@@ -8,11 +8,14 @@ import { toast } from 'sonner@2.0.3';
 import { apiClient } from '../../api/client';
 
 interface SalonInfo {
-  working_hours: any;
   address?: string;
   phone?: string;
   email?: string;
   instagram?: string;
+  working_hours?: {
+    weekdays?: string;
+    weekends?: string;
+  };
 }
 
 export default function Contacts() {
@@ -26,12 +29,7 @@ export default function Contacts() {
 
   useEffect(() => {
     apiClient.getSalonInfo()
-      .then(data => setSalonInfo({
-        address: data.address,
-        phone: data.phone,
-        email: data.email,
-        instagram: data.instagram
-      }))
+      .then(data => setSalonInfo(data))
       .catch(err => console.error('Error loading salon info:', err));
   }, []);
 
@@ -155,7 +153,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="text-lg text-gray-900 mb-2">Часы работы</h3>
                     <div className="space-y-1 text-gray-600">
-                      <p>Пн-Пт: {salonInfo.working_hours?.weekdays || '9:00 - 21:00'}</p>
+                      <p>Пн-Пт: {salonInfo.working_hours?.weekdays}</p>
                       <p>Сб-Вс: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
                     </div>
                   </div>
