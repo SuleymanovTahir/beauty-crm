@@ -1,19 +1,23 @@
-//src/components/AdminLayout.tsx
 import React, { useEffect, useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
-  ShoppingCart,
+  FileText,
   BarChart3,
   MessageSquare,
   Wrench,
   Settings,
   LogOut,
+  UserCog,
+  Calendar,
   UserPlus,
+  ShoppingCart,
   CalendarDays,
   Scissors,
-  X
+  X,
+  Menu,
+  Bot
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -24,31 +28,16 @@ interface AdminLayoutProps {
 }
 
 export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-
-  const menuItems = [
-    { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
-    { icon: ShoppingCart, label: 'Записи', path: '/admin/bookings' },
-    { icon: Users, label: 'Клиенты', path: '/admin/clients' },
-    { icon: MessageSquare, label: 'Чат', path: '/admin/chat', badge: unreadCount },
-    { icon: BarChart3, label: 'Аналитика', path: '/admin/analytics' },
-    { icon: Scissors, label: 'Услуги', path: '/admin/services' },
-    { icon: UserPlus, label: 'Сотрудники', path: '/admin/users' },
-    { icon: CalendarDays, label: 'Календарь', path: '/admin/calendar' },
-    { icon: Settings, label: 'Настройки', path: '/admin/settings' },
-    { icon: Wrench, label: 'Настройки бота', path: '/admin/bot-settings' },
-  ];
 
   useEffect(() => {
     loadUnreadCount();
     const interval = setInterval(loadUnreadCount, 10000);
     return () => clearInterval(interval);
   }, []);
-
-  // Закрываем меню при изменении размера экрана
-
 
   const loadUnreadCount = async () => {
     try {
@@ -76,48 +65,73 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     }
   };
 
-  const handleMenuItemClick = (path: string) => {
-    navigate(path);
-    // Закрываем меню только на мобильных
-  };
+  const menuItems = [
+    { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
+    { icon: FileText, label: 'Записи', path: '/admin/bookings' },
+    { icon: Users, label: 'Клиенты', path: '/admin/clients' },
+    { icon: MessageSquare, label: 'Чат', path: '/admin/chat', badge: unreadCount },
+    { icon: BarChart3, label: 'Аналитика', path: '/admin/analytics' },
+    { icon: Scissors, label: 'Услуги', path: '/admin/services' },
+    { icon: UserCog, label: 'Сотрудники', path: '/admin/users' },
+    { icon: Calendar, label: 'Календарь', path: '/admin/calendar' },
+    { icon: Settings, label: 'Настройки', path: '/admin/settings' },
+    { icon: Bot, label: 'Настройки бота', path: '/admin/bot-settings' },
+  ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Mobile Menu Button */}
-
-      {/* Mobile Overlay */}
-      
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
       {/* Sidebar */}
-      <aside className="mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-pink-600">💎 CRM</h1>
-            <p className="text-sm text-gray-500 mt-1">Администратор</p>
+      <aside
+        className={`
+          fixed lg:static inset-y-0 left-0 z-40
+          w-64 bg-white border-r border-gray-200
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-xl">
+                <span className="text-white">💎</span>
+              </div>
+              <div>
+                <span className="text-sm text-gray-900 block">CRM</span>
+                <span className="text-xs text-gray-500">Администратор</span>
+              </div>
+            </div>
           </div>
-          {/* Close button - только для мобильных */}
-        </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4">
-          <ul className="space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname.startsWith(item.path);
-
-              return (
-                <li key={item.path}>
+          {/* Menu Items */}
+          <nav className="flex-1 overflow-y-auto p-3">
+            <ul className="space-y-1">
+              {menuItems.map((item, index) => (
+                <li key={index}>
                   <button
-                    onClick={() => handleMenuItemClick(item.path)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${isActive
-                        ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                    onClick={() => {
+                      navigate(item.path);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`
+                      w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                      transition-all duration-200 relative
+                      ${location.pathname.startsWith(item.path)
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                        : 'text-gray-700 hover:bg-gray-100'
+                      }
+                    `}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-pink-600' : 'text-gray-500'}`} />
-                    <span className={isActive ? 'font-semibold' : 'font-medium'}>{item.label}</span>
-
+                    <item.icon size={18} />
+                    <span>{item.label}</span>
                     {item.badge && item.badge > 0 && (
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
                         {item.badge > 99 ? '99+' : item.badge}
@@ -125,35 +139,42 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                     )}
                   </button>
                 </li>
-              );
-            })}
-          </ul>
-        </nav>
+              ))}
+            </ul>
+          </nav>
 
-        {/* User Section */}
-        <div className="p-4 border-t border-gray-200 space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-              {user?.full_name?.charAt(0).toUpperCase() || 'A'}
+          {/* User Profile */}
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm">
+                {user?.full_name?.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="flex-1">
+                <span className="text-sm text-gray-900 block">{user?.full_name || 'Администратор'}</span>
+                <span className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</span>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">{user?.full_name || 'Администратор'}</p>
-              <p className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</p>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <LogOut size={16} />
+              <span>Выйти</span>
+            </button>
           </div>
-
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium text-sm"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Выйти</span>
-          </button>
         </div>
       </aside>
 
+      {/* Overlay for mobile */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-50">
+      <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>
     </div>
