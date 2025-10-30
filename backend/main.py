@@ -232,4 +232,16 @@ if __name__ == "__main__":
         log_level="info"
     )
 
-    
+    # 1. Миграция настроек салона (запустить ПЕРВЫМ)
+# python -m db.migrations.migrate_salon_settings
+
+# # 2. Миграция услуг
+# python -m db.migrations.migrate_services
+
+# # 3. Миграция настроек бота
+# python -m db.migrations.migrate_bot_settings
+
+# # 4. Создание таблиц сотрудников
+# python -m db.migrations.create_employees
+
+# cd ~/beauty_crm/backend && python -m db.migrations.migrate_salon_settings && python -m db.migrations.migrate_services && python -m db.migrations.migrate_bot_settings && python -m db.migrations.create_employees
