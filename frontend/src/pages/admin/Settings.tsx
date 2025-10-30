@@ -69,7 +69,10 @@ export default function AdminSettings() {
         email: data.email || '',
         instagram: data.instagram || '',
         language: data.language || 'ru',
-        working_hours: data.working_hours || { weekdays: '', weekends: '' }
+        working_hours: {
+          weekdays: data.hours_weekdays || '',
+          weekends: data.hours_weekends || ''
+        }
       });
     } catch (err) {
       console.error('Error loading salon settings:', err);
@@ -103,7 +106,8 @@ export default function AdminSettings() {
         email: generalSettings.email,
         instagram: generalSettings.instagram,
         language: generalSettings.language,
-        working_hours: generalSettings.working_hours
+        hours_weekdays: generalSettings.working_hours.weekdays,
+        hours_weekends: generalSettings.working_hours.weekends
       });
 
       toast.success('Основные настройки сохранены ✅');

@@ -159,8 +159,8 @@ export default function PublicLayout() {
             <div>
               <h3 className="text-lg mb-4">Часы работы</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Пн-Пт: {salonInfo.working_hours?.weekdays}</li>
-                <li>Сб-Вс: {salonInfo.working_hours?.weekends}</li>
+              <li>Пн-Пт: {salonInfo.hours_weekdays}</li>
+              <li>Сб-Вс: {salonInfo.hours_weekends}</li>
               </ul>
             </div>
           </div>
