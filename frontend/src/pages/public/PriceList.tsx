@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sparkles, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../../api/client';
 
 interface Service {
   id: number;
@@ -20,11 +21,7 @@ export default function PriceList() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('/api/services?active_only=true', {
-          credentials: 'include'
-        });
-        if (!response.ok) throw new Error('Failed to fetch services');
-        const data = await response.json();
+        const data = await apiClient.getPublicServices();
         setServices(data.services);
       } catch (err) {
         setError('Ошибка загрузки услуг');

@@ -418,6 +418,12 @@ export class ApiClient {
   async getAvailablePermissions() {
     return this.request<any>('/api/permissions/available')
   }
+  // ===== PUBLIC INFO ===== (ДОБАВЛЕНО)
+  // getSalonInfo: () =>
+  //   apiCall('/api/salon-info'),
+
+  // getPublicServices: () =>
+  //   apiCall('/api/public-services'),
 
   async getUserPermissions(userId: number) {
     return this.request<any>(`/api/users/${userId}/permissions`)

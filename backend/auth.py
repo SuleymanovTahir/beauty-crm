@@ -2,24 +2,17 @@
 """
 API Endpoints для авторизации и админ-панели
 """
-from fastapi import APIRouter, Request, Form, Cookie, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi import APIRouter, Form, Cookie
+from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
-import hashlib
-import smtplib
-import ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+
+
 
 from db import (
-    verify_user, create_session, delete_session, get_user_by_email,
-    create_password_reset_token, verify_reset_token, reset_user_password,
-    mark_reset_token_used, get_user_by_session
+    verify_user, create_session, delete_session,
 )
-from db.settings import get_salon_settings
-from config import DATABASE_NAME, SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, FROM_EMAIL
+from config import DATABASE_NAME
 from logger import log_info, log_error, log_warning
 from utils import require_auth
 

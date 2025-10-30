@@ -23,11 +23,17 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 INSTAGRAM_BUSINESS_ID = os.getenv("INSTAGRAM_BUSINESS_ID", "17841448618072548")
 
 # ===== EMAIL CONFIG (из .env) =====
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USERNAME = os.getenv("SMTP_USERNAME")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-FROM_EMAIL = os.getenv("FROM_EMAIL", os.getenv("SMTP_USERNAME"))
+SALON_NAME = os.getenv("SALON_NAME", "Beauty Salon")
+SALON_ADDRESS = os.getenv("SALON_ADDRESS", "Dubai, UAE")
+SALON_PHONE = os.getenv("SALON_PHONE", "+971 50 000 0000")
+SALON_BOOKING_URL = os.getenv("SALON_BOOKING_URL", "")
+SALON_EMAIL = os.getenv("SALON_EMAIL", "mladiamontuae@gmail.com")
+SALON_INSTAGRAM = os.getenv("SALON_INSTAGRAM", "@beauty_salon")
+SALON_ABOUT = os.getenv("SALON_ABOUT", "")
+SALON_WORKING_HOURS_WEEKDAYS = os.getenv("SALON_WORKING_HOURS_WEEKDAYS", "9:00 - 21:00")
+SALON_WORKING_HOURS_WEEKENDS = os.getenv("SALON_WORKING_HOURS_WEEKENDS", "10:00 - 21:00")
+SALON_BOT_NAME = os.getenv("SALON_BOT_NAME", "M.Le Diamant Assistant")
+SALON_LOCATION = os.getenv("SALON_LOCATION", "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6")
 
 # ===== DATABASE =====
 DATABASE_NAME = os.getenv("DATABASE_NAME", "salon_bot.db")

@@ -5,17 +5,25 @@ import sqlite3
 import os
 import re
 from datetime import datetime
-DATABASE_NAME = os.getenv("DATABASE_NAME", "salon_bot.db")
+import sqlite3
+from datetime import datetime
+import os
+from config import (
+    DATABASE_NAME, SALON_NAME, SALON_ADDRESS, SALON_PHONE,
+    SALON_BOOKING_URL, SALON_EMAIL, SALON_INSTAGRAM, SALON_ABOUT,
+    SALON_WORKING_HOURS_WEEKDAYS, SALON_WORKING_HOURS_WEEKENDS,
+    SALON_BOT_NAME, SALON_LOCATION
+)
 INSTRUCTIONS_FILE = "bot/bot_instructions_file.txt"
 # ===== ДЕФОЛТНЫЕ ЗНАЧЕНИЯ =====
 DEFAULT_SETTINGS = {
-    "bot_name": "M.Le Diamant Assistant",
-    "salon_name": "M.Le Diamant Beauty Lounge",
-    "salon_address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
-    "salon_phone": "+971 50 123 4567",
-    "salon_hours": "Ежедневно 10:30 - 21:00",
-    "booking_url": "https://n1234567.yclients.com",
-    "google_maps_link": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
+    "bot_name": SALON_BOT_NAME,
+    "salon_name": SALON_NAME,
+    "salon_address": SALON_ADDRESS,
+    "salon_phone": SALON_PHONE,
+    "salon_hours": SALON_WORKING_HOURS_WEEKDAYS,
+    "booking_url": SALON_BOOKING_URL,
+    "google_maps_link": SALON_LOCATION,
     "personality_traits": "Обаятельная, уверенная, харизматичная",
     "greeting_message": "Привет! 😊 Добро пожаловать!",
     "farewell_message": "Спасибо за визит! 💖",

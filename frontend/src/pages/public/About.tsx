@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
-import { Heart, Award, Users, Sparkles, Skeleton } from 'lucide-react';
+import { Heart, Award, Users, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,8 +16,17 @@ export default function About() {
   const navigate = useNavigate();
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [salonInfo, setSalonInfo] = useState<any>({});
 
   useEffect(() => {
+    const fetchSalonInfo = async () => {
+      try {
+        const response = await apiClient.getSalonInfo();
+        setSalonInfo(response);
+      } catch (err) {
+        console.error('Error fetching salon info:', err);
+      }
+    };
     const fetchTeam = async () => {
       try {
         // Попытаемся загрузить команду
@@ -63,8 +72,7 @@ export default function About() {
               <h2 className="text-4xl text-gray-900 mb-6">Наша история</h2>
               <div className="space-y-4 text-gray-600 text-lg">
                 <p>
-                  Luxury Beauty Salon был основан в 2015 году с простой идеей: создать место, где каждая
-                  женщина может получить услуги премиум-класса в комфортной и уютной атмосфере.
+                  {salonInfo.name || 'Наш салон'} - ваш надежный партнер в мире красоты
                 </p>
                 <p>
                   За годы работы мы стали одним из ведущих салонов красоты в Дубае, обслужив более 10,000

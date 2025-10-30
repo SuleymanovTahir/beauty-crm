@@ -5,8 +5,10 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner@2.0.3';
+import { apiClient } from '../../api/client';
 
 interface SalonInfo {
+  working_hours: any;
   address?: string;
   phone?: string;
   email?: string;
@@ -20,33 +22,20 @@ export default function Contacts() {
     message: ''
   });
   const [loading, setLoading] = useState(false);
-  const [salonInfo, setSalonInfo] = useState<SalonInfo>({
-    address: 'Dubai Marina, Marina Plaza, Office 2301, Dubai, UAE',
-    phone: '+971 50 123 4567',
-    email: 'info@luxurybeauty.ae',
-    instagram: '@luxurybeauty_dubai'
-  });
+  const [salonInfo, setSalonInfo] = useState<SalonInfo>({});
 
   useEffect(() => {
-    // Загружаем информацию о салоне из API или config
-    const fetchSalonInfo = async () => {
-      try {
-        const response = await fetch('/api', {
-          credentials: 'include'
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.salon_info) {
-            setSalonInfo(data.salon_info);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching salon info:', err);
-        // Используем default значения
-      }
-    };
-    fetchSalonInfo();
+    apiClient.getSalonInfo()
+      .then(data => setSalonInfo({
+        address: data.address,
+        phone: data.phone,
+        email: data.email,
+        instagram: data.instagram
+      }))
+      .catch(err => console.error('Error loading salon info:', err));
   }, []);
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,8 +155,8 @@ export default function Contacts() {
                   <div>
                     <h3 className="text-lg text-gray-900 mb-2">Часы работы</h3>
                     <div className="space-y-1 text-gray-600">
-                      <p>Понедельник - Пятница: 9:00 - 21:00</p>
-                      <p>Суббота - Воскресенье: 10:00 - 20:00</p>
+                      <p>Пн-Пт: {salonInfo.working_hours?.weekdays || '9:00 - 21:00'}</p>
+                      <p>Сб-Вс: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
                     </div>
                   </div>
                 </div>

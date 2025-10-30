@@ -213,6 +213,12 @@ export const apiClient = {
 
   getAvailablePermissions: () =>
     apiCall('/api/permissions/available'),
+  // ===== PUBLIC =====
+  getSalonInfo: () =>
+    apiCall('/public/salon-info'),
+
+  getPublicServices: () =>
+    apiCall('/public/services'),
 
   // ===== USER PROFILE ===== (ДОБАВЛЕНО)
   getUserProfile: (userId: number) =>

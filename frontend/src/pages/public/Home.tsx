@@ -7,6 +7,7 @@ import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
+import { apiClient } from '../../api/client';
 
 interface Service {
   name: string;
@@ -57,14 +58,9 @@ export default function Home() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('/api/services?active_only=true', {
-          credentials: 'include'
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const serviceNames = data.services.map((s: any) => s.name).slice(0, 8);
-          setServices(serviceNames);
-        }
+        const data = await apiClient.getPublicServices();
+        const serviceNames = data.services.map((s: any) => s.name).slice(0, 8);
+        setServices(serviceNames);
       } catch (err) {
         console.error('Error fetching services:', err);
         // Используем default услуги

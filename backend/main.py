@@ -28,6 +28,7 @@ from api.tags import router as tags_router
 from api.automation import router as automation_router
 from api.reports import router as reports_router
 from api.settings import router as settings_router 
+from api.public import router as public_router
 
 
 # Создаём директории для загрузок
@@ -56,7 +57,8 @@ app.include_router(tags_router, prefix="/api")
 app.include_router(automation_router, prefix="/api")
 app.include_router(reports_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
-
+# Публичные роутеры (БЕЗ авторизации через /public)
+app.include_router(public_router, prefix="/public")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook
 app.include_router(proxy_router)     # для прокси изображений
@@ -198,11 +200,13 @@ async def startup_event():
         # Инициализация БД
         init_database()
         
-        # Раскомментируйте следующие строки для первичной миграции при очистке БД:
+        # Раскомментируйте следующие строки для первичной миграции:
         # from db.migrations.migrate_services import migrate_services
         # from db.migrations.migrate_bot_settings import migrate_settings
+        # from db.migrations.create_employees import create_employees_tables
         # migrate_services()
         # migrate_settings()
+        # create_employees_tables()
         
         # Инициализация бота
         bot = get_bot()

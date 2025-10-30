@@ -5,8 +5,17 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner@2.0.3';
+import { apiClient } from '../../api/client';
+import { useEffect } from 'react';
 
 export default function Cooperation() {
+  const [salonInfo, setSalonInfo] = useState<any>({});
+
+  useEffect(() => {
+    apiClient.getSalonInfo()
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
+  }, []);
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -209,9 +218,8 @@ export default function Cooperation() {
           <div className="mt-8 text-center text-gray-600">
             <p>
               Или свяжитесь с нами напрямую: <br />
-              <a href="mailto:partnership@luxurybeauty.ae" className="text-pink-600 hover:underline">
-                partnership@luxurybeauty.ae
-              </a>
+              <a href={`mailto:${salonInfo.email || 'partnership@salon.ae'}`} className="text-pink-600 hover:underline">
+                {salonInfo.email || 'partnership@salon.ae'}
             </p>
           </div>
         </div>
