@@ -22,10 +22,8 @@ async def get_salon_info():
             "instagram": salon.get("instagram"),
             "booking_url": salon.get("booking_url", ""),
             "google_maps": salon.get("google_maps", ""),
-            "working_hours": {
-                "weekdays": salon.get("hours_ru", salon.get("hours", "")),
-                "weekends": salon.get("hours_ru", salon.get("hours", ""))
-            },
+            "hours_weekdays": salon.get("hours_weekdays", "10:30 - 21:00"),
+            "hours_weekends": salon.get("hours_weekends", "10:30 - 21:00"),
             "about": salon.get("about", "Премиальный салон красоты"),
             "bot_name": salon.get("bot_name", "Assistant"),
             "city": salon.get("city", "Dubai"),
@@ -42,10 +40,8 @@ async def get_salon_info():
             "instagram": None,
             "booking_url": "",
             "google_maps": "",
-            "working_hours": {
-                "weekdays": "10:00 - 21:00",
-                "weekends": "10:00 - 21:00"
-            },
+            "hours_weekdays": "10:30 - 21:00",
+            "hours_weekends": "10:30 - 21:00",
             "about": "Премиальный салон красоты",
             "bot_name": "Assistant",
             "city": "Dubai",
