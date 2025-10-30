@@ -1,3 +1,4 @@
+//src/components/PublicLayout.tsx
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';

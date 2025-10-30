@@ -12,7 +12,7 @@ from config import DATABASE_NAME
 # ===== ДЕФОЛТНЫЕ ДАННЫЕ САЛОНА =====
 # После миграции редактируются в /admin/settings
 DEFAULT_SALON_DATA = {
-    "name": "M.Le Diamant Beauty Lounge",
+    "name": "M Le Diamant Beauty Lounge",
     "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
     "phone": "+971 52 696 1100",
     "booking_url": "https://n1314037.alteg.io",

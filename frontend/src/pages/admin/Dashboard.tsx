@@ -1,3 +1,4 @@
+//src/pages/Dashboard.tsx
 import React, { useEffect, useState } from 'react';
 import { Calendar, Users, TrendingUp, DollarSign, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
 import { Card } from '../../components/ui/card';

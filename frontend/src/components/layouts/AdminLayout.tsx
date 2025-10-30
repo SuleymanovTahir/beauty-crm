@@ -1,3 +1,4 @@
+//src/components/AdminLayout.tsx
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -26,7 +27,6 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
@@ -48,29 +48,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   }, []);
 
   // Закрываем меню при изменении размера экрана
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1100 && isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isMobileMenuOpen]);
-
-  // Блокируем скролл body когда меню открыто
-  useEffect(() => {
-    if (isMobileMenuOpen && window.innerWidth <= 1100) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMobileMenuOpen]);
 
   const loadUnreadCount = async () => {
     try {
@@ -101,34 +79,17 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const handleMenuItemClick = (path: string) => {
     navigate(path);
     // Закрываем меню только на мобильных
-    if (window.innerWidth <= 1100) {
-      setIsMobileMenuOpen(false);
-    }
   };
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-         className="mobile-burger-button fixed top-4 right-4 z-[45] w-10 h-10 bg-white rounded-lg shadow-lg flex items-center justify-center border border-gray-200 hover:bg-gray-50 transition-colors"
-      >
-        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
 
       {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          onClick={() => setIsMobileMenuOpen(false)}
-          className="mobile-overlay fixed inset-0 bg-black/50 z-40"
-        />
-      )}
+      
 
       {/* Sidebar */}
-      <aside className={`mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'is-open' : ''
-        }`}>
+      <aside className="mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50">
         {/* Header */}
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div>
@@ -136,13 +97,6 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
             <p className="text-sm text-gray-500 mt-1">Администратор</p>
           </div>
           {/* Close button - только для мобильных */}
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="mobile-close-button w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5 text-gray-600" />
-          </button>
         </div>
 
         {/* Navigation */}

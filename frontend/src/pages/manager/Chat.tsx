@@ -1,4 +1,3 @@
-// frontend/src/pages/manager/Chat.tsx - ПОЛНАЯ ФИНАЛЬНАЯ ВЕРСИЯ С АДАПТИВОМ
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
@@ -15,7 +14,11 @@ import {
   FileText,
   Check,
   User,
-  ArrowLeft
+  ArrowLeft,
+  MoreVertical,
+  Image as ImageIcon,
+  Video,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -26,7 +29,7 @@ import MessageSearch from '../../components/chat/MessageSearch';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { toast } from 'sonner@2.0.3';
 import { api } from '../../services/api';
 
 interface Client {
@@ -69,6 +72,7 @@ export default function Chat() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [showMessageSearch, setShowMessageSearch] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const [notes, setNotes] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
@@ -80,21 +84,9 @@ export default function Chat() {
   const [isSavingClient, setIsSavingClient] = useState(false);
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();
 
-  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 800);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  // Отслеживаем изменение размера экрана
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 800);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -121,7 +113,6 @@ export default function Chat() {
           localStorage.removeItem('selectedClientId');
         }
       }
-      // НЕ открываем первый чат автоматически
     }
   }, [clients]);
 
@@ -216,6 +207,7 @@ export default function Chat() {
     setShowClientInfo(false);
     setShowTemplates(false);
     setIsEditingClient(false);
+    setShowMobileMenu(false);
 
     setEditedClientName(client.name || '');
     setEditedClientPhone(client.phone || '');
@@ -227,6 +219,7 @@ export default function Chat() {
     setShowClientInfo(false);
     setShowTemplates(false);
     setShowMessageSearch(false);
+    setShowMobileMenu(false);
   };
 
   const handleSaveClientInfo = async () => {
@@ -411,10 +404,12 @@ export default function Chat() {
 
   if (initialLoading) {
     return (
-      <div className="p-8 flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка чатов...</p>
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
+            <Loader className="w-8 h-8 text-white animate-spin" />
+          </div>
+          <p className="text-gray-600 font-medium">Загрузка чатов...</p>
         </div>
       </div>
     );
@@ -422,14 +417,19 @@ export default function Chat() {
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
+      <div className="p-4 md:p-8">
+        <div className="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+              <AlertCircle className="w-6 h-6 text-white" />
+            </div>
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
-              <p className="text-red-700 text-sm mt-1">{error}</p>
-              <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
+              <p className="text-red-900 font-bold text-lg">Ошибка загрузки</p>
+              <p className="text-red-700 mt-2">{error}</p>
+              <Button 
+                onClick={loadClients} 
+                className="mt-4 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-lg"
+              >
                 Попробовать еще раз
               </Button>
             </div>
@@ -440,81 +440,112 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-[calc(100vh-2rem)] p-2 sm:p-4">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 h-full flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 p-0 md:p-4 flex">
+      <div className="bg-white rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
         {/* Clients List */}
         <div className={`
-           w-full sm:w-96 border-r border-gray-200 flex flex-col
-          ${selectedClient && isMobileView ? 'hidden' : 'flex'}
+          w-full md:w-96 border-r border-gray-200/50 flex flex-col bg-gradient-to-b from-white to-gray-50/50
+          ${selectedClient ? 'hidden md:flex' : 'flex'}
         `}>
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 md:p-6 border-b border-gray-200/50 bg-white/80 backdrop-blur-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-pink-600" />
-                Чаты ({clients.length})
-              </h3>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <MessageCircle className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900">Чаты</h3>
+                  <p className="text-xs text-gray-500">{clients.length} диалогов</p>
+                </div>
+              </div>
               {isRefreshingMessages && (
-                <Loader className="w-4 h-4 text-pink-600 animate-spin" />
+                <Loader className="w-5 h-5 text-pink-600 animate-spin" />
               )}
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Поиск..."
+                placeholder="Поиск клиента..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-11 h-12 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
             {filteredClients.length > 0 ? (
-              filteredClients.map((client) => (
-                <div
-                  key={client.id}
-                  onClick={() => handleSelectClient(client)}
-                  className={`p-4 cursor-pointer border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedClient?.id === client.id ? 'bg-pink-50 border-l-4 border-l-pink-600' : ''
-                    }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="relative">
-                      {client.profile_pic && client.profile_pic.trim() !== '' ? (
-                        <img
-                          src={client.profile_pic}
-                          alt={client.display_name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                          crossOrigin="anonymous"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className={`w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
+              <div className="divide-y divide-gray-100">
+                {filteredClients.map((client) => (
+                  <button
+                    key={client.id}
+                    onClick={() => handleSelectClient(client)}
+                    className={`
+                      w-full p-4 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 
+                      transition-all text-left relative group
+                      ${selectedClient?.id === client.id ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-l-4 border-l-pink-600' : ''}
+                    `}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="relative flex-shrink-0">
+                        {client.profile_pic && client.profile_pic.trim() !== '' ? (
+                          <img
+                            src={client.profile_pic}
+                            alt={client.display_name}
+                            className="w-14 h-14 rounded-2xl object-cover border-2 border-white shadow-md"
+                            crossOrigin="anonymous"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className={`w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold shadow-md ${
+                            client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
                           }`}
-                        style={{ display: client.profile_pic && client.profile_pic.trim() !== '' ? 'none' : 'flex' }}
-                      >
-                        {client.display_name.charAt(0).toUpperCase()}
+                          style={{ display: client.profile_pic && client.profile_pic.trim() !== '' ? 'none' : 'flex' }}
+                        >
+                          {client.display_name.charAt(0).toUpperCase()}
+                        </div>
+                        {client.unread_count && client.unread_count > 0 && (
+                          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
+                            {client.unread_count}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-semibold text-gray-900 truncate">{client.display_name}</p>
+                          <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
+                            {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 truncate">{client.phone || 'Нет телефона'}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-500">{client.total_messages} сообщений</span>
+                          {client.status && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              statusConfig[client.status]?.color || 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {statusConfig[client.status]?.label || client.status}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{client.display_name}</p>
-                      <p className="text-xs text-gray-600 truncate">{client.phone || 'Нет телефона'}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {client.total_messages} сообщений
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
+                  </button>
+                ))}
+              </div>
             ) : (
-              <div className="p-4 text-center text-gray-500">
-                <MessageCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm">Клиентов не найдено</p>
+              <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mb-4">
+                  <MessageCircle className="w-10 h-10 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">Клиентов не найдено</p>
+                <p className="text-sm text-gray-400 mt-1">Попробуйте изменить критерии поиска</p>
               </div>
             )}
           </div>
@@ -522,30 +553,23 @@ export default function Chat() {
 
         {/* Chat Area */}
         {selectedClient ? (
-          <div className={`
-            flex-1 flex flex-col
-            ${isMobileView ? 'w-full' : ''}
-          `}>
+          <div className="flex-1 flex flex-col bg-white">
             {/* Chat Header */}
-            <div className="p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-pink-50 to-purple-50">
-              <div className="flex items-center justify-between gap-2">
-                {/* Кнопка "Назад" для мобильных */}
-                {isMobileView && (
-                  <button
-                    onClick={handleBackToList}
-                    className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-white/50 transition-colors flex-shrink-0"
-                    aria-label="Back to chat list"
-                  >
-                    <ArrowLeft className="w-5 h-5 text-gray-700" />
-                  </button>
-                )}
+            <div className="p-4 md:p-5 border-b border-gray-200/50 bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50">
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  onClick={handleBackToList}
+                  className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-700" />
+                </button>
 
-                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
                   {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
                     <img
                       src={selectedClient.profile_pic}
                       alt={selectedClient.display_name}
-                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white shadow-md flex-shrink-0"
+                      className="w-12 h-12 rounded-2xl object-cover border-2 border-white shadow-lg flex-shrink-0"
                       crossOrigin="anonymous"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
@@ -554,13 +578,14 @@ export default function Chat() {
                       }}
                     />
                   ) : null}
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm shadow-md flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
-                    }`}>
+                  <div className={`w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0 ${
+                    selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
+                  }`}>
                     {selectedClient.display_name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">{selectedClient.display_name}</p>
-                    <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-600">
+                    <p className="font-bold text-gray-900 truncate">{selectedClient.display_name}</p>
+                    <div className="flex items-center gap-3 text-xs text-gray-600">
                       {selectedClient.phone && (
                         <span className="hidden sm:flex items-center gap-1">
                           <Phone className="w-3 h-3" />
@@ -572,66 +597,83 @@ export default function Chat() {
                           href={`https://instagram.com/${selectedClient.username}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-pink-600 hover:underline flex items-center gap-1 truncate"
+                          className="text-pink-600 hover:text-pink-700 flex items-center gap-1 truncate font-medium"
                         >
                           <Instagram className="w-3 h-3 flex-shrink-0" />
-                          <span className="hidden sm:inline">@{selectedClient.username}</span>
-                          <span className="sm:hidden">@{selectedClient.username.substring(0, 10)}</span>
+                          @{selectedClient.username}
                         </a>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setShowMessageSearch(!showMessageSearch)}
-                    title="Поиск по сообщениям"
-                    className={`h-8 w-8 sm:h-9 sm:w-9 p-0 ${showMessageSearch ? 'bg-yellow-100 border-yellow-300' : ''}`}
+                    className={`h-10 w-10 p-0 rounded-xl border-2 ${
+                      showMessageSearch ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'hover:bg-white'
+                    }`}
                   >
-                    <Search className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <Search className="w-4 h-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setShowClientInfo(!showClientInfo);
-                      setShowTemplates(false);
-                      setShowNotes(false);
-                    }}
-                    title="Информация о клиенте"
-                    className={`h-8 w-8 sm:h-9 sm:w-9 p-0 hidden sm:flex ${showClientInfo ? 'bg-blue-100 border-blue-300' : ''}`}
-                  >
-                    <Info className="w-3 h-3 sm:w-4 sm:h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setShowTemplates(!showTemplates);
-                      setShowClientInfo(false);
-                      setShowNotes(false);
-                    }}
-                    title="Шаблоны сообщений"
-                    className={`h-8 w-8 sm:h-9 sm:w-9 p-0 hidden md:flex ${showTemplates ? 'bg-pink-100 border-pink-300' : ''}`}
-                  >
-                    <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
-                  </Button>
-
-                  {/* Кнопка закрытия чата */}
-                  {!isMobileView && (
+                  <div className="relative">
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={handleBackToList}
-                      title="Закрыть чат"
-                      className="h-8 w-8 sm:h-9 sm:w-9 p-0"
+                      onClick={() => setShowMobileMenu(!showMobileMenu)}
+                      className="h-10 w-10 p-0 rounded-xl border-2 hover:bg-white"
                     >
-                      <X className="w-4 h-4" />
+                      <MoreVertical className="w-4 h-4" />
                     </Button>
-                  )}
+                    {showMobileMenu && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40"
+                          onClick={() => setShowMobileMenu(false)}
+                        />
+                        <div className="absolute right-0 top-12 w-56 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
+                          <button
+                            onClick={() => {
+                              setShowClientInfo(!showClientInfo);
+                              setShowTemplates(false);
+                              setShowNotes(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-3 transition-colors"
+                          >
+                            <Info className="w-4 h-4 text-blue-600" />
+                            <span className="font-medium">Информация</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowTemplates(!showTemplates);
+                              setShowClientInfo(false);
+                              setShowNotes(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-3 transition-colors"
+                          >
+                            <FileText className="w-4 h-4 text-purple-600" />
+                            <span className="font-medium">Шаблоны</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowNotes(!showNotes);
+                              setShowClientInfo(false);
+                              setShowTemplates(false);
+                              setShowMobileMenu(false);
+                            }}
+                            className="w-full px-4 py-3 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-3 transition-colors"
+                          >
+                            <StickyNote className="w-4 h-4 text-yellow-600" />
+                            <span className="font-medium">Заметки</span>
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -651,10 +693,15 @@ export default function Chat() {
             )}
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+            <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-gradient-to-b from-white to-gray-50/30">
               {loadingMessages ? (
                 <div className="flex items-center justify-center h-full">
-                  <Loader className="w-6 h-6 text-pink-600 animate-spin" />
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+                      <Loader className="w-7 h-7 text-white animate-spin" />
+                    </div>
+                    <p className="text-gray-500 font-medium">Загрузка сообщений...</p>
+                  </div>
                 </div>
               ) : messages.length > 0 ? (
                 messages.map((msg, index) => (
@@ -664,14 +711,14 @@ export default function Chat() {
                     className={`flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                   >
                     <div
-                      className={`mobile-chat-message rounded-2xl shadow-md overflow-hidden max-w-md ${(msg.sender === 'bot' || msg.sender === 'manager')
-                        ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                        : 'bg-white text-gray-900 border border-gray-200'
-                        }`}
+                      className={`rounded-3xl shadow-lg overflow-hidden max-w-sm md:max-w-md ${
+                        (msg.sender === 'bot' || msg.sender === 'manager')
+                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
+                          : 'bg-white text-gray-900 border-2 border-gray-200'
+                      }`}
                     >
                       {msg.type === 'image' ? (
-                        <div className={`relative group ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'max-w-[160px]' : 'max-w-[220px]'
-                          }`}>
+                        <div className="relative group">
                           <img
                             src={(() => {
                               if (msg.message.startsWith('http')) {
@@ -686,13 +733,7 @@ export default function Chat() {
                             })()}
                             alt="Изображение"
                             loading="lazy"
-                            style={{
-                              width: '100%',
-                              height: 'auto',
-                              maxHeight: '180px',
-                              objectFit: 'cover'
-                            }}
-                            className="rounded-2xl cursor-pointer hover:scale-105 transition-transform"
+                            className="w-full h-auto max-h-96 object-cover cursor-pointer hover:scale-105 transition-transform rounded-t-3xl"
                             onClick={() => window.open(msg.message, '_blank')}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
@@ -702,16 +743,15 @@ export default function Chat() {
                           />
                           <div
                             style={{ display: 'none' }}
-                            className={`px-4 py-3 text-sm flex flex-col items-center justify-center min-h-[100px] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                              }`}
+                            className={`px-6 py-8 flex flex-col items-center justify-center min-h-[180px] ${
+                              (msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                            }`}
                           >
-                            <svg className="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p>📷 Изображение недоступно</p>
+                            <ImageIcon className="w-16 h-16 mb-3 opacity-50" />
+                            <p className="font-medium">📷 Изображение недоступно</p>
                           </div>
-                          <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
+                          <div className={`px-5 py-3 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs font-medium">
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -724,15 +764,15 @@ export default function Chat() {
                           <video
                             src={msg.message}
                             controls
-                            className="w-[400px] h-auto rounded-t-2xl"
+                            className="w-full h-auto rounded-t-3xl max-h-96"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               const fallback = e.currentTarget.nextElementSibling;
                               if (fallback) (fallback as HTMLElement).style.display = 'flex';
                             }}
                           />
-                          <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
+                          <div className={`px-5 py-3 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs font-medium">
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -741,14 +781,14 @@ export default function Chat() {
                           </div>
                         </div>
                       ) : msg.type === 'audio' ? (
-                        <div className="px-4 py-3 min-w-[250px]">
+                        <div className="px-5 py-4 min-w-[280px]">
                           <audio
                             src={msg.message}
                             controls
                             className="w-full"
                           />
-                          <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
+                          <div className={`mt-3 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs font-medium">
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -757,19 +797,20 @@ export default function Chat() {
                           </div>
                         </div>
                       ) : msg.type === 'file' ? (
-                        <div className="px-4 py-3 min-w-[200px]">
+                        <div className="px-5 py-4 min-w-[240px]">
                           <a
                             href={msg.message}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center gap-2 hover:underline group ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
-                              }`}
+                            className={`flex items-center gap-3 hover:underline group ${
+                              (msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
+                            }`}
                           >
-                            <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                            <span>Открыть файл</span>
+                            <FileText className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                            <span className="font-medium">Открыть файл</span>
                           </a>
-                          <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
+                          <div className={`mt-3 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                            <p className="text-xs font-medium">
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -778,10 +819,12 @@ export default function Chat() {
                           </div>
                         </div>
                       ) : (
-                        <div className="px-4 py-3 max-w-md">
-                          <p className="text-sm whitespace-pre-wrap break-words">{msg.message}</p>
+                        <div className="px-5 py-4 max-w-md">
+                          <p className="whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
                           <div className="flex items-center justify-between mt-2">
-                            <p className={`text-xs ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'}`}>
+                            <p className={`text-xs font-medium ${
+                              (msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                            }`}>
                               {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -794,10 +837,13 @@ export default function Chat() {
                   </div>
                 ))
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
+                <div className="flex items-center justify-center h-full">
                   <div className="text-center">
-                    <MessageCircle className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p>Нет сообщений</p>
+                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                      <MessageCircle className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 font-medium">Нет сообщений</p>
+                    <p className="text-sm text-gray-400 mt-1">Начните диалог с клиентом</p>
                   </div>
                 </div>
               )}
@@ -806,10 +852,12 @@ export default function Chat() {
 
             {/* Client Info Panel */}
             {showClientInfo && selectedClient && (
-              <div className="border-t border-gray-200 bg-white p-6 max-h-[500px] overflow-y-auto">
+              <div className="border-t border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 md:p-6 max-h-[500px] overflow-y-auto">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <User className="w-5 h-5 text-pink-600" />
+                  <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
                     Информация о клиенте
                   </h3>
                   <button
@@ -818,36 +866,36 @@ export default function Chat() {
                       setIsEditingClient(false);
                       handleCancelEdit();
                     }}
-                    className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
+                    className="h-10 w-10 hover:bg-gray-100 rounded-xl flex items-center justify-center transition"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div className="flex items-center gap-4 mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                <div className="flex items-center gap-4 mb-6 p-5 bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl border-2 border-pink-100">
                   {selectedClient.profile_pic ? (
                     <img
                       src={selectedClient.profile_pic}
                       alt={selectedClient.display_name}
-                      className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
+                      className="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-xl"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
                   ) : (
-                    <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-xl">
                       {selectedClient.display_name.charAt(0).toUpperCase()}
                     </div>
                   )}
                   <div className="flex-1">
                     <p className="text-xl font-bold text-gray-900">{selectedClient.display_name}</p>
-                    <p className="text-sm text-gray-500">ID: {selectedClient.id.substring(0, 12)}...</p>
+                    <p className="text-sm text-gray-500 mt-1">ID: {selectedClient.id.substring(0, 12)}...</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <div className="border-2 border-gray-200 rounded-2xl p-4 bg-white shadow-sm">
+                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
                       <span className="text-lg">👤</span> Имя клиента
                     </label>
                     {isEditingClient ? (
@@ -856,10 +904,10 @@ export default function Chat() {
                         value={editedClientName}
                         onChange={(e) => setEditedClientName(e.target.value)}
                         placeholder="Введите имя..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                       />
                     ) : (
-                      <p className="text-gray-900 font-medium">
+                      <p className="text-gray-900 font-medium px-2">
                         {selectedClient.name || (
                           <span className="text-gray-400 italic">Не указано</span>
                         )}
@@ -867,8 +915,8 @@ export default function Chat() {
                     )}
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <div className="border-2 border-gray-200 rounded-2xl p-4 bg-white shadow-sm">
+                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
                       <Phone className="w-4 h-4" />
                       Телефон
                     </label>
@@ -878,10 +926,10 @@ export default function Chat() {
                         value={editedClientPhone}
                         onChange={(e) => setEditedClientPhone(e.target.value)}
                         placeholder="+971 XX XXX XXXX"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                       />
                     ) : (
-                      <p className="text-gray-900 font-medium">
+                      <p className="text-gray-900 font-medium px-2">
                         {selectedClient.phone || (
                           <span className="text-gray-400 italic">Не указан</span>
                         )}
@@ -889,8 +937,8 @@ export default function Chat() {
                     )}
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gradient-to-r from-purple-50 to-pink-50">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <div className="border-2 border-purple-200 rounded-2xl p-4 bg-gradient-to-r from-purple-50 to-pink-50 shadow-sm">
+                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
                       <Instagram className="w-4 h-4 text-pink-600" />
                       Instagram
                     </label>
@@ -899,7 +947,7 @@ export default function Chat() {
                         href={`https://instagram.com/${selectedClient.username}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-base transition-colors group"
+                        className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-bold text-base transition-colors group px-2"
                       >
                         <span>@{selectedClient.username}</span>
                         <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -907,17 +955,17 @@ export default function Chat() {
                         </svg>
                       </a>
                     ) : (
-                      <p className="text-gray-400 italic">Не указан</p>
+                      <p className="text-gray-400 italic px-2">Не указан</p>
                     )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="border border-gray-200 rounded-lg p-4 bg-blue-50">
-                      <p className="text-sm text-gray-600 mb-1">Сообщений</p>
-                      <p className="text-2xl font-bold text-blue-600">{selectedClient.total_messages}</p>
+                    <div className="border-2 border-blue-200 rounded-2xl p-4 bg-gradient-to-br from-blue-50 to-cyan-50 shadow-sm">
+                      <p className="text-sm text-gray-600 mb-2 font-medium">Сообщений</p>
+                      <p className="text-3xl font-bold text-blue-600">{selectedClient.total_messages}</p>
                     </div>
-                    <div className="border border-gray-200 rounded-lg p-4 bg-green-50">
-                      <p className="text-sm text-gray-600 mb-2">Статус</p>
+                    <div className="border-2 border-green-200 rounded-2xl p-4 bg-gradient-to-br from-green-50 to-emerald-50 shadow-sm">
+                      <p className="text-sm text-gray-600 mb-2 font-medium">Статус</p>
                       {isEditingClient ? (
                         <StatusSelect
                           value={selectedClient.status}
@@ -938,21 +986,23 @@ export default function Chat() {
                           onAddStatus={handleAddStatus}
                         />
                       ) : (
-                        <span className={`inline-block px-3 py-1 font-semibold rounded-full text-sm ${statusConfig[selectedClient.status]?.color || 'bg-green-600 text-white'}`}>
+                        <span className={`inline-block px-3 py-1 font-semibold rounded-xl ${
+                          statusConfig[selectedClient.status]?.color || 'bg-green-600 text-white'
+                        }`}>
                           {statusConfig[selectedClient.status]?.label || selectedClient.status}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <div className="border-2 border-gray-200 rounded-2xl p-4 bg-white shadow-sm">
+                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Последний контакт
                     </label>
-                    <p className="text-gray-900">
+                    <p className="text-gray-900 font-medium px-2">
                       {new Date(selectedClient.last_contact).toLocaleString('ru-RU', {
                         day: '2-digit',
                         month: 'long',
@@ -970,16 +1020,16 @@ export default function Chat() {
                       <button
                         onClick={handleSaveClientInfo}
                         disabled={isSavingClient}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         {isSavingClient ? (
                           <>
-                            <Loader className="w-4 h-4 animate-spin" />
+                            <Loader className="w-5 h-5 animate-spin" />
                             Сохранение...
                           </>
                         ) : (
                           <>
-                            <Check className="w-4 h-4" />
+                            <Check className="w-5 h-5" />
                             Сохранить
                           </>
                         )}
@@ -987,17 +1037,17 @@ export default function Chat() {
                       <button
                         onClick={handleCancelEdit}
                         disabled={isSavingClient}
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-3 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5" />
                       </button>
                     </div>
                   ) : (
                     <button
                       onClick={() => setIsEditingClient(true)}
-                      className="client-info-edit-button w-full text-white font-semibold py-2 px-4 rounded-lg shadow-md transition flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                       Редактировать
@@ -1010,9 +1060,9 @@ export default function Chat() {
                       const prefix = role === 'admin' ? '/admin' : '/manager';
                       navigate(`${prefix}/clients/${selectedClient.id}`);
                     }}
-                    className="w-full border border-gray-300 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg shadow-sm transition flex items-center justify-center gap-2"
+                    className="w-full border-2 border-gray-300 hover:bg-gray-50 font-bold py-3 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
@@ -1024,17 +1074,19 @@ export default function Chat() {
 
             {/* Templates Panel */}
             {showTemplates && (
-              <div className="border-t border-gray-200 bg-white p-6">
+              <div className="border-t border-gray-200 bg-gradient-to-br from-white to-purple-50 p-4 md:p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-pink-600" />
+                  <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <FileText className="w-5 h-5 text-white" />
+                    </div>
                     Шаблоны сообщений
                   </h3>
                   <button
                     onClick={() => setShowTemplates(false)}
-                    className="h-8 w-8 p-0 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
+                    className="h-10 w-10 hover:bg-white rounded-xl flex items-center justify-center transition"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
                 <MessageTemplates
@@ -1047,39 +1099,38 @@ export default function Chat() {
               </div>
             )}
 
-
             {/* Notes Panel */}
             {showNotes && (
               <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50">
-                <div className="p-4">
+                <div className="p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-lg flex items-center justify-center">
-                        <StickyNote className="w-4 h-4 text-white" />
+                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <StickyNote className="w-5 h-5 text-white" />
                       </div>
-                      <h4 className="text-sm text-gray-900 font-semibold">Заметки о клиенте</h4>
+                      <h4 className="text-gray-900 font-bold">Заметки о клиенте</h4>
                     </div>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => setShowNotes(false)}
-                      className="h-8 w-8 p-0 hover:bg-white/50"
+                      className="h-10 w-10 p-0 hover:bg-white/50 rounded-xl"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-5 h-5" />
                     </Button>
                   </div>
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Введите заметки о клиенте..."
-                    className="min-h-[100px] mb-3 bg-white shadow-sm"
+                    className="min-h-[120px] mb-3 bg-white shadow-sm border-2 border-yellow-200 rounded-xl focus:ring-2 focus:ring-yellow-500"
                   />
                   <Button
                     size="sm"
                     onClick={handleSaveNotes}
-                    className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white shadow-md"
+                    className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white shadow-lg rounded-xl py-3 font-bold"
                   >
-                    <Check className="w-4 h-4 mr-2" />
+                    <Check className="w-5 h-5 mr-2" />
                     Сохранить заметки
                   </Button>
                 </div>
@@ -1100,10 +1151,10 @@ export default function Chat() {
 
             {/* Attached Files */}
             {attachedFiles.length > 0 && (
-              <div className="border-t border-gray-200 p-3 bg-gradient-to-r from-blue-50 to-purple-50">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold text-gray-700 flex items-center gap-2">
-                    <Paperclip className="w-3 h-3" />
+              <div className="border-t border-gray-200 p-4 bg-gradient-to-r from-blue-50 to-purple-50">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                    <Paperclip className="w-4 h-4" />
                     Прикрепленные файлы ({attachedFiles.length})
                   </p>
                   <button
@@ -1111,19 +1162,19 @@ export default function Chat() {
                       setAttachedFiles([]);
                       toast.info('Файлы очищены');
                     }}
-                    className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    className="text-sm text-red-600 hover:text-red-700 font-medium"
                   >
                     Очистить все
                   </button>
                 </div>
 
-                <div className="flex gap-2 overflow-x-auto pb-2">
+                <div className="flex gap-3 overflow-x-auto pb-2">
                   {attachedFiles.map((file, index) => (
                     <div
                       key={index}
                       className="relative flex-shrink-0 group"
                     >
-                      <div className="w-20 h-20 bg-white rounded-lg border-2 border-gray-200 overflow-hidden flex items-center justify-center">
+                      <div className="w-24 h-24 bg-white rounded-2xl border-2 border-gray-200 overflow-hidden flex items-center justify-center shadow-md">
                         {file.type.startsWith('image/') ? (
                           <img
                             src={URL.createObjectURL(file)}
@@ -1132,20 +1183,18 @@ export default function Chat() {
                           />
                         ) : file.type.startsWith('video/') ? (
                           <div className="flex flex-col items-center justify-center">
-                            <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-xs text-gray-500 mt-1">Видео</span>
+                            <Video className="w-10 h-10 text-purple-600" />
+                            <span className="text-xs text-gray-500 mt-1 font-medium">Видео</span>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center justify-center">
-                            <FileText className="w-8 h-8 text-gray-400" />
-                            <span className="text-xs text-gray-500 mt-1">Файл</span>
+                            <FileText className="w-10 h-10 text-gray-400" />
+                            <span className="text-xs text-gray-500 mt-1 font-medium">Файл</span>
                           </div>
                         )}
                       </div>
 
-                      <p className="text-xs text-gray-600 mt-1 w-20 truncate text-center" title={file.name}>
+                      <p className="text-xs text-gray-600 mt-2 w-24 truncate text-center font-medium" title={file.name}>
                         {file.name}
                       </p>
 
@@ -1155,10 +1204,10 @@ export default function Chat() {
 
                       <button
                         onClick={() => handleRemoveFile(index)}
-                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-md transition opacity-0 group-hover:opacity-100"
+                        className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition opacity-0 group-hover:opacity-100"
                         title="Удалить"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
@@ -1167,14 +1216,14 @@ export default function Chat() {
             )}
 
             {/* Chat Input */}
-            <div className="p-3 sm:p-4 border-t border-gray-200 bg-white">
-              <div className="flex items-end gap-2">
+            <div className="p-4 md:p-5 border-t border-gray-200 bg-white">
+              <div className="flex items-end gap-3">
                 <div className="flex-1">
                   <Textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Введите сообщение или / для быстрых ответов..."
-                    className="resize-none text-sm sm:text-base"
+                    className="resize-none border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                     rows={2}
                     disabled={isUploadingFile}
                     onKeyDown={(e) => {
@@ -1202,96 +1251,25 @@ export default function Chat() {
                     multiple
                     onChange={handleFileSelect}
                   />
-                  <div className="relative h-9">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const menu = document.getElementById('chat-input-menu');
-                        if (menu) menu.classList.toggle('hidden');
-                      }}
-                      title="Меню"
-                      className="h-9 w-9 p-0"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                      </svg>
-                    </Button>
-                    <div
-                      id="chat-input-menu"
-                      className="hidden fixed bottom-auto w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-                      style={{
-                        transform: 'translateY(-100%)',
-                        marginTop: '-0.5rem'
-                      }}
-                      onClick={(e) => {
-                        const menu = document.getElementById('chat-input-menu');
-                        const button = e.currentTarget;
-                        if (menu) {
-                          if (menu.classList.contains('hidden')) {
-                            const rect = button.getBoundingClientRect();
-                            menu.style.top = `${rect.top}px`;
-                            menu.style.right = `${window.innerWidth - rect.right}px`;
-                            menu.classList.remove('hidden');
-                          } else {
-                            menu.classList.add('hidden');
-                          }
-                        }
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          setShowClientInfo(!showClientInfo);
-                          setShowTemplates(false);
-                          setShowNotes(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <Info className="w-4 h-4" />
-                        Информация
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowTemplates(!showTemplates);
-                          setShowClientInfo(false);
-                          setShowNotes(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <FileText className="w-4 h-4" />
-                        Шаблоны
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowNotes(!showNotes);
-                          setShowClientInfo(false);
-                          setShowTemplates(false);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
-                      >
-                        <StickyNote className="w-4 h-4" />
-                        Заметки
-                      </button>
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploadingFile}
-                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <Paperclip className="w-4 h-4" />
-                        Прикрепить файл
-                      </button>
-                    </div>
-                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingFile}
+                    className="h-11 w-11 p-0 rounded-xl border-2 border-gray-200 hover:bg-gradient-to-br hover:from-purple-50 hover:to-pink-50"
+                  >
+                    <Paperclip className="w-5 h-5" />
+                  </Button>
                   <Button
                     onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 h-9 w-9 p-0"
+                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 h-11 w-11 p-0 rounded-xl shadow-lg hover:shadow-xl"
                     disabled={!canSend || isUploadingFile}
                     title={isUploadingFile ? "Загрузка файла..." : "Отправить"}
                   >
                     {isUploadingFile ? (
-                      <Loader className="w-4 h-4 animate-spin" />
+                      <Loader className="w-5 h-5 animate-spin" />
                     ) : (
-                      <Send className="w-4 h-4" />
+                      <Send className="w-5 h-5" />
                     )}
                   </Button>
                 </div>
@@ -1299,14 +1277,13 @@ export default function Chat() {
             </div>
           </div>
         ) : (
-          <div className={`
-            flex-1 flex items-center justify-center text-gray-500 px-8
-            ${isMobileView ? 'hidden' : 'flex'}
-          `}>
+          <div className="flex-1 hidden md:flex items-center justify-center text-gray-500 px-8 bg-gradient-to-br from-gray-50 to-pink-50">
             <div className="text-center">
-              <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-lg font-medium">Выберите клиента для начала чата</p>
-              <p className="text-sm text-gray-400 mt-2">Выберите диалог из списка слева</p>
+              <div className="w-32 h-32 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                <MessageCircle className="w-16 h-16 text-pink-600" />
+              </div>
+              <p className="text-xl font-bold text-gray-700 mb-2">Выберите клиента для начала чата</p>
+              <p className="text-gray-500">Выберите диалог из списка с��ева</p>
             </div>
           </div>
         )}
