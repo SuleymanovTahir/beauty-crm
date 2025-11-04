@@ -124,13 +124,13 @@ export default function BotSettings() {
     try {
       setLoading(true);
       console.log('🔄 Loading bot settings...');
-      
+
       const data = await api.getBotSettings();
       console.log('✅ Получены настройки:', data);
-      
+
       const langs = data.languages_supported ? data.languages_supported.split(',') : ['ru', 'en', 'ar'];
       setSelectedLanguages(langs);
-      
+
       setSettings({
         bot_name: data.bot_name || 'M.Le Diamant Assistant',
         personality_traits: data.personality_traits || '',
@@ -186,12 +186,12 @@ export default function BotSettings() {
     try {
       setSaving(true);
       await api.updateBotSettings(settings);
-      
+
       await fetch(`${import.meta.env.VITE_API_URL}/api/bot-settings/reload`, {
         method: 'POST',
         credentials: 'include'
       });
-      
+
       toast.success('✅ Настройки сохранены и бот перезагружен!');
     } catch (err: any) {
       toast.error('❌ Ошибка: ' + err.message);
@@ -246,7 +246,7 @@ export default function BotSettings() {
             Полная конфигурация AI-ассистента
           </p>
         </div>
-        
+
         <button
           onClick={handleSave}
           disabled={saving}
@@ -872,6 +872,7 @@ export default function BotSettings() {
               />
             </div>
 
+
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                 ⭐ Социальное доказательство
@@ -970,6 +971,51 @@ export default function BotSettings() {
                   resize: 'vertical'
                 }}
               />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                📋 Сбор данных перед записью
+              </label>
+              <textarea
+                value={settings.pre_booking_data_collection}
+                onChange={(e) => setSettings({ ...settings, pre_booking_data_collection: e.target.value })}
+                rows={4}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Как бот запрашивает имя и WhatsApp перед записью
+              </p>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                🎯 Детекция рекламных кампаний
+              </label>
+              <textarea
+                value={settings.ad_campaign_detection}
+                onChange={(e) => setSettings({ ...settings, ad_campaign_detection: e.target.value })}
+                rows={6}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Как бот распознает клиентов из таргетированной рекламы
+              </p>
             </div>
           </div>
         )}

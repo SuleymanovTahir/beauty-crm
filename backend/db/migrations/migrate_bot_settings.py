@@ -328,57 +328,70 @@ def create_tables(conn):
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
-    c.execute("""ALTER TABLE bot_settings ADD COLUMN IF NOT EXISTS 
-    ad_campaign_detection TEXT DEFAULT ''""")
-    c.execute("""ALTER TABLE bot_settings ADD COLUMN IF NOT EXISTS 
-    pre_booking_data_collection TEXT DEFAULT 
-    'Для записи нужно имя и WhatsApp — это займет секунду! 😊'""")
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        bot_name TEXT NOT NULL,
-        personality_traits TEXT,
-        greeting_message TEXT,
-        farewell_message TEXT,
-        price_explanation TEXT,
-        price_response_template TEXT,
-        premium_justification TEXT,
-        booking_redirect_message TEXT,
-        fomo_messages TEXT,
-        upsell_techniques TEXT,
-        communication_style TEXT,
-        max_message_length INTEGER DEFAULT 4,
-        emoji_usage TEXT,
-        languages_supported TEXT DEFAULT 'ru,en,ar',
-        objection_handling TEXT,
-        negative_handling TEXT,
-        safety_guidelines TEXT,
-        example_good_responses TEXT,
-        algorithm_actions TEXT,
-        location_features TEXT,
-        seasonality TEXT,
-        emergency_situations TEXT,
-        success_metrics TEXT,
-        objection_expensive TEXT,
-        objection_think_about_it TEXT,
-        objection_no_time TEXT,
-        objection_pain TEXT,
-        objection_result_doubt TEXT,
-        objection_cheaper_elsewhere TEXT,
-        objection_too_far TEXT,
-        objection_consult_husband TEXT,
-        objection_first_time TEXT,
-        objection_not_happy TEXT,
-        emotional_triggers TEXT,
-        social_proof_phrases TEXT,
-        personalization_rules TEXT,
-        example_dialogues TEXT,
-        emotional_responses TEXT,
-        anti_patterns TEXT,
-        voice_message_response TEXT,
-        contextual_rules TEXT,
-        updated_at TEXT
-    )''')
-    
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    bot_name TEXT NOT NULL,
+    personality_traits TEXT,
+    greeting_message TEXT,
+    farewell_message TEXT,
+    price_explanation TEXT,
+    price_response_template TEXT,
+    premium_justification TEXT,
+    booking_redirect_message TEXT,
+    fomo_messages TEXT,
+    upsell_techniques TEXT,
+    communication_style TEXT,
+    max_message_length INTEGER DEFAULT 4,
+    emoji_usage TEXT,
+    languages_supported TEXT DEFAULT 'ru,en,ar',
+    objection_handling TEXT,
+    negative_handling TEXT,
+    safety_guidelines TEXT,
+    example_good_responses TEXT,
+    algorithm_actions TEXT,
+    location_features TEXT,
+    seasonality TEXT,
+    emergency_situations TEXT,
+    success_metrics TEXT,
+    objection_expensive TEXT,
+    objection_think_about_it TEXT,
+    objection_no_time TEXT,
+    objection_pain TEXT,
+    objection_result_doubt TEXT,
+    objection_cheaper_elsewhere TEXT,
+    objection_too_far TEXT,
+    objection_consult_husband TEXT,
+    objection_first_time TEXT,
+    objection_not_happy TEXT,
+    emotional_triggers TEXT,
+    social_proof_phrases TEXT,
+    personalization_rules TEXT,
+    example_dialogues TEXT,
+    emotional_responses TEXT,
+    anti_patterns TEXT,
+    voice_message_response TEXT,
+    contextual_rules TEXT,
+    ad_campaign_detection TEXT DEFAULT '',
+    pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
+    updated_at TEXT)''')
+
+    # ✅ ДОБАВЛЯЕМ КОЛОНКИ если таблица уже существует
+    try:
+        c.execute("PRAGMA table_info(bot_settings)")
+        columns = [row[1] for row in c.fetchall()]
+
+        if 'ad_campaign_detection' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
+            print("✅ Добавлена колонка ad_campaign_detection")
+
+        if 'pre_booking_data_collection' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'")
+            print("✅ Добавлена колонка pre_booking_data_collection")
+
+        conn.commit()
+    except Exception as e:
+        print(f"⚠️  Ошибка при добавлении колонок: {e}")
+
     conn.commit()
 def migrate_settings():
     """Главная функция"""
@@ -426,47 +439,49 @@ def migrate_settings():
         if existing > 0:
             # ОБНОВЛЕНИЕ
             c.execute("""UPDATE bot_settings SET
-                bot_name = ?,
-                personality_traits = ?,
-                greeting_message = ?,
-                farewell_message = ?,
-                price_explanation = ?,
-                price_response_template = ?,
-                premium_justification = ?,
-                booking_redirect_message = ?,
-                fomo_messages = ?,
-                upsell_techniques = ?,
-                communication_style = ?,
-                max_message_length = ?,
-                emoji_usage = ?,
-                languages_supported = ?,
-                objection_expensive = ?,
-                objection_think_about_it = ?,
-                objection_no_time = ?,
-                objection_pain = ?,
-                objection_result_doubt = ?,
-                objection_cheaper_elsewhere = ?,
-                objection_too_far = ?,
-                objection_consult_husband = ?,
-                objection_first_time = ?,
-                objection_not_happy = ?,
-                emotional_triggers = ?,
-                social_proof_phrases = ?,
-                personalization_rules = ?,
-                example_dialogues = ?,
-                emotional_responses = ?,
-                anti_patterns = ?,
-                voice_message_response = ?,
-                contextual_rules = ?,
-                safety_guidelines = ?,
-                example_good_responses = ?,
-                algorithm_actions = ?,
-                location_features = ?,
-                seasonality = ?,
-                emergency_situations = ?,
-                success_metrics = ?,
-                updated_at = ?
-                WHERE id = 1""",
+            bot_name = ?,
+            personality_traits = ?,
+            greeting_message = ?,
+            farewell_message = ?,
+            price_explanation = ?,
+            price_response_template = ?,
+            premium_justification = ?,
+            booking_redirect_message = ?,
+            fomo_messages = ?,
+            upsell_techniques = ?,
+            communication_style = ?,
+            max_message_length = ?,
+            emoji_usage = ?,
+            languages_supported = ?,
+            objection_expensive = ?,
+            objection_think_about_it = ?,
+            objection_no_time = ?,
+            objection_pain = ?,
+            objection_result_doubt = ?,
+            objection_cheaper_elsewhere = ?,
+            objection_too_far = ?,
+            objection_consult_husband = ?,
+            objection_first_time = ?,
+            objection_not_happy = ?,
+            emotional_triggers = ?,
+            social_proof_phrases = ?,
+            personalization_rules = ?,
+            example_dialogues = ?,
+            emotional_responses = ?,
+            anti_patterns = ?,
+            voice_message_response = ?,
+            contextual_rules = ?,
+            safety_guidelines = ?,
+            example_good_responses = ?,
+            algorithm_actions = ?,
+            location_features = ?,
+            seasonality = ?,
+            emergency_situations = ?,
+            success_metrics = ?,
+            ad_campaign_detection = ?,
+            pre_booking_data_collection = ?,
+            updated_at = ?
+            WHERE id = 1""",
             (
                 settings['bot_name'],
                 settings['personality_traits'],
@@ -507,8 +522,10 @@ def migrate_settings():
                 settings.get('seasonality', ''),
                 settings.get('emergency_situations', ''),
                 settings.get('success_metrics', ''),
+                settings.get('ad_campaign_detection', ''),
+                settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
                 now
-            ))
+                ))
             print("   ✅ bot_settings обновлены (40 полей)")
         else:
             # СОЗДАНИЕ
@@ -525,8 +542,9 @@ def migrate_settings():
                 anti_patterns, voice_message_response, contextual_rules,
                 safety_guidelines, example_good_responses, algorithm_actions,
                 location_features, seasonality, emergency_situations, success_metrics,
+                ad_campaign_detection, pre_booking_data_collection,
                 updated_at
-            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 settings['bot_name'],
                 settings['personality_traits'],
@@ -567,6 +585,8 @@ def migrate_settings():
                 settings.get('seasonality', ''),
                 settings.get('emergency_situations', ''),
                 settings.get('success_metrics', ''),
+                settings.get('ad_campaign_detection', ''),
+                settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
                 now
             ))
             print("   ✅ bot_settings созданы (40 полей)")

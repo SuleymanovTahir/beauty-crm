@@ -217,24 +217,21 @@ Google Maps: {self.salon['google_maps']}
             if category not in services_by_category:
                 services_by_category[category] = []
             
-            services_by_category[category].append({
-                'name': service[2],
-                'name_ru': service[3] or service[2],
-                'price': f"{service[5]} {service[6]}",
-                'description': service[9] or ''
-            })
+            services_by_category[category].append(service)
         
         services_text = "=== УСЛУГИ САЛОНА ===\n\n"
         for category, services_list in services_by_category.items():
             services_text += f"📂 {category}:\n"
             for service in services_list:
+                # ✅ Теперь service - это tuple из БД
                 price_str = format_service_price_for_bot(service)
-                services_text += f"• {service['name_ru']} - {price_str}\n"
-                if service['description']:
-                    services_text += f"  └ {service['description']}\n"
+                name_ru = service[3] or service[2]
+                description = service[9] or ''
+                
+                services_text += f"• {name_ru} - {price_str}\n"
+                if description:
+                    services_text += f"  └ {description}\n"
             services_text += "\n"
-        
-        return services_text
     
     def _build_history(self, history: List[Tuple]) -> str:
         """История диалога - ИСПРАВЛЕНО для работы с 5 элементами"""
