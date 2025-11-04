@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import LanguageSwitcher from '../LanguageSwitcher';
 import {
   LayoutDashboard,
   Users,
@@ -154,13 +155,16 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                 <span className="text-xs text-gray-500 capitalize">{user?.role || 'admin'}</span>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={16} />
-              <span>Выйти</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut size={16} />
+                <span>Выйти</span>
+              </button>
+            </div>
           </div>
         </div>
       </aside>

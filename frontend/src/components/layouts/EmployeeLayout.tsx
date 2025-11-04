@@ -2,6 +2,7 @@
 import React from 'react';
 import Calendar from '../../pages/admin/Calendar';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import LanguageSwitcher from '../LanguageSwitcher';
 import { 
   LayoutDashboard, 
   User,
@@ -99,14 +100,16 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
               <p className="text-xs text-gray-500">Мастер</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="w-full flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>{loggingOut ? 'Выход...' : 'Выйти'}</span>
-          </button>
+          <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut size={16} />
+                <span>Выйти</span>
+              </button>
+            </div>
         </div>
       </aside>
 

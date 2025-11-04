@@ -3,6 +3,7 @@ import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';
 import { apiClient } from '../../api/client';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 export default function PublicLayout() {
   const location = useLocation();
@@ -31,7 +32,7 @@ export default function PublicLayout() {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3">
-            {/* <img src="./logo.png" 
+              {/* <img src="./logo.png" 
                 alt={salonInfo.name || "Logo"} 
                 className="w-12 h-12 object-contain rounded-full"/> */}
               <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
@@ -65,6 +66,7 @@ export default function PublicLayout() {
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">{salonInfo.phone}</span>
               </div>
+              <LanguageSwitcher />
               <Link
                 to="/cabinet"
                 className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-lg transition-shadow"
@@ -163,14 +165,14 @@ export default function PublicLayout() {
             <div>
               <h3 className="text-lg mb-4">Часы работы</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-              <li>Пн-Пт: {salonInfo.hours_weekdays}</li>
-              <li>Сб-Вс: {salonInfo.hours_weekends}</li>
+                <li>Пн-Пт: {salonInfo.hours_weekdays}</li>
+                <li>Сб-Вс: {salonInfo.hours_weekends}</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <p>© 2025 {salonInfo.name }. Все права защищены.</p>
+            <p>© 2025 {salonInfo.name}. Все права защищены.</p>
             <div className="flex gap-6">
               <Link to="/privacy-policy" className="hover:text-white">Политика конфиденциальности</Link>
               <Link to="/terms" className="hover:text-white">Условия использования</Link>

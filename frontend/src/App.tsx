@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
+import './i18n';
 
 // Admin Pages
 import AdminLayout from './components/layouts/AdminLayout';
