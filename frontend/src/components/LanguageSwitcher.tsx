@@ -1,6 +1,7 @@
-import { Globe } from 'lucide-react';
+import { Globe, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const languages = [
   { code: 'ru', name: 'Русский', flag: '🇷🇺' },
@@ -17,50 +18,82 @@ const languages = [
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleLanguageChange = (code: string) => {
+    i18n.changeLanguage(code);
+    localStorage.setItem('i18nextLng', code);
+    setOpen(false);
+  };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <>
       <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-        title="Выбрать язык"
+        onClick={() => setOpen(true)}
+        type="button"
+        className="w-full flex items-center justify-between gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <Globe className="w-5 h-5 text-gray-600" />
-        <span className="text-xl">{currentLang.flag}</span>
+        <div className="flex items-center gap-2">
+          <Globe className="w-5 h-5 text-gray-600" />
+          <span className="text-xl">{currentLang.flag}</span>
+        </div>
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] z-[9999]">
-          {languages.map(lang => (
-            <button
-              key={lang.code}
-              onClick={() => {
-                i18n.changeLanguage(lang.code);
-                setOpen(false);
-              }}
-              className={`w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
-                i18n.language === lang.code ? 'bg-purple-50 text-purple-700 font-medium' : ''
-              }`}
+      {open && createPortal(
+        <>
+          {/* Затемнённый фон */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-[9998] backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          
+          {/* Modal окно */}
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div 
+              className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-xl">{lang.flag}</span>
-              <span className="text-sm">{lang.name}</span>
-            </button>
-          ))}
-        </div>
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-lg font-semibold text-gray-900">Выберите язык</h3>
+                </div>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Languages list */}
+              <div className="overflow-y-auto max-h-[calc(80vh-80px)] p-2">
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => handleLanguageChange(lang.code)}
+                    type="button"
+                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 rounded-lg flex items-center gap-3 transition-all ${
+                      i18n.language === lang.code 
+                        ? 'bg-purple-50 text-purple-700 font-medium border-2 border-purple-200' 
+                        : 'border-2 border-transparent'
+                    }`}
+                  >
+                    <span className="text-2xl">{lang.flag}</span>
+                    <span className="text-base">{lang.name}</span>
+                    {i18n.language === lang.code && (
+                      <span className="ml-auto text-purple-600">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
       )}
-    </div>
+    </>
   );
 }

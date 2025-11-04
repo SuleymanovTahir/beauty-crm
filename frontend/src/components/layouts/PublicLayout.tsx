@@ -3,7 +3,7 @@ import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';
 import { apiClient } from '../../api/client';
-import LanguageSwitcher from '../LanguageSwitcher';
+import PublicLanguageSwitcher from '../PublicLanguageSwitcher';
 
 export default function PublicLayout() {
   const location = useLocation();
@@ -66,7 +66,7 @@ export default function PublicLayout() {
                 <Phone className="w-4 h-4" />
                 <span className="text-sm">{salonInfo.phone}</span>
               </div>
-              <LanguageSwitcher />
+              <PublicLanguageSwitcher />
               <Link
                 to="/cabinet"
                 className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-lg transition-shadow"
