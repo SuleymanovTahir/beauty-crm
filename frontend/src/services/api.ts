@@ -449,29 +449,29 @@ export class ApiClient {
   }
 
   // ===== ШАБЛОНЫ СООБЩЕНИЙ =====
-  async getMessageTemplates() {
-    return this.request<any>('/api/chat/templates')
-  }
+async getMessageTemplates() {
+  return this.request<any>('/api/templates')
+}
 
-  async createMessageTemplate(data: { name: string; content: string; category: string }) {
-    return this.request('/api/chat/templates', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
+async createMessageTemplate(data: { title: string; content: string; category?: string }) {
+  return this.request('/api/templates', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
 
-  async updateMessageTemplate(templateId: number, data: { name?: string; content?: string; category?: string }) {
-    return this.request(`/api/chat/templates/${templateId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
+async updateMessageTemplate(templateId: number, data: { title?: string; content?: string; category?: string }) {
+  return this.request(`/api/templates/${templateId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+}
 
-  async deleteMessageTemplate(templateId: number) {
-    return this.request(`/api/chat/templates/${templateId}`, {
-      method: 'DELETE',
-    })
-  }
+async deleteMessageTemplate(templateId: number) {
+  return this.request(`/api/templates/${templateId}`, {
+    method: 'DELETE',
+  })
+}
 
   // ===== ОТЛОЖЕННЫЕ СООБЩЕНИЯ =====
   async scheduleMessage(clientId: string, message: string, sendAt: string) {
