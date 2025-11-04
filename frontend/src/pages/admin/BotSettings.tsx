@@ -46,6 +46,8 @@ interface BotSettings {
   seasonality: string;
   emergency_situations: string;
   success_metrics: string;
+  ad_campaign_detection: string;
+  pre_booking_data_collection: string;
 }
 
 type TabType = 'general' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
@@ -168,7 +170,9 @@ export default function BotSettings() {
         location_features: data.location_features || '',
         seasonality: data.seasonality || '',
         emergency_situations: data.emergency_situations || '',
-        success_metrics: data.success_metrics || ''
+        success_metrics: data.success_metrics || '',
+        ad_campaign_detection: data.ad_campaign_detection || '',
+        pre_booking_data_collection: data.pre_booking_data_collection || 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);

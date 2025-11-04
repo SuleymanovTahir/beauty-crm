@@ -203,7 +203,9 @@ def get_bot_settings() -> dict:
                 "contextual_rules": row_dict.get("contextual_rules", ""),
                 "auto_cancel_discounts": row_dict.get("auto_cancel_discounts", ""),
                 "comment_reply_settings": row_dict.get("comment_reply_settings", "{}"),
-                "updated_at": row_dict.get("updated_at")
+                "updated_at": row_dict.get("updated_at"),
+                "ad_campaign_detection": row_dict.get("ad_campaign_detection", ""),
+                "pre_booking_data_collection": row_dict.get("pre_booking_data_collection", ""),
             }
         else:
             log_warning("⚠️ Настройки бота пусты, используются дефолты", "database")

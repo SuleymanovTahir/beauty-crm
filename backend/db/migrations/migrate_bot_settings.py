@@ -328,7 +328,11 @@ def create_tables(conn):
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
-    
+    c.execute("""ALTER TABLE bot_settings ADD COLUMN IF NOT EXISTS 
+    ad_campaign_detection TEXT DEFAULT ''""")
+    c.execute("""ALTER TABLE bot_settings ADD COLUMN IF NOT EXISTS 
+    pre_booking_data_collection TEXT DEFAULT 
+    'Для записи нужно имя и WhatsApp — это займет секунду! 😊'""")
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
         bot_name TEXT NOT NULL,

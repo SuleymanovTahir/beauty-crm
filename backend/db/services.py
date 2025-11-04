@@ -329,3 +329,21 @@ def toggle_service_active_status(service_id):
         from logger import log_error
         log_error(f"❌ Error toggling service status: {e}", "database")
         raise
+
+def format_service_price_for_bot(service) -> str:
+    """
+    Форматировать цену услуги для бота (правильный порядок)
+    """
+    price = service[5] if len(service) > 5 else 0
+    min_price = service[6] if len(service) > 6 and service[6] else None
+    max_price = service[7] if len(service) > 7 and service[7] else None
+    currency = service[8] if len(service) > 8 else "AED"
+    
+    # ✅ ПРАВИЛЬНАЯ ЛОГИКА
+    if min_price and max_price and min_price != max_price:
+        # Проверяем правильный порядок (min всегда меньше max)
+        if min_price > max_price:
+            min_price, max_price = max_price, min_price  # Меняем местами
+        return f"от {min_price} до {max_price} {currency}"
+    else:
+        return f"{price} {currency}"

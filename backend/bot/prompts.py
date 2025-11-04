@@ -8,8 +8,10 @@ from datetime import datetime
 from db import (
     get_all_services,
     get_all_special_packages,
-    find_special_package_by_keywords
+    find_special_package_by_keywords,
 )
+from db.services import format_service_price_for_bot
+
 
 class PromptBuilder:
     """Построитель промптов для AI-бота"""
@@ -226,7 +228,8 @@ Google Maps: {self.salon['google_maps']}
         for category, services_list in services_by_category.items():
             services_text += f"📂 {category}:\n"
             for service in services_list:
-                services_text += f"• {service['name_ru']} - {service['price']}\n"
+                price_str = format_service_price_for_bot(service)
+                services_text += f"• {service['name_ru']} - {price_str}\n"
                 if service['description']:
                     services_text += f"  └ {service['description']}\n"
             services_text += "\n"
