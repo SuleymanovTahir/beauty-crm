@@ -127,17 +127,17 @@ export default function Users() {
         <p className="text-gray-600">{filteredUsers.length} пользователей</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-500 text-sm mb-2">Всего пользователей</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Всего пользователей</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-500 text-sm mb-2">Администраторов</p>
+        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Администраторов</p>
           <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-500 text-sm mb-2">Сотрудников</p>
+        <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Сотрудников</p>
           <h3 className="text-3xl text-green-600">{stats.employees}</h3>
         </div>
       </div>

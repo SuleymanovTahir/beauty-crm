@@ -416,22 +416,22 @@ export default function Bookings() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Ожидают</p>
-          <h3 style={{ fontSize: '1.875rem', color: '#eab308', fontWeight: 'bold' }}>{stats.pending}</h3>
+          <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Завершённых</p>
-          <h3 style={{ fontSize: '1.875rem', color: '#3b82f6', fontWeight: 'bold' }}>{stats.completed}</h3>
+          <h3 className="text-3xl text-purple-600">{stats.completed}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Всего</p>
-          <h3 style={{ fontSize: '1.875rem', color: '#111', fontWeight: 'bold' }}>{stats.total}</h3>
+          <h3 className="text-3xl text-green-600">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Доход</p>
-          <h3 style={{ fontSize: '1.875rem', color: '#10b981', fontWeight: 'bold' }}>{stats.revenue} AED</h3>
+          <h3 className="text-3xl text-blue-600">{stats.revenue} AED</h3>
         </div>
       </div>
 
