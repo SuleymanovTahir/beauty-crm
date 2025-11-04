@@ -45,6 +45,7 @@ interface Client {
   status: string;
   profile_pic?: string;
   unread_count?: number;
+  notes?: string;
 }
 
 interface Message {
@@ -216,11 +217,15 @@ export default function Chat() {
     setEditedClientPhone(client.phone || '');
 
     // Загрузить заметки клиента
+    setIsLoadingNotes(true);
     try {
-      const data = await api.getClientNotes(client.id);
-      setNotes(data.notes || '');
+      const clientData = await api.getClient(client.id);
+      setNotes(clientData.client?.notes || '');
     } catch (err) {
+      console.error('Error loading notes:', err);
       setNotes('');
+    } finally {
+      setIsLoadingNotes(false);
     }
   };
 
@@ -853,9 +858,8 @@ export default function Chat() {
               </div>
             )}
             {/* Notes Panel */}
-            {/* Notes Panel */}
             {showNotes && (
-              <div className="border-t border-gray-200 p-4 flex-shrink-0 max-h-[500px] overflow-y-auto">
+              <div className="border-t border-gray-200 p-4 flex-shrink-0">
                 <NotesPanel
                   notes={notes}
                   onChange={setNotes}

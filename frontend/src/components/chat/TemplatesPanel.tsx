@@ -72,9 +72,13 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
     }
   };
 
-  const handleUpdate = async (id: string, data: any) => {
+  const handleUpdate = async (id: string, title?: string, content?: string) => {
     try {
-      await api.updateMessageTemplate(parseInt(id), data);
+      const updateData: any = {};
+      if (title !== undefined) updateData.title = title;
+      if (content !== undefined) updateData.content = content;
+
+      await api.updateMessageTemplate(parseInt(id), updateData);
       toast.success('Шаблон обновлен');
       setEditingId(null);
       loadTemplates();
@@ -164,7 +168,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
       </div>
 
       {/* Templates List */}
-      <ScrollArea className="h-[400px]">
+      <div className="overflow-y-auto" style={{ maxHeight: '400px' }}>
         <div className="p-4 space-y-3">
           {loading ? (
             <div className="flex items-center justify-center py-12">
@@ -236,7 +240,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                           defaultValue={template.title}
                           onBlur={(e) => {
                             if (e.target.value !== template.title) {
-                              handleUpdate(template.id, { title: e.target.value });
+                              handleUpdate(template.id, e.target.value, undefined);
                             }
                           }}
                           className="mb-2"
@@ -245,7 +249,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                           defaultValue={template.content}
                           onBlur={(e) => {
                             if (e.target.value !== template.content) {
-                              handleUpdate(template.id, { content: e.target.value });
+                              handleUpdate(template.id, undefined, e.target.value);
                             }
                           }}
                           rows={3}
@@ -326,7 +330,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
             </>
           )}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Footer */}
       <div className="p-4 bg-purple-100/30 border-t-2 border-purple-200">

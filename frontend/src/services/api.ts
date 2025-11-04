@@ -467,14 +467,25 @@ export class ApiClient {
   async createMessageTemplate(data: { title: string; content: string; category?: string }) {
     return this.request('/api/chat/templates', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        name: data.title,
+        content: data.content,
+        category: data.category || 'general'
+      }),
     })
   }
 
-  async updateMessageTemplate(templateId: number, data: { title?: string; content?: string; category?: string }) {
+  async updateMessageTemplate(templateId: number, data: { name?: string; title?: string; content?: string; category?: string }) {
+    // Если передан title, используем его как name для бэкенда
+    const requestData = {
+      name: data.title || data.name,
+      content: data.content,
+      category: data.category
+    };
+
     return this.request(`/api/chat/templates/${templateId}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify(requestData),
     })
   }
 
