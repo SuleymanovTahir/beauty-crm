@@ -792,17 +792,17 @@ export default function Chat() {
                   onClose={() => setShowClientInfo(false)}
                   onUpdate={async (data) => {
                     await api.updateClient(selectedClient.id, data);
-                    
+
                     // Обновить локальное состояние
                     setClients(clients.map(c =>
                       c.id === selectedClient.id
                         ? {
-                            ...c,
-                            name: data.name || c.name,
-                            phone: data.phone || c.phone,
-                            status: data.status || c.status,
-                            display_name: data.name || c.username || c.display_name
-                          }
+                          ...c,
+                          name: data.name || c.name,
+                          phone: data.phone || c.phone,
+                          status: data.status || c.status,
+                          display_name: data.name || c.username || c.display_name
+                        }
                         : c
                     ));
 
@@ -823,18 +823,6 @@ export default function Chat() {
             {/* Templates Panel */}
             {showTemplates && (
               <div className="border-t border-gray-200 bg-white p-4 flex-shrink-0">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
-                    <FileText className="w-4 h-4 text-purple-600" />
-                    Шаблоны
-                  </h3>
-                  <button
-                    onClick={() => setShowTemplates(false)}
-                    className="h-8 w-8 hover:bg-gray-100 rounded-lg flex items-center justify-center"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
                 <TemplatesPanel
                   onSelect={(content) => {
                     setMessage(content);
@@ -845,7 +833,6 @@ export default function Chat() {
                 />
               </div>
             )}
-
             {/* Notes Panel */}
             {showNotes && (
               <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50 p-4 flex-shrink-0">

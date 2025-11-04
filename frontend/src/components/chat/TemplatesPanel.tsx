@@ -10,6 +10,8 @@ interface Template {
   content: string;
   category?: string;
   usageCount?: number;
+  date?: string;
+  time?: string;
 }
 
 interface TemplatesPanelProps {
@@ -142,6 +144,9 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                     <h4 className="font-bold text-sm group-hover:scale-105 transition-transform">
                       {template.title}
                     </h4>
+                    {template.date && (
+                      <span className="text-xs opacity-70">📅 {template.date} {template.time}</span>
+                    )}
                   </div>
                   {template.usageCount !== undefined && (
                     <div className="flex items-center gap-1 text-xs opacity-70">
@@ -175,7 +180,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
         <div className="bg-white/60 backdrop-blur rounded-xl p-3 border border-purple-200">
           <p className="text-xs text-purple-800 flex items-center gap-1.5">
             <Star className="w-4 h-4 flex-shrink-0 text-purple-600" />
-            Совет: используйте {{date}} и {{time}} для подстановки данных
+            Совет: используйте {{ date }} и {{ time }} для подстановки данных
           </p>
         </div>
       </div>
