@@ -28,18 +28,18 @@ def get_all_bookings():
 
 
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
-                phone: str, name: str, special_package_id: int = None):
+                phone: str, name: str, special_package_id: int = None, master: str = None):
     """Сохранить завершённую запись"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
     now = datetime.now().isoformat()
     c.execute("""INSERT INTO bookings 
-                 (instagram_id, service_name, datetime, phone, name, status, 
-                  created_at, special_package_id)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-              (instagram_id, service, datetime_str, phone, name, "pending", 
-               now, special_package_id))
+             (instagram_id, service_name, datetime, phone, name, status, 
+              created_at, special_package_id, master)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+          (instagram_id, service, datetime_str, phone, name, "pending", 
+           now, special_package_id, master))
     
     c.execute("""UPDATE clients 
                  SET status = 'lead', phone = ?, name = ? 

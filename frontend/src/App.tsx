@@ -252,7 +252,7 @@ export default function App() {
           >
             <Route path="dashboard" element={<EmployeeDashboard />} />
             <Route path="profile" element={<EmployeeProfile />} />
-            <Route path="calendar" element={<Calendar />} />
+            <Route path="calendar" element={<Calendar employeeFilter={true} />} />
             <Route path="" element={<Navigate to="dashboard" replace />} />
           </Route>
 

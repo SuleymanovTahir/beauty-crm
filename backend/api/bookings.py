@@ -92,9 +92,10 @@ async def create_booking_api(
         datetime_str = f"{data.get('date')} {data.get('time')}"
         phone = data.get('phone', '')
         name = data.get('name')
+        master = data.get('master', '')  # ✅ ДОБАВЛЕНО
         
         get_or_create_client(instagram_id, username=name)
-        save_booking(instagram_id, service, datetime_str, phone, name)
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master)
         
         log_activity(user["id"], "create_booking", "booking", instagram_id, 
                     f"Service: {service}")

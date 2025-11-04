@@ -31,7 +31,7 @@ export default function MessageSearch({ messages, onJumpToMessage, onClose }: Me
 
     const foundMatches: number[] = [];
     messages.forEach((msg, index) => {
-      if (msg.message.toLowerCase().includes(searchTerm.toLowerCase())) {
+      if (msg.message && msg.message.toLowerCase().includes(searchTerm.toLowerCase())) {  // ✅ ПРОВЕРКА msg.message
         foundMatches.push(index);
       }
     });
@@ -39,7 +39,7 @@ export default function MessageSearch({ messages, onJumpToMessage, onClose }: Me
     setMatches(foundMatches);
     if (foundMatches.length > 0) {
       setCurrentMatch(0);
-      onJumpToMessage(foundMatches[0]);
+      setTimeout(() => onJumpToMessage(foundMatches[0]), 100);  // ✅ ДОБАВЛЕНА ЗАДЕРЖКА
     }
   }, [searchTerm, messages]);
 
@@ -47,14 +47,14 @@ export default function MessageSearch({ messages, onJumpToMessage, onClose }: Me
     if (matches.length === 0) return;
     const nextIndex = (currentMatch + 1) % matches.length;
     setCurrentMatch(nextIndex);
-    onJumpToMessage(matches[nextIndex]);
+    setTimeout(() => onJumpToMessage(matches[nextIndex]), 50);  // ✅ ДОБАВЛЕНА ЗАДЕРЖКА
   };
-
+  
   const handlePrevious = () => {
     if (matches.length === 0) return;
     const prevIndex = currentMatch === 0 ? matches.length - 1 : currentMatch - 1;
     setCurrentMatch(prevIndex);
-    onJumpToMessage(matches[prevIndex]);
+    setTimeout(() => onJumpToMessage(matches[prevIndex]), 50);  // ✅ ДОБАВЛЕНА ЗАДЕРЖКА
   };
 
   return (

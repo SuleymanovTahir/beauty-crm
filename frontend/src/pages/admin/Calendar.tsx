@@ -104,10 +104,14 @@ const statusLabels: Record<string, string> = {
   cancelled: 'Отменена'
 };
 
-export default function Calendar() {
+interface CalendarProps {
+  employeeFilter?: boolean;
+}
+
+export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -123,15 +127,17 @@ export default function Calendar() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
   const [selectedService, setSelectedService] = useState<string>('all');
-  
+
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  
+
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
-  
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const [employeeId] = useState(employeeFilter ? currentUser.full_name : null);
+
   const [addForm, setAddForm] = useState({
     phone: '',
     date: '',
@@ -139,12 +145,12 @@ export default function Calendar() {
     revenue: 0,
     master: ''
   });
-  
+
   const statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [employeeId]);
 
   const loadData = async () => {
     try {
@@ -155,11 +161,11 @@ export default function Calendar() {
         api.getClients(),
         api.getUsers()
       ]);
-      
+
       setBookings(bookingsData.bookings || []);
       setServices(servicesData.services || []);
       setClients(clientsData.clients || []);
-      setMasters(usersData.users?.filter((u: UserMaster) => 
+      setMasters(usersData.users?.filter((u: UserMaster) =>
         u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
       ) || []);
     } catch (err) {
@@ -174,12 +180,12 @@ export default function Calendar() {
     if (viewMode === 'day') {
       return [currentDate];
     }
-    
+
     const startOfWeek = new Date(currentDate);
     const day = startOfWeek.getDay();
     const diff = day === 0 ? -6 : 1 - day;
     startOfWeek.setDate(startOfWeek.getDate() + diff);
-    
+
     return Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(date.getDate() + i);
@@ -187,16 +193,18 @@ export default function Calendar() {
     });
   };
 
+  // СТАЛО:
   const getBookingsForSlot = (date: Date, hour: number) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
       const bookingHour = bookingDate.getHours();
-      
+
       return (
         bookingDate.toDateString() === date.toDateString() &&
         bookingHour === hour &&
-        (selectedEmployee === 'all' || b.master === selectedEmployee) &&
-        (selectedService === 'all' || b.service === selectedService)
+        (!employeeId || b.master === employeeId) &&  // ✅ ДОБАВЛЕНО
+        (selectedEmployee === 'all' || !selectedEmployee || !b.master || b.master === selectedEmployee) &&
+        (selectedService === 'all' || !selectedService || b.service === selectedService)
       );
     });
   };
@@ -232,9 +240,9 @@ export default function Calendar() {
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
     setCurrentDate(todayDate);
-    
+
     const todayBookings = getBookingsForDay(todayDate);
-    
+
     if (todayBookings.length === 0) {
       toast.success('📅 Сегодня записей нет - свободный день! 🎉', { duration: 3000 });
     } else if (todayBookings.length === 1) {
@@ -284,7 +292,7 @@ export default function Calendar() {
     const bookingDate = new Date(booking.datetime);
     const client = clients.find(c => c.instagram_id === booking.client_id) || null;
     const service = services.find(s => s.name_ru === booking.service) || null;
-    
+
     setSelectedClient(client);
     setSelectedServiceItem(service);
     setAddForm({
@@ -347,7 +355,7 @@ export default function Calendar() {
         });
         toast.success('Запись создана ✅');
       }
-      
+
       setShowCreateModal(false);
       resetForm();
       await loadData();
@@ -360,7 +368,7 @@ export default function Calendar() {
 
   const handleDeleteBooking = async (booking: Booking) => {
     if (!confirm(`Удалить запись для ${booking.name}?`)) return;
-    
+
     try {
       await api.updateBookingStatus(booking.id, 'cancelled');
       toast.success('Запись удалена');
@@ -376,7 +384,7 @@ export default function Calendar() {
     if (!selectedBooking) return;
     try {
       await api.updateBookingStatus(selectedBooking.id, newStatus);
-      const updated = bookings.map(b => 
+      const updated = bookings.map(b =>
         b.id === selectedBooking.id ? { ...b, status: newStatus } : b
       );
       setBookings(updated);
@@ -449,14 +457,13 @@ export default function Calendar() {
               <Button
                 onClick={() => setShowFilters(!showFilters)}
                 variant="outline"
-                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm ${
-                  showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
-                }`}
+                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
+                  }`}
               >
                 <Filter className="w-4 h-4 md:mr-2" />
                 <span className="hidden md:inline">Фильтры</span>
               </Button>
-              
+
               <Select value={viewMode} onValueChange={(v) => setViewMode(v as 'day' | 'week')}>
                 <SelectTrigger className="w-[100px] md:w-[130px] rounded-xl border-2 h-9 md:h-10 text-sm">
                   <SelectValue />
@@ -563,23 +570,21 @@ export default function Calendar() {
               {days.map((day, index) => {
                 const formatted = formatDate(day);
                 const isToday = day.toDateString() === new Date().toDateString();
-                
+
                 return (
                   <div
                     key={index}
-                    className={`p-2 md:p-3 text-center border-r border-gray-200 ${
-                      isToday ? 'bg-gradient-to-br from-pink-100 to-purple-100' : 'bg-gray-50'
-                    }`}
+                    className={`p-2 md:p-3 text-center border-r border-gray-200 ${isToday ? 'bg-gradient-to-br from-pink-100 to-purple-100' : 'bg-gray-50'
+                      }`}
                   >
                     <div className={`text-xs font-medium ${isToday ? 'text-purple-700' : 'text-gray-600'}`}>
                       {formatted.dayName}
                     </div>
                     <div
-                      className={`text-sm md:text-base font-bold mt-0.5 ${
-                        isToday
-                          ? 'bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'
-                          : 'text-gray-900'
-                      }`}
+                      className={`text-sm md:text-base font-bold mt-0.5 ${isToday
+                        ? 'bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'
+                        : 'text-gray-900'
+                        }`}
                     >
                       {formatted.day}
                     </div>
@@ -603,7 +608,7 @@ export default function Calendar() {
                 {/* Day Cells */}
                 {days.map((day, dayIndex) => {
                   const slotBookings = getBookingsForSlot(day, hour);
-                  
+
                   return (
                     <div
                       key={dayIndex}
@@ -619,8 +624,8 @@ export default function Calendar() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-64">
                             {slotBookings.map((booking, idx) => (
-                              <DropdownMenuItem 
-                                key={idx} 
+                              <DropdownMenuItem
+                                key={idx}
                                 className="flex flex-col items-start p-3 cursor-pointer"
                                 onClick={() => setSelectedBooking(booking)}
                               >
@@ -661,7 +666,7 @@ export default function Calendar() {
                       </div>
 
                       {/* Add Button */}
-                      <button 
+                      <button
                         onClick={() => openCreateModal(day, hour)}
                         className="absolute bottom-1 right-1 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
                       >
@@ -718,36 +723,36 @@ export default function Calendar() {
       {/* Create/Edit Modal */}
       {showCreateModal && (
         <div style={{
-          position: 'fixed', 
-          inset: 0, 
+          position: 'fixed',
+          inset: 0,
           backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', 
-          alignItems: 'center', 
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 9999, 
+          zIndex: 9999,
           padding: '1rem'
         }}>
           <div style={{
-            backgroundColor: '#fff', 
+            backgroundColor: '#fff',
             borderRadius: '1rem',
-            width: '100%', 
-            maxWidth: '500px', 
+            width: '100%',
+            maxWidth: '500px',
             maxHeight: '90vh',
-            overflow: 'auto', 
+            overflow: 'auto',
             boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
           }}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-xl font-bold text-gray-900">
                 {isEditing ? 'Редактировать запись' : 'Добавить запись'}
               </h3>
-              <button 
+              <button
                 onClick={() => { setShowCreateModal(false); resetForm(); }}
                 className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
               >
                 ×
               </button>
             </div>
-            
+
             <div className="p-6 space-y-4">
               {/* Client Search */}
               <div>
@@ -765,7 +770,7 @@ export default function Calendar() {
                       setShowClientDropdown(true);
                     }}
                     onFocus={() => setShowClientDropdown(true)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                   />
                   {selectedClient && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -836,7 +841,7 @@ export default function Calendar() {
                       setShowServiceDropdown(true);
                     }}
                     onFocus={() => setShowServiceDropdown(true)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                   />
                   {selectedServiceItem && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -920,7 +925,7 @@ export default function Calendar() {
                   placeholder="+971 50 123 4567"
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                 />
               </div>
 
@@ -934,7 +939,7 @@ export default function Calendar() {
                     type="date"
                     value={addForm.date}
                     onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                   />
                 </div>
                 <div>
@@ -965,7 +970,7 @@ export default function Calendar() {
                   placeholder="0"
                   value={addForm.revenue}
                   onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                 />
               </div>
 
@@ -994,29 +999,29 @@ export default function Calendar() {
       {/* Event Detail Modal */}
       {selectedBooking && !showCreateModal && (
         <div style={{
-          position: 'fixed', 
-          inset: 0, 
+          position: 'fixed',
+          inset: 0,
           backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', 
-          alignItems: 'center', 
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 9999, 
+          zIndex: 9999,
           padding: '1rem'
         }}>
           <div style={{
-            backgroundColor: '#fff', 
+            backgroundColor: '#fff',
             borderRadius: '1rem',
-            width: '100%', 
+            width: '100%',
             maxWidth: '450px',
             boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
-            maxHeight: '90vh', 
+            maxHeight: '90vh',
             overflow: 'auto'
           }}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-lg font-bold text-gray-900">
                 Запись #{selectedBooking.id}
               </h3>
-              <button 
+              <button
                 onClick={() => setSelectedBooking(null)}
                 className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
               >
@@ -1029,10 +1034,10 @@ export default function Calendar() {
                 <label className="block text-xs font-medium text-gray-500 mb-2">
                   Клиент
                 </label>
-                <input 
-                  type="text" 
-                  value={selectedBooking.name} 
-                  readOnly 
+                <input
+                  type="text"
+                  value={selectedBooking.name}
+                  readOnly
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                 />
               </div>
@@ -1041,10 +1046,10 @@ export default function Calendar() {
                 <label className="block text-xs font-medium text-gray-500 mb-2">
                   Услуга
                 </label>
-                <input 
-                  type="text" 
-                  value={selectedBooking.service} 
-                  readOnly 
+                <input
+                  type="text"
+                  value={selectedBooking.service}
+                  readOnly
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                 />
               </div>
@@ -1054,10 +1059,10 @@ export default function Calendar() {
                   <label className="block text-xs font-medium text-gray-500 mb-2">
                     Мастер
                   </label>
-                  <input 
-                    type="text" 
-                    value={selectedBooking.master} 
-                    readOnly 
+                  <input
+                    type="text"
+                    value={selectedBooking.master}
+                    readOnly
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                   />
                 </div>
@@ -1067,10 +1072,10 @@ export default function Calendar() {
                 <label className="block text-xs font-medium text-gray-500 mb-2">
                   Телефон
                 </label>
-                <input 
-                  type="tel" 
-                  value={selectedBooking.phone} 
-                  readOnly 
+                <input
+                  type="tel"
+                  value={selectedBooking.phone}
+                  readOnly
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                 />
               </div>
@@ -1079,22 +1084,22 @@ export default function Calendar() {
                 <label className="block text-xs font-medium text-gray-500 mb-2">
                   Дата и время
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
-                    day: '2-digit', 
-                    month: '2-digit', 
+                    day: '2-digit',
+                    month: '2-digit',
                     year: 'numeric',
-                    hour: '2-digit', 
+                    hour: '2-digit',
                     minute: '2-digit'
-                  })} 
-                  readOnly 
+                  })}
+                  readOnly
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
                 />
               </div>
 
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                   className="w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-between shadow-sm transition-all"
                   style={{
@@ -1110,8 +1115,8 @@ export default function Calendar() {
                 {showStatusDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-xl overflow-hidden z-10">
                     {statuses.map(status => (
-                      <button 
-                        key={status} 
+                      <button
+                        key={status}
                         onClick={() => handleChangeStatus(status)}
                         className="w-full px-4 py-3 text-left text-sm font-medium border-b border-gray-100 last:border-b-0 transition-colors"
                         style={{
@@ -1128,15 +1133,15 @@ export default function Calendar() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button 
+                <button
                   onClick={() => handleDeleteBooking(selectedBooking)}
                   className="flex-1 px-4 py-3 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg text-red-700 font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <Trash2 size={16} />
                   Удалить
                 </button>
-                
-                <button 
+
+                <button
                   onClick={() => {
                     setSelectedBooking(null);
                     openEditModal(selectedBooking);
@@ -1148,7 +1153,7 @@ export default function Calendar() {
                 </button>
               </div>
 
-              <button 
+              <button
                 onClick={() => setSelectedBooking(null)}
                 className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all"
               >
