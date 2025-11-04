@@ -56,7 +56,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-w-full flex flex-col max-h-[600px]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
             <User className="w-5 h-5 text-white" />
@@ -70,8 +70,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
           <X className="w-5 h-5 text-white" />
         </button>
       </div>
-
-      {/* Content */}
+  
+      {/* Content - со скроллом */}
       <div className="p-4 space-y-4 overflow-y-auto flex-1">
         {/* Profile Picture & Display Name */}
         <div className="flex items-center gap-3 sm:gap-4 pb-4 border-b-2 border-gray-100">
@@ -79,7 +79,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <img
               src={client.profile_pic}
               alt={client.display_name}
-              className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-lg"
+              className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-lg flex-shrink-0"
               crossOrigin="anonymous"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -89,7 +89,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             />
           ) : null}
           <div
-            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg ${client.profile_pic ? 'hidden' : ''
+            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg flex-shrink-0 ${client.profile_pic ? 'hidden' : ''
               }`}
           >
             <span className="text-2xl font-bold">
@@ -103,7 +103,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             )}
           </div>
         </div>
-
+  
         {/* Name Field */}
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
           <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
@@ -126,7 +126,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </p>
           )}
         </div>
-
+  
         {/* Phone Field */}
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
           <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
@@ -149,6 +149,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </p>
           )}
         </div>
+  
         {/* Status Field */}
         <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
           <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
@@ -187,6 +188,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </div>
           )}
         </div>
+  
         {/* Instagram Field */}
         {client.username && (
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border-2 border-pink-200 p-4">
@@ -196,8 +198,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               </div>
               Instagram
             </label>
-            <a
-              href={`https://instagram.com/${client.username}`}
+            
+            <a  href={`https://instagram.com/${client.username}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold transition-colors"
@@ -211,8 +213,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
           </div>
         )}
       </div>
-
-      {/* Actions */}
+  
+      {/* Actions - зафиксированы внизу */}
       <div className="p-3 sm:p-4 bg-gray-50 border-t-2 border-gray-100 flex-shrink-0">
         {isEditing ? (
           <div className="flex flex-col sm:flex-row gap-2">
@@ -237,9 +239,10 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               onClick={handleCancel}
               disabled={isSaving}
               variant="outline"
-              className="px-4 border-2 rounded-xl hover:bg-gray-100"
+              className="sm:w-auto px-4 border-2 rounded-xl hover:bg-gray-100"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 sm:mr-2" />
+              <span className="sm:inline hidden">Отмена</span>
             </Button>
           </div>
         ) : (

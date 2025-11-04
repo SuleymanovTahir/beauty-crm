@@ -21,32 +21,31 @@ async def get_message_templates(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
-        
-        # Получаем общие шаблоны и шаблоны пользователя
+
         c.execute("""
-            SELECT id, name, content, category 
-            FROM message_templates 
+            SELECT id, name, content, category
+            FROM message_templates
             WHERE user_id IS NULL OR user_id = ?
             ORDER BY category, name
-        """, (user["id"],))
-        
+            """, (user["id"],))
+
         templates = [
             {
-                "id": row[0],
-                "name": row[1],
+                "id": str(row[0]),
+                "title": row[1],
                 "content": row[2],
                 "category": row[3]
             }
             for row in c.fetchall()
         ]
-        
+
         conn.close()
         return {"templates": templates}
-        
+
     except Exception as e:
         log_error(f"Error getting templates: {e}", "templates")
         return JSONResponse({"error": str(e)}, status_code=500)
