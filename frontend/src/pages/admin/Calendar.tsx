@@ -769,7 +769,10 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       setSelectedClient(null);
                       setShowClientDropdown(true);
                     }}
-                    onFocus={() => setShowClientDropdown(true)}
+                    onFocus={() => {
+                      setShowClientDropdown(true);
+                      setShowServiceDropdown(false);
+                    }}
                     className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                   />
                   {selectedClient && (
@@ -787,7 +790,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                     </div>
                   )}
                   {showClientDropdown && !selectedClient && clientSearch && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-10">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-20">
                       {filteredClients.length > 0 ? (
                         filteredClients.map((client) => (
                           <button
@@ -840,7 +843,10 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       setSelectedServiceItem(null);
                       setShowServiceDropdown(true);
                     }}
-                    onFocus={() => setShowServiceDropdown(true)}
+                    onFocus={() => {
+                      setShowServiceDropdown(true);
+                      setShowClientDropdown(false);
+                    }}
                     className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
                   />
                   {selectedServiceItem && (

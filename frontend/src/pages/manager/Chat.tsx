@@ -408,8 +408,8 @@ export default function Chat() {
 
 
   const filteredClients = clients.filter(client =>
-    client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.phone.includes(searchTerm)
+    (client.display_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client.phone || '').includes(searchTerm)
   );
 
   const canSend = message.trim().length > 0 || attachedFiles.length > 0;
