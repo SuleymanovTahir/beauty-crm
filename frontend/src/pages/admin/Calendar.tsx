@@ -1,3 +1,4 @@
+// frontend/src/pages/admin/Calendar.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit, Check, X } from 'lucide-react';
 import { toast } from 'sonner';

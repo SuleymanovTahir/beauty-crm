@@ -395,85 +395,101 @@ export default function Clients() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Поиск по имени, телефону, Instagram..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full md:w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            style={{
-              paddingRight: '2.5rem',
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'right 0.75rem center',
-              backgroundSize: '16px 16px',
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none'
-            }}
-          >
-            <option value="all">Все статусы</option>
-            {Object.entries(statusConfig).map(([key, config]) => (
-              <option key={key} value={key}>{config.label}</option>
-            ))}
-          </select>
-          <PeriodFilter
-            period={period}
-            dateFrom={dateFrom}
-            dateTo={dateTo}
-            onPeriodChange={setPeriod}
-            onDateFromChange={setDateFrom}
-            onDateToChange={setDateTo}
-            showAllOption={true}
-          />
-          {period === 'custom' && (
-            <>
-              <Input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="w-full md:w-[180px]"
-              />
-              <Input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="w-full md:w-[180px]"
-              />
-            </>
-          )}
-          <Button className="bg-pink-600 hover:bg-pink-700" onClick={() => setShowCreateDialog(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Добавить клиента
-          </Button>
-          <div className="flex gap-2">
-            <ExportDropdown
-              onExport={handleExport}
-              loading={exporting}
-              disabled={exporting}
-            />
-            <Button
-              variant="outline"
-              onClick={() => setShowExportDialog(true)}
-              disabled={exporting}
-              className="border-green-600 text-green-600 hover:bg-green-50"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Полный экспорт
-            </Button>
-          </div>
-        </div>
+      <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+  <div className="flex flex-col gap-3">
+    {/* Поиск - всегда на всю ширину */}
+    <div className="relative w-full">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+      <Input
+        type="text"
+        placeholder="Поиск по имени, телефону, Instagram..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-10"
+      />
+    </div>
+
+    {/* Вторая строка - фильтры */}
+    <div className="flex flex-wrap gap-2">
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        className="flex-1 min-w-[140px] px-3 py-2 border border-gray-300 rounded-lg text-sm"
+        style={{
+          paddingRight: '2.5rem',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '16px 16px',
+          appearance: 'none',
+        }}
+      >
+        <option value="all">Все статусы</option>
+        {Object.entries(statusConfig).map(([key, config]) => (
+          <option key={key} value={key}>{config.label}</option>
+        ))}
+      </select>
+      
+      <div className="flex-1 min-w-[140px]">
+        <PeriodFilter
+          period={period}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onPeriodChange={setPeriod}
+          onDateFromChange={setDateFrom}
+          onDateToChange={setDateTo}
+          showAllOption={true}
+        />
       </div>
+    </div>
+
+    {/* Третья строка - кнопки действий */}
+    <div className="flex flex-wrap gap-2">
+      {period === 'custom' && (
+        <>
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="flex-1 min-w-[140px]"
+          />
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="flex-1 min-w-[140px]"
+          />
+        </>
+      )}
+      
+      <Button 
+        className="bg-pink-600 hover:bg-pink-700 flex-1 sm:flex-initial min-w-[140px]" 
+        onClick={() => setShowCreateDialog(true)}
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        <span className="hidden sm:inline">Добавить клиента</span>
+        <span className="sm:hidden">Клиент</span>
+      </Button>
+      
+      <div className="flex gap-2 flex-1 sm:flex-initial">
+        <ExportDropdown
+          onExport={handleExport}
+          loading={exporting}
+          disabled={exporting}
+        />
+        <Button
+          variant="outline"
+          onClick={() => setShowExportDialog(true)}
+          disabled={exporting}
+          className="border-green-600 text-green-600 hover:bg-green-50 flex-1 sm:flex-initial"
+        >
+          <Download className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">Полный экспорт</span>
+        </Button>
+      </div>
+    </div>
+  </div>
+</div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredClients.length > 0 ? (

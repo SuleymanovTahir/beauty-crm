@@ -1,3 +1,4 @@
+// frontend/src/pages/manager/Chat.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,

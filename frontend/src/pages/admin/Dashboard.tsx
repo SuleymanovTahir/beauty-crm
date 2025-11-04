@@ -44,7 +44,7 @@ export default function AdminDashboard() {
       ]);
 
       setStats(statsData);
-      
+
       // Берём последние 3 записи
       if (bookingsData.bookings) {
         setRecentBookings(bookingsData.bookings.slice(0, 3));
@@ -149,25 +149,30 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         {stat_cards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 ${stat.bg} rounded-lg flex items-center justify-center`}>
-                  <Icon className={`w-6 h-6 ${stat.color}`} />
+            <div
+              key={index}
+              className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between mb-3 md:mb-4">
+                <div className={`w-10 h-10 md:w-12 md:h-12 ${stat.bg} rounded-lg flex items-center justify-center`}>
+                  <Icon className={`w-5 h-5 md:w-6 md:h-6 ${stat.color}`} />
                 </div>
               </div>
-              <h3 className="text-2xl text-gray-900 mb-1">{stat.value}</h3>
-              <p className="text-gray-600 text-sm">{stat.label}</p>
+              <h3 className="text-xl md:text-2xl text-gray-900 mb-1 md:mb-2 truncate">
+                {stat.value}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-600">{stat.label}</p>
             </div>
           );
         })}
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      {/* Content Grid - 1 колонка на мобильных */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 md:mb-8">
         {/* Recent Bookings */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">

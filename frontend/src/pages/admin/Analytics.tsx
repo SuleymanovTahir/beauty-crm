@@ -301,15 +301,15 @@ export default function Analytics() {
         {servicesData.length > 0 && (
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">Распределение услуг</h2>
-            <ResponsiveContainer width="100%" height={isMobile ? 300 : 300}>
+            <ResponsiveContainer width="100%" height={isMobile ? 350 : 300}>
               <PieChart>
                 <Pie
                   data={servicesData}
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
-                  cy="50%"
-                  outerRadius={isMobile ? 60 : 100}
+                  cy={isMobile ? "40%" : "50%"}
+                  outerRadius={isMobile ? 80 : 100}
                   label={!isMobile}
                   labelLine={!isMobile}
                 >
@@ -317,24 +317,37 @@ export default function Analytics() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ fontSize: isMobile ? 11 : 14 }} />
+                <Tooltip
+                  contentStyle={{
+                    fontSize: isMobile ? 11 : 14,
+                    padding: '8px 12px',
+                    borderRadius: '8px'
+                  }}
+                />
                 {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
               </PieChart>
             </ResponsiveContainer>
 
-            {/* Mobile Legend */}
-            {isMobile && (
-              <div className="mt-4 space-y-2">
+            {/* Mobile Legend - Improved */}
+            {isMobile && servicesData.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-2">
                 {servicesData.map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <div
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: entry.color }}
-                      />
-                      <span className="truncate">{entry.name}</span>
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg text-xs"
+                  >
+                    <div
+                      className="w-4 h-4 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: entry.color }}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate font-medium text-gray-900">
+                        {entry.name}
+                      </div>
+                      <div className="text-gray-600">
+                        {entry.value} • {entry.revenue} AED
+                      </div>
                     </div>
-                    <span className="text-gray-700 font-semibold flex-shrink-0">{entry.value}</span>
                   </div>
                 ))}
               </div>
