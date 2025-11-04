@@ -853,8 +853,9 @@ export default function Chat() {
               </div>
             )}
             {/* Notes Panel */}
+            {/* Notes Panel */}
             {showNotes && (
-              <div className="border-t border-gray-200 p-4">
+              <div className="border-t border-gray-200 p-4 flex-shrink-0 max-h-[500px] overflow-y-auto">
                 <NotesPanel
                   notes={notes}
                   onChange={setNotes}

@@ -58,7 +58,7 @@ export default function NotesPanel({ notes, onChange, onSave, onClose, isLoading
         <Button
           onClick={onSave}
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white rounded-xl shadow-lg font-semibold disabled:opacity-50"
+          className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl shadow-lg font-semibold disabled:opacity-50 border-2 border-amber-700"
         >
           {isLoading ? (
             <>

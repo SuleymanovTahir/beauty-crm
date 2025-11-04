@@ -204,14 +204,13 @@ export class ApiClient {
 
   // ===== ЗАМЕТКИ КЛИЕНТА =====
   async getClientNotes(clientId: string) {
-    return this.request<any>(`/api/clients/${clientId}/notes`)
+    // Получаем данные клиента, включая заметки
+    const client = await this.getClient(clientId);
+    return { notes: client.notes || '' };
   }
 
   async updateClientNotes(clientId: string, notes: string) {
-    return this.request(`/api/clients/${clientId}/notes`, {
-      method: 'POST',
-      body: JSON.stringify({ notes }),
-    })
+    return this.updateClient(clientId, { notes });
   }
 
   // ===== ЧАТ =====
@@ -334,13 +333,13 @@ export class ApiClient {
     if (dateFrom && dateTo) {
       url += `&date_from=${dateFrom}&date_to=${dateTo}`;
     }
-  
+
     const response = await fetch(url, {
       credentials: 'include',
     });
-  
+
     if (!response.ok) throw new Error('Export failed');
-  
+
     return response.blob();
   }
 
@@ -348,9 +347,9 @@ export class ApiClient {
     const response = await fetch(`${this.baseURL}/api/export/full-data?format=${format}`, {
       credentials: 'include',
     })
-  
+
     if (!response.ok) throw new Error('Export failed')
-    
+
     return response.blob()
   }
 
@@ -461,29 +460,29 @@ export class ApiClient {
   }
 
   // ===== ШАБЛОНЫ СООБЩЕНИЙ =====
-async getMessageTemplates() {
-  return this.request<any>('/api/templates')
-}
+  async getMessageTemplates() {
+    return this.request<any>('/api/chat/templates')
+  }
 
-async createMessageTemplate(data: { title: string; content: string; category?: string }) {
-  return this.request('/api/templates', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  })
-}
+  async createMessageTemplate(data: { title: string; content: string; category?: string }) {
+    return this.request('/api/chat/templates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
 
-async updateMessageTemplate(templateId: number, data: { title?: string; content?: string; category?: string }) {
-  return this.request(`/api/templates/${templateId}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  })
-}
+  async updateMessageTemplate(templateId: number, data: { title?: string; content?: string; category?: string }) {
+    return this.request(`/api/chat/templates/${templateId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
 
-async deleteMessageTemplate(templateId: number) {
-  return this.request(`/api/templates/${templateId}`, {
-    method: 'DELETE',
-  })
-}
+  async deleteMessageTemplate(templateId: number) {
+    return this.request(`/api/chat/templates/${templateId}`, {
+      method: 'DELETE',
+    })
+  }
 
   // ===== ОТЛОЖЕННЫЕ СООБЩЕНИЯ =====
   async scheduleMessage(clientId: string, message: string, sendAt: string) {

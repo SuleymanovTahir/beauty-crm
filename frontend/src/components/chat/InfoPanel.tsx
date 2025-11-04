@@ -54,7 +54,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-w-full">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-w-full flex flex-col max-h-[600px]">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 overflow-y-auto flex-1">
         {/* Profile Picture & Display Name */}
         <div className="flex items-center gap-3 sm:gap-4 pb-4 border-b-2 border-gray-100">
           {client.profile_pic ? (
@@ -213,7 +213,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       </div>
 
       {/* Actions */}
-      <div className="p-3 sm:p-4 bg-gray-50 border-t-2 border-gray-100">
+      <div className="p-3 sm:p-4 bg-gray-50 border-t-2 border-gray-100 flex-shrink-0">
         {isEditing ? (
           <div className="flex flex-col sm:flex-row gap-2">
             <Button
