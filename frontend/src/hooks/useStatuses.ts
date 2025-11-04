@@ -1,8 +1,3 @@
-import { useState, useEffect } from 'react';
-import { api } from '../services/api';
-import { DEFAULT_CLIENT_STATUSES, DEFAULT_BOOKING_STATUSES, StatusConfig } from '../config/statuses';
-import { toast } from 'sonner';
-
 export function useClientStatuses() {
   const [statuses, setStatuses] = useState<Record<string, StatusConfig>>(DEFAULT_CLIENT_STATUSES);
   const [loading, setLoading] = useState(true);
@@ -45,7 +40,46 @@ export function useClientStatuses() {
     }
   };
 
-  return { statuses, loading, addStatus, reload: loadStatuses };
+  const removeStatus = async (key: string) => {
+    try {
+      await api.deleteClientStatus(key);
+
+      const newStatuses = { ...statuses };
+      delete newStatuses[key];
+      setStatuses(newStatuses);
+
+      toast.success('Статус удален');
+      return true;
+    } catch (err) {
+      toast.error('Ошибка удаления статуса');
+      return false;
+    }
+  };
+
+  const updateStatus = async (key: string, label?: string, color?: string) => {
+    try {
+      await api.updateClientStatus(key, {
+        status_label: label,
+        status_color: color
+      });
+
+      setStatuses({
+        ...statuses,
+        [key]: {
+          label: label || statuses[key].label,
+          color: color || statuses[key].color
+        }
+      });
+
+      toast.success('Статус обновлен');
+      return true;
+    } catch (err) {
+      toast.error('Ошибка обновления статуса');
+      return false;
+    }
+  };
+
+  return { statuses, loading, addStatus, removeStatus, updateStatus, reload: loadStatuses };
 }
 
 export function useBookingStatuses() {
@@ -90,5 +124,44 @@ export function useBookingStatuses() {
     }
   };
 
-  return { statuses, loading, addStatus, reload: loadStatuses };
+  const removeStatus = async (key: string) => {
+    try {
+      await api.deleteBookingStatus(key);
+
+      const newStatuses = { ...statuses };
+      delete newStatuses[key];
+      setStatuses(newStatuses);
+
+      toast.success('Статус удален');
+      return true;
+    } catch (err) {
+      toast.error('Ошибка удаления статуса');
+      return false;
+    }
+  };
+
+  const updateStatus = async (key: string, label?: string, color?: string) => {
+    try {
+      await api.updateBookingStatus(key, {
+        status_label: label,
+        status_color: color
+      });
+
+      setStatuses({
+        ...statuses,
+        [key]: {
+          label: label || statuses[key].label,
+          color: color || statuses[key].color
+        }
+      });
+
+      toast.success('Статус обновлен');
+      return true;
+    } catch (err) {
+      toast.error('Ошибка обновления статуса');
+      return false;
+    }
+  };
+
+  return { statuses, loading, addStatus, removeStatus, updateStatus, reload: loadStatuses };
 }

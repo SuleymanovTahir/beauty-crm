@@ -1,6 +1,35 @@
 // frontend/src/pages/admin/Calendar.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit, Check, X } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  X,
+  User,
+  Scissors,
+  Clock,
+  MoreVertical,
+  Plus,
+  Trash2,
+  Edit,
+  Check
+} from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../components/ui/dropdown-menu';
+import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -35,7 +64,7 @@ interface Client {
   namejt: string;
 }
 
-interface User {
+interface UserMaster {
   id: number;
   username: string;
   full_name: string;
@@ -80,16 +109,20 @@ export default function Calendar() {
   today.setHours(0, 0, 0, 0);
   
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
+  const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
-  const [masters, setMasters] = useState<User[]>([]);
+  const [masters, setMasters] = useState<UserMaster[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
+  const [selectedService, setSelectedService] = useState<string>('all');
   
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
@@ -97,7 +130,7 @@ export default function Calendar() {
   
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
   
   const [addForm, setAddForm] = useState({
     phone: '',
@@ -126,7 +159,7 @@ export default function Calendar() {
       setBookings(bookingsData.bookings || []);
       setServices(servicesData.services || []);
       setClients(clientsData.clients || []);
-      setMasters(usersData.users?.filter((u: User) => 
+      setMasters(usersData.users?.filter((u: UserMaster) => 
         u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
       ) || []);
     } catch (err) {
@@ -137,29 +170,34 @@ export default function Calendar() {
     }
   };
 
-  const getWeekDays = () => {
-    const days = [];
-    const startOfWeek = new Date(currentDate);
-    const dayOfWeek = startOfWeek.getDay();
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    startOfWeek.setDate(startOfWeek.getDate() + diff);
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startOfWeek);
-      date.setDate(startOfWeek.getDate() + i);
-      days.push(date);
+  const getDaysInView = () => {
+    if (viewMode === 'day') {
+      return [currentDate];
     }
-    return days;
+    
+    const startOfWeek = new Date(currentDate);
+    const day = startOfWeek.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    startOfWeek.setDate(startOfWeek.getDate() + diff);
+    
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(startOfWeek);
+      date.setDate(date.getDate() + i);
+      return date;
+    });
   };
 
-  const weekDays = getWeekDays();
-
-  const getBookingsForSlot = (day: Date, hour: number, minute: number) => {
+  const getBookingsForSlot = (date: Date, hour: number) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
-      return bookingDate.toDateString() === day.toDateString() && 
-             bookingDate.getHours() === hour &&
-             bookingDate.getMinutes() === minute;
+      const bookingHour = bookingDate.getHours();
+      
+      return (
+        bookingDate.toDateString() === date.toDateString() &&
+        bookingHour === hour &&
+        (selectedEmployee === 'all' || b.master === selectedEmployee) &&
+        (selectedService === 'all' || b.service === selectedService)
+      );
     });
   };
 
@@ -170,15 +208,23 @@ export default function Calendar() {
     });
   };
 
-  const goToPreviousWeek = () => {
+  const navigatePrevious = () => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() - 7);
+    if (viewMode === 'day') {
+      newDate.setDate(newDate.getDate() - 1);
+    } else {
+      newDate.setDate(newDate.getDate() - 7);
+    }
     setCurrentDate(newDate);
   };
 
-  const goToNextWeek = () => {
+  const navigateNext = () => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + 7);
+    if (viewMode === 'day') {
+      newDate.setDate(newDate.getDate() + 1);
+    } else {
+      newDate.setDate(newDate.getDate() + 7);
+    }
     setCurrentDate(newDate);
   };
 
@@ -198,24 +244,38 @@ export default function Calendar() {
     }
   };
 
-  const isToday = (date: Date) => {
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+  const formatDate = (date: Date) => {
+    const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+    return {
+      dayName: days[date.getDay()],
+      day: date.getDate(),
+      month: months[date.getMonth()],
+      full: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+    };
   };
 
-  const isSelected = (date: Date) => {
-    return date.getDate() === currentDate.getDate() &&
-           date.getMonth() === currentDate.getMonth() &&
-           date.getFullYear() === currentDate.getFullYear();
+  const getCurrentPeriod = () => {
+    if (viewMode === 'day') {
+      return formatDate(currentDate).full;
+    }
+    const days = getDaysInView();
+    const start = formatDate(days[0]);
+    const end = formatDate(days[days.length - 1]);
+    return `${start.day} ${start.month} - ${end.day} ${end.month} ${days[0].getFullYear()}`;
   };
 
-  const formatMonth = (date: Date) => {
-    return MONTHS[date.getMonth()];
-  };
-
-  const openCreateModal = () => {
+  const openCreateModal = (date?: Date, hour?: number) => {
     resetForm();
+    if (date) {
+      const dateStr = date.toISOString().split('T')[0];
+      const timeStr = hour !== undefined ? `${String(hour).padStart(2, '0')}:00` : TIME_SLOTS[0].display;
+      setAddForm(prev => ({
+        ...prev,
+        date: dateStr,
+        time: timeStr
+      }));
+    }
     setIsEditing(false);
     setShowCreateModal(true);
   };
@@ -226,7 +286,7 @@ export default function Calendar() {
     const service = services.find(s => s.name_ru === booking.service) || null;
     
     setSelectedClient(client);
-    setSelectedService(service);
+    setSelectedServiceItem(service);
     setAddForm({
       phone: booking.phone,
       date: bookingDate.toISOString().split('T')[0],
@@ -243,7 +303,7 @@ export default function Calendar() {
     setClientSearch('');
     setServiceSearch('');
     setSelectedClient(null);
-    setSelectedService(null);
+    setSelectedServiceItem(null);
     setAddForm({
       phone: '',
       date: currentDate.toISOString().split('T')[0],
@@ -254,7 +314,7 @@ export default function Calendar() {
   };
 
   const handleSaveBooking = async () => {
-    if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
+    if (!selectedClient || !selectedServiceItem || !addForm.date || !addForm.time) {
       toast.error('Заполните все обязательные поля (клиент, услуга, дата, время)');
       return;
     }
@@ -267,10 +327,10 @@ export default function Calendar() {
           instagram_id: selectedClient.instagram_id,
           name: selectedClient.display_name,
           phone: addForm.phone || selectedClient.phone || '',
-          service: selectedService.name_ru,
+          service: selectedServiceItem.name_ru,
           date: addForm.date,
           time: addForm.time,
-          revenue: addForm.revenue || selectedService.price,
+          revenue: addForm.revenue || selectedServiceItem.price,
           master: addForm.master,
         });
         toast.success('Запись обновлена');
@@ -279,10 +339,10 @@ export default function Calendar() {
           instagram_id: selectedClient.instagram_id,
           name: selectedClient.display_name,
           phone: addForm.phone || selectedClient.phone || '',
-          service: selectedService.name_ru,
+          service: selectedServiceItem.name_ru,
           date: addForm.date,
           time: addForm.time,
-          revenue: addForm.revenue || selectedService.price,
+          revenue: addForm.revenue || selectedServiceItem.price,
           master: addForm.master,
         });
         toast.success('Запись создана ✅');
@@ -338,6 +398,9 @@ export default function Calendar() {
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
+  const hours = Array.from({ length: 13 }, (_, i) => i + 9);
+  const days = getDaysInView();
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
@@ -348,140 +411,309 @@ export default function Calendar() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="h-full flex flex-col bg-gradient-to-br from-gray-50 via-white to-purple-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm text-gray-900">Календарь</span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={goToToday}
-              className="px-4 py-2 text-sm text-purple-600 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
-            >
-              Сегодня
-            </button>
-            <button 
-              onClick={openCreateModal}
-              className="px-4 py-2 text-sm text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
-            >
-              <Plus size={16} />
-              Запись
-            </button>
-          </div>
-        </div>
-
-        {/* Week Navigation */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={goToPreviousWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronLeft size={20} className="text-gray-600" />
-            </button>
-            <button
-              onClick={goToNextWeek}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronRight size={20} className="text-gray-600" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2 text-purple-500">
-            <CalendarIcon size={18} />
-            <span className="text-sm">
-              {currentDate.getDate()} {formatMonth(currentDate)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Week Days Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-2">
-        <div className="grid grid-cols-8 gap-2">
-          <div className="text-xs text-gray-500"></div>
-          {weekDays.map((day, index) => (
-            <div
-              key={index}
-              className={`
-                text-center py-3 rounded-lg transition-colors cursor-pointer
-                ${isSelected(day) ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : 'hover:bg-gray-50'}
-              `}
-              onClick={() => setCurrentDate(new Date(day))}
-            >
-              <div className="text-xs text-gray-500 mb-1">
-                {isSelected(day) ? (
-                  <span className="text-white/80">{DAYS[index]}</span>
-                ) : (
-                  DAYS[index]
-                )}
-              </div>
-              <div className={`text-sm ${isSelected(day) ? 'text-white font-bold' : 'text-gray-900'}`}>
-                {day.getDate()}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
+        <div className="p-3 md:p-4">
+          {/* Top Row */}
+          <div className="flex items-center justify-between gap-2 mb-3 md:mb-4">
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={goToToday}
+                variant="outline"
+                className="rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm"
+              >
+                Сегодня
+              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  onClick={navigatePrevious}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50"
+                >
+                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                </Button>
+                <Button
+                  onClick={navigateNext}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 md:h-10 w-9 md:w-10 p-0 rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50"
+                >
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                </Button>
               </div>
             </div>
-          ))}
+
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                variant="outline"
+                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm ${
+                  showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
+                }`}
+              >
+                <Filter className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Фильтры</span>
+              </Button>
+              
+              <Select value={viewMode} onValueChange={(v) => setViewMode(v as 'day' | 'week')}>
+                <SelectTrigger className="w-[100px] md:w-[130px] rounded-xl border-2 h-9 md:h-10 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="day">День</SelectItem>
+                  <SelectItem value="week">Неделя</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                onClick={() => openCreateModal()}
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all"
+              >
+                <Plus className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Добавить</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Period Display */}
+          <div className="flex items-center justify-center">
+            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl">
+              <CalendarIcon className="w-4 h-4 text-purple-600" />
+              <span className="text-sm font-semibold text-purple-900">
+                {getCurrentPeriod()}
+              </span>
+            </div>
+          </div>
+
+          {/* Filters Section */}
+          {showFilters && (
+            <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1">
+                    <User className="w-3.5 h-3.5" />
+                    Мастер
+                  </label>
+                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                    <SelectTrigger className="rounded-xl border-2 bg-white h-9 text-sm">
+                      <SelectValue placeholder="Все" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все мастера</SelectItem>
+                      {masters.map(emp => (
+                        <SelectItem key={emp.id} value={emp.full_name}>
+                          {emp.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1">
+                    <Scissors className="w-3.5 h-3.5" />
+                    Услуга
+                  </label>
+                  <Select value={selectedService} onValueChange={setSelectedService}>
+                    <SelectTrigger className="rounded-xl border-2 bg-white h-9 text-sm">
+                      <SelectValue placeholder="Все" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Все услуги</SelectItem>
+                      {services.map(service => (
+                        <SelectItem key={service.id} value={service.name_ru}>
+                          {service.name_ru}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-end">
+                  <Button
+                    onClick={() => {
+                      setSelectedEmployee('all');
+                      setSelectedService('all');
+                    }}
+                    variant="outline"
+                    className="w-full rounded-xl border-2 h-9 text-sm hover:bg-red-50 hover:border-red-300 hover:text-red-600"
+                  >
+                    Сбросить
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Time Slots */}
-      <div className="flex-1 overflow-auto px-6 py-4">
-        <div className="space-y-2">
-          {TIME_SLOTS.map((slot, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-8 gap-2 items-start"
-            >
-              <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
-                <CalendarIcon size={14} className="text-gray-400" />
-                {slot.display}
+      {/* Calendar Grid */}
+      <div className="flex-1 overflow-auto">
+        <div className="min-w-[640px] h-full">
+          {/* Days Header */}
+          <div className="sticky top-0 z-10 bg-white border-b-2 border-gray-200 shadow-sm">
+            <div className="grid grid-cols-8">
+              <div className="p-2 md:p-3 border-r border-gray-200 bg-gray-50">
+                <div className="flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                </div>
               </div>
-              {weekDays.map((day, dayIndex) => {
-                const slotBookings = getBookingsForSlot(day, slot.hour, slot.minute);
+              {days.map((day, index) => {
+                const formatted = formatDate(day);
+                const isToday = day.toDateString() === new Date().toDateString();
+                
                 return (
-                  <button
-                    key={dayIndex}
-                    onClick={() => {
-                      setCurrentDate(new Date(day));
-                      if (slotBookings.length === 0) {
-                        openCreateModal();
-                      }
-                    }}
-                    className={`
-                      min-h-[60px] p-2 rounded-lg border-2 transition-all text-left
-                      ${slotBookings.length > 0 
-                        ? 'border-solid' 
-                        : 'border-dashed border-gray-200 hover:border-purple-300 hover:bg-purple-50'
-                      }
-                      ${isSelected(day) && slotBookings.length === 0 ? 'bg-purple-50/50' : 'bg-white'}
-                    `}
+                  <div
+                    key={index}
+                    className={`p-2 md:p-3 text-center border-r border-gray-200 ${
+                      isToday ? 'bg-gradient-to-br from-pink-100 to-purple-100' : 'bg-gray-50'
+                    }`}
                   >
-                    {slotBookings.map(booking => (
-                      <div
-                        key={booking.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedBooking(booking);
-                        }}
-                        className="text-xs font-medium p-2 rounded cursor-pointer mb-1 overflow-hidden"
-                        style={{
-                          backgroundColor: statusColors[booking.status]?.bg,
-                          color: statusColors[booking.status]?.text,
-                          border: `1px solid ${statusColors[booking.status]?.border}`,
-                        }}
-                        title={`${booking.name} - ${booking.service}`}
-                      >
-                        <div className="truncate font-semibold">{booking.name}</div>
-                        <div className="truncate text-[10px] opacity-80">{booking.service}</div>
-                      </div>
-                    ))}
-                  </button>
+                    <div className={`text-xs font-medium ${isToday ? 'text-purple-700' : 'text-gray-600'}`}>
+                      {formatted.dayName}
+                    </div>
+                    <div
+                      className={`text-sm md:text-base font-bold mt-0.5 ${
+                        isToday
+                          ? 'bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent'
+                          : 'text-gray-900'
+                      }`}
+                    >
+                      {formatted.day}
+                    </div>
+                  </div>
                 );
               })}
             </div>
-          ))}
+          </div>
+
+          {/* Time Slots */}
+          <div className="bg-white">
+            {hours.map((hour) => (
+              <div key={hour} className="grid grid-cols-8 border-b border-gray-100">
+                {/* Time Label */}
+                <div className="p-2 md:p-3 border-r border-gray-200 bg-gray-50/50 flex items-start justify-center">
+                  <span className="text-xs md:text-sm text-gray-600 font-medium">
+                    {hour}:00
+                  </span>
+                </div>
+
+                {/* Day Cells */}
+                {days.map((day, dayIndex) => {
+                  const slotBookings = getBookingsForSlot(day, hour);
+                  
+                  return (
+                    <div
+                      key={dayIndex}
+                      className="min-h-[80px] md:min-h-[100px] p-1 md:p-2 border-r border-gray-200 hover:bg-purple-50/30 transition-colors relative group"
+                    >
+                      {/* Show All Bookings Button if multiple */}
+                      {slotBookings.length > 2 && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="absolute top-1 right-1 bg-purple-600 text-white rounded-lg px-2 py-1 text-xs font-bold hover:bg-purple-700 shadow-lg z-10">
+                              +{slotBookings.length - 2}
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-64">
+                            {slotBookings.map((booking, idx) => (
+                              <DropdownMenuItem 
+                                key={idx} 
+                                className="flex flex-col items-start p-3 cursor-pointer"
+                                onClick={() => setSelectedBooking(booking)}
+                              >
+                                <p className="font-semibold text-sm">{booking.name}</p>
+                                <p className="text-xs text-gray-600">{booking.service}</p>
+                                {booking.master && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {booking.master}
+                                  </p>
+                                )}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+
+                      {/* Display first 2 bookings */}
+                      <div className="space-y-1">
+                        {slotBookings.slice(0, 2).map((booking, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setSelectedBooking(booking)}
+                            className="bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg p-1.5 md:p-2 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                          >
+                            <p className="font-semibold text-xs md:text-sm truncate">
+                              {booking.name}
+                            </p>
+                            <p className="text-xs opacity-90 truncate">
+                              {booking.service}
+                            </p>
+                            {viewMode === 'day' && booking.master && (
+                              <p className="text-xs opacity-75 mt-0.5">
+                                {booking.master}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Add Button */}
+                      <button 
+                        onClick={() => openCreateModal(day, hour)}
+                        className="absolute bottom-1 right-1 w-6 h-6 bg-purple-600 hover:bg-purple-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-lg"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Active Filters Display */}
+      {(selectedEmployee !== 'all' || selectedService !== 'all') && (
+        <div className="flex-shrink-0 bg-white border-t border-gray-200 p-2 md:p-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-medium text-gray-600">Активные фильтры:</span>
+            {selectedEmployee !== 'all' && (
+              <Badge
+                variant="secondary"
+                className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-300"
+              >
+                <User className="w-3 h-3 mr-1" />
+                {selectedEmployee}
+                <button
+                  onClick={() => setSelectedEmployee('all')}
+                  className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            )}
+            {selectedService !== 'all' && (
+              <Badge
+                variant="secondary"
+                className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300"
+              >
+                <Scissors className="w-3 h-3 mr-1" />
+                {selectedService}
+                <button
+                  onClick={() => setSelectedService('all')}
+                  className="ml-1 hover:bg-purple-200 rounded-full p-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </Badge>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
@@ -597,21 +829,21 @@ export default function Calendar() {
                   <input
                     type="text"
                     placeholder="Поиск услуги..."
-                    value={selectedService ? selectedService.name_ru : serviceSearch}
+                    value={selectedServiceItem ? selectedServiceItem.name_ru : serviceSearch}
                     onChange={(e) => {
                       setServiceSearch(e.target.value);
-                      setSelectedService(null);
+                      setSelectedServiceItem(null);
                       setShowServiceDropdown(true);
                     }}
                     onFocus={() => setShowServiceDropdown(true)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   />
-                  {selectedService && (
+                  {selectedServiceItem && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                       <Check size={16} className="text-green-500" />
                       <button
                         onClick={() => {
-                          setSelectedService(null);
+                          setSelectedServiceItem(null);
                           setServiceSearch('');
                         }}
                         className="text-gray-400 hover:text-gray-600"
@@ -620,14 +852,14 @@ export default function Calendar() {
                       </button>
                     </div>
                   )}
-                  {showServiceDropdown && !selectedService && serviceSearch && (
+                  {showServiceDropdown && !selectedServiceItem && serviceSearch && (
                     <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-10">
                       {filteredServices.length > 0 ? (
                         filteredServices.map((service) => (
                           <button
                             key={service.id}
                             onClick={() => {
-                              setSelectedService(service);
+                              setSelectedServiceItem(service);
                               setServiceSearch('');
                               setShowServiceDropdown(false);
                               setAddForm({ ...addForm, revenue: service.price });

@@ -1,265 +1,117 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, X, Edit2, Trash2 } from 'lucide-react';
-import { api } from '../../services/api';
-import { toast } from 'sonner';
-import { Button } from '../ui/button';
+import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
+import { Button } from '../ui/button';
 
-interface Template {
-  id: number;
-  name: string;
-  content: string;
-  category: string;
+interface Message {
+  id?: string | number;
+  message: string;
+  sender: string;
+  timestamp: string;
+  type?: string;
 }
 
-interface MessageTemplatesProps {
-  onSelect: (content: string) => void;
+interface MessageSearchProps {
+  messages: Message[];
+  onJumpToMessage: (index: number) => void;
+  onClose: () => void;
 }
 
-export default function MessageTemplates({ onSelect }: MessageTemplatesProps) {
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [showCreate, setShowCreate] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    name: '',
-    content: '',
-    category: 'general'
-  });
-  
+export default function MessageSearch({ messages, onJumpToMessage, onClose }: MessageSearchProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentMatch, setCurrentMatch] = useState(0);
+  const [matches, setMatches] = useState<number[]>([]);
+
   useEffect(() => {
-    loadTemplates();
-  }, []);
-  
-  const loadTemplates = async () => {
-    try {
-      setLoading(true);
-      const data = await api.getMessageTemplates();
-      setTemplates(data.templates || []);
-    } catch (err) {
-      toast.error('Ошибка загрузки шаблонов');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleCreate = async () => {
-    if (!formData.name.trim() || !formData.content.trim()) {
-      toast.error('Заполните все поля');
+    if (!searchTerm.trim()) {
+      setMatches([]);
+      setCurrentMatch(0);
       return;
     }
-    
-    try {
-      setLoading(true);
-      await api.createMessageTemplate(formData);
-      toast.success('Шаблон создан');
-      setShowCreate(false);
-      setFormData({ name: '', content: '', category: 'general' });
-      loadTemplates();
-    } catch (err) {
-      toast.error('Ошибка создания шаблона');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleUpdate = async (id: number) => {
-    try {
-      setLoading(true);
-      await api.updateMessageTemplate(id, formData);
-      toast.success('Шаблон обновлен');
-      setEditingId(null);
-      setFormData({ name: '', content: '', category: 'general' });
-      loadTemplates();
-    } catch (err) {
-      toast.error('Ошибка обновления');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleDelete = async (id: number) => {
-    if (!confirm('Удалить этот шаблон?')) return;
-    
-    try {
-      await api.deleteMessageTemplate(id);
-      toast.success('Шаблон удален');
-      loadTemplates();
-    } catch (err) {
-      toast.error('Ошибка удаления');
-      console.error(err);
-    }
-  };
-  
-  const startEdit = (template: Template) => {
-    setEditingId(template.id);
-    setFormData({
-      name: template.name,
-      content: template.content,
-      category: template.category
+
+    const foundMatches: number[] = [];
+    messages.forEach((msg, index) => {
+      if (msg.message.toLowerCase().includes(searchTerm.toLowerCase())) {
+        foundMatches.push(index);
+      }
     });
-    setShowCreate(false);
-  };
-  
-  const cancelEdit = () => {
-    setEditingId(null);
-    setFormData({ name: '', content: '', category: 'general' });
-  };
-  
-  const groupedTemplates = templates.reduce((acc, template) => {
-    if (!acc[template.category]) {
-      acc[template.category] = [];
+
+    setMatches(foundMatches);
+    if (foundMatches.length > 0) {
+      setCurrentMatch(0);
+      onJumpToMessage(foundMatches[0]);
     }
-    acc[template.category].push(template);
-    return acc;
-  }, {} as Record<string, Template[]>);
-  
+  }, [searchTerm, messages]);
+
+  const handleNext = () => {
+    if (matches.length === 0) return;
+    const nextIndex = (currentMatch + 1) % matches.length;
+    setCurrentMatch(nextIndex);
+    onJumpToMessage(matches[nextIndex]);
+  };
+
+  const handlePrevious = () => {
+    if (matches.length === 0) return;
+    const prevIndex = currentMatch === 0 ? matches.length - 1 : currentMatch - 1;
+    setCurrentMatch(prevIndex);
+    onJumpToMessage(matches[prevIndex]);
+  };
+
   return (
-    <div className="border-t bg-white">
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-semibold flex items-center gap-2 text-gray-900">
-            <FileText className="w-4 h-4 text-pink-600" />
-            Шаблоны сообщений
-          </h4>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => {
-              setShowCreate(!showCreate);
-              setEditingId(null);
-              if (!showCreate) {
-                setFormData({ name: '', content: '', category: 'general' });
-              }
-            }}
-            className="h-8 w-8 p-0"
-          >
-            {showCreate ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          </Button>
+    <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-b-2 border-yellow-300 p-3 shadow-lg animate-in slide-in-from-top duration-300">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-yellow-600" />
+          <Input
+            type="text"
+            placeholder="Поиск в сообщениях..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-4 border-2 border-yellow-300 focus:border-yellow-500 bg-white rounded-xl h-10"
+            autoFocus
+          />
         </div>
-        
-        {/* Форма создания/редактирования */}
-        {(showCreate || editingId) && (
-          <div className="mb-4 p-3 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg space-y-2 border border-pink-200">
-            <Input
-              placeholder="Название шаблона"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              className="bg-white"
-            />
-            <Textarea
-              placeholder="Текст шаблона"
-              value={formData.content}
-              onChange={(e) => setFormData({...formData, content: e.target.value})}
-              className="bg-white min-h-[80px]"
-              rows={3}
-            />
-            <select
-              value={formData.category}
-              onChange={(e) => setFormData({...formData, category: e.target.value})}
-              className="w-full px-3 py-2 border rounded bg-white text-sm"
-            >
-              <option value="general">Общие</option>
-              <option value="greetings">Приветствия</option>
-              <option value="booking">Запись</option>
-              <option value="info">Информация</option>
-              <option value="closing">Завершение</option>
-              <option value="followup">Followup</option>
-            </select>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => editingId ? handleUpdate(editingId) : handleCreate()}
-                disabled={loading}
-                className="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
-                size="sm"
-              >
-                {editingId ? 'Обновить' : 'Создать'}
-              </Button>
-              {editingId && (
-                <Button
-                  onClick={cancelEdit}
-                  variant="outline"
-                  size="sm"
-                >
-                  Отмена
-                </Button>
-              )}
-            </div>
+
+        {matches.length > 0 && (
+          <div className="flex items-center gap-1 bg-white rounded-xl px-3 py-2 border-2 border-yellow-300">
+            <span className="text-sm font-semibold text-yellow-800 whitespace-nowrap">
+              {currentMatch + 1} из {matches.length}
+            </span>
           </div>
         )}
-        
-        {/* Список шаблонов по категориям */}
-        <div className="space-y-3 max-h-[400px] overflow-y-auto">
-          {loading && templates.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">
-              <div className="animate-spin w-5 h-5 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-              Загрузка...
-            </div>
-          ) : Object.keys(groupedTemplates).length > 0 ? (
-            Object.entries(groupedTemplates).map(([category, categoryTemplates]) => (
-              <div key={category} className="space-y-2">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  {category === 'general' ? 'Общие' :
-                   category === 'greetings' ? 'Приветствия' :
-                   category === 'booking' ? 'Запись' :
-                   category === 'info' ? 'Информация' :
-                   category === 'closing' ? 'Завершение' :
-                   category === 'followup' ? 'Followup' : category}
-                </p>
-                {categoryTemplates.map(template => (
-                  <div
-                    key={template.id}
-                    className="group relative"
-                  >
-                    <button
-                      onClick={() => onSelect(template.content)}
-                      className="w-full text-left p-3 border rounded-lg hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 hover:border-pink-300 transition-all"
-                    >
-                      <p className="font-medium text-sm text-gray-900">{template.name}</p>
-                      <p className="text-xs text-gray-600 mt-1 line-clamp-2">{template.content}</p>
-                    </button>
-                    
-                    {/* Кнопки действий */}
-                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startEdit(template);
-                        }}
-                        className="p-1 bg-blue-100 hover:bg-blue-200 rounded text-blue-600"
-                        title="Редактировать"
-                      >
-                        <Edit2 className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(template.id);
-                        }}
-                        className="p-1 bg-red-100 hover:bg-red-200 rounded text-red-600"
-                        title="Удалить"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-              <p className="text-sm">Нет шаблонов</p>
-              <p className="text-xs mt-1">Создайте первый шаблон</p>
-            </div>
-          )}
+
+        <div className="flex items-center gap-1">
+          <Button
+            onClick={handlePrevious}
+            disabled={matches.length === 0}
+            size="sm"
+            variant="outline"
+            className="h-10 w-10 p-0 border-2 border-yellow-300 hover:bg-yellow-100 rounded-xl disabled:opacity-50"
+          >
+            <ChevronUp className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={handleNext}
+            disabled={matches.length === 0}
+            size="sm"
+            variant="outline"
+            className="h-10 w-10 p-0 border-2 border-yellow-300 hover:bg-yellow-100 rounded-xl disabled:opacity-50"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </Button>
         </div>
+
+        <button
+          onClick={onClose}
+          className="h-10 w-10 hover:bg-yellow-100 rounded-xl flex items-center justify-center transition-colors border-2 border-yellow-300"
+        >
+          <X className="w-5 h-5 text-yellow-700" />
+        </button>
       </div>
+
+      {searchTerm && matches.length === 0 && (
+        <p className="text-sm text-yellow-700 mt-2 px-1">Ничего не найдено</p>
+      )}
     </div>
   );
 }

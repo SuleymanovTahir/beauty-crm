@@ -1,4 +1,3 @@
-//src/components/AdminLayout.tsx
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -16,7 +15,8 @@ import {
   ShoppingCart,
   CalendarDays,
   Scissors,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -30,6 +30,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Панель управления', path: '/admin/dashboard' },
@@ -50,8 +51,22 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     return () => clearInterval(interval);
   }, []);
 
-  // Закрываем меню при изменении размера экрана
+  // Close mobile menu when screen resizes to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1100) {
+        setIsMobileMenuOpen(false);
+      }
+    };
 
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const loadUnreadCount = async () => {
     try {
@@ -81,25 +96,49 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
   const handleMenuItemClick = (path: string) => {
     navigate(path);
-    // Закрываем меню только на мобильных
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Mobile Menu Button */}
+    <div className="flex h-screen bg-gray-50 relative">
+      {/* Mobile Menu Button - Fixed at top left */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 lg:hidden w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl shadow-xl flex items-center justify-center transition-all"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <Menu className="w-6 h-6" />
+        )}
+      </button>
 
       {/* Mobile Overlay */}
-      
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
       {/* Sidebar */}
-      <aside className="mobile-sidebar w-64 bg-white border-r border-gray-200 flex flex-col z-50">
+      <aside
+        className={`
+          fixed lg:static
+          top-0 left-0 h-full
+          w-64 bg-white border-r border-gray-200
+          flex flex-col z-40
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
         {/* Header */}
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-pink-600">💎 CRM</h1>
             <p className="text-sm text-gray-500 mt-1">Администратор</p>
           </div>
-          {/* Close button - только для мобильных */}
         </div>
 
         {/* Navigation */}
@@ -113,10 +152,11 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                 <li key={item.path}>
                   <button
                     onClick={() => handleMenuItemClick(item.path)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${isActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 relative ${
+                      isActive
                         ? 'bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 shadow-sm'
                         : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                    }`}
                   >
                     <Icon className={`w-5 h-5 ${isActive ? 'text-pink-600' : 'text-gray-500'}`} />
                     <span className={isActive ? 'font-semibold' : 'font-medium'}>{item.label}</span>
@@ -156,7 +196,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-50">
+      <main className="flex-1 overflow-y-auto bg-gray-50 w-full lg:w-auto">
+        {/* Add padding top on mobile to prevent content being hidden behind menu button */}
+        <div className="lg:hidden h-20" />
         <Outlet />
       </main>
     </div>

@@ -5,33 +5,38 @@ interface QuickRepliesProps {
   onSelect: (text: string) => void;
 }
 
-const defaultReplies = [
-  '👋 Здравствуйте!',
-  '📅 Когда вам удобно?',
-  '✅ Отлично!',
-  '🎉 Спасибо за обращение!',
-  '⏰ Свяжусь с вами позже',
-  '💎 Посмотрите наши услуги',
-  '📞 Могу я вам перезвонить?',
-  '🌟 Рады вас видеть!'
+const QUICK_REPLIES = [
+  { id: '1', text: 'Спасибо!', icon: '💖' },
+  { id: '2', text: 'Записал вас', icon: '✅' },
+  { id: '3', text: 'Перезвоню позже', icon: '📞' },
+  { id: '4', text: 'Да, конечно', icon: '👍' },
+  { id: '5', text: 'Нет, к сожалению', icon: '🙏' },
+  { id: '6', text: 'Уточню и сообщу', icon: '⏱️' }
 ];
 
 export default function QuickReplies({ onSelect }: QuickRepliesProps) {
   return (
-    <div className="border-t bg-gradient-to-r from-blue-50 to-purple-50 p-3">
-      <div className="flex items-center gap-2 mb-2">
-        <Zap className="w-4 h-4 text-purple-600" />
-        <p className="text-xs font-semibold text-gray-700">Быстрые ответы</p>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+          <Zap className="w-4 h-4 text-white" />
+        </div>
+        <p className="font-semibold text-gray-700 text-sm">Быстрые ответы</p>
       </div>
       
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-transparent">
-        {defaultReplies.map((reply, index) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {QUICK_REPLIES.map((reply) => (
           <button
-            key={index}
-            onClick={() => onSelect(reply)}
-            className="px-3 py-1.5 bg-white hover:bg-gradient-to-r hover:from-purple-100 hover:to-pink-100 rounded-full text-sm whitespace-nowrap transition-all hover:scale-105 border border-purple-200 hover:border-purple-300 shadow-sm"
+            key={reply.id}
+            onClick={() => onSelect(reply.text)}
+            className="bg-white border-2 border-purple-200 hover:border-purple-400 rounded-xl p-2.5 text-left transition-all hover:shadow-md group"
           >
-            {reply}
+            <div className="flex items-center gap-2">
+              <span className="text-lg group-hover:scale-110 transition-transform">{reply.icon}</span>
+              <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 truncate">
+                {reply.text}
+              </span>
+            </div>
           </button>
         ))}
       </div>
