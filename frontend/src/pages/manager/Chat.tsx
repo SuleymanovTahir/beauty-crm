@@ -71,8 +71,6 @@ export default function Chat() {
   const [error, setError] = useState<string | null>(null);
 
   const [showNotes, setShowNotes] = useState(false);
-  const [notes, setNotes] = useState('');
-  const [isLoadingNotes, setIsLoadingNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
@@ -227,6 +225,7 @@ export default function Chat() {
     } finally {
       setIsLoadingNotes(false);
     }
+
   };
 
   const handleBackToList = () => {
@@ -406,20 +405,7 @@ export default function Chat() {
     toast.info('Файл удален');
   };
 
-  const handleSaveNotes = async () => {
-    if (!selectedClient) return;
 
-    try {
-      setIsLoadingNotes(true);
-      await api.updateClientNotes(selectedClient.id, notes);
-      toast.success('Заметки сохранены');
-      setShowNotes(false);
-    } catch (err) {
-      toast.error('Ошибка сохранения заметок');
-    } finally {
-      setIsLoadingNotes(false);
-    }
-  };
 
   const filteredClients = clients.filter(client =>
     client.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -764,8 +750,8 @@ export default function Chat() {
                           </div>
                         ) : msg.type === 'file' ? (
                           <div className="px-4 py-3 min-w-[200px]">
-                            
-                           <a href={msg.message}
+
+                            <a href={msg.message}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
@@ -977,14 +963,11 @@ export default function Chat() {
                   </div>
                 )}
 
-                {showNotes && (
+                {showNotes && selectedClient && (
                   <div className="p-4">
                     <NotesPanel
-                      notes={notes}
-                      onChange={setNotes}
-                      onSave={handleSaveNotes}
+                      clientId={selectedClient.id}
                       onClose={() => setShowNotes(false)}
-                      isLoading={isLoadingNotes}
                     />
                   </div>
                 )}

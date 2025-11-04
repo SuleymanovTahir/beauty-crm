@@ -204,13 +204,27 @@ export class ApiClient {
 
   // ===== ЗАМЕТКИ КЛИЕНТА =====
   async getClientNotes(clientId: string) {
-    // Получаем данные клиента, включая заметки
-    const client = await this.getClient(clientId);
-    return { notes: client.notes || '' };
+    return this.request<any>(`/api/clients/${clientId}/notes`)
+  }
+  
+  async addClientNote(clientId: string, noteText: string) {
+    return this.request(`/api/clients/${clientId}/notes`, {
+      method: 'POST',
+      body: JSON.stringify({ note_text: noteText }),
+    })
+  }
+  
+  async deleteClientNote(clientId: string, noteId: number) {
+    return this.request(`/api/clients/${clientId}/notes/${noteId}`, {
+      method: 'DELETE',
+    })
   }
 
-  async updateClientNotes(clientId: string, notes: string) {
-    return this.updateClient(clientId, { notes });
+  async updateClientNote(clientId: string, noteId: number, noteText: string) {
+    return this.request(`/api/clients/${clientId}/notes/${noteId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ note_text: noteText }),
+    })
   }
 
   // ===== ЧАТ =====

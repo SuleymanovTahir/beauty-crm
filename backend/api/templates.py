@@ -5,12 +5,52 @@ from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
+from datetime import datetime
 
 from config import DATABASE_NAME
 from utils import require_auth
 from logger import log_info, log_error
 
 router = APIRouter(tags=["Templates"])
+
+
+def replace_placeholders(content: str, client_id: str) -> str:
+    """Заменить плейсхолдеры на реальные данные"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        # Получить последнюю активную запись клиента
+        c.execute("""
+            SELECT date, time, service_name 
+            FROM bookings 
+            WHERE instagram_id = ? AND status IN ('pending', 'confirmed')
+            ORDER BY date DESC, time DESC 
+            LIMIT 1
+        """, (client_id,))
+        
+        booking = c.fetchone()
+        conn.close()
+        
+        if booking:
+            date_str = booking[0]
+            time_str = booking[1]
+            
+            # Форматировать дату в читаемый вид
+            try:
+                date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                formatted_date = date_obj.strftime('%d.%m.%Y')
+            except:
+                formatted_date = date_str
+            
+            content = content.replace('{{date}}', formatted_date)
+            content = content.replace('{{time}}', time_str)
+            content = content.replace('{{service}}', booking[2] or '')
+        
+        return content
+    except Exception as e:
+        log_error(f"Error replacing placeholders: {e}", "templates")
+        return content
 
 
 @router.get("/chat/templates")
@@ -116,7 +156,7 @@ async def update_template(
         """, (template_id,))
         
         result = c.fetchone()
-        if not result or result[0] != user["id"]:
+        if not result or (result[0] is not None and result[0] != user["id"]):
             conn.close()
             return JSONResponse({"error": "Access denied"}, status_code=403)
         
@@ -173,7 +213,7 @@ async def delete_template(
         """, (template_id,))
         
         result = c.fetchone()
-        if not result or result[0] != user["id"]:
+        if not result or (result[0] is not None and result[0] != user["id"]):
             conn.close()
             return JSONResponse({"error": "Access denied"}, status_code=403)
         

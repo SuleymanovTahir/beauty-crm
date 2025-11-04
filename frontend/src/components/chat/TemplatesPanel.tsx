@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, X, Search, Clock, Star, Plus, Trash2, Edit2, Save, Loader } from 'lucide-react';
+import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { ScrollArea } from '../ui/scroll-area';
 import { Textarea } from '../ui/textarea';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
@@ -193,7 +192,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                     className="mb-2"
                   />
                   <Textarea
-                    placeholder="Текст шаблона"
+                    placeholder="Текст шаблона (можно использовать {{date}}, {{time}}, {{service}})"
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     className="mb-2"
@@ -279,20 +278,19 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                         </div>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => onSelect(template.content)}
-                        className={`w-full text-left p-4 rounded-xl border-2 bg-gradient-to-r ${getCategoryColor(
+                      <div
+                        className={`relative w-full text-left p-4 rounded-xl border-2 bg-gradient-to-r ${getCategoryColor(
                           template.category
-                        )} hover:shadow-lg transition-all duration-200 group relative`}
+                        )} hover:shadow-lg transition-all duration-200 group`}
                       >
-                        {/* Кнопки управления */}
-                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {/* Кнопки управления - ВНУТРИ карточки */}
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setEditingId(template.id);
                             }}
-                            className="w-7 h-7 bg-white rounded-lg flex items-center justify-center hover:bg-blue-50"
+                            className="w-5 h-5 bg-white rounded-lg flex items-center justify-center hover:bg-blue-50 shadow-md"
                           >
                             <Edit2 className="w-3.5 h-3.5 text-blue-600" />
                           </button>
@@ -301,33 +299,39 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                               e.stopPropagation();
                               handleDelete(template.id);
                             }}
-                            className="w-7 h-7 bg-white rounded-lg flex items-center justify-center hover:bg-red-50"
+                            className="w-5 h-5 bg-white rounded-lg flex items-center justify-center hover:bg-red-50 shadow-md"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-red-600" />
                           </button>
                         </div>
 
-                        <div className="flex items-start justify-between mb-2 pr-16">
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl">{getCategoryIcon(template.category)}</span>
-                            <h4 className="font-bold text-sm group-hover:scale-105 transition-transform">
-                              {template.title}
-                            </h4>
-                          </div>
-                          {template.usageCount !== undefined && (
-                            <div className="flex items-center gap-1 text-xs opacity-70">
-                              <Clock className="w-3 h-3" />
-                              {template.usageCount}
+                        {/* Контент карточки - клик по любой части вставляет шаблон */}
+                        <div
+                          onClick={() => onSelect(template.content)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex items-start justify-between mb-2 pr-16">
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl">{getCategoryIcon(template.category)}</span>
+                              <h4 className="font-bold text-sm hover:scale-105 transition-transform">
+                                {template.title}
+                              </h4>
                             </div>
-                          )}
+                            {template.usageCount !== undefined && (
+                              <div className="flex items-center gap-1 text-xs opacity-70">
+                                <Clock className="w-3 h-3" />
+                                {template.usageCount}
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs opacity-80 line-clamp-2 leading-relaxed">
+                            {template.content}
+                          </p>
+                          <div className="mt-2 pt-2 border-t border-current opacity-30">
+                            <p className="text-xs font-semibold">Нажмите для вставки</p>
+                          </div>
                         </div>
-                        <p className="text-xs opacity-80 line-clamp-2 leading-relaxed">
-                          {template.content}
-                        </p>
-                        <div className="mt-2 pt-2 border-t border-current opacity-30">
-                          <p className="text-xs font-semibold">Нажмите для вставки</p>
-                        </div>
-                      </button>
+                      </div>
                     )}
                   </div>
                 ))
