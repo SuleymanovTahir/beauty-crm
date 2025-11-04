@@ -71,6 +71,7 @@ export default function Chat() {
 
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState('');
+  const [isLoadingNotes, setIsLoadingNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
@@ -202,7 +203,7 @@ export default function Chat() {
     }
   };
 
-  const handleSelectClient = (client: Client) => {
+  const handleSelectClient = async (client: Client) => {
     setSelectedClient(client);
     loadMessages(client.id, true);
     setShowNotes(false);
@@ -213,6 +214,14 @@ export default function Chat() {
 
     setEditedClientName(client.name || '');
     setEditedClientPhone(client.phone || '');
+
+    // Загрузить заметки клиента
+    try {
+      const data = await api.getClientNotes(client.id);
+      setNotes(data.notes || '');
+    } catch (err) {
+      setNotes('');
+    }
   };
 
   const handleBackToList = () => {
@@ -392,9 +401,19 @@ export default function Chat() {
     toast.info('Файл удален');
   };
 
-  const handleSaveNotes = () => {
-    toast.success('Заметки сохранены');
-    setShowNotes(false);
+  const handleSaveNotes = async () => {
+    if (!selectedClient) return;
+
+    try {
+      setIsLoadingNotes(true);
+      await api.updateClientNotes(selectedClient.id, notes);
+      toast.success('Заметки сохранены');
+      setShowNotes(false);
+    } catch (err) {
+      toast.error('Ошибка сохранения заметок');
+    } finally {
+      setIsLoadingNotes(false);
+    }
   };
 
   const filteredClients = clients.filter(client =>
@@ -841,6 +860,7 @@ export default function Chat() {
                   onChange={setNotes}
                   onSave={handleSaveNotes}
                   onClose={() => setShowNotes(false)}
+                  isLoading={isLoadingNotes}
                 />
               </div>
             )}

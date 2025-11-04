@@ -59,7 +59,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
         content: newContent,
         category: newCategory || 'general'
       });
-      
+
       toast.success('Шаблон создан');
       setNewTitle('');
       setNewContent('');

@@ -1,16 +1,18 @@
 import React from 'react';
-import { StickyNote, X, Save } from 'lucide-react';
+import { StickyNote, X, Save, Loader } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
+
 
 interface NotesPanelProps {
   notes: string;
   onChange: (value: string) => void;
   onSave: () => void;
   onClose: () => void;
+  isLoading?: boolean;
 }
 
-export default function NotesPanel({ notes, onChange, onSave, onClose }: NotesPanelProps) {
+export default function NotesPanel({ notes, onChange, onSave, onClose, isLoading = false }: NotesPanelProps) {
   return (
     <div className="bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 rounded-2xl border-2 border-yellow-300 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300">
       {/* Header */}
@@ -40,7 +42,7 @@ export default function NotesPanel({ notes, onChange, onSave, onClose }: NotesPa
             rows={8}
           />
         </div>
-        
+
         <div className="mt-4 bg-yellow-100/50 rounded-xl p-3 border border-yellow-200">
           <p className="text-xs text-yellow-800 flex items-center gap-1.5">
             <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -55,10 +57,20 @@ export default function NotesPanel({ notes, onChange, onSave, onClose }: NotesPa
       <div className="p-4 bg-yellow-100/30 border-t-2 border-yellow-200">
         <Button
           onClick={onSave}
-          className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white rounded-xl shadow-lg font-semibold"
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white rounded-xl shadow-lg font-semibold disabled:opacity-50"
         >
-          <Save className="w-4 h-4 mr-2" />
-          Сохранить заметки
+          {isLoading ? (
+            <>
+              <Loader className="w-4 h-4 mr-2 animate-spin" />
+              Сохранение...
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Сохранить заметки
+            </>
+          )}
         </Button>
       </div>
     </div>

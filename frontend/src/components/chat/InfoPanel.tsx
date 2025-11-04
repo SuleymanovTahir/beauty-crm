@@ -54,7 +54,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-2xl border-2 border-blue-200 shadow-xl overflow-hidden animate-in slide-in-from-top duration-300 max-w-full">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       {/* Content */}
       <div className="p-4 space-y-4">
         {/* Profile Picture & Display Name */}
-        <div className="flex items-center gap-4 pb-4 border-b-2 border-gray-100">
+        <div className="flex items-center gap-3 sm:gap-4 pb-4 border-b-2 border-gray-100">
           {client.profile_pic ? (
             <img
               src={client.profile_pic}
@@ -97,7 +97,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-gray-900 text-lg truncate">{client.display_name}</p>
+            <p className="font-bold text-gray-900 text-base sm:text-lg truncate">{client.display_name}</p>
             {client.username && (
               <p className="text-sm text-gray-600">@{client.username}</p>
             )}
@@ -213,9 +213,9 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       </div>
 
       {/* Actions */}
-      <div className="p-4 bg-gray-50 border-t-2 border-gray-100">
+      <div className="p-3 sm:p-4 bg-gray-50 border-t-2 border-gray-100">
         {isEditing ? (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button
               onClick={handleSave}
               disabled={isSaving}

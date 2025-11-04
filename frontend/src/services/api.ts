@@ -195,10 +195,22 @@ export class ApiClient {
     })
   }
 
-  async updateBookingStatus(bookingId: number, status: string) {
-    return this.request(`/api/bookings/${bookingId}/status`, {
+  async updateBookingStatus(key: string, data: any) {
+    return this.request(`/api/statuses/booking/${key}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ===== ЗАМЕТКИ КЛИЕНТА =====
+  async getClientNotes(clientId: string) {
+    return this.request<any>(`/api/clients/${clientId}/notes`)
+  }
+
+  async updateClientNotes(clientId: string, notes: string) {
+    return this.request(`/api/clients/${clientId}/notes`, {
       method: 'POST',
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ notes }),
     })
   }
 
