@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { User, Phone, Instagram, Check, X, Loader, Edit2, Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { StatusSelect } from '../shared/StatusSelect';
+import { useClientStatuses } from '../../hooks/useStatuses';
+
 
 interface Client {
   id: string;
@@ -15,7 +18,7 @@ interface Client {
 interface InfoPanelProps {
   client: Client;
   onClose: () => void;
-  onUpdate: (data: { name: string; phone: string }) => Promise<void>;
+  onUpdate: (data: { name: string; phone: string; status?: string }) => Promise<void>;
 }
 
 export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps) {
@@ -23,13 +26,16 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   const [isSaving, setIsSaving] = useState(false);
   const [editedName, setEditedName] = useState(client.name || '');
   const [editedPhone, setEditedPhone] = useState(client.phone || '');
+  const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();
+  const [editedStatus, setEditedStatus] = useState(client.status || 'new');
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
       await onUpdate({
         name: editedName.trim(),
-        phone: editedPhone.trim()
+        phone: editedPhone.trim(),
+        status: editedStatus
       });
       setIsEditing(false);
     } catch (error) {
@@ -42,6 +48,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
   const handleCancel = () => {
     setEditedName(client.name || '');
     setEditedPhone(client.phone || '');
+    setEditedStatus(client.status || 'new');
     setIsEditing(false);
   };
 
@@ -81,9 +88,8 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             />
           ) : null}
           <div
-            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg ${
-              client.profile_pic ? 'hidden' : ''
-            }`}
+            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg ${client.profile_pic ? 'hidden' : ''
+              }`}
           >
             <span className="text-2xl font-bold">
               {client.display_name.charAt(0).toUpperCase()}
@@ -142,7 +148,44 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             </p>
           )}
         </div>
-
+        {/* Status Field */}
+        <div className="bg-white rounded-xl border-2 border-gray-200 p-4 hover:border-blue-300 transition-colors">
+          <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
+              <Check className="w-4 h-4 text-purple-600" />
+            </div>
+            Статус
+          </label>
+          {isEditing ? (
+            <StatusSelect
+              value={editedStatus}
+              onChange={setEditedStatus}
+              options={statusConfig}
+              allowAdd={true}
+              onAddStatus={handleAddStatus}
+            />
+          ) : (
+            <div className="px-2 py-1">
+              <StatusSelect
+                value={client.status}
+                onChange={async (newStatus) => {
+                  try {
+                    await onUpdate({
+                      name: client.name,
+                      phone: client.phone,
+                      status: newStatus
+                    });
+                  } catch (error) {
+                    console.error('Failed to update status:', error);
+                  }
+                }}
+                options={statusConfig}
+                allowAdd={true}
+                onAddStatus={handleAddStatus}
+              />
+            </div>
+          )}
+        </div>
         {/* Instagram Field */}
         {client.username && (
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border-2 border-pink-200 p-4">
