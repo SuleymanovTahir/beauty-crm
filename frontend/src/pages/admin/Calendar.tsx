@@ -759,7 +759,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Клиент *
                 </label>
-                <div className="relative">
+                <div className="relative z-30">
                   <input
                     type="text"
                     placeholder="Поиск клиента по имени или телефону..."
@@ -833,7 +833,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Услуга *
                 </label>
-                <div className="relative">
+                <div className="relative z-20">
                   <input
                     type="text"
                     placeholder="Поиск услуги..."
