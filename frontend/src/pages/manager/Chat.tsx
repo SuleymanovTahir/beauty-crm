@@ -27,6 +27,7 @@ import { Textarea } from '../../components/ui/textarea';
 import TemplatesPanel from '../../components/chat/TemplatesPanel';
 import QuickReplies from '../../components/chat/QuickReplies';
 import MessageSearch from '../../components/chat/MessageSearch';
+import InfoPanel from '../../components/chat/InfoPanel';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
@@ -785,119 +786,37 @@ export default function Chat() {
 
             {/* Client Info Panel */}
             {showClientInfo && selectedClient && (
-              <div className="border-t border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 max-h-[400px] overflow-y-auto flex-shrink-0">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
-                    <User className="w-4 h-4 text-blue-600" />
-                    Информация
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setShowClientInfo(false);
-                      setIsEditingClient(false);
-                      handleCancelEdit();
-                    }}
-                    className="h-8 w-8 hover:bg-gray-100 rounded-lg flex items-center justify-center transition"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+              <div className="border-t border-gray-200 p-4 flex-shrink-0 max-h-[500px] overflow-y-auto">
+                <InfoPanel
+                  client={selectedClient}
+                  onClose={() => setShowClientInfo(false)}
+                  onUpdate={async (data) => {
+                    await api.updateClient(selectedClient.id, data);
+                    
+                    // Обновить локальное состояние
+                    setClients(clients.map(c =>
+                      c.id === selectedClient.id
+                        ? {
+                            ...c,
+                            name: data.name || c.name,
+                            phone: data.phone || c.phone,
+                            status: data.status || c.status,
+                            display_name: data.name || c.username || c.display_name
+                          }
+                        : c
+                    ));
 
-                <div className="space-y-3">
-                  <div className="border border-gray-200 rounded-xl p-3 bg-white">
-                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-sm">
-                      👤 Имя клиента
-                    </label>
-                    {isEditingClient ? (
-                      <input
-                        type="text"
-                        value={editedClientName}
-                        onChange={(e) => setEditedClientName(e.target.value)}
-                        placeholder="Введите имя..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm"
-                      />
-                    ) : (
-                      <p className="text-gray-900 text-sm px-1">
-                        {selectedClient.name || <span className="text-gray-400 italic">Не указано</span>}
-                      </p>
-                    )}
-                  </div>
+                    setSelectedClient({
+                      ...selectedClient,
+                      name: data.name,
+                      phone: data.phone,
+                      status: data.status || selectedClient.status,
+                      display_name: data.name || selectedClient.username || selectedClient.display_name
+                    });
 
-                  <div className="border border-gray-200 rounded-xl p-3 bg-white">
-                    <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-sm">
-                      <Phone className="w-3.5 h-3.5" />
-                      Телефон
-                    </label>
-                    {isEditingClient ? (
-                      <input
-                        type="text"
-                        value={editedClientPhone}
-                        onChange={(e) => setEditedClientPhone(e.target.value)}
-                        placeholder="+971 XX XXX XXXX"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm"
-                      />
-                    ) : (
-                      <p className="text-gray-900 text-sm px-1">
-                        {selectedClient.phone || <span className="text-gray-400 italic">Не указан</span>}
-                      </p>
-                    )}
-                  </div>
-
-                  {selectedClient.username && (
-                    <div className="border border-purple-200 rounded-xl p-3 bg-gradient-to-r from-purple-50 to-pink-50">
-                      <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-sm">
-                        <Instagram className="w-3.5 h-3.5 text-pink-600" />
-                        Instagram
-                      </label>
-                      <a
-                        href={`https://instagram.com/${selectedClient.username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-pink-600 hover:text-pink-700 font-semibold text-sm"
-                      >
-                        @{selectedClient.username}
-                      </a>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 space-y-2">
-                  {isEditingClient ? (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleSaveClientInfo}
-                        disabled={isSavingClient}
-                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-2 px-3 rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-                      >
-                        {isSavingClient ? (
-                          <>
-                            <Loader className="w-4 h-4 animate-spin" />
-                            Сохранение...
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-4 h-4" />
-                            Сохранить
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={handleCancelEdit}
-                        disabled={isSavingClient}
-                        className="px-3 py-2 border border-gray-300 rounded-xl text-sm"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setIsEditingClient(true)}
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-3 rounded-xl text-sm"
-                    >
-                      Редактировать
-                    </button>
-                  )}
-                </div>
+                    toast.success('Информация обновлена');
+                  }}
+                />
               </div>
             )}
 
