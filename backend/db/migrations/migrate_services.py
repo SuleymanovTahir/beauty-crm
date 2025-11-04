@@ -1185,6 +1185,97 @@ SERVICES_DATA = [
     },
 ]
 
+# ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ (ПРИМЕРЫ) =====
+SPECIAL_PACKAGES_DATA = [
+    {
+        'name': 'Summer Manicure & Pedicure',
+        'name_ru': 'Летний пакет: Маникюр + Педикюр',
+        'description': 'Complete hand and foot care with gel polish',
+        'description_ru': 'Полный уход за руками и ногами с гель-лаком',
+        'original_price': 360,
+        'special_price': 290,
+        'currency': 'AED',
+        'keywords': 'летний пакет, summer, маникюр педикюр вместе, manicure pedicure, маникюр+педикюр',
+        'promo_code': 'SUMMER2025',
+        'valid_from': '2025-06-01',
+        'valid_until': '2025-08-31',
+        'services_included': 'manicure_gelish, pedicure_gelish',
+        'max_usage': 100
+    },
+    {
+        'name': 'Balayage + Keratin Complex',
+        'name_ru': 'Комплекс: Balayage + Кератин',
+        'description': 'Hair coloring with keratin treatment',
+        'description_ru': 'Окрашивание балаяж + кератиновое выпрямление',
+        'original_price': 1500,
+        'special_price': 1200,
+        'currency': 'AED',
+        'keywords': 'балаяж, balayage, кератин комплекс, balayage keratin, окрашивание+кератин',
+        'promo_code': 'HAIR2025',
+        'valid_from': '2025-01-01',
+        'valid_until': '2025-12-31',
+        'services_included': 'balayage, hair_treatment',
+        'max_usage': 50
+    },
+    {
+        'name': 'Permanent Brows + Lips Package',
+        'name_ru': 'Пакет: Перманент Брови + Губы',
+        'description': 'Complete permanent makeup for brows and lips',
+        'description_ru': 'Полный перманентный макияж бровей и губ',
+        'original_price': 2300,
+        'special_price': 2000,
+        'currency': 'AED',
+        'keywords': 'перманент, permanent makeup, брови+губы, brows+lips, перманент комплекс',
+        'promo_code': 'PERMANENT2025',
+        'valid_from': '2025-01-01',
+        'valid_until': '2025-12-31',
+        'services_included': 'permanent_brows, permanent_lips',
+        'max_usage': None
+    }
+]
+
+def migrate_special_packages():
+    """Добавить специальные пакеты в БД"""
+    if not os.path.exists(DATABASE_NAME):
+        print(f"❌ БД {DATABASE_NAME} не найдена!")
+        return 1
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    print(f"\n📦 Добавление специальных пакетов...")
+    
+    for pkg in SPECIAL_PACKAGES_DATA:
+        try:
+            discount = int(((pkg['original_price'] - pkg['special_price']) / pkg['original_price']) * 100)
+            
+            c.execute("""INSERT INTO special_packages 
+                         (name, name_ru, description, description_ru, original_price, 
+                          special_price, currency, discount_percent, services_included, 
+                          promo_code, keywords, valid_from, valid_until, is_active, 
+                          created_at, updated_at, max_usage, usage_count)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 0)""",
+                      (pkg['name'], pkg['name_ru'], pkg['description'], 
+                       pkg['description_ru'], pkg['original_price'], 
+                       pkg['special_price'], pkg['currency'], discount, 
+                       pkg['services_included'], pkg['promo_code'], 
+                       pkg['keywords'], pkg['valid_from'], pkg['valid_until'],
+                       datetime.now().isoformat(), datetime.now().isoformat(),
+                       pkg['max_usage']))
+            
+            print(f"✅ {pkg['name_ru']} - {pkg['special_price']} AED (скидка {discount}%)")
+            
+        except sqlite3.IntegrityError:
+            print(f"⚠️  Пакет {pkg['name_ru']} уже существует")
+        except Exception as e:
+            print(f"❌ Ошибка: {pkg['name_ru']} - {e}")
+    
+    conn.commit()
+    conn.close()
+    
+    print(f"\n✅ Специальные пакеты добавлены!")
+    return 0
+
 def migrate_services():
     """Главная функция миграции"""
     
