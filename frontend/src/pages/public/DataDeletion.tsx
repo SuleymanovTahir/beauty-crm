@@ -1,6 +1,15 @@
 import React from 'react';
+import { apiClient } from '../../api/client';
 
 export default function DataDeletion() {
+  const [salonInfo, setSalonInfo] = React.useState<any>({});
+
+  React.useEffect(() => {
+    apiClient.getSalonInfo()
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
       <h1 className="text-3xl font-bold mb-6">Data Deletion Request</h1>
@@ -21,16 +30,16 @@ export default function DataDeletion() {
         <h2 className="text-2xl font-semibold mt-8 mb-4">How to Request Data Deletion</h2>
         <p className="mb-4">
           To request deletion of your data, please send a direct message to our Instagram account{' '}
-          <a href="https://instagram.com/mlediamant" className="text-pink-600 hover:underline">
-            @mlediamant
+          <a href={salonInfo.instagram || '#'} className="text-pink-600 hover:underline">
+          {salonInfo.instagram ? `${salonInfo.instagram.split('/').pop()}` : 'salon'}
           </a>
           {' '}with the text: <strong>"Delete my data"</strong>
         </p>
 
         <p className="mb-4">
           Alternatively, you can email us at:{' '}
-          <a href="mailto:privacy@mlediamant.com" className="text-pink-600 hover:underline">
-            privacy@mlediamant.com
+          <a href={`mailto:${salonInfo.privacy_contact_email || salonInfo.email}`} className="text-pink-600 hover:underline">
+          {salonInfo.privacy_contact_email || salonInfo.email}
           </a>
         </p>
 
@@ -50,12 +59,12 @@ export default function DataDeletion() {
           <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
           <p>
             Contact us via Instagram{' '}
-            <a href="https://instagram.com/mlediamant" className="text-pink-600 hover:underline">
-              @mlediamant
+            <a href={salonInfo.instagram || '#'} className="text-pink-600 hover:underline">
+              {salonInfo.instagram ? `${salonInfo.instagram.split('/').pop()}` : 'salon'}
             </a>
             {' '}or email{' '}
-            <a href="mailto:support@mlediamant.com" className="text-pink-600 hover:underline">
-              support@mlediamant.com
+            <a href={`mailto:${salonInfo.support_email || salonInfo.email}`} className="text-pink-600 hover:underline">
+              {salonInfo.support_email || salonInfo.email}
             </a>
           </p>
         </div>
