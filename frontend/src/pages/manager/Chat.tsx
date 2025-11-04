@@ -433,7 +433,7 @@ export default function Chat() {
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-            <Loader className="w-8 h-8 text-white animate-spin" />
+            <Loader className="w-8 h-8 text-black animate-spin" />
           </div>
           <p className="text-gray-600 font-medium">Загрузка чатов...</p>
         </div>
@@ -447,7 +447,7 @@ export default function Chat() {
         <div className="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-              <AlertCircle className="w-6 h-6 text-white" />
+              <AlertCircle className="w-6 h-6 text-black" />
             </div>
             <div className="flex-1">
               <p className="text-red-900 font-bold text-lg">Ошибка загрузки</p>
@@ -502,11 +502,11 @@ export default function Chat() {
                   `}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-black text-sm">
                         {client.display_name.charAt(0).toUpperCase()}
                       </div>
                       {client.unread_count && client.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
                           {client.unread_count > 9 ? '9+' : client.unread_count}
                         </div>
                       )}
@@ -539,456 +539,457 @@ export default function Chat() {
 
         {/* Chat Area - Занимает всё оставшееся место */}
         {selectedClient ? (
-          <div className="flex-1 flex flex-col bg-white min-w-0">
-            {/* Chat Header */}
-            <div className="p-3 md:p-4 border-b border-gray-200/50 bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 flex-shrink-0">
-              <div className="flex items-center justify-between gap-2">
-                <button
-                  onClick={handleBackToList}
-                  className="sm:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors flex-shrink-0"
-                >
-                  <ArrowLeft className="w-5 h-5 text-gray-700" />
-                </button>
-
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
-                    <img
-                      src={selectedClient.profile_pic}
-                      alt={selectedClient.display_name}
-                      className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-lg flex-shrink-0"
-                      crossOrigin="anonymous"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                        if (fallback) fallback.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
-                    }`}>
-                    {selectedClient.display_name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-gray-900 truncate text-sm">{selectedClient.display_name}</p>
-                    <p className="text-xs text-gray-600 truncate">
-                      {selectedClient.username && `@${selectedClient.username}`}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setShowMessageSearch(!showMessageSearch)}
-                    className={`h-9 w-9 p-0 rounded-xl border-2 ${showMessageSearch ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'hover:bg-white'
-                      }`}
+          <div className="flex-1 flex bg-white min-w-0">
+            {/* Main Chat Column */}
+            <div className="flex-1 flex flex-col min-w-0">
+              {/* Chat Header */}
+              <div className="p-3 md:p-4 border-b border-gray-200/50 bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 flex-shrink-0">
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    onClick={handleBackToList}
+                    className="sm:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors flex-shrink-0"
                   >
-                    <Search className="w-4 h-4" />
-                  </Button>
-                  <div className="relative">
+                    <ArrowLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
+                      <img
+                        src={selectedClient.profile_pic}
+                        alt={selectedClient.display_name}
+                        className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-lg flex-shrink-0"
+                        crossOrigin="anonymous"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-black font-bold shadow-lg flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
+                      }`}>
+                      {selectedClient.display_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-gray-900 truncate text-sm">{selectedClient.display_name}</p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {selectedClient.username && `@${selectedClient.username}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => setShowMobileMenu(!showMobileMenu)}
-                      className="h-9 w-9 p-0 rounded-xl border-2 hover:bg-white"
-                    >
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                    {showMobileMenu && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setShowMobileMenu(false)}
-                        />
-                        <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
-                          <button
-                            onClick={() => {
-                              setShowClientInfo(!showClientInfo);
-                              setShowTemplates(false);
-                              setShowNotes(false);
-                              setShowMobileMenu(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                          >
-                            <Info className="w-4 h-4 text-blue-600" />
-                            <span className="font-medium">Информация</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setShowTemplates(!showTemplates);
-                              setShowClientInfo(false);
-                              setShowNotes(false);
-                              setShowMobileMenu(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                          >
-                            <FileText className="w-4 h-4 text-purple-600" />
-                            <span className="font-medium">Шаблоны</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setShowNotes(!showNotes);
-                              setShowClientInfo(false);
-                              setShowTemplates(false);
-                              setShowMobileMenu(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
-                          >
-                            <StickyNote className="w-4 h-4 text-yellow-600" />
-                            <span className="font-medium">Заметки</span>
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Panel */}
-            {showMessageSearch && (
-              <MessageSearch
-                messages={messages}
-                onJumpToMessage={(index) => {
-                  messageRefs.current[index]?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                  });
-                }}
-                onClose={() => setShowMessageSearch(false)}
-              />
-            )}
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50/30">
-              {loadingMessages ? (
-                <div className="flex items-center justify-center h-full">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                      <Loader className="w-6 h-6 text-white animate-spin" />
-                    </div>
-                    <p className="text-gray-500 font-medium text-sm">Загрузка...</p>
-                  </div>
-                </div>
-              ) : messages.length > 0 ? (
-                messages.map((msg, index) => (
-                  <div
-                    key={msg.id}
-                    ref={(el) => messageRefs.current[index] = el}
-                    className={`flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
-                  >
-                    <div
-                      className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${(msg.sender === 'bot' || msg.sender === 'manager')
-                        ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                        : 'bg-white text-gray-900 border-2 border-gray-200'
+                      onClick={() => setShowMessageSearch(!showMessageSearch)}
+                      className={`h-9 w-9 p-0 rounded-xl border-2 ${showMessageSearch ? 'bg-yellow-100 border-yellow-400 text-yellow-700' : 'hover:bg-white'
                         }`}
                     >
-                      {msg.type === 'image' ? (
-                        <div className="relative group">
-                          <img
-                            src={(() => {
-                              if (msg.message.startsWith('http')) {
-                                if (msg.message.includes('zrok.io')) {
-                                  const url = new URL(msg.message);
-                                  const filePath = url.pathname;
-                                  return `${import.meta.env.VITE_API_URL}${filePath}`;
-                                }
-                                return msg.message;
-                              }
-                              return `${import.meta.env.VITE_API_URL}${msg.message}`;
-                            })()}
-                            alt="Изображение"
-                            loading="lazy"
-                            className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
-                            onClick={() => window.open(msg.message, '_blank')}
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                              const fallback = e.currentTarget.nextElementSibling;
-                              if (fallback) (fallback as HTMLElement).style.display = 'flex';
-                            }}
-                          />
+                      <Search className="w-4 h-4" />
+                    </Button>
+                    <div className="relative">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowMobileMenu(!showMobileMenu)}
+                        className="h-9 w-9 p-0 rounded-xl border-2 hover:bg-white"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                      {showMobileMenu && (
+                        <>
                           <div
-                            style={{ display: 'none' }}
-                            className={`px-4 py-6 flex flex-col items-center justify-center min-h-[140px] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                              }`}
-                          >
-                            <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-                            <p className="text-sm">📷 Изображение недоступно</p>
-                          </div>
-                          <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      ) : msg.type === 'video' ? (
-                        <div className="relative">
-                          <video
-                            src={msg.message}
-                            controls
-                            className="w-full h-auto rounded-t-2xl max-h-72"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
+                            className="fixed inset-0 z-40"
+                            onClick={() => setShowMobileMenu(false)}
                           />
-                          <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
+                          <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
+                            <button
+                              onClick={() => {
+                                setShowClientInfo(!showClientInfo);
+                                setShowTemplates(false);
+                                setShowNotes(false);
+                                setShowMobileMenu(false);
+                              }}
+                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            >
+                              <Info className="w-4 h-4 text-blue-600" />
+                              <span className="font-medium">Информация</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setShowTemplates(!showTemplates);
+                                setShowClientInfo(false);
+                                setShowNotes(false);
+                                setShowMobileMenu(false);
+                              }}
+                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            >
+                              <FileText className="w-4 h-4 text-purple-600" />
+                              <span className="font-medium">Шаблоны</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                setShowNotes(!showNotes);
+                                setShowClientInfo(false);
+                                setShowTemplates(false);
+                                setShowMobileMenu(false);
+                              }}
+                              className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
+                            >
+                              <StickyNote className="w-4 h-4 text-yellow-600" />
+                              <span className="font-medium">Заметки</span>
+                            </button>
                           </div>
-                        </div>
-                      ) : msg.type === 'audio' ? (
-                        <div className="px-4 py-3 min-w-[240px]">
-                          <audio
-                            src={msg.message}
-                            controls
-                            className="w-full"
-                          />
-                          <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      ) : msg.type === 'file' ? (
-                        <div className="px-4 py-3 min-w-[200px]">
-                          <a
-                            href={msg.message}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
-                              }`}
-                          >
-                            <FileText className="w-5 h-5" />
-                            <span className="text-sm font-medium">Открыть файл</span>
-                          </a>
-                          <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                            <p className="text-xs">
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="px-4 py-3">
-                          <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
-                          <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                            }`}>
-                            {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
-                        </div>
+                        </>
                       )}
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                      <MessageCircle className="w-8 h-8 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Search Panel */}
+              {showMessageSearch && (
+                <MessageSearch
+                  messages={messages}
+                  onJumpToMessage={(index) => {
+                    messageRefs.current[index]?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'center'
+                    });
+                  }}
+                  onClose={() => setShowMessageSearch(false)}
+                />
+              )}
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50/30">
+                {loadingMessages ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+                        <Loader className="w-6 h-6 text-black animate-spin" />
+                      </div>
+                      <p className="text-gray-500 font-medium text-sm">Загрузка...</p>
                     </div>
-                    <p className="text-gray-500 font-medium text-sm">Нет сообщений</p>
+                  </div>
+                ) : messages.length > 0 ? (
+                  messages.map((msg, index) => (
+                    <div
+                      key={msg.id}
+                      ref={(el) => messageRefs.current[index] = el}
+                      className={`flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                    >
+                      <div
+                        className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${(msg.sender === 'bot' || msg.sender === 'manager')
+                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-black'
+                          : 'bg-white text-gray-900 border-2 border-gray-200'
+                          }`}
+                      >
+                        {msg.type === 'image' ? (
+                          <div className="relative group">
+                            <img
+                              src={(() => {
+                                if (msg.message.startsWith('http')) {
+                                  if (msg.message.includes('zrok.io')) {
+                                    const url = new URL(msg.message);
+                                    const filePath = url.pathname;
+                                    return `${import.meta.env.VITE_API_URL}${filePath}`;
+                                  }
+                                  return msg.message;
+                                }
+                                return `${import.meta.env.VITE_API_URL}${msg.message}`;
+                              })()}
+                              alt="Изображение"
+                              loading="lazy"
+                              className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
+                              onClick={() => window.open(msg.message, '_blank')}
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const fallback = e.currentTarget.nextElementSibling;
+                                if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                              }}
+                            />
+                            <div
+                              style={{ display: 'none' }}
+                              className={`px-4 py-6 flex flex-col items-center justify-center min-h-[140px] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                                }`}
+                            >
+                              <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
+                              <p className="text-sm">📷 Изображение недоступно</p>
+                            </div>
+                            <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                              <p className="text-xs">
+                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        ) : msg.type === 'video' ? (
+                          <div className="relative">
+                            <video
+                              src={msg.message}
+                              controls
+                              className="w-full h-auto rounded-t-2xl max-h-72"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                            <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                              <p className="text-xs">
+                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        ) : msg.type === 'audio' ? (
+                          <div className="px-4 py-3 min-w-[240px]">
+                            <audio
+                              src={msg.message}
+                              controls
+                              className="w-full"
+                            />
+                            <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                              <p className="text-xs">
+                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        ) : msg.type === 'file' ? (
+                          <div className="px-4 py-3 min-w-[200px]">
+                            
+                           <a href={msg.message}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
+                                }`}
+                            >
+                              <FileText className="w-5 h-5" />
+                              <span className="text-sm font-medium">Открыть файл</span>
+                            </a>
+                            <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                              <p className="text-xs">
+                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="px-4 py-3">
+                            <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
+                            <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                              }`}>
+                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <MessageCircle className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <p className="text-gray-500 font-medium text-sm">Нет сообщений</p>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Quick Replies */}
+              {showQuickReplies && selectedClient && (
+                <div className="border-t border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 p-3 flex-shrink-0">
+                  <QuickReplies
+                    onSelect={(text) => {
+                      setMessage(text);
+                      setShowQuickReplies(false);
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Attached Files */}
+              {attachedFiles.length > 0 && (
+                <div className="border-t border-gray-200 p-3 bg-gradient-to-r from-blue-50 to-purple-50 flex-shrink-0">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-gray-700 flex items-center gap-1">
+                      <Paperclip className="w-3.5 h-3.5" />
+                      Файлы ({attachedFiles.length})
+                    </p>
+                    <button
+                      onClick={() => {
+                        setAttachedFiles([]);
+                        toast.info('Файлы очищены');
+                      }}
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
+                    >
+                      Очистить
+                    </button>
+                  </div>
+
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {attachedFiles.map((file, index) => (
+                      <div key={index} className="relative flex-shrink-0 group">
+                        <div className="w-20 h-20 bg-white rounded-xl border-2 border-gray-200 overflow-hidden flex items-center justify-center shadow-sm">
+                          {file.type.startsWith('image/') ? (
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={file.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : file.type.startsWith('video/') ? (
+                            <Video className="w-8 h-8 text-purple-600" />
+                          ) : (
+                            <FileText className="w-8 h-8 text-gray-400" />
+                          )}
+                        </div>
+
+                        <p className="text-xs text-gray-600 mt-1 w-20 truncate text-center" title={file.name}>
+                          {file.name}
+                        </p>
+
+                        <button
+                          onClick={() => handleRemoveFile(index)}
+                          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-black rounded-full flex items-center justify-center shadow-lg transition opacity-0 group-hover:opacity-100"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
-              <div ref={messagesEndRef} />
-            </div>
 
-            {/* Client Info Panel */}
-            {showClientInfo && selectedClient && (
-              <div className="border-t border-gray-200 p-4 flex-shrink-0 max-h-[500px] overflow-y-auto">
-                <InfoPanel
-                  client={selectedClient}
-                  onClose={() => setShowClientInfo(false)}
-                  onUpdate={async (data) => {
-                    await api.updateClient(selectedClient.id, data);
-
-                    // Обновить локальное состояние
-                    setClients(clients.map(c =>
-                      c.id === selectedClient.id
-                        ? {
-                          ...c,
-                          name: data.name || c.name,
-                          phone: data.phone || c.phone,
-                          status: data.status || c.status,
-                          display_name: data.name || c.username || c.display_name
+              {/* Chat Input */}
+              <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <Textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Сообщение..."
+                      className="resize-none border-2 border-gray-200 rounded-xl text-sm"
+                      rows={2}
+                      disabled={isUploadingFile}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (canSend && !isUploadingFile) {
+                            handleSendMessage();
+                          }
                         }
-                        : c
-                    ));
+                      }}
+                    />
+                  </div>
 
-                    setSelectedClient({
-                      ...selectedClient,
-                      name: data.name,
-                      phone: data.phone,
-                      status: data.status || selectedClient.status,
-                      display_name: data.name || selectedClient.username || selectedClient.display_name
-                    });
-
-                    toast.success('Информация обновлена');
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Templates Panel */}
-            {showTemplates && (
-              <div className="border-t border-gray-200 p-4">
-                <TemplatesPanel
-                  onSelect={(content) => {
-                    setMessage(content);
-                    setShowTemplates(false);
-                  }}
-                  onClose={() => setShowTemplates(false)}
-                />
-              </div>
-            )}
-            {/* Notes Panel */}
-            {showNotes && (
-              <div className="border-t border-gray-200 p-4 flex-shrink-0">
-                <NotesPanel
-                  notes={notes}
-                  onChange={setNotes}
-                  onSave={handleSaveNotes}
-                  onClose={() => setShowNotes(false)}
-                  isLoading={isLoadingNotes}
-                />
-              </div>
-            )}
-
-
-            {/* Quick Replies */}
-            {showQuickReplies && selectedClient && (
-              <div className="border-t border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 p-3 flex-shrink-0">
-                <QuickReplies
-                  onSelect={(text) => {
-                    setMessage(text);
-                    setShowQuickReplies(false);
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Attached Files */}
-            {attachedFiles.length > 0 && (
-              <div className="border-t border-gray-200 p-3 bg-gradient-to-r from-blue-50 to-purple-50 flex-shrink-0">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-bold text-gray-700 flex items-center gap-1">
-                    <Paperclip className="w-3.5 h-3.5" />
-                    Файлы ({attachedFiles.length})
-                  </p>
-                  <button
-                    onClick={() => {
-                      setAttachedFiles([]);
-                      toast.info('Файлы очищены');
-                    }}
-                    className="text-xs text-red-600 hover:text-red-700 font-medium"
-                  >
-                    Очистить
-                  </button>
-                </div>
-
-                <div className="flex gap-2 overflow-x-auto pb-2">
-                  {attachedFiles.map((file, index) => (
-                    <div key={index} className="relative flex-shrink-0 group">
-                      <div className="w-20 h-20 bg-white rounded-xl border-2 border-gray-200 overflow-hidden flex items-center justify-center shadow-sm">
-                        {file.type.startsWith('image/') ? (
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : file.type.startsWith('video/') ? (
-                          <Video className="w-8 h-8 text-purple-600" />
-                        ) : (
-                          <FileText className="w-8 h-8 text-gray-400" />
-                        )}
-                      </div>
-
-                      <p className="text-xs text-gray-600 mt-1 w-20 truncate text-center" title={file.name}>
-                        {file.name}
-                      </p>
-
-                      <button
-                        onClick={() => handleRemoveFile(index)}
-                        className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition opacity-0 group-hover:opacity-100"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Chat Input */}
-            <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <Textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Сообщение..."
-                    className="resize-none border-2 border-gray-200 rounded-xl text-sm"
-                    rows={2}
-                    disabled={isUploadingFile}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        if (canSend && !isUploadingFile) {
-                          handleSendMessage();
-                        }
-                      }
-                    }}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*,video/*,audio/*"
-                    multiple
-                    onChange={handleFileSelect}
-                  />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingFile}
-                    className="h-10 w-10 p-0 rounded-xl"
-                  >
-                    <Paperclip className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 h-10 w-10 p-0 rounded-xl"
-                    disabled={!canSend || isUploadingFile}
-                  >
-                    {isUploadingFile ? (
-                      <Loader className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/*,video/*,audio/*"
+                      multiple
+                      onChange={handleFileSelect}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingFile}
+                      className="h-10 w-10 p-0 rounded-xl"
+                    >
+                      <Paperclip className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      onClick={handleSendMessage}
+                      className="bg-gradient-to-r from-pink-500 to-purple-600 h-10 w-10 p-0 rounded-xl"
+                      disabled={!canSend || isUploadingFile}
+                    >
+                      {isUploadingFile ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* Right Sidebar for Panels */}
+            {(showClientInfo || showTemplates || showNotes) && (
+              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0">
+                {showClientInfo && selectedClient && (
+                  <div className="p-4">
+                    <InfoPanel
+                      client={selectedClient}
+                      onClose={() => setShowClientInfo(false)}
+                      onUpdate={async (data) => {
+                        await api.updateClient(selectedClient.id, data);
+                        setClients(clients.map(c =>
+                          c.id === selectedClient.id
+                            ? {
+                              ...c,
+                              name: data.name || c.name,
+                              phone: data.phone || c.phone,
+                              status: data.status || c.status,
+                              display_name: data.name || c.username || c.display_name
+                            }
+                            : c
+                        ));
+                        setSelectedClient({
+                          ...selectedClient,
+                          name: data.name,
+                          phone: data.phone,
+                          status: data.status || selectedClient.status,
+                          display_name: data.name || selectedClient.username || selectedClient.display_name
+                        });
+                        toast.success('Информация обновлена');
+                      }}
+                    />
+                  </div>
+                )}
+
+                {showTemplates && (
+                  <div className="p-4">
+                    <TemplatesPanel
+                      onSelect={(content) => {
+                        setMessage(content);
+                        setShowTemplates(false);
+                      }}
+                      onClose={() => setShowTemplates(false)}
+                    />
+                  </div>
+                )}
+
+                {showNotes && (
+                  <div className="p-4">
+                    <NotesPanel
+                      notes={notes}
+                      onChange={setNotes}
+                      onSave={handleSaveNotes}
+                      onClose={() => setShowNotes(false)}
+                      isLoading={isLoadingNotes}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 hidden sm:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">

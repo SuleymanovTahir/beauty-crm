@@ -19,15 +19,15 @@ export default function NotesPanel({ notes, onChange, onSave, onClose, isLoading
       <div className="bg-gradient-to-r from-yellow-500 to-amber-600 p-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-            <StickyNote className="w-5 h-5 text-white" />
+            <StickyNote className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-white text-lg">Заметки</h3>
+          <h3 className="font-bold text-black text-lg">Заметки</h3>
         </div>
         <button
           onClick={onClose}
           className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5 text-white" />
+          <X className="w-5 h-5 text-black" />
         </button>
       </div>
 
@@ -59,7 +59,7 @@ export default function NotesPanel({ notes, onChange, onSave, onClose, isLoading
         <Button
           onClick={onSave}
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-700 hover:to-orange-600 text-white rounded-xl shadow-xl font-bold disabled:opacity-50 border-2 border-yellow-800"
+          className="w-full bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-700 hover:to-orange-600 text-black rounded-xl shadow-xl font-bold disabled:opacity-50 border-2 border-yellow-800"
         >
           {isLoading ? (
             <>

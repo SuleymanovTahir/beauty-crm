@@ -59,15 +59,15 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-            <User className="w-5 h-5 text-white" />
+            <User className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-white text-lg">Информация</h3>
+          <h3 className="font-bold text-black text-lg">Информация</h3>
         </div>
         <button
           onClick={onClose}
           className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5 text-white" />
+          <X className="w-5 h-5 text-black" />
         </button>
       </div>
   
@@ -89,7 +89,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             />
           ) : null}
           <div
-            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg flex-shrink-0 ${client.profile_pic ? 'hidden' : ''
+            className={`w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-black shadow-lg flex-shrink-0 ${client.profile_pic ? 'hidden' : ''
               }`}
           >
             <span className="text-2xl font-bold">
@@ -194,7 +194,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border-2 border-pink-200 p-4">
             <label className="flex items-center gap-2 font-semibold text-gray-700 mb-3">
               <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Instagram className="w-4 h-4 text-white" />
+                <Instagram className="w-4 h-4 text-black" />
               </div>
               Instagram
             </label>
@@ -221,7 +221,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl shadow-lg"
+              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-black rounded-xl shadow-lg"
             >
               {isSaving ? (
                 <>
@@ -248,7 +248,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
         ) : (
           <Button
             onClick={() => setIsEditing(true)}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-black rounded-xl shadow-lg"
           >
             <Edit2 className="w-4 h-4 mr-2" />
             Редактировать

@@ -72,12 +72,8 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
     }
   };
 
-  const handleUpdate = async (id: string, title?: string, content?: string) => {
+  const handleUpdate = async (id: string, updateData: { title?: string; content?: string }) => {
     try {
-      const updateData: any = {};
-      if (title !== undefined) updateData.title = title;
-      if (content !== undefined) updateData.content = content;
-
       await api.updateMessageTemplate(parseInt(id), updateData);
       toast.success('Шаблон обновлен');
       setEditingId(null);
@@ -141,15 +137,15 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-            <FileText className="w-5 h-5 text-white" />
+            <FileText className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-white text-lg">Шаблоны сообщений</h3>
+          <h3 className="font-bold text-black text-lg">Шаблоны сообщений</h3>
         </div>
         <button
           onClick={onClose}
           className="h-9 w-9 hover:bg-white/20 rounded-xl flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5 text-white" />
+          <X className="w-5 h-5 text-black" />
         </button>
       </div>
 
@@ -237,31 +233,50 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                     {editingId === template.id ? (
                       <div className="p-4 bg-white rounded-xl border-2 border-purple-300">
                         <Input
+                          id={`title-${template.id}`}
                           defaultValue={template.title}
-                          onBlur={(e) => {
-                            if (e.target.value !== template.title) {
-                              handleUpdate(template.id, e.target.value, undefined);
-                            }
-                          }}
                           className="mb-2"
                         />
                         <Textarea
+                          id={`content-${template.id}`}
                           defaultValue={template.content}
-                          onBlur={(e) => {
-                            if (e.target.value !== template.content) {
-                              handleUpdate(template.id, undefined, e.target.value);
-                            }
-                          }}
                           rows={3}
+                          className="mb-2"
                         />
-                        <Button
-                          onClick={() => setEditingId(null)}
-                          size="sm"
-                          variant="outline"
-                          className="mt-2"
-                        >
-                          Готово
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => {
+                              const titleInput = document.getElementById(`title-${template.id}`) as HTMLInputElement;
+                              const contentInput = document.getElementById(`content-${template.id}`) as HTMLTextAreaElement;
+                              
+                              const updateData: any = {};
+                              if (titleInput && titleInput.value !== template.title) {
+                                updateData.title = titleInput.value;
+                              }
+                              if (contentInput && contentInput.value !== template.content) {
+                                updateData.content = contentInput.value;
+                              }
+                              
+                              if (Object.keys(updateData).length > 0) {
+                                handleUpdate(template.id, updateData);
+                              } else {
+                                setEditingId(null);
+                              }
+                            }}
+                            size="sm"
+                            className="flex-1"
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            Сохранить
+                          </Button>
+                          <Button
+                            onClick={() => setEditingId(null)}
+                            size="sm"
+                            variant="outline"
+                          >
+                            Отмена
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <button
@@ -329,16 +344,6 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
               )}
             </>
           )}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 bg-purple-100/30 border-t-2 border-purple-200">
-        <div className="bg-white/60 backdrop-blur rounded-xl p-3 border border-purple-200">
-          <p className="text-xs text-purple-800 flex items-center gap-1.5">
-            <Star className="w-4 h-4 flex-shrink-0 text-purple-600" />
-            Совет: используйте {`{{ date }}`} и {`{{ time }}`} для подстановки данных
-          </p>
         </div>
       </div>
     </div>

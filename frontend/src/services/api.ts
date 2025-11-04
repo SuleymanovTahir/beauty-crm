@@ -476,12 +476,13 @@ export class ApiClient {
   }
 
   async updateMessageTemplate(templateId: number, data: { name?: string; title?: string; content?: string; category?: string }) {
-    // Если передан title, используем его как name для бэкенда
-    const requestData = {
-      name: data.title || data.name,
-      content: data.content,
-      category: data.category
-    };
+    const requestData: any = {};
+    
+    // Добавляем только те поля, которые переданы
+    if (data.title !== undefined) requestData.name = data.title;
+    if (data.name !== undefined) requestData.name = data.name;
+    if (data.content !== undefined) requestData.content = data.content;
+    if (data.category !== undefined) requestData.category = data.category;
 
     return this.request(`/api/chat/templates/${templateId}`, {
       method: 'PUT',
