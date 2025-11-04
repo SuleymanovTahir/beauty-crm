@@ -19,23 +19,14 @@ import {
   MoreVertical,
   Image as ImageIcon,
   Video,
-  Smile,
-  CheckCheck
+
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { ScrollArea } from '../../components/ui/scroll-area';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../components/ui/dropdown-menu';
-import MessageTemplates from '../../components/chat/MessageTemplates';
+
+import TemplatesPanel from '../../components/chat/TemplatesPanel';
 import QuickReplies from '../../components/chat/QuickReplies';
 import MessageSearch from '../../components/chat/MessageSearch';
-import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
@@ -925,12 +916,13 @@ export default function Chat() {
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <MessageTemplates
+                <TemplatesPanel
                   onSelect={(content) => {
                     setMessage(content);
                     setShowTemplates(false);
                     toast.success('Шаблон вставлен');
                   }}
+                  onClose={() => setShowTemplates(false)}
                 />
               </div>
             )}
