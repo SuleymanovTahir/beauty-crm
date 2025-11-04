@@ -91,6 +91,8 @@ export default defineConfig({
     // Минификация (terser для лучшего результата)
     minify: "terser",
 
+    chunkSizeWarningLimit: 2000, 
+
     // Не генерировать исходные карты для продакшена
     sourcemap: false,
 
