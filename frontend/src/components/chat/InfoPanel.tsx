@@ -13,6 +13,7 @@ interface Client {
   phone: string;
   display_name: string;
   profile_pic?: string;
+  status: string;
 }
 
 interface InfoPanelProps {
