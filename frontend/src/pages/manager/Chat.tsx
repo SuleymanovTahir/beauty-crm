@@ -28,6 +28,7 @@ import TemplatesPanel from '../../components/chat/TemplatesPanel';
 import QuickReplies from '../../components/chat/QuickReplies';
 import MessageSearch from '../../components/chat/MessageSearch';
 import InfoPanel from '../../components/chat/InfoPanel';
+import NotesPanel from '../../components/chat/NotesPanel';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
@@ -69,13 +70,13 @@ export default function Chat() {
   const [error, setError] = useState<string | null>(null);
 
   const [showNotes, setShowNotes] = useState(false);
+  const [notes, setNotes] = useState('');
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [showMessageSearch, setShowMessageSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const [notes, setNotes] = useState('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
 
@@ -822,12 +823,11 @@ export default function Chat() {
 
             {/* Templates Panel */}
             {showTemplates && (
-              <div className="border-t border-gray-200 bg-white p-4 flex-shrink-0">
+              <div className="border-t border-gray-200 p-4">
                 <TemplatesPanel
                   onSelect={(content) => {
                     setMessage(content);
                     setShowTemplates(false);
-                    toast.success('Шаблон вставлен');
                   }}
                   onClose={() => setShowTemplates(false)}
                 />
@@ -835,36 +835,16 @@ export default function Chat() {
             )}
             {/* Notes Panel */}
             {showNotes && (
-              <div className="border-t border-gray-200 bg-gradient-to-br from-yellow-50 to-amber-50 p-4 flex-shrink-0">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-gray-900 font-bold text-sm flex items-center gap-2">
-                    <StickyNote className="w-4 h-4 text-yellow-600" />
-                    Заметки
-                  </h4>
-                  <button
-                    onClick={() => setShowNotes(false)}
-                    className="h-8 w-8 hover:bg-white/50 rounded-lg flex items-center justify-center"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Введите заметки..."
-                  className="min-h-[100px] mb-3 bg-white text-sm"
-                  rows={3}
+              <div className="border-t border-gray-200 p-4">
+                <NotesPanel
+                  notes={notes}
+                  onChange={setNotes}
+                  onSave={handleSaveNotes}
+                  onClose={() => setShowNotes(false)}
                 />
-                <Button
-                  size="sm"
-                  onClick={handleSaveNotes}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-sm"
-                >
-                  <Check className="w-4 h-4 mr-2" />
-                  Сохранить
-                </Button>
               </div>
             )}
+
 
             {/* Quick Replies */}
             {showQuickReplies && selectedClient && (
