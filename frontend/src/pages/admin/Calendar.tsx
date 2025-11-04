@@ -1,6 +1,5 @@
-//src/pages/Calendar.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit, Check, X, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, Calendar as CalendarIcon, Trash2, Edit, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -91,12 +90,10 @@ export default function Calendar() {
   const [isEditing, setIsEditing] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
   
-  // Client search
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   
-  // Service search
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -139,15 +136,22 @@ export default function Calendar() {
     }
   };
 
-  const weekDays = useMemo(() => {
+  const getWeekDays = () => {
     const days = [];
-    for (let i = -3; i <= 3; i++) {
-      const d = new Date(currentDate);
-      d.setDate(d.getDate() + i);
-      days.push(d);
+    const startOfWeek = new Date(currentDate);
+    const dayOfWeek = startOfWeek.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    startOfWeek.setDate(startOfWeek.getDate() + diff);
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + i);
+      days.push(date);
     }
     return days;
-  }, [currentDate]);
+  };
+
+  const weekDays = getWeekDays();
 
   const getBookingsForSlot = (day: Date, hour: number, minute: number) => {
     return bookings.filter(b => {
@@ -165,19 +169,19 @@ export default function Calendar() {
     });
   };
 
-  const handlePrevDay = () => {
-    const d = new Date(currentDate);
-    d.setDate(d.getDate() - 1);
-    setCurrentDate(d);
+  const goToPreviousWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() - 7);
+    setCurrentDate(newDate);
   };
 
-  const handleNextDay = () => {
-    const d = new Date(currentDate);
-    d.setDate(d.getDate() + 1);
-    setCurrentDate(d);
+  const goToNextWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + 7);
+    setCurrentDate(newDate);
   };
 
-  const handleToday = () => {
+  const goToToday = () => {
     const todayDate = new Date();
     todayDate.setHours(0, 0, 0, 0);
     setCurrentDate(todayDate);
@@ -191,6 +195,22 @@ export default function Calendar() {
     } else {
       toast.success(`📅 ${todayBookings.length} записей на сегодня 🔥`, { duration: 3000 });
     }
+  };
+
+  const isToday = (date: Date) => {
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  };
+
+  const isSelected = (date: Date) => {
+    return date.getDate() === currentDate.getDate() &&
+           date.getMonth() === currentDate.getMonth() &&
+           date.getFullYear() === currentDate.getFullYear();
+  };
+
+  const formatMonth = (date: Date) => {
+    return MONTHS[date.getMonth()];
   };
 
   const openCreateModal = () => {
@@ -317,168 +337,146 @@ export default function Calendar() {
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
-  const isToday = (date: Date) => date.toDateString() === today.toDateString();
-  const isCurrentDate = (date: Date) => date.toDateString() === currentDate.toDateString();
-
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
-        <p style={{ marginTop: '1rem', color: '#6b7280' }}>Загрузка...</p>
+      <div className="flex flex-col items-center justify-center h-full">
+        <div className="inline-block animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full"></div>
+        <p className="mt-4 text-gray-500">Загрузка...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '1rem', backgroundColor: '#f9fafb', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div style={{ marginBottom: '0.75rem' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827' }}>
-          Календарь
-        </h1>
-      </div>
-
-      {/* Navigation */}
-      <div style={{
-        backgroundColor: '#fff',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-        padding: '0.75rem',
-        marginBottom: '0.75rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '0.75rem'
-      }}>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button onClick={handlePrevDay} style={{
-            width: '32px', height: '32px', border: '1px solid #d1d5db',
-            borderRadius: '0.375rem', backgroundColor: '#fff', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <ChevronLeft size={16} color="#6b7280" />
-          </button>
-
-          <button onClick={handleNextDay} style={{
-            width: '32px', height: '32px', border: '1px solid #d1d5db',
-            borderRadius: '0.375rem', backgroundColor: '#fff', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <ChevronRight size={16} color="#6b7280" />
-          </button>
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm text-gray-900">Календарь</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={goToToday}
+              className="px-4 py-2 text-sm text-purple-600 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors"
+            >
+              Сегодня
+            </button>
+            <button 
+              onClick={openCreateModal}
+              className="px-4 py-2 text-sm text-white bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:shadow-lg transition-all flex items-center gap-2"
+            >
+              <Plus size={16} />
+              Запись
+            </button>
+          </div>
         </div>
 
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '0.5rem',
-          fontSize: '0.95rem', fontWeight: '600', color: '#111827'
-        }}>
-          {isToday(currentDate) && <CalendarIcon size={16} color="#ec4899" />}
-          <span style={{ color: isToday(currentDate) ? '#ec4899' : '#111827' }}>
-            {currentDate.getDate()} {MONTHS[currentDate.getMonth()]}
-          </span>
-        </div>
+        {/* Week Navigation */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={goToPreviousWeek}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronLeft size={20} className="text-gray-600" />
+            </button>
+            <button
+              onClick={goToNextWeek}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ChevronRight size={20} className="text-gray-600" />
+            </button>
+          </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={handleToday} style={{
-            padding: '0.4rem 0.75rem', backgroundColor: '#fff',
-            border: '2px solid #ec4899', borderRadius: '0.375rem',
-            fontSize: '0.8rem', fontWeight: '600', color: '#ec4899', cursor: 'pointer'
-          }}>
-            Сегодня
-          </button>
-
-          <button onClick={openCreateModal} style={{
-            padding: '0.4rem 0.75rem', backgroundColor: '#2563eb',
-            color: '#fff', border: 'none', borderRadius: '0.375rem',
-            fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: '0.3rem'
-          }}>
-            <Plus size={14} />
-            Запись
-          </button>
+          <div className="flex items-center gap-2 text-purple-500">
+            <CalendarIcon size={18} />
+            <span className="text-sm">
+              {currentDate.getDate()} {formatMonth(currentDate)}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Week Days */}
-      <div style={{
-        backgroundColor: '#fff', borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb', padding: '0.5rem',
-        marginBottom: '0.75rem', display: 'grid',
-        gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.375rem'
-      }}>
-        {weekDays.map((day, idx) => {
-          const isCurrent = isCurrentDate(day);
-          const isCurrentToday = isToday(day);
-          
-          return (
-            <button key={idx} onClick={() => setCurrentDate(new Date(day))} style={{
-              padding: '0.5rem 0.25rem',
-              backgroundColor: isCurrent ? '#ec4899' : isCurrentToday ? '#fef3c7' : '#f9fafb',
-              border: isCurrent ? '2px solid #ec4899' : '1px solid #e5e7eb',
-              borderRadius: '0.375rem', cursor: 'pointer'
-            }}>
-              <div style={{
-                fontSize: '0.65rem', fontWeight: '600',
-                color: isCurrent ? '#fff' : '#6b7280', marginBottom: '0.125rem'
-              }}>
-                {DAYS[day.getDay() === 0 ? 6 : day.getDay() - 1]}
+      {/* Week Days Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-2">
+        <div className="grid grid-cols-8 gap-2">
+          <div className="text-xs text-gray-500"></div>
+          {weekDays.map((day, index) => (
+            <div
+              key={index}
+              className={`
+                text-center py-3 rounded-lg transition-colors cursor-pointer
+                ${isSelected(day) ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' : 'hover:bg-gray-50'}
+              `}
+              onClick={() => setCurrentDate(new Date(day))}
+            >
+              <div className="text-xs text-gray-500 mb-1">
+                {isSelected(day) ? (
+                  <span className="text-white/80">{DAYS[index]}</span>
+                ) : (
+                  DAYS[index]
+                )}
               </div>
-              <div style={{
-                fontSize: '0.9rem', fontWeight: 'bold',
-                color: isCurrent ? '#fff' : '#111827'
-              }}>
+              <div className={`text-sm ${isSelected(day) ? 'text-white font-bold' : 'text-gray-900'}`}>
                 {day.getDate()}
               </div>
-            </button>
-          );
-        })}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div style={{
-        backgroundColor: '#fff', borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb', overflow: 'hidden',
-        flex: 1, display: 'flex', flexDirection: 'column'
-      }}>
-        <div style={{ flex: 1, overflow: 'auto' }}>
-          {TIME_SLOTS.map((slot, slotIdx) => (
-            <div key={slotIdx} style={{
-              display: 'grid', gridTemplateColumns: '60px 1fr',
-              gap: '0', borderBottom: slotIdx !== TIME_SLOTS.length - 1 ? '1px solid #e5e7eb' : 'none',
-              minHeight: '50px'
-            }}>
-              <div style={{
-                padding: '0.5rem 0.25rem', backgroundColor: '#f9fafb',
-                borderRight: '1px solid #e5e7eb', fontWeight: '600',
-                color: '#6b7280', textAlign: 'center', display: 'flex',
-                alignItems: 'center', justifyContent: 'center',
-                fontSize: '0.75rem', gap: '0.25rem', whiteSpace: 'nowrap'
-              }}>
-                <Clock size={12} />
+      {/* Time Slots */}
+      <div className="flex-1 overflow-auto px-6 py-4">
+        <div className="space-y-2">
+          {TIME_SLOTS.map((slot, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-8 gap-2 items-start"
+            >
+              <div className="flex items-center gap-2 text-xs text-gray-500 pt-2">
+                <CalendarIcon size={14} className="text-gray-400" />
                 {slot.display}
               </div>
-
-              <div onClick={openCreateModal} style={{
-                padding: '0.3rem', backgroundColor: '#fff',
-                cursor: 'pointer', display: 'flex',
-                flexDirection: 'column', gap: '0.2rem', overflow: 'auto'
-              }}>
-                {getBookingsForSlot(currentDate, slot.hour, slot.minute).map(booking => (
-                  <div key={booking.id} onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedBooking(booking);
-                  }} style={{
-                    padding: '0.35rem', backgroundColor: statusColors[booking.status]?.bg,
-                    color: statusColors[booking.status]?.text,
-                    border: `1px solid ${statusColors[booking.status]?.border}`,
-                    borderRadius: '0.25rem', fontSize: '0.7rem',
-                    cursor: 'pointer', fontWeight: 'bold',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-                  }} title={`${booking.name} - ${booking.service}`}>
-                    {booking.name} - {booking.service}
-                  </div>
-                ))}
-              </div>
+              {weekDays.map((day, dayIndex) => {
+                const slotBookings = getBookingsForSlot(day, slot.hour, slot.minute);
+                return (
+                  <button
+                    key={dayIndex}
+                    onClick={() => {
+                      setCurrentDate(new Date(day));
+                      if (slotBookings.length === 0) {
+                        openCreateModal();
+                      }
+                    }}
+                    className={`
+                      min-h-[60px] p-2 rounded-lg border-2 transition-all text-left
+                      ${slotBookings.length > 0 
+                        ? 'border-solid' 
+                        : 'border-dashed border-gray-200 hover:border-purple-300 hover:bg-purple-50'
+                      }
+                      ${isSelected(day) && slotBookings.length === 0 ? 'bg-purple-50/50' : 'bg-white'}
+                    `}
+                  >
+                    {slotBookings.map(booking => (
+                      <div
+                        key={booking.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBooking(booking);
+                        }}
+                        className="text-xs font-medium p-2 rounded cursor-pointer mb-1 overflow-hidden"
+                        style={{
+                          backgroundColor: statusColors[booking.status]?.bg,
+                          color: statusColors[booking.status]?.text,
+                          border: `1px solid ${statusColors[booking.status]?.border}`,
+                        }}
+                        title={`${booking.name} - ${booking.service}`}
+                      >
+                        <div className="truncate font-semibold">{booking.name}</div>
+                        <div className="truncate text-[10px] opacity-80">{booking.service}</div>
+                      </div>
+                    ))}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
@@ -487,35 +485,43 @@ export default function Calendar() {
       {/* Create/Edit Modal */}
       {showCreateModal && (
         <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999, padding: '1rem'
+          position: 'fixed', 
+          inset: 0, 
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          zIndex: 9999, 
+          padding: '1rem'
         }}>
           <div style={{
-            backgroundColor: '#fff', borderRadius: '1rem',
-            width: '100%', maxWidth: '500px', maxHeight: '90vh',
-            overflow: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+            backgroundColor: '#fff', 
+            borderRadius: '1rem',
+            width: '100%', 
+            maxWidth: '500px', 
+            maxHeight: '90vh',
+            overflow: 'auto', 
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
           }}>
-            <div style={{
-              padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-            }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+              <h3 className="text-xl font-bold text-gray-900">
                 {isEditing ? 'Редактировать запись' : 'Добавить запись'}
               </h3>
-              <button onClick={() => { setShowCreateModal(false); resetForm(); }} style={{
-                backgroundColor: 'transparent', border: 'none',
-                cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
-              }}>×</button>
+              <button 
+                onClick={() => { setShowCreateModal(false); resetForm(); }}
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+              >
+                ×
+              </button>
             </div>
             
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="p-6 space-y-4">
               {/* Client Search */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Клиент *
                 </label>
-                <div style={{ position: 'relative' }}>
+                <div className="relative">
                   <input
                     type="text"
                     placeholder="Поиск клиента по имени или телефону..."
@@ -526,41 +532,24 @@ export default function Calendar() {
                       setShowClientDropdown(true);
                     }}
                     onFocus={() => setShowClientDropdown(true)}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   />
                   {selectedClient && (
-                    <div style={{
-                      position: 'absolute', right: '0.75rem', top: '50%',
-                      transform: 'translateY(-50%)', display: 'flex',
-                      alignItems: 'center', gap: '0.5rem'
-                    }}>
-                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <Check size={16} className="text-green-500" />
                       <button
                         onClick={() => {
                           setSelectedClient(null);
                           setClientSearch('');
                         }}
-                        style={{
-                          backgroundColor: 'transparent', border: 'none',
-                          cursor: 'pointer', padding: 0
-                        }}
+                        className="text-gray-400 hover:text-gray-600"
                       >
-                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                        <X size={16} />
                       </button>
                     </div>
                   )}
                   {showClientDropdown && !selectedClient && clientSearch && (
-                    <div style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0,
-                      marginTop: '0.5rem', backgroundColor: '#fff',
-                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
-                    }}>
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-10">
                       {filteredClients.length > 0 ? (
                         filteredClients.map((client) => (
                           <button
@@ -571,31 +560,17 @@ export default function Calendar() {
                               setShowClientDropdown(false);
                               setAddForm({ ...addForm, phone: client.phone || '' });
                             }}
-                            style={{
-                              width: '100%', padding: '0.75rem 1rem',
-                              textAlign: 'left', border: 'none',
-                              backgroundColor: '#fff', cursor: 'pointer',
-                              borderBottom: '1px solid #f3f4f6',
-                              display: 'flex', alignItems: 'center', gap: '0.75rem'
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+                            className="w-full px-4 py-3 text-left hover:bg-purple-50 border-b border-gray-100 flex items-center gap-3 transition-colors"
                           >
-                            <div style={{
-                              width: '40px', height: '40px',
-                              backgroundColor: '#fce7f3', borderRadius: '50%',
-                              display: 'flex', alignItems: 'center',
-                              justifyContent: 'center', color: '#ec4899',
-                              fontWeight: '500', fontSize: '0.875rem', flexShrink: 0
-                            }}>
+                            <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                               {(client.display_name || 'N').charAt(0).toUpperCase()}
                             </div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">
                                 {client.display_name}
                               </div>
                               {client.phone && (
-                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                <div className="text-xs text-gray-500 truncate">
                                   {client.phone}
                                 </div>
                               )}
@@ -603,7 +578,7 @@ export default function Calendar() {
                           </button>
                         ))
                       ) : (
-                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
+                        <div className="px-4 py-8 text-center text-gray-500 text-sm">
                           Клиенты не найдены
                         </div>
                       )}
@@ -614,10 +589,10 @@ export default function Calendar() {
 
               {/* Service Search */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Услуга *
                 </label>
-                <div style={{ position: 'relative' }}>
+                <div className="relative">
                   <input
                     type="text"
                     placeholder="Поиск услуги..."
@@ -628,41 +603,24 @@ export default function Calendar() {
                       setShowServiceDropdown(true);
                     }}
                     onFocus={() => setShowServiceDropdown(true)}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   />
                   {selectedService && (
-                    <div style={{
-                      position: 'absolute', right: '0.75rem', top: '50%',
-                      transform: 'translateY(-50%)', display: 'flex',
-                      alignItems: 'center', gap: '0.5rem'
-                    }}>
-                      <Check style={{ width: '16px', height: '16px', color: '#10b981' }} />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                      <Check size={16} className="text-green-500" />
                       <button
                         onClick={() => {
                           setSelectedService(null);
                           setServiceSearch('');
                         }}
-                        style={{
-                          backgroundColor: 'transparent', border: 'none',
-                          cursor: 'pointer', padding: 0
-                        }}
+                        className="text-gray-400 hover:text-gray-600"
                       >
-                        <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                        <X size={16} />
                       </button>
                     </div>
                   )}
                   {showServiceDropdown && !selectedService && serviceSearch && (
-                    <div style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0,
-                      marginTop: '0.5rem', backgroundColor: '#fff',
-                      border: '1px solid #e5e7eb', borderRadius: '0.5rem',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                      maxHeight: '300px', overflowY: 'auto', zIndex: 10
-                    }}>
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-10">
                       {filteredServices.length > 0 ? (
                         filteredServices.map((service) => (
                           <button
@@ -673,32 +631,25 @@ export default function Calendar() {
                               setShowServiceDropdown(false);
                               setAddForm({ ...addForm, revenue: service.price });
                             }}
-                            style={{
-                              width: '100%', padding: '0.75rem 1rem',
-                              textAlign: 'left', border: 'none',
-                              backgroundColor: '#fff', cursor: 'pointer',
-                              borderBottom: '1px solid #f3f4f6'
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+                            className="w-full px-4 py-3 text-left hover:bg-purple-50 border-b border-gray-100 transition-colors"
                           >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div className="flex justify-between items-center">
                               <div>
-                                <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111' }}>
+                                <div className="text-sm font-medium text-gray-900">
                                   {service.name_ru}
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                <div className="text-xs text-gray-500">
                                   {service.category}
                                 </div>
                               </div>
-                              <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#ec4899' }}>
+                              <div className="text-sm font-semibold text-purple-600">
                                 {service.price} {service.currency}
                               </div>
                             </div>
                           </button>
                         ))
                       ) : (
-                        <div style={{ padding: '1rem', textAlign: 'center', color: '#9ca3af', fontSize: '0.875rem' }}>
+                        <div className="px-4 py-8 text-center text-gray-500 text-sm">
                           Услуги не найдены
                         </div>
                       )}
@@ -709,18 +660,13 @@ export default function Calendar() {
 
               {/* Master Selection */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Мастер
                 </label>
                 <select
                   value={addForm.master}
                   onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
-                  style={{
-                    width: '100%', padding: '0.75rem',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    fontSize: '0.95rem', boxSizing: 'border-box',
-                    backgroundColor: '#fff', cursor: 'pointer'
-                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
                 >
                   <option value="">Выберите мастера</option>
                   {masters.map((m) => (
@@ -733,7 +679,7 @@ export default function Calendar() {
 
               {/* Phone */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Телефон {!selectedClient?.phone && '*'}
                 </label>
                 <input
@@ -741,44 +687,31 @@ export default function Calendar() {
                   placeholder="+971 50 123 4567"
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
-                  style={{
-                    width: '100%', padding: '0.75rem',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    fontSize: '0.95rem', boxSizing: 'border-box'
-                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
               </div>
 
               {/* Date and Time */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Дата *
                   </label>
                   <input
                     type="date"
                     value={addForm.date}
                     onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box'
-                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Время *
                   </label>
                   <select
                     value={addForm.time}
                     onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                    style={{
-                      width: '100%', padding: '0.75rem',
-                      border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                      fontSize: '0.95rem', boxSizing: 'border-box',
-                      backgroundColor: '#fff', cursor: 'pointer'
-                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
                   >
                     {TIME_SLOTS.map((slot, idx) => (
                       <option key={idx} value={slot.display}>
@@ -791,7 +724,7 @@ export default function Calendar() {
 
               {/* Revenue */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Сумма (AED)
                 </label>
                 <input
@@ -799,38 +732,23 @@ export default function Calendar() {
                   placeholder="0"
                   value={addForm.revenue}
                   onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
-                  style={{
-                    width: '100%', padding: '0.75rem',
-                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
-                    fontSize: '0.95rem', boxSizing: 'border-box'
-                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 />
               </div>
 
               {/* Buttons */}
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+              <div className="flex gap-3 pt-4">
                 <button
                   onClick={() => { setShowCreateModal(false); resetForm(); }}
                   disabled={addingBooking}
-                  style={{
-                    flex: 1, padding: '0.75rem',
-                    backgroundColor: '#f3f4f6', border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem', cursor: 'pointer',
-                    fontWeight: '500', color: '#374151'
-                  }}
+                  className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
                 >
                   Отмена
                 </button>
                 <button
                   onClick={handleSaveBooking}
                   disabled={addingBooking}
-                  style={{
-                    flex: 1, padding: '0.75rem',
-                    backgroundColor: '#ec4899', border: 'none',
-                    borderRadius: '0.5rem', color: '#fff',
-                    fontWeight: '500', cursor: addingBooking ? 'not-allowed' : 'pointer',
-                    opacity: addingBooking ? 0.5 : 1
-                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addingBooking ? 'Создание...' : isEditing ? 'Сохранить' : 'Создать'}
                 </button>
@@ -843,126 +761,131 @@ export default function Calendar() {
       {/* Event Detail Modal */}
       {selectedBooking && !showCreateModal && (
         <div style={{
-          position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 9999, padding: '1rem'
+          position: 'fixed', 
+          inset: 0, 
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          zIndex: 9999, 
+          padding: '1rem'
         }}>
           <div style={{
-            backgroundColor: '#fff', borderRadius: '1rem',
-            width: '100%', maxWidth: '450px',
+            backgroundColor: '#fff', 
+            borderRadius: '1rem',
+            width: '100%', 
+            maxWidth: '450px',
             boxShadow: '0 20px 25px rgba(0,0,0,0.1)',
-            maxHeight: '90vh', overflow: 'auto'
+            maxHeight: '90vh', 
+            overflow: 'auto'
           }}>
-            <div style={{
-              padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              position: 'sticky', top: 0, backgroundColor: '#fff'
-            }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827' }}>
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+              <h3 className="text-lg font-bold text-gray-900">
                 Запись #{selectedBooking.id}
               </h3>
-              <button onClick={() => setSelectedBooking(null)} style={{
-                backgroundColor: 'transparent', border: 'none',
-                cursor: 'pointer', color: '#6b7280', fontSize: '1.5rem'
-              }}>
+              <button 
+                onClick={() => setSelectedBooking(null)}
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+              >
                 ×
               </button>
             </div>
 
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div className="p-6 space-y-4">
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
                   Клиент
                 </label>
-                <input type="text" value={selectedBooking.name} readOnly style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', backgroundColor: '#f9fafb',
-                  fontSize: '0.95rem', boxSizing: 'border-box'
-                }} />
+                <input 
+                  type="text" 
+                  value={selectedBooking.name} 
+                  readOnly 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
                   Услуга
                 </label>
-                <input type="text" value={selectedBooking.service} readOnly style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', backgroundColor: '#f9fafb',
-                  fontSize: '0.95rem', boxSizing: 'border-box'
-                }} />
+                <input 
+                  type="text" 
+                  value={selectedBooking.service} 
+                  readOnly 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                />
               </div>
 
               {selectedBooking.master && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                  <label className="block text-xs font-medium text-gray-500 mb-2">
                     Мастер
                   </label>
-                  <input type="text" value={selectedBooking.master} readOnly style={{
-                    width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem', backgroundColor: '#f9fafb',
-                    fontSize: '0.95rem', boxSizing: 'border-box'
-                  }} />
+                  <input 
+                    type="text" 
+                    value={selectedBooking.master} 
+                    readOnly 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                  />
                 </div>
               )}
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
                   Телефон
                 </label>
-                <input type="tel" value={selectedBooking.phone} readOnly style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', backgroundColor: '#f9fafb',
-                  fontSize: '0.95rem', boxSizing: 'border-box'
-                }} />
+                <input 
+                  type="tel" 
+                  value={selectedBooking.phone} 
+                  readOnly 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '500', color: '#6b7280', marginBottom: '0.5rem' }}>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
                   Дата и время
                 </label>
-                <input type="text" value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
-                  day: '2-digit', month: '2-digit', year: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                })} readOnly style={{
-                  width: '100%', padding: '0.75rem', border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem', backgroundColor: '#f9fafb',
-                  fontSize: '0.95rem', boxSizing: 'border-box'
-                }} />
+                <input 
+                  type="text" 
+                  value={new Date(selectedBooking.datetime).toLocaleString('ru-RU', {
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    year: 'numeric',
+                    hour: '2-digit', 
+                    minute: '2-digit'
+                  })} 
+                  readOnly 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                />
               </div>
 
-              <div style={{ position: 'relative' }}>
-                <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} style={{
-                  width: '100%', padding: '0.75rem 1rem',
-                  backgroundColor: statusColors[selectedBooking.status]?.bg,
-                  borderRadius: '0.5rem',
-                  border: `2px solid ${statusColors[selectedBooking.status]?.border}`,
-                  color: statusColors[selectedBooking.status]?.text,
-                  fontWeight: 'bold', cursor: 'pointer', fontSize: '0.95rem',
-                  boxShadow: `0 2px 4px rgba(0, 0, 0, 0.1)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-                }}>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                  className="w-full px-4 py-3 rounded-lg font-semibold text-sm flex items-center justify-between shadow-sm transition-all"
+                  style={{
+                    backgroundColor: statusColors[selectedBooking.status]?.bg,
+                    color: statusColors[selectedBooking.status]?.text,
+                    border: `2px solid ${statusColors[selectedBooking.status]?.border}`,
+                  }}
+                >
                   <span>{statusLabels[selectedBooking.status]}</span>
                   <span>▼</span>
                 </button>
 
                 {showStatusDropdown && (
-                  <div style={{
-                    position: 'absolute', top: '100%', left: 0, right: 0,
-                    marginTop: '0.5rem', backgroundColor: '#fff',
-                    border: '2px solid #e5e7eb', borderRadius: '0.5rem',
-                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-                    zIndex: 10000, overflow: 'hidden'
-                  }}>
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-gray-200 rounded-lg shadow-xl overflow-hidden z-10">
                     {statuses.map(status => (
-                      <button key={status} onClick={() => handleChangeStatus(status)} style={{
-                        width: '100%', padding: '0.875rem 1rem', textAlign: 'left',
-                        border: 'none',
-                        backgroundColor: selectedBooking.status === status ? statusColors[status]?.bg : '#fff',
-                        borderBottom: status !== statuses[statuses.length - 1] ? '1px solid #e5e7eb' : 'none',
-                        cursor: 'pointer', color: statusColors[status]?.text,
-                        fontWeight: selectedBooking.status === status ? 'bold' : 'normal',
-                        fontSize: '0.95rem'
-                      }}>
+                      <button 
+                        key={status} 
+                        onClick={() => handleChangeStatus(status)}
+                        className="w-full px-4 py-3 text-left text-sm font-medium border-b border-gray-100 last:border-b-0 transition-colors"
+                        style={{
+                          backgroundColor: selectedBooking.status === status ? statusColors[status]?.bg : '#fff',
+                          color: statusColors[status]?.text,
+                        }}
+                      >
                         {statusLabels[status]}
                         {selectedBooking.status === status && ' ✓'}
                       </button>
@@ -971,38 +894,31 @@ export default function Calendar() {
                 )}
               </div>
 
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-                <button onClick={() => handleDeleteBooking(selectedBooking)} style={{
-                  flex: 1, padding: '0.75rem', backgroundColor: '#fee2e2',
-                  border: '2px solid #fca5a5', borderRadius: '0.5rem',
-                  color: '#991b1b', fontWeight: '600', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '0.5rem', fontSize: '0.95rem'
-                }}>
+              <div className="flex gap-3 pt-4">
+                <button 
+                  onClick={() => handleDeleteBooking(selectedBooking)}
+                  className="flex-1 px-4 py-3 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg text-red-700 font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
                   <Trash2 size={16} />
                   Удалить
                 </button>
                 
-                <button onClick={() => {
-                  setSelectedBooking(null);
-                  openEditModal(selectedBooking);
-                }} style={{
-                  flex: 1, padding: '0.75rem', backgroundColor: '#dbeafe',
-                  border: '2px solid #93c5fd', borderRadius: '0.5rem',
-                  color: '#1e40af', fontWeight: '600', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  gap: '0.5rem', fontSize: '0.95rem'
-                }}>
+                <button 
+                  onClick={() => {
+                    setSelectedBooking(null);
+                    openEditModal(selectedBooking);
+                  }}
+                  className="flex-1 px-4 py-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-lg text-blue-700 font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
                   <Edit size={16} />
                   Изменить
                 </button>
               </div>
 
-              <button onClick={() => setSelectedBooking(null)} style={{
-                padding: '0.75rem', backgroundColor: '#2563eb',
-                border: 'none', borderRadius: '0.5rem', color: '#fff',
-                fontWeight: '500', cursor: 'pointer', marginTop: '0.5rem'
-              }}>
+              <button 
+                onClick={() => setSelectedBooking(null)}
+                className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all"
+              >
                 Закрыть
               </button>
             </div>
