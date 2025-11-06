@@ -404,7 +404,7 @@ export default function Bookings() {
         <div>
           <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Calendar style={{ width: '32px', height: '32px', color: '#ec4899' }} />
-            Управление записями
+            {t('bookings:title')}
           </h1>
           <p style={{ color: '#666' }}>{filteredBookings.length} записей</p>
         </div>
@@ -420,7 +420,7 @@ export default function Bookings() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Ожидают</p>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:pending')}</p>
           <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
@@ -469,7 +469,7 @@ export default function Bookings() {
               MozAppearance: 'none'
             }}
           >
-            <option value="all">Все статусы</option>
+            <option value="all">{t('bookings:all_statuses')}</option>
             {Object.entries(statusConfig).map(([key, config]) => (
               <option key={key} value={key}>{config.label}</option>
             ))}
@@ -551,7 +551,7 @@ export default function Bookings() {
               <thead style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                 <tr>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>ID</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Клиент</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:client')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Услуга</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Дата</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Телефон</th>
@@ -939,7 +939,7 @@ export default function Bookings() {
               {/* Client Search */}
               <div style={{ position: 'relative' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Клиент *
+                {t('bookings:client')} *
                 </label>
                 <input
                   type="text"

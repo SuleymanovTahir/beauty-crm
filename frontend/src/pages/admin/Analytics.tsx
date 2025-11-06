@@ -7,6 +7,7 @@ import { customPieLabel, customPiePercentLabel, customPieLegend } from '../../co
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner@2.0.3';
 import { api } from '../../services/api';
+import i18n from '../../i18n';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 
 interface AnalyticsData {
@@ -132,10 +133,10 @@ export default function Analytics() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 md:w-6 md:h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm md:text-base text-red-800 font-medium">Ошибка загрузки аналитики</p>
+              <p className="text-sm md:text-base text-red-800 font-medium">{t('analytics:errors.loading_error')}</p>
               <p className="text-xs md:text-sm text-red-700 mt-1">{error}</p>
               <Button onClick={loadData} className="mt-4 bg-red-600 hover:bg-red-700 text-sm">
-              {t('analytics:try_again')}
+                {t('analytics:try_again')}
               </Button>
             </div>
           </div>
@@ -186,9 +187,9 @@ export default function Analytics() {
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-2 md:gap-3">
           <BarChart3 className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
-          <span>Аналитика</span>
+          <span>{t('analytics:title')}</span>
         </h1>
-        <p className="text-sm md:text-base text-gray-600">Детальный анализ работы салона</p>
+        <p className="text-sm md:text-base text-gray-600">{t('analytics:detailed_analysis')}</p>
       </div>
 
       {/* Filters */}

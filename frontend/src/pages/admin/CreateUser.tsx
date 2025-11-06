@@ -26,27 +26,27 @@ export default function CreateUser() {
     
     // Валидация
     if (!formData.full_name.trim()) {
-      toast.error('Заполните поле "ФИ"');
+      toast.error(t('createuser:errors.full_name_required'));
       return;
     }
 
     if (!formData.username.trim()) {
-      toast.error('Заполните поле "Логин"');
+      toast.error(t('createuser:errors.username_required'));
       return;
     }
 
     if (formData.username.length < 3) {
-      toast.error('Логин должен содержать минимум 3 символа');
+      toast.error(t('createuser:errors.username_min_length'));
       return;
     }
 
     if (!formData.password) {
-      toast.error('Заполните поле "Пароль"');
+      toast.error(t('createuser:errors.password_required'));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Пароль должен содержать минимум 6 символов');
+      toast.error(t('createuser:errors.password_min_length'));
       return;
     }
 
@@ -92,21 +92,21 @@ export default function CreateUser() {
         disabled={loading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Назад к пользователям
+        t('common:back_to_users')
       </Button>
 
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <UserPlus className="w-8 h-8 text-pink-600" />
-            Создать нового пользователя
+            {t('createuser:title')}
           </h1>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">ФИ *</Label>
+              <Label htmlFor="full_name">{t('createuser:full_name')} *</Label>
               <Input
                 id="full_name"
                 required
@@ -118,7 +118,7 @@ export default function CreateUser() {
             </div>
 
             <div>
-              <Label htmlFor="username">Логин *</Label>
+              <Label htmlFor="username">t('createuser:username') *</Label>
               <Input
                 id="username"
                 required
@@ -128,12 +128,12 @@ export default function CreateUser() {
                 placeholder="anna_petrova"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Минимум 3 символа, будет использоваться для входа в систему
+              t('createuser:username_hint')
               </p>
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">t('createuser:email')</Label>
               <Input
                 id="email"
                 type="email"
@@ -143,12 +143,12 @@ export default function CreateUser() {
                 placeholder="anna@example.com"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Необязательно, для восстановления пароля
+              t('createuser:email_hint')
               </p>
             </div>
 
             <div>
-              <Label htmlFor="password">Пароль *</Label>
+              <Label htmlFor="password">t('createuser:password') *</Label>
               <Input
                 id="password"
                 type="password"
@@ -160,30 +160,30 @@ export default function CreateUser() {
                 placeholder="••••••"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Минимум 6 символов
+              t('createuser:password_hint')
               </p>
             </div>
 
             <div>
-              <Label htmlFor="role">Роль *</Label>
-              <Select 
-                value={formData.role} 
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
+              <Label htmlFor="role">t('createuser:role') *</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(value: string) => setFormData({ ...formData, role: value })}
                 disabled={loading}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="employee">Сотрудник</SelectItem>
-                  <SelectItem value="manager">Менеджер</SelectItem>
-                  <SelectItem value="admin">Администратор</SelectItem>
+                  <SelectItem value="employee">t('createuser:role_employee')</SelectItem>
+                  <SelectItem value="manager">t('createuser:manager')</SelectItem>
+                  <SelectItem value="admin">t('createuser:admin')</SelectItem>
                 </SelectContent>
               </Select>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
-                <p><strong>Сотрудник:</strong> базовые права - просмотр своих записей и графика</p>
-                <p><strong>Менеджер:</strong> расширенные права - работа с клиентами и аналитикой</p>
-                <p><strong>Администратор:</strong> полный доступ ко всем функциям системы</p>
+                <p><strong>t('createuser:role_employee'):</strong> базовые права - просмотр своих записей и графика</p>
+                <p><strong>t('createuser:manager'):</strong> расширенные права - работа с клиентами и аналитикой</p>
+                <p><strong>t('createuser:admin'):</strong> полный доступ ко всем функциям системы</p>
               </div>
             </div>
 
@@ -200,7 +200,7 @@ export default function CreateUser() {
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Создать аккаунт
+                  t('createuser:title')
                 </>
               )}
             </Button>

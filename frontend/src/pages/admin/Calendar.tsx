@@ -72,8 +72,30 @@ interface UserMaster {
   role: string;
 }
 
-const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const DAYS = [
+  t('calendar:days.mon'),
+  t('calendar:days.tue'),
+  t('calendar:days.wed'),
+  t('calendar:days.thu'),
+  t('calendar:days.fri'),
+  t('calendar:days.sat'),
+  t('calendar:days.sun')
+];
+
+const MONTHS = [
+  t('calendar:months.january'),
+  t('calendar:months.february'),
+  t('calendar:months.march'),
+  t('calendar:months.april'),
+  t('calendar:months.may'),
+  t('calendar:months.june'),
+  t('calendar:months.july'),
+  t('calendar:months.august'),
+  t('calendar:months.september'),
+  t('calendar:months.october'),
+  t('calendar:months.november'),
+  t('calendar:months.december'),
+]
 
 const SALON_START_HOUR = 9;
 const SALON_END_HOUR = 21;
@@ -415,7 +437,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <div className="inline-block animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full"></div>
-        <p className="mt-4 text-gray-500">Загрузка...</p>
+        <p className="mt-4 text-gray-600">{t('common:loading')}</p>
       </div>
     );
   }
@@ -433,7 +455,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 variant="outline"
                 className="rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm"
               >
-                Сегодня
+                {t('calendar:today')}
               </Button>
               <div className="flex items-center gap-1">
                 <Button
@@ -745,7 +767,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           }}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-xl font-bold text-gray-900">
-                {isEditing ? 'Редактировать запись' : 'Добавить запись'}
+              {isEditing ? t('calendar:edit_booking') : t('calendar:add_booking')}
               </h3>
               <button
                 onClick={() => { setShowCreateModal(false); resetForm(); }}

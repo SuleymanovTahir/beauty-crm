@@ -368,7 +368,7 @@ export default function Clients() {
         <div>
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <Users className="w-8 h-8 text-pink-600" />
-            База клиентов
+            {t('clients:title')}
           </h1>
           <p className="text-gray-600">{filteredClients.length} клиентов</p>
         </div>
@@ -380,7 +380,7 @@ export default function Clients() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Всего клиентов</p>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:total_clients')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
@@ -426,7 +426,7 @@ export default function Clients() {
                 appearance: 'none',
               }}
             >
-              <option value="all">Все статусы</option>
+              <option value="all">{t('clients:all_statuses')}</option>
               {Object.entries(statusConfig).map(([key, config]) => (
                 <option key={key} value={key}>{config.label}</option>
               ))}

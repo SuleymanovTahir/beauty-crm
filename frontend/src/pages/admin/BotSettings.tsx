@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 import { Save, Bot, MessageSquare, DollarSign, Calendar, AlertCircle, Globe, Sparkles, BookOpen, Shield, Zap, Heart, Users, MessageCircle } from 'lucide-react';
 
 interface BotSettings {
@@ -219,7 +220,7 @@ export default function BotSettings() {
   };
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
-    { id: 'general', label: 'Основное', icon: <Bot size={18} /> },
+    { id: 'general', label: t('botsettings:tabs.general'), icon: <Bot size={18} /> },
     { id: 'personality', label: 'Личность', icon: <Sparkles size={18} /> },
     { id: 'pricing', label: 'Цены', icon: <DollarSign size={18} /> },
     { id: 'objections', label: 'Возражения', icon: <MessageCircle size={18} /> },
@@ -244,7 +245,7 @@ export default function BotSettings() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
-            🤖 Настройки бота
+          🤖 {t('botsettings:title')}
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
             Полная конфигурация AI-ассистента
@@ -324,7 +325,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                Имя бота
+              {t('botsettings:bot_name')}
               </label>
               <input
                 type="text"

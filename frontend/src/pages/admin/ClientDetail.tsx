@@ -39,7 +39,7 @@ export default function ClientDetail() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  
+
   const [editForm, setEditForm] = useState({
     name: '',
     phone: '',
@@ -56,17 +56,17 @@ export default function ClientDetail() {
     try {
       setLoading(true);
       const data = await api.getClient(id!);
-      
+
       setClient(data.client);
       setEditForm({
         name: data.client?.name || '',
         phone: data.client?.phone || '',
         notes: data.client?.notes || ''
       });
-      
+
       setMessages(data.chat_history || []);
     } catch (err) {
-      toast.error('Ошибка загрузки клиента');
+      toast.error(t('common:loading_error'));
       console.error('Error:', err);
       navigate('/admin/clients');
     } finally {
@@ -80,7 +80,7 @@ export default function ClientDetail() {
     try {
       setSaving(true);
       await api.updateClient(client.id, editForm);
-      
+
       setClient({ ...client, ...editForm });
       setEditing(false);
       toast.success('Данные клиента обновлены');
@@ -107,9 +107,9 @@ export default function ClientDetail() {
     return (
       <div className="p-8">
         <Button onClick={() => navigate('/admin/clients')} variant="ghost">
-          ← Вернуться
+          ← {t('common:back')}
         </Button>
-        <p className="text-gray-600 mt-4">Клиент не найден</p>
+        <p className="text-gray-600 mt-4">{t('clientdetail:not_found')}</p>
       </div>
     );
   }
@@ -172,12 +172,12 @@ export default function ClientDetail() {
         {/* Main Info */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Информация о клиенте</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('clientdetail:client_info')}</h2>
 
             {editing ? (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Имя</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:name')</label>
                   <Input
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
@@ -185,7 +185,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Телефон</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:phone')</label>
                   <Input
                     value={editForm.phone}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
@@ -232,7 +232,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <Calendar className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">Первый контакт</p>
+                    <p className="text-sm text-gray-600">t('clientdetail:first_contact')</p>
                     <p className="text-lg text-gray-900">
                       {new Date(client.first_contact).toLocaleDateString('ru-RU')}
                     </p>
@@ -242,7 +242,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <MessageSquare className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">Всего сообщений</p>
+                    <p className="text-sm text-gray-600">t('clientdetail:total_messages')</p>
                     <p className="text-lg text-gray-900">{client.total_messages}</p>
                   </div>
                 </div>
@@ -309,11 +309,10 @@ export default function ClientDetail() {
                 className={`flex ${msg.sender === 'bot' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-md px-4 py-3 rounded-lg ${
-                    msg.sender === 'bot'
+                  className={`max-w-md px-4 py-3 rounded-lg ${msg.sender === 'bot'
                       ? 'bg-pink-100 text-gray-900'
                       : 'bg-gray-100 text-gray-900'
-                  }`}
+                    }`}
                 >
                   <p className="text-sm">{msg.message}</p>
                   <p className="text-xs text-gray-600 mt-1">

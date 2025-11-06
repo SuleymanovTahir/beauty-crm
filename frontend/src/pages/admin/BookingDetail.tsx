@@ -43,12 +43,12 @@ export default function BookingDetail() {
         setBooking(found);
         setNewStatus(found.status);
       } else {
-        toast.error('Запись не найдена');
+        toast.error(t('bookingdetail:not_found'));
         navigate('/admin/bookings');
       }
     } catch (err) {
       console.error('Error loading booking:', err);
-      toast.error('Ошибка загрузки записи');
+      toast.error(t('common:loading_error'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function BookingDetail() {
     try {
       setUpdating(true);
       await apiClient.updateBookingStatus(booking.id, newStatus);
-      toast.success('Статус обновлён ✅');
+      toast.success(t('bookingdetail:status_updated'));
       setBooking({ ...booking, status: newStatus });
     } catch (err) {
       console.error('Error updating status:', err);
@@ -75,7 +75,7 @@ export default function BookingDetail() {
       <div className="p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Загрузка...</p>
+          <p className="mt-4 text-gray-600">{t('common:loading')}</p>
         </div>
       </div>
     );
@@ -85,9 +85,9 @@ export default function BookingDetail() {
     return (
       <div className="p-8">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Запись не найдена</p>
+          <p className="text-gray-600 mb-4">t('bookingdetail:not_found')</p>
           <Button onClick={() => navigate('/admin/bookings')}>
-            ← Вернуться к записям
+            ← t('common:back_to_bookings')
           </Button>
         </div>
       </div>
@@ -119,8 +119,8 @@ export default function BookingDetail() {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div>
-          <h1 className="text-3xl text-gray-900 mb-1">Запись #{booking.id}</h1>
-          <p className="text-gray-600">Детальная информация</p>
+        <h1 className="text-3xl text-gray-900 mb-1">{t('bookingdetail:booking_number', { id: booking.id })}</h1>
+        <p className="text-gray-600">{t('bookingdetail:detailed_info')}</p>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export default function BookingDetail() {
         {/* Main Info */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Информация о записи</h2>
+          <h2 className="text-2xl text-gray-900 mb-6">{t('bookingdetail:booking_info')}</h2>
 
             <div className="space-y-6">
               {/* Client */}
@@ -137,13 +137,13 @@ export default function BookingDetail() {
                   <User className="w-6 h-6 text-pink-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Клиент</p>
+                <p className="text-sm text-gray-600">{t('bookingdetail:client')}</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.name}</p>
                   <button
                     onClick={() => navigate(`/admin/clients/${booking.client_id}`)}
                     className="text-sm text-pink-600 hover:underline mt-1"
                   >
-                    Профиль клиента →
+                    t('bookingdetail:client_profile') →
                   </button>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function BookingDetail() {
                   <Briefcase className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Услуга</p>
+                  <p className="text-sm text-gray-600">t('bookingdetail:service')</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.service}</p>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function BookingDetail() {
                   <Calendar className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Дата и время</p>
+                  <p className="text-sm text-gray-600">t('bookingdetail:date_time')</p>
                   <p className="text-lg text-gray-900 font-medium">{formatDate(booking.datetime)}</p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function BookingDetail() {
                   <Phone className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Телефон</p>
+                  <p className="text-sm text-gray-600">t('bookingdetail:phone')</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.phone}</p>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function BookingDetail() {
                     <Briefcase className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Сумма</p>
+                    <p className="text-sm text-gray-600">t('bookingdetail:revenue')</p>
                     <p className="text-lg text-gray-900 font-medium">{booking.revenue} AED</p>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function BookingDetail() {
                   <Clock className="w-6 h-6 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Создана</p>
+                  <p className="text-sm text-gray-600">t('bookingdetail:created_at')</p>
                   <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export default function BookingDetail() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
               <Edit2 className="w-5 h-5" />
-              Статус записи
+              t('bookingdetail:status')
             </h3>
 
             <div className="space-y-4">
@@ -222,10 +222,10 @@ export default function BookingDetail() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">Новая</SelectItem>
-                  <SelectItem value="confirmed">Подтверждена</SelectItem>
-                  <SelectItem value="completed">Завершена</SelectItem>
-                  <SelectItem value="cancelled">Отменена</SelectItem>
+                  <SelectItem value="new">t('bookingdetail:status_new')</SelectItem>
+                  <SelectItem value="confirmed">t('bookingdetail:confirmed')</SelectItem>
+                  <SelectItem value="completed">t('bookingdetail:completed)</SelectItem>
+                  <SelectItem value="cancelled">t('bookingdetail:cancelled')</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -234,12 +234,12 @@ export default function BookingDetail() {
                 disabled={updating || newStatus === booking.status}
                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
               >
-                {updating ? 'Обновление...' : 'Обновить статус'}
+                {updating ? t('bookingdetail:update') : t('bookingdetail:update_status')}
               </Button>
 
               {/* Current Status Badge */}
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600 mb-2">Текущий статус</p>
+                <p className="text-xs text-gray-600 mb-2">t('bookingdetail:current_status')</p>
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-3 h-3 rounded-full ${
@@ -268,13 +268,13 @@ export default function BookingDetail() {
 
           {/* Actions */}
           <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h3 className="text-lg text-gray-900 mb-4">Действия</h3>
+            <h3 className="text-lg text-gray-900 mb-4">t('bookingdetail:actions')</h3>
             <Button
               onClick={() => navigate(`/admin/chat?client_id=${booking.client_id}`)}
               variant="outline"
               className="w-full"
             >
-              💬 Написать клиенту
+              💬 t('bookingdetail:write_to_client')
             </Button>
           </div>
         </div>

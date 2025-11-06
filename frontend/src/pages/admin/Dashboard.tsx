@@ -105,7 +105,7 @@ export default function AdminDashboard() {
   const stat_cards = [
     {
       icon: Calendar,
-      label: 'Записи ожидают',
+      label: t('dashboard:pending_bookings'),
       value: stats.pending_bookings || 0,
       color: 'text-pink-600',
       bg: 'bg-pink-50'
@@ -146,8 +146,8 @@ export default function AdminDashboard() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2">Панель управления</h1>
-        <p className="text-gray-600">Добро пожаловать в систему управления салоном</p>
+      <h1 className="text-3xl text-gray-900 mb-2">{t('dashboard:title')}</h1>
+      <p className="text-gray-600">{t('dashboard:welcome')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -178,7 +178,7 @@ export default function AdminDashboard() {
         {/* Recent Bookings */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl text-gray-900">Последние записи</h2>
+            <h2 className="text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
             <Button variant="outline" size="sm" onClick={() => navigate('/admin/bookings')}>
               Все записи
             </Button>
