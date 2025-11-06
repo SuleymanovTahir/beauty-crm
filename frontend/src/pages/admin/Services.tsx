@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';

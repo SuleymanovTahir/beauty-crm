@@ -1,6 +1,7 @@
 // frontend/src/pages/admin/Bookings.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';

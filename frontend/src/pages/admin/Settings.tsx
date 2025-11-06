@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, Smartphone, Plus, Edit, Trash2, Check, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';

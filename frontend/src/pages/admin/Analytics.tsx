@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, Download, RefreshCw, AlertCircle, Loader } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { customPieLabel, customPiePercentLabel, customPieLegend } from '../../components/shared/PieChartLabel';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner@2.0.3';

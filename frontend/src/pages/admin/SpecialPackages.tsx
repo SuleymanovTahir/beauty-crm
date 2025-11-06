@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, DollarSign, AlertCircle, Loader } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';

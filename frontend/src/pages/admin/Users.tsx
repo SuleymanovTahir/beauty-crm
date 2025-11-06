@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { useNavigate } from 'react-router-dom';

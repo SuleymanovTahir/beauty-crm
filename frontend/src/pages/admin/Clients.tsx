@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, Users, TrendingUp, DollarSign, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';

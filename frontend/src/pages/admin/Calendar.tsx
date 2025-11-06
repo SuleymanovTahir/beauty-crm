@@ -16,6 +16,7 @@ import {
   Check
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectContent,
