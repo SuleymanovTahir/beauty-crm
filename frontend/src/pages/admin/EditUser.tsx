@@ -9,7 +9,6 @@ import { Label } from '../../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { useTranslation } from 'react-i18next';
 
 export default function EditUser() {
   const navigate = useNavigate();

@@ -7,7 +7,6 @@ import { customPieLabel, customPiePercentLabel, customPieLegend } from '../../co
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner@2.0.3';
 import { api } from '../../services/api';
-import { useTranslation } from 'react-i18next';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 
 interface AnalyticsData {
@@ -72,9 +71,9 @@ export default function Analytics() {
       }
       setAnalytics(analyticsData);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки';
+      const message = err instanceof Error ? err.message : t('analytics:errors.loading_error');
       setError(message);
-      toast.error(`Ошибка загрузки аналитики: ${message}`);
+      toast.error(`${t('analytics:errors.loading_error')}: ${message}`);
       console.error('Analytics error:', err);
     } finally {
       setLoading(false);
@@ -93,11 +92,11 @@ export default function Analytics() {
 
   const handleApplyCustomDates = () => {
     if (!dateFrom || !dateTo) {
-      toast.error('Выберите обе даты');
+      toast.error(t('analytics:errors.select_both_dates'));
       return;
     }
     if (dateFrom > dateTo) {
-      toast.error('Дата начала должна быть раньше даты конца');
+      toast.error(t('analytics:errors.invalid_date_range'));
       return;
     }
     loadData();
@@ -117,10 +116,10 @@ export default function Analytics() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success('Файл успешно скачан');
+      toast.success(t('analytics:success.file_downloaded'));
     } catch (err) {
       console.error('Export error:', err);
-      toast.error('Ошибка при экспорте файла');
+      toast.error(t('analytics:errors.export_failed'));
     } finally {
       setExporting(false);
     }
@@ -136,7 +135,7 @@ export default function Analytics() {
               <p className="text-sm md:text-base text-red-800 font-medium">Ошибка загрузки аналитики</p>
               <p className="text-xs md:text-sm text-red-700 mt-1">{error}</p>
               <Button onClick={loadData} className="mt-4 bg-red-600 hover:bg-red-700 text-sm">
-                Попробовать еще раз
+              {t('analytics:try_again')}
               </Button>
             </div>
           </div>
@@ -150,7 +149,7 @@ export default function Analytics() {
       <div className="p-4 md:p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-6 h-6 md:w-8 md:h-8 text-pink-600 animate-spin" />
-          <p className="text-sm md:text-base text-gray-600">Загрузка аналитики...</p>
+          <p className="text-sm md:text-base text-gray-600">{t('analytics:detailed_analysis')}</p>
         </div>
       </div>
     );
@@ -158,9 +157,9 @@ export default function Analytics() {
 
   const bookingsTrendData = analytics?.bookings_by_day?.map(([date, count]) => ({
     name: isMobile
-      ? new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' })
-      : new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
-    записи: count
+      ? new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'numeric' })
+      : new Date(date).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
+    [t('analytics:bookings')]: count
   })) || [];
 
   const servicesData = analytics?.services_stats?.map(([name, count, revenue], index) => ({
@@ -171,8 +170,8 @@ export default function Analytics() {
   })) || [];
 
   const statusData = analytics?.status_stats?.map(([status, count]) => ({
-    name: status === 'pending' ? 'Ожидает' : status === 'completed' ? 'Завершена' : status === 'cancelled' ? 'Отменена' : 'Подтверждена',
-    записи: count
+    name: t(`analytics:status.${status}`),
+    [t('analytics:bookings')]: count
   })) || [];
 
   const topServices = analytics?.services_stats?.slice(0, 5).map(([name, count, revenue]) => ({
@@ -207,7 +206,7 @@ export default function Analytics() {
 
           {period === 'custom' && (
             <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
-              Применить
+              {t('analytics:apply')}
             </Button>
           )}
 
@@ -217,7 +216,7 @@ export default function Analytics() {
             className="md:ml-auto"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            Обновить
+            {t('analytics:refresh')}
           </Button>
           <Button
             onClick={handleExportCSV}
@@ -225,7 +224,7 @@ export default function Analytics() {
             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
           >
             <Download className="w-4 h-4" />
-            {exporting ? 'Экспорт...' : 'Экспортировать'}
+            {exporting ? t('analytics:exporting') : t('analytics:export')}
           </Button>
         </div>
       </div>
@@ -237,9 +236,9 @@ export default function Analytics() {
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {stats.conversion_rate.toFixed(1)}%
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">Конверсия</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:conversion')}</p>
             <div className="text-xs md:text-sm text-green-600">
-              {isMobile ? 'Конверсия' : 'От посетителей к клиентам'}
+              {isMobile ? t('analytics:conversion') : t('analytics:from_visitors')}
             </div>
           </div>
 
@@ -247,9 +246,9 @@ export default function Analytics() {
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {analytics?.avg_response_time.toFixed(0) || 0} мин
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">Время ответа</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:response_time')}</p>
             <div className="text-xs md:text-sm text-blue-600">
-              Среднее время
+              {t('analytics:avg_time')}
             </div>
           </div>
 
@@ -257,9 +256,9 @@ export default function Analytics() {
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {isMobile ? `${(stats.total_revenue / 1000).toFixed(1)}k` : stats.total_revenue.toLocaleString()} AED
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">Доход</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:revenue')}</p>
             <div className="text-xs md:text-sm text-green-600">
-              За период
+              {t('analytics:for_period')}
             </div>
           </div>
 
@@ -267,9 +266,9 @@ export default function Analytics() {
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
               {stats.total_revenue > 0 ? (stats.total_revenue / stats.total_bookings).toFixed(0) : 0} AED
             </h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">Средний чек</p>
+            <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:avg_check')}</p>
             <div className="text-xs md:text-sm text-green-600">
-              На запись
+              {t('analytics:per_booking')}
             </div>
           </div>
         </div>
@@ -280,7 +279,7 @@ export default function Analytics() {
         {/* Bookings Trend */}
         {bookingsTrendData.length > 0 && (
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-xl text-gray-900 mb-6">Динамика записей</h2>
+            <h2 className="text-xl text-gray-900 mb-6">{t('analytics:bookings_trend')}</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={bookingsTrendData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -290,7 +289,7 @@ export default function Analytics() {
                 <Legend />
                 <Line
                   type="monotone"
-                  dataKey="записи"
+                  dataKey={t('analytics:bookings')}
                   stroke="#ec4899"
                   strokeWidth={2}
                   dot={{ fill: '#ec4899' }}
@@ -303,7 +302,7 @@ export default function Analytics() {
         {/* Services Distribution */}
         {servicesData.length > 0 && (
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">Распределение услуг</h2>
+            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:services_distribution')}</h2>
             <ResponsiveContainer width="100%" height={isMobile ? 350 : 300}>
               <PieChart>
                 <Pie
@@ -361,7 +360,7 @@ export default function Analytics() {
         {/* Status Chart */}
         {statusData.length > 0 && (
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">Статусы записей</h2>
+            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:booking_statuses')}</h2>
             <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
               <BarChart data={statusData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -376,7 +375,7 @@ export default function Analytics() {
                 <YAxis tick={{ fontSize: isMobile ? 10 : 12 }} />
                 <Tooltip contentStyle={{ fontSize: isMobile ? 12 : 14 }} />
                 {!isMobile && <Legend />}
-                <Bar dataKey="записи" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+                <Bar dataKey={t('analytics:bookings')} fill="#8b5cf6" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -387,15 +386,15 @@ export default function Analytics() {
       {topServices.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-4 md:p-6 border-b border-gray-200">
-            <h2 className="text-base md:text-xl text-gray-900">Топ услуг</h2>
+            <h2 className="text-base md:text-xl text-gray-900">{t('analytics:top_services')}</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">Название</th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">Кол-во</th>
-                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">Доход</th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">{t('analytics:name')}</th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">{t('analytics:quantity')}</th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">{t('analytics:income')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">

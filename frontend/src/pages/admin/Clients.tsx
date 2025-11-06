@@ -31,7 +31,6 @@ import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { usePeriodFilter } from '../../hooks/usePeriodFilter';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
-import { useTranslation } from 'react-i18next';
 
 interface Client {
   id: string;

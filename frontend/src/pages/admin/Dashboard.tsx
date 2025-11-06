@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { useTranslation } from 'react-i18next';
 
 interface Stats {
   total_clients: number;

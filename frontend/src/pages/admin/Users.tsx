@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 

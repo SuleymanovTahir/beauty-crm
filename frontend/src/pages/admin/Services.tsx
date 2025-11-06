@@ -11,7 +11,6 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { useTranslation } from 'react-i18next';
 
 interface Service {
   id: number;
