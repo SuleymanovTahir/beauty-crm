@@ -18,6 +18,7 @@ export default function Cooperation() {
       .then(setSalonInfo)
       .catch(err => console.error('Error loading salon info:', err));
   }, []);
+  
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -28,123 +29,115 @@ export default function Cooperation() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Спасибо за ваше предложение! Мы рассмотрим его и свяжемся с вами.');
+    toast.success(t('cooperation:success_message'));
     setFormData({ name: '', company: '', email: '', phone: '', proposal: '' });
   };
 
   return (
     <div>
-      {/* Header */}
       <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Handshake className="w-10 h-10 text-pink-600" />
           </div>
-          <h1 className="text-5xl text-gray-900 mb-4">Сотрудничество</h1>
+          <h1 className="text-5xl text-gray-900 mb-4">{t('cooperation:title')}</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Мы открыты для взаимовыгодного партнерства и новых возможностей
+            {t('cooperation:subtitle')}
           </p>
         </div>
       </section>
 
-      {/* Cooperation Options */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Виды сотрудничества</h2>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('cooperation:types_title')}</h2>
             <p className="text-xl text-gray-600">
-              Мы рассматриваем различные формы партнерства
+              {t('cooperation:types_subtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Поставщики</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:suppliers_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Мы заинтересованы в сотрудничестве с поставщиками качественных материалов и
-                оборудования для салонов красоты.
+                {t('cooperation:suppliers_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Косметические средства</li>
-                <li>• Оборудование</li>
-                <li>• Расходные материалы</li>
+                <li>• {t('cooperation:suppliers_item1')}</li>
+                <li>• {t('cooperation:suppliers_item2')}</li>
+                <li>• {t('cooperation:suppliers_item3')}</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Инфлюенсеры</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:influencers_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Предлагаем взаимовыгодное сотрудничество блогерам и инфлюенсерам в сфере
-                красоты и здорового образа жизни.
+                {t('cooperation:influencers_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Бартерное сотрудничество</li>
-                <li>• Промо-коды для подписчиков</li>
-                <li>• Совместные проекты</li>
+                <li>• {t('cooperation:influencers_item1')}</li>
+                <li>• {t('cooperation:influencers_item2')}</li>
+                <li>• {t('cooperation:influencers_item3')}</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Мастера</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:masters_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Приглашаем к сотрудничеству опытных мастеров различных специализаций
-                для работы в нашем салоне.
+                {t('cooperation:masters_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Аренда кабинета</li>
-                <li>• Процент от выручки</li>
-                <li>• Фиксированная ставка</li>
+                <li>• {t('cooperation:masters_item1')}</li>
+                <li>• {t('cooperation:masters_item2')}</li>
+                <li>• {t('cooperation:masters_item3')}</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Обучение</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:education_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Сотрудничаем с образовательными центрами и приглашаем преподавателей
-                для проведения мастер-классов.
+                {t('cooperation:education_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Мастер-классы</li>
-                <li>• Курсы повышения квалификации</li>
-                <li>• Сертификация</li>
+                <li>• {t('cooperation:education_item1')}</li>
+                <li>• {t('cooperation:education_item2')}</li>
+                <li>• {t('cooperation:education_item3')}</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Маркетинг</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:marketing_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Рассматриваем предложения от маркетинговых агентс��в и специалистов
-                по продвижению.
+                {t('cooperation:marketing_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• SMM продвижение</li>
-                <li>• Контент-маркетинг</li>
-                <li>• Performance маркетинг</li>
+                <li>• {t('cooperation:marketing_item1')}</li>
+                <li>• {t('cooperation:marketing_item2')}</li>
+                <li>• {t('cooperation:marketing_item3')}</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl">
-              <h3 className="text-2xl text-gray-900 mb-4">Другие предложения</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('cooperation:other_title')}</h3>
               <p className="text-gray-600 mb-4">
-                Мы всегда открыты для интересных идей и нестандартных форм сотрудничества.
+                {t('cooperation:other_desc')}
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Совместные акции</li>
-                <li>• Кросс-промо</li>
-                <li>• Инновационные проекты</li>
+                <li>• {t('cooperation:other_item1')}</li>
+                <li>• {t('cooperation:other_item2')}</li>
+                <li>• {t('cooperation:other_item3')}</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Proposal Form */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl text-gray-900 mb-4">Форма предложения</h2>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('cooperation:form_title')}</h2>
             <p className="text-xl text-gray-600">
-              Опишите ваше предложение, и мы свяжемся с вами
+              {t('cooperation:form_subtitle')}
             </p>
           </div>
 
@@ -152,23 +145,23 @@ export default function Cooperation() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="name">Ваше имя *</Label>
+                  <Label htmlFor="name">{t('cooperation:form_name')} *</Label>
                   <Input
                     id="name"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Иван Иванов"
+                    placeholder={t('cooperation:form_name_placeholder')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="company">Компания</Label>
+                  <Label htmlFor="company">{t('cooperation:form_company')}</Label>
                   <Input
                     id="company"
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    placeholder="Название компании"
+                    placeholder={t('cooperation:form_company_placeholder')}
                   />
                 </div>
               </div>
@@ -182,12 +175,12 @@ export default function Cooperation() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="ivan@example.com"
+                    placeholder={t('cooperation:form_email_placeholder')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="phone">Телефон</Label>
+                  <Label htmlFor="phone">{t('cooperation:form_phone')}</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -199,27 +192,27 @@ export default function Cooperation() {
               </div>
 
               <div>
-                <Label htmlFor="proposal">Ваше предложение *</Label>
+                <Label htmlFor="proposal">{t('cooperation:form_proposal')} *</Label>
                 <Textarea
                   id="proposal"
                   required
                   value={formData.proposal}
                   onChange={(e) => setFormData({ ...formData, proposal: e.target.value })}
-                  placeholder="Расскажите подробнее о вашем предложении..."
+                  placeholder={t('cooperation:form_proposal_placeholder')}
                   className="min-h-[180px]"
                 />
               </div>
 
               <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600" size="lg">
                 <Send className="w-4 h-4 mr-2" />
-                Отправить предложение
+                {t('cooperation:form_submit')}
               </Button>
             </form>
           </div>
 
           <div className="mt-8 text-center text-gray-600">
             <p>
-              Или свяжитесь с нами напрямую: <br />
+              {t('cooperation:contact_directly')}: <br />
               {salonInfo.email && (
                 <a href={`mailto:${salonInfo.email}`} className="text-pink-600 hover:underline">
                   {salonInfo.email}

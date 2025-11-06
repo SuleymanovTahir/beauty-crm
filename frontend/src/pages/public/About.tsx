@@ -64,8 +64,7 @@ export default function About() {
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl text-gray-900 mb-6">{t('about:title')}</h1>
             <p className="text-xl text-gray-600">
-              Мы создаем красоту и уверенность уже более 10 лет. Наша миссия - помочь каждой женщине
-              почувствовать себя прекрасной и особенной.
+              {t('about:We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special')}
             </p>
           </div>
         </div>
@@ -76,19 +75,16 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl text-gray-900 mb-6">Наша история</h2>
+            <h2 className="text-4xl text-gray-900 mb-6">{t('about:our_story')}</h2>
               <div className="space-y-4 text-gray-600 text-lg">
                 <p>
-                  {salonInfo.name || 'Наш салон'} - ваш надежный партнер в мире красоты
+                  {salonInfo.name || 'Наш салон'} - {t('about:your_reliable_partner_in_the_world_of_beauty')}
                 </p>
                 <p>
-                  За годы работы мы стали одним из ведущих салонов красоты в Дубае, обслужив более 10,000
-                  довольных клиенток. Наша репутация построена на доверии, профессионализме и любви к
-                  своему делу.
+                  {t('about:Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft')}
                 </p>
                 <p>
-                  Мы постоянно развиваемся, следим за последними трендами в индустрии красоты и используем
-                  только проверенные, качественные материалы и оборудование.
+                {t('about:We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment')}
                 </p>
               </div>
             </div>
@@ -107,8 +103,8 @@ export default function About() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Наши ценности</h2>
-            <p className="text-xl text-gray-600">Принципы, которыми мы руководствуемся</p>
+          <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_values')}</h2>
+          <p className="text-xl text-gray-600">{t('about:The_principles_we_are_guided_by')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -116,9 +112,10 @@ export default function About() {
               <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Heart className="w-8 h-8 text-pink-600" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Любовь к делу</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('about:Love_for_our_craft')}</h3>
+
               <p className="text-gray-600">
-                Мы любим то, что делаем, и это отражается в каждой процедуре
+              {t('about:We_love_what_we_do_and_this_is_reflected_in_every_procedure')}              
               </p>
             </div>
 
@@ -126,19 +123,18 @@ export default function About() {
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Award className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Профессионализм</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('about:values.professionalism.title')}</h3>
               <p className="text-gray-600">
-                Наши мастера регулярно повышают квалификацию
-              </p>
+              {t('about:Our_masters_regularly_upgrade_their_qualifications')}              </p>
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm text-center">
               <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-cyan-600" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Клиентоориентированность</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('about:values.client_focus.title')}</h3>
               <p className="text-gray-600">
-                Ваш комфорт и удовлетворенность - наш приоритет
+              {t('about:Your_comfort_and_satisfaction_-_our_priority')}
               </p>
             </div>
 
@@ -146,10 +142,9 @@ export default function About() {
               <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="w-8 h-8 text-amber-600" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Качество</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('about:values.quality.title')}</h3>
               <p className="text-gray-600">
-                Используем только премиальные материалы и оборудование
-              </p>
+              {t('about:We_use_only_premium_materials_and_equipment')}              </p>
             </div>
           </div>
         </div>
@@ -159,16 +154,15 @@ export default function About() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Наша команда</h2>
-            <p className="text-xl text-gray-600">
-              Познакомьтесь с нашими талантливыми мастерами
-            </p>
+          <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_team')}</h2>
+          <p className="text-xl text-gray-600">
+            {t('about:Meet_our_talented_masters')}            </p>
           </div>
 
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600">Загрузка команды...</p>
-            </div>
+<p className="text-gray-600">{t('common:loading')}</p>
+</div>
           ) : team.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {team.map((member) => (
@@ -187,11 +181,9 @@ export default function About() {
               <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-2xl text-gray-900 mb-4">Наша команда профессионалов</h3>
+              <h3 className="text-2xl text-gray-900 mb-4">{t('about:Our_team_of_professionals')}</h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                В нашем салоне работают опытные мастера с международными сертификатами.
-                Каждый специалист имеет богатый опыт и регулярно повышает свою квалификацию,
-                чтобы предоставлять вам услуги высочайшего качества.
+              {t('about:In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality')}
               </p>
             </div>
           )}
@@ -204,19 +196,19 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="text-5xl text-pink-600 mb-2">10+</p>
-              <p className="text-gray-700">Лет опыта</p>
+              <p className="text-gray-700">{t('stats:years_experience')}</p>
             </div>
             <div>
               <p className="text-5xl text-purple-600 mb-2">10K+</p>
-              <p className="text-gray-700">Довольных клиентов</p>
+              <p className="text-gray-700">{t('stats:satisfied_clients')}</p>
             </div>
             <div>
               <p className="text-5xl text-pink-600 mb-2">15+</p>
-              <p className="text-gray-700">Видов услуг</p>
+              <p className="text-gray-700">{t('stats:service_types')}</p>
             </div>
             <div>
               <p className="text-5xl text-purple-600 mb-2">50+</p>
-              <p className="text-gray-700">Наград и сертификатов</p>
+              <p className="text-gray-700">{t('stats:awards_and_certificates')}</p>
             </div>
           </div>
         </div>
@@ -225,16 +217,16 @@ export default function About() {
       {/* CTA */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl text-gray-900 mb-6">Готовы преобразиться?</h2>
+          <h2 className="text-4xl text-gray-900 mb-6">{t('cta:ready_to_transform')}</h2>
           <p className="text-xl text-gray-600 mb-8">
-            Запишитесь на процедуру прямо сейчас и ощутите разницу
+          {t('about:Book_a_procedure_right_now_and_feel_the_difference')}
           </p>
           <Button
             size="lg"
             className="bg-gradient-to-r from-pink-500 to-purple-600"
             onClick={() => navigate('/')}
           >
-            Записаться на процедуру
+            {t('cta:book_procedure')}
           </Button>
         </div>
       </section>

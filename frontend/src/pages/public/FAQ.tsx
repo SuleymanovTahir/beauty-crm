@@ -17,55 +17,60 @@ export default function FAQ() {
       .catch(err => console.error('Error loading salon info:', err));
   }, []);
 
-  // Динамические FAQ на основе данных салона
   const faqs = [
     {
-      question: 'Как записаться на процедуру?',
-      answer: `Вы можете записаться на процедуру через форму на нашем сайте${salonInfo.phone ? `, позвонив по телефону ${salonInfo.phone}` : ''}${salonInfo.instagram ? `, или написав нам в Instagram ${salonInfo.instagram}` : ''}. Мы свяжемся с вами для подтверждения записи.`
+      question: t('faq:questions.booking.question'),
+      answer: t('faq:questions.booking.answer', { 
+        phone: salonInfo.phone || '', 
+        instagram: salonInfo.instagram || '' 
+      })
     },
     {
-      question: 'Какие способы оплаты вы принимаете?',
-      answer: 'Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги.'
+      question: t('faq:questions.payment.question'),
+      answer: t('faq:questions.payment.answer')
     },
     {
-      question: 'Могу ли я отменить или перенести запись?',
-      answer: 'Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.'
+      question: t('faq:questions.cancellation.question'),
+      answer: t('faq:questions.cancellation.answer')
     },
     {
-      question: 'Какие материалы вы используете?',
-      answer: 'Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.'
+      question: t('faq:questions.materials.question'),
+      answer: t('faq:questions.materials.answer')
     },
     {
-      question: 'Есть ли у ваших мастеров сертификаты?',
-      answer: 'Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.'
+      question: t('faq:questions.certificates.question'),
+      answer: t('faq:questions.certificates.answer')
     },
     {
-      question: 'Нужна ли подготовка перед процедурой?',
-      answer: 'Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.'
+      question: t('faq:questions.preparation.question'),
+      answer: t('faq:questions.preparation.answer')
     },
     {
-      question: 'Есть ли противопоказания к процедурам?',
-      answer: 'Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.'
+      question: t('faq:questions.contraindications.question'),
+      answer: t('faq:questions.contraindications.answer')
     },
     {
-      question: 'Предоставляете ли вы гарантию на услуги?',
-      answer: 'Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.'
+      question: t('faq:questions.guarantee.question'),
+      answer: t('faq:questions.guarantee.answer')
     },
     {
-      question: 'Есть ли у вас программа лояльности?',
-      answer: 'Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.'
+      question: t('faq:questions.loyalty.question'),
+      answer: t('faq:questions.loyalty.answer')
     },
     ...(salonInfo.working_hours ? [{
-      question: 'Работаете ли вы в выходные?',
-      answer: `Да, мы работаем 7 дней в неделю. ${salonInfo.working_hours.weekdays ? `В будние дни ${salonInfo.working_hours.weekdays}` : ''}${salonInfo.working_hours.weekends ? `, в выходные ${salonInfo.working_hours.weekends}` : ''}.`
+      question: t('faq:questions.weekends.question'),
+      answer: t('faq:questions.weekends.answer', {
+        weekdays: salonInfo.working_hours.weekdays || '',
+        weekends: salonInfo.working_hours.weekends || ''
+      })
     }] : []),
     {
-      question: 'Можно ли подарить сертификат на услуги?',
-      answer: 'Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.'
+      question: t('faq:questions.gift.question'),
+      answer: t('faq:questions.gift.answer')
     },
     ...(salonInfo.address ? [{
-      question: 'Где находится ваш салон?',
-      answer: `Мы находимся по адресу: ${salonInfo.address}. Подробную информацию о том, как добраться, вы можете найти на странице Контакты.`
+      question: t('faq:questions.location.question'),
+      answer: t('faq:questions.location.answer', { address: salonInfo.address })
     }] : [])
   ];
 
@@ -77,9 +82,9 @@ export default function FAQ() {
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <HelpCircle className="w-10 h-10 text-pink-600" />
           </div>
-          <h1 className="text-5xl text-gray-900 mb-4">Часто задаваемые вопросы</h1>
+          <h1 className="text-5xl text-gray-900 mb-4">{t('faq:title')}</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Ответы на популярные вопросы о наших услугах
+            {t('faq:subtitle')}
           </p>
         </div>
       </section>
@@ -111,9 +116,9 @@ export default function FAQ() {
       {/* Contact CTA */}
       <section className="py-20 bg-gradient-to-br from-pink-50 to-purple-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl text-gray-900 mb-4">Не нашли ответ на свой вопрос?</h2>
+          <h2 className="text-3xl text-gray-900 mb-4">{t('faq:cta.title')}</h2>
           <p className="text-lg text-gray-600 mb-8">
-            Свяжитесь с нами, и мы с радостью ответим на все ваши вопросы
+            {t('faq:cta.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -121,14 +126,14 @@ export default function FAQ() {
               className="bg-gradient-to-r from-pink-500 to-purple-600"
               onClick={() => navigate('/contacts')}
             >
-              Связаться с нами
+              {t('faq:cta.contactButton')}
             </Button>
             <Button
               size="lg"
               variant="outline"
               onClick={() => navigate('/')}
             >
-              Записаться на процедуру
+              {t('faq:cta.bookButton')}
             </Button>
           </div>
         </div>

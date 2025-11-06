@@ -76,7 +76,7 @@ export default function Funnel() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка данных воронки...</p>
+          <p className="text-gray-600">{t('funnel:loading')}...</p>
         </div>
       </div>
     );
@@ -89,10 +89,10 @@ export default function Funnel() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('common:error_loading')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadFunnelData} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать еще раз
+              {t('common:try_again')}
               </Button>
             </div>
           </div>
@@ -112,10 +112,10 @@ export default function Funnel() {
   const maxValue = Math.max(...stageValues);
 
   const conversionMetrics = [
-    { label: 'Посетитель → Вовлечённый', value: funnel.conversion_rates.visitor_to_engaged },
-    { label: 'Вовлечённый → Начал запись', value: funnel.conversion_rates.engaged_to_booking },
-    { label: 'Начал запись → Записался', value: funnel.conversion_rates.booking_to_booked },
-    { label: 'Записался → Посетил', value: funnel.conversion_rates.booked_to_completed },
+    { label: t('funnel:conversion.visitor_to_engaged'), value: funnel.conversion_rates.visitor_to_engaged },
+    { label: t('funnel:conversion.engaged_to_booking'), value: funnel.conversion_rates.engaged_to_booking },
+    { label: t('funnel:conversion.booking_to_booked'), value: funnel.conversion_rates.booking_to_booked },
+    { label: t('funnel:conversion.booked_to_completed'), value: funnel.conversion_rates.booked_to_completed },
   ];
 
   // Вычисляем потери на каждом этапе
@@ -135,27 +135,27 @@ export default function Funnel() {
   
   if (funnel.conversion_rates.visitor_to_engaged < 60) {
     recommendations.push({
-      title: 'Увеличить вовлечённость',
-      description: `Потеря ${losses[1]} потенциальных клиентов на этапе вовлечения`,
-      suggestion: 'Улучшите контент в соцсетях, добавьте отзывы и примеры работ',
+      title: t('funnel:recommendations.increase_engagement.title'),
+      description: t('funnel:recommendations.increase_engagement.description', { count: losses[1] }),
+      suggestion: t('funnel:recommendations.increase_engagement.suggestion'),
       priority: 'high'
     });
   }
 
   if (funnel.conversion_rates.engaged_to_booking < 50) {
     recommendations.push({
-      title: 'Оптимизировать форму записи',
-      description: `${(100 - funnel.conversion_rates.engaged_to_booking).toFixed(1)}% посетителей уходят не завершив запись`,
-      suggestion: 'Упростите форму записи, добавьте автозаполнение',
+      title: t('funnel:recommendations.optimize_form.title'),
+      description: t('funnel:recommendations.optimize_form.description', { percent: (100 - funnel.conversion_rates.engaged_to_booking).toFixed(1) }),
+      suggestion: t('funnel:recommendations.optimize_form.suggestion'),
       priority: 'high'
     });
   }
 
   if (funnel.conversion_rates.booked_to_completed < 90) {
     recommendations.push({
-      title: 'Снизить no-show',
-      description: `${losses[4]} клиентов (${((losses[4] / funnel.booked) * 100).toFixed(1)}%) не пришли на запись`,
-      suggestion: 'Добавьте напоминания за 24 часа и за 2 часа до визита',
+      title: t('funnel:recommendations.reduce_noshow.title'),
+      description: t('funnel:recommendations.reduce_noshow.description', { count: losses[4], percent: ((losses[4] / funnel.booked) * 100).toFixed(1) }),
+      suggestion: t('funnel:recommendations.reduce_noshow.suggestion'),
       priority: 'medium'
     });
   }
@@ -166,9 +166,9 @@ export default function Funnel() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Filter className="w-8 h-8 text-pink-600" />
-          Воронка продаж
+          {t('funnel:title')}
         </h1>
-        <p className="text-gray-600">Анализ этапов взаимодействия с клиентами</p>
+        <p className="text-gray-600">{t('funnel:subtitle')}</p>
       </div>
 
       {/* Filters */}
@@ -179,21 +179,21 @@ export default function Funnel() {
               <SelectValue placeholder="Период" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="week">Неделя</SelectItem>
-              <SelectItem value="2weeks">2 недели</SelectItem>
-              <SelectItem value="month">Месяц</SelectItem>
-              <SelectItem value="3months">3 месяца</SelectItem>
+              <SelectItem value="week">{t('common:period.week')}</SelectItem>
+              <SelectItem value="2weeks">{t('common:period.2weeks')}</SelectItem>
+              <SelectItem value="month">{t('common:period.month')}</SelectItem>
+              <SelectItem value="3months">{t('common:period.3months')}</SelectItem>
             </SelectContent>
           </Select>
           
           <Button variant="outline" className="md:ml-auto" onClick={loadFunnelData}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Обновить
+            {t('common:refresh')}
           </Button>
           
           <Button className="bg-pink-600 hover:bg-pink-700">
             <Download className="w-4 h-4 mr-2" />
-            Экспорт
+            {t('common:export')}
           </Button>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default function Funnel() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
         <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
           <Filter className="w-6 h-6 text-pink-600" />
-          Воронка продаж
+          {t('funnel:funnel_chart')}
         </h2>
         
         <div className="space-y-4">
@@ -261,7 +261,7 @@ export default function Funnel() {
                 {losses[index] > 0 && (
                   <div className="mt-2 ml-4 flex items-center gap-2 text-red-600 text-sm">
                     <TrendingDown className="w-4 h-4" />
-                    <span>Потери: {losses[index]} клиентов</span>
+                    <span>{t('funnel:losses', { count: losses[index] })}</span>
                   </div>
                 )}
               </div>
@@ -274,13 +274,13 @@ export default function Funnel() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Key Metrics */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-6">Ключевые метрики</h2>
+        <h2 className="text-xl text-gray-900 mb-6">{t('funnel:key_metrics')}</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-8 h-8 text-green-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Общая конверсия</p>
+                <p className="text-sm text-gray-600">{t('funnel:total_conversion')}</p>
                   <p className="text-2xl text-gray-900">{totalConversion.toFixed(1)}%</p>
                 </div>
               </div>
@@ -295,7 +295,7 @@ export default function Funnel() {
               <div className="flex items-center gap-3">
                 <AlertTriangle className="w-8 h-8 text-red-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Общие потери</p>
+                <p className="text-sm text-gray-600">{t('funnel:total_losses')}</p>
                   <p className="text-2xl text-gray-900">{funnel.visitors - funnel.completed}</p>
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function Funnel() {
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-8 h-8 text-blue-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Успешных визитов</p>
+                <p className="text-sm text-gray-600">{t('funnel:successful_visits')}</p>
                   <p className="text-2xl text-gray-900">{funnel.completed}</p>
                 </div>
               </div>
@@ -316,7 +316,7 @@ export default function Funnel() {
 
         {/* Recommendations */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-6">Рекомендации</h2>
+        <h2 className="text-xl text-gray-900 mb-6">{t('funnel:recommendations_title')}</h2>
           <div className="space-y-4">
             {recommendations.length > 0 ? (
               recommendations.map((rec, index) => (
@@ -345,9 +345,9 @@ export default function Funnel() {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="text-sm text-green-900 font-medium">Все хорошо!</h3>
+                  <h3 className="text-sm text-green-900 font-medium">{t('funnel:all_good')}</h3>
                     <p className="text-xs text-green-700 mt-1">
-                      Ваша воронка показывает хорошие результаты. Продолжайте в том же духе!
+                    {t('Your funnel shows good results. Keep it up!')}
                     </p>
                   </div>
                 </div>
@@ -360,16 +360,16 @@ export default function Funnel() {
       {/* Stage Details Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl text-gray-900">Детализация по этапам</h2>
+        <h2 className="text-xl text-gray-900">{t('funnel:stage_details')}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Этап</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Количество</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">От всего</th>
-                <th className="px-6 py-4 text-left text-sm text-gray-600">Потери</th>
+              <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.stage')}</th>
+                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.count')}</th>
+                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.percentage')}</th>
+                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('funnel:table.losses')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">

@@ -26,16 +26,15 @@ export default function PriceList() {
         const data = await apiClient.getPublicServices();
         setServices(data.services);
       } catch (err) {
-        setError('Ошибка загрузки услуг');
+        setError(t('pricelist:error'));
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
     fetchServices();
-  }, []);
+  }, [t]);
 
-  // Группируем услуги по категориям
   const groupedServices = services.reduce((acc, service) => {
     const category = service.category || 'other';
     if (!acc[category]) acc[category] = [];
@@ -53,11 +52,15 @@ export default function PriceList() {
     'other': '🌟'
   };
 
+  const getCategoryName = (category: string): string => {
+    return t(`pricelist:categories.${category}`);
+  };
+
   if (loading) {
     return (
       <div className="py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-gray-600">Загрузка услуг...</p>
+          <p className="text-gray-600">{t('pricelist:loading')}</p>
         </div>
       </div>
     );
@@ -69,7 +72,7 @@ export default function PriceList() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-600" />
-            <span className="text-red-800">{error || 'Услуги не найдены'}</span>
+            <span className="text-red-800">{error || t('pricelist:noServices')}</span>
           </div>
         </div>
       </div>
@@ -81,9 +84,9 @@ export default function PriceList() {
       {/* Header */}
       <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl text-gray-900 mb-4">Наши услуги и цены</h1>
+          <h1 className="text-5xl text-gray-900 mb-4">{t('pricelist:title')}</h1>
           <p className="text-xl text-gray-600">
-            Премиальные услуги красоты по доступным ценам
+            {t('pricelist:subtitle')}
           </p>
         </div>
       </section>
@@ -91,13 +94,13 @@ export default function PriceList() {
       {/* Booking CTA */}
       <section className="bg-white border-b border-gray-200 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-lg text-gray-700 mb-4">Готовы преобразиться?</p>
+          <p className="text-lg text-gray-700 mb-4">{t('pricelist:cta.ready')}</p>
           <Button
             size="lg"
             className="bg-gradient-to-r from-pink-500 to-purple-600"
             onClick={() => navigate('/')}
           >
-            Записаться на процедуру
+            {t('pricelist:cta.bookButton')}
           </Button>
         </div>
       </section>
@@ -113,12 +116,7 @@ export default function PriceList() {
                     {categoryIcons[category] || '🌟'}
                   </div>
                   <h2 className="text-3xl text-gray-900">
-                    {category === 'permanent-makeup' ? 'Перманентный макияж' :
-                     category === 'facial-care' ? 'Уход за лицом' :
-                     category === 'nails' ? 'Ногтевой сервис' :
-                     category === 'lashes' ? 'Ресницы и брови' :
-                     category === 'hair' ? 'Парикмахерские услуги' :
-                     category === 'massage' ? 'Массаж' : 'Другие услуги'}
+                    {getCategoryName(category)}
                   </h2>
                 </div>
 
@@ -145,16 +143,16 @@ export default function PriceList() {
       {/* Bottom CTA */}
       <section className="bg-gradient-to-br from-pink-50 to-purple-50 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl text-gray-900 mb-4">Готовы записаться?</h2>
+          <h2 className="text-3xl text-gray-900 mb-4">{t('pricelist:bottomCta.title')}</h2>
           <p className="text-lg text-gray-600 mb-8">
-            Выберите удобное время и насладитесь нашими премиальными услугами
+            {t('pricelist:bottomCta.description')}
           </p>
           <Button
             size="lg"
             className="bg-gradient-to-r from-pink-500 to-purple-600"
             onClick={() => navigate('/')}
           >
-            Записаться сейчас
+            {t('pricelist:bottomCta.bookButton')}
           </Button>
         </div>
       </section>

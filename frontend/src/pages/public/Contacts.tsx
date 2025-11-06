@@ -35,19 +35,16 @@ export default function Contacts() {
       .catch(err => console.error('Error loading salon info:', err));
   }, []);
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.email || !formData.message) {
-      toast.error('Пожалуйста, заполните все поля');
+      toast.error(t('contacts:fill_all_fields'));
       return;
     }
 
     setLoading(true);
     try {
-      // Отправляем сообщение на email или в БД
       const response = await fetch('/api/send-message', {
         method: 'POST',
         credentials: 'include',
@@ -60,14 +57,14 @@ export default function Contacts() {
       });
 
       if (response.ok) {
-        toast.success('Ваше сообщение отправлено! Мы свяжемся с вами в ближайшее время.');
+        toast.success(t('contacts:message_sent'));
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error('Ошибка отправки сообщения');
+        toast.error(t('contacts:send_error'));
       }
     } catch (err) {
       console.error('Error sending message:', err);
-      toast.error('Ошибка отправки. Попробуйте позже.');
+      toast.error(t('contacts:try_later'));
     } finally {
       setLoading(false);
     }
@@ -75,26 +72,22 @@ export default function Contacts() {
 
   return (
     <div>
-      {/* Header */}
       <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl text-gray-900 mb-4">{t('contacts:title')}</h1>
           <p className="text-xl text-gray-600">
-            Свяжитесь с нами удобным для вас способом
+            {t('contacts:subtitle')}
           </p>
         </div>
       </section>
 
-      {/* Contact Info & Form */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Information */}
             <div>
-              <h2 className="text-3xl text-gray-900 mb-8">Как с нами связаться</h2>
+              <h2 className="text-3xl text-gray-900 mb-8">{t('contacts:how_to_contact')}</h2>
               
               <div className="space-y-6">
-                {/* Address */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-pink-600" />
@@ -105,19 +98,17 @@ export default function Contacts() {
                   </div>
                 </div>
 
-                {/* Phone */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg text-gray-900 mb-1">Телефон</h3>
+                    <h3 className="text-lg text-gray-900 mb-1">{t('contacts:phone')}</h3>
                     <p className="text-gray-600">{salonInfo.phone}</p>
                     <p className="text-gray-600">+971 4 123 4567</p>
                   </div>
                 </div>
 
-                {/* Email */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-cyan-600" />
@@ -129,7 +120,6 @@ export default function Contacts() {
                   </div>
                 </div>
 
-                {/* Instagram */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Instagram className="w-6 h-6 text-pink-600" />
@@ -147,7 +137,6 @@ export default function Contacts() {
                   </div>
                 </div>
 
-                {/* Hours */}
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Clock className="w-6 h-6 text-amber-600" />
@@ -155,17 +144,16 @@ export default function Contacts() {
                   <div>
                     <h3 className="text-lg text-gray-900 mb-2">{t('contacts:working_hours')}</h3>
                     <div className="space-y-1 text-gray-600">
-                      <p>Пн-Пт: {salonInfo.working_hours?.weekdays}</p>
-                      <p>Сб-Вс: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
+                      <p>{t('contacts:weekdays')}: {salonInfo.working_hours?.weekdays}</p>
+                      <p>{t('contacts:weekends')}: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Contact Form */}
             <div>
-              <h2 className="text-3xl text-gray-900 mb-8">Напишите нам</h2>
+              <h2 className="text-3xl text-gray-900 mb-8">{t('contacts:write_us')}</h2>
               
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -177,7 +165,7 @@ export default function Contacts() {
                       disabled={loading}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Анна Иванова"
+                      placeholder={t('contacts:name_placeholder')}
                     />
                   </div>
 
@@ -190,19 +178,19 @@ export default function Contacts() {
                       disabled={loading}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="anna@example.com"
+                      placeholder={t('contacts:email_placeholder')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="message">Сообщение *</Label>
+                    <Label htmlFor="message">{t('contacts:message')} *</Label>
                     <Textarea
                       id="message"
                       required
                       disabled={loading}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Расскажите нам, чем мы можем вам помочь..."
+                      placeholder={t('contacts:message_placeholder')}
                       className="min-h-[150px]"
                     />
                   </div>
@@ -214,7 +202,7 @@ export default function Contacts() {
                     size="lg"
                   >
                     <Send className="w-4 h-4 mr-2" />
-                    {loading ? 'Отправка...' : 'Отправить сообщение'}
+                    {loading ? t('contacts:sending') : t('contacts:send_button')}
                   </Button>
                 </form>
               </div>
@@ -223,7 +211,6 @@ export default function Contacts() {
         </div>
       </section>
 
-      {/* Map */}
       <section className="pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gray-200 rounded-2xl overflow-hidden h-[450px]">

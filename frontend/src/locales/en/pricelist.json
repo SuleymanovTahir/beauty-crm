@@ -1,0 +1,25 @@
+{
+    "title": "Our services and prices",
+    "subtitle": "Premium beauty services at affordable prices",
+    "loading": "Loading services...",
+    "error": "Error loading services",
+    "noServices": "Services not found",
+    "categories": {
+      "permanent-makeup": "Permanent makeup",
+      "facial-care": "Facial care",
+      "nails": "Nail services",
+      "lashes": "Lashes and brows",
+      "hair": "Hair services",
+      "massage": "Massage",
+      "other": "Other services"
+    },
+    "cta": {
+      "ready": "Ready to transform?",
+      "bookButton": "Book an appointment"
+    },
+    "bottomCta": {
+      "title": "Ready to book?",
+      "description": "Choose a convenient time and enjoy our premium services",
+      "bookButton": "Book now"
+    }
+  }

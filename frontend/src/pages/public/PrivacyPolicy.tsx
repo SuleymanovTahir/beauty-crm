@@ -13,6 +13,12 @@ export default function PrivacyPolicy() {
       .catch(err => console.error('Error loading salon info:', err));
   }, []);
 
+  const currentDate = new Date().toLocaleDateString(t('privacypolicy:locale'), { 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  });
+
   return (
     <div className="py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,117 +27,93 @@ export default function PrivacyPolicy() {
             <div className="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center">
               <Shield className="w-8 h-8 text-purple-600" />
             </div>
-            <h1 className="text-4xl text-gray-900">Политика конфиденциальности</h1>
+            <h1 className="text-4xl text-gray-900">{t('privacypolicy:title')}</h1>
           </div>
 
           <div className="prose prose-purple max-w-none space-y-6 text-gray-700">
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">1. Введение</h2>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.introduction.title')}</h2>
               <p>
-              {salonInfo.name } серьезно относится к защите вашей конфиденциальности. Данная Политика
-                конфиденциальности описывает, какую информацию мы собираем, как мы ее используем и защищаем.
+                {t('privacypolicy:sections.introduction.content', { salonName: salonInfo.name || 'Наш салон' })}
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">2. Собираемая информация</h2>
-              <p>Мы можем собирать следующую информацию:</p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.collectedInfo.title')}</h2>
+              <p>{t('privacypolicy:sections.collectedInfo.description')}</p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Имя и контактную информацию (телефон, email)</li>
-                <li>История посещений и оказанных услуг</li>
-                <li>Предпочтения в услугах и процедурах</li>
-                <li>Информацию о медицинских противопоказаниях (с вашего согласия)</li>
-                <li>Фотографии результатов работы (только с вашего письменного согласия)</li>
+                <li>{t('privacypolicy:sections.collectedInfo.items.0')}</li>
+                <li>{t('privacypolicy:sections.collectedInfo.items.1')}</li>
+                <li>{t('privacypolicy:sections.collectedInfo.items.2')}</li>
+                <li>{t('privacypolicy:sections.collectedInfo.items.3')}</li>
+                <li>{t('privacypolicy:sections.collectedInfo.items.4')}</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">3. Использование информации</h2>
-              <p>Мы используем собранную информацию для:</p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.dataUsage.title')}</h2>
+              <p>{t('privacypolicy:sections.dataUsage.description')}</p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Организации и подтверждения ваших записей</li>
-                <li>Предоставления качественных услуг с учетом ваших особенностей</li>
-                <li>Отправки напоминаний о записях</li>
-                <li>Информирования о новых услугах и специальных предложениях (с вашего согласия)</li>
-                <li>Улучшения качества наших услуг</li>
+                <li>{t('privacypolicy:sections.dataUsage.items.0')}</li>
+                <li>{t('privacypolicy:sections.dataUsage.items.1')}</li>
+                <li>{t('privacypolicy:sections.dataUsage.items.2')}</li>
+                <li>{t('privacypolicy:sections.dataUsage.items.3')}</li>
+                <li>{t('privacypolicy:sections.dataUsage.items.4')}</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">4. Защита данных</h2>
-              <p>
-                Мы принимаем все необходимые меры для защиты ваших персональных данных от несанкционированного
-                доступа, изменения, раскрытия или уничтожения.
-              </p>
-              <p className="mt-3">
-                Доступ к вашим данным имеют только уполномоченные сотрудники, которые обязаны соблюдать
-                конфиденциальность.
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.dataProtection.title')}</h2>
+              <p>{t('privacypolicy:sections.dataProtection.paragraph1')}</p>
+              <p className="mt-3">{t('privacypolicy:sections.dataProtection.paragraph2')}</p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">5. Передача данных третьим лицам</h2>
-              <p>
-                Мы не продаем, не обмениваем и не передаем вашу личную информацию третьим лицам без вашего
-                явного согласия, за исключением случаев, предусмотренных законодательством.
-              </p>
-              <p className="mt-3">
-                Мы можем передавать обезличенную статистическую информацию нашим партнерам для улучшения
-                качества услуг.
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.thirdParty.title')}</h2>
+              <p>{t('privacypolicy:sections.thirdParty.paragraph1')}</p>
+              <p className="mt-3">{t('privacypolicy:sections.thirdParty.paragraph2')}</p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">6. Cookies и технологии отслеживания</h2>
-              <p>
-                Наш веб-сайт может использовать файлы cookie для улучшения пользовательского опыта.
-                Вы можете отключить cookies в настройках вашего браузера.
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.cookies.title')}</h2>
+              <p>{t('privacypolicy:sections.cookies.content')}</p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">7. Ваши права</h2>
-              <p>Вы имеете право:</p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.rights.title')}</h2>
+              <p>{t('privacypolicy:sections.rights.description')}</p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Запросить доступ к вашим персональным данным</li>
-                <li>Запросить исправление неточных данных</li>
-                <li>Запросить удаление ваших данных</li>
-                <li>Отозвать согласие на обработку данных в любое время</li>
-                <li>Отказаться от получения рекламных рассылок</li>
+                <li>{t('privacypolicy:sections.rights.items.0')}</li>
+                <li>{t('privacypolicy:sections.rights.items.1')}</li>
+                <li>{t('privacypolicy:sections.rights.items.2')}</li>
+                <li>{t('privacypolicy:sections.rights.items.3')}</li>
+                <li>{t('privacypolicy:sections.rights.items.4')}</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">8. Хранение данных</h2>
-              <p>
-                Мы храним ваши персональные данные только в течение времени, необходимого для целей,
-                указанных в данной Политике, или в соответствии с требованиями законодательства.
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.dataStorage.title')}</h2>
+              <p>{t('privacypolicy:sections.dataStorage.content')}</p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">9. Изменения в Политике</h2>
-              <p>
-                Мы оставляем за собой право обновлять данную Политику конфиденциальности. Обновления
-                будут опубликованы на этой странице с указанием даты последнего изменения.
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.policyChanges.title')}</h2>
+              <p>{t('privacypolicy:sections.policyChanges.content')}</p>
             </section>
 
             <section>
-              <h2 className="text-2xl text-gray-900 mb-4">10. Контакты</h2>
-              <p>
-                По вопросам, касающимся данной Политики конфиденциальности, вы можете связаться с нами:
-              </p>
+              <h2 className="text-2xl text-gray-900 mb-4">{t('privacypolicy:sections.contact.title')}</h2>
+              <p>{t('privacypolicy:sections.contact.description')}</p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Телефон: {salonInfo.phone }</li>
-                <li>Email: {salonInfo.email}</li>
-                <li>Адрес: {salonInfo.address}</li>
+                <li>{t('privacypolicy:sections.contact.phone')}: {salonInfo.phone}</li>
+                <li>{t('privacypolicy:sections.contact.email')}: {salonInfo.email}</li>
+                <li>{t('privacypolicy:sections.contact.address')}: {salonInfo.address}</li>
               </ul>
             </section>
           </div>
 
           <div className="mt-12 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-          <p>Дата последнего обновления: {new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p>{t('privacypolicy:lastUpdated', { date: currentDate })}</p>
           </div>
         </div>
       </div>

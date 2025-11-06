@@ -6,7 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +65,6 @@ export default function Home() {
         setServices(serviceNames);
       } catch (err) {
         console.error('Error fetching services:', err);
-        // Используем default услуги
         setServices([
           'Перманентный макияж бровей',
           'Маникюр',
@@ -87,7 +86,7 @@ export default function Home() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
-      toast.error('Пожалуйста, заполните все поля');
+      toast.error(t('home:booking.validation'));
       return;
     }
     navigate('/success', { state: formData });
@@ -117,14 +116,13 @@ export default function Home() {
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-6 h-6 text-pink-600" />
-              <span className="text-pink-600">Премиум услуги красоты</span>
+              <span className="text-pink-600">{t('home:hero.badge')}</span>
             </div>
             <h1 className="text-5xl text-gray-900 mb-6">
-              Откройте для себя новый уровень красоты
+              {t('home:hero.title')}
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Профессиональные мастера, индивидуальный подход и высококачественные материалы. 
-              Ваша красота - наша страсть.
+              {t('home:hero.description')}
             </p>
             <div className="flex gap-4">
               <Button 
@@ -132,14 +130,14 @@ export default function Home() {
                 className="bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg"
                 onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
-                Записаться сейчас
+                {t('home:hero.bookButton')}
               </Button>
               <Button 
                 size="lg" 
                 variant="outline"
                 onClick={() => navigate('/price-list')}
               >
-                Наши услуги
+                {t('home:hero.servicesButton')}
               </Button>
             </div>
           </div>
@@ -150,8 +148,8 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Почему выбирают нас</h2>
-            <p className="text-xl text-gray-600">Мы предлагаем лучший сервис в индустрии красоты</p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('home:features.title')}</h2>
+            <p className="text-xl text-gray-600">{t('home:features.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -159,9 +157,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Star className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Опытные мастера</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('home:features.items.masters.title')}</h3>
               <p className="text-gray-600">
-                Наши специалисты имеют международные сертификаты и многолетний опыт работы
+                {t('home:features.items.masters.description')}
               </p>
             </div>
 
@@ -169,9 +167,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Премиум материалы</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('home:features.items.materials.title')}</h3>
               <p className="text-gray-600">
-                Используем только качественные и безопасные материалы от ведущих брендов
+                {t('home:features.items.materials.description')}
               </p>
             </div>
 
@@ -179,9 +177,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Clock className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl text-gray-900 mb-3">Удобное расписание</h3>
+              <h3 className="text-xl text-gray-900 mb-3">{t('home:features.items.schedule.title')}</h3>
               <p className="text-gray-600">
-                Работаем 7 дней в неделю с удобными временными слотами для записи
+                {t('home:features.items.schedule.description')}
               </p>
             </div>
           </div>
@@ -192,8 +190,8 @@ export default function Home() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Наши работы</h2>
-            <p className="text-xl text-gray-600">Результаты, которыми мы гордимся</p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('home:gallery.title')}</h2>
+            <p className="text-xl text-gray-600">{t('home:gallery.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -204,7 +202,7 @@ export default function Home() {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">Перманентный макияж</p>
+                <p className="text-white text-lg">{t('home:gallery.items.makeup')}</p>
               </div>
             </div>
 
@@ -215,7 +213,7 @@ export default function Home() {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">Уход за лицом</p>
+                <p className="text-white text-lg">{t('home:gallery.items.facial')}</p>
               </div>
             </div>
 
@@ -226,7 +224,7 @@ export default function Home() {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">Наш салон</p>
+                <p className="text-white text-lg">{t('home:gallery.items.salon')}</p>
               </div>
             </div>
           </div>
@@ -237,8 +235,8 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl text-gray-900 mb-4">Отзывы наших клиентов</h2>
-            <p className="text-xl text-gray-600">Что говорят о нас</p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('home:testimonials.title')}</h2>
+            <p className="text-xl text-gray-600">{t('home:testimonials.subtitle')}</p>
           </div>
 
           {testimonials.length > 0 ? (
@@ -282,45 +280,45 @@ export default function Home() {
       <section id="booking-form" className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl text-gray-900 mb-4">Записаться на процедуру</h2>
-            <p className="text-xl text-gray-600">Заполните форму и мы свяжемся с вами для подтверждения</p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('home:booking.title')}</h2>
+            <p className="text-xl text-gray-600">{t('home:booking.description')}</p>
           </div>
 
           {loadingServices ? (
             <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-              <p className="text-gray-600">Загрузка услуг...</p>
+              <p className="text-gray-600">{t('home:booking.loading')}</p>
             </div>
           ) : (
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="name">Ваше имя *</Label>
+                  <Label htmlFor="name">{t('home:booking.form.name')}</Label>
                   <Input
                     id="name"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Анна Иванова"
+                    placeholder={t('home:booking.form.namePlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="phone">Телефон *</Label>
+                  <Label htmlFor="phone">{t('home:booking.form.phone')}</Label>
                   <Input
                     id="phone"
                     type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+971 50 123 4567"
+                    placeholder={t('home:booking.form.phonePlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="service">Услуга *</Label>
+                  <Label htmlFor="service">{t('home:booking.form.service')}</Label>
                   <Select required value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Выберите услугу" />
+                      <SelectValue placeholder={t('home:booking.form.servicePlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {services.map((service) => (
@@ -334,7 +332,7 @@ export default function Home() {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="date">Дата *</Label>
+                    <Label htmlFor="date">{t('home:booking.form.date')}</Label>
                     <Input
                       id="date"
                       type="date"
@@ -345,7 +343,7 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <Label htmlFor="time">Время *</Label>
+                    <Label htmlFor="time">{t('home:booking.form.time')}</Label>
                     <Input
                       id="time"
                       type="time"
@@ -358,7 +356,7 @@ export default function Home() {
 
                 <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg" size="lg">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Записаться
+                  {t('home:booking.form.submit')}
                 </Button>
               </form>
             </div>
