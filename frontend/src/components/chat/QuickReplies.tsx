@@ -1,5 +1,6 @@
 import React from 'react';
 import { Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface QuickRepliesProps {
   onSelect: (text: string) => void;
@@ -15,6 +16,7 @@ const QUICK_REPLIES = [
 ];
 
 export default function QuickReplies({ onSelect }: QuickRepliesProps) {
+  const { t } = useTranslation(['quickreplies', 'common']);
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">

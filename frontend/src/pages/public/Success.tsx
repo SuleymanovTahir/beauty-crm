@@ -2,8 +2,10 @@ import React from 'react';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Success() {
+  const { t } = useTranslation(['success', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
   const bookingData = location.state || {};

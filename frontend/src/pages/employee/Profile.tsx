@@ -10,6 +10,7 @@ import { Badge } from '../../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface UserProfile {
   id: number;
@@ -24,7 +25,7 @@ interface UserProfile {
 export default function EmployeeProfile() {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = currentUser.id;
-
+  const { t } = useTranslation(['profile', 'common']);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

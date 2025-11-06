@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { StatusSelect } from '../shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
+import { useTranslation } from 'react-i18next';
 
 
 interface Client {
@@ -25,6 +26,7 @@ interface InfoPanelProps {
 export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { t } = useTranslation(['infopanel', 'common']);
   const [editedName, setEditedName] = useState(client.name || '');
   const [editedPhone, setEditedPhone] = useState(client.phone || '');
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();

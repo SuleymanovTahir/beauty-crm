@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner@2.0.3';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface Service {
   name: string;
@@ -44,6 +45,7 @@ const defaultTestimonials: Testimonial[] = [
 export default function Home() {
   const navigate = useNavigate();
   const [services, setServices] = useState<string[]>([]);
+  const { t } = useTranslation(['home', 'common']);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [loadingServices, setLoadingServices] = useState(true);

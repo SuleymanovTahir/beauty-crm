@@ -31,6 +31,7 @@ import InfoPanel from '../../components/chat/InfoPanel';
 import NotesPanel from '../../components/chat/NotesPanel';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner@2.0.3';
 import { api } from '../../services/api';
 
@@ -59,6 +60,7 @@ interface Message {
 export default function Chat() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation(['chat', 'common']);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 
@@ -25,6 +26,7 @@ const roleConfig: Record<string, { label: string; color: string }> = {
 
 export default function Users() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['users', 'common']);
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');

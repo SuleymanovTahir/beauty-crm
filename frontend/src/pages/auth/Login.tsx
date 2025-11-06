@@ -8,6 +8,7 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from 'react-i18next';
 import { api } from "../../services/api";
 
 interface LoginProps {
@@ -23,6 +24,7 @@ interface LoginProps {
 
 export default function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation(['login', 'common']);
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",

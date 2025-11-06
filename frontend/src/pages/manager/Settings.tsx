@@ -6,8 +6,10 @@ import { Switch } from '../../components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner@2.0.3';
+import { useTranslation } from 'react-i18next';
 
 export default function ManagerSettings() {
+  const { t } = useTranslation(['settings', 'common']);
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     smsNotifications: false,

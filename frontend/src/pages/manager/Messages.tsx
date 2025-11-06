@@ -29,6 +29,7 @@ import { Checkbox } from "../../components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useTranslation } from 'react-i18next';
 
 interface ClientMessage {
   id: string;
@@ -66,6 +67,7 @@ const statuses = [
 
 export default function Messages() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['messages', 'common']);
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

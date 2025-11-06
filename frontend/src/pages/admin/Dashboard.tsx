@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Stats {
   total_clients: number;
@@ -24,6 +25,7 @@ interface Stats {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['dashboard', 'common']);
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

@@ -13,6 +13,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface SpecialPackage {
   id: number;
@@ -36,6 +37,7 @@ interface SpecialPackage {
 
 export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
+  const { t } = useTranslation(['specialpackages', 'common']);
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');

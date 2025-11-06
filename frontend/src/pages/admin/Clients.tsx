@@ -31,6 +31,7 @@ import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { usePeriodFilter } from '../../hooks/usePeriodFilter';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
+import { useTranslation } from 'react-i18next';
 
 interface Client {
   id: string;
@@ -57,6 +58,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation(['сlients', 'common']);
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

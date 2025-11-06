@@ -7,6 +7,7 @@ import { customPieLabel, customPiePercentLabel, customPieLegend } from '../../co
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner@2.0.3';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 
 interface AnalyticsData {
@@ -37,6 +38,7 @@ export default function Analytics() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { t } = useTranslation(['analytics', 'common']);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

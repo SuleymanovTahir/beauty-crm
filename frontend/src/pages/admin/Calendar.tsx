@@ -116,6 +116,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const { t } = useTranslation(['calendar', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [masters, setMasters] = useState<UserMaster[]>([]);

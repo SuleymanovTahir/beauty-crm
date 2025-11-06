@@ -4,9 +4,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '..
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 export default function FAQ() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['faq', 'common']);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 
   React.useEffect(() => {

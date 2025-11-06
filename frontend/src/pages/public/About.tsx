@@ -4,6 +4,7 @@ import { Heart, Award, Users, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface TeamMember {
   id: number;
@@ -15,6 +16,7 @@ interface TeamMember {
 
 export default function About() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['about', 'common']);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [salonInfo, setSalonInfo] = useState<any>({});

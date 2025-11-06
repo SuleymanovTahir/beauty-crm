@@ -6,6 +6,7 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner@2.0.3';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface SalonInfo {
   address?: string;
@@ -19,6 +20,7 @@ interface SalonInfo {
 }
 
 export default function Contacts() {
+  const { t } = useTranslation(['contacts', 'common']);
   const [formData, setFormData] = useState({
     name: '',
     email: '',

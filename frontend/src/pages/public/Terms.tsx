@@ -1,9 +1,11 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 export default function Terms() {
   const [salonInfo, setSalonInfo] = React.useState<any>({});
+  const { t } = useTranslation(['terms', 'common']);
 
   React.useEffect(() => {
     apiClient.getSalonInfo()

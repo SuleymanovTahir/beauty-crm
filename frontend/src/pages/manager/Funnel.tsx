@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface FunnelData {
   visitors: number;
@@ -46,6 +47,7 @@ const stageDescriptions = [
 ];
 
 export default function Funnel() {
+  const { t } = useTranslation(['funnel', 'common']);
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [period, setPeriod] = useState('month');
   const [loading, setLoading] = useState(true);

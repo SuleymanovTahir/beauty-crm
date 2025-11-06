@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminSettings() {
+  const { t } = useTranslation(['settings', 'common']);
   const [generalSettings, setGeneralSettings] = useState({
     salonName: '',
     city: '',

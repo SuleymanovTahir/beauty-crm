@@ -19,11 +19,11 @@ export default function PublicLayout() {
   }, []);
 
   const menuItems = [
-    { label: 'Главная', path: '/' },
-    { label: 'Прайс-лист', path: '/price-list' },
-    { label: 'О нас', path: '/about' },
-    { label: 'Контакты', path: '/contacts' },
-    { label: 'FAQ', path: '/faq' },
+    { label: t('public:home'), path: '/' },
+    { label: t('public:price_list'), path: '/price-list' },
+    { label: t('public:about'), path: '/about' },
+    { label: t('public:contacts'), path: '/contacts' },
+    { label: t('public:faq'), path: '/faq' },
   ];
 
   return (
@@ -73,7 +73,7 @@ export default function PublicLayout() {
                 to="/cabinet"
                 className="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:shadow-lg transition-shadow"
               >
-                Войти
+                {t('public:login')}
               </Link>
             </div>
 
@@ -109,7 +109,7 @@ export default function PublicLayout() {
                 className="block px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-center rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Личный кабинет
+                {t('public:personal_cabinet')}
               </Link>
             </nav>
           </div>
@@ -129,24 +129,24 @@ export default function PublicLayout() {
             <div>
               <h3 className="text-lg mb-4">{salonInfo.name}</h3>
               <p className="text-gray-400 text-sm">
-                {salonInfo.description || 'Премиальные услуги красоты в самом сердце города. Профессиональные мастера и индивидуальный подход.'}
+                {salonInfo.description || t('public:footer.description')}
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-lg mb-4">Быстрые ссылки</h3>
+              <h3 className="text-lg mb-4">{t('public:footer.quick_links')}</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/price-list" className="hover:text-white">Прайс-лист</Link></li>
-                <li><Link to="/about" className="hover:text-white">О нас</Link></li>
-                <li><Link to="/cooperation" className="hover:text-white">Сотрудничество</Link></li>
-                <li><Link to="/faq" className="hover:text-white">FAQ</Link></li>
+                <li><Link to="/price-list" className="hover:text-white">{t('public:price_list')}</Link></li>
+                <li><Link to="/about" className="hover:text-white">{t('public:about')}</Link></li>
+                <li><Link to="/cooperation" className="hover:text-white">{t('public:footer.cooperation')}</Link></li>
+                <li><Link to="/faq" className="hover:text-white">{t('public:faq')}</Link></li>
               </ul>
             </div>
 
             {/* Contacts */}
             <div>
-              <h3 className="text-lg mb-4">Контакты</h3>
+            <h3 className="text-lg mb-4">{t('public:footer.contacts')}</h3>
               <ul className="space-y-3 text-sm text-gray-400">
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
@@ -165,19 +165,19 @@ export default function PublicLayout() {
 
             {/* Working Hours */}
             <div>
-              <h3 className="text-lg mb-4">Часы работы</h3>
+            <h3 className="text-lg mb-4">{t('public:footer.working_hours')}</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Пн-Пт: {salonInfo.hours_weekdays}</li>
-                <li>Сб-Вс: {salonInfo.hours_weekends}</li>
+              <li>{t('public:footer.weekdays')}: {salonInfo.hours_weekdays}</li>
+              <li>{t('public:footer.weekends')}: {salonInfo.hours_weekends}</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <p>© 2025 {salonInfo.name}. Все права защищены.</p>
+          <p>© 2025 {salonInfo.name}. {t('public:footer.all_rights')}.</p>
             <div className="flex gap-6">
-              <Link to="/privacy-policy" className="hover:text-white">Политика конфиденциальности</Link>
-              <Link to="/terms" className="hover:text-white">Условия использования</Link>
+            <Link to="/privacy-policy" className="hover:text-white">{t('public:footer.privacy_policy')}</Link>
+            <Link to="/terms" className="hover:text-white">{t('public:footer.terms')}</Link>
             </div>
           </div>
         </div>

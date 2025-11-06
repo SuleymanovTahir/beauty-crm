@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Stats {
   total_clients: number;
@@ -36,6 +37,7 @@ interface FunnelData {
 
 export default function ManagerDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const { t } = useTranslation(['dashboard', 'common']);
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

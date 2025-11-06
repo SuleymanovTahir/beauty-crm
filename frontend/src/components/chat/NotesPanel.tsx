@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Note {
   id: number;
@@ -19,6 +20,7 @@ interface NotesPanelProps {
 
 export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
   const [notes, setNotes] = useState<Note[]>([]);
+  const { t } = useTranslation(['notespanel', 'common']);
   const [newNoteText, setNewNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

@@ -3,6 +3,7 @@ import { Sparkles, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface Service {
   id: number;
@@ -14,6 +15,7 @@ interface Service {
 
 export default function PriceList() {
   const navigate = useNavigate();
+  const { t } = useTranslation(['pricelist', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

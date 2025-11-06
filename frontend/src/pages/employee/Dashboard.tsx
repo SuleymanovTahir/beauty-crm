@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 interface Booking {
   id: number;
@@ -13,6 +14,7 @@ interface Booking {
 
 export default function EmployeeDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const { t } = useTranslation(['dashboard', 'common']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -7,8 +7,10 @@ import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner@2.0.3';
 import { apiClient } from '../../api/client';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Cooperation() {
+  const { t } = useTranslation(['cooperation', 'common']);
   const [salonInfo, setSalonInfo] = useState<any>({});
 
   useEffect(() => {

@@ -66,6 +66,7 @@ export default function BotSettings() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { t } = useTranslation(['botsettings', 'common']);
   const [settings, setSettings] = useState<BotSettings>({
     bot_name: '',
     personality_traits: '',
@@ -105,7 +106,9 @@ export default function BotSettings() {
     location_features: '',
     seasonality: '',
     emergency_situations: '',
-    success_metrics: ''
+    success_metrics: '',
+    ad_campaign_detection: '',
+    pre_booking_data_collection: ''
   });
 
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['ru', 'en', 'ar']);
