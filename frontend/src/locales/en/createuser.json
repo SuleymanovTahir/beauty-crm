@@ -1,0 +1,25 @@
+{
+    "errors": {
+      "full_name_required": "Full name is required",
+      "username_required": "Username is required",
+      "username_min_length": "Username must be at least 3 characters",
+      "password_required": "Password is required",
+      "password_min_length": "Password must be at least 6 characters"
+    },
+    "title": "Create Account",
+    "full_name": "Full Name *",
+    "username": "Username *",
+    "username_hint": "Minimum 3 characters, used for login",
+    "email": "Email",
+    "email_hint": "Optional, for password recovery",
+    "password": "Password *",
+    "password_hint": "Minimum 6 characters",
+    "role": "Role *",
+    "role_employee": "Employee",
+    "role_manager": "Manager",
+    "role_admin": "Administrator",
+    "role_employee_desc": "Employee: basic rights - view own bookings and schedule",
+    "role_manager_desc": "Manager: extended rights - work with clients and analytics",
+    "role_admin_desc": "Administrator: full access to all system features",
+    "create_button": "Create Account"
+  }

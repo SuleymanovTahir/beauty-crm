@@ -193,7 +193,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Заметки</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:notes')</label>
                   <Textarea
                     value={editForm.notes}
                     onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
@@ -249,7 +249,7 @@ export default function ClientDetail() {
 
                 {client.notes && (
                   <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">Заметки</p>
+                    <p className="text-sm text-gray-600">t('clientdetail:notes')</p>
                     <p className="text-gray-900 mt-1">{client.notes}</p>
                   </div>
                 )}
@@ -265,21 +265,21 @@ export default function ClientDetail() {
 
             <div className="space-y-6">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Статус</p>
+                <p className="text-sm text-gray-600 mb-1">t('clientdetail:status')</p>
                 <Badge className="bg-blue-100 text-blue-800 capitalize">
                   {client.status}
                 </Badge>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600 mb-1">Lifetime Value</p>
+                <p className="text-sm text-gray-600 mb-1">('clientdetail:lifetime_value')</p>
                 <p className="text-2xl text-green-600 font-bold">
                   {client.lifetime_value} AED
                 </p>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600 mb-1">Последний контакт</p>
+                <p className="text-sm text-gray-600 mb-1">t('clientdetail:last_contact')</p>
                 <p className="text-gray-900">
                   {new Date(client.last_contact).toLocaleDateString('ru-RU')}
                 </p>
@@ -290,7 +290,7 @@ export default function ClientDetail() {
                 className="w-full bg-pink-600 hover:bg-pink-700 gap-2"
               >
                 <MessageSquare className="w-4 h-4" />
-                Написать сообщение
+                t('clientdetail:write_message')
               </Button>
             </div>
           </div>
@@ -299,7 +299,7 @@ export default function ClientDetail() {
 
       {/* Chat History */}
       <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h2 className="text-2xl text-gray-900 mb-6">История переписки</h2>
+        <h2 className="text-2xl text-gray-900 mb-6">t('clientdetail:chat_history')</h2>
 
         {messages.length > 0 ? (
           <div className="space-y-4">
@@ -323,7 +323,7 @@ export default function ClientDetail() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">Нет сообщений</p>
+          <p className="text-gray-500 text-center py-8">t('clientdetail:no_messages')</p>
         )}
       </div>
     </div>

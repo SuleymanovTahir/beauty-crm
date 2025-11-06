@@ -23,5 +23,21 @@
   "top_services": "Топ услуг",
   "name": "Название",
   "quantity": "Кол-во",
-  "income": "Доход"
+  "income": "Доход",
+  "bookings": "Записи",
+  "status": {
+    "pending": "Ожидает",
+    "completed": "Завершена",
+    "cancelled": "Отменена",
+    "confirmed": "Подтверждена"
+  },
+  "errors": {
+    "select_both_dates": "Выберите обе даты",
+    "invalid_date_range": "Дата начала должна быть раньше даты конца",
+    "export_failed": "Ошибка при экспорте файла",
+    "loading_error": "Ошибка загрузки"
+  },
+  "success": {
+    "file_downloaded": "Файл успешно скачан"
+  }
 }
