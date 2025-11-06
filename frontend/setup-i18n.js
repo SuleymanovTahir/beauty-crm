@@ -40,7 +40,7 @@ for (const lang of languages) {
     
     if (!fs.existsSync(filePath)) {
       // Для русского создаём с примерами, для остальных - пустые
-      const content = lang === 'ru' ? getExampleTranslations(ns) : '{}';
+      const content = lang === 'ru' ? getExampleTranslations(ns) : JSON.stringify({}, null, 2);
       fs.writeFileSync(filePath, content, 'utf8');
       console.log(`   📄 Создан: locales/${lang}/${ns}.json`);
     }
