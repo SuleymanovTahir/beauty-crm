@@ -65,7 +65,7 @@ export default function Cooperation() {
                 оборудования для салонов красоты.
               </p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Косметические сред��тва</li>
+                <li>• Косметические средства</li>
                 <li>• Оборудование</li>
                 <li>• Расходные материалы</li>
               </ul>
