@@ -64,7 +64,7 @@ export default function BookingDetail() {
       setBooking({ ...booking, status: newStatus });
     } catch (err) {
       console.error('Error updating status:', err);
-      toast.error('Ошибка обновления статуса');
+      toast.error(t('bookingdetail:error_updating_status'));
     } finally {
       setUpdating(false);
     }
@@ -254,12 +254,12 @@ export default function BookingDetail() {
                   ></div>
                   <span className="text-sm text-gray-900 font-medium capitalize">
                     {booking.status === 'new'
-                      ? 'Новая'
+                      ? t('bookingdetail:status_new')
                       : booking.status === 'confirmed'
-                      ? 'Подтверждена'
+                      ? t('bookingdetail:status_confirmed')
                       : booking.status === 'completed'
-                      ? 'Завершена'
-                      : 'Отменена'}
+                      ? t('bookingdetail:status_completed')
+                      : t('bookingdetail:status_cancelled')}
                   </span>
                 </div>
               </div>

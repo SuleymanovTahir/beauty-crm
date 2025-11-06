@@ -72,30 +72,6 @@ interface UserMaster {
   role: string;
 }
 
-const DAYS = [
-  t('calendar:days.mon'),
-  t('calendar:days.tue'),
-  t('calendar:days.wed'),
-  t('calendar:days.thu'),
-  t('calendar:days.fri'),
-  t('calendar:days.sat'),
-  t('calendar:days.sun')
-];
-
-const MONTHS = [
-  t('calendar:months.january'),
-  t('calendar:months.february'),
-  t('calendar:months.march'),
-  t('calendar:months.april'),
-  t('calendar:months.may'),
-  t('calendar:months.june'),
-  t('calendar:months.july'),
-  t('calendar:months.august'),
-  t('calendar:months.september'),
-  t('calendar:months.october'),
-  t('calendar:months.november'),
-  t('calendar:months.december'),
-]
 
 const SALON_START_HOUR = 9;
 const SALON_END_HOUR = 21;
@@ -120,16 +96,12 @@ const statusColors: Record<string, { bg: string; text: string; border: string }>
   cancelled: { bg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
 };
 
-const statusLabels: Record<string, string> = {
-  pending: 'Ожидание',
-  confirmed: 'Подтверждена',
-  completed: 'Завершена',
-  cancelled: 'Отменена'
-};
+
 
 interface CalendarProps {
   employeeFilter?: boolean;
 }
+
 
 export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const today = new Date();
@@ -139,6 +111,37 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const { t } = useTranslation(['calendar', 'common']);
+
+  const statusLabels: Record<string, string> = {
+    pending: t('calendar:pending'),
+    confirmed: t('calendar:confirmed'),
+    completed: t('calendar:completed'),
+    cancelled: t('calendar:cancelled')
+  };
+  const DAYS = [
+    t('calendar:days.mon'),
+    t('calendar:days.tue'),
+    t('calendar:days.wed'),
+    t('calendar:days.thu'),
+    t('calendar:days.fri'),
+    t('calendar:days.sat'),
+    t('calendar:days.sun')
+  ];
+
+  const MONTHS = [
+    t('calendar:months.january'),
+    t('calendar:months.february'),
+    t('calendar:months.march'),
+    t('calendar:months.april'),
+    t('calendar:months.may'),
+    t('calendar:months.june'),
+    t('calendar:months.july'),
+    t('calendar:months.august'),
+    t('calendar:months.september'),
+    t('calendar:months.october'),
+    t('calendar:months.november'),
+    t('calendar:months.december'),
+  ]
   const [services, setServices] = useState<Service[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [masters, setMasters] = useState<UserMaster[]>([]);
@@ -193,7 +196,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
         u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
       ) || []);
     } catch (err) {
-      toast.error('Ошибка загрузки данных');
+      toast.error(t('calendar:error_loading_data'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -268,17 +271,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     const todayBookings = getBookingsForDay(todayDate);
 
     if (todayBookings.length === 0) {
-      toast.success('📅 Сегодня записей нет - свободный день! 🎉', { duration: 3000 });
+      toast.success(t('calendar:no_bookings_today'), { duration: 3000 });
     } else if (todayBookings.length === 1) {
-      toast.success(`📅 Одна запись на сегодня ⏰`, { duration: 3000 });
+      toast.success(t('calendar:one_booking_today'), { duration: 3000 });
     } else {
-      toast.success(`📅 ${todayBookings.length} записей на сегодня 🔥`, { duration: 3000 });
+      toast.success(t('calendar:bookings_today', { count: todayBookings.length }), { duration: 3000 });
     }
   };
 
   const formatDate = (date: Date) => {
-    const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+    const days = [t('calendar:days.sun'), t('calendar:days.mon'), t('calendar:days.tue'), t('calendar:days.wed'), t('calendar:days.thu'), t('calendar:days.fri'), t('calendar:days.sat')];
+    const months = [t('calendar:months.january'), t('calendar:months.february'), t('calendar:months.march'), t('calendar:months.april'), t('calendar:months.may'), t('calendar:months.june'), t('calendar:months.july'), t('calendar:months.august'), t('calendar:months.september'), t('calendar:months.october'), t('calendar:months.november'), t('calendar:months.december')];
     return {
       dayName: days[date.getDay()],
       day: date.getDate(),
@@ -347,14 +350,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
   const handleSaveBooking = async () => {
     if (!selectedClient || !selectedServiceItem || !addForm.date || !addForm.time) {
-      toast.error('Заполните все обязательные поля (клиент, услуга, дата, время)');
+      toast.error(t('calendar:fill_required_fields'));
       return;
     }
 
     try {
       setAddingBooking(true);
       if (isEditing && selectedBooking) {
-        await api.updateBookingStatus(selectedBooking.id, 'cancelled');
+        await api.updateBookingStatus(String(selectedBooking.id), 'cancelled');
         await api.createBooking({
           instagram_id: selectedClient.instagram_id,
           name: selectedClient.display_name,
@@ -365,7 +368,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           revenue: addForm.revenue || selectedServiceItem.price,
           master: addForm.master,
         });
-        toast.success('Запись обновлена');
+        toast.success(t('calendar:booking_updated'));
       } else {
         await api.createBooking({
           instagram_id: selectedClient.instagram_id,
@@ -377,29 +380,29 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           revenue: addForm.revenue || selectedServiceItem.price,
           master: addForm.master,
         });
-        toast.success('Запись создана ✅');
+        toast.success(t('calendar:booking_created'));
       }
 
       setShowCreateModal(false);
       resetForm();
       await loadData();
     } catch (err: any) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(t('calendar:error', { message: err.message }));
     } finally {
       setAddingBooking(false);
     }
   };
 
   const handleDeleteBooking = async (booking: Booking) => {
-    if (!confirm(`Удалить запись для ${booking.name}?`)) return;
+    if (!confirm(t('calendar:delete_booking', { name: booking.name }))) return;
 
     try {
-      await api.updateBookingStatus(booking.id, 'cancelled');
-      toast.success('Запись удалена');
+      await api.updateBookingStatus(String(booking.id), 'cancelled');
+      toast.success(t('calendar:booking_deleted'));
       setSelectedBooking(null);
       await loadData();
     } catch (err) {
-      toast.error('Ошибка удаления');
+      toast.error(t('calendar:error_deleting_booking'));
       console.error(err);
     }
   };
@@ -407,16 +410,16 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const handleChangeStatus = async (newStatus: string) => {
     if (!selectedBooking) return;
     try {
-      await api.updateBookingStatus(selectedBooking.id, newStatus);
+      await api.updateBookingStatus(String(selectedBooking.id), newStatus);
       const updated = bookings.map(b =>
         b.id === selectedBooking.id ? { ...b, status: newStatus } : b
       );
       setBookings(updated);
       setSelectedBooking({ ...selectedBooking, status: newStatus });
       setShowStatusDropdown(false);
-      toast.success('Статус изменён');
+      toast.success(t('calendar:status_changed'));
     } catch (err) {
-      toast.error('Ошибка');
+      toast.error(t('calendar:error_changing_status'));
     }
   };
 
@@ -485,7 +488,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   }`}
               >
                 <Filter className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Фильтры</span>
+                <span className="hidden md:inline">{t('calendar:filters')}</span>
               </Button>
 
               <Select value={viewMode} onValueChange={(v) => setViewMode(v as 'day' | 'week')}>
@@ -493,8 +496,8 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="day">День</SelectItem>
-                  <SelectItem value="week">Неделя</SelectItem>
+                  <SelectItem value="day">{t('calendar:day')}</SelectItem>
+                  <SelectItem value="week">{t('calendar:week')}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -503,7 +506,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all"
               >
                 <Plus className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Добавить</span>
+                <span className="hidden md:inline">{t('calendar:add')}</span>
               </Button>
             </div>
           </div>
@@ -525,14 +528,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1">
                     <User className="w-3.5 h-3.5" />
-                    Мастер
+                    {t('calendar:master')}
                   </label>
                   <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
                     <SelectTrigger className="rounded-xl border-2 bg-white h-9 text-sm">
-                      <SelectValue placeholder="Все" />
+                      <SelectValue placeholder={t('calendar:all')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Все мастера</SelectItem>
+                      <SelectItem value="all">{t('calendar:all_masters')}</SelectItem>
                       {masters.map(emp => (
                         <SelectItem key={emp.id} value={emp.full_name}>
                           {emp.full_name}
@@ -545,14 +548,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1.5 flex items-center gap-1">
                     <Scissors className="w-3.5 h-3.5" />
-                    Услуга
+                    {t('calendar:service')}
                   </label>
                   <Select value={selectedService} onValueChange={setSelectedService}>
                     <SelectTrigger className="rounded-xl border-2 bg-white h-9 text-sm">
-                      <SelectValue placeholder="Все" />
+                      <SelectValue placeholder={t('calendar:all')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Все услуги</SelectItem>
+                      <SelectItem value="all">{t('calendar:all_services')}</SelectItem>
                       {services.map(service => (
                         <SelectItem key={service.id} value={service.name_ru}>
                           {service.name_ru}
@@ -571,7 +574,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                     variant="outline"
                     className="w-full rounded-xl border-2 h-9 text-sm hover:bg-red-50 hover:border-red-300 hover:text-red-600"
                   >
-                    Сбросить
+                    {t('calendar:reset')}
                   </Button>
                 </div>
               </div>
@@ -709,7 +712,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       {(selectedEmployee !== 'all' || selectedService !== 'all') && (
         <div className="flex-shrink-0 bg-white border-t border-gray-200 p-2 md:p-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium text-gray-600">Активные фильтры:</span>
+            <span className="text-xs font-medium text-gray-600">{t('calendar:active_filters')}:</span>
             {selectedEmployee !== 'all' && (
               <Badge
                 variant="secondary"
@@ -767,7 +770,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           }}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-xl font-bold text-gray-900">
-              {isEditing ? t('calendar:edit_booking') : t('calendar:add_booking')}
+                {isEditing ? t('calendar:edit_booking') : t('calendar:add_booking')}
               </h3>
               <button
                 onClick={() => { setShowCreateModal(false); resetForm(); }}
@@ -781,12 +784,12 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Client Search */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Клиент *
+                  {t('calendar:client')} *
                 </label>
                 <div className="relative z-30">
                   <input
                     type="text"
-                    placeholder="Поиск клиента по имени или телефону..."
+                    placeholder={t('calendar:search_client')}
                     value={selectedClient ? selectedClient.display_name : clientSearch}
                     onChange={(e) => {
                       setClientSearch(e.target.value);
@@ -844,7 +847,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                         ))
                       ) : (
                         <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                          Клиенты не найдены
+                          {t('calendar:clients_not_found')}
                         </div>
                       )}
                     </div>
@@ -855,12 +858,12 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Service Search */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Услуга *
+                  {t('calendar:service')} *
                 </label>
                 <div className="relative z-20">
                   <input
                     type="text"
-                    placeholder="Поиск услуги..."
+                    placeholder={t('calendar:search_service')}
                     value={selectedServiceItem ? selectedServiceItem.name_ru : serviceSearch}
                     onChange={(e) => {
                       setServiceSearch(e.target.value);
@@ -918,7 +921,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                         ))
                       ) : (
                         <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                          Услуги не найдены
+                          {t('calendar:services_not_found')}
                         </div>
                       )}
                     </div>
@@ -929,14 +932,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Master Selection */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Мастер
+                  {t('calendar:master')}
                 </label>
                 <select
                   value={addForm.master}
                   onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all bg-white"
                 >
-                  <option value="">Выберите мастера</option>
+                  <option value="">{t('calendar:select_master')}</option>
                   {masters.map((m) => (
                     <option key={m.id} value={m.full_name}>
                       {m.full_name} ({m.role})
@@ -948,11 +951,11 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Phone */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Телефон {!selectedClient?.phone && '*'}
+                  {t('calendar:phone')} {!selectedClient?.phone && '*'}
                 </label>
                 <input
                   type="tel"
-                  placeholder="+971 50 123 4567"
+                  placeholder={t('calendar:phone_placeholder')}
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
@@ -963,7 +966,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Дата *
+                    {t('calendar:date')} *
                   </label>
                   <input
                     type="date"
@@ -974,7 +977,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Время *
+                    {t('calendar:time')} *
                   </label>
                   <select
                     value={addForm.time}
@@ -993,11 +996,11 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Revenue */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Сумма (AED)
+                  {t('calendar:revenue')} (AED)
                 </label>
                 <input
                   type="number"
-                  placeholder="0"
+                  placeholder={t('calendar:revenue_placeholder')}
                   value={addForm.revenue}
                   onChange={(e) => setAddForm({ ...addForm, revenue: Number(e.target.value) })}
                   className="w-full px-4 py-3 border-2 border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-600 bg-white transition-all"
@@ -1011,14 +1014,14 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   disabled={addingBooking}
                   className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
                 >
-                  Отмена
+                  {t('calendar:cancel')}
                 </button>
                 <button
                   onClick={handleSaveBooking}
                   disabled={addingBooking}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {addingBooking ? 'Создание...' : isEditing ? 'Сохранить' : 'Создать'}
+                  {addingBooking ? t('calendar:creating') : isEditing ? t('calendar:save') : t('calendar:create')}
                 </button>
               </div>
             </div>
@@ -1049,7 +1052,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           }}>
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-lg font-bold text-gray-900">
-                Запись #{selectedBooking.id}
+                {t('calendar:booking')} #{selectedBooking.id}
               </h3>
               <button
                 onClick={() => setSelectedBooking(null)}
@@ -1062,7 +1065,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">
-                  Клиент
+                  {t('calendar:client')}
                 </label>
                 <input
                   type="text"
@@ -1074,7 +1077,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">
-                  Услуга
+                  {t('calendar:service')}
                 </label>
                 <input
                   type="text"
@@ -1087,7 +1090,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {selectedBooking.master && (
                 <div>
                   <label className="block text-xs font-medium text-gray-500 mb-2">
-                    Мастер
+                    {t('calendar:master')}
                   </label>
                   <input
                     type="text"
@@ -1100,7 +1103,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">
-                  Телефон
+                  {t('calendar:phone')}
                 </label>
                 <input
                   type="tel"
@@ -1112,7 +1115,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">
-                  Дата и время
+                  {t('calendar:date_and_time')}
                 </label>
                 <input
                   type="text"
@@ -1168,7 +1171,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   className="flex-1 px-4 py-3 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg text-red-700 font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <Trash2 size={16} />
-                  Удалить
+                  {t('calendar:delete')}
                 </button>
 
                 <button
@@ -1179,7 +1182,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   className="flex-1 px-4 py-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-lg text-blue-700 font-semibold flex items-center justify-center gap-2 transition-colors"
                 >
                   <Edit size={16} />
-                  Изменить
+                  {t('calendar:edit')}
                 </button>
               </div>
 
@@ -1187,7 +1190,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 onClick={() => setSelectedBooking(null)}
                 className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:shadow-lg text-white font-medium rounded-lg transition-all"
               >
-                Закрыть
+                {t('calendar:close')}
               </button>
             </div>
           </div>

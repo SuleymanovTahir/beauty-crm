@@ -1,7 +1,6 @@
 //src/pages/Dashboard.tsx
-import React, { useEffect, useState } from 'react';
-import { Calendar, Users, TrendingUp, DollarSign, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
-import { Card } from '../../components/ui/card';
+import { useEffect, useState } from 'react';
+import { Calendar, Users, TrendingUp, DollarSign, CheckCircle, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +65,7 @@ export default function AdminDashboard() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка данных...</p>
+          <p className="text-gray-600">{t('dashboard:loading_data')}</p>
         </div>
       </div>
     );
@@ -79,10 +78,10 @@ export default function AdminDashboard() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('dashboard:error_loading')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadDashboardData} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать еще раз
+                {t('dashboard:try_again')}
               </Button>
             </div>
           </div>
@@ -95,7 +94,7 @@ export default function AdminDashboard() {
     return (
       <div className="p-8">
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800">Нет данных</p>
+          <p className="text-yellow-800">{t('dashboard:no_data')}</p>
         </div>
       </div>
     );
@@ -112,21 +111,21 @@ export default function AdminDashboard() {
     },
     {
       icon: Users,
-      label: 'Новые клиенты',
+      label: t('dashboard:new_clients'),
       value: stats.new_clients || 0,
       color: 'text-purple-600',
       bg: 'bg-purple-50'
     },
     {
       icon: DollarSign,
-      label: 'Общий доход',
+      label: t('dashboard:total_revenue'),
       value: `${(stats.total_revenue || 0).toFixed(0)} AED`,
       color: 'text-green-600',
       bg: 'bg-green-50'
     },
     {
       icon: TrendingUp,
-      label: 'Конверсия',
+      label: t('dashboard:conversion_rate'),
       value: `${(stats.conversion_rate || 0).toFixed(1)}%`,
       color: 'text-blue-600',
       bg: 'bg-blue-50'
@@ -135,10 +134,10 @@ export default function AdminDashboard() {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { text: string; bg: string; color: string }> = {
-      pending: { text: 'Ожидание', bg: 'bg-yellow-100', color: 'text-yellow-800' },
-      confirmed: { text: 'Подтверждена', bg: 'bg-green-100', color: 'text-green-800' },
-      completed: { text: 'Завершена', bg: 'bg-blue-100', color: 'text-blue-800' },
-      cancelled: { text: 'Отменена', bg: 'bg-red-100', color: 'text-red-800' },
+      pending: { text: t('dashboard:status_pending'), bg: 'bg-yellow-100', color: 'text-yellow-800' },
+      confirmed: { text: t('dashboard:status_confirmed'), bg: 'bg-green-100', color: 'text-green-800' },
+      completed: { text: t('dashboard:status_completed'), bg: 'bg-blue-100', color: 'text-blue-800' },
+      cancelled: { text: t('dashboard:status_cancelled'), bg: 'bg-red-100', color: 'text-red-800' },
     };
     return badges[status] || { text: status, bg: 'bg-gray-100', color: 'text-gray-800' };
   };
@@ -180,7 +179,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
             <Button variant="outline" size="sm" onClick={() => navigate('/admin/bookings')}>
-              Все записи
+              {t('dashboard:all_bookings')}
             </Button>
           </div>
           <div className="space-y-4">
@@ -195,11 +194,11 @@ export default function AdminDashboard() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold">
-                        {booking.name?.charAt(0) || 'С'}
+                        {booking.name?.charAt(0) || t('dashboard:default_initials')}
                       </div>
                       <div>
-                        <p className="text-sm text-gray-900">{booking.name || 'Не указано'}</p>
-                        <p className="text-xs text-gray-500">{booking.service || 'Нет услуги'}</p>
+                        <p className="text-sm text-gray-900">{booking.name || t('dashboard:unknown_name')}</p>
+                        <p className="text-xs text-gray-500">{booking.service || t('dashboard:no_service')}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -219,7 +218,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Нет записей</p>
+                  <p>{t('dashboard:no_bookings')}</p>
               </div>
             )}
           </div>
@@ -227,14 +226,14 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-6">Быстрые действия</h2>
+          <h2 className="text-xl text-gray-900 mb-6">{t('dashboard:quick_actions')}</h2>
           <div className="space-y-3">
             <Button
               className="w-full justify-start bg-pink-600 hover:bg-pink-700"
               onClick={() => navigate('/admin/bookings')}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Создать запись
+              {t('dashboard:create_booking')}
             </Button>
             <Button
               variant="outline"
@@ -242,7 +241,7 @@ export default function AdminDashboard() {
               onClick={() => navigate('/admin/clients')}
             >
               <Users className="w-4 h-4 mr-2" />
-              Добавить клиента
+              {t('dashboard:add_client')}
             </Button>
             <Button
               variant="outline"
@@ -250,7 +249,7 @@ export default function AdminDashboard() {
               onClick={() => navigate('/admin/users/create')}
             >
               <Users className="w-4 h-4 mr-2" />
-              Создать пользователя
+              {t('dashboard:create_user')}
             </Button>
             <Button
               variant="outline"
@@ -258,7 +257,7 @@ export default function AdminDashboard() {
               onClick={() => navigate('/admin/analytics')}
             >
               <TrendingUp className="w-4 h-4 mr-2" />
-              Просмотреть аналитику
+              {t('dashboard:view_analytics')}
             </Button>
             <Button
               variant="outline"
@@ -266,7 +265,7 @@ export default function AdminDashboard() {
               onClick={() => navigate('/admin/calendar')}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              Календарь
+              {t('dashboard:calendar')}
             </Button>
           </div>
         </div>
@@ -277,9 +276,9 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm mb-1">Всего клиентов</p>
+              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_clients')}</p>
               <p className="text-3xl text-gray-900 font-bold">{stats.total_clients}</p>
-              <p className="text-xs text-green-600 mt-1">+{stats.new_clients} новых</p>
+              <p className="text-xs text-green-600 mt-1">+{stats.new_clients} {t('dashboard:new_clients')}</p>
             </div>
             <Users className="w-8 h-8 text-blue-600" />
           </div>
@@ -288,9 +287,9 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm mb-1">Всего записей</p>
+              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_bookings')}</p>
               <p className="text-3xl text-gray-900 font-bold">{stats.total_bookings}</p>
-              <p className="text-xs text-green-600 mt-1">{stats.completed_bookings} завершено</p>
+              <p className="text-xs text-green-600 mt-1">{stats.completed_bookings} {t('dashboard:completed_bookings')}</p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
@@ -299,12 +298,12 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-600 text-sm mb-1">Сообщений</p>
+              <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_messages')}</p>
               <p className="text-3xl text-gray-900 font-bold">
                 {(stats.total_client_messages || 0) + (stats.total_bot_messages || 0)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                👤 {stats.total_client_messages || 0} | 🤖 {stats.total_bot_messages || 0}
+                {t('dashboard:client_messages')} {stats.total_client_messages || 0} | {t('dashboard:bot_messages')} {stats.total_bot_messages || 0}
               </p>
             </div>
             <TrendingUp className="w-8 h-8 text-purple-600" />

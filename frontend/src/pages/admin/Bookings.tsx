@@ -204,7 +204,7 @@ export default function Bookings() {
       setServices(servicesData.services || []);
     } catch (err: any) {
       setError(err.message);
-      toast.error(`Ошибка: ${err.message}`);
+      toast.error(`${t('bookings:error')}: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -219,16 +219,18 @@ export default function Bookings() {
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await api.updateBookingStatus(id, newStatus);
-      setBookings(bookings.map((b: any) => b.id === id ? { ...b, status: newStatus } : b));
-      toast.success('Статус обновлён');
+      setBookings((prevBookings: any[]) =>
+        prevBookings.map((b: any) => b.id === id ? { ...b, status: newStatus } : b)
+      );
+      toast.success(t('bookings:status_updated'));
     } catch (err) {
-      toast.error('Ошибка обновления статуса');
+      toast.error(t('bookings:error_updating_status'));
     }
   };
 
   const handleAddBooking = async () => {
     if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
-      toast.error('Заполните все обязательные поля (клиент, услуга, дата, время)');
+      toast.error(t('bookings:fill_all_required_fields'));
       return;
     }
 
@@ -244,12 +246,12 @@ export default function Bookings() {
         revenue: addForm.revenue || selectedService.price,
       });
 
-      toast.success('Запись создана ✅');
+      toast.success(t('bookings:booking_created'));
       setShowAddDialog(false);
       resetForm();
       await loadData();
     } catch (err: any) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(`❌ ${t('bookings:error')}: ${err.message}`);
     } finally {
       setAddingBooking(false);
     }
@@ -302,10 +304,10 @@ export default function Bookings() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`Файл ${format.toUpperCase()} успешно скачан`);
+      toast.success(t('bookings:file_downloaded', { format: format.toUpperCase() }));
       setShowExportDialog(false);
     } catch (err) {
-      toast.error('Ошибка при экспорте');
+      toast.error(t('bookings:error_exporting'));
     } finally {
       setExporting(false);
     }
@@ -317,7 +319,7 @@ export default function Bookings() {
     if (file) {
       const ext = file.name.split('.').pop()?.toLowerCase();
       if (!['csv', 'xlsx', 'xls'].includes(ext || '')) {
-        toast.error('Поддерживаются только CSV и Excel файлы');
+        toast.error(t('bookings:only_csv_and_excel_files_supported'));
         return;
       }
       setImportFile(file);
@@ -327,7 +329,7 @@ export default function Bookings() {
 
   const handleImport = async () => {
     if (!importFile) {
-      toast.error('Выберите файл для импорта');
+      toast.error(t('bookings:select_file_for_import'));
       return;
     }
 
@@ -338,15 +340,15 @@ export default function Bookings() {
       setImportResult(result);
 
       if (result.imported > 0) {
-        toast.success(`✅ Импортировано ${result.imported} записей`);
+        toast.success(t('bookings:imported_bookings', { count: result.imported }));
         await loadData();
       }
 
       if (result.skipped > 0) {
-        toast.warning(`⚠️ Пропущено ${result.skipped} записей`);
+        toast.warning(t('bookings:skipped_bookings', { count: result.skipped }));
       }
     } catch (err: any) {
-      toast.error(`❌ Ошибка импорта: ${err.message}`);
+      toast.error(t('bookings:import_error', { message: err.message }));
     } finally {
       setImporting(false);
     }
@@ -366,9 +368,9 @@ export default function Bookings() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success('Шаблон скачан');
+        toast.success(t('bookings:template_downloaded'));
     } catch (err) {
-      toast.error('Ошибка при скачивании шаблона');
+      toast.error(t('bookings:error_downloading_template'));
     }
   };
 
@@ -406,14 +408,14 @@ export default function Bookings() {
             <Calendar style={{ width: '32px', height: '32px', color: '#ec4899' }} />
             {t('bookings:title')}
           </h1>
-          <p style={{ color: '#666' }}>{filteredBookings.length} записей</p>
+          <p style={{ color: '#666' }}>{filteredBookings.length} {t('bookings:records_count')}</p>
         </div>
         <button onClick={handleRefresh} disabled={refreshing} style={{
           padding: '0.5rem 1rem', backgroundColor: '#fff', border: '1px solid #ddd',
           borderRadius: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem'
         }}>
           <RefreshCw style={{ width: '16px', height: '16px', animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-          Обновить
+          {t('bookings:refresh')}
         </button>
       </div>
 
@@ -424,15 +426,15 @@ export default function Bookings() {
           <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Завершённых</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:completed')}</p>
           <h3 className="text-3xl text-purple-600">{stats.completed}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Всего</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:total')}</p>
           <h3 className="text-3xl text-green-600">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Доход</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:revenue')}</p>
           <h3 className="text-3xl text-blue-600">{stats.revenue} AED</h3>
         </div>
       </div>
@@ -444,7 +446,7 @@ export default function Bookings() {
             <Search style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', color: '#9ca3af' }} />
             <input
               type="text"
-              placeholder="Поиск..."
+              placeholder={t('bookings:search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -513,7 +515,7 @@ export default function Bookings() {
             alignItems: 'center', gap: '0.5rem'
           }}>
             <Plus style={{ width: '16px', height: '16px' }} />
-            Добавить
+            {t('bookings:add')}
           </button>
 
           {/* ===== КНОПКИ ИМПОРТА/ЭКСПОРТА (ТОЛЬКО ДЛЯ АДМИНА) ===== */}
@@ -531,7 +533,7 @@ export default function Bookings() {
                 }}
               >
                 <Upload style={{ width: '16px', height: '16px' }} />
-                {importing ? 'Импорт...' : 'Импорт'}
+                {importing ? t('bookings:importing') : t('bookings:import')}
               </button>
               <ExportDropdown
                 onExport={handleExport}
@@ -552,11 +554,11 @@ export default function Bookings() {
                 <tr>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>ID</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:client')}</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Услуга</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Дата</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Телефон</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Статус</th>
-                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>Действия</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:service')}</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:date')}</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -572,7 +574,7 @@ export default function Bookings() {
                         }}>
                           {(booking.name || 'N').charAt(0).toUpperCase()}
                         </div>
-                        <span style={{ fontSize: '0.875rem', color: '#111' }}>{booking.name || 'Без имени'}</span>
+                        <span style={{ fontSize: '0.875rem', color: '#111' }}>{booking.name || t('bookings:no_name')}</span>
                       </div>
                     </td>
                     <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service_name || '-'}</td>
@@ -627,7 +629,7 @@ export default function Bookings() {
         ) : (
           <div style={{ padding: '5rem 2rem', textAlign: 'center', color: '#9ca3af' }}>
             <Calendar style={{ width: '64px', height: '64px', color: '#d1d5db', margin: '0 auto 1rem' }} />
-            <p style={{ fontSize: '1.125rem' }}>Записи не найдены</p>
+            <p style={{ fontSize: '1.125rem' }}>{t('bookings:no_bookings')}</p>
           </div>
         )}
       </div>
@@ -651,7 +653,7 @@ export default function Bookings() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                Импорт записей
+                {t('bookings:import_title')}
               </h3>
               <button onClick={() => { setShowImportDialog(false); setImportFile(null); setImportResult(null); }} style={{
                 backgroundColor: 'transparent', border: 'none',
@@ -668,11 +670,11 @@ export default function Bookings() {
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                   <AlertCircle style={{ width: '20px', height: '20px', color: '#1e40af', flexShrink: 0 }} />
                   <div style={{ fontSize: '0.875rem', color: '#1e40af' }}>
-                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Формат файла:</p>
+                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{t('bookings:file_format')}:</p>
                     <ul style={{ marginLeft: '1rem', listStyle: 'disc' }}>
-                      <li>Колонки: instagram_id, name, phone, service, datetime, status, revenue</li>
-                      <li>Формат даты: YYYY-MM-DD HH:MM (например: 2025-01-15 14:00)</li>
-                      <li>Поддерживаются CSV и Excel файлы</li>
+                      <li>{t('bookings:columns')}: {t('bookings:columns_description')}</li>
+                      <li>{t('bookings:date_format')}: YYYY-MM-DD HH:MM ({t('bookings:example')}: 2025-01-15 14:00)</li>
+                      <li>{t('bookings:supported_formats')}</li>
                     </ul>
                   </div>
                 </div>
@@ -681,7 +683,7 @@ export default function Bookings() {
               {/* Template Download */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <p style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Скачать шаблон:
+                  {t('bookings:download_template')}:
                 </p>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button
@@ -692,7 +694,7 @@ export default function Bookings() {
                       fontSize: '0.875rem', cursor: 'pointer'
                     }}
                   >
-                    📄 CSV Шаблон
+                    📄 {t('bookings:csv_template')}
                   </button>
                   <button
                     onClick={() => handleDownloadTemplate('excel')}
@@ -702,7 +704,7 @@ export default function Bookings() {
                       fontSize: '0.875rem', cursor: 'pointer'
                     }}
                   >
-                    📊 Excel Шаблон
+                    📊 {t('bookings:excel_template')}
                   </button>
                 </div>
               </div>
@@ -710,7 +712,7 @@ export default function Bookings() {
               {/* File Input */}
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Выберите файл *
+                  {t('bookings:select_file')} *
                 </label>
                 <input
                   type="file"
@@ -724,7 +726,7 @@ export default function Bookings() {
                 />
                 {importFile && (
                   <p style={{ fontSize: '0.75rem', color: '#10b981', marginTop: '0.5rem' }}>
-                    ✓ {importFile.name}
+                    ✓ {t('bookings:selected_file', { name: importFile.name })}
                   </p>
                 )}
               </div>
@@ -736,13 +738,13 @@ export default function Bookings() {
                   border: `1px solid ${importResult.imported > 0 ? '#6ee7b7' : '#fca5a5'}`,
                   borderRadius: '0.5rem', padding: '1rem', marginBottom: '1rem'
                 }}>
-                  <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Результаты импорта:</p>
+                  <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{t('bookings:import_results')}:</p>
                   <ul style={{ fontSize: '0.875rem', marginLeft: '1rem' }}>
-                    <li>✅ Импортировано: {importResult.imported}</li>
-                    <li>⚠️ Пропущено: {importResult.skipped}</li>
+                    <li>✅ {t('bookings:imported')}: {importResult.imported}</li>
+                    <li>⚠️ {t('bookings:skipped')}: {importResult.skipped}</li>
                     {importResult.errors && importResult.errors.length > 0 && (
                       <li style={{ color: '#991b1b', marginTop: '0.5rem' }}>
-                        Ошибки: {importResult.errors.slice(0, 3).join('; ')}
+                        {t('bookings:errors')}: {importResult.errors.slice(0, 3).join('; ')}
                       </li>
                     )}
                   </ul>
@@ -763,7 +765,7 @@ export default function Bookings() {
                   fontWeight: '500', color: '#374151', cursor: 'pointer'
                 }}
               >
-                {importResult ? 'Закрыть' : 'Отмена'}
+                {importResult ? t('bookings:close') : t('bookings:cancel')}
               </button>
               {!importResult && (
                 <button
@@ -776,7 +778,7 @@ export default function Bookings() {
                     opacity: importing || !importFile ? 0.5 : 1
                   }}
                 >
-                  {importing ? 'Импортирование...' : 'Импортировать'}
+                  {importing ? t('bookings:importing') : t('bookings:import')}
                 </button>
               )}
             </div>
@@ -801,7 +803,7 @@ export default function Bookings() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                Экспорт записей
+                {t('bookings:export_title')}
               </h3>
               <button onClick={() => setShowExportDialog(false)} style={{
                 backgroundColor: 'transparent', border: 'none',
@@ -811,15 +813,15 @@ export default function Bookings() {
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Период экспорта
+                  {t('bookings:export_period')}
                 </label>
                 <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.75rem' }}>
-                  Оставьте пустым для экспорта всех записей
+                  {t('bookings:export_period_description')}
                 </p>
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Дата с
+                  {t('bookings:export_date_from')}
                 </label>
                 <input
                   type="date"
@@ -834,7 +836,7 @@ export default function Bookings() {
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Дата по
+                    {t('bookings:export_date_to')}
                 </label>
                 <input
                   type="date"
@@ -849,7 +851,7 @@ export default function Bookings() {
               </div>
               <div style={{ paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
-                  Формат файла
+                  {t('bookings:export_file_format')}
                 </label>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <button
@@ -862,7 +864,7 @@ export default function Bookings() {
                       opacity: exporting ? 0.5 : 1
                     }}
                   >
-                    CSV
+                    {t('bookings:csv')}
                   </button>
                   <button
                     onClick={() => handleExport('pdf')}
@@ -874,7 +876,7 @@ export default function Bookings() {
                       opacity: exporting ? 0.5 : 1
                     }}
                   >
-                    PDF
+                    {t('bookings:pdf')}
                   </button>
                   <button
                     onClick={() => handleExport('excel')}
@@ -886,7 +888,7 @@ export default function Bookings() {
                       opacity: exporting ? 0.5 : 1
                     }}
                   >
-                    Excel
+                    {t('bookings:excel')}
                   </button>
                 </div>
               </div>
@@ -904,7 +906,7 @@ export default function Bookings() {
                   fontWeight: '500', color: '#374151', cursor: 'pointer'
                 }}
               >
-                Отмена
+                {t('bookings:cancel')}
               </button>
             </div>
           </div>
@@ -927,7 +929,7 @@ export default function Bookings() {
               display: 'flex', justifyContent: 'space-between', alignItems: 'center'
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                Добавить запись
+                {t('bookings:add_booking')}
               </h3>
               <button onClick={() => { setShowAddDialog(false); resetForm(); }} style={{
                 backgroundColor: 'transparent', border: 'none',
@@ -943,7 +945,7 @@ export default function Bookings() {
                 </label>
                 <input
                   type="text"
-                  placeholder="Поиск клиента..."
+                  placeholder={t('bookings:search_client')}
                   value={clientSearch}
                   onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
                   onFocus={() => setShowClientDropdown(true)}
@@ -1001,7 +1003,7 @@ export default function Bookings() {
                       ))
                     ) : (
                       <div style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        Клиенты не найдены
+                        {t('bookings:clients_not_found')}
                       </div>
                     )}
                   </div>
@@ -1011,11 +1013,11 @@ export default function Bookings() {
               {/* Service Search */}
               <div style={{ position: 'relative' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Услуга *
+                  {t('bookings:service')} *
                 </label>
                 <input
                   type="text"
-                  placeholder="Поиск услуги..."
+                  placeholder={t('bookings:search_service')}
                   value={serviceSearch}
                   onChange={(e) => { setServiceSearch(e.target.value); setShowServiceDropdown(true); }}
                   onFocus={() => setShowServiceDropdown(true)}
@@ -1032,7 +1034,7 @@ export default function Bookings() {
                     fontSize: '0.875rem', display: 'flex',
                     justifyContent: 'space-between', alignItems: 'center'
                   }}>
-                    <span>{selectedService.name_ru} ({selectedService.price} AED)</span>
+                    <span>{selectedService.name_ru} ({selectedService.price} {t('bookings:currency')})</span>
                     <button
                       onClick={() => { setSelectedService(null); setServiceSearch(''); }}
                       style={{
@@ -1068,12 +1070,12 @@ export default function Bookings() {
                           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
                         >
-                          {s.name_ru} - {s.price} AED
+                          {s.name_ru} - {s.price} {t('bookings:currency')}
                         </div>
                       ))
                     ) : (
                       <div style={{ padding: '0.75rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        Услуги не найдены
+                        {t('bookings:services_not_found')}
                       </div>
                     )}
                   </div>
@@ -1084,7 +1086,7 @@ export default function Bookings() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    Дата *
+                    {t('bookings:date')} *
                   </label>
                   <input
                     type="date"
@@ -1099,7 +1101,7 @@ export default function Bookings() {
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    Время *
+                    {t('bookings:time')} *
                   </label>
                   <input
                     type="time"
@@ -1117,11 +1119,11 @@ export default function Bookings() {
               {/* Phone */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  Телефон
+                  {t('bookings:phone')}
                 </label>
                 <input
                   type="tel"
-                  placeholder="+971 XX XXX XXXX"
+                  placeholder={t('bookings:phone_placeholder')}
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
                   style={{
@@ -1146,7 +1148,7 @@ export default function Bookings() {
                   fontWeight: '500', color: '#374151', cursor: 'pointer'
                 }}
               >
-                Отмена
+                {t('bookings:cancel')}
               </button>
               <button
                 onClick={handleAddBooking}
@@ -1158,7 +1160,7 @@ export default function Bookings() {
                   opacity: addingBooking ? 0.5 : 1
                 }}
               >
-                {addingBooking ? 'Создание...' : 'Создать запись'}
+                  {addingBooking ? t('bookings:creating') : t('bookings:create_booking')}
               </button>
             </div>
           </div>

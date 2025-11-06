@@ -32,7 +32,7 @@ import NotesPanel from '../../components/chat/NotesPanel';
 import { useClientStatuses } from '../../hooks/useStatuses';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { api } from '../../services/api';
 
 interface Client {
@@ -59,7 +59,6 @@ interface Message {
 
 export default function Chat() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { t } = useTranslation(['chat', 'common']);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -86,7 +85,6 @@ export default function Chat() {
   const [editedClientName, setEditedClientName] = useState('');
   const [editedClientPhone, setEditedClientPhone] = useState('');
   const [isSavingClient, setIsSavingClient] = useState(false);
-  const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -166,9 +164,9 @@ export default function Chat() {
 
       setClients(clientsWithUnread);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки клиентов';
+      const message = err instanceof Error ? err.message : t('chat:error_loading_clients');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(t('chat:error') + (message ? ': ' + message : ''));
     } finally {
       setInitialLoading(false);
     }
@@ -192,8 +190,8 @@ export default function Chat() {
       setMessages(messagesArray);
     } catch (err) {
       if (isInitial) {
-        const message = err instanceof Error ? err.message : 'Ошибка загрузки сообщений';
-        toast.error(`Ошибка: ${message}`);
+        const message = err instanceof Error ? err.message : t('chat:error_loading_messages');
+        toast.error(t('chat:error'), { message });
       }
     } finally {
       if (isInitial) {
@@ -239,51 +237,7 @@ export default function Chat() {
     setShowMobileMenu(false);
   };
 
-  const handleSaveClientInfo = async () => {
-    if (!selectedClient) return;
 
-    try {
-      setIsSavingClient(true);
-
-      await api.updateClient(selectedClient.id, {
-        name: editedClientName.trim() || null,
-        phone: editedClientPhone.trim() || null,
-      });
-
-      setClients(clients.map(c =>
-        c.id === selectedClient.id
-          ? {
-            ...c,
-            name: editedClientName.trim() || '',
-            phone: editedClientPhone.trim() || '',
-            display_name: editedClientName.trim() || c.username || c.id.substring(0, 15) + '...'
-          }
-          : c
-      ));
-
-      setSelectedClient({
-        ...selectedClient,
-        name: editedClientName.trim() || '',
-        phone: editedClientPhone.trim() || '',
-        display_name: editedClientName.trim() || selectedClient.username || selectedClient.id.substring(0, 15) + '...'
-      });
-
-      setIsEditingClient(false);
-      toast.success('Информация обновлена');
-    } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Ошибка сохранения';
-      toast.error(`Ошибка: ${errorMsg}`);
-    } finally {
-      setIsSavingClient(false);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    if (!selectedClient) return;
-    setEditedClientName(selectedClient.name || '');
-    setEditedClientPhone(selectedClient.phone || '');
-    setIsEditingClient(false);
-  };
 
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
@@ -298,23 +252,24 @@ export default function Chat() {
             const formData = new FormData();
             formData.append('file', file);
 
-            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+            const uploadResponse = await fetch(`${(import.meta as any).env.VITE_API_URL}/api/upload`, {
               method: 'POST',
               credentials: 'include',
               body: formData,
-              signal: AbortSignal.timeout(120000)
+              // @ts-ignore: AbortSignal.timeout may not be supported in all environments
+              signal: (AbortSignal as any).timeout ? (AbortSignal as any).timeout(120000) : undefined
             });
 
             if (!uploadResponse.ok) {
               const errorText = await uploadResponse.text();
               console.error('Upload error:', errorText);
-              throw new Error(`Ошибка загрузки: ${uploadResponse.status}`);
+              throw new Error(`${t('chat:error_loading')}: ${uploadResponse.status}`);
             }
 
             const uploadResult = await uploadResponse.json();
 
             if (!uploadResult.file_url) {
-              throw new Error('Не получен URL файла');
+              throw new Error(t('chat:file_url_not_received'));
             }
 
             const { file_url } = uploadResult;
@@ -325,8 +280,9 @@ export default function Chat() {
 
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
 
-            if (sendResult.error) {
-              throw new Error(sendResult.error);
+            // Properly typeguard sendResult for error property
+            if (typeof sendResult === 'object' && sendResult !== null && 'error' in sendResult && sendResult.error) {
+              throw new Error(String((sendResult as any).error));
             }
 
             const newFileMessage: Message = {
@@ -339,20 +295,20 @@ export default function Chat() {
 
             setMessages(prev => [...prev, newFileMessage]);
 
-            toast.success(`Файл "${file.name}" отправлен`);
+            toast.success(t('chat:file_sent', { filename: file.name }));
           } catch (err) {
             allFilesSent = false;
-            const errorMsg = err instanceof Error ? err.message : 'Ошибка';
+            const errorMsg = err instanceof Error ? err.message : t('chat:error');
             console.error('File send error:', err);
 
             if (errorMsg.includes('timeout') || errorMsg.includes('aborted')) {
-              toast.error(`⏱️ Время загрузки истекло для "${file.name}"`);
+              toast.error(t('chat:loading_timeout', { filename: file.name }));
             } else if (errorMsg.includes('403')) {
-              toast.error(`🔒 Доступ запрещен для "${file.name}"`);
+              toast.error(t('chat:access_denied', { filename: file.name }));
             } else if (errorMsg.includes('Instagram cannot access')) {
-              toast.error(`🚫 Instagram не может получить доступ к файлу с localhost.`);
+              toast.error(t('chat:instagram_cannot_access'));
             } else {
-              toast.error(`❌ Не удалось отправить "${file.name}": ${errorMsg}`);
+              toast.error(t('chat:error_sending_file', { filename: file.name, error: errorMsg }));
             }
           }
         }
@@ -377,7 +333,7 @@ export default function Chat() {
 
         setMessages(prev => [...prev, newMessage]);
         setMessage('');
-        toast.success('Сообщение отправлено');
+        toast.success(t('chat:message_sent'));
       }
 
       setTimeout(() => {
@@ -386,9 +342,9 @@ export default function Chat() {
         }
       }, 1000);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Ошибка отправки';
-      console.error('Send error:', err);
-      toast.error(`Ошибка: ${errorMsg}`);
+      const errorMsg = err instanceof Error ? err.message : t('chat:error_sending');
+      console.error(t('chat:error_sending'), err);
+      toast.error(t('chat:error') + (errorMsg ? `: ${errorMsg}` : ''));
     } finally {
       setIsUploadingFile(false);
     }
@@ -398,13 +354,13 @@ export default function Chat() {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       setAttachedFiles([...attachedFiles, ...files]);
-      toast.success(`${files.length} ${files.length === 1 ? 'файл добавлен' : 'файла добавлено'}`);
+      toast.success(t('chat:files_added', { count: files.length }));
     }
   };
 
   const handleRemoveFile = (index: number) => {
     setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
-    toast.info('Файл удален');
+    toast.info(t('chat:file_removed'));
   };
 
 
@@ -423,7 +379,7 @@ export default function Chat() {
           <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
             <Loader className="w-8 h-8 text-black animate-spin" />
           </div>
-          <p className="text-gray-600 font-medium">Загрузка чатов...</p>
+          <p className="text-gray-600 font-medium">{t('chat:loading_chats')}</p>
         </div>
       </div>
     );
@@ -438,13 +394,13 @@ export default function Chat() {
               <AlertCircle className="w-6 h-6 text-black" />
             </div>
             <div className="flex-1">
-              <p className="text-red-900 font-bold text-lg">Ошибка загрузки</p>
+              <p className="text-red-900 font-bold text-lg">{t('chat:error_loading')}</p>
               <p className="text-red-700 mt-2">{error}</p>
               <Button
                 onClick={loadClients}
                 className="mt-4 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-lg"
               >
-                Попробовать еще раз
+                {t('chat:try_again')}
               </Button>
             </div>
           </div>
@@ -463,13 +419,13 @@ export default function Chat() {
 `}>
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-gray-900">Чаты ({clients.length})</span>
+              <span className="text-sm text-gray-900">{t('chat:chats')} ({clients.length})</span>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Поиск..."
+                placeholder={t('chat:search')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
@@ -506,9 +462,9 @@ export default function Chat() {
                           {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500 truncate mb-1 block">{client.phone || 'Нет телефона'}</span>
+                      <span className="text-xs text-gray-500 truncate mb-1 block">{client.phone || t('chat:no_phone')}</span>
                       <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">{client.total_messages} сообщ.</span>
+                        <span className="text-xs text-gray-500">{client.total_messages} {t('chat:messages')}</span>
                       </div>
                     </div>
                   </button>
@@ -519,7 +475,7 @@ export default function Chat() {
                 <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-3">
                   <MessageCircle className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-gray-500 font-medium text-sm">Клиентов не найдено</p>
+                <p className="text-gray-500 font-medium text-sm">{t('chat:no_clients_found')}</p>
               </div>
             )}
           </div>
@@ -602,7 +558,7 @@ export default function Chat() {
                               className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
                             >
                               <Info className="w-4 h-4 text-blue-600" />
-                              <span className="font-medium">Информация</span>
+                              <span className="font-medium">{t('chat:information')}</span>
                             </button>
                             <button
                               onClick={() => {
@@ -614,7 +570,7 @@ export default function Chat() {
                               className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
                             >
                               <FileText className="w-4 h-4 text-purple-600" />
-                              <span className="font-medium">Шаблоны</span>
+                              <span className="font-medium">{t('chat:templates')}</span>
                             </button>
                             <button
                               onClick={() => {
@@ -626,7 +582,7 @@ export default function Chat() {
                               className="w-full px-4 py-2.5 text-left hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 flex items-center gap-2 transition-colors text-sm"
                             >
                               <StickyNote className="w-4 h-4 text-yellow-600" />
-                              <span className="font-medium">Заметки</span>
+                              <span className="font-medium">{t('chat:notes')}</span>
                             </button>
                           </div>
                         </>
@@ -658,7 +614,7 @@ export default function Chat() {
                       <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
                         <Loader className="w-6 h-6 text-black animate-spin" />
                       </div>
-                      <p className="text-gray-500 font-medium text-sm">Загрузка...</p>
+                      <p className="text-gray-500 font-medium text-sm">{t('chat:loading')}</p>
                     </div>
                   </div>
                 ) : messages.length > 0 ? (
@@ -682,13 +638,15 @@ export default function Chat() {
                                   if (msg.message.includes('zrok.io')) {
                                     const url = new URL(msg.message);
                                     const filePath = url.pathname;
-                                    return `${import.meta.env.VITE_API_URL}${filePath}`;
+                                    // @ts-ignore
+                                    return `${(import.meta as any).env.VITE_API_URL}${filePath}`;
                                   }
                                   return msg.message;
                                 }
-                                return `${import.meta.env.VITE_API_URL}${msg.message}`;
+                                // @ts-ignore
+                                return `${(import.meta as any).env.VITE_API_URL}${msg.message}`;
                               })()}
-                              alt="Изображение"
+                              alt={t('chat:image')}
                               loading="lazy"
                               className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
                               onClick={() => window.open(msg.message, '_blank')}
@@ -704,7 +662,7 @@ export default function Chat() {
                                 }`}
                             >
                               <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-                              <p className="text-sm">📷 Изображение недоступно</p>
+                              <p className="text-sm">📷 {t('chat:image_not_available')}</p>
                             </div>
                             <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
                               <p className="text-xs">
@@ -792,7 +750,7 @@ export default function Chat() {
                       <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <MessageCircle className="w-8 h-8 text-gray-400" />
                       </div>
-                      <p className="text-gray-500 font-medium text-sm">Нет сообщений</p>
+                      <p className="text-gray-500 font-medium text-sm">{t('chat:no_messages')}</p>
                     </div>
                   </div>
                 )}
@@ -817,16 +775,16 @@ export default function Chat() {
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-bold text-gray-700 flex items-center gap-1">
                       <Paperclip className="w-3.5 h-3.5" />
-                      Файлы ({attachedFiles.length})
+                      {t('chat:files')} ({attachedFiles.length})
                     </p>
                     <button
                       onClick={() => {
                         setAttachedFiles([]);
-                        toast.info('Файлы очищены');
+                        toast.info(t('chat:files_cleared'));
                       }}
                       className="text-xs text-red-600 hover:text-red-700 font-medium"
                     >
-                      Очистить
+                      {t('chat:clear')}
                     </button>
                   </div>
 
@@ -870,7 +828,7 @@ export default function Chat() {
                     <Textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Сообщение..."
+                      placeholder={t('chat:message')}
                       className="resize-none border-2 border-gray-200 rounded-xl text-sm"
                       rows={2}
                       disabled={isUploadingFile}
@@ -947,7 +905,7 @@ export default function Chat() {
                           status: data.status || selectedClient.status,
                           display_name: data.name || selectedClient.username || selectedClient.display_name
                         });
-                        toast.success('Информация обновлена');
+                        toast.success(t('chat:information_updated'));
                       }}
                     />
                   </div>
@@ -982,8 +940,8 @@ export default function Chat() {
               <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
                 <MessageCircle className="w-12 h-12 text-pink-600" />
               </div>
-              <p className="text-lg font-bold text-gray-700">Выберите чат</p>
-              <p className="text-sm text-gray-500 mt-1">Выберите диалог из списка</p>
+              <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
+              <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
             </div>
           </div>
         )}

@@ -54,20 +54,21 @@ interface BotSettings {
 
 type TabType = 'general' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
 
-const AVAILABLE_LANGUAGES = [
-  { code: 'ru', name: 'Русский', flag: '🇷🇺', note: 'основной' },
-  { code: 'en', name: 'English', flag: '🇬🇧', note: 'international' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦', note: 'местный' },
-  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', note: 'индийцы' },
-  { code: 'ur', name: 'اردو', flag: '🇵🇰', note: 'пакистанцы' },
-  { code: 'tl', name: 'Filipino', flag: '🇵🇭', note: 'филиппинцы' },
-];
+
 
 export default function BotSettings() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation(['botsettings', 'common']);
+  const AVAILABLE_LANGUAGES = [
+    { code: 'ru', name: t('botsettings:russian'), flag: '🇷🇺', note: t('botsettings:main') },
+    { code: 'en', name: t('botsettings:english'), flag: '🇬🇧', note: t('botsettings:international') },
+    { code: 'ar', name: t('botsettings:arabic'), flag: '🇸🇦', note: t('botsettings:local') },
+    { code: 'hi', name: t('botsettings:hindi'), flag: '🇮🇳', note: t('botsettings:indian') },
+    { code: 'ur', name: t('botsettings:urdu'), flag: '🇵🇰', note: t('botsettings:pakistani') },
+    { code: 'tl', name: t('botsettings:filipino'), flag: '🇵🇭', note: t('botsettings:filipino') },
+  ];
   const [settings, setSettings] = useState<BotSettings>({
     bot_name: '',
     personality_traits: '',
@@ -128,16 +129,16 @@ export default function BotSettings() {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Loading bot settings...');
+      console.log('🔄 ' + t('botsettings:loading_bot_settings'));
 
       const data = await api.getBotSettings();
-      console.log('✅ Получены настройки:', data);
+      console.log('✅ ' + t('botsettings:settings_loaded') + ':', data);
 
       const langs = data.languages_supported ? data.languages_supported.split(',') : ['ru', 'en', 'ar'];
       setSelectedLanguages(langs);
 
       setSettings({
-        bot_name: data.bot_name || 'M.Le Diamant Assistant',
+        bot_name: data.bot_name || t('botsettings:bot_name'),
         personality_traits: data.personality_traits || '',
         greeting_message: data.greeting_message || '',
         farewell_message: data.farewell_message || '',
@@ -177,11 +178,11 @@ export default function BotSettings() {
         emergency_situations: data.emergency_situations || '',
         success_metrics: data.success_metrics || '',
         ad_campaign_detection: data.ad_campaign_detection || '',
-        pre_booking_data_collection: data.pre_booking_data_collection || 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
+        pre_booking_data_collection: data.pre_booking_data_collection || t('botsettings:pre_booking_data_collection'),
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
-      toast.error('Ошибка загрузки настроек: ' + (err instanceof Error ? err.message : 'Неизвестная ошибка'));
+      toast.error(t('botsettings:error_loading_settings') + (err instanceof Error ? err.message : t('botsettings:unknown_error')));
     } finally {
       setLoading(false);
     }
@@ -197,9 +198,9 @@ export default function BotSettings() {
         credentials: 'include'
       });
 
-      toast.success('✅ Настройки сохранены и бот перезагружен!');
+      toast.success(t('botsettings:settings_saved_and_bot_reloaded'));
     } catch (err: any) {
-      toast.error('❌ Ошибка: ' + err.message);
+      toast.error(t('botsettings:error') + err.message);
     } finally {
       setSaving(false);
     }
@@ -209,7 +210,7 @@ export default function BotSettings() {
     setSelectedLanguages(prev => {
       if (prev.includes(langCode)) {
         if (prev.length === 1) {
-          toast.error('Должен быть выбран хотя бы один язык');
+          toast.error(t('botsettings:at_least_one_language_must_be_selected'));
           return prev;
         }
         return prev.filter(l => l !== langCode);
@@ -221,20 +222,20 @@ export default function BotSettings() {
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
     { id: 'general', label: t('botsettings:tabs.general'), icon: <Bot size={18} /> },
-    { id: 'personality', label: 'Личность', icon: <Sparkles size={18} /> },
-    { id: 'pricing', label: 'Цены', icon: <DollarSign size={18} /> },
-    { id: 'objections', label: 'Возражения', icon: <MessageCircle size={18} /> },
-    { id: 'communication', label: 'Общение', icon: <MessageSquare size={18} /> },
-    { id: 'advanced', label: 'Продвинутое', icon: <BookOpen size={18} /> },
-    { id: 'safety', label: 'Безопасность', icon: <Shield size={18} /> },
-    { id: 'examples', label: 'Примеры', icon: <Zap size={18} /> }
+    { id: 'personality', label: t('botsettings:tabs.personality'), icon: <Sparkles size={18} /> },
+    { id: 'pricing', label: t('botsettings:tabs.pricing'), icon: <DollarSign size={18} /> },
+    { id: 'objections', label: t('botsettings:tabs.objections'), icon: <MessageCircle size={18} /> },
+    { id: 'communication', label: t('botsettings:tabs.communication'), icon: <MessageSquare size={18} /> },
+    { id: 'advanced', label: t('botsettings:tabs.advanced'), icon: <BookOpen size={18} /> },
+    { id: 'safety', label: t('botsettings:tabs.safety'), icon: <Shield size={18} /> },
+    { id: 'examples', label: t('botsettings:tabs.examples'), icon: <Zap size={18} /> }
   ];
 
   if (loading) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
         <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
-        <p style={{ marginTop: '1rem', color: '#6b7280' }}>Загрузка...</p>
+        <p style={{ marginTop: '1rem', color: '#6b7280' }}>{t('botsettings:loading')}</p>
       </div>
     );
   }
@@ -248,7 +249,7 @@ export default function BotSettings() {
           🤖 {t('botsettings:title')}
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-            Полная конфигурация AI-ассистента
+            {t('botsettings:full_configuration_of_ai_assistant')}
           </p>
         </div>
 
@@ -269,7 +270,7 @@ export default function BotSettings() {
           }}
         >
           <Save size={18} />
-          {saving ? 'Сохранение...' : 'Сохранить'}
+          {saving ? t('botsettings:saving') : t('botsettings:save')}
         </button>
       </div>
 
@@ -320,7 +321,7 @@ export default function BotSettings() {
         {activeTab === 'general' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🏢 Основная информация
+              🏢 {t('botsettings:main_information')}
             </h2>
 
             <div>
@@ -344,7 +345,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📏 Макс. длина сообщения (предложений)
+                📏 {t('botsettings:max_message_length')}
               </label>
               <input
                 type="number"
@@ -365,7 +366,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
-                🌍 Поддерживаемые языки
+                🌍 {t('botsettings:supported_languages')}
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
                 {AVAILABLE_LANGUAGES.map(lang => (
@@ -407,12 +408,12 @@ export default function BotSettings() {
         {activeTab === 'personality' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              ✨ Личность бота
+              ✨ {t('botsettings:personality_of_the_bot')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                Черты характера
+                {t('botsettings:character_traits')}
               </label>
               <textarea
                 value={settings.personality_traits}
@@ -432,7 +433,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 Приветствие
+                👋 {t('botsettings:greeting')}
               </label>
               <textarea
                 value={settings.greeting_message}
@@ -452,7 +453,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 Прощание
+                👋 {t('botsettings:farewell')}
               </label>
               <textarea
                 value={settings.farewell_message}
@@ -472,7 +473,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎨 Стиль общения
+                🎨 {t('botsettings:communication_style')}
               </label>
               <textarea
                 value={settings.communication_style}
@@ -492,7 +493,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 Эмодзи
+                😊 {t('botsettings:emoji')}
               </label>
               <input
                 type="text"
@@ -515,12 +516,12 @@ export default function BotSettings() {
         {activeTab === 'pricing' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💰 Работа с ценами
+              💰 {t('botsettings:working_with_prices')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💎 Объяснение премиум-цен
+                💎 {t('botsettings:premium_price_explanation')}
               </label>
               <textarea
                 value={settings.price_explanation}
@@ -540,7 +541,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📝 Шаблон ответа на цену
+                📝 {t('botsettings:price_response_template')}
               </label>
               <textarea
                 value={settings.price_response_template}
@@ -561,7 +562,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🛡️ Обоснование высоких цен
+                🛡️ {t('botsettings:high_price_justification')}
               </label>
               <textarea
                 value={settings.premium_justification}
@@ -581,7 +582,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⚡ FOMO сообщения (разделяйте |)
+                ⚡ {t('botsettings:fomo_messages')} ({t('botsettings:separate_with_pipe')})
               </label>
               <textarea
                 value={settings.fomo_messages}
@@ -601,7 +602,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚀 Upsell техники (разделяйте |)
+                🚀 {t('botsettings:upsell_techniques')} ({t('botsettings:separate_with_pipe')})
               </label>
               <textarea
                 value={settings.upsell_techniques}
@@ -621,7 +622,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📱 Сообщение о записи
+                📱 {t('botsettings:booking_message')}
               </label>
               <textarea
                 value={settings.booking_redirect_message}
@@ -645,12 +646,12 @@ export default function BotSettings() {
         {activeTab === 'objections' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ Работа с возражениями
+              🛡️ {t('botsettings:working_with_objections')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💸 "Дорого"
+                💸 {t('botsettings:expensive')}
               </label>
               <textarea
                 value={settings.objection_expensive}
@@ -670,7 +671,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤔 "Подумаю"
+                🤔 {t('botsettings:think_about_it')}
               </label>
               <textarea
                 value={settings.objection_think_about_it}
@@ -690,7 +691,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⏰ "Нет времени"
+                ⏰ {t('botsettings:no_time')}
               </label>
               <textarea
                 value={settings.objection_no_time}
@@ -710,7 +711,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😰 "Боюсь боли"
+                😰 {t('botsettings:afraid_of_pain')}
               </label>
               <textarea
                 value={settings.objection_pain}
@@ -730,7 +731,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❓ "Не уверен в результате"
+                ❓ {t('botsettings:not_sure_about_the_result')}
               </label>
               <textarea
                 value={settings.objection_result_doubt}
@@ -750,7 +751,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🏪 "У других дешевле"
+                🏪 {t('botsettings:cheaper_elsewhere')}
               </label>
               <textarea
                 value={settings.objection_cheaper_elsewhere}
@@ -770,7 +771,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚗 "Слишком далеко"
+                🚗 {t('botsettings:too_far')}
               </label>
               <textarea
                 value={settings.objection_too_far}
@@ -790,7 +791,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💑 "Посоветуюсь с мужем"
+                💑 {t('botsettings:consult_with_husband')}
               </label>
               <textarea
                 value={settings.objection_consult_husband}
@@ -810,7 +811,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🆕 "Первый раз"
+                🆕 {t('botsettings:first_time')}
               </label>
               <textarea
                 value={settings.objection_first_time}
@@ -830,7 +831,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😟 "А если не понравится?"
+                😟 {t('botsettings:if_not_liked')}
               </label>
               <textarea
                 value={settings.objection_not_happy}
@@ -854,12 +855,12 @@ export default function BotSettings() {
         {activeTab === 'communication' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💬 Общение и эмоции
+                💬 {t('botsettings:communication_and_emotions')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💖 Эмоциональные триггеры
+                💖 {t('botsettings:emotional_triggers')}
               </label>
               <textarea
                 value={settings.emotional_triggers}
@@ -880,7 +881,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⭐ Социальное доказательство
+                ⭐ {t('botsettings:social_proof')}
               </label>
               <textarea
                 value={settings.social_proof_phrases}
@@ -900,7 +901,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👤 Правила персонализации
+                👤 {t('botsettings:personalization_rules')}
               </label>
               <textarea
                 value={settings.personalization_rules}
@@ -920,7 +921,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 Эмоциональные ответы
+                😊 {t('botsettings:emotional_responses')}
               </label>
               <textarea
                 value={settings.emotional_responses}
@@ -940,7 +941,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎙️ Ответ на голосовые
+                🎙️ {t('botsettings:voice_message_response')}
               </label>
               <textarea
                 value={settings.voice_message_response}
@@ -960,7 +961,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❌ Антипаттерны (что НЕ делать)
+                ❌ {t('botsettings:anti_patterns')} (что НЕ делать)
               </label>
               <textarea
                 value={settings.anti_patterns}
@@ -979,7 +980,7 @@ export default function BotSettings() {
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Сбор данных перед записью
+                📋 {t('botsettings:pre_booking_data_collection')}
               </label>
               <textarea
                 value={settings.pre_booking_data_collection}
@@ -996,13 +997,13 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Как бот запрашивает имя и WhatsApp перед записью
+                {t('botsettings:pre_booking_data_collection_explanation')}
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎯 Детекция рекламных кампаний
+                🎯 {t('botsettings:ad_campaign_detection')}
               </label>
               <textarea
                 value={settings.ad_campaign_detection}
@@ -1019,7 +1020,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Как бот распознает клиентов из таргетированной рекламы
+                {t('botsettings:ad_campaign_detection_explanation')}
               </p>
             </div>
           </div>
@@ -1029,12 +1030,12 @@ export default function BotSettings() {
         {activeTab === 'advanced' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🎓 Продвинутые настройки
+              🎓 {t('botsettings:advanced_settings')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Алгоритм действий
+                  📋 {t('botsettings:algorithm_actions')}
               </label>
               <textarea
                 value={settings.algorithm_actions}
@@ -1054,7 +1055,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📍 Особенности локации
+                📍 {t('botsettings:location_features')}
               </label>
               <textarea
                 value={settings.location_features}
@@ -1074,7 +1075,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌡️ Сезонность
+                🌡️ {t('botsettings:seasonality')}
               </label>
               <textarea
                 value={settings.seasonality}
@@ -1094,7 +1095,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌍 Контекстные правила
+                🌍 {t('botsettings:contextual_rules')}
               </label>
               <textarea
                 value={settings.contextual_rules}
@@ -1114,7 +1115,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📊 Метрики успеха
+                📊 {t('botsettings:success_metrics')}
               </label>
               <textarea
                 value={settings.success_metrics}
@@ -1138,7 +1139,7 @@ export default function BotSettings() {
         {activeTab === 'safety' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ Безопасность и этика
+              🛡️ {t('botsettings:safety_and_ethics')}
             </h2>
 
             <div style={{
@@ -1152,17 +1153,17 @@ export default function BotSettings() {
               <Shield size={20} color="#1e40af" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af', fontWeight: '600', marginBottom: '0.25rem' }}>
-                  Важно для безопасности:
+                  {t('botsettings:important_for_safety')}
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af' }}>
-                  Эти правила защищают клиентов и репутацию салона
+                  {t('botsettings:these_rules_protect_clients_and_reputation')}
                 </p>
               </div>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🔒 Правила безопасности
+                🔒 {t('botsettings:safety_rules')}
               </label>
               <textarea
                 value={settings.safety_guidelines}
@@ -1182,7 +1183,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚨 Экстренные ситуации
+                🚨 {t('botsettings:emergency_situations')}
               </label>
               <textarea
                 value={settings.emergency_situations}
@@ -1206,12 +1207,12 @@ export default function BotSettings() {
         {activeTab === 'examples' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💡 Примеры и диалоги
+              💡 {t('botsettings:examples_and_dialogues')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ✅ Примеры хороших ответов
+                ✅ {t('botsettings:good_responses')}
               </label>
               <textarea
                 value={settings.example_good_responses}
@@ -1231,7 +1232,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💬 Примеры диалогов
+                💬 {t('botsettings:dialogues')}
               </label>
               <textarea
                 value={settings.example_dialogues}
@@ -1249,7 +1250,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Примеры реальных диалогов для обучения бота
+                {t('botsettings:real_dialogues_for_training')}
               </p>
             </div>
           </div>
@@ -1282,7 +1283,7 @@ export default function BotSettings() {
           }}
         >
           <Save size={20} />
-          {saving ? 'Сохранение...' : 'Сохранить всё'}
+          {saving ? t('botsettings:saving') : t('botsettings:save_all')}
         </button>
       </div>
     </div>

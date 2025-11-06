@@ -36,7 +36,7 @@ export default function Login({ onLogin }: LoginProps) {
     e.preventDefault();
 
     if (!credentials.username || !credentials.password) {
-      setError("Заполните оба поля");
+      setError(t('login:fill_both_fields'));
       return;
     }
 
@@ -59,26 +59,26 @@ export default function Login({ onLogin }: LoginProps) {
         });
 
         toast.success(
-          `Добро пожаловать, ${
+          `${t('login:welcome')} ${
             response.user.full_name || response.user.username
           }!`
         );
         navigate("/admin/dashboard");
       } else {
-        setError("Ошибка авторизации");
-        toast.error("Ошибка авторизации");
+        setError(t('login:authorization_error'));
+        toast.error(t('login:authorization_error'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка входа";
+      const message = err instanceof Error ? err.message : t('login:login_error');
 
-      if (message.includes("Unauthorized") || message.includes("401")) {
-        setError("Неверное имя пользователя или пароль");
+      if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {
+        setError(t('login:invalid_username_or_password'));
       } else {
         setError(message);
       }
 
       toast.error(message);
-      console.error("Login error:", err);
+      console.error(t('login:login_error'), err);
     } finally {
       setLoading(false);
     }
@@ -91,8 +91,8 @@ export default function Login({ onLogin }: LoginProps) {
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">💎 M.Le Diamant</h1>
-          <p className="text-gray-600">CRM система управления</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('login:login_title')}</h1>
+          <p className="text-gray-600">{t('login:crm_system_management')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -104,7 +104,7 @@ export default function Login({ onLogin }: LoginProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="username">Имя пользователя</Label>
+              <Label htmlFor="username">{t('login:username')}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -115,14 +115,14 @@ export default function Login({ onLogin }: LoginProps) {
                   onChange={(e) =>
                     setCredentials({ ...credentials, username: e.target.value })
                   }
-                  placeholder="Введите логин"
+                  placeholder={t('login:enter_login')}
                   className="pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password">{t('login:password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -134,7 +134,7 @@ export default function Login({ onLogin }: LoginProps) {
                   onChange={(e) =>
                     setCredentials({ ...credentials, password: e.target.value })
                   }
-                  placeholder="Введите пароль"
+                  placeholder={t('login:enter_password')}
                   className="pl-10"
                 />
               </div>
@@ -151,10 +151,10 @@ export default function Login({ onLogin }: LoginProps) {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
-                  Вход...
+                  {t('login:loading')}
                 </>
               ) : (
-                "Войти"
+                t('login:login')
               )}
             </Button>
           </form>
@@ -165,14 +165,14 @@ export default function Login({ onLogin }: LoginProps) {
               className="text-pink-600"
               onClick={() => navigate("/forgot-password")}
             >
-              Забыли пароль?
+              {t('login:forgot_password')}
             </Button>
           </div>
         </div>
 
         <div className="mt-6 text-center">
           <Button variant="outline" onClick={() => navigate("/")}>
-            Вернуться на главную
+            {t('login:return_to_home')}
           </Button>
         </div>
       </div>

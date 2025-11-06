@@ -23,7 +23,7 @@ export default function CreateUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Валидация
     if (!formData.full_name.trim()) {
       toast.error(t('createuser:errors.full_name_required'));
@@ -55,7 +55,7 @@ export default function CreateUser() {
 
       // Используем новый API endpoint для создания пользователя
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/users`,
+        `${(window as any).VITE_API_URL || 'http://localhost:8000'}/api/users`,
         {
           method: 'POST',
           headers: {
@@ -69,13 +69,13 @@ export default function CreateUser() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Ошибка создания пользователя');
+        throw new Error(result.error || t('createuser:errors.create_failed'));
       }
 
-      toast.success('Пользователь успешно создан!');
+      toast.success(t('createuser:success.created'));
       navigate('/admin/users');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка создания пользователя';
+      const message = err instanceof Error ? err.message : t('createuser:errors.create_failed');
       toast.error(`Ошибка: ${message}`);
       console.error('Error creating user:', err);
     } finally {
@@ -113,7 +113,7 @@ export default function CreateUser() {
                 disabled={loading}
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                placeholder="Анна Петрова"
+                placeholder={t('createuser:placeholders.name')}
               />
             </div>
 
@@ -125,10 +125,10 @@ export default function CreateUser() {
                 disabled={loading}
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder="anna_petrova"
+                placeholder={t('createuser:placeholders.name')}
               />
               <p className="text-sm text-gray-500 mt-1">
-              t('createuser:username_hint')
+                t('createuser:username_hint')
               </p>
             </div>
 
@@ -140,10 +140,10 @@ export default function CreateUser() {
                 disabled={loading}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="anna@example.com"
+                placeholder={t('createuser:placeholders.email')}
               />
               <p className="text-sm text-gray-500 mt-1">
-              t('createuser:email_hint')
+                t('createuser:email_hint')
               </p>
             </div>
 
@@ -160,7 +160,7 @@ export default function CreateUser() {
                 placeholder="••••••"
               />
               <p className="text-sm text-gray-500 mt-1">
-              t('createuser:password_hint')
+                t('createuser:password_hint')
               </p>
             </div>
 
@@ -181,21 +181,21 @@ export default function CreateUser() {
                 </SelectContent>
               </Select>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
-                <p><strong>t('createuser:role_employee'):</strong> базовые права - просмотр своих записей и графика</p>
-                <p><strong>t('createuser:manager'):</strong> расширенные права - работа с клиентами и аналитикой</p>
-                <p><strong>t('createuser:admin'):</strong> полный доступ ко всем функциям системы</p>
+                <p><strong>{t('createuser:role_employee')}:</strong> {t('createuser:role_employee_desc')}</p>
+                <p><strong>{t('createuser:role_manager')}:</strong> {t('createuser:role_manager_desc')}</p>
+                <p><strong>{t('createuser:role_admin')}:</strong> {t('createuser:role_admin_desc')}</p>
               </div>
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading}
               className="w-full bg-pink-600 hover:bg-pink-700"
             >
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Создание...
+                  t('createuser:creating')
                 </>
               ) : (
                 <>

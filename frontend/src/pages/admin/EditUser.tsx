@@ -44,7 +44,7 @@ export default function EditUser() {
         email: data.email || ''
       });
     } catch (err) {
-      toast.error('Ошибка загрузки профиля');
+      toast.error(t('users:error_loading_profile'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -55,21 +55,21 @@ export default function EditUser() {
     e.preventDefault();
 
     if (!profileData.username || profileData.username.length < 3) {
-      toast.error('Логин должен быть минимум 3 символа');
+      toast.error(t('users:username_must_be_at_least_3_characters'));
       return;
     }
 
     if (!profileData.full_name || profileData.full_name.length < 2) {
-      toast.error('Имя должно быть минимум 2 символа');
+      toast.error(t('users:name_must_be_at_least_2_characters'));
       return;
     }
 
     try {
       setSaving(true);
       await api.updateUserProfile(userId, profileData);
-      toast.success('✅ Профиль обновлён');
+      toast.success(t('users:profile_updated'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка обновления';
+      const message = err instanceof Error ? err.message : t('users:error_updating_profile');
       toast.error(`❌ ${message}`);
     } finally {
       setSaving(false);
@@ -80,12 +80,12 @@ export default function EditUser() {
     e.preventDefault();
 
     if (!passwordData.new_password || passwordData.new_password.length < 6) {
-      toast.error('Пароль должен быть минимум 6 символов');
+      toast.error(t('users:password_must_be_at_least_6_characters'));
       return;
     }
 
     if (passwordData.new_password !== passwordData.confirm_password) {
-      toast.error('Пароли не совпадают');
+      toast.error(t('users:passwords_do_not_match'));
       return;
     }
 
@@ -94,10 +94,10 @@ export default function EditUser() {
       await api.changePassword(userId, {
         new_password: passwordData.new_password
       });
-      toast.success('✅ Пароль изменён');
+      toast.success(t('users:password_changed'));
       setPasswordData({ new_password: '', confirm_password: '' });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка изменения пароля';
+      const message = err instanceof Error ? err.message : t('users:error_changing_password');
       toast.error(`❌ ${message}`);
     } finally {
       setSaving(false);
@@ -121,14 +121,14 @@ export default function EditUser() {
         disabled={saving}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Назад к пользователям
+        {t('users:back_to_users')}
       </Button>
 
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <UserCog className="w-8 h-8 text-pink-600" />
-            Редактировать пользователя
+            {t('users:edit_user')}
           </h1>
           <p className="text-gray-600">{profileData.full_name}</p>
         </div>
@@ -137,21 +137,21 @@ export default function EditUser() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
-              Профиль
+                {t('users:profile')}
             </TabsTrigger>
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
-              Пароль
+              {t('users:password')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Основная информация</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('users:basic_information')}</h2>
               
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
-                  <Label htmlFor="username">Логин *</Label>
+                  <Label htmlFor="username">{t('users:username')} *</Label>
                   <Input
                     id="username"
                     required
@@ -162,35 +162,35 @@ export default function EditUser() {
                     minLength={3}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Минимум 3 символа
+                    {t('users:username_must_be_at_least_3_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="full_name">Полное имя *</Label>
+                  <Label htmlFor="full_name">{t('users:full_name')} *</Label>
                   <Input
                     id="full_name"
                     required
                     disabled={saving}
                     value={profileData.full_name}
                     onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                    placeholder="Анна Петрова"
+                    placeholder={t('users:full_name_placeholder')}
                     minLength={2}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('users:email')}</Label>
                   <Input
                     id="email"
                     type="email"
                     disabled={saving}
                     value={profileData.email}
                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    placeholder="anna@example.com"
+                    placeholder={t('users:email_placeholder')}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Для восстановления пароля
+                    {t('users:email_for_password_recovery')}
                   </p>
                 </div>
 
@@ -202,10 +202,10 @@ export default function EditUser() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      Сохранение...
+                      {t('users:saving')}...
                     </>
                   ) : (
-                    'Сохранить изменения'
+                    t('users:save_changes')
                   )}
                 </Button>
               </form>
@@ -214,18 +214,18 @@ export default function EditUser() {
 
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Изменить пароль</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('users:change_password')}</h2>
               
               <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>⚠️ Важно:</strong> Администратор может изменить пароль без знания текущего. 
-                  После изменения пользователь должен войти с новым паролем.
+                  <strong>⚠️ {t('users:important')}:</strong> {t('users:admin_can_change_password_without_knowing_current')} 
+                  {t('users:after_changing_user_must_login_with_new_password')}
                 </p>
               </div>
 
               <form onSubmit={handleChangePassword} className="space-y-6">
                 <div>
-                  <Label htmlFor="new_password">Новый пароль *</Label>
+                  <Label htmlFor="new_password">{t('users:new_password')} *</Label>
                   <Input
                     id="new_password"
                     type="password"
@@ -237,12 +237,12 @@ export default function EditUser() {
                     minLength={6}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Минимум 6 символов
+                    {t('users:password_must_be_at_least_6_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="confirm_password">Подтвердите пароль *</Label>
+                  <Label htmlFor="confirm_password">{t('users:confirm_password')} *</Label>
                   <Input
                     id="confirm_password"
                     type="password"
@@ -263,12 +263,12 @@ export default function EditUser() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      Изменение...
+                      {t('users:changing')}...
                     </>
                   ) : (
                     <>
                       <Key className="w-4 h-4 mr-2" />
-                      Изменить пароль
+                      {t('users:change_password')}
                     </>
                   )}
                 </Button>

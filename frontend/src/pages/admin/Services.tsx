@@ -64,10 +64,14 @@ const categories = [
 
 // Форматирование цены
 const formatPrice = (service: Service) => {
-  const minPrice = service.min_price && service.min_price !== 'null' ? Number(service.min_price) : null;
-  const maxPrice = service.max_price && service.max_price !== 'null' ? Number(service.max_price) : null;
-  
-  if (minPrice && maxPrice && minPrice !== maxPrice) {
+  const minPrice = typeof service.min_price === 'number' ? service.min_price : null;
+  const maxPrice = typeof service.max_price === 'number' ? service.max_price : null;
+
+  if (
+    minPrice !== null &&
+    maxPrice !== null &&
+    minPrice !== maxPrice
+  ) {
     return `${minPrice} — ${maxPrice} ${service.currency}`;
   }
   return `${service.price} ${service.currency}`;
@@ -219,7 +223,7 @@ export default function Services() {
   const handleSaveService = async () => {
     try {
       if (!serviceFormData.key || !serviceFormData.name || !serviceFormData.name_ru || !serviceFormData.category) {
-        toast.error('Заполните обязательные поля');
+        toast.error(t('services:fill_required_fields'));
         return;
       }
 
@@ -242,16 +246,16 @@ export default function Services() {
 
       if (editingService) {
         await api.updateService(editingService.id, serviceData);
-        toast.success('Услуга обновлена');
+        toast.success(t('services:service_updated'));
       } else {
         await api.createService(serviceData);
-        toast.success('Услуга добавлена');
+        toast.success(t('services:service_added'));
       }
 
       await loadData();
       setIsServiceModalOpen(false);
     } catch (err) {
-      toast.error(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      toast.error(`${t('services:error')}: ${err instanceof Error ? err.message : t('services:unknown_error')}`);
     } finally {
       setSaving(false);
     }
@@ -265,7 +269,7 @@ export default function Services() {
         credentials: 'include'
       });
 
-      if (!response.ok) throw new Error('Toggle failed');
+      if (!response.ok) throw new Error(t('services:toggle_failed'));
 
       const data = await response.json();
 
@@ -274,22 +278,22 @@ export default function Services() {
         s.id === service.id ? { ...s, is_active: data.is_active } : s
       ));
 
-      toast.success(data.is_active ? 'Услуга активирована' : 'Услуга деактивирована');
+      toast.success(data.is_active ? t('services:service_activated') : t('services:service_deactivated'));
     } catch (err) {
-      toast.error('Ошибка изменения статуса');
+      toast.error(t('services:error_changing_status'));
       console.error(err);
     }
   };
 
   const handleDeleteService = async (id: number) => {
-    if (!confirm('Удалить эту услугу?')) return;
+    if (!confirm(t('services:are_you_sure_you_want_to_delete_this_service'))) return;
 
     try {
       await api.deleteService(id);
       setServices(services.filter(s => s.id !== id));
-      toast.success('Услуга удалена');
+      toast.success(t('services:service_deleted'));
     } catch (err) {
-      toast.error(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      toast.error(`${t('services:error')}: ${err instanceof Error ? err.message : t('services:unknown_error')}`);
     }
   };
 
@@ -346,12 +350,12 @@ export default function Services() {
   const handleSavePackage = async () => {
     try {
       if (!packageFormData.name || !packageFormData.name_ru) {
-        toast.error('Заполните название пакета');
+        toast.error(t('services:fill_package_name'));
         return;
       }
 
       if (packageFormData.special_price >= packageFormData.original_price) {
-        toast.error('Специальная цена должна быть меньше обычной');
+        toast.error(t('services:special_price_must_be_less_than_original'));
         return;
       }
 
@@ -377,30 +381,30 @@ export default function Services() {
 
       if (editingPackage) {
         await api.updateSpecialPackage(editingPackage.id, packageData);
-        toast.success('Пакет обновлен');
+        toast.success(t('services:package_updated'));
       } else {
         await api.createSpecialPackage(packageData);
-        toast.success('Пакет создан');
+        toast.success(t('services:package_created'));
       }
 
       await loadData();
       setIsPackageModalOpen(false);
     } catch (err) {
-      toast.error(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      toast.error(`${t('services:error')}: ${err instanceof Error ? err.message : t('services:unknown_error')}`);
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeletePackage = async (id: number) => {
-    if (!confirm('Удалить этот пакет?')) return;
+    if (!confirm(t('services:are_you_sure_you_want_to_delete_this_package'))) return;
 
     try {
       await api.deleteSpecialPackage(id);
       setPackages(packages.filter(p => p.id !== id));
-      toast.success('Пакет удален');
+      toast.success(t('services:package_deleted'));
     } catch (err) {
-      toast.error(`Ошибка: ${err instanceof Error ? err.message : 'Неизвестная ошибка'}`);
+      toast.error(`${t('services:error')}: ${err instanceof Error ? err.message : t('services:unknown_error')}`);
     }
   };
 
@@ -410,9 +414,9 @@ export default function Services() {
       setPackages(packages.map(p =>
         p.id === pkg.id ? { ...p, is_active: !p.is_active } : p
       ));
-      toast.success(pkg.is_active ? 'Пакет деактивирован' : 'Пакет активирован');
+      toast.success(pkg.is_active ? t('services:package_deactivated') : t('services:package_activated'));
     } catch (err) {
-      toast.error('Ошибка изменения статуса');
+      toast.error(t('services:error_changing_status'));
     }
   };
 
@@ -421,7 +425,7 @@ export default function Services() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка...</p>
+          <p className="text-gray-600">{t('services:loading')}...</p>
         </div>
       </div>
     );
@@ -433,10 +437,10 @@ export default function Services() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Scissors className="w-8 h-8 text-pink-600" />
-          Услуги и спецпредложения
+          {t('services:services_and_packages')}
         </h1>
         <p className="text-gray-600">
-          Управление прайс-листом и акциями салона
+          {t('services:management_of_price_list_and_salon_promotions')}
         </p>
       </div>
 
@@ -451,7 +455,7 @@ export default function Services() {
               }`}
           >
             <Scissors className="w-5 h-5 inline-block mr-2" />
-            Услуги ({filteredServices.length})
+              {t('services:services')} ({filteredServices.length})
           </button>
           <button
             onClick={() => setActiveTab('packages')}
@@ -461,7 +465,7 @@ export default function Services() {
               }`}
           >
             <Gift className="w-5 h-5 inline-block mr-2" />
-            Специальные пакеты ({filteredPackages.length})
+            {t('services:special_packages')} ({filteredPackages.length})
           </button>
         </div>
       </div>
@@ -476,7 +480,7 @@ export default function Services() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Поиск услуг..."
+                  placeholder={t('services:search_services')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -484,10 +488,10 @@ export default function Services() {
               </div>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder="Категория" />
+                  <SelectValue placeholder={t('services:category')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Все категории</SelectItem>
+                  <SelectItem value="all">{t('services:all_categories')}</SelectItem>
                   {categories.map(cat => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
@@ -498,7 +502,7 @@ export default function Services() {
                 onClick={handleOpenAddService}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Добавить услугу
+                {t('services:add_service')}
               </Button>
             </div>
           </div>
@@ -510,12 +514,12 @@ export default function Services() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Название</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Цена</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Длительность</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Категория</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Статус</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Действия</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:name')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:price')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:duration')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:category')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:status')}</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">{t('services:actions')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -555,7 +559,7 @@ export default function Services() {
                               : 'bg-red-100 text-red-800 hover:bg-red-200'
                               }`}
                           >
-                            {service.is_active ? 'Активна' : 'Неактивна'}
+                            {service.is_active ? t('services:active') : t('services:inactive')}
                           </button>
                         </td>
                         <td className="px-6 py-4">
@@ -585,7 +589,7 @@ export default function Services() {
             ) : (
               <div className="py-20 text-center text-gray-500">
                 <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p>Услуги не найдены</p>
+                  <p>{t('services:services_not_found')}</p>
               </div>
             )}
           </div>
@@ -600,11 +604,11 @@ export default function Services() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-blue-800 font-medium">Как работают специальные пакеты:</p>
+                <p className="text-blue-800 font-medium">{t('services:how_special_packages_work')}</p>
                 <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
-                  <li>Когда клиент упоминает ключевые слова или промокод, бот предложит специальную цену</li>
-                  <li>Бот автоматически распознает контекст рекламной кампании</li>
-                  <li>Пакеты можно ограничить по времени и количеству использований</li>
+                  <li>{t('services:when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price')}</li>
+                  <li>{t('services:bot_automatically_recognizes_the_context_of_the_advertising_campaign')}</li>
+                  <li>{t('services:packages_can_be_limited_by_time_and_usage_count')}</li>
                 </ul>
               </div>
             </div>
@@ -617,7 +621,7 @@ export default function Services() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Поиск пакетов, промокодов..."
+                  placeholder={t('services:search_packages_promo_codes')}
                   value={packageSearchTerm}
                   onChange={(e) => setPackageSearchTerm(e.target.value)}
                   className="pl-10"
@@ -625,12 +629,12 @@ export default function Services() {
               </div>
               <Select value={packageStatusFilter} onValueChange={(value: any) => setPackageStatusFilter(value)}>
                 <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder="Статус" />
+                  <SelectValue placeholder={t('services:status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Все пакеты</SelectItem>
-                  <SelectItem value="active">Активные</SelectItem>
-                  <SelectItem value="inactive">Неактивные</SelectItem>
+                  <SelectItem value="all">{t('services:all_packages')}</SelectItem>
+                  <SelectItem value="active">{t('services:active')}</SelectItem>
+                  <SelectItem value="inactive">{t('services:inactive')}</SelectItem>
                 </SelectContent>
               </Select>
               <Button
@@ -638,7 +642,7 @@ export default function Services() {
                 onClick={handleOpenAddPackage}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Создать пакет
+                {t('services:create_package')}
               </Button>
             </div>
           </div>
@@ -657,7 +661,7 @@ export default function Services() {
                     <p className="text-sm text-gray-500">{pkg.name}</p>
                   </div>
                   <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                    {pkg.is_active ? 'Активен' : 'Неактивен'}
+                    {pkg.is_active ? t('services:active') : t('services:inactive')}
                   </Badge>
                 </div>
 
@@ -692,7 +696,7 @@ export default function Services() {
                 {/* Keywords */}
                 {pkg.keywords.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-1">Ключевые слова:</p>
+                    <p className="text-xs text-gray-500 mb-1">{t('services:keywords')}:</p>
                     <div className="flex flex-wrap gap-1">
                       {pkg.keywords.slice(0, 3).map((keyword, idx) => (
                         <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
@@ -717,7 +721,7 @@ export default function Services() {
                 {/* Stats */}
                 {pkg.max_usage && (
                   <div className="text-xs text-gray-500 mb-4">
-                    Использовано: {pkg.usage_count} / {pkg.max_usage}
+                    {t('services:used')}: {pkg.usage_count} / {pkg.max_usage}
                   </div>
                 )}
 
@@ -730,7 +734,7 @@ export default function Services() {
                     className="flex-1"
                   >
                     <Edit className="w-4 h-4 mr-1" />
-                    Изменить
+                    {t('services:edit')}
                   </Button>
                   <Button
                     size="sm"
@@ -738,7 +742,7 @@ export default function Services() {
                     onClick={() => handleTogglePackageActive(pkg)}
                     className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
                   >
-                    {pkg.is_active ? 'Отключить' : 'Включить'}
+                    {pkg.is_active ? t('services:disable') : t('services:enable')}
                   </Button>
                   <Button
                     size="sm"
@@ -756,9 +760,9 @@ export default function Services() {
           {filteredPackages.length === 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
               <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">Специальные пакеты не найдены</p>
+              <p className="text-gray-500 mb-4">{t('services:special_packages_not_found')}</p>
               <Button onClick={handleOpenAddPackage} className="bg-pink-600 hover:bg-pink-700">
-                Создать первый пакет
+                {t('services:create_first_package')}
               </Button>
             </div>
           )}
@@ -770,26 +774,26 @@ export default function Services() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingService ? 'Редактировать услугу' : 'Добавить услугу'}
+              {editingService ? t('services:edit_service') : t('services:add_service')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="key">Ключ *</Label>
+                <Label htmlFor="key">{t('services:key')} *</Label>
                 <Input
                   id="key"
                   value={serviceFormData.key}
                   onChange={(e) => setServiceFormData({ ...serviceFormData, key: e.target.value })}
-                  placeholder="permanent_makeup_brows"
+                  placeholder={t('services:permanent_makeup_brows')}
                 />
               </div>
               <div>
-                <Label htmlFor="category">Категория *</Label>
+                <Label htmlFor="category">{t('services:category')} *</Label>
                 <Select value={serviceFormData.category} onValueChange={(value) => setServiceFormData({ ...serviceFormData, category: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Выберите категорию" />
+                    <SelectValue placeholder={t('services:select_category')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map(cat => (
@@ -801,28 +805,28 @@ export default function Services() {
             </div>
 
             <div>
-              <Label htmlFor="name">Название (EN) *</Label>
+              <Label htmlFor="name">{t('services:name')} (EN) *</Label>
               <Input
                 id="name"
                 value={serviceFormData.name}
                 onChange={(e) => setServiceFormData({ ...serviceFormData, name: e.target.value })}
-                placeholder="Permanent Makeup - Brows"
+                placeholder={t('services:permanent_makeup_brows')}
               />
             </div>
 
             <div>
-              <Label htmlFor="nameRu">Название (RU) *</Label>
+              <Label htmlFor="nameRu">{t('services:name')} (RU) *</Label>
               <Input
                 id="nameRu"
                 value={serviceFormData.name_ru}
                 onChange={(e) => setServiceFormData({ ...serviceFormData, name_ru: e.target.value })}
-                placeholder="Перманентный макияж бровей"
+                placeholder={t('services:permanent_makeup_brows')}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">Базовая цена *</Label>
+                <Label htmlFor="price">{t('services:base_price')} *</Label>
                 <Input
                   id="price"
                   type="number"
@@ -831,8 +835,13 @@ export default function Services() {
                 />
               </div>
               <div>
-                <Label htmlFor="currency">Валюта</Label>
-                <Select value={serviceFormData.currency} onValueChange={(value) => setServiceFormData({ ...serviceFormData, currency: value })}>
+                <Label htmlFor="currency">{t('services:currency')}</Label>
+                <Select
+                  value={serviceFormData.currency}
+                  onValueChange={(value: string) =>
+                    setServiceFormData({ ...serviceFormData, currency: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -846,77 +855,77 @@ export default function Services() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="minPrice">Мин. цена</Label>
+                <Label htmlFor="minPrice">{t('services:min_price')}</Label>
                 <Input
                   id="minPrice"
                   type="number"
                   value={serviceFormData.min_price}
                   onChange={(e) => setServiceFormData({ ...serviceFormData, min_price: e.target.value })}
-                  placeholder="Опционально"
+                  placeholder={t('services:optional')}
                 />
               </div>
               <div>
-                <Label htmlFor="maxPrice">Макс. цена</Label>
+                <Label htmlFor="maxPrice">{t('services:max_price')}</Label>
                 <Input
                   id="maxPrice"
                   type="number"
                   value={serviceFormData.max_price}
                   onChange={(e) => setServiceFormData({ ...serviceFormData, max_price: e.target.value })}
-                  placeholder="Опционально"
+                  placeholder={t('services:optional')}
                 />
               </div>
               <div>
-                <Label htmlFor="duration">Длительность</Label>
+                <Label htmlFor="duration">{t('services:duration')}</Label>
                 <Input
                   id="duration"
                   value={serviceFormData.duration}
                   onChange={(e) => setServiceFormData({ ...serviceFormData, duration: e.target.value })}
-                  placeholder="1h, 30min"
+                  placeholder={t('services:1h_30min')}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="description">Описание (EN)</Label>
+              <Label htmlFor="description">{t('services:description')} (EN)</Label>
               <Textarea
                 id="description"
                 value={serviceFormData.description}
                 onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
-                placeholder="Professional brow tattooing"
+                placeholder={t('services:professional_brow_tattooing')}
               />
             </div>
 
             <div>
-              <Label htmlFor="descriptionRu">Описание (RU)</Label>
+              <Label htmlFor="descriptionRu">{t('services:description')} (RU)</Label>
               <Textarea
                 id="descriptionRu"
                 value={serviceFormData.description_ru}
                 onChange={(e) => setServiceFormData({ ...serviceFormData, description_ru: e.target.value })}
-                placeholder="Профессиональный татуаж бровей"
+                placeholder={t('services:professional_brow_tattooing')}
               />
             </div>
 
             <div>
-              <Label htmlFor="benefits">Преимущества (разделяйте через |)</Label>
+                <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
               <Textarea
                 id="benefits"
                 value={serviceFormData.benefits}
                 onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
-                placeholder="Long-lasting | Natural look | Waterproof"
+                placeholder={t('services:long_lasting_natural_look_waterproof')}
               />
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsServiceModalOpen(false)}>
-              Отмена
+              {t('services:cancel')}
             </Button>
             <Button
               onClick={handleSaveService}
               className="bg-pink-600 hover:bg-pink-700"
               disabled={saving}
             >
-              {saving ? 'Сохранение...' : 'Сохранить'}
+              {saving ? t('services:saving') : t('services:save')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -927,46 +936,46 @@ export default function Services() {
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingPackage ? 'Редактировать пакет' : 'Создать пакет'}
+              {editingPackage ? t('services:edit_package') : t('services:create_package')}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="pkgName">Название (EN) *</Label>
+                <Label htmlFor="pkgName">{t('services:name')} (EN) *</Label>
                 <Input
                   id="pkgName"
                   value={packageFormData.name}
                   onChange={(e) => setPackageFormData({ ...packageFormData, name: e.target.value })}
-                  placeholder="Summer Special Package"
+                  placeholder={t('services:summer_special_package')}
                 />
               </div>
               <div>
-                <Label htmlFor="pkgNameRu">Название (RU) *</Label>
+                <Label htmlFor="pkgNameRu">{t('services:name')} (RU) *</Label>
                 <Input
                   id="pkgNameRu"
                   value={packageFormData.name_ru}
                   onChange={(e) => setPackageFormData({ ...packageFormData, name_ru: e.target.value })}
-                  placeholder="Летний специальный пакет"
+                  placeholder={t('services:summer_special_package')}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="pkgDescRu">Описание (RU)</Label>
+              <Label htmlFor="pkgDescRu">{t('services:description')} (RU)</Label>
               <Textarea
                 id="pkgDescRu"
                 value={packageFormData.description_ru}
                 onChange={(e) => setPackageFormData({ ...packageFormData, description_ru: e.target.value })}
-                placeholder="Включает маникюр + педикюр по специальной цене"
+                placeholder={t('services:includes_manicure_pedicure_at_special_price')}
                 rows={2}
               />
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="origPrice">Обычная цена *</Label>
+                  <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
                 <Input
                   id="origPrice"
                   type="number"
@@ -975,7 +984,7 @@ export default function Services() {
                 />
               </div>
               <div>
-                <Label htmlFor="specPrice">Специальная цена *</Label>
+                <Label htmlFor="specPrice">{t('services:special_price')} *</Label>
                 <Input
                   id="specPrice"
                   type="number"
@@ -984,7 +993,7 @@ export default function Services() {
                 />
               </div>
               <div>
-                <Label>Скидка</Label>
+                <Label>{t('services:discount')}</Label>
                 <div className="h-10 flex items-center text-2xl font-bold text-green-600">
                   {calculateDiscount()}%
                 </div>
@@ -993,54 +1002,54 @@ export default function Services() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="promoCode">Промокод</Label>
+                <Label htmlFor="promoCode">{t('services:promo_code')}</Label>
                 <Input
                   id="promoCode"
                   value={packageFormData.promo_code}
                   onChange={(e) => setPackageFormData({ ...packageFormData, promo_code: e.target.value.toUpperCase() })}
-                  placeholder="SUMMER2025"
+                  placeholder={t('services:summer2025')}
                 />
               </div>
               <div>
-                <Label htmlFor="maxUsage">Макс. использований</Label>
+                <Label htmlFor="maxUsage">{t('services:max_usage')}</Label>
                 <Input
                   id="maxUsage"
                   type="number"
                   value={packageFormData.max_usage}
                   onChange={(e) => setPackageFormData({ ...packageFormData, max_usage: Number(e.target.value) })}
-                  placeholder="0 = без ограничений"
+                  placeholder={t('services:0_no_limit')}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="keywords">Ключевые слова (через запятую) *</Label>
+              <Label htmlFor="keywords">{t('services:keywords')} ({t('services:separate_through_comma')}) *</Label>
               <Textarea
                 id="keywords"
                 value={packageFormData.keywords}
                 onChange={(e) => setPackageFormData({ ...packageFormData, keywords: e.target.value })}
-                placeholder="летняя акция, summer promo, маникюр педикюр вместе"
+                placeholder={t('services:summer_promo_manicure_pedicure_together')}
                 rows={2}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Когда клиент упоминает эти слова, бот предложит этот пакет
+                {t('services:when_client_mentions_these_words_bot_will_offer_this_package')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="services">Включенные услуги (ключи через запятую)</Label>
+              <Label htmlFor="services">{t('services:included_services')} ({t('services:separate_through_comma')})</Label>
               <Textarea
                 id="services"
                 value={packageFormData.services_included}
                 onChange={(e) => setPackageFormData({ ...packageFormData, services_included: e.target.value })}
-                placeholder="manicure_gelish, pedicure_gelish"
+                placeholder={t('services:manicure_gelish_pedicure_gelish')}
                 rows={2}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="validFrom">Действует с *</Label>
+                <Label htmlFor="validFrom">{t('services:valid_from')} *</Label>
                 <Input
                   id="validFrom"
                   type="date"
@@ -1049,7 +1058,7 @@ export default function Services() {
                 />
               </div>
               <div>
-                <Label htmlFor="validUntil">Действует до *</Label>
+                <Label htmlFor="validUntil">{t('services:valid_until')} *</Label>
                 <Input
                   id="validUntil"
                   type="date"
@@ -1068,21 +1077,21 @@ export default function Services() {
                 className="w-4 h-4 text-pink-600 rounded"
               />
               <Label htmlFor="pkgActive" className="cursor-pointer">
-                Активен (доступен для клиентов)
+                {t('services:active')} ({t('services:available_for_clients')})
               </Label>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsPackageModalOpen(false)}>
-              Отмена
+              {t('services:cancel')}
             </Button>
             <Button
               onClick={handleSavePackage}
               className="bg-pink-600 hover:bg-pink-700"
               disabled={saving}
             >
-              {saving ? 'Сохранение...' : 'Сохранить'}
+              {saving ? t('services:saving') : t('services:save')}
             </Button>
           </DialogFooter>
         </DialogContent>

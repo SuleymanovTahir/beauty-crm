@@ -77,8 +77,8 @@ export default function AdminSettings() {
         }
       });
     } catch (err) {
-      console.error('Error loading salon settings:', err);
-      toast.error('Ошибка загрузки настроек');
+      console.error(t('settings:error_loading_salon_settings'), err);
+      toast.error(t('settings:error_loading_settings'));
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export default function AdminSettings() {
       const data = await api.getRoles();
       setRoles(data.roles || []);
     } catch (err) {
-      console.error('Error loading roles:', err);
+      console.error(t('settings:error_loading_roles'), err);
     } finally {
       setLoadingRoles(false);
     }
@@ -112,10 +112,10 @@ export default function AdminSettings() {
         hours_weekends: generalSettings.working_hours.weekends
       });
 
-      toast.success('Основные настройки сохранены ✅');
+      toast.success(t('settings:general_settings_saved'));
     } catch (err) {
-      console.error('Error saving general settings:', err);
-      toast.error('Ошибка сервера');
+      console.error(t('settings:error_saving_general_settings'), err);
+      toast.error(t('settings:server_error'));
     }
   };
 
@@ -130,46 +130,46 @@ export default function AdminSettings() {
       });
 
       if (response.ok) {
-        toast.success('Уведомления настроены');
+        toast.success(t('settings:notifications_configured'));
       } else {
-        toast.error('Ошибка при сохранении');
+        toast.error(t('settings:error_saving_notifications'));
       }
     } catch (err) {
-      console.error('Error saving notification settings:', err);
-      toast.error('Ошибка сервера');
+      console.error(t('settings:error_saving_notification_settings'), err);
+      toast.error(t('settings:server_error'));
     }
   };
 
   // Roles handlers
   const handleCreateRole = async () => {
     if (!createRoleForm.role_key || !createRoleForm.role_name) {
-      toast.error('Заполните обязательные поля');
+      toast.error(t('settings:fill_required_fields'));
       return;
     }
 
     try {
       setSavingRole(true);
       await api.createRole(createRoleForm);
-      toast.success('✅ Роль создана! Теперь настройте права доступа.');
+      toast.success(t('settings:role_created'));
       setShowCreateRoleDialog(false);
       setCreateRoleForm({ role_key: '', role_name: '', role_description: '' });
       await loadRoles();
     } catch (err) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(t('settings:error') + err.message);
     } finally {
       setSavingRole(false);
     }
   };
 
   const handleDeleteRole = async (roleKey: string, roleName: string) => {
-    if (!confirm(`Удалить роль "${roleName}"?`)) return;
+    if (!confirm(t('settings:delete_role') + roleName)) return;
 
     try {
       await api.deleteRole(roleKey);
-      toast.success('✅ Роль удалена');
+      toast.success(t('settings:role_deleted'));
       await loadRoles();
     } catch (err) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(t('settings:error') + err.message);
     }
   };
 
@@ -181,7 +181,7 @@ export default function AdminSettings() {
       setPermissions(data.permissions || {});
       setAvailablePermissions(data.available_permissions || {});
     } catch (err) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(t('settings:error') + (err instanceof Error ? err.message : t('settings:unknown_error')));
     }
   };
 
@@ -189,8 +189,8 @@ export default function AdminSettings() {
     setPermissions(prev => ({
       ...prev,
       [permKey]: {
-        ...(prev[permKey] || {}),
-        [action]: !prev[permKey]?.[action]
+        ...(prev[permKey] as Record<string, boolean> || {}),
+        [action]: !((prev[permKey] as Record<string, boolean>)?.[action])
       }
     }));
   };
@@ -198,11 +198,19 @@ export default function AdminSettings() {
   const handleSavePermissions = async () => {
     try {
       setSavingRole(true);
-      await api.updateRolePermissions(selectedRole.key, permissions);
-      toast.success('✅ Права обновлены');
+      if (!selectedRole) {
+        toast.error(t('settings:error') + t('settings:no_role_selected'));
+        return;
+      }
+      if (!('key' in selectedRole)) {
+        toast.error(t('settings:error') + t('settings:no_role_selected'));
+        return;
+      }
+      await api.updateRolePermissions((selectedRole as { key: string }).key, permissions);
+      toast.success(t('settings:permissions_updated'));
       setShowPermissionsDialog(false);
     } catch (err) {
-      toast.error(`❌ Ошибка: ${err.message}`);
+      toast.error(t('settings:error') + (err instanceof Error ? err.message : t('settings:unknown_error')));
     } finally {
       setSavingRole(false);
     }
@@ -215,33 +223,33 @@ export default function AdminSettings() {
           <SettingsIcon className="w-8 h-8 text-pink-600" />
           Настройки системы
         </h1>
-        <p className="text-gray-600">Управление параметрами CRM</p>
+        <p className="text-gray-600">{t('settings:manage_crm_parameters')}</p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
-            <span className="hidden sm:inline">Общие</span>
+            <span className="hidden sm:inline">{t('settings:general')}</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
-            <span className="hidden sm:inline">Уведомления</span>
+            <span className="hidden sm:inline">{t('settings:notifications')}</span>
           </TabsTrigger>
           <TabsTrigger value="roles" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            <span className="hidden sm:inline">Роли</span>
+            <span className="hidden sm:inline">{t('settings:roles')}</span>
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            <span className="hidden sm:inline">Безопасность</span>
+            <span className="hidden sm:inline">{t('settings:security')}</span>
           </TabsTrigger>
         </TabsList>
 
         {/* General Settings */}
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Основные настройки</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader className="w-8 h-8 text-pink-600 animate-spin" />
@@ -250,7 +258,7 @@ export default function AdminSettings() {
               <form onSubmit={handleSaveGeneral} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="salonName">Название салона *</Label>
+                    <Label htmlFor="salonName">{t('settings:salon_name')} *</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
@@ -260,15 +268,20 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="language">Язык системы</Label>
-                    <Select value={generalSettings.language} onValueChange={(value) => setGeneralSettings({ ...generalSettings, language: value })}>
+                    <Label htmlFor="language">{t('settings:system_language')}</Label>
+                    <Select
+                      value={generalSettings.language}
+                      onValueChange={(value: string) =>
+                        setGeneralSettings({ ...generalSettings, language: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ru">🇷🇺 Русский</SelectItem>
-                        <SelectItem value="en">🇬🇧 English</SelectItem>
-                        <SelectItem value="ar">🇦🇪 العربية</SelectItem>
+                        <SelectItem value="ru">{t('settings:russian')}</SelectItem>
+                        <SelectItem value="en">{t('settings:english')}</SelectItem>
+                        <SelectItem value="ar">{t('settings:arabic')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -276,7 +289,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="city">Город</Label>
+                    <Label htmlFor="city">{t('settings:city')}</Label>
                     <Input
                       id="city"
                       value={generalSettings.city}
@@ -285,7 +298,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="phone">Телефон</Label>
+                    <Label htmlFor="phone">{t('settings:phone')}</Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -296,7 +309,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div>
-                  <Label htmlFor="address">Адрес</Label>
+                  <Label htmlFor="address">{t('settings:address')}</Label>
                   <Input
                     id="address"
                     value={generalSettings.address}
@@ -306,7 +319,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('settings:email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -316,7 +329,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="instagram">Instagram</Label>
+                    <Label htmlFor="instagram">{t('settings:instagram')}</Label>
                     <Input
                       id="instagram"
                       value={generalSettings.instagram}
@@ -328,7 +341,7 @@ export default function AdminSettings() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="weekdays">Часы работы (Пн-Пт)</Label>
+                    <Label htmlFor="weekdays">{t('settings:working_hours')}</Label>
                     <Input
                       id="weekdays"
                       value={generalSettings.working_hours.weekdays}
@@ -341,7 +354,7 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <Label htmlFor="weekends">Часы работы (Сб-Вс)</Label>
+                    <Label htmlFor="weekends">{t('settings:working_hours')}</Label>
                     <Input
                       id="weekends"
                       value={generalSettings.working_hours.weekends}
@@ -355,7 +368,7 @@ export default function AdminSettings() {
                 </div>
 
                 <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
-                  Сохранить изменения
+                  {t('settings:save_changes')}
                 </Button>
               </form>
             )}
@@ -365,23 +378,25 @@ export default function AdminSettings() {
         {/* Notifications */}
         <TabsContent value="notifications">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Настройки уведомлений</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('settings:notification_settings')}</h2>
 
             <form onSubmit={handleSaveNotifications} className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-lg text-gray-900 mb-4">Каналы уведомлений</h3>
+                <h3 className="text-lg text-gray-900 mb-4">{t('settings:notification_channels')}</h3>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Mail className="w-6 h-6 text-blue-600" />
                     <div>
-                      <p className="text-sm text-gray-900">Email уведомления</p>
-                      <p className="text-xs text-gray-600">Получать уведомления на почту</p>
+                      <p className="text-sm text-gray-900">{t('settings:email_notifications')}</p>
+                      <p className="text-xs text-gray-600">{t('settings:receive_notifications_on_email')}</p>
                     </div>
                   </div>
                   <Switch
-                    checked={notificationSettings.emailNotifications}
-                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, emailNotifications: checked })}
+                    checked={!!notificationSettings.emailNotifications}
+                    onCheckedChange={(checked: boolean) =>
+                      setNotificationSettings({ ...notificationSettings, emailNotifications: checked })
+                    }
                   />
                 </div>
 
@@ -389,57 +404,65 @@ export default function AdminSettings() {
                   <div className="flex items-center gap-3">
                     <Smartphone className="w-6 h-6 text-green-600" />
                     <div>
-                      <p className="text-sm text-gray-900">SMS уведомления</p>
-                      <p className="text-xs text-gray-600">Получать SMS на телефон</p>
+                      <p className="text-sm text-gray-900">{t('settings:sms_notifications')}</p>
+                      <p className="text-xs text-gray-600">{t('settings:receive_notifications_on_sms')}</p>
                     </div>
                   </div>
                   <Switch
-                    checked={notificationSettings.smsNotifications}
-                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, smsNotifications: checked })}
+                    checked={!!notificationSettings.smsNotifications}
+                    onCheckedChange={(checked: boolean) =>
+                      setNotificationSettings({ ...notificationSettings, smsNotifications: checked })
+                    }
                   />
                 </div>
               </div>
 
               <div className="border-t border-gray-200 pt-6 space-y-4">
-                <h3 className="text-lg text-gray-900 mb-4">Типы уведомлений</h3>
+                <h3 className="text-lg text-gray-900 mb-4">{t('settings:notification_types')}</h3>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="text-sm text-gray-900">Уведомления о записях</p>
-                    <p className="text-xs text-gray-600">Новые записи, изменения, отмены</p>
+                    <p className="text-sm text-gray-900">{t('settings:booking_notifications')}</p>
+                    <p className="text-xs text-gray-600">{t('settings:new_bookings_changes_cancellations')}</p>
                   </div>
                   <Switch
                     checked={notificationSettings.bookingNotifications}
-                    onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, bookingNotifications: checked })}
+                    onCheckedChange={(checked: boolean) =>
+                      setNotificationSettings({ ...notificationSettings, bookingNotifications: checked })
+                    }
                   />
                 </div>
 
                 <div className="p-4 bg-gray-50 rounded-lg space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-900">Напоминания о днях рождения</p>
-                      <p className="text-xs text-gray-600">Уведомления сотрудников о ДР клиентов</p>
+                      <p className="text-sm text-gray-900">{t('settings:birthday_reminders')}</p>
+                      <p className="text-xs text-gray-600">{t('settings:notifications_about_birthdays')}</p>
                     </div>
                     <Switch
-                      checked={notificationSettings.birthdayReminders}
-                      onCheckedChange={(checked) => setNotificationSettings({ ...notificationSettings, birthdayReminders: checked })}
+                      checked={!!notificationSettings.birthdayReminders}
+                      onCheckedChange={(checked: boolean) =>
+                        setNotificationSettings({ ...notificationSettings, birthdayReminders: checked })
+                      }
                     />
                   </div>
 
                   {notificationSettings.birthdayReminders && (
                     <div>
-                      <Label htmlFor="birthdayDays">Напоминать за (дней)</Label>
+                      <Label htmlFor="birthdayDays">{t('settings:notify_days')}</Label>
                       <Select
                         value={notificationSettings.birthdayDaysAdvance.toString()}
-                        onValueChange={(value) => setNotificationSettings({ ...notificationSettings, birthdayDaysAdvance: parseInt(value) })}
+                        onValueChange={(value: string) =>
+                          setNotificationSettings({ ...notificationSettings, birthdayDaysAdvance: parseInt(value, 10) })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="3">3 дня</SelectItem>
-                          <SelectItem value="7">7 дней (неделя)</SelectItem>
-                          <SelectItem value="14">14 дней (2 недели)</SelectItem>
+                          <SelectItem value="3">{t('settings:3_days')}</SelectItem>
+                          <SelectItem value="7">{t('settings:7_days')}</SelectItem>
+                          <SelectItem value="14">{t('settings:14_days')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -448,7 +471,7 @@ export default function AdminSettings() {
               </div>
 
               <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
-                Сохранить настройки уведомлений
+                {t('settings:save_notification_settings')}
               </Button>
             </form>
           </div>
@@ -459,12 +482,12 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl text-gray-900 mb-2">Управление ролями</h2>
-                <p className="text-gray-600">Создавайте роли и назначайте права доступа</p>
+                <h2 className="text-2xl text-gray-900 mb-2">{t('settings:manage_roles')}</h2>
+                <p className="text-gray-600">{t('settings:create_roles_and_assign_permissions')}</p>
               </div>
               <Button onClick={() => setShowCreateRoleDialog(true)} className="bg-pink-600 hover:bg-pink-700">
                 <Plus className="w-4 h-4 mr-2" />
-                Создать роль
+                {t('settings:create_role')}
               </Button>
             </div>
 
@@ -473,11 +496,11 @@ export default function AdminSettings() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-blue-800 font-medium text-sm mb-2">О системе ролей:</p>
+                  <p className="text-blue-800 font-medium text-sm mb-2">{t('settings:about_roles_system')}:</p>
                   <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
-                    <li>Создавайте кастомные роли под нужды вашего бизнеса</li>
-                    <li>Назначайте детальные права: просмотр, создание, редактирование, удаление</li>
-                    <li>Встроенные роли (Админ, Менеджер, Сотрудник) нельзя удалить</li>
+                    <li>{t('settings:create_custom_roles_for_your_business')}</li>
+                    <li>{t('settings:assign_detailed_permissions')}: просмотр, создание, редактирование, удаление</li>
+                    <li>{t('settings:builtin_roles_cannot_be_deleted')}</li>
                   </ul>
                 </div>
               </div>
@@ -494,7 +517,7 @@ export default function AdminSettings() {
                   <div key={role.key} className="relative bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
                     {!role.is_custom && (
                       <div className="absolute top-4 right-4 px-3 py-1 bg-yellow-100 border border-yellow-200 rounded-full text-xs font-semibold text-yellow-800">
-                        Встроенная
+                        {t('settings:builtin')}
                       </div>
                     )}
 
@@ -514,7 +537,7 @@ export default function AdminSettings() {
                         className="flex-1"
                       >
                         <Edit className="w-4 h-4 mr-1" />
-                        Права
+                        {t('settings:permissions')}
                       </Button>
                       {role.is_custom && (
                         <Button
@@ -537,32 +560,32 @@ export default function AdminSettings() {
         {/* Security */}
         <TabsContent value="security">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Безопасность и доступ</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('settings:security_and_access')}</h2>
 
             <div className="space-y-6">
               <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <Shield className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-sm text-gray-900 mb-2 font-semibold">Рекомендации по безопасности</h3>
+                    <h3 className="text-sm text-gray-900 mb-2 font-semibold">{t('settings:security_recommendations')}</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
-                      <li>• Используйте сложные пароли (минимум 8 символов)</li>
-                      <li>• Регулярно меняйте пароли сотрудников</li>
-                      <li>• Не передавайте учетные данные третьим лицам</li>
-                      <li>• Проверяйте активные сессии пользователей</li>
-                      <li>• Регулярно создавайте резервные копии данных</li>
+                      <li>• {t('settings:use_strong_passwords')}</li>
+                      <li>• {t('settings:regularly_change_passwords')}</li>
+                      <li>• {t('settings:do_not_share_credentials')}</li>
+                      <li>• {t('settings:check_active_sessions')}</li>
+                      <li>• {t('settings:regularly_backup_data')}</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg text-gray-900 mb-4">Резервное копирование</h3>
+                <h3 className="text-lg text-gray-900 mb-4">{t('settings:backup')}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Скачайте резервную копию всех данных системы для безопасности
+                  {t('settings:download_backup_for_security')}
                 </p>
                 <Button variant="outline">
-                  📥 Скачать резервную копию
+                  📥 {t('settings:download_backup')}
                 </Button>
               </div>
             </div>
@@ -575,12 +598,12 @@ export default function AdminSettings() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900">Создать роль</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings:create_role')}</h3>
             </div>
 
             <div className="p-6 space-y-4">
               <div>
-                <Label htmlFor="roleKey">Ключ роли (латиница) *</Label>
+                <Label htmlFor="roleKey">{t('settings:role_key')} *</Label>
                 <Input
                   id="roleKey"
                   placeholder="senior_master"
@@ -590,20 +613,20 @@ export default function AdminSettings() {
               </div>
 
               <div>
-                <Label htmlFor="roleName">Название роли *</Label>
+                <Label htmlFor="roleName">{t('settings:role_name')} *</Label>
                 <Input
                   id="roleName"
-                  placeholder="Старший мастер"
+                  placeholder={t('settings:senior_master')}
                   value={createRoleForm.role_name}
                   onChange={(e) => setCreateRoleForm({ ...createRoleForm, role_name: e.target.value })}
                 />
               </div>
 
               <div>
-                <Label htmlFor="roleDesc">Описание</Label>
+                <Label htmlFor="roleDesc">{t('settings:role_description')}</Label>
                 <Textarea
                   id="roleDesc"
-                  placeholder="Описание роли..."
+                  placeholder={t('settings:role_description_placeholder')}
                   value={createRoleForm.role_description}
                   onChange={(e) => setCreateRoleForm({ ...createRoleForm, role_description: e.target.value })}
                   rows={3}
@@ -613,10 +636,10 @@ export default function AdminSettings() {
 
             <div className="p-6 border-t border-gray-200 flex gap-3">
               <Button variant="outline" onClick={() => setShowCreateRoleDialog(false)} className="flex-1">
-                Отмена
+                {t('settings:cancel')}
               </Button>
               <Button onClick={handleCreateRole} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
-                {savingRole ? 'Создание...' : 'Создать'}
+                {savingRole ? t('settings:creating') + '...' : t('settings:create')}
               </Button>
             </div>
           </div>
@@ -628,8 +651,18 @@ export default function AdminSettings() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-auto">
           <div className="bg-white rounded-xl max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-auto">
             <div className="p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
-              <h3 className="text-xl font-bold text-gray-900">Права роли: {selectedRole.name}</h3>
-              <p className="text-sm text-gray-600 mt-1">Настройте детальные права доступа</p>
+              <h3 className="text-xl font-bold text-gray-900">
+                {t('settings:role_permissions')}:&nbsp;
+                {selectedRole &&
+                  (
+                    // Try both fields but fallback to displaying the whole object as JSON if neither present
+                    (selectedRole as any).role_name ||
+                    (selectedRole as any).name ||
+                    JSON.stringify(selectedRole)
+                  )
+                }
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">{t('settings:configure_detailed_access_permissions')}</p>
             </div>
 
             <div className="p-6">
@@ -637,11 +670,11 @@ export default function AdminSettings() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-gray-50">
-                      <th className="p-3 text-left text-sm font-semibold text-gray-600 border-b">Ресурс</th>
-                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Просмотр</th>
-                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Создание</th>
-                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Редактирование</th>
-                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">Удаление</th>
+                      <th className="p-3 text-left text-sm font-semibold text-gray-600 border-b">{t('settings:resource')}</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">{t('settings:view')}</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">{t('settings:create')}</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">{t('settings:edit')}</th>
+                      <th className="p-3 text-center text-sm font-semibold text-gray-600 border-b">{t('settings:delete')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -652,7 +685,15 @@ export default function AdminSettings() {
                           <td key={action} className="p-3 text-center">
                             <input
                               type="checkbox"
-                              checked={permissions[key]?.[action] || false}
+                              checked={
+                                Boolean(
+                                  permissions &&
+                                  typeof permissions === 'object' &&
+                                  (permissions as Record<string, any>)[key] &&
+                                  typeof (permissions as Record<string, any>)[key] === 'object' &&
+                                  ((permissions as Record<string, any>)[key] as Record<string, any>)[action]
+                                )
+                              }
                               onChange={() => handleTogglePermission(key, action)}
                               className="w-5 h-5 cursor-pointer accent-pink-600"
                             />
@@ -661,16 +702,16 @@ export default function AdminSettings() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table>   {/* ✅ ИСПРАВЛЕНО */}
               </div>
             </div>
 
             <div className="p-6 border-t border-gray-200 flex gap-3 sticky bottom-0 bg-white">
               <Button variant="outline" onClick={() => setShowPermissionsDialog(false)} className="flex-1">
-                Отмена
+                {t('settings:cancel')}
               </Button>
               <Button onClick={handleSavePermissions} disabled={savingRole} className="flex-1 bg-pink-600 hover:bg-pink-700">
-                {savingRole ? 'Сохранение...' : 'Сохранить права'}
+                {savingRole ? t('settings:saving') + '...' : t('settings:save_permissions')}
               </Button>
             </div>
           </div>

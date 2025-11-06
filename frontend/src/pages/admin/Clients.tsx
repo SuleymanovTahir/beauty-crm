@@ -134,12 +134,12 @@ export default function Clients() {
       setClients(clientsArray);
 
       if (clientsArray.length === 0) {
-        toast.info("Клиентов не найдено");
+        toast.info(t('clients:no_clients_found'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка загрузки клиентов";
+      const message = err instanceof Error ? err.message : t('clients:error_loading_clients');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(`${t('clients:error')}: ${message}`);
       console.error("Error loading clients:", err);
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ export default function Clients() {
     setRefreshing(true);
     await loadClients();
     setRefreshing(false);
-    toast.success("Данные обновлены");
+    toast.success(t('clients:data_updated'));
   };
 
   // ✅ НОВОЕ: Открытие диалога редактирования
@@ -190,11 +190,11 @@ export default function Clients() {
           : c
       ));
 
-      toast.success("✅ Клиент обновлён");
+      toast.success(t('clients:client_updated'));
       setShowEditDialog(false);
       setEditingClient(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка обновления";
+      const message = err instanceof Error ? err.message : t('clients:error_updating_client');
       toast.error(`❌ Ошибка: ${message}`);
       console.error("Error:", err);
     } finally {
@@ -204,7 +204,7 @@ export default function Clients() {
 
   const handleCreateClient = async () => {
     if (!createForm.name.trim()) {
-      toast.error("Заполните имя клиента");
+      toast.error(t('clients:fill_client_name'));
       return;
     }
 
@@ -220,13 +220,13 @@ export default function Clients() {
         notes: createForm.notes,
       });
 
-      toast.success("Клиент создан ✅");
+      toast.success(t('clients:client_created'));
       setShowCreateDialog(false);
       setCreateForm({ name: "", phone: "", instagram_id: "", notes: "" });
       await loadClients();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка создания";
-      toast.error(`❌ Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('clients:error_creating_client');
+      toast.error(`${t('clients:error')}: ${message}`);
       console.error("Error:", err);
     } finally {
       setCreatingClient(false);
@@ -245,12 +245,12 @@ export default function Clients() {
       setDeletingId(clientToDelete.id);
       await api.deleteClient(clientToDelete.id);
       setClients(clients.filter(c => c.id !== clientToDelete.id));
-      toast.success("✅ Клиент удалён");
+      toast.success(t('clients:client_deleted'));
       setShowDeleteDialog(false);
       setClientToDelete(null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка удаления";
-      toast.error(`❌ Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('clients:error_deleting_client');
+      toast.error(`${t('clients:error')}: ${message}`);
       console.error("Error:", err);
     } finally {
       setDeletingId(null);
@@ -261,9 +261,9 @@ export default function Clients() {
     try {
       await api.pinClient(clientId);
       await loadClients();
-      toast.success('Изменено');
+      toast.success(t('clients:changed'));
     } catch (err) {
-      toast.error('Ошибка');
+      toast.error(t('clients:error'));
     }
   };
 
@@ -284,10 +284,10 @@ export default function Clients() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`Файл ${format.toUpperCase()} успешно скачан`);
+      toast.success(`${t('clients:file_downloaded')} ${format.toUpperCase()}`);
       setShowExportMenu(false);
     } catch (err) {
-      toast.error('Ошибка при экспорте');
+      toast.error(t('clients:error_exporting'));
     } finally {
       setExporting(false);
     }
@@ -316,10 +316,10 @@ export default function Clients() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success(`Полный экспорт ${format.toUpperCase()} завершен`);
+      toast.success(`${t('clients:full_export')} ${format.toUpperCase()}`);
       setShowExportDialog(false);
     } catch (err) {
-      toast.error('Ошибка при экспорте');
+      toast.error(t('clients:error_exporting'));
     } finally {
       setExporting(false);
     }
@@ -337,7 +337,7 @@ export default function Clients() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка клиентов...</p>
+          <p className="text-gray-600">{t('clients:loading_clients')}</p>
         </div>
       </div>
     );
@@ -350,10 +350,10 @@ export default function Clients() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('clients:error_loading_clients')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadClients} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать еще раз
+                {t('clients:try_again')}
               </Button>
             </div>
           </div>
@@ -370,11 +370,11 @@ export default function Clients() {
             <Users className="w-8 h-8 text-pink-600" />
             {t('clients:title')}
           </h1>
-          <p className="text-gray-600">{filteredClients.length} клиентов</p>
+          <p className="text-gray-600">{filteredClients.length} {t('clients:total_clients')}</p>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
           <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-          Обновить
+          {t('clients:refresh')}
         </Button>
       </div>
 
@@ -384,15 +384,15 @@ export default function Clients() {
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>VIP клиентов</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:vip_clients')}</p>
           <h3 className="text-3xl text-purple-600">{stats.vip}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Новых клиентов</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:new_clients')}</p>
           <h3 className="text-3xl text-green-600">{stats.new}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Активных</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:active_clients')}</p>
           <h3 className="text-3xl text-blue-600">{stats.active}</h3>
         </div>
       </div>
@@ -404,7 +404,7 @@ export default function Clients() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по имени, телефону, Instagram..."
+              placeholder={t('clients:search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -463,14 +463,13 @@ export default function Clients() {
                 />
               </>
             )}
-
             <Button
               className="bg-pink-600 hover:bg-pink-700 flex-1 sm:flex-initial min-w-[140px]"
               onClick={() => setShowCreateDialog(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Добавить клиента</span>
-              <span className="sm:hidden">Клиент</span>
+              <span className="hidden sm:inline">{t('clients:add_client')}</span>
+              <span className="sm:hidden">{t('clients:client')}</span>
             </Button>
 
             <div className="flex gap-2 flex-1 sm:flex-initial">
@@ -486,7 +485,7 @@ export default function Clients() {
                 className="border-green-600 text-green-600 hover:bg-green-50 flex-1 sm:flex-initial"
               >
                 <Download className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Полный экспорт</span>
+                <span className="hidden sm:inline">{t('clients:full_export')}</span>
               </Button>
             </div>
           </div>
@@ -499,13 +498,13 @@ export default function Clients() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Клиент</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Контакты</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Сообщений</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">LTV</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Последний контакт</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Статус</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:client')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:contacts')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:messages')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:ltv')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:last_contact')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:status')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -563,9 +562,9 @@ export default function Clients() {
                             setClients(clients.map(c =>
                               c.id === client.id ? { ...c, status: newStatus } : c
                             ));
-                            toast.success('Статус обновлён');
+                            toast.success(t('clients:status_updated'));
                           } catch (err) {
-                            toast.error('Ошибка обновления статуса');
+                            toast.error(t('clients:error_updating_status'));
                           }
                         }}
                         options={statusConfig}
@@ -579,7 +578,7 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           onClick={() => navigate(`/admin/clients/${client.id}`)}
-                          title="Просмотр информации о клиенте"
+                          title={t('clients:view_client_info')}
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
@@ -589,7 +588,7 @@ export default function Clients() {
                           variant="outline"
                           className="text-blue-600 hover:bg-blue-50"
                           onClick={() => handleOpenEditDialog(client)}
-                          title="Редактировать клиента"
+                          title={t('clients:edit_client')}
                         >
                           <Edit2 className="w-4 h-4" />
                         </Button>
@@ -598,7 +597,7 @@ export default function Clients() {
                           variant="outline"
                           className="text-green-600 hover:bg-green-50"
                           onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
-                          title="Написать сообщение"
+                          title={t('clients:write_message')}
                         >
                           <MessageSquare className="w-4 h-4" />
                         </Button>
@@ -606,7 +605,7 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           onClick={() => handlePinClient(client.id)}
-                          title="Закрепить клиента"
+                          title={t('clients:pin_client')}
                         >
                           <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
                         </Button>
@@ -616,7 +615,7 @@ export default function Clients() {
                           className="text-red-600 hover:bg-red-50 hover:text-red-700"
                           onClick={() => handleDeleteClient(client.id, client.display_name)}
                           disabled={deletingId === client.id}
-                          title="Удалить клиента"
+                          title={t('clients:delete_client')}
                         >
                           {deletingId === client.id ? (
                             <Loader className="w-4 h-4 animate-spin" />
@@ -634,7 +633,7 @@ export default function Clients() {
         ) : (
           <div className="py-20 text-center text-gray-500">
             <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p>Клиенты не найдены</p>
+            <p>{t('clients:no_clients_found')}</p>
           </div>
         )}
       </div>
@@ -643,37 +642,37 @@ export default function Clients() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Редактировать клиента</DialogTitle>
+            <DialogTitle>{t('clients:edit_client')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit_name">Имя</Label>
+              <Label htmlFor="edit_name">{t('clients:name')}</Label>
               <Input
                 id="edit_name"
                 value={editForm.name}
                 onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                placeholder="Анна Петрова"
+                placeholder={t('clients:name_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="edit_phone">Телефон</Label>
+              <Label htmlFor="edit_phone">{t('clients:phone')}</Label>
               <Input
                 id="edit_phone"
                 value={editForm.phone}
                 onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                placeholder="+971 50 123 4567"
+                placeholder={t('clients:phone_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="edit_notes">Заметки</Label>
+              <Label htmlFor="edit_notes">{t('clients:notes')}</Label>
               <Textarea
                 id="edit_notes"
                 value={editForm.notes}
                 onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-                placeholder="Добавьте любые заметки о клиенте..."
+                placeholder={t('clients:notes_placeholder')}
                 className="min-h-[80px]"
               />
             </div>
@@ -688,7 +687,7 @@ export default function Clients() {
               }}
               disabled={savingEdit}
             >
-              Отмена
+              {t('clients:cancel')}
             </Button>
             <Button
               onClick={handleSaveEdit}
@@ -698,10 +697,10 @@ export default function Clients() {
               {savingEdit ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Сохранение...
+                  {t('clients:saving')}
                 </>
               ) : (
-                'Сохранить'
+                t('clients:save')
               )}
             </Button>
           </DialogFooter>
@@ -712,49 +711,49 @@ export default function Clients() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Добавить нового клиента</DialogTitle>
+            <DialogTitle>{t('clients:add_client')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Имя *</Label>
+              <Label htmlFor="name">{t('clients:name')} *</Label>
               <Input
                 id="name"
                 value={createForm.name}
                 onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                placeholder="Анна Петрова"
+                placeholder={t('clients:name_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="phone">Телефон</Label>
+                <Label htmlFor="phone">{t('clients:phone')}</Label>
               <Input
                 id="phone"
                 value={createForm.phone}
                 onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
-                placeholder="+971 50 123 4567"
+                placeholder={t('clients:phone_placeholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">Необязательно</p>
+              <p className="text-xs text-gray-500 mt-1">{t('clients:optional')}</p>
             </div>
 
             <div>
-              <Label htmlFor="instagram">Instagram ID</Label>
+              <Label htmlFor="instagram">{t('clients:instagram_id')}</Label>
               <Input
                 id="instagram"
                 value={createForm.instagram_id}
                 onChange={(e) => setCreateForm({ ...createForm, instagram_id: e.target.value })}
-                placeholder="123456789 или @username"
+                placeholder={t('clients:instagram_id_placeholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">Необязательно, автоматически сгенерируется</p>
+              <p className="text-xs text-gray-500 mt-1">{t('clients:optional')}</p>
             </div>
 
             <div>
-              <Label htmlFor="notes">Заметки</Label>
+              <Label htmlFor="notes">{t('clients:notes')}</Label>
               <Textarea
                 id="notes"
                 value={createForm.notes}
                 onChange={(e) => setCreateForm({ ...createForm, notes: e.target.value })}
-                placeholder="Добавьте любые заметки о клиенте..."
+                placeholder={t('clients:notes_placeholder')}
                 className="min-h-[80px]"
               />
             </div>
@@ -762,10 +761,10 @@ export default function Clients() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)} disabled={creatingClient}>
-              Отмена
+              {t('clients:cancel')}
             </Button>
             <Button onClick={handleCreateClient} className="bg-pink-600 hover:bg-pink-700" disabled={creatingClient}>
-              {creatingClient ? 'Создание...' : 'Создать'}
+              {creatingClient ? t('clients:creating') : t('clients:create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -796,14 +795,14 @@ export default function Clients() {
                   <AlertCircle style={{ width: '24px', height: '24px', color: '#dc2626' }} />
                 </div>
                 <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#7f1d1d' }}>
-                  Удалить клиента?
+                  {t('clients:delete_client')}
                 </h3>
               </div>
             </div>
 
             <div style={{ backgroundColor: '#fff', padding: '1.5rem' }}>
               <p style={{ color: '#1f2937', marginBottom: '1rem', fontSize: '0.95rem' }}>
-                Вы удаляете клиента <strong>"{clientToDelete.name}"</strong>
+                {t('clients:you_are_deleting_client')} <strong>"{clientToDelete.name}"</strong>
               </p>
 
               <div style={{
@@ -814,12 +813,12 @@ export default function Clients() {
                   <AlertCircle style={{ width: '20px', height: '20px', color: '#b45309', flexShrink: 0, marginTop: '2px' }} />
                   <div>
                     <p style={{ fontSize: '0.875rem', fontWeight: 'bold', color: '#92400e', marginBottom: '0.5rem' }}>
-                      ⚠️ Это действие необратимо!
+                      ⚠️ {t('clients:this_action_is_irreversible')}!
                     </p>
                     <ul style={{ fontSize: '0.875rem', color: '#92400e', marginLeft: '1rem' }}>
-                      <li>✗ Все сообщения будут удалены</li>
-                      <li>✗ Все записи будут удалены</li>
-                      <li>✗ История не восстановится</li>
+                      <li>✗ {t('clients:all_messages_will_be_deleted')}</li>
+                      <li>✗ {t('clients:all_records_will_be_deleted')}</li>
+                      <li>✗ {t('clients:history_will_not_be_restored')}</li>
                     </ul>
                   </div>
                 </div>
@@ -845,7 +844,7 @@ export default function Clients() {
                   opacity: deletingId !== null ? 0.5 : 1
                 }}
               >
-                Отмена
+                {t('clients:cancel')}
               </button>
               <button
                 onClick={handleConfirmDelete}
@@ -862,10 +861,10 @@ export default function Clients() {
                 {deletingId ? (
                   <>
                     <Loader style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
-                    Удаляю...
+                    {t('clients:deleting')}...
                   </>
                 ) : (
-                  "Удалить"
+                  t('clients:delete')
                 )}
               </button>
             </div>
@@ -881,7 +880,7 @@ export default function Clients() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <Download className="w-5 h-5 text-green-600" />
-                Полный экспорт данных
+                {t('clients:full_export_data')}
               </h3>
               <button
                 onClick={() => setShowExportDialog(false)}
@@ -893,17 +892,17 @@ export default function Clients() {
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-sm text-blue-900">
-                <strong>Экспорт включает:</strong>
+                <strong>{t('clients:export_includes')}:</strong>
               </p>
               <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                <li>✓ Все данные клиентов</li>
-                <li>✓ Все сообщения с привязкой к клиентам</li>
-                <li>✓ Все записи с привязкой к клиентам</li>
+                <li>✓ {t('clients:all_client_data')}</li>
+                <li>✓ {t('clients:all_messages_with_client_links')}</li>
+                <li>✓ {t('clients:all_records_with_client_links')}</li>
               </ul>
             </div>
 
             <p className="text-sm text-gray-600 mb-4">
-              Выберите формат экспорта:
+              {t('clients:select_export_format')}:
             </p>
 
             <div className="space-y-3">
@@ -913,7 +912,7 @@ export default function Clients() {
                 className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <FileText className="w-5 h-5" />
-                CSV (универсальный формат)
+                CSV ({t('clients:universal_format')})
               </button>
 
               <button
@@ -922,14 +921,14 @@ export default function Clients() {
                 className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <FileSpreadsheet className="w-5 h-5" />
-                Excel (с отдельными листами)
+                Excel ({t('clients:separate_sheets')})
               </button>
             </div>
 
             {exporting && (
               <div className="mt-4 flex items-center justify-center gap-2 text-gray-600">
                 <Loader className="w-4 h-4 animate-spin" />
-                <span className="text-sm">Подготовка файла...</span>
+                <span className="text-sm">{t('clients:preparing_file')}</span>
               </div>
             )}
           </div>

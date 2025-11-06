@@ -83,9 +83,9 @@ export default function ClientDetail() {
 
       setClient({ ...client, ...editForm });
       setEditing(false);
-      toast.success('Данные клиента обновлены');
+      toast.success(t('clientdetail:client_data_updated'));
     } catch (err) {
-      toast.error('Ошибка сохранения');
+      toast.error(t('clientdetail:error_saving'));
       console.error('Error:', err);
     } finally {
       setSaving(false);
@@ -97,7 +97,7 @@ export default function ClientDetail() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Загрузка...</p>
+          <p className="mt-4 text-gray-600">{t('clientdetail:loading')}</p>
         </div>
       </div>
     );
@@ -107,7 +107,7 @@ export default function ClientDetail() {
     return (
       <div className="p-8">
         <Button onClick={() => navigate('/admin/clients')} variant="ghost">
-          ← {t('common:back')}
+          ← {t('common:back_to_clients')}
         </Button>
         <p className="text-gray-600 mt-4">{t('clientdetail:not_found')}</p>
       </div>
@@ -128,7 +128,7 @@ export default function ClientDetail() {
           {client.profile_pic ? (
             <img
               src={client.profile_pic}
-              alt={client.name || 'Клиент'}
+              alt={client.name || t('clientdetail:client')}
               className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -136,11 +136,11 @@ export default function ClientDetail() {
             />
           ) : (
             <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-              {(client.name || client.username || 'К').charAt(0).toUpperCase()}
+              {(client.name || client.username || t('clientdetail:client')).charAt(0).toUpperCase()}
             </div>
           )}
           <div className="flex-1">
-            <h1 className="text-3xl text-gray-900">{client.name || 'Клиент'}</h1>
+            <h1 className="text-3xl text-gray-900">{client.name || t('clientdetail:client')}</h1>
             {client.username && (
               <a
                 href={`https://instagram.com/${client.username}`}
@@ -163,7 +163,7 @@ export default function ClientDetail() {
             className="gap-2"
           >
             <Edit2 className="w-4 h-4" />
-            Редактировать
+            {t('clientdetail:edit')}
           </Button>
         )}
       </div>
@@ -208,14 +208,14 @@ export default function ClientDetail() {
                     className="bg-pink-600 hover:bg-pink-700"
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    {saving ? 'Сохранение...' : 'Сохранить'}
+                    {saving ? t('clientdetail:saving') : t('clientdetail:save')}
                   </Button>
                   <Button
                     onClick={() => setEditing(false)}
                     variant="outline"
                   >
                     <X className="w-4 h-4 mr-2" />
-                    Отмена
+                    {t('clientdetail:cancel')}
                   </Button>
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <Phone className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">Телефон</p>
+                    <p className="text-sm text-gray-600">{t('clientdetail:phone')}</p>
                     <p className="text-lg text-gray-900">{client.phone || '-'}</p>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function ClientDetail() {
         {/* Stats Card */}
         <div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h3 className="text-lg text-gray-900 mb-6">Статистика</h3>
+            <h3 className="text-lg text-gray-900 mb-6">{t('clientdetail:statistics')}</h3>
 
             <div className="space-y-6">
               <div>

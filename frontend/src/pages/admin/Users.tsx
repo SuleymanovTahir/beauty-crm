@@ -17,15 +17,16 @@ interface User {
   created_at: string;
 }
 
-const roleConfig: Record<string, { label: string; color: string }> = {
-  admin: { label: 'Администратор', color: 'bg-purple-100 text-purple-800' },
-  manager: { label: 'Менеджер', color: 'bg-blue-100 text-blue-800' },
-  employee: { label: 'Сотрудник', color: 'bg-green-100 text-green-800' },
-};
+
 
 export default function Users() {
   const navigate = useNavigate();
   const { t } = useTranslation(['users', 'common']);
+  const roleConfig: Record<string, { label: string; color: string }> = {
+    admin: { label: t('users:administrator'), color: 'bg-purple-100 text-purple-800' },
+    manager: { label: t('users:manager'), color: 'bg-blue-100 text-blue-800' },
+    employee: { label: t('users:employee'), color: 'bg-green-100 text-green-800' },
+  };
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,12 +58,12 @@ export default function Users() {
       setUsers(usersArray);
 
       if (usersArray.length === 0) {
-        toast.info('Пользователей не найдено');
+        toast.info(t('users:no_users'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки пользователей';
+      const message = err instanceof Error ? err.message : t('users:error_loading_users');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(`${t('users:error')}: ${message}`);
       console.error('Error loading users:', err);
     } finally {
       setLoading(false);
@@ -70,15 +71,15 @@ export default function Users() {
   };
 
   const handleDeleteUser = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return;
+    if (!confirm(t('users:are_you_sure_you_want_to_delete_this_user'))) return;
 
     try {
       await api.deleteUser(id);
       setUsers(users.filter(u => u.id !== id));
-      toast.success('Пользователь удален');
+      toast.success(t('users:user_deleted'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка удаления';
-      toast.error(`Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('users:error_deleting_user');
+      toast.error(`${t('users:error')}: ${message}`);
       console.error('Error deleting user:', err);
     }
   };
@@ -94,7 +95,7 @@ export default function Users() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка пользователей...</p>
+          <p className="text-gray-600">{t('users:loading_users')}</p>
         </div>
       </div>
     );
@@ -107,10 +108,10 @@ export default function Users() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('users:error_loading')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadUsers} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать еще раз
+                {t('users:try_again')}
               </Button>
             </div>
           </div>
@@ -124,22 +125,22 @@ export default function Users() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <UsersIcon className="w-8 h-8 text-pink-600" />
-          Управление пользователями
+          {t('users:user_management')}
         </h1>
-        <p className="text-gray-600">{filteredUsers.length} пользователей</p>
+        <p className="text-gray-600">{filteredUsers.length} {t('users:users')}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Всего пользователей</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('users:total_users')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Администраторов</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('users:administrators')}</p>
           <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Сотрудников</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('users:employees')}</p>
           <h3 className="text-3xl text-green-600">{stats.employees}</h3>
         </div>
       </div>
@@ -150,7 +151,7 @@ export default function Users() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по имени, логину или email..."
+              placeholder={t('users:search_by_name_username_email')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -161,7 +162,7 @@ export default function Users() {
             onClick={() => navigate('/admin/users/create')}
           >
             <UserPlus className="w-4 h-4 mr-2" />
-            Добавить пользователя
+            {t('users:add_user')}
           </Button>
         </div>
       </div>
@@ -172,12 +173,12 @@ export default function Users() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Пользователь</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Логин</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Email</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Роль</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Создан</th>
-                  <th className="px-6 py-4 text-left text-sm text-gray-600">Действия</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:user')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:username')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:email')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:role')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:created')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('users:actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -230,7 +231,7 @@ export default function Users() {
         ) : (
           <div className="py-20 text-center text-gray-500">
             <UsersIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p>Пользователи не найдены</p>
+            <p>{t('users:users_not_found')}</p>
           </div>
         )}
       </div>

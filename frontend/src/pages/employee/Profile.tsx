@@ -65,7 +65,7 @@ export default function EmployeeProfile() {
       });
     } catch (err) {
       console.error('Error loading profile:', err);
-      toast.error('Ошибка загрузки профиля');
+      toast.error(t('profile:error_loading_profile'));
     } finally {
       setLoading(false);
     }
@@ -76,12 +76,12 @@ export default function EmployeeProfile() {
 
     // Валидация
     if (!profileData.username || profileData.username.length < 3) {
-      toast.error('Логин должен быть минимум 3 символа');
+      toast.error(t('profile:username_must_be_at_least_3_characters'));
       return;
     }
 
     if (!profileData.full_name || profileData.full_name.length < 2) {
-      toast.error('Имя должно быть минимум 2 символа');
+      toast.error(t('profile:full_name_must_be_at_least_2_characters'));
       return;
     }
 
@@ -107,11 +107,11 @@ export default function EmployeeProfile() {
       // Перезагружаем профиль
       await loadProfile();
       
-      toast.success('✅ Профиль успешно обновлён');
+      toast.success(t('profile:profile_successfully_updated'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка обновления';
+      const message = err instanceof Error ? err.message : t('profile:error_updating_profile');
       toast.error(`❌ ${message}`);
-      console.error('Error updating profile:', err);
+      console.error(t('profile:error_updating_profile'), err);
     } finally {
       setSaving(false);
     }
@@ -122,17 +122,17 @@ export default function EmployeeProfile() {
 
     // Валидация
     if (!passwordData.old_password) {
-      toast.error('Введите текущий пароль');
+      toast.error(t('profile:enter_current_password'));
       return;
     }
 
     if (!passwordData.new_password || passwordData.new_password.length < 6) {
-      toast.error('Новый пароль должен быть минимум 6 символов');
+      toast.error(t('profile:new_password_must_be_at_least_6_characters'));
       return;
     }
 
     if (passwordData.new_password !== passwordData.confirm_password) {
-      toast.error('Пароли не совпадают');
+      toast.error(t('profile:passwords_do_not_match'));
       return;
     }
 
@@ -145,7 +145,7 @@ export default function EmployeeProfile() {
         new_password: passwordData.new_password
       });
       
-      toast.success('✅ Пароль успешно изменён');
+      toast.success(t('profile:password_successfully_changed'));
       
       // Очищаем поля
       setPasswordData({ 
@@ -154,9 +154,9 @@ export default function EmployeeProfile() {
         confirm_password: '' 
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка изменения пароля';
+      const message = err instanceof Error ? err.message : t('profile:error_changing_password');
       toast.error(`❌ ${message}`);
-      console.error('Error changing password:', err);
+      console.error(t('profile:error_changing_password'), err);
     } finally {
       setSaving(false);
     }
@@ -164,9 +164,9 @@ export default function EmployeeProfile() {
 
   // ✅ Роли с красивыми метками
   const roleLabels: Record<string, { label: string; color: string }> = {
-    admin: { label: 'Администратор', color: 'bg-purple-100 text-purple-800' },
-    manager: { label: 'Менеджер', color: 'bg-blue-100 text-blue-800' },
-    employee: { label: 'Сотрудник', color: 'bg-green-100 text-green-800' }
+    admin: { label: t('profile:admin'), color: 'bg-purple-100 text-purple-800' },
+    manager: { label: t('profile:manager'), color: 'bg-blue-100 text-blue-800' },
+    employee: { label: t('profile:employee'), color: 'bg-green-100 text-green-800' }
   };
 
   if (loading) {
@@ -174,7 +174,7 @@ export default function EmployeeProfile() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка профиля...</p>
+          <p className="text-gray-600">{t('profile:loading_profile')}</p>
         </div>
       </div>
     );
@@ -186,8 +186,8 @@ export default function EmployeeProfile() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-600" />
           <div>
-            <p className="text-red-800 font-medium">Ошибка загрузки профиля</p>
-            <p className="text-red-700 text-sm mt-1">Попробуйте перезагрузить страницу</p>
+            <p className="text-red-800 font-medium">{t('profile:error_loading_profile')}</p>
+            <p className="text-red-700 text-sm mt-1">{t('profile:try_reloading_page')}</p>
           </div>
         </div>
       </div>
@@ -200,9 +200,9 @@ export default function EmployeeProfile() {
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <User className="w-8 h-8 text-pink-600" />
-            Мой профиль
+            {t('profile:my_profile')}
           </h1>
-          <p className="text-gray-600">Управление личными данными и настройками безопасности</p>
+          <p className="text-gray-600">{t('profile:manage_personal_data_and_security_settings')}</p>
         </div>
 
         {/* ✅ НОВОЕ: Карточка профиля с расширенной информацией */}
@@ -229,7 +229,7 @@ export default function EmployeeProfile() {
                 {user.created_at && (
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    В системе с {new Date(user.created_at).toLocaleDateString('ru-RU')}
+                    {t('profile:in_system_since')} {new Date(user.created_at).toLocaleDateString('ru-RU')}
                   </div>
                 )}
               </div>
@@ -242,22 +242,22 @@ export default function EmployeeProfile() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
-              Редактировать профиль
+              {t('profile:edit_profile')}
             </TabsTrigger>
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
-              Сменить пароль
+              {t('profile:change_password')}
             </TabsTrigger>
           </TabsList>
 
           {/* ✅ Вкладка: Редактирование профиля */}
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Личная информация</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:personal_information')}</h2>
               
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
-                  <Label htmlFor="username">Логин *</Label>
+                  <Label htmlFor="username">{t('profile:username')} *</Label>
                   <Input
                     id="username"
                     required
@@ -268,25 +268,25 @@ export default function EmployeeProfile() {
                     minLength={3}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Минимум 3 символа
+                    {t('profile:username_must_be_at_least_3_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="full_name">Полное имя *</Label>
+                  <Label htmlFor="full_name">{t('profile:full_name')} *</Label>
                   <Input
                     id="full_name"
                     required
                     disabled={saving}
                     value={profileData.full_name}
                     onChange={(e) => setProfileData({ ...profileData, full_name: e.target.value })}
-                    placeholder="Анна Петрова"
+                    placeholder={t('profile:full_name_placeholder')}
                     minLength={2}
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('profile:email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -295,12 +295,12 @@ export default function EmployeeProfile() {
                       disabled={saving}
                       value={profileData.email}
                       onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                      placeholder="anna@example.com"
+                      placeholder={t('profile:email_placeholder')}
                       className="pl-10"
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    Для восстановления пароля
+                    {t('profile:for_password_recovery')}
                   </p>
                 </div>
 
@@ -312,12 +312,12 @@ export default function EmployeeProfile() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      Сохранение...
+                      {t('profile:saving_changes')}
                     </>
                   ) : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      Сохранить изменения
+                      {t('profile:save_changes')}
                     </>
                   )}
                 </Button>
@@ -328,18 +328,18 @@ export default function EmployeeProfile() {
           {/* ✅ НОВАЯ Вкладка: Смена пароля */}
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">Изменить пароль</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:change_password')}</h2>
               
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  <strong>💡 Совет:</strong> Используйте сложный пароль длиной минимум 6 символов. 
-                  Комбинируйте буквы, цифры и специальные символы для максимальной безопасности.
+                  <strong>💡 {t('profile:tip')}:</strong> {t('profile:use_complex_password_at_least_6_characters')} 
+                  {t('profile:combine_letters_numbers_and_special_characters_for_maximum_security')}
                 </p>
               </div>
 
               <form onSubmit={handleChangePassword} className="space-y-6">
                 <div>
-                  <Label htmlFor="old_password">Текущий пароль *</Label>
+                  <Label htmlFor="old_password">{t('profile:current_password')} *</Label>
                   <Input
                     id="old_password"
                     type="password"
@@ -350,12 +350,12 @@ export default function EmployeeProfile() {
                     placeholder="••••••"
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Введите ваш текущий пароль для подтверждения
+                    {t('profile:enter_current_password_for_confirmation')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="new_password">Новый пароль *</Label>
+                  <Label htmlFor="new_password">{t('profile:new_password')} *</Label>
                   <Input
                     id="new_password"
                     type="password"
@@ -367,12 +367,12 @@ export default function EmployeeProfile() {
                     minLength={6}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    Минимум 6 символов
+                    {t('profile:new_password_must_be_at_least_6_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="confirm_password">Подтвердите новый пароль *</Label>
+                  <Label htmlFor="confirm_password">{t('profile:confirm_new_password')} *</Label>
                   <Input
                     id="confirm_password"
                     type="password"
@@ -393,12 +393,12 @@ export default function EmployeeProfile() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      Изменение...
+                      {t('profile:changing_password')}
                     </>
                   ) : (
                     <>
                       <Key className="w-4 h-4 mr-2" />
-                      Изменить пароль
+                      {t('profile:change_password')}
                     </>
                   )}
                 </Button>
