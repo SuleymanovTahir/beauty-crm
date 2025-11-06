@@ -62,7 +62,7 @@ export default function About() {
       <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl text-gray-900 mb-6">О нас</h1>
+            <h1 className="text-5xl text-gray-900 mb-6">{t('about:title')}</h1>
             <p className="text-xl text-gray-600">
               Мы создаем красоту и уверенность уже более 10 лет. Наша миссия - помочь каждой женщине
               почувствовать себя прекрасной и особенной.

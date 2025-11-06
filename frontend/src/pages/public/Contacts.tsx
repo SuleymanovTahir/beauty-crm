@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
 
@@ -78,7 +78,7 @@ export default function Contacts() {
       {/* Header */}
       <section className="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl text-gray-900 mb-4">Контакты</h1>
+          <h1 className="text-5xl text-gray-900 mb-4">{t('contacts:title')}</h1>
           <p className="text-xl text-gray-600">
             Свяжитесь с нами удобным для вас способом
           </p>
@@ -100,7 +100,7 @@ export default function Contacts() {
                     <MapPin className="w-6 h-6 text-pink-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg text-gray-900 mb-1">Адрес</h3>
+                    <h3 className="text-lg text-gray-900 mb-1">{t('contacts:address')}</h3>
                     <p className="text-gray-600">{salonInfo.address}</p>
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export default function Contacts() {
                     <Clock className="w-6 h-6 text-amber-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg text-gray-900 mb-2">Часы работы</h3>
+                    <h3 className="text-lg text-gray-900 mb-2">{t('contacts:working_hours')}</h3>
                     <div className="space-y-1 text-gray-600">
                       <p>Пн-Пт: {salonInfo.working_hours?.weekdays}</p>
                       <p>Сб-Вс: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
@@ -170,7 +170,7 @@ export default function Contacts() {
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label htmlFor="name">Ваше имя *</Label>
+                    <Label htmlFor="name">{t('contacts:your_name')} *</Label>
                     <Input
                       id="name"
                       required
