@@ -59,9 +59,9 @@ export default function ManagerDashboard() {
       setStats(statsData);
       setFunnel(funnelData);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки данных';
+      const message = err instanceof Error ? err.message : t('dashboard:errors.loading');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(t('dashboard:errors.loading', { message }));
       console.error('Error loading dashboard:', err);
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export default function ManagerDashboard() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка данных...</p>
+          <p className="text-gray-600">{t('dashboard:loading')}</p>
         </div>
       </div>
     );
@@ -86,10 +86,10 @@ export default function ManagerDashboard() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('dashboard:errors.loading_title')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadDashboardData} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать еще раз
+                {t('dashboard:retry')}
               </Button>
             </div>
           </div>
@@ -101,8 +101,8 @@ export default function ManagerDashboard() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2">Панель менеджера</h1>
-        <p className="text-gray-600">Управление клиентами и сообщениями</p>
+        <h1 className="text-3xl text-gray-900 mb-2">{t('dashboard:manager_panel')}</h1>
+        <p className="text-gray-600">{t('dashboard:manager_desc')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -114,7 +114,7 @@ export default function ManagerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl text-gray-900 mb-1">{stats?.total_client_messages || 0}</h3>
-              <p className="text-gray-600 text-sm">Сообщений от клиентов</p>
+              <p className="text-gray-600 text-sm">{t('dashboard:client_messages')}</p>
             </div>
             {stats && stats.total_client_messages > 0 && (
               <Badge className="bg-blue-100 text-blue-800">
@@ -131,7 +131,7 @@ export default function ManagerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl text-gray-900 mb-1">{stats?.total_clients || 0}</h3>
-              <p className="text-gray-600 text-sm">Всего клиентов</p>
+              <p className="text-gray-600 text-sm">{t('dashboard:total_clients')}</p>
             </div>
             {stats && stats.new_clients > 0 && (
               <Badge className="bg-green-100 text-green-800">
@@ -148,10 +148,10 @@ export default function ManagerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl text-gray-900 mb-1">{stats?.conversion_rate.toFixed(1)}%</h3>
-              <p className="text-gray-600 text-sm">Конверсия</p>
+              <p className="text-gray-600 text-sm">{t('dashboard:conversion_rate')}</p>
             </div>
             <Badge className="bg-purple-100 text-purple-800">
-              {stats && stats.conversion_rate > 15 ? 'Хорошо' : 'Норма'}
+              {stats && stats.conversion_rate > 15 ? t('dashboard:good') : t('dashboard:normal')}
             </Badge>
           </div>
         </Link>
@@ -163,11 +163,11 @@ export default function ManagerDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl text-gray-900 mb-1">{stats?.total_bookings || 0}</h3>
-              <p className="text-gray-600 text-sm">Всего записей</p>
+              <p className="text-gray-600 text-sm">{t('dashboard:total_bookings')}</p>
             </div>
             {stats && stats.pending_bookings > 0 && (
               <Badge className="bg-pink-100 text-pink-800">
-                {stats.pending_bookings} ожидают
+                {stats.pending_bookings} {t('dashboard:pending')}
               </Badge>
             )}
           </div>
@@ -177,23 +177,23 @@ export default function ManagerDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-4">Быстрые действия</h2>
+          <h2 className="text-xl text-gray-900 mb-4">{t('dashboard:quick_actions')}</h2>
           <div className="space-y-3">
             <Link to="/manager/chat">
               <Button className="w-full justify-between bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
                 <span className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Открыть чат
+                  {t('dashboard:open_chat')}
                 </span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
-            
+
             <Link to="/manager/messages">
               <Button className="w-full justify-between bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
                 <span className="flex items-center gap-2">
                   <MessageCircle className="w-5 h-5" />
-                  Сообщения
+                  {t('dashboard:messages')}
                 </span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -203,7 +203,7 @@ export default function ManagerDashboard() {
               <Button className="w-full justify-between bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700">
                 <span className="flex items-center gap-2">
                   <Filter className="w-5 h-5" />
-                  Воронка продаж
+                  {t('dashboard:sales_funnel')}
                 </span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -213,7 +213,7 @@ export default function ManagerDashboard() {
               <Button className="w-full justify-between bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
                 <span className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  База клиентов
+                  {t('dashboard:client_base')}
                 </span>
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -223,11 +223,11 @@ export default function ManagerDashboard() {
 
         {/* Key Metrics */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-4">Ключевые метрики</h2>
+          <h2 className="text-xl text-gray-900 mb-4">{t('dashboard:key_metrics')}</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Активных клиентов</p>
+                <p className="text-sm text-gray-600">{t('dashboard:active_clients')}</p>
                 <p className="text-2xl text-gray-900 font-medium">{stats?.customers || 0}</p>
               </div>
               <TrendingUp className="w-6 h-6 text-blue-600" />
@@ -235,7 +235,7 @@ export default function ManagerDashboard() {
 
             <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Завершённых процедур</p>
+                <p className="text-sm text-gray-600">{t('dashboard:completed_procedures')}</p>
                 <p className="text-2xl text-gray-900 font-medium">{stats?.completed_bookings || 0}</p>
               </div>
               <TrendingUp className="w-6 h-6 text-green-600" />
@@ -243,7 +243,7 @@ export default function ManagerDashboard() {
 
             <div className="flex items-center justify-between p-4 bg-pink-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Общий доход</p>
+                <p className="text-sm text-gray-600">{t('dashboard:total_revenue')}</p>
                 <p className="text-2xl text-gray-900 font-medium">{(stats?.total_revenue || 0).toFixed(0)} AED</p>
               </div>
               <TrendingUp className="w-6 h-6 text-pink-600" />
@@ -257,18 +257,18 @@ export default function ManagerDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl text-gray-900 mb-6 flex items-center gap-2">
             <Filter className="w-6 h-6 text-pink-600" />
-            Воронка продаж
+            {t('dashboard:sales_funnel')}
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Посетители</p>
+              <p className="text-sm text-gray-600 mb-2">{t('dashboard:visitors')}</p>
               <p className="text-3xl text-gray-900 mb-1">{funnel.visitors}</p>
               <p className="text-xs text-gray-500">100%</p>
             </div>
 
             <div className="bg-cyan-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Вовлечённые</p>
+              <p className="text-sm text-gray-600 mb-2">{t('dashboard:engaged')}</p>
               <p className="text-3xl text-gray-900 mb-1">{funnel.engaged}</p>
               <p className="text-xs text-gray-500">
                 {((funnel.engaged / funnel.visitors) * 100).toFixed(1)}%
@@ -276,7 +276,7 @@ export default function ManagerDashboard() {
             </div>
 
             <div className="bg-green-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Начали запись</p>
+              <p className="text-sm text-gray-600 mb-2">{t('dashboard:started_booking')}</p>
               <p className="text-3xl text-gray-900 mb-1">{funnel.started_booking}</p>
               <p className="text-xs text-gray-500">
                 {((funnel.started_booking / funnel.visitors) * 100).toFixed(1)}%
@@ -284,7 +284,7 @@ export default function ManagerDashboard() {
             </div>
 
             <div className="bg-amber-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Записались</p>
+              <p className="text-sm text-gray-600 mb-2">{t('dashboard:booked')}</p>
               <p className="text-3xl text-gray-900 mb-1">{funnel.booked}</p>
               <p className="text-xs text-gray-500">
                 {((funnel.booked / funnel.visitors) * 100).toFixed(1)}%
@@ -292,7 +292,7 @@ export default function ManagerDashboard() {
             </div>
 
             <div className="bg-pink-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600 mb-2">Завершено</p>
+              <p className="text-sm text-gray-600 mb-2">{t('dashboard:completed')}</p>
               <p className="text-3xl text-gray-900 mb-1">{funnel.completed}</p>
               <p className="text-xs text-gray-500">
                 {((funnel.completed / funnel.visitors) * 100).toFixed(1)}%
@@ -302,7 +302,7 @@ export default function ManagerDashboard() {
 
           <Link to="/manager/funnel" className="mt-4">
             <Button className="bg-pink-600 hover:bg-pink-700">
-              Подробно о воронке
+              {t('dashboard:funnel_details')}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
