@@ -3,6 +3,7 @@ import React from 'react';
 import Calendar from '../../pages/admin/Calendar';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   User,
@@ -19,6 +20,7 @@ interface EmployeeLayoutProps {
 export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation(['layouts', 'common']);
   const [loggingOut, setLoggingOut] = React.useState(false);
 
   const menuItems = [

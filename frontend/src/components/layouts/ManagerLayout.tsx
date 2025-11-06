@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   Users, 
@@ -23,6 +24,7 @@ interface ManagerLayoutProps {
 export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation(['layouts', 'common']);
   const [loggingOut, setLoggingOut] = React.useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 

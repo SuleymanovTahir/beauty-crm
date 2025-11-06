@@ -4,9 +4,11 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import PublicLanguageSwitcher from '../PublicLanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export default function PublicLayout() {
   const location = useLocation();
+  const { t } = useTranslation(['layouts', 'common']);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 

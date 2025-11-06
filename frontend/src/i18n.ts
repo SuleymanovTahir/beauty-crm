@@ -5,15 +5,19 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 const languages = ["ru","en","es","ar","hi","kk","pt","fr","de"];
 const namespaces = ["common","auth","dashboard","clients","bookings","chat","analytics","services","settings","users","employee","manager","public","layouts"];
 
+// Используем import.meta.glob для Vite
+const localeFiles = import.meta.glob('./locales/**/*.json', { eager: true });
+
 const resources: any = {};
 
 for (const lang of languages) {
   resources[lang] = {};
   for (const ns of namespaces) {
-    try {
-      resources[lang][ns] = require(`./locales/${lang}/${ns}.json`);
-    } catch (e) {
-      console.warn(`Missing: ${lang}/${ns}.json`);
+    const key = `./locales/${lang}/${ns}.json`;
+    if (localeFiles[key]) {
+      resources[lang][ns] = (localeFiles[key] as any).default || localeFiles[key];
+    } else {
+      resources[lang][ns] = {};
     }
   }
 }
