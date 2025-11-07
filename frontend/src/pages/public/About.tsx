@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { Heart, Award, Users, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';

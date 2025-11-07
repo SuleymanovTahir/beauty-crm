@@ -3,8 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   MessageCircle,
   Search,
-  Phone,
-  Instagram,
   Paperclip,
   Send,
   Loader,
@@ -13,24 +11,19 @@ import {
   StickyNote,
   Info,
   FileText,
-  Check,
-  User,
   ArrowLeft,
   MoreVertical,
   Image as ImageIcon,
   Video,
-
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
-
 import TemplatesPanel from '../../components/chat/TemplatesPanel';
 import QuickReplies from '../../components/chat/QuickReplies';
 import MessageSearch from '../../components/chat/MessageSearch';
 import InfoPanel from '../../components/chat/InfoPanel';
 import NotesPanel from '../../components/chat/NotesPanel';
-import { useClientStatuses } from '../../hooks/useStatuses';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -68,7 +61,6 @@ export default function Chat() {
 
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
-  const [isRefreshingMessages, setIsRefreshingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [showNotes, setShowNotes] = useState(false);
@@ -80,11 +72,6 @@ export default function Chat() {
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isUploadingFile, setIsUploadingFile] = useState(false);
-
-  const [isEditingClient, setIsEditingClient] = useState(false);
-  const [editedClientName, setEditedClientName] = useState('');
-  const [editedClientPhone, setEditedClientPhone] = useState('');
-  const [isSavingClient, setIsSavingClient] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -176,28 +163,26 @@ export default function Chat() {
     try {
       if (isInitial) {
         setLoadingMessages(true);
-      } else {
-        setIsRefreshingMessages(true);
       }
 
       const data = await api.getChatMessages(clientId, 50);
-      const messagesArray = data.messages || (Array.isArray(data) ? data : []);
+      const messagesArray = (data && typeof data === 'object' && 'messages' in data)
+        ? data.messages
+        : (Array.isArray(data) ? data : []);
 
       if (!isInitial && JSON.stringify(messagesArray) === JSON.stringify(messages)) {
         return;
       }
 
-      setMessages(messagesArray);
+      setMessages(messagesArray as Message[]);
     } catch (err) {
       if (isInitial) {
         const message = err instanceof Error ? err.message : t('chat:error_loading_messages');
-        toast.error(t('chat:error'), { message });
+        toast.error(t('chat:error') + (message ? ': ' + message : ''));
       }
     } finally {
       if (isInitial) {
         setLoadingMessages(false);
-      } else {
-        setIsRefreshingMessages(false);
       }
     }
   };
@@ -208,24 +193,13 @@ export default function Chat() {
     setShowNotes(false);
     setShowClientInfo(false);
     setShowTemplates(false);
-    setIsEditingClient(false);
     setShowMobileMenu(false);
 
-    setEditedClientName(client.name || '');
-    setEditedClientPhone(client.phone || '');
-
-    // Загрузить заметки клиента
-    setIsLoadingNotes(true);
     try {
-      const clientData = await api.getClient(client.id);
-      setNotes(clientData.client?.notes || '');
+      await api.getClient(client.id);
     } catch (err) {
-      console.error('Error loading notes:', err);
-      setNotes('');
-    } finally {
-      setIsLoadingNotes(false);
+      console.error('Error loading notes:', err instanceof Error ? err.message : err);
     }
-
   };
 
   const handleBackToList = () => {
@@ -237,12 +211,9 @@ export default function Chat() {
     setShowMobileMenu(false);
   };
 
-
-
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
-    // ✅ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ"
     if (message.trim().startsWith('#Помоги бот#')) {
       const fullText = message.replace('#Помоги бот#', '').trim();
 
@@ -251,7 +222,6 @@ export default function Chat() {
         return;
       }
 
-      // ✅ Парсим: первая строка = вопрос, остальное = контекст
       const lines = fullText.split('\n');
       const question = lines[0].trim();
       const context = lines.slice(1).join('\n').trim();
@@ -261,11 +231,14 @@ export default function Chat() {
 
         const response = await api.askBotAdvice(question, context);
 
-        // ✅ Показываем в модальном окне (больше места для текста)
-        toast.success('💡 Совет бота:', {
-          description: response.advice,
-          duration: 15000, // 15 секунд
-        });
+        if (response && typeof response === 'object' && 'advice' in response && typeof response.advice === 'string') {
+          toast.success('💡 Совет бота:', {
+            description: response.advice,
+            duration: 15000,
+          });
+        } else {
+          toast.error('Бот не вернул совет.');
+        }
 
         setMessage('');
         setIsUploadingFile(false);
@@ -277,7 +250,6 @@ export default function Chat() {
       }
     }
 
-    // ===== ОБЫЧНАЯ ОТПРАВКА СООБЩЕНИЙ КЛИЕНТУ =====
     try {
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
@@ -288,12 +260,10 @@ export default function Chat() {
             const formData = new FormData();
             formData.append('file', file);
 
-            const uploadResponse = await fetch(`${(import.meta as any).env.VITE_API_URL}/api/upload`, {
+            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
               method: 'POST',
               credentials: 'include',
               body: formData,
-              // @ts-ignore: AbortSignal.timeout may not be supported in all environments
-              signal: (AbortSignal as any).timeout ? (AbortSignal as any).timeout(120000) : undefined
             });
 
             if (!uploadResponse.ok) {
@@ -316,7 +286,6 @@ export default function Chat() {
 
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
 
-            // Properly typeguard sendResult for error property
             if (typeof sendResult === 'object' && sendResult !== null && 'error' in sendResult && sendResult.error) {
               throw new Error(String((sendResult as any).error));
             }
@@ -385,7 +354,6 @@ export default function Chat() {
       setIsUploadingFile(false);
     }
   };
-  
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -400,8 +368,6 @@ export default function Chat() {
     toast.info(t('chat:file_removed'));
   };
 
-
-
   const filteredClients = clients.filter(client =>
     (client.display_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (client.phone || '').includes(searchTerm)
@@ -414,7 +380,7 @@ export default function Chat() {
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-            <Loader className="w-8 h-8 text-black animate-spin" />
+            <Loader className="w-8 h-8 text-white animate-spin" />
           </div>
           <p className="text-gray-600 font-medium">{t('chat:loading_chats')}</p>
         </div>
@@ -428,7 +394,7 @@ export default function Chat() {
         <div className="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200 rounded-2xl p-6 shadow-lg">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-              <AlertCircle className="w-6 h-6 text-black" />
+              <AlertCircle className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
               <p className="text-red-900 font-bold text-lg">{t('chat:error_loading')}</p>
@@ -449,14 +415,14 @@ export default function Chat() {
   return (
     <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-pink-50 flex p-0 md:p-4">
       <div className="bg-white rounded-none md:rounded-3xl shadow-2xl border border-gray-200/50 h-full w-full flex overflow-hidden">
-        {/* Clients List - Узкий на всех экранах */}
+        {/* Clients List */}
         <div className={`
-  ${selectedClient ? 'hidden md:flex' : 'flex'}
-  flex-col w-full md:w-96 border-r border-gray-200
-`}>
+          ${selectedClient ? 'hidden md:flex' : 'flex'}
+          flex-col w-full md:w-96 border-r border-gray-200
+        `}>
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-gray-900">{t('chat:chats')} ({clients.length})</span>
+              <span className="text-sm font-semibold text-gray-900">{t('chat:chats')} ({clients.length})</span>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -478,23 +444,23 @@ export default function Chat() {
                     key={client.id}
                     onClick={() => handleSelectClient(client)}
                     className={`
-                    w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left
-                    ${selectedClient?.id === client.id ? 'bg-purple-50' : ''}
-                  `}
+                      w-full p-4 flex items-start gap-3 hover:bg-gray-50 transition-colors text-left
+                      ${selectedClient?.id === client.id ? 'bg-purple-50' : ''}
+                    `}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-black text-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
                         {client.display_name.charAt(0).toUpperCase()}
                       </div>
                       {client.unread_count && client.unread_count > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
                           {client.unread_count > 9 ? '9+' : client.unread_count}
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm text-gray-900 truncate">{client.display_name}</span>
+                        <span className="text-sm font-medium text-gray-900 truncate">{client.display_name}</span>
                         <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
                           {new Date(client.last_contact).toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' })}
                         </span>
@@ -518,7 +484,7 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* Chat Area - Занимает всё оставшееся место */}
+        {/* Chat Area */}
         {selectedClient ? (
           <div className="flex-1 flex bg-white min-w-0">
             {/* Main Chat Column */}
@@ -528,7 +494,7 @@ export default function Chat() {
                 <div className="flex items-center justify-between gap-2">
                   <button
                     onClick={handleBackToList}
-                    className="sm:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors flex-shrink-0"
+                    className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors flex-shrink-0"
                   >
                     <ArrowLeft className="w-5 h-5 text-gray-700" />
                   </button>
@@ -547,7 +513,7 @@ export default function Chat() {
                         }}
                       />
                     ) : null}
-                    <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-black font-bold shadow-lg flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
+                    <div className={`w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0 ${selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? 'hidden' : ''
                       }`}>
                       {selectedClient.display_name.charAt(0).toUpperCase()}
                     </div>
@@ -649,7 +615,7 @@ export default function Chat() {
                   <div className="flex items-center justify-center h-full">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                        <Loader className="w-6 h-6 text-black animate-spin" />
+                        <Loader className="w-6 h-6 text-white animate-spin" />
                       </div>
                       <p className="text-gray-500 font-medium text-sm">{t('chat:loading')}</p>
                     </div>
@@ -658,12 +624,12 @@ export default function Chat() {
                   messages.map((msg, index) => (
                     <div
                       key={msg.id}
-                      ref={(el) => messageRefs.current[index] = el}
+                      ref={(el) => { messageRefs.current[index] = el; }}
                       className={`flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
                       <div
                         className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${(msg.sender === 'bot' || msg.sender === 'manager')
-                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-black'
+                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
                           : 'bg-white text-gray-900 border-2 border-gray-200'
                           }`}
                       >
@@ -675,13 +641,11 @@ export default function Chat() {
                                   if (msg.message.includes('zrok.io')) {
                                     const url = new URL(msg.message);
                                     const filePath = url.pathname;
-                                    // @ts-ignore
-                                    return `${(import.meta as any).env.VITE_API_URL}${filePath}`;
+                                    return `${import.meta.env.VITE_API_URL}${filePath}`;
                                   }
                                   return msg.message;
                                 }
-                                // @ts-ignore
-                                return `${(import.meta as any).env.VITE_API_URL}${msg.message}`;
+                                return `${import.meta.env.VITE_API_URL}${msg.message}`;
                               })()}
                               alt={t('chat:image')}
                               loading="lazy"
@@ -747,7 +711,6 @@ export default function Chat() {
                           </div>
                         ) : msg.type === 'file' ? (
                           <div className="px-4 py-3 min-w-[200px]">
-
                             <a href={msg.message}
                               target="_blank"
                               rel="noopener noreferrer"
@@ -848,7 +811,7 @@ export default function Chat() {
 
                         <button
                           onClick={() => handleRemoveFile(index)}
-                          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-black rounded-full flex items-center justify-center shadow-lg transition opacity-0 group-hover:opacity-100"
+                          className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition opacity-0 group-hover:opacity-100"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -972,7 +935,7 @@ export default function Chat() {
             )}
           </div>
         ) : (
-          <div className="flex-1 hidden sm:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
+          <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
             <div className="text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
                 <MessageCircle className="w-12 h-12 text-pink-600" />

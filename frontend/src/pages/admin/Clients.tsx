@@ -1,5 +1,5 @@
 // frontend/src/pages/admin/Clients.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Users,
   Search,
@@ -93,8 +93,7 @@ export default function Clients() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
 
-  // Export Menu
-  const [showExportMenu, setShowExportMenu] = useState(false);
+
 
   useEffect(() => {
     loadClients();
@@ -285,7 +284,6 @@ export default function Clients() {
       window.URL.revokeObjectURL(url);
 
       toast.success(`${t('clients:file_downloaded')} ${format.toUpperCase()}`);
-      setShowExportMenu(false);
     } catch (err) {
       toast.error(t('clients:error_exporting'));
     } finally {
@@ -295,9 +293,7 @@ export default function Clients() {
 
   // ДОБАВИТЬ:
 
-  const handleExportFullData = () => {
-    setShowExportDialog(true);
-  };
+
 
   const handleConfirmExport = async (format: 'csv' | 'excel') => {
     try {
@@ -380,7 +376,7 @@ export default function Clients() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:total_clients')}</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('clients:total_clients')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
@@ -517,10 +513,9 @@ export default function Clients() {
                         )}
                         {client.profile_pic && client.profile_pic.trim() !== '' ? (
                           <img
-                            src={client.profile_pic}
+                            src={`/api/proxy-image?url=${encodeURIComponent(client.profile_pic)}`}
                             alt={client.display_name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-                            crossOrigin="anonymous"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               const fallback = e.currentTarget.nextElementSibling as HTMLElement;
@@ -726,7 +721,7 @@ export default function Clients() {
             </div>
 
             <div>
-                <Label htmlFor="phone">{t('clients:phone')}</Label>
+              <Label htmlFor="phone">{t('clients:phone')}</Label>
               <Input
                 id="phone"
                 value={createForm.phone}

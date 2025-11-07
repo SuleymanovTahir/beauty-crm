@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Phone, User, Briefcase, Clock, Edit2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 
 interface Booking {

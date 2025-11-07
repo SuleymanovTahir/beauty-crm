@@ -1,5 +1,5 @@
 // frontend/src/pages/admin/Calendar.tsx
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect} from 'react';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -9,7 +9,6 @@ import {
   User,
   Scissors,
   Clock,
-  MoreVertical,
   Plus,
   Trash2,
   Edit,
@@ -118,30 +117,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     completed: t('calendar:completed'),
     cancelled: t('calendar:cancelled')
   };
-  const DAYS = [
-    t('calendar:days.mon'),
-    t('calendar:days.tue'),
-    t('calendar:days.wed'),
-    t('calendar:days.thu'),
-    t('calendar:days.fri'),
-    t('calendar:days.sat'),
-    t('calendar:days.sun')
-  ];
 
-  const MONTHS = [
-    t('calendar:months.january'),
-    t('calendar:months.february'),
-    t('calendar:months.march'),
-    t('calendar:months.april'),
-    t('calendar:months.may'),
-    t('calendar:months.june'),
-    t('calendar:months.july'),
-    t('calendar:months.august'),
-    t('calendar:months.september'),
-    t('calendar:months.october'),
-    t('calendar:months.november'),
-    t('calendar:months.december'),
-  ]
   const [services, setServices] = useState<Service[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [masters, setMasters] = useState<UserMaster[]>([]);
@@ -491,7 +467,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <span className="hidden md:inline">{t('calendar:filters')}</span>
               </Button>
 
-              <Select value={viewMode} onValueChange={(v) => setViewMode(v as 'day' | 'week')}>
+              <Select value={viewMode} onValueChange={(v: string) => setViewMode(v as 'day' | 'week')}>
                 <SelectTrigger className="w-[100px] md:w-[130px] rounded-xl border-2 h-9 md:h-10 text-sm">
                   <SelectValue />
                 </SelectTrigger>

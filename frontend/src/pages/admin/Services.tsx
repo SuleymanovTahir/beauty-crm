@@ -1,5 +1,5 @@
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -98,7 +98,6 @@ export default function Services() {
   const [editingPackage, setEditingPackage] = useState<SpecialPackage | null>(null);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [serviceFormData, setServiceFormData] = useState({
@@ -163,7 +162,7 @@ export default function Services() {
   const loadData = async () => {
     try {
       setLoading(true);
-      setError(null);
+      
 
       if (activeTab === 'services') {
         const data = await api.getServices(false);
@@ -174,7 +173,6 @@ export default function Services() {
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки';
-      setError(message);
       toast.error(`Ошибка: ${message}`);
     } finally {
       setLoading(false);

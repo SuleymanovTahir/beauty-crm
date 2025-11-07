@@ -83,10 +83,7 @@ export function useClientStatuses() {
 
   const updateStatus = async (key: string, label?: string, color?: string) => {
     try {
-      await api.updateClientStatus(key, {
-        status_label: label,
-        status_color: color
-      });
+      await api.updateClientStatus(key, label ?? statuses[key]?.label);
 
       setStatuses({
         ...statuses,
@@ -151,7 +148,7 @@ export function useBookingStatuses() {
 
   const removeStatus = async (key: string) => {
     try {
-      await api.deleteBookingStatus(key);
+      await api.updateBookingStatus(key, {});
 
       const newStatuses = { ...statuses };
       delete newStatuses[key];

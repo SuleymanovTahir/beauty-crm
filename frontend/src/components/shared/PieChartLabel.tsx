@@ -1,6 +1,3 @@
-import React from 'react';
-// В том же файле PieChartLabel.tsx
-
 import { smartTruncate } from '../../utils/text';
 
 export const customPieLegend = (props: any) => {
@@ -64,7 +61,6 @@ export const customPieLabel = ({
   cx,
   cy,
   midAngle,
-  innerRadius,
   outerRadius,
   percent,
   name,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';

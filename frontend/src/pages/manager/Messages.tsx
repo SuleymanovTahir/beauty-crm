@@ -1,5 +1,5 @@
 // frontend/src/pages/manager/Messages.tsx - УЛУЧШЕННАЯ ВЕРСИЯ БЕЗ ПРЫЖКОВ
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   MessageSquare,
   Search,
@@ -13,7 +13,6 @@ import {
   Loader,
   AlertCircle,
   ArchiveRestore,
-  X,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -67,7 +66,7 @@ const statuses = [
 
 export default function Messages() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['manager/Messages', 'common']);
+  useTranslation(['manager/Messages', 'common']);
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -486,11 +485,11 @@ export default function Messages() {
                       <Checkbox
                         checked={selectedMessages.includes(message.id)}
                         onCheckedChange={() => handleToggleSelect(message.id)}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
                       />
 
                       <button
-                        onClick={(e) => {
+                        onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
                           handleToggleStar(message.id);
                         }}

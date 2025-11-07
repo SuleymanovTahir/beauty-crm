@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useTranslation } from 'react-i18next';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { api } from '../../services/api';
@@ -21,7 +20,6 @@ interface TemplatesPanelProps {
 }
 
 export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProps) {
-  const { t } = useTranslation(['components/chat/TemplatesPanel', 'common']);
   const [searchTerm, setSearchTerm] = useState('');
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);

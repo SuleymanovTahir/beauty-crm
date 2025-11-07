@@ -1,4 +1,3 @@
-import React from 'react';
 import { Calendar } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Input } from '../ui/input';

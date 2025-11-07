@@ -1,5 +1,4 @@
 //src/components/EmployLayout.tsx
-import React from 'react';
 import Calendar from '../../pages/admin/Calendar';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -10,7 +9,7 @@ import {
   Settings,
   LogOut
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 interface EmployeeLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -20,8 +19,7 @@ interface EmployeeLayoutProps {
 export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['components/layouts/EmployeeLayout', 'common']);
-  const [loggingOut, setLoggingOut] = React.useState(false);
+  const { t } = useTranslation(['components/EmployeeLayout', 'common']);
 
   const menuItems = [
     { icon: LayoutDashboard, label: t('layouts:menu.my_bookings'), path: '/employee/dashboard' },
@@ -31,7 +29,6 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
   ];
 
   const handleLogout = async () => {
-    setLoggingOut(true);
     try {
       const response = await fetch('/logout', {
         method: 'POST',
@@ -55,7 +52,6 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
       onLogout();
       navigate('/login', { replace: true });
     } finally {
-      setLoggingOut(false);
     }
   };
 

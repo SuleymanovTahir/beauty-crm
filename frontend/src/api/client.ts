@@ -119,13 +119,13 @@ export const apiClient = {
       body: data,
     }),
 
-  updateService: (id: number, data: any) =>
+  updateService: (data: any) =>
     apiCall(`/api/services/{id}/update`, {
       method: 'POST',
       body: data,
     }),
 
-  deleteService: (id: number) =>
+    deleteService: () =>
     apiCall(`/api/services/{id}/delete`, {
       method: 'DELETE',
     }),

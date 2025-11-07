@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { useTranslation } from 'react-i18next';
 
 interface Message {
   id?: string | number;
@@ -20,7 +19,6 @@ interface MessageSearchProps {
 
 export default function MessageSearch({ messages, onJumpToMessage, onClose }: MessageSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const { t } = useTranslation(['components/chat/MessageSearch', 'common']);
   const [currentMatch, setCurrentMatch] = useState(0);
   const [matches, setMatches] = useState<number[]>([]);
 

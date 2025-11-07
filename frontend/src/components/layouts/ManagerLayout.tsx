@@ -1,5 +1,5 @@
 //src/components/ManagerLayout.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,6 @@ import {
   LayoutDashboard, 
   Users, 
   BarChart3, 
-  MessageSquare,
   MessageCircle,
   Settings,
   LogOut,
@@ -25,7 +24,6 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['components/layouts/ManagerLayout', 'common']);
-  const [loggingOut, setLoggingOut] = React.useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const menuItems = [
@@ -54,7 +52,6 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   };
 
   const handleLogout = async () => {
-    setLoggingOut(true);
     try {
       const response = await fetch('/logout', {
         method: 'POST',
@@ -78,7 +75,6 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
       onLogout();
       navigate('/login', { replace: true });
     } finally {
-      setLoggingOut(false);
     }
   };
 

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Globe, Bell, Bot, Shield, Mail, Smartphone, Plus, Edit, Trash2, Check, Loader, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
+import { api } from '../../services/api';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
-import { api } from '../../services/api';
 
 export default function AdminSettings() {
   const { t } = useTranslation(['admin/Settings', 'common']);
@@ -95,9 +95,9 @@ export default function AdminSettings() {
     } finally {
       setLoadingRoles(false);
     }
-  };
+  }
 
-  const handleSaveGeneral = async (e: React.FormEvent) => {
+  const handleSaveGeneral = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await api.updateSalonSettings({
@@ -155,7 +155,15 @@ export default function AdminSettings() {
       setCreateRoleForm({ role_key: '', role_name: '', role_description: '' });
       await loadRoles();
     } catch (err) {
-      toast.error(t('settings:error') + err.message);
+      let message = t('settings:error');
+      if (err instanceof Error) {
+        message += err.message;
+      } else if (typeof err === 'string') {
+        message += err;
+      } else {
+        message += t('settings:unknown_error');
+      }
+      toast.error(message);
     } finally {
       setSavingRole(false);
     }
@@ -169,7 +177,15 @@ export default function AdminSettings() {
       toast.success(t('settings:role_deleted'));
       await loadRoles();
     } catch (err) {
-      toast.error(t('settings:error') + err.message);
+      let errorMessage = t('settings:error');
+      if (err instanceof Error) {
+        errorMessage += err.message;
+      } else if (typeof err === 'string') {
+        errorMessage += err;
+      } else {
+        errorMessage += t('settings:unknown_error');
+      }
+      toast.error(errorMessage);
     }
   };
 
@@ -186,13 +202,16 @@ export default function AdminSettings() {
   };
 
   const handleTogglePermission = (permKey: string, action: string) => {
-    setPermissions(prev => ({
-      ...prev,
-      [permKey]: {
-        ...(prev[permKey] as Record<string, boolean> || {}),
-        [action]: !((prev[permKey] as Record<string, boolean>)?.[action])
-      }
-    }));
+    setPermissions(prev => {
+      const typedPrev = prev as Record<string, Record<string, boolean>>;
+      return {
+        ...prev,
+        [permKey]: {
+          ...(typedPrev[permKey] || {}),
+          [action]: !(typedPrev[permKey]?.[action])
+        }
+      };
+    });
   };
 
   const handleSavePermissions = async () => {
@@ -340,7 +359,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  <div key="weekdays">
                     <Label htmlFor="weekdays">{t('settings:working_hours')}</Label>
                     <Input
                       id="weekdays"
@@ -353,7 +372,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div key="weekends">
                     <Label htmlFor="weekends">{t('settings:working_hours')}</Label>
                     <Input
                       id="weekends"
@@ -682,7 +701,7 @@ export default function AdminSettings() {
                       <tr key={key} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="p-3 text-sm font-medium text-gray-900">{name as string}</td>
                         {['can_view', 'can_create', 'can_edit', 'can_delete'].map(action => (
-                          <td key={action} className="p-3 text-center">
+                          <td key={`${key}-${action}`} className="p-3 text-center">
                             <input
                               type="checkbox"
                               checked={

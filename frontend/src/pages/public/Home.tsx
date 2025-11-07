@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
-import { Calendar, Clock, Sparkles, Star, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, Sparkles, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -10,9 +10,6 @@ import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
 
-interface Service {
-  name: string;
-}
 
 interface Testimonial {
   name: string;
@@ -46,7 +43,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [services, setServices] = useState<string[]>([]);
   const { t } = useTranslation(['public/Home', 'common']);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [testimonials] = useState<Testimonial[]>(defaultTestimonials);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({

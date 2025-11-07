@@ -6,7 +6,6 @@ import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, P
 import { toast } from 'sonner';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
-import { usePeriodFilter } from '../../hooks/usePeriodFilter';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useBookingStatuses } from '../../hooks/useStatuses';
 
@@ -91,12 +90,12 @@ const api = {
 
 export default function Bookings() {
   const navigate = useNavigate();
-  const { statuses: statusConfig, addStatus: handleAddBookingStatus } = useBookingStatuses();
-  const [bookings, setBookings] = useState([]);
-  const [clients, setClients] = useState([]);
+  const { statuses: statusConfig}= useBookingStatuses();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
   const { t } = useTranslation(['admin/Bookings', 'common']);
-  const [services, setServices] = useState([]);
-  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -146,13 +145,6 @@ export default function Bookings() {
   }, []);
 
 
-  const filteredByPeriod = usePeriodFilter({
-    items: bookings,
-    period,
-    dateFrom,
-    dateTo,
-    getItemDate: (booking: any) => booking.datetime || booking.created_at
-  });
 
   useEffect(() => {
     const filtered = bookings.filter((booking: any) => {
@@ -315,7 +307,8 @@ export default function Bookings() {
 
   // ===== IMPORT HANDLERS =====
   const handleImportFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const input = e.target;
+    const file = input.files?.[0];
     if (file) {
       const ext = file.name.split('.').pop()?.toLowerCase();
       if (!['csv', 'xlsx', 'xls'].includes(ext || '')) {

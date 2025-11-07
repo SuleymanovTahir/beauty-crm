@@ -1,8 +1,8 @@
 // frontend/src/pages/admin/SpecialPackages.tsx
 // Управление специальными пакетами и акциями
 
-import React, { useState, useEffect } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, DollarSign, AlertCircle, Loader } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';

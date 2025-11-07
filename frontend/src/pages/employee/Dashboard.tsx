@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Calendar, Clock, AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import {  Clock, AlertCircle } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useTranslation } from 'react-i18next';

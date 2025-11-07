@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { api } from '../../services/api';
 import { Settings as SettingsIcon, Bell, Shield, Mail, Smartphone } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Label } from '../../components/ui/label';
@@ -39,15 +38,8 @@ export default function ManagerSettings() {
       toast.error(t('common:server_error'));
     }
   };
-  const [generalSettings, setGeneralSettings] = useState({});
-  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    api.getSalonSettings().then(data => {
-      setGeneralSettings(data);
-      setLoading(false);
-    });
-  }, []);
+
 
   return (
     <div className="p-8">
@@ -149,11 +141,14 @@ export default function ManagerSettings() {
                   {notificationSettings.dailyReport && (
                     <div>
                       <Label htmlFor="reportTime">{t('settings:report_time')}</Label>
-                      <Input
+                      <input
                         id="reportTime"
                         type="time"
+                        className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                         value={notificationSettings.reportTime}
-                        onChange={(e) => setNotificationSettings({ ...notificationSettings, reportTime: e.target.value })}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setNotificationSettings({ ...notificationSettings, reportTime: e.target.value })
+                        }
                       />
                     </div>
                   )}
