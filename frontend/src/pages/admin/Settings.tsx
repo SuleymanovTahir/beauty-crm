@@ -403,28 +403,26 @@ export default function AdminSettings() {
               <div className="space-y-4">
                 <h3 className="text-lg text-gray-900 mb-4">{t('settings:notification_channels')}</h3>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key="email-notifications" className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Mail className="w-6 h-6 text-blue-600" />
                     <div>
                       <p className="text-sm text-gray-900">{t('settings:email_notifications')}</p>
-                      <p className="text-xs text-gray-600">{t('settings:receive_notifications_on_email')}</p>
+                      <p className="text-xs text-gray-600">{t('settings:receive_by_email')}</p>
                     </div>
                   </div>
                   <Switch
                     checked={!!notificationSettings.emailNotifications}
-                    onCheckedChange={(checked: boolean) =>
-                      setNotificationSettings({ ...notificationSettings, emailNotifications: checked })
-                    }
+                    onCheckedChange={(checked: boolean) => setNotificationSettings({ ...notificationSettings, emailNotifications: checked })}
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key="sms-notifications" className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <Smartphone className="w-6 h-6 text-green-600" />
                     <div>
                       <p className="text-sm text-gray-900">{t('settings:sms_notifications')}</p>
-                      <p className="text-xs text-gray-600">{t('settings:receive_notifications_on_sms')}</p>
+                      <p className="text-xs text-gray-600">{t('settings:receive_by_phone')}</p>
                     </div>
                   </div>
                   <Switch
@@ -439,7 +437,7 @@ export default function AdminSettings() {
               <div className="border-t border-gray-200 pt-6 space-y-4">
                 <h3 className="text-lg text-gray-900 mb-4">{t('settings:notification_types')}</h3>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key="booking-notif" className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <p className="text-sm text-gray-900">{t('settings:booking_notifications')}</p>
                     <p className="text-xs text-gray-600">{t('settings:new_bookings_changes_cancellations')}</p>
@@ -452,7 +450,7 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg space-y-4">
+                <div key="birthday-notif" className="p-4 bg-gray-50 rounded-lg space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-900">{t('settings:birthday_reminders')}</p>
