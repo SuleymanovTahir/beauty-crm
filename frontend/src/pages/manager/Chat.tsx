@@ -214,57 +214,112 @@ export default function Chat() {
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
   
-    // ✅ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ" (регистронезависимая)
-    const messageLower = message.trim().toLowerCase();
+    // ✅ БОЛЕЕ НАДЕЖНАЯ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ"
+    const cleanMessage = message.trim();
     
-    if (messageLower.startsWith('#помоги бот#') || messageLower.startsWith('#бот помоги#')) {
-      // Убираем команду (поддерживаем оба варианта)
-      let fullText = message.trim();
-      if (messageLower.startsWith('#помоги бот#')) {
-        fullText = fullText.replace(/#помоги бот#/i, '').trim();
-      } else if (messageLower.startsWith('#бот помоги#')) {
-        fullText = fullText.replace(/#бот помоги#/i, '').trim();
-      }
+    // Удаляем все пробелы и приводим к нижнему регистру для проверки
+    const normalizedMessage = cleanMessage.toLowerCase().replace(/\s+/g, '');
+    
+    // Все возможные варианты команды (без пробелов)
+    const botHelpCommands = [
+      '#помогибот#',
+      '#ботпомоги#',
+      '#помогимнебот#',
+      '#ботпомогимне#'
+    ];
+    
+    const isBotHelp = botHelpCommands.some(cmd => normalizedMessage.startsWith(cmd));
+    
+    // ✅ ДЕБАГ ЛОГИРОВАНИЕ
+    console.log('🔍 Проверка команды бота:', {
+      original: cleanMessage,
+      normalized: normalizedMessage,
+      isBotHelp: isBotHelp
+    });
+  
+    if (isBotHelp) {
+      console.log('✅ Обнаружена команда "Помоги бот"');
+      
+      // ✅ Убираем ВСЕ варианты команды
+      let fullText = cleanMessage
+        .replace(/#помоги\s*бот#/gi, '')
+        .replace(/#бот\s*помоги#/gi, '')
+        .replace(/#помоги\s*мне\s*бот#/gi, '')
+        .replace(/#бот\s*помоги\s*мне#/gi, '')
+        .trim();
+      
+      console.log('📝 Текст после удаления команды:', fullText);
       
       if (!fullText) {
-        toast.error('Напишите вопрос после команды #Помоги бот# или #Бот помоги#');
+        toast.error('Напишите вопрос после команды #Помоги бот#', {
+          description: 'Пример: #Помоги бот# Клиент жалуется на цену, что делать?'
+        });
         return;
       }
-    
+  
       // ✅ Парсим: первая строка = вопрос, остальное = контекст
-      const lines = fullText.split('\n');
+      const lines = fullText.split('\n').filter(l => l.trim());
       const question = lines[0].trim();
-      const context = lines.slice(1).join('\n').trim();
-    
+      const context = lines.length > 1 ? lines.slice(1).join('\n').trim() : '';
+  
       try {
         setIsUploadingFile(true);
         
         console.log('🤖 Запрос совета у бота:', { question, context });
         
+        // Показываем индикатор загрузки
+        toast.loading('🤖 Бот думает над ответом...', { id: 'bot-thinking' });
+        
         const response = await api.askBotAdvice(question, context);
         
         console.log('✅ Получен совет от бота:', response);
         
-        // ✅ Показываем ответ бота
-        toast.success('💡 Совет бота:', {
+        // Убираем индикатор загрузки
+        toast.dismiss('bot-thinking');
+        
+        // ✅ Показываем ответ бота в красивом модальном окне
+        toast.success('💡 Совет от AI-бота', {
           description: response.advice,
-          duration: 15000, // 15 секунд
+          duration: 30000, // 30 секунд
+          action: {
+            label: '📋 Копировать',
+            onClick: () => {
+              navigator.clipboard.writeText(response.advice);
+              toast.success('Скопировано в буфер обмена!');
+            }
+          }
         });
         
+        // ✅ Очищаем поле ввода
         setMessage('');
-        return; // ⚠️ ВАЖНО: Выходим из функции, НЕ отправляем клиенту!
+        
+        console.log('✅ Команда "Помоги бот" выполнена успешно - клиенту НЕ отправлено');
+        
+        // ⚠️ КРИТИЧЕСКИ ВАЖНО: return - НЕ отправляем клиенту!
+        return;
         
       } catch (err) {
+        toast.dismiss('bot-thinking');
         console.error('❌ Ошибка получения совета:', err);
-        toast.error('Ошибка получения совета от бота: ' + (err instanceof Error ? err.message : 'Неизвестная ошибка'));
-        return; // ⚠️ ВАЖНО: Даже при ошибке НЕ отправляем клиенту!
+        
+        const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
+        toast.error('Не удалось получить совет от бота', {
+          description: errorMessage,
+          duration: 5000
+        });
+        
+        // ⚠️ ВАЖНО: Даже при ошибке НЕ отправляем клиенту!
+        return;
       } finally {
         setIsUploadingFile(false);
       }
     }
     
     // ===== ОБЫЧНАЯ ОТПРАВКА СООБЩЕНИЙ КЛИЕНТУ =====
+    console.log('📤 Отправка обычного сообщения клиенту');
+    
     try {
+      // ✅ ОТПРАВКА ФАЙЛОВ
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
         let allFilesSent = true;
@@ -302,7 +357,6 @@ export default function Chat() {
   
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
   
-            // Properly typeguard sendResult for error property
             if (typeof sendResult === 'object' && sendResult !== null && 'error' in sendResult && sendResult.error) {
               throw new Error(String((sendResult as any).error));
             }
@@ -342,6 +396,7 @@ export default function Chat() {
         setIsUploadingFile(false);
       }
   
+      // ✅ ОТПРАВКА ТЕКСТОВОГО СООБЩЕНИЯ
       if (message.trim()) {
         await api.sendMessage(selectedClient.id, message);
   
@@ -358,6 +413,7 @@ export default function Chat() {
         toast.success(t('chat:message_sent'));
       }
   
+      // ✅ ОБНОВЛЯЕМ СООБЩЕНИЯ ЧЕРЕЗ СЕКУНДУ
       setTimeout(() => {
         if (selectedClient) {
           loadMessages(selectedClient.id, false);
@@ -837,6 +893,16 @@ export default function Chat() {
                   </div>
                 </div>
               )}
+              <div className="px-3 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-gray-200 flex-shrink-0">
+                <p className="text-xs text-gray-600 flex items-center gap-2">
+                  <span className="font-semibold">💡 Подсказка:</span>
+                  Напишите
+                  <code className="px-1.5 py-0.5 bg-white rounded border border-purple-200 font-mono text-purple-700">
+                    #Помоги бот# вопрос
+                  </code>
+                  чтобы получить совет от AI (не отправится клиенту)
+                </p>
+              </div>
 
               {/* Chat Input */}
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">

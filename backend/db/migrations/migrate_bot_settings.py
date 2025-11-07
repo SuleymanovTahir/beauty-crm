@@ -386,6 +386,11 @@ def create_tables(conn):
             c.execute("UPDATE bot_settings SET max_message_chars = max_message_length * 100")
             print("✅ Поле max_message_chars добавлено")
             conn.commit()
+        # ✅ ПРОВЕРЯЕМ ЧТО max_message_chars ЕСТЬ
+        if 'max_message_chars' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 500")
+            print("✅ Добавлено поле max_message_chars со значением по умолчанию 500")
+            conn.commit()
         if 'ad_campaign_detection' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
             print("✅ Добавлена колонка ad_campaign_detection")
