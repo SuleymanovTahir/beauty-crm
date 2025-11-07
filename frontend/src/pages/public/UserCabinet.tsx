@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { User, Calendar, Clock, CheckCircle, XCircle, Lock, AlertCircle } from 'lucide-react';
+import { User, Lock, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner@2.0.3';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +17,7 @@ export default function UserCabinet() {
     e.preventDefault();
     
     if (!loginData.username || !loginData.password) {
-      toast.error('Пожалуйста, заполните все поля');
+      toast.error(t('usercabinet:fillAllFields'));
       return;
     }
 
@@ -38,13 +36,11 @@ export default function UserCabinet() {
       if (response.ok) {
         const data = await response.json();
         
-        // Сохраняем данные в localStorage
         localStorage.setItem('session_token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        toast.success('Вы успешно вошли в систему! 🎉');
+        toast.success(t('usercabinet:loginSuccess'));
 
-        // Редирект в зависимости от роли
         setTimeout(() => {
           if (data.user.role === 'admin') {
             window.location.href = '/admin';
@@ -55,11 +51,11 @@ export default function UserCabinet() {
           }
         }, 500);
       } else {
-        toast.error('Неверные учетные данные');
+        toast.error(t('usercabinet:loginError'));
       }
     } catch (err) {
       console.error('Login error:', err);
-      toast.error('Ошибка при входе');
+      toast.error(t('usercabinet:systemError'));
     } finally {
       setLoading(false);
     }
@@ -72,14 +68,14 @@ export default function UserCabinet() {
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <User className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">Личный кабинет</h1>
-          <p className="text-gray-600">Войдите в систему управления салоном</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('usercabinet:title')}</h1>
+          <p className="text-gray-600">{t('usercabinet:subtitle')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <Label htmlFor="username">Имя пользователя или email</Label>
+              <Label htmlFor="username">{t('usercabinet:username')}</Label>
               <Input
                 id="username"
                 type="text"
@@ -87,13 +83,13 @@ export default function UserCabinet() {
                 disabled={loading}
                 value={loginData.username}
                 onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
-                placeholder="admin"
+                placeholder={t('usercabinet:usernamePlaceholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">Введите ваше имя пользователя</p>
+              <p className="text-xs text-gray-500 mt-1">{t('usercabinet:usernameHint')}</p>
             </div>
 
             <div>
-              <Label htmlFor="password">Пароль</Label>
+              <Label htmlFor="password">{t('usercabinet:password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -101,9 +97,9 @@ export default function UserCabinet() {
                 disabled={loading}
                 value={loginData.password}
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                placeholder="••••••"
+                placeholder={t('usercabinet:passwordPlaceholder')}
               />
-              <p className="text-xs text-gray-500 mt-1">Вводится при регистрации</p>
+              <p className="text-xs text-gray-500 mt-1">{t('usercabinet:passwordHint')}</p>
             </div>
 
             <Button 
@@ -113,16 +109,16 @@ export default function UserCabinet() {
               size="lg"
             >
               <Lock className="w-4 h-4 mr-2" />
-              {loading ? 'Вход...' : 'Войти в систему'}
+              {loading ? t('usercabinet:loggingIn') : t('usercabinet:loginButton')}
             </Button>
           </form>
 
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex gap-3">
             <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-blue-800">
-              <p className="font-semibold mb-1">Учетные данные для входа:</p>
-              <p>Username: <code className="bg-white px-2 py-1 rounded">admin</code></p>
-              <p>Password: <code className="bg-white px-2 py-1 rounded">admin123</code></p>
+              <p className="font-semibold mb-1">{t('usercabinet:credentials.title')}</p>
+              <p>{t('usercabinet:credentials.username')} <code className="bg-white px-2 py-1 rounded">admin</code></p>
+              <p>{t('usercabinet:credentials.password')} <code className="bg-white px-2 py-1 rounded">admin123</code></p>
             </div>
           </div>
 
@@ -132,7 +128,7 @@ export default function UserCabinet() {
               variant="outline"
               className="w-full"
             >
-              ← Вернуться на главную
+              {t('usercabinet:backToHome')}
             </Button>
           </div>
         </div>
@@ -140,15 +136,15 @@ export default function UserCabinet() {
         <div className="mt-8 grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl text-pink-600 mb-1">👨‍💼</div>
-            <p className="text-xs text-gray-600">Администратор</p>
+            <p className="text-xs text-gray-600">{t('usercabinet:roles.admin')}</p>
           </div>
           <div>
             <div className="text-2xl text-purple-600 mb-1">📊</div>
-            <p className="text-xs text-gray-600">Менеджер</p>
+            <p className="text-xs text-gray-600">{t('usercabinet:roles.manager')}</p>
           </div>
           <div>
             <div className="text-2xl text-blue-600 mb-1">💅</div>
-            <p className="text-xs text-gray-600">Сотрудник</p>
+            <p className="text-xs text-gray-600">{t('usercabinet:roles.employee')}</p>
           </div>
         </div>
       </div>

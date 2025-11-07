@@ -19,30 +19,42 @@ export default function Success() {
           </div>
 
           <h1 className="text-4xl text-gray-900 mb-4">
-            Запись подтверждена!
+            {t('success:title')}
           </h1>
 
           {bookingData.name && (
             <p className="text-xl text-gray-600 mb-6">
-              Спасибо, {bookingData.name}!
+              {t('success:thankYou', { name: bookingData.name })}
             </p>
           )}
 
           {bookingData.service && (
             <div className="mb-8 p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl">
               <p className="text-lg text-gray-700 mb-2">
-                Ваша запись на <span className="text-pink-600">{bookingData.service}</span> успешно создана.
+                {t('success:serviceBooked', { service: bookingData.service }).split('<highlight>').map((part, i) => {
+                  if (i === 0) return part;
+                  const [highlighted, ...rest] = part.split('</highlight>');
+                  return (
+                    <React.Fragment key={i}>
+                      <span className="text-pink-600">{highlighted}</span>
+                      {rest.join('</highlight>')}
+                    </React.Fragment>
+                  );
+                })}
               </p>
               {bookingData.date && bookingData.time && (
                 <p className="text-gray-600">
-                  {new Date(bookingData.date).toLocaleDateString('ru-RU')} в {bookingData.time}
+                  {t('success:dateTime', {
+                    date: new Date(bookingData.date).toLocaleDateString('ru-RU'),
+                    time: bookingData.time
+                  })}
                 </p>
               )}
             </div>
           )}
 
           <p className="text-gray-600 mb-8">
-            Мы свяжемся с вами в ближайшее время для подтверждения деталей записи.
+            {t('success:contactMessage')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -50,13 +62,13 @@ export default function Success() {
               onClick={() => navigate('/')}
               className="bg-gradient-to-r from-pink-500 to-purple-600"
             >
-              Вернуться на главную
+              {t('success:backToHome')}
             </Button>
             <Button
               onClick={() => navigate('/price-list')}
               variant="outline"
             >
-              Посмотреть услуги
+              {t('success:viewServices')}
             </Button>
           </div>
         </div>

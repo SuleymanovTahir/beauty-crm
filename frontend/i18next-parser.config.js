@@ -9,8 +9,11 @@ module.exports = {
   keepRemoved: false,
   sort: true,
   verbose: true,
+  customValueTemplate: null,
   lexers: {
     tsx: ['JsxLexer'],
     ts: ['JsxLexer']
-  }
+  },
+  // Автоматически создавать namespace из пути файла
+  defaultValue: (locale, namespace, key) => key
 };

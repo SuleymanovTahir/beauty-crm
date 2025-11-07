@@ -3,12 +3,33 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 const languages = ["ru","en","es","ar","hi","kk","pt","fr","de"];
-const namespaces = ["common","auth","dashboard","clients","bookings","chat","analytics","services","settings","users","employee","manager","public","layouts"];
+const namespaces = [
+  'common',
+  // Admin pages
+  'admin/Analytics', 'admin/BookingDetail', 'admin/Bookings', 'admin/BotSettings',
+  'admin/Calendar', 'admin/ClientDetail', 'admin/Clients', 'admin/CreateUser',
+  'admin/Dashboard', 'admin/EditUser', 'admin/Services', 'admin/Settings',
+  'admin/SpecialPackages', 'admin/Users',
+  // Manager pages
+  'manager/Chat', 'manager/Dashboard', 'manager/Funnel', 'manager/Messages', 'manager/Settings',
+  // Employee pages
+  'employee/Dashboard', 'employee/Profile',
+  // Public pages
+  'public/About', 'public/Contacts', 'public/Cooperation', 'public/DataDeletion',
+  'public/FAQ', 'public/Home', 'public/PriceList', 'public/PrivacyPolicy',
+  'public/Success', 'public/Terms', 'public/UserCabinet',
+  // Auth
+  'auth/Login',
+  // Layouts
+  'layouts/AdminLayout', 'layouts/EmployeeLayout', 'layouts/ManagerLayout', 'layouts/PublicLayout',
+  // Components
+  'components/LanguageSwitcher', 'components/PublicLanguageSwitcher'
+];
 
-// Используем import.meta.glob для Vite
-const localeFiles = import.meta.glob('./locales/**/*.json', { eager: true });
+// Используем import.meta as any для обхода ошибки типов с Vite
+const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
 
-const resources: any = {};
+const resources: Record<string, any> = {};
 
 for (const lang of languages) {
   resources[lang] = {};
