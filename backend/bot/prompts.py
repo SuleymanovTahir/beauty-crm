@@ -68,14 +68,20 @@ class PromptBuilder:
     
     def _build_personality(self) -> str:
         """Секция PERSONALITY"""
+        # ✅ ЧИТАЕМ ЛИМИТ ИЗ БД
+        max_chars = self.bot_settings.get('max_message_chars', 500)
+        
         return f"""=== PERSONALITY ===
 {self.bot_settings['personality_traits']}
 
 СТИЛЬ ОБЩЕНИЯ:
 {self.bot_settings['communication_style']}
 
-- Максимум {self.bot_settings['max_message_length']} предложений
-- Эмодзи: {self.bot_settings['emoji_usage']}"""
+⚠️ ДЛИНА ОТВЕТА: СТРОГО не более {max_chars} символов (включая эмодзи и пробелы)!
+- Эмодзи: {self.bot_settings['emoji_usage']}
+
+Если информации много - сократи до сути, но ОБЯЗАТЕЛЬНО уложись в лимит {max_chars} символов!
+Считай каждый символ. Лучше короче, но в рамках лимита, чем обрезанное сообщение."""
     
     def _build_language_settings(self, language: str) -> str:
         """Языковые настройки"""
@@ -110,15 +116,34 @@ class PromptBuilder:
             return """=== ПРОДОЛЖЕНИЕ ДИАЛОГА ===
 - НЕ здоровайся снова - вы уже общаетесь!
 - Отвечай на конкретный вопрос клиента
-- Будь краткой и по делу (2-3 предложения)"""
+- Будь краткой и по делу"""
     
     def _should_greet(self, history: List[Tuple]) -> bool:
         """Определить нужно ли здороваться"""
         if len(history) <= 1:
             return True
         
-        # Логика из core.py
-        # ... (та же логика что в SalonBot.should_greet)
+        # Если прошло много времени (>6 часов)
+        if len(history) > 0:
+            try:
+                last_msg = history[-1]
+                # Обработка разных форматов истории
+                if len(last_msg) >= 5:
+                    timestamp = last_msg[2]
+                elif len(last_msg) >= 3:
+                    timestamp = last_msg[2]
+                else:
+                    return False
+                
+                last_timestamp = datetime.fromisoformat(timestamp)
+                now = datetime.now()
+                time_diff = now - last_timestamp
+                
+                if time_diff.total_seconds() > 21600:  # 6 часов
+                    return True
+            except:
+                pass
+        
         return False
     
     def _build_voice_handling(self) -> str:
@@ -128,9 +153,9 @@ class PromptBuilder:
             'Извините, я AI-помощник и не могу прослушивать голосовые 😊'
         )
         return f"""=== ГОЛОСОВЫЕ СООБЩЕНИЯ ===
-        если клиент отправил голосовое, скажи весело и дружелюбно:
-        "{voice_response}
-        ⚠️ НЕ говори фразы типа "администратор свяжется" — ТЫ и есть главный помощник!"""
+Если клиент отправил голосовое, скажи весело и дружелюбно:
+"{voice_response}"
+⚠️ НЕ говори фразы типа "администратор свяжется" — ТЫ и есть главный помощник!"""
     
     def _build_special_packages(self) -> str:
         """Специальные пакеты"""
@@ -232,6 +257,8 @@ Google Maps: {self.salon['google_maps']}
                 if description:
                     services_text += f"  └ {description}\n"
             services_text += "\n"
+        
+        return services_text
     
     def _build_history(self, history: List[Tuple]) -> str:
         """История диалога - ИСПРАВЛЕНО для работы с 5 элементами"""
@@ -270,8 +297,13 @@ Google Maps: {self.salon['google_maps']}
     
     def _build_algorithm(self) -> str:
         """Алгоритм действий"""
+        max_chars = self.bot_settings.get('max_message_chars', 500)
+        
         return f"""⚡ АЛГОРИТМ ДЕЙСТВИЙ:
-{self.bot_settings['algorithm_actions']}"""
+{self.bot_settings['algorithm_actions']}
+
+⚠️ ПОВТОРЯЮ: Твой ответ должен быть СТРОГО не более {max_chars} символов!
+Если превысишь - сообщение обрежется и клиент увидит неполную информацию."""
     
     def _build_examples(self) -> str:
         """Примеры хороших ответов"""
@@ -285,12 +317,15 @@ Google Maps: {self.salon['google_maps']}
     def _build_dont_do(self) -> str:
         """Что НЕ делать"""
         anti_patterns = self.bot_settings.get('anti_patterns', '')
-        if not anti_patterns:
-            return """🚫 НЕ ДЕЛАЙ:
+        max_chars = self.bot_settings.get('max_message_chars', 500)
+        
+        base_rules = f"""🚫 НЕ ДЕЛАЙ:
 - НЕ повторяй приветствия
-- НЕ пиши длинные тексты
+- НЕ пиши длинные тексты (лимит {max_chars} символов!)
 - НЕ собирай данные для записи
 - НЕ придумывай цены"""
         
-        return f"""🚫 НЕ ДЕЛАЙ:
-{anti_patterns}"""
+        if anti_patterns:
+            return f"{base_rules}\n\n{anti_patterns}"
+        
+        return base_rules

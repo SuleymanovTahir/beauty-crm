@@ -148,18 +148,19 @@ class SalonBot:
     async def _generate_via_proxy(self, prompt: str) -> str:
         """
         Генерация через Gemini REST API с прокси
-        
-        Args:
-            prompt: Полный промпт
-            
-        Returns:
-            str: Ответ от Gemini
         """
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
-        
+
+        # ✅ ЧИТАЕМ ИЗ БД (уже загружено в self.bot_settings)
         max_chars = self.bot_settings.get('max_message_chars', 500)
-        max_tokens = int(max_chars / 3)  # 1 токен ≈ 3 символа для русского
-        
+        max_tokens = int(max_chars / 2.5)  # Русский: ~2.5 символа на токен
+
+        # ✅ ДОБАВЛЯЕМ ИНСТРУКЦИЮ В ПРОМПТ
+        prompt_with_limit = f"""{prompt}
+
+        ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
+        """
+
         payload = {
             "contents": [{
                 "parts": [{"text": prompt}]
@@ -195,7 +196,13 @@ class SalonBot:
                 if "content" in candidate and "parts" in candidate["content"]:
                     parts = candidate["content"]["parts"]
                     if len(parts) > 0 and "text" in parts[0]:
-                        return parts[0]["text"].strip()
+                        response_text = parts[0]["text"].strip()
+                        
+                        # ✅ ПРИНУДИТЕЛЬНАЯ ОБРЕЗКА (на случай если бот превысил)
+                        if len(response_text) > max_chars:
+                            response_text = response_text[:max_chars-3] + "..."
+                        
+                        return response_text
             
             # Если структура ответа неожиданная
             raise Exception(f"Unexpected Gemini response structure: {data}")

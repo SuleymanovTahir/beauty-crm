@@ -365,6 +365,8 @@ export default function BotSettings() {
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
                 Рекомендуется 300-600 символов. Чем меньше - тем короче ответы бота.
+                <br />
+                <strong>⚠️ Бот будет СТРОГО соблюдать этот лимит!</strong>
               </p>
             </div>
 

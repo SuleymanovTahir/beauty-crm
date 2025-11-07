@@ -17,7 +17,7 @@ DEFAULT_SETTINGS = {
     "farewell_message": "Спасибо за визит! 💖",
     "price_explanation": "Мы в премиум-сегменте 💎",
     "communication_style": "Дружелюбный, экспертный",
-    "max_message_length": 4,
+    "max_message_chars": 500,
     "emoji_usage": "Умеренное (2-3 на сообщение)",
     "languages_supported": "ru,en,ar",
 }

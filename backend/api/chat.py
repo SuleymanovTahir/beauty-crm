@@ -331,7 +331,7 @@ async def ask_bot_advice(
     
     try:
         # Получаем бота
-        from backend.api.utils import get_bot  # Исправлено: добавлен импорт для get_bot
+        from bot import get_bot  # Исправлено: добавлен импорт для get_bot
         bot = get_bot()
         
         # ✅ Специальный промпт для консультации менеджера
