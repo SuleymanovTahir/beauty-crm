@@ -16,7 +16,7 @@ interface TeamMember {
 
 export default function About() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['about', 'common']);
+  const { t } = useTranslation(['public/About', 'common']);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [salonInfo, setSalonInfo] = useState<any>({});

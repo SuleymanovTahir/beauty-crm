@@ -23,7 +23,7 @@ interface Stats {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['admin/Dashboard', 'common']);
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

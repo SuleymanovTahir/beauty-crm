@@ -20,7 +20,7 @@ interface NotesPanelProps {
 
 export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
   const [notes, setNotes] = useState<Note[]>([]);
-  const { t } = useTranslation(['notespanel', 'common']);
+  const { t } = useTranslation(['components/chat/NotesPanel', 'common']);
   const [newNoteText, setNewNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

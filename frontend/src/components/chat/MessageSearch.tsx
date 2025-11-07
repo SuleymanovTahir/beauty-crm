@@ -20,7 +20,7 @@ interface MessageSearchProps {
 
 export default function MessageSearch({ messages, onJumpToMessage, onClose }: MessageSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const { t } = useTranslation(['messagesearch', 'common']);
+  const { t } = useTranslation(['components/chat/MessageSearch', 'common']);
   const [currentMatch, setCurrentMatch] = useState(0);
   const [matches, setMatches] = useState<number[]>([]);
 

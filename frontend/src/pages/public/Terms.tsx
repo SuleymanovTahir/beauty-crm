@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Terms() {
   const [salonInfo, setSalonInfo] = React.useState<any>({});
-  const { t, i18n } = useTranslation(['terms', 'common']);
+  const { t, i18n } = useTranslation(['public/Terms', 'common']);
 
   React.useEffect(() => {
     apiClient.getSalonInfo()

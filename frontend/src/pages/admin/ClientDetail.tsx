@@ -33,7 +33,7 @@ interface ChatMessage {
 export default function ClientDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation(['clientdetail', 'common']);
+  const { t } = useTranslation([' admin/ClientDetail', 'common']);
   const [client, setClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);

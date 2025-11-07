@@ -57,7 +57,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { t } = useTranslation(['сlients', 'common']);
+  const { t } = useTranslation(['admin/Clients', 'common']);
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

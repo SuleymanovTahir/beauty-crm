@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 
 export default function AdminSettings() {
-  const { t } = useTranslation(['settings', 'common']);
+  const { t } = useTranslation(['admin/Settings', 'common']);
   const [generalSettings, setGeneralSettings] = useState({
     salonName: '',
     city: '',

@@ -157,13 +157,17 @@ class SalonBot:
         """
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
         
+        max_chars = self.bot_settings.get('max_message_chars', 500)
+        max_tokens = int(max_chars / 3)  # 1 токен ≈ 3 символа для русского
+        
         payload = {
             "contents": [{
                 "parts": [{"text": prompt}]
             }],
             "generationConfig": {
                 "temperature": 0.7,
-                "maxOutputTokens": 500,
+                "maxOutputTokens": max_tokens,
+                "stopSequences": []
             }
         }
         

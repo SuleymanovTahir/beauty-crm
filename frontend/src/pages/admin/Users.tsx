@@ -21,7 +21,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['users', 'common']);
+  const { t } = useTranslation(['admin/Users', 'common']);
   const roleConfig: Record<string, { label: string; color: string }> = {
     admin: { label: t('users:administrator'), color: 'bg-purple-100 text-purple-800' },
     manager: { label: t('users:manager'), color: 'bg-blue-100 text-blue-800' },

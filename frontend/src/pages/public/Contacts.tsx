@@ -20,7 +20,7 @@ interface SalonInfo {
 }
 
 export default function Contacts() {
-  const { t } = useTranslation(['contacts', 'common']);
+  const { t } = useTranslation(['public/Contacts', 'common']);
   const [formData, setFormData] = useState({
     name: '',
     email: '',

@@ -59,7 +59,7 @@ interface Message {
 
 export default function Chat() {
   const location = useLocation();
-  const { t } = useTranslation(['chat', 'common']);
+  const { t } = useTranslation(['manager/Chat', 'common']);
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -241,7 +241,41 @@ export default function Chat() {
 
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
-
+    // ✅ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ"
+    if (message.trim().startsWith('#Помоги бот#')) {
+      const fullText = message.replace('#Помоги бот#', '').trim();
+      
+      if (!fullText) {
+        toast.error('Напишите вопрос после команды #Помоги бот#');
+        return;
+      }
+    
+      // ✅ Парсим: первая строка = вопрос, остальное = контекст
+      const lines = fullText.split('\n');
+      const question = lines[0].trim();
+      const context = lines.slice(1).join('\n').trim();
+    
+      try {
+        setIsUploadingFile(true);
+        
+        const response = await api.askBotAdvice(question, context);
+        
+        // ✅ Показываем в модальном окне (больше места для текста)
+        toast.success('💡 Совет бота:', {
+          description: response.advice,
+          duration: 15000, // 15 секунд
+        });
+        
+        setMessage('');
+        setIsUploadingFile(false);
+        return;
+      } catch (err) {
+        toast.error('Ошибка получения совета от бота');
+        setIsUploadingFile(false);
+        return;
+      }
+    }
+    
     try {
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);

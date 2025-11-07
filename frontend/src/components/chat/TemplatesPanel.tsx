@@ -21,7 +21,7 @@ interface TemplatesPanelProps {
 }
 
 export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProps) {
-  const { t } = useTranslation(['templatespanel', 'common']);
+  const { t } = useTranslation(['components/chat/TemplatesPanel', 'common']);
   const [searchTerm, setSearchTerm] = useState('');
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);

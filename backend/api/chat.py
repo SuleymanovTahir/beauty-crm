@@ -310,3 +310,62 @@ async def get_client_unread_count(
     
     count = get_unread_messages_count(client_id)
     return {"client_id": client_id, "unread_count": count}
+
+
+@router.post("/chat/ask-bot")
+async def ask_bot_advice(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Запросить совет у бота (для менеджера)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    data = await request.json()
+    manager_question = data.get('question')
+    context = data.get('context', '')  # ✅ Менеджер может передать контекст сам
+    
+    if not manager_question:
+        return JSONResponse({"error": "Missing question"}, status_code=400)
+    
+    try:
+        # Получаем бота
+        from backend.api.utils import get_bot  # Исправлено: добавлен импорт для get_bot
+        bot = get_bot()
+        
+        # ✅ Специальный промпт для консультации менеджера
+        consultation_prompt = f"""
+Ты — эксперт по продажам салона красоты M.Le Diamant в Dubai. Менеджер обратился к тебе за советом.
+
+{f"КОНТЕКСТ СИТУАЦИИ (от менеджера):{chr(10)}{context}{chr(10)}" if context else ""}
+
+ВОПРОС МЕНЕДЖЕРА:
+{manager_question}
+
+Дай КОНКРЕТНЫЙ совет менеджеру:
+✅ Что написать клиенту (можно готовый текст)
+✅ Какую стратегию использовать
+✅ Какие ошибки избежать
+
+Ответ должен быть:
+- КРАТКИМ (3-5 предложений)
+- КОНКРЕТНЫМ (без воды)
+- С ПРИМЕРОМ текста для клиента (если нужно)
+
+Используй психологию продаж, FOMO, эмоции - как ты делаешь обычно в чате с клиентами.
+"""
+        
+        # Генерируем ответ
+        advice = await bot._generate_via_proxy(consultation_prompt)
+        
+        log_info(f"✅ Bot advice generated for {user['username']}", "api")
+        
+        return {
+            "success": True,
+            "advice": advice
+        }
+        
+    except Exception as e:
+        log_error(f"Error generating bot advice: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

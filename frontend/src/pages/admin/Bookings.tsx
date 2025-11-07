@@ -94,7 +94,7 @@ export default function Bookings() {
   const { statuses: statusConfig, addStatus: handleAddBookingStatus } = useBookingStatuses();
   const [bookings, setBookings] = useState([]);
   const [clients, setClients] = useState([]);
-  const { t } = useTranslation(['bookings', 'common']);
+  const { t } = useTranslation(['admin/Bookings', 'common']);
   const [services, setServices] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

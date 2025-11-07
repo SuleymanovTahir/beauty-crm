@@ -14,7 +14,7 @@ interface Booking {
 
 export default function EmployeeDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['employee/Dashboard', 'common']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

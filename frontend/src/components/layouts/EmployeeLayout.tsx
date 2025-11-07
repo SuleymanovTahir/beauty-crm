@@ -20,7 +20,7 @@ interface EmployeeLayoutProps {
 export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['layouts', 'common']);
+  const { t } = useTranslation(['components/layouts/EmployeeLayout', 'common']);
   const [loggingOut, setLoggingOut] = React.useState(false);
 
   const menuItems = [

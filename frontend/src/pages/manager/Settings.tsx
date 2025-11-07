@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 export default function ManagerSettings() {
-  const { t } = useTranslation(['settings', 'common']);
+  const { t } = useTranslation(['manager/Settings', 'common']);
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
     smsNotifications: false,

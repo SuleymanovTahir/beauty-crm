@@ -16,7 +16,7 @@ const QUICK_REPLIES = [
 ];
 
 export default function QuickReplies({ onSelect }: QuickRepliesProps) {
-  const { t } = useTranslation(['quickreplies', 'common']);
+  const { t } = useTranslation(['components/chat/QuickReplies', 'common']);
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">

@@ -12,7 +12,7 @@ import { api } from '../../services/api';
 
 export default function EditUser() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['editUser', 'common']);
+  const { t } = useTranslation(['admin/EditUser', 'common']);
   const { id } = useParams<{ id: string }>();
   const userId = parseInt(id || '0');
 

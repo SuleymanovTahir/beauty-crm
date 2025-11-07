@@ -4,13 +4,13 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Cooperation() {
-  const { t } = useTranslation(['cooperation', 'common']);
+  const { t } = useTranslation(['public/Cooperation', 'common']);
   const [salonInfo, setSalonInfo] = useState<any>({});
 
   useEffect(() => {

@@ -74,6 +74,16 @@ export class ApiClient {
     return response
   }
 
+  async askBotAdvice(question: string, context?: string) {
+    return this.request('/api/chat/ask-bot', {
+      method: 'POST',
+      body: JSON.stringify({
+        question: question,
+        context: context || '' // Опционально: контекст от менеджера
+      }),
+    })
+  }
+
   async logout() {
     try {
       await this.request('/api/logout', { method: 'POST' })

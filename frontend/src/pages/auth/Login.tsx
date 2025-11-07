@@ -24,7 +24,7 @@ interface LoginProps {
 
 export default function Login({ onLogin }: LoginProps) {
   const navigate = useNavigate();
-  const { t } = useTranslation(['login', 'common']);
+  const { t } = useTranslation(['auth/Login', 'common']);
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",

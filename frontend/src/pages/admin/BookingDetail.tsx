@@ -24,7 +24,7 @@ export default function BookingDetail() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation(['bookingdetail', 'common']);
+  const { t } = useTranslation(['admin/BookingDetail', 'common']);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
 

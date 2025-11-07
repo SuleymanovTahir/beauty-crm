@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function PublicLayout() {
   const location = useLocation();
-  const { t } = useTranslation(['layouts', 'common']);
+  const { t } = useTranslation(['components/layouts/PublicLayout', 'common']);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 

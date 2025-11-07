@@ -3,7 +3,7 @@ import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
 
 export default function DataDeletion() {
-  const { t } = useTranslation(['datadeletion', 'common']);
+  const { t } = useTranslation(['public/DataDeletion', 'common']);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 
   React.useEffect(() => {

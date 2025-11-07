@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function FAQ() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['faq', 'common']);
+  const { t } = useTranslation(['public/Faq', 'common']);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 
   React.useEffect(() => {

@@ -15,7 +15,7 @@ interface Service {
 
 export default function PriceList() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['pricelist', 'common']);
+  const { t } = useTranslation(['public/PriceList', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

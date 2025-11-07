@@ -5,10 +5,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export default function Success() {
-  const { t } = useTranslation(['success', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation(['public/Success', 'common']);
   const bookingData = location.state || {};
+
 
   return (
     <div className="py-20">

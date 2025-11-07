@@ -20,7 +20,7 @@ interface BotSettings {
   fomo_messages: string;
   upsell_techniques: string;
   communication_style: string;
-  max_message_length: number;
+  max_message_chars: number;
   emoji_usage: string;
   languages_supported: string;
   objection_expensive: string;
@@ -60,7 +60,7 @@ export default function BotSettings() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { t } = useTranslation(['botsettings', 'common']);
+  const { t } = useTranslation(['admin/BotSettings', 'common']);
   const AVAILABLE_LANGUAGES = [
     { code: 'ru', name: t('botsettings:russian'), flag: '🇷🇺', note: t('botsettings:main') },
     { code: 'en', name: t('botsettings:english'), flag: '🇬🇧', note: t('botsettings:international') },
@@ -81,7 +81,7 @@ export default function BotSettings() {
     fomo_messages: '',
     upsell_techniques: '',
     communication_style: '',
-    max_message_length: 4,
+    max_message_chars: 4,
     emoji_usage: '',
     languages_supported: 'ru,en,ar',
     objection_expensive: '',
@@ -149,7 +149,7 @@ export default function BotSettings() {
         fomo_messages: data.fomo_messages || '',
         upsell_techniques: data.upsell_techniques || '',
         communication_style: data.communication_style || '',
-        max_message_length: data.max_message_length || 4,
+        max_message_chars: data.max_message_chars || 4,
         emoji_usage: data.emoji_usage || '',
         languages_supported: langs.join(','),
         objection_expensive: data.objection_expensive || '',
@@ -246,7 +246,7 @@ export default function BotSettings() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
-          🤖 {t('botsettings:title')}
+            🤖 {t('botsettings:title')}
           </h1>
           <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
             {t('botsettings:full_configuration_of_ai_assistant')}
@@ -326,7 +326,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-              {t('botsettings:bot_name')}
+                {t('botsettings:bot_name')}
               </label>
               <input
                 type="text"
@@ -345,14 +345,15 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📏 {t('botsettings:max_message_length')}
+                📏 Макс. длина сообщения (символов)
               </label>
               <input
                 type="number"
-                min="1"
-                max="10"
-                value={settings.max_message_length}
-                onChange={(e) => setSettings({ ...settings, max_message_length: parseInt(e.target.value) || 4 })}
+                min="100"
+                max="2000"
+                step="50"
+                value={settings.max_message_chars || 500}
+                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value) || 500 })}
                 style={{
                   width: '100%',
                   padding: '0.75rem',
@@ -362,6 +363,9 @@ export default function BotSettings() {
                   boxSizing: 'border-box'
                 }}
               />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Рекомендуется 300-600 символов. Чем меньше - тем короче ответы бота.
+              </p>
             </div>
 
             <div>
@@ -855,7 +859,7 @@ export default function BotSettings() {
         {activeTab === 'communication' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-                💬 {t('botsettings:communication_and_emotions')}
+              💬 {t('botsettings:communication_and_emotions')}
             </h2>
 
             <div>
@@ -1035,7 +1039,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  📋 {t('botsettings:algorithm_actions')}
+                📋 {t('botsettings:algorithm_actions')}
               </label>
               <textarea
                 value={settings.algorithm_actions}

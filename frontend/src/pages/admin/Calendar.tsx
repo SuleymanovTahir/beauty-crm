@@ -110,7 +110,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const { t } = useTranslation(['calendar', 'common']);
+  const { t } = useTranslation(['admin/Calendar', 'common']);
 
   const statusLabels: Record<string, string> = {
     pending: t('calendar:pending'),

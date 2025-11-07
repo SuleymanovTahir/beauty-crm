@@ -38,7 +38,7 @@ export default function Analytics() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { t } = useTranslation(['analytics', 'common']);
+  const { t } = useTranslation(['admin/Analytics', 'common']);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

@@ -24,7 +24,7 @@ interface ManagerLayoutProps {
 export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['layouts', 'common']);
+  const { t } = useTranslation(['components/layouts/ManagerLayout', 'common']);
   const [loggingOut, setLoggingOut] = React.useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 

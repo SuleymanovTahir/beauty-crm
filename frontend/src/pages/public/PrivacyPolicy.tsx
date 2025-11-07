@@ -4,7 +4,7 @@ import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
 
 export default function PrivacyPolicy() {
-  const { t } = useTranslation(['privacypolicy', 'common']);
+  const { t } = useTranslation(['public/PrivacyPolicy', 'common']);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
   
   React.useEffect(() => {

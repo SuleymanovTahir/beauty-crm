@@ -36,7 +36,7 @@ interface SpecialPackage {
 
 export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
-  const { t } = useTranslation(['specialpackages', 'common']);
+  const { t } = useTranslation(['admin/SpecialPackages', 'common']);
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');

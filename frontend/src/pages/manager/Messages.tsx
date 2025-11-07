@@ -67,7 +67,7 @@ const statuses = [
 
 export default function Messages() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['messages', 'common']);
+  const { t } = useTranslation(['manager/Messages', 'common']);
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

@@ -26,7 +26,7 @@ interface InfoPanelProps {
 export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { t } = useTranslation(['infopanel', 'common']);
+  const { t } = useTranslation(['components/chat/InfoPanel', 'common']);
   const [editedName, setEditedName] = useState(client.name || '');
   const [editedPhone, setEditedPhone] = useState(client.phone || '');
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses();

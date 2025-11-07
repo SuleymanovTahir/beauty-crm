@@ -45,7 +45,7 @@ const stageDescriptions = [
 ];
 
 export default function Funnel() {
-  const { t } = useTranslation(['funnel', 'common']);
+  const { t } = useTranslation(['manager/Funnel', 'common']);
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [period, setPeriod] = useState('month');
   const [loading, setLoading] = useState(true);

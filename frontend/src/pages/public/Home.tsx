@@ -45,7 +45,7 @@ const defaultTestimonials: Testimonial[] = [
 export default function Home() {
   const navigate = useNavigate();
   const [services, setServices] = useState<string[]>([]);
-  const { t } = useTranslation(['home', 'common']);
+  const { t } = useTranslation(['public/Home', 'common']);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonials);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [loadingServices, setLoadingServices] = useState(true);

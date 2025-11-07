@@ -11,7 +11,7 @@ import { api } from '../../services/api';
 
 export default function CreateUser() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['createuser', 'common']);
+  const { t } = useTranslation(['admin/CreateUser', 'common']);
   const [formData, setFormData] = useState({
     full_name: '',
     username: '',

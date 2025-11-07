@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function UserCabinet() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['usercabinet', 'common']);
+  const { t } = useTranslation(['public/UserCabinet', 'common']);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
 

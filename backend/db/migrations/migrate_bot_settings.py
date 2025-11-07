@@ -341,7 +341,7 @@ def create_tables(conn):
     fomo_messages TEXT,
     upsell_techniques TEXT,
     communication_style TEXT,
-    max_message_length INTEGER DEFAULT 4,
+    max_message_chars INTEGER DEFAULT 500,
     emoji_usage TEXT,
     languages_supported TEXT DEFAULT 'ru,en,ar',
     objection_handling TEXT,
@@ -379,7 +379,13 @@ def create_tables(conn):
     try:
         c.execute("PRAGMA table_info(bot_settings)")
         columns = [row[1] for row in c.fetchall()]
-
+        if 'max_message_length' in columns and 'max_message_chars' not in columns:
+        # Создаем новое поле
+            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 500")
+            # Копируем значение (1 предложение ≈ 100 символов)
+            c.execute("UPDATE bot_settings SET max_message_chars = max_message_length * 100")
+            print("✅ Поле max_message_chars добавлено")
+            conn.commit()
         if 'ad_campaign_detection' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
             print("✅ Добавлена колонка ad_campaign_detection")
