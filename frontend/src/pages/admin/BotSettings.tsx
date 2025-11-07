@@ -20,6 +20,7 @@ interface BotSettings {
   upsell_techniques: string;
   communication_style: string;
   max_message_chars: number;
+  max_message_length?: number; 
   emoji_usage: string;
   languages_supported: string;
   objection_expensive: string;
@@ -80,7 +81,7 @@ export default function BotSettings() {
     fomo_messages: '',
     upsell_techniques: '',
     communication_style: '',
-    max_message_chars: 4,
+    max_message_chars: 500,
     emoji_usage: '',
     languages_supported: 'ru,en,ar',
     objection_expensive: '',
@@ -148,7 +149,7 @@ export default function BotSettings() {
         fomo_messages: data.fomo_messages || '',
         upsell_techniques: data.upsell_techniques || '',
         communication_style: data.communication_style || '',
-        max_message_chars: data.max_message_chars || 4,
+        max_message_chars: data.max_message_chars || data.max_message_length * 100 || 500, // ✅ Миграция со старого поля
         emoji_usage: data.emoji_usage || '',
         languages_supported: langs.join(','),
         objection_expensive: data.objection_expensive || '',

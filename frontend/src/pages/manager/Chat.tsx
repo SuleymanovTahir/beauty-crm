@@ -214,216 +214,139 @@ export default function Chat() {
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
-    // ✅ БОЛЕЕ НАДЕЖНАЯ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ"
     const cleanMessage = message.trim();
 
-    // ✅ БОЛЕЕ НАДЕЖНАЯ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ"
-    // Удаляем все пробелы и приводим к нижнему регистру для проверки
-    const normalizedMessage = cleanMessage.toLowerCase().replace(/\s+/g, '');
+    // ✅ ШАБЛОН 1: Проверка команды бота (ПРИОРИТЕТ №1)
+    const lowerMessage = cleanMessage.toLowerCase();
+    const isBotHelp =
+      lowerMessage.startsWith('#помоги') ||
+      lowerMessage.startsWith('#бот') ||
+      lowerMessage.startsWith('бот помоги') ||
+      lowerMessage.startsWith('помоги бот') ||
+      lowerMessage.startsWith('#bot') ||
+      lowerMessage.startsWith('#help');
 
-    // Все возможные варианты команды (без пробелов)
-    const botHelpCommands = [
-      '#помогибот#',
-      '#ботпомоги#',
-      '#помогимнебот#',
-      '#ботпомогимне#'
-    ];
-
-    const isBotHelp = botHelpCommands.some(cmd => normalizedMessage.startsWith(cmd));
-
-    // ✅ ДЕБАГ ЛОГИРОВАНИЕ
-    console.log('🔍 Проверка команды бота:', {
-      original: cleanMessage,
-      normalized: normalizedMessage,
-      isBotHelp: isBotHelp
-    });
+    console.log('🔍 Проверка команды:', { original: cleanMessage, isBotHelp });
 
     if (isBotHelp) {
-      console.log('✅ Обнаружена команда "Помоги бот"');
+      console.log('✅ Обнаружена команда бота - НЕ отправляем клиенту!');
 
-      // ✅ Убираем ВСЕ варианты команды
+      // Удаляем команду из текста
       let fullText = cleanMessage
-        .replace(/#помоги\s*бот#/gi, '')
-        .replace(/#бот\s*помоги#/gi, '')
-        .replace(/#помоги\s*мне\s*бот#/gi, '')
-        .replace(/#бот\s*помоги\s*мне#/gi, '')
+        .replace(/^#?помоги\s*бот#?\s*/gi, '')
+        .replace(/^#?бот\s*помоги#?\s*/gi, '')
+        .replace(/^#?помоги#?\s*/gi, '')
+        .replace(/^#?bot#?\s*/gi, '')
+        .replace(/^#?help#?\s*/gi, '')
         .trim();
 
-      console.log('📝 Текст после удаления команды:', fullText);
-
       if (!fullText) {
-        toast.error('Напишите вопрос после команды #Помоги бот#', {
-          description: 'Пример: #Помоги бот# Клиент жалуется на цену, что делать?'
+        toast.error('❌ Напишите вопрос после команды', {
+          description: 'Пример: #помоги клиент жалуется на цену',
+          duration: 5000
         });
         return;
       }
 
-      // ✅ Парсим: первая строка = вопрос, остальное = контекст
       const lines = fullText.split('\n').filter(l => l.trim());
       const question = lines[0].trim();
-      const context = lines.length > 1 ? lines.slice(1).join('\n').trim() : '';
+      const context = lines.slice(1).join('\n').trim();
 
       try {
-        setIsUploadingFile(true);
-
-        console.log('🤖 Запрос совета у бота:', { question, context });
-
-        // Показываем индикатор загрузки
-        toast.loading('🤖 Бот думает над ответом...', { id: 'bot-thinking' });
-
+        const loadingId = toast.loading('🤖 Бот анализирует ситуацию...');
         const response = await api.askBotAdvice(question, context);
+        toast.dismiss(loadingId);
 
-        console.log('✅ Получен совет от бота:', response);
-
-        // Убираем индикатор загрузки
-        toast.dismiss('bot-thinking');
-
-        // ✅ Показываем ответ бота в красивом модальном окне
         toast.success('💡 Совет от AI-бота', {
           description: response.advice,
-          duration: 30000, // 30 секунд
+          duration: 30000,
           action: {
             label: '📋 Копировать',
             onClick: () => {
               navigator.clipboard.writeText(response.advice);
-              toast.success('Скопировано в буфер обмена!');
+              toast.success('✅ Скопировано!');
             }
           }
         });
 
-        // ✅ Очищаем поле ввода
         setMessage('');
-
-        console.log('✅ Команда "Помоги бот" выполнена успешно - клиенту НЕ отправлено');
-
-        // ⚠️ КРИТИЧЕСКИ ВАЖНО: return - НЕ отправляем клиенту!
-        return;
-
+        return; // ⚠️ НЕ продолжаем отправку клиенту
       } catch (err) {
-        toast.dismiss('bot-thinking');
-        console.error('❌ Ошибка получения совета:', err);
-
-        const errorMessage = err instanceof Error ? err.message : 'Неизвестная ошибка';
-        toast.error('Не удалось получить совет от бота', {
-          description: errorMessage,
-          duration: 5000
+        console.error('❌ Ошибка:', err);
+        toast.error('❌ Ошибка получения совета', {
+          description: err instanceof Error ? err.message : 'Неизвестная ошибка'
         });
-
-        // ⚠️ ВАЖНО: Даже при ошибке НЕ отправляем клиенту!
-        return;
-      } finally {
-        setIsUploadingFile(false);
+        return; // ⚠️ Даже при ошибке НЕ отправляем клиенту
       }
     }
 
-    // ===== ОБЫЧНАЯ ОТПРАВКА СООБЩЕНИЙ КЛИЕНТУ =====
-    console.log('📤 Отправка обычного сообщения клиенту');
+    // ✅ ШАБЛОН 2: Обычная отправка клиенту (только если НЕ команда бота)
+    console.log('📤 Отправка сообщения клиенту');
 
     try {
-      // ✅ ОТПРАВКА ФАЙЛОВ
+      // Отправка файлов
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
-        let allFilesSent = true;
 
         for (const file of attachedFiles) {
           try {
             const formData = new FormData();
             formData.append('file', file);
 
-            const uploadResponse = await fetch(`${(import.meta as any).env.VITE_API_URL}/api/upload`, {
+            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
               method: 'POST',
               credentials: 'include',
               body: formData,
-              // @ts-ignore: AbortSignal.timeout may not be supported in all environments
-              signal: (AbortSignal as any).timeout ? (AbortSignal as any).timeout(120000) : undefined
             });
 
-            if (!uploadResponse.ok) {
-              const errorText = await uploadResponse.text();
-              console.error('Upload error:', errorText);
-              throw new Error(`${t('chat:error_loading')}: ${uploadResponse.status}`);
-            }
+            if (!uploadResponse.ok) throw new Error('Upload failed');
 
-            const uploadResult = await uploadResponse.json();
-
-            if (!uploadResult.file_url) {
-              throw new Error(t('chat:file_url_not_received'));
-            }
-
-            const { file_url } = uploadResult;
-
+            const { file_url } = await uploadResponse.json();
             const fileType = file.type.startsWith('image/') ? 'image' :
               file.type.startsWith('video/') ? 'video' :
                 file.type.startsWith('audio/') ? 'audio' : 'file';
 
-            const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
+            await api.sendFile(selectedClient.id, file_url, fileType);
 
-            if (typeof sendResult === 'object' && sendResult !== null && 'error' in sendResult && sendResult.error) {
-              throw new Error(String((sendResult as any).error));
-            }
-
-            const newFileMessage: Message = {
+            setMessages(prev => [...prev, {
               id: Date.now() + Math.random(),
               message: file_url,
               sender: 'manager',
               timestamp: new Date().toISOString(),
               type: fileType
-            };
+            }]);
 
-            setMessages(prev => [...prev, newFileMessage]);
-
-            toast.success(t('chat:file_sent', { filename: file.name }));
+            toast.success(`✅ ${file.name}`);
           } catch (err) {
-            allFilesSent = false;
-            const errorMsg = err instanceof Error ? err.message : t('chat:error');
-            console.error('File send error:', err);
-
-            if (errorMsg.includes('timeout') || errorMsg.includes('aborted')) {
-              toast.error(t('chat:loading_timeout', { filename: file.name }));
-            } else if (errorMsg.includes('403')) {
-              toast.error(t('chat:access_denied', { filename: file.name }));
-            } else if (errorMsg.includes('Instagram cannot access')) {
-              toast.error(t('chat:instagram_cannot_access'));
-            } else {
-              toast.error(t('chat:error_sending_file', { filename: file.name, error: errorMsg }));
-            }
+            console.error(err);
+            toast.error(`❌ Ошибка: ${file.name}`);
           }
         }
 
-        if (allFilesSent) {
-          setAttachedFiles([]);
-        }
-
+        setAttachedFiles([]);
         setIsUploadingFile(false);
       }
 
-      // ✅ ОТПРАВКА ТЕКСТОВОГО СООБЩЕНИЯ
+      // Отправка текста
       if (message.trim()) {
         await api.sendMessage(selectedClient.id, message);
 
-        const newMessage: Message = {
+        setMessages(prev => [...prev, {
           id: Date.now(),
           message: message,
           sender: 'manager',
           timestamp: new Date().toISOString(),
           type: 'text'
-        };
+        }]);
 
-        setMessages(prev => [...prev, newMessage]);
         setMessage('');
-        toast.success(t('chat:message_sent'));
+        toast.success('✅ Отправлено');
       }
 
-      // ✅ ОБНОВЛЯЕМ СООБЩЕНИЯ ЧЕРЕЗ СЕКУНДУ
-      setTimeout(() => {
-        if (selectedClient) {
-          loadMessages(selectedClient.id, false);
-        }
-      }, 1000);
+      setTimeout(() => loadMessages(selectedClient.id, false), 1000);
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : t('chat:error_sending');
-      console.error(t('chat:error_sending'), err);
-      toast.error(t('chat:error') + (errorMsg ? `: ${errorMsg}` : ''));
+      console.error(err);
+      toast.error('❌ Ошибка отправки');
     } finally {
       setIsUploadingFile(false);
     }
@@ -895,16 +818,30 @@ export default function Chat() {
                 </div>
               )}
               {/* Подсказка про команду бота */}
-              <div className="px-3 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-gray-200 flex-shrink-0">
-                <p className="text-xs text-gray-600 flex items-center gap-2">
-                  <span className="font-semibold">💡 Подсказка:</span>
-                  Напишите
-                  <code className="px-1.5 py-0.5 bg-white rounded border border-purple-200 font-mono text-purple-700">
-                    #Помоги бот# вопрос
-                  </code>
-                  чтобы получить совет от AI (не отправится клиенту)
-                </p>
+              <div className="px-3 py-2 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-t border-gray-200">
+                <div className="flex items-start gap-2">
+                  <div className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-white text-xs font-bold">AI</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-700 mb-1">💡 Команды AI-помощника:</p>
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-600">
+                      <code className="px-2 py-0.5 bg-white rounded border border-blue-200 font-mono text-blue-700">
+                        #помоги
+                      </code>
+                      <span className="text-gray-400">или</span>
+                      <code className="px-2 py-0.5 bg-white rounded border border-blue-200 font-mono text-blue-700">
+                        бот помоги
+                      </code>
+                      <span>→ получить совет (не отправится клиенту)</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      <strong>Пример:</strong> #помоги Клиент молчит уже час, писать или ждать?
+                    </p>
+                  </div>
+                </div>
               </div>
+
 
 
               {/* Chat Input */}

@@ -324,8 +324,10 @@ async def ask_bot_advice(
     
     data = await request.json()
     manager_question = data.get('question')
-    context = data.get('context', '')  # ✅ Менеджер может передать контекст сам
-    log_info(f"💡 Менеджер {user['username']} запросил совет бота", "api")
+    context = data.get('context', '')
+    
+    # ✅ НОВОЕ: Логирование для отладки
+    log_info(f"💡 Менеджер {user['username']} запросил совет", "api")
     log_info(f"   Вопрос: {manager_question[:100]}...", "api")
     if context:
         log_info(f"   Контекст: {context[:100]}...", "api")

@@ -79,7 +79,7 @@ export class ApiClient {
       method: 'POST',
       body: JSON.stringify({
         question: question,
-        context: context || '' // Опционально: контекст от менеджера
+        context: context || ''
       }),
     })
   }

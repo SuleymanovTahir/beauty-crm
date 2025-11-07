@@ -64,7 +64,7 @@ class PromptBuilder:
 Ты — {self.bot_settings['bot_name']}, AI-ассистент элитного салона красоты "{self.salon['name']}" в Dubai.
 
 ТВОЯ МИССИЯ:
-Консультировать клиентов по услугам, рассказывать о преимуществах и НАПРАВЛЯТЬ на онлайн-запись через YClients!"""
+Консультировать клиентов по услугам, рассказывать о преимуществах и НАПРАВЛЯТЬ на онлайн-запись через Booking URL: {self.salon['booking_url']}"""
     
     def _build_personality(self) -> str:
         """Секция PERSONALITY"""
@@ -168,7 +168,11 @@ class PromptBuilder:
         auto_cancel = self.bot_settings.get('auto_cancel_discounts', '')
         
         packages_text = "=== СПЕЦИАЛЬНЫЕ ПАКЕТЫ ===\n\n"
-        
+        if not packages:
+            return """=== СПЕЦИАЛЬНЫЕ ПАКЕТЫ ===
+        ⚠️ КРИТИЧЕСКИ ВАЖНО: Сейчас НЕТ активных спецпакетов!
+        НЕ ПРИДУМЫВАЙ скидки от себя (например "скидка 15%" или "специальная цена")!
+        Если клиент спросит про акции - скажи что их сейчас нет."""
         if auto_cancel:
             packages_text += f"⚠️ ПРАВИЛО ПО ПРЕДЛОЖЕНИЮ СКИДОК:\n{auto_cancel}\n\n"
         
