@@ -63,7 +63,7 @@ app.include_router(notes_router, prefix="/api")
 app.include_router(public_router, prefix="/public")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook
-app.include_router(proxy_router)     # для прокси изображений
+app.include_router(proxy_router, prefix="/api")   # для прокси изображений
 
 
 # ===== MIDDLEWARE =====

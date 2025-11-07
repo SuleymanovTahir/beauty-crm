@@ -213,83 +213,100 @@ export default function Chat() {
 
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
-
-    if (message.trim().startsWith('#Помоги бот#')) {
-      const fullText = message.replace('#Помоги бот#', '').trim();
-
+  
+    // ✅ ПРОВЕРКА НА КОМАНДУ "ПОМОГИ БОТ" (регистронезависимая)
+    const messageLower = message.trim().toLowerCase();
+    
+    if (messageLower.startsWith('#помоги бот#') || messageLower.startsWith('#бот помоги#')) {
+      // Убираем команду (поддерживаем оба варианта)
+      let fullText = message.trim();
+      if (messageLower.startsWith('#помоги бот#')) {
+        fullText = fullText.replace(/#помоги бот#/i, '').trim();
+      } else if (messageLower.startsWith('#бот помоги#')) {
+        fullText = fullText.replace(/#бот помоги#/i, '').trim();
+      }
+      
       if (!fullText) {
-        toast.error('Напишите вопрос после команды #Помоги бот#');
+        toast.error('Напишите вопрос после команды #Помоги бот# или #Бот помоги#');
         return;
       }
-
+    
+      // ✅ Парсим: первая строка = вопрос, остальное = контекст
       const lines = fullText.split('\n');
       const question = lines[0].trim();
       const context = lines.slice(1).join('\n').trim();
-
+    
       try {
         setIsUploadingFile(true);
-
+        
+        console.log('🤖 Запрос совета у бота:', { question, context });
+        
         const response = await api.askBotAdvice(question, context);
-
-        if (response && typeof response === 'object' && 'advice' in response && typeof response.advice === 'string') {
-          toast.success('💡 Совет бота:', {
-            description: response.advice,
-            duration: 15000,
-          });
-        } else {
-          toast.error('Бот не вернул совет.');
-        }
-
+        
+        console.log('✅ Получен совет от бота:', response);
+        
+        // ✅ Показываем ответ бота
+        toast.success('💡 Совет бота:', {
+          description: response.advice,
+          duration: 15000, // 15 секунд
+        });
+        
         setMessage('');
-        setIsUploadingFile(false);
-        return;
+        return; // ⚠️ ВАЖНО: Выходим из функции, НЕ отправляем клиенту!
+        
       } catch (err) {
-        toast.error('Ошибка получения совета от бота');
+        console.error('❌ Ошибка получения совета:', err);
+        toast.error('Ошибка получения совета от бота: ' + (err instanceof Error ? err.message : 'Неизвестная ошибка'));
+        return; // ⚠️ ВАЖНО: Даже при ошибке НЕ отправляем клиенту!
+      } finally {
         setIsUploadingFile(false);
-        return;
       }
     }
-
+    
+    // ===== ОБЫЧНАЯ ОТПРАВКА СООБЩЕНИЙ КЛИЕНТУ =====
     try {
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
         let allFilesSent = true;
-
+  
         for (const file of attachedFiles) {
           try {
             const formData = new FormData();
             formData.append('file', file);
-
-            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+  
+            const uploadResponse = await fetch(`${(import.meta as any).env.VITE_API_URL}/api/upload`, {
               method: 'POST',
               credentials: 'include',
               body: formData,
+              // @ts-ignore: AbortSignal.timeout may not be supported in all environments
+              signal: (AbortSignal as any).timeout ? (AbortSignal as any).timeout(120000) : undefined
             });
-
+  
             if (!uploadResponse.ok) {
               const errorText = await uploadResponse.text();
               console.error('Upload error:', errorText);
               throw new Error(`${t('chat:error_loading')}: ${uploadResponse.status}`);
             }
-
+  
             const uploadResult = await uploadResponse.json();
-
+  
             if (!uploadResult.file_url) {
               throw new Error(t('chat:file_url_not_received'));
             }
-
+  
             const { file_url } = uploadResult;
-
+  
             const fileType = file.type.startsWith('image/') ? 'image' :
               file.type.startsWith('video/') ? 'video' :
                 file.type.startsWith('audio/') ? 'audio' : 'file';
-
+  
             const sendResult = await api.sendFile(selectedClient.id, file_url, fileType);
-
+  
+            // Properly typeguard sendResult for error property
             if (typeof sendResult === 'object' && sendResult !== null && 'error' in sendResult && sendResult.error) {
               throw new Error(String((sendResult as any).error));
             }
-
+  
             const newFileMessage: Message = {
               id: Date.now() + Math.random(),
               message: file_url,
@@ -297,15 +314,15 @@ export default function Chat() {
               timestamp: new Date().toISOString(),
               type: fileType
             };
-
+  
             setMessages(prev => [...prev, newFileMessage]);
-
+  
             toast.success(t('chat:file_sent', { filename: file.name }));
           } catch (err) {
             allFilesSent = false;
             const errorMsg = err instanceof Error ? err.message : t('chat:error');
             console.error('File send error:', err);
-
+  
             if (errorMsg.includes('timeout') || errorMsg.includes('aborted')) {
               toast.error(t('chat:loading_timeout', { filename: file.name }));
             } else if (errorMsg.includes('403')) {
@@ -317,17 +334,17 @@ export default function Chat() {
             }
           }
         }
-
+  
         if (allFilesSent) {
           setAttachedFiles([]);
         }
-
+  
         setIsUploadingFile(false);
       }
-
+  
       if (message.trim()) {
         await api.sendMessage(selectedClient.id, message);
-
+  
         const newMessage: Message = {
           id: Date.now(),
           message: message,
@@ -335,12 +352,12 @@ export default function Chat() {
           timestamp: new Date().toISOString(),
           type: 'text'
         };
-
+  
         setMessages(prev => [...prev, newMessage]);
         setMessage('');
         toast.success(t('chat:message_sent'));
       }
-
+  
       setTimeout(() => {
         if (selectedClient) {
           loadMessages(selectedClient.id, false);

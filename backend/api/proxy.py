@@ -1,6 +1,4 @@
-"""
-Прокси для изображений Instagram (обход 403 Forbidden)
-"""
+
 from fastapi import APIRouter, Query
 from fastapi.responses import Response
 import httpx
@@ -8,7 +6,7 @@ from logger import log_error, log_info
 
 router = APIRouter(tags=["Proxy"])
 
-@router.get("/api/proxy/image")
+@router.get("/proxy/image")
 async def proxy_image(url: str = Query(...)):
     """
     Прокси для загрузки изображений Instagram

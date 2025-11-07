@@ -1,5 +1,5 @@
 {
-  "name": "CRM для салона красоты",
+  "name": "beauty_crm",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
