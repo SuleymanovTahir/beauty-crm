@@ -1,14 +1,14 @@
 {
-    "not_found": "Клиент не найден",
-    "client_info": "Информация о клиенте",
-    "phone": "Телефон",
-    "first_contact": "Первый контакт",
-    "total_messages": "Всего сообщений",
-    "notes": "Заметки",
-    "status": "Статус",
-    "lifetime_value": "Lifetime Value",
-    "last_contact": "Последний контакт",
-    "write_message": "Написать сообщение",
-    "chat_history": "История переписки",
-    "no_messages": "Нет сообщений"
-  }
+  "cancel": "cancel",
+  "client": "client",
+  "client_data_updated": "client_data_updated",
+  "client_info": "client_info",
+  "edit": "edit",
+  "error_saving": "error_saving",
+  "loading": "loading",
+  "not_found": "not_found",
+  "phone": "phone",
+  "save": "save",
+  "saving": "saving",
+  "statistics": "statistics"
+}

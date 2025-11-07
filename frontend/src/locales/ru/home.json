@@ -1,57 +1,35 @@
 {
-    "hero": {
-      "badge": "Премиум услуги красоты",
-      "title": "Откройте для себя новый уровень красоты",
-      "description": "Профессиональные мастера, индивидуальный подход и высококачественные материалы. Ваша красота - наша страсть.",
-      "bookButton": "Записаться сейчас",
-      "servicesButton": "Наши услуги"
-    },
-    "features": {
-      "title": "Почему выбирают нас",
-      "subtitle": "Мы предлагаем лучший сервис в индустрии красоты",
-      "items": {
-        "masters": {
-          "title": "Опытные мастера",
-          "description": "Наши специалисты имеют международные сертификаты и многолетний опыт работы"
-        },
-        "materials": {
-          "title": "Премиум материалы",
-          "description": "Используем только качественные и безопасные материалы от ведущих брендов"
-        },
-        "schedule": {
-          "title": "Удобное расписание",
-          "description": "Работаем 7 дней в неделю с удобными временными слотами для записи"
-        }
-      }
-    },
-    "gallery": {
-      "title": "Наши работы",
-      "subtitle": "Результаты, которыми мы гордимся",
-      "items": {
-        "makeup": "Перманентный макияж",
-        "facial": "Уход за лицом",
-        "salon": "Наш салон"
-      }
-    },
-    "testimonials": {
-      "title": "Отзывы наших клиентов",
-      "subtitle": "Что говорят о нас"
-    },
-    "booking": {
-      "title": "Записаться на процедуру",
-      "description": "Заполните форму и мы свяжемся с вами для подтверждения",
-      "loading": "Загрузка услуг...",
-      "validation": "Пожалуйста, заполните все поля",
-      "form": {
-        "name": "Ваше имя *",
-        "namePlaceholder": "Анна Иванова",
-        "phone": "Телефон *",
-        "phonePlaceholder": "+971 50 123 4567",
-        "service": "Услуга *",
-        "servicePlaceholder": "Выберите услугу",
-        "date": "Дата *",
-        "time": "Время *",
-        "submit": "Записаться"
-      }
-    }
-  }
+  "booking.description": "booking.description",
+  "booking.form.date": "booking.form.date",
+  "booking.form.name": "booking.form.name",
+  "booking.form.namePlaceholder": "booking.form.namePlaceholder",
+  "booking.form.phone": "booking.form.phone",
+  "booking.form.phonePlaceholder": "booking.form.phonePlaceholder",
+  "booking.form.service": "booking.form.service",
+  "booking.form.servicePlaceholder": "booking.form.servicePlaceholder",
+  "booking.form.submit": "booking.form.submit",
+  "booking.form.time": "booking.form.time",
+  "booking.loading": "booking.loading",
+  "booking.title": "booking.title",
+  "booking.validation": "booking.validation",
+  "features.items.masters.description": "features.items.masters.description",
+  "features.items.masters.title": "features.items.masters.title",
+  "features.items.materials.description": "features.items.materials.description",
+  "features.items.materials.title": "features.items.materials.title",
+  "features.items.schedule.description": "features.items.schedule.description",
+  "features.items.schedule.title": "features.items.schedule.title",
+  "features.subtitle": "features.subtitle",
+  "features.title": "features.title",
+  "gallery.items.facial": "gallery.items.facial",
+  "gallery.items.makeup": "gallery.items.makeup",
+  "gallery.items.salon": "gallery.items.salon",
+  "gallery.subtitle": "gallery.subtitle",
+  "gallery.title": "gallery.title",
+  "hero.badge": "hero.badge",
+  "hero.bookButton": "hero.bookButton",
+  "hero.description": "hero.description",
+  "hero.servicesButton": "hero.servicesButton",
+  "hero.title": "hero.title",
+  "testimonials.subtitle": "testimonials.subtitle",
+  "testimonials.title": "testimonials.title"
+}

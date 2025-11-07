@@ -1,1 +1,19 @@
-{}
+{
+  "about": "about",
+  "contacts": "contacts",
+  "faq": "faq",
+  "footer.all_rights": "footer.all_rights",
+  "footer.contacts": "footer.contacts",
+  "footer.cooperation": "footer.cooperation",
+  "footer.description": "footer.description",
+  "footer.privacy_policy": "footer.privacy_policy",
+  "footer.quick_links": "footer.quick_links",
+  "footer.terms": "footer.terms",
+  "footer.weekdays": "footer.weekdays",
+  "footer.weekends": "footer.weekends",
+  "footer.working_hours": "footer.working_hours",
+  "home": "home",
+  "login": "login",
+  "personal_cabinet": "personal_cabinet",
+  "price_list": "price_list"
+}

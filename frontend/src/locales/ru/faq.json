@@ -1,60 +1,32 @@
 {
-    "title": "Часто задаваемые вопросы",
-    "subtitle": "Ответы на популярные вопросы о наших услугах",
-    "questions": {
-      "booking": {
-        "question": "Как записаться на процедуру?",
-        "answer": "Вы можете записаться на процедуру через форму на нашем сайте{{phone, phone}}, позвонив по телефону {{phone}}{{/phone}}{{instagram, instagram}}, или написав нам в Instagram {{instagram}}{{/instagram}}. Мы свяжемся с вами для подтверждения записи."
-      },
-      "payment": {
-        "question": "Какие способы оплаты вы принимаете?",
-        "answer": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги."
-      },
-      "cancellation": {
-        "question": "Могу ли я отменить или перенести запись?",
-        "answer": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги."
-      },
-      "materials": {
-        "question": "Какие материалы вы используете?",
-        "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья."
-      },
-      "certificates": {
-        "question": "Есть ли у ваших мастеров сертификаты?",
-        "answer": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации."
-      },
-      "preparation": {
-        "question": "Нужна ли подготовка перед процедурой?",
-        "answer": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи."
-      },
-      "contraindications": {
-        "question": "Есть ли противопоказания к процедурам?",
-        "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером."
-      },
-      "guarantee": {
-        "question": "Предоставляете ли вы гарантию на услуги?",
-        "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение."
-      },
-      "loyalty": {
-        "question": "Есть ли у вас программа лояльности?",
-        "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов."
-      },
-      "weekends": {
-        "question": "Работаете ли вы в выходные?",
-        "answer": "Да, мы работаем 7 дней в неделю. {{weekdays, weekdays}}В будние дни {{weekdays}}{{/weekdays}}{{weekends, weekends}}, в выходные {{weekends}}{{/weekends}}."
-      },
-      "gift": {
-        "question": "Можно ли подарить сертификат на услуги?",
-        "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата."
-      },
-      "location": {
-        "question": "Где находится ваш салон?",
-        "answer": "Мы находимся по адресу: {{address}}. Подробную информацию о том, как добраться, вы можете найти на странице Контакты."
-      }
-    },
-    "cta": {
-      "title": "Не нашли ответ на свой вопрос?",
-      "description": "Свяжитесь с нами, и мы с радостью ответим на все ваши вопросы",
-      "contactButton": "Связаться с нами",
-      "bookButton": "Записаться на процедуру"
-    }
-  }
+  "cta.bookButton": "cta.bookButton",
+  "cta.contactButton": "cta.contactButton",
+  "cta.description": "cta.description",
+  "cta.title": "cta.title",
+  "questions.booking.answer": "questions.booking.answer",
+  "questions.booking.question": "questions.booking.question",
+  "questions.cancellation.answer": "questions.cancellation.answer",
+  "questions.cancellation.question": "questions.cancellation.question",
+  "questions.certificates.answer": "questions.certificates.answer",
+  "questions.certificates.question": "questions.certificates.question",
+  "questions.contraindications.answer": "questions.contraindications.answer",
+  "questions.contraindications.question": "questions.contraindications.question",
+  "questions.gift.answer": "questions.gift.answer",
+  "questions.gift.question": "questions.gift.question",
+  "questions.guarantee.answer": "questions.guarantee.answer",
+  "questions.guarantee.question": "questions.guarantee.question",
+  "questions.location.answer": "questions.location.answer",
+  "questions.location.question": "questions.location.question",
+  "questions.loyalty.answer": "questions.loyalty.answer",
+  "questions.loyalty.question": "questions.loyalty.question",
+  "questions.materials.answer": "questions.materials.answer",
+  "questions.materials.question": "questions.materials.question",
+  "questions.payment.answer": "questions.payment.answer",
+  "questions.payment.question": "questions.payment.question",
+  "questions.preparation.answer": "questions.preparation.answer",
+  "questions.preparation.question": "questions.preparation.question",
+  "questions.weekends.answer": "questions.weekends.answer",
+  "questions.weekends.question": "questions.weekends.question",
+  "subtitle": "subtitle",
+  "title": "title"
+}

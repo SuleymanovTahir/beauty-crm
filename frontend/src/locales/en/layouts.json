@@ -1,1 +1,20 @@
-{}
+{
+  "admin": "admin",
+  "crm": "crm",
+  "employee": "employee",
+  "logout": "logout",
+  "manager": "manager",
+  "menu.analytics": "menu.analytics",
+  "menu.bookings": "menu.bookings",
+  "menu.bot_settings": "menu.bot_settings",
+  "menu.calendar": "menu.calendar",
+  "menu.chat": "menu.chat",
+  "menu.clients": "menu.clients",
+  "menu.dashboard": "menu.dashboard",
+  "menu.funnel": "menu.funnel",
+  "menu.my_bookings": "menu.my_bookings",
+  "menu.profile": "menu.profile",
+  "menu.services": "menu.services",
+  "menu.settings": "menu.settings",
+  "menu.users": "menu.users"
+}
