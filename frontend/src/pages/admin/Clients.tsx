@@ -513,7 +513,7 @@ export default function Clients() {
                         )}
                         {client.profile_pic && client.profile_pic.trim() !== '' ? (
                           <img
-                            src={`/api/proxy-image?url=${encodeURIComponent(client.profile_pic)}`}
+                          src={`/api/proxy/image?url=${encodeURIComponent(client.profile_pic)}`}
                             alt={client.display_name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                             onError={(e) => {

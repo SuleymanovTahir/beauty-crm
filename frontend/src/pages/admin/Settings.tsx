@@ -359,8 +359,8 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div key="weekdays">
-                    <Label htmlFor="weekdays">{t('settings:working_hours')}</Label>
+                  <div>
+                    <Label htmlFor="weekdays">{t('settings:weekdays_hours')}</Label>
                     <Input
                       id="weekdays"
                       value={generalSettings.working_hours.weekdays}
@@ -372,8 +372,8 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div key="weekends">
-                    <Label htmlFor="weekends">{t('settings:working_hours')}</Label>
+                  <div>
+                    <Label htmlFor="weekends">{t('settings:weekends_hours')}</Label>
                     <Input
                       id="weekends"
                       value={generalSettings.working_hours.weekends}
