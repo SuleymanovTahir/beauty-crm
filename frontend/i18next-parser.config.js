@@ -14,6 +14,11 @@ module.exports = {
     tsx: ['JsxLexer'],
     ts: ['JsxLexer']
   },
-  // Автоматически создавать namespace из пути файла
-  defaultValue: (locale, namespace, key) => key
+  // Автоматическое определение namespace из пути файла
+  defaultValue: (locale, namespace, key) => key,
+  
+  // ✅ Правило: папка pages -> namespace по пути к файлу
+  // src/pages/admin/Dashboard.tsx -> admin/Dashboard
+  // src/pages/public/Home.tsx -> public/Home
+  useKeysAsDefaultValue: false
 };
