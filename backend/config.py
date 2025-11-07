@@ -5,8 +5,37 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-# ===== ЗАГРУЗКА ПЕРЕМЕННЫХ ИЗ .env =====
-load_dotenv()
+import socket
+
+def is_localhost() -> bool:
+    """Проверяет, запущено ли приложение на localhost"""
+    try:
+        hostname = socket.gethostname()
+        return hostname in ['localhost', '127.0.0.1'] or hostname.startswith('192.168.')
+    except:
+        return False
+
+# Определяем окружение
+if os.getenv("ENVIRONMENT"):
+    # Явно указано в переменных окружения
+    environment = os.getenv("ENVIRONMENT")
+elif os.getenv("DEV_MODE") == "1":
+    environment = "development"
+elif is_localhost():
+    environment = "development"
+else:
+    environment = "production"
+
+# Выбираем файл конфигурации
+if environment == "development":
+    env_file = ".env.local"
+    print("🔧 Режим: LOCALHOST (development)")
+else:
+    env_file = ".env.production"
+    print("🚀 Режим: PRODUCTION (server)")
+
+# Загружаем правильный .env файл
+load_dotenv(env_file)
 
 # Подавление логов
 os.environ['GRPC_VERBOSITY'] = 'ERROR'

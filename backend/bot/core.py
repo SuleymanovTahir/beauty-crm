@@ -34,12 +34,13 @@ class SalonBot:
         self.reload_settings()
         
         # ✅ Настройка прокси для обхода геоблокировки
-        self.proxy_url = os.getenv("PROXY_URL")
-        
+        # ✅ Настройка прокси для обхода геоблокировки
+        self.proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
+
         if self.proxy_url:
             print(f"🌐 Используется прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}...")
         else:
-            print("⚠️ Прокси не настроен - возможны проблемы в Казахстане!")
+            print("⚠️ Прокси отключен (localhost) или не настроен")
         
         # Настраиваем Gemini (для fallback без прокси)
         genai.configure(api_key=GEMINI_API_KEY)
@@ -146,8 +147,8 @@ class SalonBot:
             return self._get_fallback_response(client_language)
     
     async def _generate_via_proxy(self, prompt: str) -> str:
-        url = f"https://{self.proxy_url}/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
-
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
+    
         # ✅ ЧИТАЕМ ИЗ БД (уже загружено в self.bot_settings)
         max_chars = self.bot_settings.get('max_message_chars', 500)
         max_tokens = int(max_chars / 2.5)  # Русский: ~2.5 символа на токен
@@ -156,31 +157,31 @@ class SalonBot:
         prompt_with_limit = f"""{prompt}
 
     ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
-    """
+"""
 
         payload = {
             "contents": [{
-                "parts": [{"text": prompt_with_limit}]  # ✅ Используем промпт с инструкцией
-            }],
+                "parts": [{"text": prompt_with_limit}]
+                }],
             "generationConfig": {
                 "temperature": 0.7,
-                "maxOutputTokens": max_tokens,  # ✅ Ограничение токенов
+                "maxOutputTokens": max_tokens,
                 "stopSequences": []
             }
         }
         
         # ✅ КРИТИЧЕСКИ ВАЖНО: Используем прокси если настроен
-        client_kwargs = {
+        client_kwargs: dict = {
             "timeout": 60.0,
             "follow_redirects": True
         }
-        
+
         if self.proxy_url:
-            client_kwargs["proxy"] = self.proxy_url
+            client_kwargs["proxies"] = self.proxy_url
             print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
         else:
-            print("⚠️ Прокси НЕ настроен!")
-        
+            print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
+                
         async with httpx.AsyncClient(**client_kwargs) as client:
             response = await client.post(url, json=payload)
             response.raise_for_status()
@@ -203,6 +204,7 @@ class SalonBot:
             
             # Если структура ответа неожиданная
             raise Exception(f"Unexpected Gemini response structure: {data}")
+    
     
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке"""
