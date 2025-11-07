@@ -22,7 +22,9 @@ DEFAULT_SETTINGS = {
     "emoji_usage": "Умеренное (2-3 на сообщение)",
     "languages_supported": "ru,en,ar",
 }
-def parse_section(content: str, section_name: str, next_section: str = None) -> str:
+from typing import Optional
+
+def parse_section(content: str, section_name: str, next_section: Optional[str] = None) -> str:
     """Извлечь текст между секциями"""
     try:
         start = content.find(f'[{section_name}]')

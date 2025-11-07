@@ -1,7 +1,4 @@
 # backend/bot/core.py
-"""
-Основной класс бота - объединяет функциональность из ai_bot.py и bot.py
-"""
 import google.generativeai as genai
 import httpx
 import os
@@ -12,9 +9,6 @@ from config import GEMINI_API_KEY
 from db import (
     get_salon_settings, 
     get_bot_settings,
-    get_all_services,
-    find_special_package_by_keywords,
-    get_all_special_packages
 )
 
 
@@ -56,9 +50,9 @@ class SalonBot:
     
     def build_system_prompt(
         self, 
-        instagram_id: str, 
-        history: List[Tuple], 
-        booking_progress: Dict = None, 
+        instagram_id: str,
+        history: List[Tuple],
+        booking_progress: Optional[Dict] = None,
         client_language: str = 'ru'
     ) -> str:
         """
@@ -83,7 +77,7 @@ class SalonBot:
         return builder.build_full_prompt(
             instagram_id=instagram_id,
             history=history,
-            booking_progress=booking_progress,
+            booking_progress=booking_progress or {},
             client_language=client_language
         )
     
@@ -91,8 +85,8 @@ class SalonBot:
         self, 
         user_message: str, 
         instagram_id: str,
-        history: List[Tuple] = None,
-        booking_progress: Dict = None,
+        history: Optional[List[Tuple]] = None,
+        booking_progress: Optional[Dict] = None,
         client_language: str = 'ru'
     ) -> str:
         """
@@ -112,11 +106,9 @@ class SalonBot:
         system_prompt = self.build_system_prompt(
             instagram_id=instagram_id,
             history=history or [],
-            booking_progress=booking_progress,
+            booking_progress=booking_progress or {},
             client_language=client_language
         )
-        
-        # Полный промпт
         full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
         
         try:
