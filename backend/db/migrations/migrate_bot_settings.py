@@ -49,38 +49,32 @@ def parse_section(content: str, section_name: str, next_section: Optional[str] =
 def extract_quotes(text: str) -> list:
     """Извлечь фразы в кавычках"""
     return re.findall(r'"([^"]*)"', text)
+
 def extract_objection(content: str, objection_keyword: str) -> str:
     """Извлечь конкретное возражение - только ответ бота"""
     
-    # Ищем блок возражения
     pattern = rf'\*\*ВОЗРАЖЕНИЕ.*?{re.escape(objection_keyword)}.*?\*\*'
     match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
     
     if not match:
         return ""
     
-    # Начинаем искать от найденного возражения
     start_pos = match.end()
     
-    # Ищем "✅ ГЕНИАЛЬНО:" после возражения
     genius_pattern = r'✅\s*ГЕНИАЛЬНО:\s*\n'
     genius_match = re.search(genius_pattern, content[start_pos:])
     
     if not genius_match:
         return ""
     
-    # Начало ответа - сразу после "✅ ГЕНИАЛЬНО:"
     answer_start = start_pos + genius_match.end()
-    
-    # Конец ответа - до следующего "**ВОЗРАЖЕНИЕ" или "---"
     rest_content = content[answer_start:]
     
-    # Ищем конец блока
     end_patterns = [
-        r'\n\n\*\*ВОЗРАЖЕНИЕ',  # Следующее возражение
-        r'\n---',                 # Разделитель
-        r'\n\n\[',                # Новая секция
-        r'\n\n#',                 # Заголовок
+        r'\n\n\*\*ВОЗРАЖЕНИЕ',
+        r'\n---',
+        r'\n\n\[',
+        r'\n\n#',
     ]
     
     end_pos = len(rest_content)
@@ -91,25 +85,33 @@ def extract_objection(content: str, objection_keyword: str) -> str:
     
     response = rest_content[:end_pos].strip()
     
-    # Очистка от артефактов
+    # ✅ УБИРАЕМ ДУБЛИКАТЫ
     lines = []
+    seen_genialnos = 0
     for line in response.split('\n'):
-        # Пропускаем служебные строки
-        if line.strip().startswith('✅ ГЕНИАЛЬНО:'):
+        line_stripped = line.strip()
+        
+        # Пропускаем лишние "✅ ГЕНИАЛЬНО:"
+        if line_stripped.startswith('✅ ГЕНИАЛЬНО:'):
+            seen_genialnos += 1
+            if seen_genialnos > 1:
+                continue
+        
+        if line_stripped.startswith('❌'):
             continue
-        if line.strip().startswith('❌'):
-            continue
-        if line.strip().startswith('**ВОЗРАЖЕНИЕ'):
+        if line_stripped.startswith('**ВОЗРАЖЕНИЕ'):
             break
         lines.append(line)
     
     response = '\n'.join(lines).strip()
     
-    # Обрезаем до 1000 символов если слишком длинно
-    if len(response) > 1000:
-        response = response[:997] + '...'
+    # ✅ Увеличиваем лимит до 2000
+    if len(response) > 2000:
+        response = response[:1997] + '...'
     
     return response
+
+    
 def parse_instructions_file() -> dict:
     """ПОЛНЫЙ парсинг файла"""
     
@@ -349,14 +351,14 @@ def create_tables(conn):
     languages_supported TEXT DEFAULT 'ru,en,ar',
     objection_handling TEXT,
     negative_handling TEXT,
-    safety_guidelines TEXT,
-    example_good_responses TEXT,
-    algorithm_actions TEXT,
+    safety_guidelines TEXT,        -- ✅ БЕЗ ЛИМИТА
+    example_good_responses TEXT,   -- ✅ БЕЗ ЛИМИТА
+    algorithm_actions TEXT,        -- ✅ БЕЗ ЛИМИТА
     location_features TEXT,
     seasonality TEXT,
     emergency_situations TEXT,
     success_metrics TEXT,
-    objection_expensive TEXT,
+    objection_expensive TEXT,      -- ✅ БЕЗ ЛИМИТА (2000 символов)
     objection_think_about_it TEXT,
     objection_no_time TEXT,
     objection_pain TEXT,
@@ -369,7 +371,7 @@ def create_tables(conn):
     emotional_triggers TEXT,
     social_proof_phrases TEXT,
     personalization_rules TEXT,
-    example_dialogues TEXT,
+    example_dialogues TEXT,        -- ✅ БЕЗ ЛИМИТА (2000 символов)
     emotional_responses TEXT,
     anti_patterns TEXT,
     voice_message_response TEXT,
@@ -407,6 +409,8 @@ def create_tables(conn):
         print(f"⚠️  Ошибка при добавлении колонок: {e}")
 
     conn.commit()
+
+
 def migrate_settings():
     """Главная функция"""
     
