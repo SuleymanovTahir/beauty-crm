@@ -80,6 +80,9 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const lastProcessedMessageId = useRef<string | number | null>(null);
+  const isFetchingSuggestion = useRef(false);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const clientIdFromUrl = searchParams.get('client_id');
@@ -130,6 +133,38 @@ export default function Chat() {
     }
   }, [message]);
 
+  useEffect(() => {
+    if (!selectedClient || botMode !== 'assistant' || messages.length === 0) return;
+    if (isFetchingSuggestion.current) return; // Защита от дублирования
+
+    const lastMsg = messages[messages.length - 1];
+    
+    // Проверяем: это НОВОЕ сообщение от КЛИЕНТА?
+    if (
+      lastMsg.sender === 'client' && 
+      lastMsg.id && 
+      lastMsg.id !== lastProcessedMessageId.current
+    ) {
+      console.log('🆕 Обнаружено новое сообщение от клиента:', lastMsg.id);
+      
+      lastProcessedMessageId.current = lastMsg.id;
+      isFetchingSuggestion.current = true;
+      
+      setTimeout(() => {
+        fetchBotSuggestion(selectedClient.id).finally(() => {
+          isFetchingSuggestion.current = false;
+        });
+      }, 1000);
+    }
+  }, [messages, selectedClient, botMode]);
+
+  // ✅ ДОБАВЛЕНО: Сброс при смене клиента
+  useEffect(() => {
+    lastProcessedMessageId.current = null;
+    isFetchingSuggestion.current = false;
+  }, [selectedClient]);
+
+
   const loadClients = async () => {
     try {
       setInitialLoading(true);
@@ -178,13 +213,7 @@ export default function Chat() {
       }
 
       setMessages(messagesArray as Message[]);
-      if (!isInitial && botMode === 'assistant') {
-        const lastMsg = messagesArray[messagesArray.length - 1];
-        if (lastMsg && lastMsg.sender === 'client') {
-          // Даем 1 секунду чтобы все сообщения дошли
-          setTimeout(() => fetchBotSuggestion(clientId), 1000);
-        }
-      }
+
     } catch (err) {
       if (isInitial) {
         const message = err instanceof Error ? err.message : t('chat:error_loading_messages');
@@ -877,6 +906,29 @@ export default function Chat() {
                   </div>
                 </div>
               )}
+              {/* ✅ ДОБАВЛЕНО: Кнопка запроса подсказки (только для assistant mode) */}
+              {selectedClient && botMode === 'assistant' && (
+                <div className="px-3 py-2 bg-white border-t border-gray-200">
+                  <button
+                    onClick={() => fetchBotSuggestion(selectedClient.id)}
+                    disabled={isLoadingSuggestion}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoadingSuggestion ? (
+                      <>
+                        <Loader className="w-4 h-4 animate-spin" />
+                        <span>Бот думает...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        <span>✨ Получить подсказку от AI</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
               {/* Подсказка про команду бота */}
               <div className="px-3 py-2 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-t border-gray-200">
                 <div className="flex items-start gap-2">

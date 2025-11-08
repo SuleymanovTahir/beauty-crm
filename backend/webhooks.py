@@ -299,28 +299,32 @@ async def handle_webhook(request: Request):
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
                     
-                    bot_mode = get_client_bot_mode(sender_id)
-                    log_info(f"🤖 Bot mode for {sender_id}: {bot_mode}", "webhook")
-
-
                     salon = get_salon_settings()
                     bot_globally_enabled = salon.get('bot_globally_enabled', 1)
+                    
+                    log_info(f"🌐 Global bot enabled: {bot_globally_enabled}", "webhook")
                     
                     if not bot_globally_enabled:
                         log_info(f"⏸️ Bot globally disabled, skipping auto-response", "webhook")
                         continue
                     
+                    # ✅ Получаем режим ПОСЛЕ проверки глобальной настройки
+                    bot_mode = get_client_bot_mode(sender_id)
+                    log_info(f"🤖 Bot mode for {sender_id}: {bot_mode}", "webhook")
+                    
                     if bot_mode == 'manual':
                         log_info(f"👤 Manual mode, skipping auto-response", "webhook")
                         continue
                     
-                    if bot_mode == 'assistant':
-                        log_info(f"🤖 Assistant mode, skipping auto-response (manager will handle)", "webhook")
-                        continue
-                    
-                    # Только если режим 'autopilot' - продолжаем автоответ
-                    if bot_mode != 'autopilot':
-                        continue
+                    # ✅ ИСПРАВЛЕНИЕ: В assistant и autopilot бот отвечает
+                    elif bot_mode == 'assistant':
+                        log_info(f"🤖 Assistant mode, bot will respond + suggest", "webhook")
+                        # НЕ CONTINUE - продолжаем
+                    elif bot_mode == 'autopilot':
+                        log_info(f"🤖 Autopilot mode, bot will respond", "webhook")
+                        # НЕ CONTINUE - продолжаем
+                    else:
+                        log_warning(f"⚠️ Unknown bot mode: {bot_mode}, defaulting to autopilot", "webhook")
 
 
                     await send_typing_indicator(sender_id)

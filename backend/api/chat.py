@@ -15,8 +15,10 @@ from integrations import send_message
 from utils import require_auth, get_total_unread
 from logger import log_error,log_info,log_warning
 
+
 router = APIRouter(tags=["Chat"])
 
+_processing_suggestions = set()
 
 @router.get("/chat/messages")
 async def get_chat_messages(
@@ -411,6 +413,21 @@ async def get_bot_suggestion(
         
         if not client_id:
             return JSONResponse({"error": "Missing client_id"}, status_code=400)
+
+        request_key = f"{client_id}_{user['id']}"
+
+        if request_key in _processing_suggestions:
+            log_warning(f"⚠️ Duplicate request ignored for {client_id}", "api")
+            return JSONResponse(
+                {"error": "Already processing suggestion for this client"}, 
+                status_code=429
+            )
+        
+        # Помечаем что начали обработку
+        _processing_suggestions.add(request_key)
+        
+        # ✅ НОВОЕ: Логирование для отладки
+        log_info(f"💡 Менеджер {user['username']} запросил совет", "api")
         
         # ✅ Получаем последние сообщения (включая несколько подряд от клиента)
         history = get_chat_history(client_id, limit=20)
@@ -457,6 +474,11 @@ async def get_bot_suggestion(
     except Exception as e:
         log_error(f"Error generating bot suggestion: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        # ✅ ДОБАВЛЕНО: Гарантированная очистка флага обработки
+        request_key = f"{client_id}_{user['id']}" if 'client_id' in locals() and 'user' in locals() else None
+        if request_key:
+            _processing_suggestions.discard(request_key)
 
 
 # НОВЫЙ ENDPOINT: Изменить режим бота для клиента

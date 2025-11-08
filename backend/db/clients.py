@@ -206,17 +206,20 @@ def detect_and_save_language(instagram_id: str, message: str):
 
 
 def get_client_language(instagram_id: str) -> str:
-    """Получить предпочитаемый язык клиента"""
+    """Получить язык клиента"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    c.execute("SELECT detected_language FROM clients WHERE instagram_id = ?", 
-             (instagram_id,))
-    result = c.fetchone()
-    
-    conn.close()
-    
-    return result[0] if result and result[0] else 'ru'
+    try:
+        # ✅ ИСПРАВЛЕНИЕ: Используем detected_language вместо language
+        c.execute("SELECT detected_language FROM clients WHERE instagram_id = ?", (instagram_id,))
+        result = c.fetchone()
+        return result[0] if result and result[0] else 'ru'
+    except Exception as e:
+        log_error(f"Ошибка получения языка клиента: {e}", "database")
+        return 'ru'
+    finally:
+        conn.close()
 
 
 # В конец файла backend/db/clients.py
@@ -250,20 +253,7 @@ def update_client(instagram_id: str, data: dict):
     finally:
         conn.close()
 
-def get_client_language(instagram_id: str) -> str:
-    """Получить язык клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    try:
-        c.execute("SELECT language FROM clients WHERE instagram_id = ?", (instagram_id,))
-        result = c.fetchone()
-        return result[0] if result and result[0] else 'ru'
-    except Exception as e:
-        log_error(f"Ошибка получения языка клиента: {e}", "database")
-        return 'ru'
-    finally:
-        conn.close()
+
 
 
 def get_client_bot_mode(instagram_id: str) -> str:
