@@ -301,3 +301,4 @@ def update_client_bot_mode(instagram_id: str, mode: str) -> bool:
         return False
     finally:
         conn.close()
+

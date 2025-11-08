@@ -4,13 +4,12 @@ API Endpoints для работы с чатом
 from fastapi import APIRouter, Request, Query, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-from httpx import TimeoutException, AsyncClient
 from integrations.instagram import send_file
-from db import  get_client_bot_mode, get_client_language, update_client_bot_mode
 
 from db import (
     get_chat_history, mark_messages_as_read, save_message,
-    get_unread_messages_count, log_activity
+    get_unread_messages_count, log_activity,get_client_language,
+    update_client_bot_mode
 )
 from integrations import send_message
 from utils import require_auth, get_total_unread
@@ -460,6 +459,7 @@ async def get_bot_suggestion(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+# НОВЫЙ ENDPOINT: Изменить режим бота для клиента
 # НОВЫЙ ENDPOINT: Изменить режим бота для клиента
 @router.post("/clients/{client_id}/bot-mode")
 async def update_client_bot_mode_api(

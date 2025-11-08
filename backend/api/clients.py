@@ -11,10 +11,10 @@ from db import (
     get_all_clients, get_client_by_id, get_or_create_client,
     update_client_info, update_client_status, pin_client,
     delete_client, get_chat_history, get_all_bookings,
-    log_activity
+    log_activity,update_client_bot_mode
 )
 from utils import require_auth, get_total_unread, get_client_display_name
-from logger import log_error
+from logger import log_error,log_info
 
 router = APIRouter(tags=["Clients"])
 
@@ -468,3 +468,31 @@ def get_client_bot_mode(instagram_id: str) -> str:
     conn.close()
     
     return result[0] if result and result[0] else 'assistant'
+
+@router.post("/{client_id}/bot-mode")
+async def update_client_bot_mode_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Изменить режим бота для клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        data = await request.json()
+        mode = data.get('mode')
+        
+        if mode not in ['manual', 'assistant', 'autopilot']:
+            return JSONResponse({"error": "Invalid mode"}, status_code=400)
+        
+        update_client_bot_mode(client_id, mode)
+        
+        log_info(f"🔧 Bot mode changed for {client_id}: {mode}", "api")
+        
+        return {"success": True, "mode": mode}
+        
+    except Exception as e:
+        log_error(f"Error updating bot mode: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
