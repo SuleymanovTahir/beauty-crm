@@ -179,21 +179,20 @@ class SalonBot:
             "follow_redirects": True
         }
     
-        # ✅ КРИТИЧЕСКИ ВАЖНО: Правильная настройка прокси для httpx
+        # ✅ ПРАВИЛЬНЫЙ СИНТАКСИС для AsyncClient
         if self.proxy_url:
-            # Для httpx используем mounts вместо proxies
-            client_kwargs["mounts"] = {
-                'https://': httpx.HTTPTransport(proxy=self.proxy_url),
-                'http://': httpx.HTTPTransport(proxy=self.proxy_url)
-            }
-            print(
-                f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
+            print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
         else:
             print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
 
-        async with httpx.AsyncClient(**client_kwargs) as client:
-            response = await client.post(url, json=payload)
-            response.raise_for_status()
+        # ✅ РАБОТАЕТ для старых версий httpx - используем transport
+        if self.proxy_url:
+            transport = httpx.HTTPTransport(proxy=self.proxy_url)
+            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, transport=transport) as client:
+                response = await client.post(url, json=payload)
+        else:
+            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+                response = await client.post(url, json=payload)
 
             data = response.json()
 

@@ -29,17 +29,16 @@ async def fetch_username_from_api(user_id: str) -> tuple:
             "access_token": PAGE_ACCESS_TOKEN,
         }
         
-        client_kwargs: dict = {"timeout": 10.0}
-        if os.getenv("ENVIRONMENT") == "production":
-            proxy_url = os.getenv("PROXY_URL")
-            if proxy_url:
-                client_kwargs["mounts"] = {
-                    'https://': httpx.HTTPTransport(proxy=proxy_url),
-                    'http://': httpx.HTTPTransport(proxy=proxy_url)
-                } 
+        # ✅ Правильный синтаксис для AsyncClient
+        proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
-        async with httpx.AsyncClient(**client_kwargs) as client:
-            response = await client.get(url, params=params)
+        if proxy_url:
+            transport = httpx.HTTPTransport(proxy=proxy_url)
+            async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+                response = await client.get(url, params=params)
+        else:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url, params=params)
 
             
             if response.status_code == 200:
@@ -126,14 +125,15 @@ async def get_instagram_scoped_id(sender_id: str) -> str:
             "access_token": PAGE_ACCESS_TOKEN,
         }
         
-        client_kwargs: dict = {"timeout": 10.0}
-        if os.getenv("ENVIRONMENT") == "production":
-            proxy_url = os.getenv("PROXY_URL")
-            if proxy_url:
-                client_kwargs["proxies"] = proxy_url
+        proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
-        async with httpx.AsyncClient(**client_kwargs) as client:
-            response = await client.get(url, params=params)
+        if proxy_url:
+            transport = httpx.HTTPTransport(proxy=proxy_url)
+            async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+                response = await client.get(url, params=params)
+        else:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url, params=params)
             response.raise_for_status()
             if response.status_code == 200:
                 data = response.json()
@@ -260,8 +260,15 @@ async def handle_webhook(request: Request):
                                 if proxy_url:
                                     client_kwargs["proxies"] = proxy_url
 
-                            async with httpx.AsyncClient(**client_kwargs) as client:
-                                response = await client.get(url, params=params)
+                            proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
+
+                            if proxy_url:
+                                transport = httpx.HTTPTransport(proxy=proxy_url)
+                                async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+                                    response = await client.get(url, params=params)
+                            else:
+                                async with httpx.AsyncClient(timeout=10.0) as client:
+                                    response = await client.get(url, params=params)
 
                                 if response.status_code == 200:
                                     data_api = response.json()
