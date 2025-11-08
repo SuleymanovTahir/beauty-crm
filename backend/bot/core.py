@@ -28,8 +28,6 @@ class SalonBot:
         self.reload_settings()
 
         # ✅ Настройка прокси для обхода геоблокировки
-        # ✅ Настройка прокси для обхода геоблокировки
-        # ✅ КРИТИЧЕСКИ ВАЖНО: Принудительная загрузка из окружения
         environment = os.getenv("ENVIRONMENT")
         proxy_url_raw = os.getenv("PROXY_URL")
 
@@ -150,6 +148,7 @@ class SalonBot:
             return self._get_fallback_response(client_language)
 
     async def _generate_via_proxy(self, prompt: str) -> str:
+        """Генерация через Gemini REST API с прокси"""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
     
         # ✅ ЧИТАЕМ ИЗ БД
@@ -159,8 +158,8 @@ class SalonBot:
         # ✅ ДОБАВЛЯЕМ ИНСТРУКЦИЮ В ПРОМПТ
         prompt_with_limit = f"""{prompt}
     
-    ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
-    """
+⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
+"""
     
         payload = {
             "contents": [{
@@ -173,31 +172,21 @@ class SalonBot:
             }
         }
     
-        # ✅ ИСПРАВЛЕНИЕ: Используем mounts вместо proxies
-        client_kwargs: dict = {
-            "timeout": 60.0,
-            "follow_redirects": True
-        }
-    
         # ✅ ПРАВИЛЬНЫЙ СИНТАКСИС для AsyncClient
         if self.proxy_url:
             print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
         else:
             print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
 
-        if self.proxy_url:
-            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxies=self.proxy_url) as client:
-                response = await client.post(url, json=payload)
-                data = response.json()
-        else:
-            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
-                response = await client.post(url, json=payload)
-                data = response.json()
-        
-        # Извлекаем текст ответа
-        if "candidates" in data and len(data["candidates"]) > 0:
-
-        data = response.json()
+        try:
+            if self.proxy_url:
+                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxies=self.proxy_url) as client:
+                    response = await client.post(url, json=payload)
+                    data = response.json()
+            else:
+                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+                    response = await client.post(url, json=payload)
+                    data = response.json()
 
             # Извлекаем текст ответа
             if "candidates" in data and len(data["candidates"]) > 0:
@@ -215,6 +204,13 @@ class SalonBot:
 
             # Если структура ответа неожиданная
             raise Exception(f"Unexpected Gemini response structure: {data}")
+            
+        except httpx.HTTPError as e:
+            print(f"❌ HTTP Error: {e}")
+            raise
+        except Exception as e:
+            print(f"❌ Unexpected error: {e}")
+            raise
 
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке"""
