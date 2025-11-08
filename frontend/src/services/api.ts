@@ -84,6 +84,27 @@ export class ApiClient {
     })
   }
 
+  async getBotSuggestion(clientId: string) {
+    return this.request('/api/chat/bot-suggest', {
+      method: 'POST',
+      body: JSON.stringify({ client_id: clientId }),
+    })
+  }
+  
+  async updateClientBotMode(clientId: string, mode: 'manual' | 'assistant' | 'autopilot') {
+    return this.request(`/api/clients/${clientId}/bot-mode`, {
+      method: 'POST',
+      body: JSON.stringify({ mode }),
+    })
+  }
+  
+  async updateBotGloballyEnabled(enabled: boolean) {
+    return this.request('/api/settings/bot-globally-enabled', {
+      method: 'POST',
+      body: JSON.stringify({ enabled }),
+    })
+  }
+
   async logout() {
     try {
       await this.request('/api/logout', { method: 'POST' })

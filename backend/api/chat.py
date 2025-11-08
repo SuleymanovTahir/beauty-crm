@@ -6,6 +6,8 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 from httpx import TimeoutException, AsyncClient
 from integrations.instagram import send_file
+from db import  get_client_bot_mode, get_client_language, update_client_bot_mode
+from config import BOT_MODES
 
 from db import (
     get_chat_history, mark_messages_as_read, save_message,
@@ -390,4 +392,100 @@ async def ask_bot_advice(
         
     except Exception as e:
         log_error(f"Error generating bot advice: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+
+# НОВЫЙ ENDPOINT: Предложение ответа от бота (режим "ассистент")
+@router.post("/chat/bot-suggest")
+async def get_bot_suggestion(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить предложение ответа от бота (не отправляет клиенту)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        data = await request.json()
+        client_id = data.get('client_id')
+        
+        if not client_id:
+            return JSONResponse({"error": "Missing client_id"}, status_code=400)
+        
+        # ✅ Получаем последние сообщения (включая несколько подряд от клиента)
+        history = get_chat_history(client_id, limit=20)
+        
+        # ✅ КРИТИЧЕСКИ ВАЖНО: Находим все непрочитанные сообщения клиента подряд
+        unread_messages = []
+        for msg in reversed(history):  # Идем с конца
+            if msg[1] == 'client':  # sender == 'client'
+                unread_messages.insert(0, msg[0])  # Добавляем в начало
+            else:
+                break  # Как только встретили ответ менеджера/бота - останавливаемся
+        
+        if not unread_messages:
+            return JSONResponse({"error": "No unread messages"}, status_code=400)
+        
+        # ✅ Объединяем все непрочитанные сообщения в один контекст
+        combined_message = "\n\n".join(unread_messages)
+        
+        log_info(f"🤖 Bot suggestion request: {len(unread_messages)} unread messages from {client_id}", "api")
+        log_info(f"📝 Combined: {combined_message[:100]}...", "api")
+        # Получаем язык клиента
+
+        client_language = get_client_language(client_id)
+
+        # Генерируем ответ
+        from bot import get_bot
+        bot = get_bot()
+        
+        ai_response = await bot.generate_response(
+            user_message=combined_message,
+            instagram_id=client_id,
+            history=history,
+            client_language=client_language
+        )
+        
+        log_info(f"✅ Bot suggestion generated: {ai_response[:50]}...", "api")
+        
+        return {
+            "success": True,
+            "suggestion": ai_response,
+            "unread_count": len(unread_messages)
+        }
+        
+    except Exception as e:
+        log_error(f"Error generating bot suggestion: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# НОВЫЙ ENDPOINT: Изменить режим бота для клиента
+@router.post("/clients/{client_id}/bot-mode")
+async def update_client_bot_mode_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Изменить режим бота для клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        data = await request.json()
+        mode = data.get('mode')
+        
+        if mode not in ['manual', 'assistant', 'autopilot']:
+            return JSONResponse({"error": "Invalid mode"}, status_code=400)
+        
+        update_client_bot_mode(client_id, mode)
+        
+        log_info(f"🔧 Bot mode changed for {client_id}: {mode}", "api")
+        
+        return {"success": True, "mode": mode}
+        
+    except Exception as e:
+        log_error(f"Error updating bot mode: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

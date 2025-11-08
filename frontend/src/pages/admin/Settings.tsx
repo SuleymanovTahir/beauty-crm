@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
+
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Save, Building, Phone, Clock, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -27,7 +28,10 @@ export default function AdminSettings() {
     }
   });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
+  // ✅ ДОБАВЬ СОСТОЯНИЕ:
+  const [botGloballyEnabled, setBotGloballyEnabled] = useState(true);
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -47,6 +51,7 @@ export default function AdminSettings() {
   const [availablePermissions, setAvailablePermissions] = useState({});
   const [savingRole, setSavingRole] = useState(false);
 
+
   const [createRoleForm, setCreateRoleForm] = useState({
     role_key: '',
     role_name: '',
@@ -55,7 +60,7 @@ export default function AdminSettings() {
 
   useEffect(() => {
     loadRoles();
-    loadSalonSettings(); // ДОБАВИТЬ
+    loadSalonSettings();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -76,6 +81,7 @@ export default function AdminSettings() {
           weekends: data.hours_weekends || ''
         }
       });
+      setBotGloballyEnabled(data.bot_globally_enabled ?? true);
     } catch (err) {
       console.error(t('settings:error_loading_salon_settings'), err);
       toast.error(t('settings:error_loading_settings'));
@@ -83,6 +89,7 @@ export default function AdminSettings() {
       setLoading(false);
     }
   };
+
 
 
   const loadRoles = async () => {
@@ -234,6 +241,15 @@ export default function AdminSettings() {
       setSavingRole(false);
     }
   };
+  const handleUpdateBotEnabled = async (enabled: boolean) => {
+    try {
+      await api.updateBotGloballyEnabled(enabled);
+      setBotGloballyEnabled(enabled);
+      toast.success(enabled ? 'Бот включен глобально' : 'Бот отключен глобально');
+    } catch (err) {
+      toast.error('Ошибка обновления');
+    }
+  };
 
   return (
     <div className="p-8">
@@ -269,6 +285,28 @@ export default function AdminSettings() {
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
+            <div className="mb-8 p-6 bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-xl">
+              <div className="flex items-center gap-3 mb-4">
+                <Bot className="w-6 h-6 text-pink-600" />
+                <h3 className="text-lg font-bold text-gray-900">{t('settings:bot_management')}</h3>
+              </div>
+
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900 mb-1">
+                    {t('settings:bot_enabled_for_all_clients')}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {t('settings:disable_to_stop_auto_replies')}
+                  </p>
+                </div>
+                <Switch
+                  checked={botGloballyEnabled}
+                  onCheckedChange={handleUpdateBotEnabled}
+                />
+              </div>
+            </div>
+
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Loader className="w-8 h-8 text-pink-600 animate-spin" />

@@ -13,6 +13,7 @@ import {
   FileText,
   ArrowLeft,
   MoreVertical,
+  Sparkles,
   Image as ImageIcon,
   Video,
 } from 'lucide-react';
@@ -58,7 +59,9 @@ export default function Chat() {
   const [searchTerm, setSearchTerm] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
-
+  const [botMode, setBotMode] = useState<'manual' | 'assistant' | 'autopilot'>('assistant');
+  const [botSuggestion, setBotSuggestion] = useState<string | null>(null);
+  const [isLoadingSuggestion, setIsLoadingSuggestion] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -175,6 +178,13 @@ export default function Chat() {
       }
 
       setMessages(messagesArray as Message[]);
+      if (!isInitial && botMode === 'assistant') {
+        const lastMsg = messagesArray[messagesArray.length - 1];
+        if (lastMsg && lastMsg.sender === 'client') {
+          // Даем 1 секунду чтобы все сообщения дошли
+          setTimeout(() => fetchBotSuggestion(clientId), 1000);
+        }
+      }
     } catch (err) {
       if (isInitial) {
         const message = err instanceof Error ? err.message : t('chat:error_loading_messages');
@@ -189,6 +199,8 @@ export default function Chat() {
 
   const handleSelectClient = async (client: Client) => {
     setSelectedClient(client);
+    setBotMode((client as any).bot_mode || 'assistant');
+    loadMessages(client.id, true);
     loadMessages(client.id, true);
     setShowNotes(false);
     setShowClientInfo(false);
@@ -210,6 +222,30 @@ export default function Chat() {
     setShowMessageSearch(false);
     setShowMobileMenu(false);
   };
+
+  const fetchBotSuggestion = async (clientId: string) => {
+    if (botMode !== 'assistant') return;
+
+    try {
+      setIsLoadingSuggestion(true);
+      const response = await api.getBotSuggestion(clientId);
+
+      if (response.success) {
+        setBotSuggestion(response.suggestion);
+        setMessage(response.suggestion); // Подставляем в textarea
+
+        toast.info(`🤖 Бот предлагает ответ (${response.unread_count} сообщ.)`, {
+          description: response.suggestion.substring(0, 100) + '...',
+          duration: 5000
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching bot suggestion:', err);
+    } finally {
+      setIsLoadingSuggestion(false);
+    }
+  };
+
 
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
@@ -495,7 +531,31 @@ export default function Chat() {
                   >
                     <ArrowLeft className="w-5 h-5 text-gray-700" />
                   </button>
+                  {botMode === 'assistant' && isLoadingSuggestion && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 rounded-full">
+                      <Loader className="w-3 h-3 text-purple-600 animate-spin" />
+                      <span className="text-xs font-medium text-purple-700">Бот думает...</span>
+                    </div>
+                  )}
 
+                  {botMode === 'assistant' && botSuggestion && !isLoadingSuggestion && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 rounded-full">
+                      <Sparkles className="w-3 h-3 text-purple-600" />
+                      <span className="text-xs font-medium text-purple-700">Предложение бота</span>
+                    </div>
+                  )}
+
+                  {botMode === 'autopilot' && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-full">
+                      <span className="inline-flex items-center justify-center w-3 h-3 rounded-full bg-green-400">
+                        {/* Simple autopilot icon replacement */}
+                        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 8 8">
+                          <circle cx="4" cy="4" r="4" />
+                        </svg>
+                      </span>
+                      <span className="text-xs font-medium text-green-700">Автопилот</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
                       <img
@@ -848,127 +908,143 @@ export default function Chat() {
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
-                    <Textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder={t('chat:message')}
-                      className="resize-none border-2 border-gray-200 rounded-xl text-sm"
-                      rows={2}
-                      disabled={isUploadingFile}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          if (canSend && !isUploadingFile) {
-                            handleSendMessage();
+                    <div className="relative">
+                      <Textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder={t('chat:message')}
+                        className="resize-none border-2 border-gray-200 rounded-xl text-sm"
+                        rows={2}
+                        disabled={isUploadingFile}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            if (canSend && !isUploadingFile) {
+                              handleSendMessage();
+                            }
                           }
-                        }
-                      }}
-                    />
-                  </div>
+                        }}
+                      />
 
-                  <div className="flex flex-col gap-2">
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      accept="image/*,video/*,audio/*"
-                      multiple
-                      onChange={handleFileSelect}
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isUploadingFile}
-                      className="h-10 w-10 p-0 rounded-xl"
-                    >
-                      <Paperclip className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      onClick={handleSendMessage}
-                      className="bg-gradient-to-r from-pink-500 to-purple-600 h-10 w-10 p-0 rounded-xl"
-                      disabled={!canSend || isUploadingFile}
-                    >
-                      {isUploadingFile ? (
-                        <Loader className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Send className="w-4 h-4" />
+                      {/* ✅ ДОБАВЬ КНОПКУ СБРОСА ВНУТРЬ КОНТЕЙНЕРА: */}
+                      {botSuggestion && (
+                        <button
+                          onClick={() => {
+                            setBotSuggestion(null);
+                            setMessage('');
+                            toast.info('Предложение бота сброшено');
+                          }}
+                          className="absolute top-2 right-2 text-xs text-purple-600 hover:text-purple-700 font-medium bg-white px-2 py-1 rounded shadow-sm"
+                        >
+                          ✕ Сбросить
+                        </button>
                       )}
-                    </Button>
+                    </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept="image/*,video/*,audio/*"
+                        multiple
+                        onChange={handleFileSelect}
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploadingFile}
+                        className="h-10 w-10 p-0 rounded-xl"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={handleSendMessage}
+                        className="bg-gradient-to-r from-pink-500 to-purple-600 h-10 w-10 p-0 rounded-xl"
+                        disabled={!canSend || isUploadingFile}
+                      >
+                        {isUploadingFile ? (
+                          <Loader className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Right Sidebar for Panels */}
+              {(showClientInfo || showTemplates || showNotes) && (
+                <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0">
+                  {showClientInfo && selectedClient && (
+                    <div className="p-4">
+                      <InfoPanel
+                        client={selectedClient}
+                        onClose={() => setShowClientInfo(false)}
+                        onUpdate={async (data) => {
+                          await api.updateClient(selectedClient.id, data);
+                          setClients(clients.map(c =>
+                            c.id === selectedClient.id
+                              ? {
+                                ...c,
+                                name: data.name || c.name,
+                                phone: data.phone || c.phone,
+                                status: data.status || c.status,
+                                display_name: data.name || c.username || c.display_name
+                              }
+                              : c
+                          ));
+                          setSelectedClient({
+                            ...selectedClient,
+                            name: data.name,
+                            phone: data.phone,
+                            status: data.status || selectedClient.status,
+                            display_name: data.name || selectedClient.username || selectedClient.display_name
+                          });
+                          toast.success(t('chat:information_updated'));
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {showTemplates && (
+                    <div className="p-4">
+                      <TemplatesPanel
+                        onSelect={(content) => {
+                          setMessage(content);
+                          setShowTemplates(false);
+                        }}
+                        onClose={() => setShowTemplates(false)}
+                      />
+                    </div>
+                  )}
+
+                  {showNotes && selectedClient && (
+                    <div className="p-4">
+                      <NotesPanel
+                        clientId={selectedClient.id}
+                        onClose={() => setShowNotes(false)}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-
-            {/* Right Sidebar for Panels */}
-            {(showClientInfo || showTemplates || showNotes) && (
-              <div className="w-full md:w-96 border-l border-gray-200 overflow-y-auto flex-shrink-0">
-                {showClientInfo && selectedClient && (
-                  <div className="p-4">
-                    <InfoPanel
-                      client={selectedClient}
-                      onClose={() => setShowClientInfo(false)}
-                      onUpdate={async (data) => {
-                        await api.updateClient(selectedClient.id, data);
-                        setClients(clients.map(c =>
-                          c.id === selectedClient.id
-                            ? {
-                              ...c,
-                              name: data.name || c.name,
-                              phone: data.phone || c.phone,
-                              status: data.status || c.status,
-                              display_name: data.name || c.username || c.display_name
-                            }
-                            : c
-                        ));
-                        setSelectedClient({
-                          ...selectedClient,
-                          name: data.name,
-                          phone: data.phone,
-                          status: data.status || selectedClient.status,
-                          display_name: data.name || selectedClient.username || selectedClient.display_name
-                        });
-                        toast.success(t('chat:information_updated'));
-                      }}
-                    />
-                  </div>
-                )}
-
-                {showTemplates && (
-                  <div className="p-4">
-                    <TemplatesPanel
-                      onSelect={(content) => {
-                        setMessage(content);
-                        setShowTemplates(false);
-                      }}
-                      onClose={() => setShowTemplates(false)}
-                    />
-                  </div>
-                )}
-
-                {showNotes && selectedClient && (
-                  <div className="p-4">
-                    <NotesPanel
-                      clientId={selectedClient.id}
-                      onClose={() => setShowNotes(false)}
-                    />
-                  </div>
-                )}
+            ) : (
+            <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
+              <div className="text-center">
+                <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+                  <MessageCircle className="w-12 h-12 text-pink-600" />
+                </div>
+                <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
+                <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
-            <div className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-                <MessageCircle className="w-12 h-12 text-pink-600" />
-              </div>
-              <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
-              <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
             </div>
-          </div>
         )}
-      </div>
+          </div>
     </div>
-  );
+      );
 }

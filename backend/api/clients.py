@@ -5,7 +5,8 @@ from fastapi import APIRouter, Request, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
 import time
-
+import sqlite3
+from config import DATABASE_NAME
 from db import (
     get_all_clients, get_client_by_id, get_or_create_client,
     update_client_info, update_client_status, pin_client,
@@ -432,3 +433,38 @@ async def bulk_actions(
     except Exception as e:
         log_error(f"Bulk actions error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+# backend/db/clients.py
+
+# Добавь в конец файла:
+
+def update_client_bot_mode(instagram_id: str, mode: str):
+    """Изменить режим бота для клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        UPDATE clients 
+        SET bot_mode = ?
+        WHERE instagram_id = ?
+    """, (mode, instagram_id))
+    
+    conn.commit()
+    conn.close()
+
+
+def get_client_bot_mode(instagram_id: str) -> str:
+    """Получить режим бота для клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT bot_mode 
+        FROM clients 
+        WHERE instagram_id = ?
+    """, (instagram_id,))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    return result[0] if result and result[0] else 'assistant'

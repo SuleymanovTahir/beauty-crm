@@ -728,3 +728,17 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         return False
     finally:
         conn.close()
+
+def update_bot_globally_enabled(enabled: bool):
+    """Включить/выключить бота глобально"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        UPDATE salon_settings 
+        SET bot_globally_enabled = ?
+        WHERE id = 1
+    """, (1 if enabled else 0,))
+    
+    conn.commit()
+    conn.close()

@@ -9,7 +9,8 @@ from db import (
     get_salon_settings, update_salon_settings,
     get_bot_settings, update_bot_settings, log_activity,
     get_custom_statuses, create_custom_status,
-    delete_custom_status, update_custom_status
+    delete_custom_status, update_custom_status,
+    update_bot_globally_enabled,
 )
 from utils import require_auth
 from logger import log_error, log_info
@@ -276,3 +277,27 @@ async def update_salon_settings_legacy(
 ):
     """Обновить настройки салона (альтернативный путь)"""
     return await update_salon_settings_api(request, session_token)
+
+
+@router.post("/settings/bot-globally-enabled")
+async def update_bot_enabled(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Включить/выключить бота глобально"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        enabled = data.get('enabled', True)
+        
+        update_bot_globally_enabled(enabled)
+        
+        log_info(f"🤖 Bot globally {'enabled' if enabled else 'disabled'}", "settings")
+        
+        return {"success": True, "enabled": enabled}
+    except Exception as e:
+        log_error(f"Error updating bot enabled: {e}", "settings")
+        return JSONResponse({"error": str(e)}, status_code=500)

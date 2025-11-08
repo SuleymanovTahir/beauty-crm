@@ -25,5 +25,9 @@
   "high_price_justification": "Обоснование высоких цен",
   "fomo_messages": "FOMO сообщения",
   "upsell_techniques": "Upsell техники",
-  "booking_message": "Сообщение о записи"
+  "booking_message": "Сообщение о записи",
+  "save_permissions": "Сохранить права",
+  "bot_management": "Управление ботом",
+  "bot_enabled_for_all_clients": "Бот включен для всех клиентов",
+  "disable_to_stop_auto_replies": "Отключите, чтобы бот не отвечал автоматически ни одному клиенту"
 }

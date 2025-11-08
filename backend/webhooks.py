@@ -4,17 +4,14 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 import json
-import traceback
 import httpx
 import os
 from datetime import datetime
-import urllib.parse
 
 from config import VERIFY_TOKEN, PAGE_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ID, DATABASE_NAME
-import sqlite3
 from db import (
     get_or_create_client, save_message, get_chat_history,
-    detect_and_save_language, get_client_language, update_client_info
+    detect_and_save_language, get_client_language, update_client_info,get_client_bot_mode,get_salon_settings
 )
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
@@ -186,8 +183,7 @@ async def handle_webhook(request: Request):
                 logger.info(f"📬 Message from {sender_id}: is_echo={is_echo}, text={message_text[:50]}")
 
                 if is_echo:
-                    import sqlite3
-                    from config import DATABASE_NAME
+                    
 
                     # ✅ КРИТИЧЕСКИ ВАЖНО: Проверяем sender_id
                     # Если sender_id = наш бизнес-аккаунт (17841448618072548), то это НАШЕ сообщение
@@ -303,6 +299,30 @@ async def handle_webhook(request: Request):
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
                     
+                    bot_mode = get_client_bot_mode(sender_id)
+                    log_info(f"🤖 Bot mode for {sender_id}: {bot_mode}", "webhook")
+
+
+                    salon = get_salon_settings()
+                    bot_globally_enabled = salon.get('bot_globally_enabled', 1)
+                    
+                    if not bot_globally_enabled:
+                        log_info(f"⏸️ Bot globally disabled, skipping auto-response", "webhook")
+                        continue
+                    
+                    if bot_mode == 'manual':
+                        log_info(f"👤 Manual mode, skipping auto-response", "webhook")
+                        continue
+                    
+                    if bot_mode == 'assistant':
+                        log_info(f"🤖 Assistant mode, skipping auto-response (manager will handle)", "webhook")
+                        continue
+                    
+                    # Только если режим 'autopilot' - продолжаем автоответ
+                    if bot_mode != 'autopilot':
+                        continue
+
+
                     await send_typing_indicator(sender_id)
                     
                     history = get_chat_history(sender_id, limit=10)
