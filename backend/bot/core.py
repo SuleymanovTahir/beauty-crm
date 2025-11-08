@@ -29,14 +29,23 @@ class SalonBot:
 
         # ✅ Настройка прокси для обхода геоблокировки
         # ✅ Настройка прокси для обхода геоблокировки
-        self.proxy_url = os.getenv("PROXY_URL") if os.getenv(
-            "ENVIRONMENT") == "production" else None
+        # ✅ КРИТИЧЕСКИ ВАЖНО: Принудительная загрузка из окружения
+        environment = os.getenv("ENVIRONMENT")
+        proxy_url_raw = os.getenv("PROXY_URL")
+
+        print("=" * 50)
+        print(f"🔍 DEBUG: ENVIRONMENT = '{environment}'")
+        print(f"🔍 DEBUG: PROXY_URL exists = {proxy_url_raw is not None}")
+        if proxy_url_raw:
+            print(f"🔍 DEBUG: PROXY_URL = '{proxy_url_raw[:30]}...'")
+
+        self.proxy_url = proxy_url_raw if environment == "production" else None
 
         if self.proxy_url:
-            print(
-                f"🌐 Используется прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}...")
+            print(f"✅ Прокси АКТИВЕН: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}...")
         else:
-            print("⚠️ Прокси отключен (localhost) или не настроен")
+            print(f"❌ Прокси ОТКЛЮЧЕН (env={environment}, proxy={proxy_url_raw is not None})")
+        print("=" * 50)
 
         # Настраиваем Gemini (для fallback без прокси)
         genai.configure(api_key=GEMINI_API_KEY)
