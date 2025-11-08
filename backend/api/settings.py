@@ -10,7 +10,6 @@ from db import (
     get_bot_settings, update_bot_settings, log_activity,
     get_custom_statuses, create_custom_status,
     delete_custom_status, update_custom_status,
-    update_bot_globally_enabled,
 )
 from utils import require_auth
 from logger import log_error, log_info

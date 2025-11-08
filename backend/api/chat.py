@@ -7,7 +7,6 @@ from typing import Optional
 from httpx import TimeoutException, AsyncClient
 from integrations.instagram import send_file
 from db import  get_client_bot_mode, get_client_language, update_client_bot_mode
-from config import BOT_MODES
 
 from db import (
     get_chat_history, mark_messages_as_read, save_message,

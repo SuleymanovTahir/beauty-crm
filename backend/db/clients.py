@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 from typing import Optional
 import re
-from logger import log_info
+from logger import log_info,log_error
 from config import DATABASE_NAME
 
 
@@ -247,5 +247,57 @@ def update_client(instagram_id: str, data: dict):
         conn.commit()
     except Exception as e:
         print(f"❌ Ошибка обновления: {e}")
+    finally:
+        conn.close()
+
+def get_client_language(instagram_id: str) -> str:
+    """Получить язык клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT language FROM clients WHERE instagram_id = ?", (instagram_id,))
+        result = c.fetchone()
+        return result[0] if result and result[0] else 'ru'
+    except Exception as e:
+        log_error(f"Ошибка получения языка клиента: {e}", "database")
+        return 'ru'
+    finally:
+        conn.close()
+
+
+def get_client_bot_mode(instagram_id: str) -> str:
+    """Получить режим бота для клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT bot_mode FROM clients WHERE instagram_id = ?", (instagram_id,))
+        result = c.fetchone()
+        return result[0] if result and result[0] else 'autopilot'
+    except Exception as e:
+        log_error(f"Ошибка получения режима бота: {e}", "database")
+        return 'autopilot'
+    finally:
+        conn.close()
+
+
+def update_client_bot_mode(instagram_id: str, mode: str) -> bool:
+    """Обновить режим бота для клиента"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute(
+            "UPDATE clients SET bot_mode = ? WHERE instagram_id = ?",
+            (mode, instagram_id)
+        )
+        conn.commit()
+        log_info(f"✅ Режим бота обновлен: {instagram_id} -> {mode}", "database")
+        return True
+    except Exception as e:
+        log_error(f"Ошибка обновления режима бота: {e}", "database")
+        conn.rollback()
+        return False
     finally:
         conn.close()

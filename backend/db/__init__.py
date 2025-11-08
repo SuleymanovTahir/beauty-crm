@@ -14,6 +14,8 @@ from .clients import (
     pin_client,
     delete_client,
     detect_and_save_language,
+    get_client_bot_mode, 
+    update_client_bot_mode,
     get_client_language,
     update_client,
 )
@@ -77,7 +79,8 @@ from .settings import (
     get_role_permissions,
     update_role_permissions,
     check_user_permission,
-    AVAILABLE_PERMISSIONS
+    AVAILABLE_PERMISSIONS,
+    update_bot_globally_enabled,
 )
 
 # Сообщения
