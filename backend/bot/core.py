@@ -185,16 +185,19 @@ class SalonBot:
         else:
             print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
 
-        # ✅ РАБОТАЕТ для старых версий httpx - используем transport
         if self.proxy_url:
-            transport = httpx.HTTPTransport(proxy=self.proxy_url)
-            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, transport=transport) as client:
+            async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxies=self.proxy_url) as client:
                 response = await client.post(url, json=payload)
+                data = response.json()
         else:
             async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
                 response = await client.post(url, json=payload)
+                data = response.json()
+        
+        # Извлекаем текст ответа
+        if "candidates" in data and len(data["candidates"]) > 0:
 
-            data = response.json()
+        data = response.json()
 
             # Извлекаем текст ответа
             if "candidates" in data and len(data["candidates"]) > 0:

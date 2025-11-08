@@ -29,29 +29,26 @@ async def fetch_username_from_api(user_id: str) -> tuple:
             "access_token": PAGE_ACCESS_TOKEN,
         }
         
-        # ✅ Правильный синтаксис для AsyncClient
         proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
         if proxy_url:
-            transport = httpx.HTTPTransport(proxy=proxy_url)
-            async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+            async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
                 response = await client.get(url, params=params)
         else:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.get(url, params=params)
-
+        
+        if response.status_code == 200:
+            data = response.json()
+            username = data.get("username", "")
+            name = data.get("name", "")
+            profile_pic = data.get("profile_pic", "")
             
-            if response.status_code == 200:
-                data = response.json()
-                username = data.get("username", "")
-                name = data.get("name", "")
-                profile_pic = data.get("profile_pic", "")
-                
-                log_info(f"✅ API data: username={username}, name={name}, has_pic={bool(profile_pic)}", "webhook")
-                return username, name, profile_pic
-            else:
-                log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
-                return "", "", ""
+            log_info(f"✅ API data: username={username}, name={name}, has_pic={bool(profile_pic)}", "webhook")
+            return username, name, profile_pic
+        else:
+            log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
+            return "", "", ""
                 
     except httpx.TimeoutException:
         log_error(f"⏱️ Timeout при запросе к Instagram API для {user_id}", "webhook")
@@ -128,25 +125,26 @@ async def get_instagram_scoped_id(sender_id: str) -> str:
         proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
         if proxy_url:
-            transport = httpx.HTTPTransport(proxy=proxy_url)
-            async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+            async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
                 response = await client.get(url, params=params)
         else:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.get(url, params=params)
-            response.raise_for_status()
-            if response.status_code == 200:
-                data = response.json()
-                instagram_id = data.get("id")
-                
-                if instagram_id and instagram_id != sender_id:
-                    log_info(f"🔄 Converted ASID {sender_id} → IGSID {instagram_id}", "webhook")
-                    return instagram_id
+        
+        response.raise_for_status()
+        
+        if response.status_code == 200:
+            data = response.json()
+            instagram_id = data.get("id")
+            
+            if instagram_id and instagram_id != sender_id:
+                log_info(f"🔄 Converted ASID {sender_id} → IGSID {instagram_id}", "webhook")
+                return instagram_id
                     
     except Exception as e:
         log_warning(f"⚠️ Не удалось получить IGSID: {e}", "webhook")
     
-    return sender_id  # Возвращаем оригинальный ID
+    return sender_id
 
 
 @router.post("/webhook")
@@ -174,6 +172,7 @@ async def handle_webhook(request: Request):
                 sender_id = messaging.get("sender", {}).get("id")
                 sender_id = await get_instagram_scoped_id(sender_id)
                 logger.info(f"📨 Processing messaging event: {json.dumps(messaging, indent=2)[:300]}...")                
+                
                 if not sender_id or "message" not in messaging:
                     continue
                 
@@ -186,17 +185,11 @@ async def handle_webhook(request: Request):
                 logger.info(f"📬 Message from {sender_id}: is_echo={is_echo}, text={message_text[:50]}")
 
                 if is_echo:
-                    
-
                     # ✅ КРИТИЧЕСКИ ВАЖНО: Проверяем sender_id
-                    # Если sender_id = наш бизнес-аккаунт (17841448618072548), то это НАШЕ сообщение
-                    # Если sender_id = ID клиента, то это эхо ИЗ CRM API
-
                     if sender_id == "17841448618072548":
                         # ✅ Это МЕНЕДЖЕР написал из Instagram Direct
                         logger.info(f"📨 Manager sent via Instagram Direct to {messaging['recipient']['id']}")
 
-                        # Получаем ID клиента из recipient
                         client_id = messaging.get("recipient", {}).get("id")
 
                         if not client_id:
@@ -246,39 +239,31 @@ async def handle_webhook(request: Request):
                     
                     # Если не нашли - запрашиваем из API
                     if not username:
-                        # Стало:
                         try:
                             url = f"https://graph.facebook.com/v18.0/{sender_id}"
                             params = {
-                                "fields": "username,name,profile_pic",  # ✅ ДОБАВИЛИ profile_pic
+                                "fields": "username,name,profile_pic",
                                 "access_token": PAGE_ACCESS_TOKEN,
                             }
-
-                            client_kwargs: dict = {"timeout": 10.0}
-                            if os.getenv("ENVIRONMENT") == "production":
-                                proxy_url = os.getenv("PROXY_URL")
-                                if proxy_url:
-                                    client_kwargs["proxies"] = proxy_url
 
                             proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
                             if proxy_url:
-                                transport = httpx.HTTPTransport(proxy=proxy_url)
-                                async with httpx.AsyncClient(timeout=10.0, transport=transport) as client:
+                                async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
                                     response = await client.get(url, params=params)
                             else:
                                 async with httpx.AsyncClient(timeout=10.0) as client:
                                     response = await client.get(url, params=params)
 
-                                if response.status_code == 200:
-                                    data_api = response.json()
-                                    username = data_api.get("username", "")
-                                    name = data_api.get("name", "")
-                                    profile_pic = data_api.get("profile_pic", "")  # ✅ ПОЛУЧАЕМ АВАТАР
+                            if response.status_code == 200:
+                                data_api = response.json()
+                                username = data_api.get("username", "")
+                                name = data_api.get("name", "")
+                                profile_pic = data_api.get("profile_pic", "")
 
-                                    log_info(f"✅ API data: username={username}, name={name}, has_pic={bool(profile_pic)}", "webhook")
-                                else:
-                                    log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
+                                log_info(f"✅ API data: username={username}, name={name}, has_pic={bool(profile_pic)}", "webhook")
+                            else:
+                                log_warning(f"⚠️ API вернул {response.status_code}: {response.text}", "webhook")
                         except Exception as api_err:
                             log_error(f"❌ API fetch error: {api_err}", "webhook", exc_info=True)
                     
@@ -292,7 +277,6 @@ async def handle_webhook(request: Request):
                     get_or_create_client(sender_id, username=username)
                     
                     # ✅ ОБНОВЛЯЕМ ИМЯ (если есть)
-                    # Стало:
                     if name or profile_pic:
                         update_client_info(sender_id, name=name, profile_pic=profile_pic if profile_pic else None)
                     
@@ -325,17 +309,12 @@ async def handle_webhook(request: Request):
                     if bot_mode == 'manual':
                         log_info(f"👤 Manual mode, skipping auto-response", "webhook")
                         continue
-                    
-                    # ✅ ИСПРАВЛЕНИЕ: В assistant и autopilot бот отвечает
                     elif bot_mode == 'assistant':
                         log_info(f"🤖 Assistant mode, bot will respond + suggest", "webhook")
-                        # НЕ CONTINUE - продолжаем
                     elif bot_mode == 'autopilot':
                         log_info(f"🤖 Autopilot mode, bot will respond", "webhook")
-                        # НЕ CONTINUE - продолжаем
                     else:
                         log_warning(f"⚠️ Unknown bot mode: {bot_mode}, defaulting to autopilot", "webhook")
-
 
                     await send_typing_indicator(sender_id)
                     
@@ -356,7 +335,6 @@ async def handle_webhook(request: Request):
                         import traceback
                         logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
 
-                        # Вернем дефолтный ответ
                         ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
                     
                     save_message(
@@ -371,6 +349,7 @@ async def handle_webhook(request: Request):
                     
                 except Exception as e:
                     logger.error(f"❌ Processing error: {e}")
+                    import traceback
                     logger.error(traceback.format_exc())
         
         return {"status": "ok"}
@@ -378,6 +357,7 @@ async def handle_webhook(request: Request):
     except Exception as e:
         logger.error("=" * 70)
         logger.error(f"❌ CRITICAL ERROR: {e}")
+        import traceback
         logger.error(traceback.format_exc())
         return {"status": "ok"}
     
