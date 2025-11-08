@@ -33,7 +33,10 @@ async def fetch_username_from_api(user_id: str) -> tuple:
         if os.getenv("ENVIRONMENT") == "production":
             proxy_url = os.getenv("PROXY_URL")
             if proxy_url:
-                client_kwargs["proxies"] = proxy_url 
+                client_kwargs["mounts"] = {
+                    'https://': httpx.HTTPTransport(proxy=proxy_url),
+                    'http://': httpx.HTTPTransport(proxy=proxy_url)
+                } 
 
         async with httpx.AsyncClient(**client_kwargs) as client:
             response = await client.get(url, params=params)
