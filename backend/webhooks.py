@@ -32,7 +32,7 @@ async def fetch_username_from_api(user_id: str) -> tuple:
         proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
         if proxy_url:
-            async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=10.0, proxy=proxy_url) as client:
                 response = await client.get(url, params=params)
         else:
             async with httpx.AsyncClient(timeout=10.0) as client:
@@ -125,7 +125,7 @@ async def get_instagram_scoped_id(sender_id: str) -> str:
         proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
         if proxy_url:
-            async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=10.0, proxy=proxy_url) as client:
                 response = await client.get(url, params=params)
         else:
             async with httpx.AsyncClient(timeout=10.0) as client:
@@ -249,7 +249,7 @@ async def handle_webhook(request: Request):
                             proxy_url = os.getenv("PROXY_URL") if os.getenv("ENVIRONMENT") == "production" else None
 
                             if proxy_url:
-                                async with httpx.AsyncClient(timeout=10.0, proxies=proxy_url) as client:
+                                async with httpx.AsyncClient(timeout=10.0, proxy=proxy_url) as client:
                                     response = await client.get(url, params=params)
                             else:
                                 async with httpx.AsyncClient(timeout=10.0) as client:

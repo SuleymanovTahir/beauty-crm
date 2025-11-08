@@ -31,7 +31,7 @@ async def send_message(recipient_id: str, message: str) -> dict:
 
     try:
         if proxy_url:
-            async with httpx.AsyncClient(timeout=30.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=30.0, proxy=proxy_url) as client:
                 response = await client.post(url, params=params, json=data)
         else:
             async with httpx.AsyncClient(timeout=30.0) as client:
@@ -108,7 +108,7 @@ async def send_file(recipient_id: str, file_url: str, file_type: str = "image") 
         log_info(f"📦 Payload: {data}", "instagram")
         
         if proxy_url:
-            async with httpx.AsyncClient(timeout=120.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=120.0, proxy=proxy_url) as client:
                 response = await client.post(url, params=params, json=data)
         else:
             async with httpx.AsyncClient(timeout=120.0) as client:
@@ -154,7 +154,7 @@ async def send_typing_indicator(recipient_id: str) -> None:
 
     try:
         if proxy_url:
-            async with httpx.AsyncClient(timeout=30.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=30.0, proxy=proxy_url) as client:
                 await client.post(url, params=params, json=data)
         else:
             async with httpx.AsyncClient(timeout=30.0) as client:
@@ -183,7 +183,7 @@ async def mark_as_seen(recipient_id: str) -> None:
 
     try:
         if proxy_url:
-            async with httpx.AsyncClient(timeout=30.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=30.0, proxy=proxy_url) as client:
                 await client.post(url, params=params, json=data)
         else:
             async with httpx.AsyncClient(timeout=30.0) as client:
@@ -224,7 +224,7 @@ async def send_reaction(recipient_id: str, message_id: str, reaction: str = "❤
         log_info(f"❤️ Отправка реакции {reaction} на сообщение {message_id}", "instagram")
         
         if proxy_url:
-            async with httpx.AsyncClient(timeout=30.0, proxies=proxy_url) as client:
+            async with httpx.AsyncClient(timeout=30.0, proxy=proxy_url) as client:
                 response = await client.post(url, params=params, json=data)
         else:
             async with httpx.AsyncClient(timeout=30.0) as client:

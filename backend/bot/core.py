@@ -180,7 +180,7 @@ class SalonBot:
 
         try:
             if self.proxy_url:
-                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxies=self.proxy_url) as client:
+                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxy=self.proxy_url) as client:
                     response = await client.post(url, json=payload)
                     data = response.json()
             else:
