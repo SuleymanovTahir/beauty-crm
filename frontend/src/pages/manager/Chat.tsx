@@ -86,6 +86,8 @@ export default function Chat() {
   const [botQuestion, setBotQuestion] = useState('');
   const [botContext, setBotContext] = useState('');
   const [isAskingBot, setIsAskingBot] = useState(false);
+  const [isSelectingMessages, setIsSelectingMessages] = useState(false);
+  const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -472,6 +474,59 @@ export default function Chat() {
     }
   };
 
+  const handleAskBotWithSelectedMessages = async () => {
+    if (selectedMessageIds.size === 0) {
+      toast.error('❌ Выберите хотя бы одно сообщение');
+      return;
+    }
+
+    try {
+      setIsAskingBot(true);
+
+      // Собираем выбранные сообщения в хронологическом порядке
+      const selectedMessages = messages
+        .filter(msg => selectedMessageIds.has(msg.id))
+        .map(msg => {
+          const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
+          return `${sender}: ${msg.message}`;
+        })
+        .join('\n');
+
+      if (!selectedMessages) {
+        toast.error('❌ Не удалось собрать выбранные сообщения');
+        return;
+      }
+
+      const question = "Проанализируй эти сообщения и дай совет как лучше ответить клиенту";
+      const response = await api.askBotAdvice(question, selectedMessages);
+
+      // Показываем совет в toast
+      toast.success('💡 Совет от AI-бота', {
+        description: response.advice,
+        duration: 60000,
+        action: {
+          label: '📋 Копировать',
+          onClick: () => {
+            navigator.clipboard.writeText(response.advice);
+            toast.success('✅ Скопировано!');
+          }
+        }
+      });
+
+      // Сбрасываем режим выделения
+      setIsSelectingMessages(false);
+      setSelectedMessageIds(new Set());
+
+    } catch (err) {
+      console.error('❌ Ошибка:', err);
+      toast.error('❌ Ошибка получения совета', {
+        description: err instanceof Error ? err.message : 'Неизвестная ошибка'
+      });
+    } finally {
+      setIsAskingBot(false);
+    }
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
@@ -749,7 +804,18 @@ export default function Chat() {
                   onClose={() => setShowMessageSearch(false)}
                 />
               )}
-
+              {/* Подсказка для режима выделения */}
+              {isSelectingMessages && (
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mx-4 mb-3">
+                  <p className="text-sm font-medium text-blue-900 mb-1">
+                    📱 Режим выделения сообщений
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    Нажимайте на кружки рядом с сообщениями чтобы выбрать их.
+                    Бот проанализирует только выбранные сообщения.
+                  </p>
+                </div>
+              )}
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50/30">
                 {loadingMessages ? (
@@ -766,12 +832,38 @@ export default function Chat() {
                     <div
                       key={msg.id}
                       ref={(el) => { messageRefs.current[index] = el; }}
-                      className={`flex ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                      className={`flex items-start gap-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
+                      {/* Чекбокс для режима выделения */}
+                      {isSelectingMessages && (
+                        <button
+                          onClick={() => {
+                            const newSelected = new Set(selectedMessageIds);
+                            if (newSelected.has(msg.id)) {
+                              newSelected.delete(msg.id);
+                            } else {
+                              newSelected.add(msg.id);
+                            }
+                            setSelectedMessageIds(newSelected);
+                          }}
+                          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedMessageIds.has(msg.id)
+                            ? 'bg-blue-500 border-blue-500'
+                            : 'bg-white border-gray-300 hover:border-blue-400'
+                            } ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'order-2' : 'order-1'}`}
+                        >
+                          {selectedMessageIds.has(msg.id) && (
+                            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </button>
+                      )}
+
                       <div
-                        className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${(msg.sender === 'bot' || msg.sender === 'manager')
-                          ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                          : 'bg-white text-gray-900 border-2 border-gray-200'
+                        className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${selectedMessageIds.has(msg.id) ? 'ring-2 ring-blue-500' : ''
+                          } ${(msg.sender === 'bot' || msg.sender === 'manager')
+                            ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
+                            : 'bg-white text-gray-900 border-2 border-gray-200'
                           }`}
                       >
                         {msg.type === 'image' ? (
@@ -962,34 +1054,84 @@ export default function Chat() {
                 </div>
               )}
               {selectedClient && (
-                <div className="px-3 py-2 bg-white border-t border-gray-200 flex gap-2">
-                  {botMode === 'assistant' && (
-                    <button
-                      onClick={() => fetchBotSuggestion(selectedClient.id)}
-                      disabled={isLoadingSuggestion}
-                      className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isLoadingSuggestion ? (
-                        <>
-                          <Loader className="w-4 h-4 animate-spin" />
-                          <span>Бот думает...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4" />
-                          <span>✨ Автоподсказка</span>
-                        </>
+                <div className="px-3 py-2 bg-white border-t border-gray-200">
+                  {!isSelectingMessages ? (
+                    <div className="flex gap-2">
+                      {botMode === 'assistant' && (
+                        <button
+                          onClick={() => fetchBotSuggestion(selectedClient.id)}
+                          disabled={isLoadingSuggestion}
+                          className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isLoadingSuggestion ? (
+                            <>
+                              <Loader className="w-4 h-4 animate-spin" />
+                              <span>Бот думает...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4" />
+                              <span>✨ Автоподсказка</span>
+                            </>
+                          )}
+                        </button>
                       )}
-                    </button>
-                  )}
 
-                  <button
-                    onClick={() => setShowAskBotModal(true)}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>🤖 Спросить AI</span>
-                  </button>
+                      <button
+                        onClick={() => {
+                          setIsSelectingMessages(true);
+                          setSelectedMessageIds(new Set());
+                        }}
+                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        <span>🤖 Выбрать и спросить AI</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg">
+                        <span className="text-sm font-medium text-blue-900">
+                          📋 Выбрано: {selectedMessageIds.size} сообщений
+                        </span>
+                        <button
+                          onClick={() => {
+                            setIsSelectingMessages(false);
+                            setSelectedMessageIds(new Set());
+                          }}
+                          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          ✕ Отмена
+                        </button>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            if (selectedMessageIds.size === 0) {
+                              toast.error('❌ Выберите хотя бы одно сообщение');
+                              return;
+                            }
+                            handleAskBotWithSelectedMessages();
+                          }}
+                          disabled={selectedMessageIds.size === 0 || isAskingBot}
+                          className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium text-sm hover:from-green-600 hover:to-emerald-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isAskingBot ? (
+                            <>
+                              <Loader className="w-4 h-4 animate-spin" />
+                              <span>Думаю...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4" />
+                              <span>✨ Получить совет ({selectedMessageIds.size})</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
               {/* Chat Input */}
