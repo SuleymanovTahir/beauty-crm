@@ -82,9 +82,9 @@ export default function BotSettings() {
     fomo_messages: '',
     upsell_techniques: '',
     communication_style: '',
-    max_message_chars: 500,
+    max_message_chars: 0,
     emoji_usage: '',
-    languages_supported: 'ru,en,ar',
+    languages_supported: '',
     objection_expensive: '',
     objection_think_about_it: '',
     objection_no_time: '',
@@ -151,9 +151,9 @@ export default function BotSettings() {
         fomo_messages: data.fomo_messages || '',
         upsell_techniques: data.upsell_techniques || '',
         communication_style: data.communication_style || '',
-        max_message_chars: data.max_message_chars || data.max_message_length * 100 || 500, // ✅ Миграция со старого поля
+        max_message_chars: data.max_message_chars,
         emoji_usage: data.emoji_usage || '',
-        languages_supported: langs.join(','),
+        languages_supported: data.languages_supported,
         objection_expensive: data.objection_expensive || '',
         objection_think_about_it: data.objection_think_about_it || '',
         objection_no_time: data.objection_no_time || '',
@@ -355,8 +355,8 @@ export default function BotSettings() {
                 min="100"
                 max="2000"
                 step="50"
-                value={settings.max_message_chars || 500}
-                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value) || 500 })}
+                value={settings.max_message_chars || 0}
+                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value)})}
                 style={{
                   width: '100%',
                   padding: '0.75rem',
@@ -367,7 +367,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Рекомендуется 300-600 символов. Чем меньше - тем короче ответы бота.
+                Рекомендуется 200-400 символов. Чем меньше - тем короче ответы бота.
                 <br />
                 <strong>⚠️ Бот будет СТРОГО соблюдать этот лимит!</strong>
               </p>
