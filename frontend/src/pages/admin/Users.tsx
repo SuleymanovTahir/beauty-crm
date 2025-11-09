@@ -213,6 +213,20 @@ export default function Users() {
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
+                        {/* ✅ ДОБАВЬ ЭТУ КНОПКУ */}
+                        {user.role !== 'director' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowPermissionsDialog(true);
+                            }}
+                            className="text-blue-600"
+                          >
+                            <Shield className="w-4 h-4" />
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"

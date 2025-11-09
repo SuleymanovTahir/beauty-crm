@@ -31,6 +31,7 @@ from api.public import router as public_router
 from api.notes import router as notes_router
 from api.masters import router as masters_router
 from scheduler import start_birthday_checker
+from api.internal_chat import router as internal_chat_router
 
 
 
@@ -66,6 +67,7 @@ app.include_router(masters_router, prefix="/api")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
+app.include_router(internal_chat_router)
 
 
 # ===== MIDDLEWARE =====

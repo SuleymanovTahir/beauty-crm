@@ -89,6 +89,76 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     return user if user else None
 
 
+# После функции require_auth (строка ~60)
+
+def check_permission(user: dict, permission: str) -> bool:
+    """
+    Проверить есть ли у пользователя право
+    
+    Args:
+        user: данные пользователя
+        permission: ключ права (например 'clients_view')
+    
+    Returns:
+        bool: True если право есть
+    """
+    from config import ROLES
+    
+    # Директор имеет все права
+    if user.get('role') == 'director':
+        return True
+    
+    # Проверяем права роли
+    role_data = ROLES.get(user.get('role'), {})
+    role_permissions = role_data.get('permissions', [])
+    
+    if role_permissions == '*':  # все права
+        return True
+    
+    if permission in role_permissions:
+        return True
+    
+    # Проверяем индивидуальные права из БД
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT granted FROM user_permissions
+        WHERE user_id = ? AND permission_key = ?
+    """, (user['id'], permission))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    return bool(result and result[0]) if result else False
+
+
+def require_permission(permission: str):
+    """
+    Декоратор для проверки прав доступа
+    
+    Usage:
+        @require_permission('clients_view')
+        async def get_clients(session_token: str = Cookie(None)):
+            ...
+    """
+    def decorator(func):
+        async def wrapper(*args, session_token: Optional[str] = Cookie(None), **kwargs):
+            user = require_auth(session_token)
+            if not user:
+                raise HTTPException(status_code=401, detail="Не авторизован")
+            
+            if not check_permission(user, permission):
+                raise HTTPException(
+                    status_code=403, 
+                    detail=f"Недостаточно прав. Требуется: {permission}"
+                )
+            
+            return await func(*args, session_token=session_token, **kwargs)
+        return wrapper
+    return decorator
+
+
 def get_current_user(session_token: Optional[str] = Cookie(None)):
     """
     Dependency для получения текущего пользователя

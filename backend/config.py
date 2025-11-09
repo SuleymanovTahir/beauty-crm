@@ -92,3 +92,50 @@ if missing_vars:
 print("✅ Config загружен успешно!")
 print(f"   Database: {DATABASE_NAME}")
 print(f"   ℹ️  Для настроек салона используйте: from database import get_salon_settings")
+
+
+# ===== РОЛИ И ПРАВА ДОСТУПА =====
+
+ROLES = {
+    'director': {
+        'name': 'Директор',
+        'permissions': '*'  # все права
+    },
+    'admin': {
+        'name': 'Администратор',
+        'permissions': [
+            'clients_view', 'clients_edit', 'clients_create',
+            'bookings_view', 'bookings_edit', 'bookings_create',
+            'services_view', 'services_edit',
+            'users_view',
+            'settings_view',
+            'analytics_view'
+        ]
+    },
+    'sales': {
+        'name': 'Продажник',
+        'permissions': [
+            'clients_view', 'clients_edit',
+            'instagram_chat',
+            'analytics_view', 'analytics_export_anonymized',
+            'internal_chat'
+        ]
+    },
+    'marketer': {
+        'name': 'Таргетолог',
+        'permissions': [
+            'analytics_view', 'analytics_export_anonymized',
+            'instagram_chat',  # опционально
+            'internal_chat'
+        ]
+    },
+    'employee': {
+        'name': 'Сотрудник',
+        'permissions': [
+            'bookings_view_own', 'bookings_edit_own',
+            'calendar_view_own',
+            'profile_edit',
+            'internal_chat'
+        ]
+    }
+}

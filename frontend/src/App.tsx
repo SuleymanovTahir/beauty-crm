@@ -25,6 +25,9 @@ import Chat from './pages/manager/Chat';
 import Funnel from './pages/manager/Funnel';
 import ManagerSettings from './pages/manager/Settings';
 
+import SalesLayout from './components/layouts/SalesLayout';
+import MarketerLayout from './components/layouts/MarketerLayout';
+
 // Employee Pages
 import EmployeeLayout from './components/layouts/EmployeeLayout';
 import EmployeeDashboard from './pages/employee/Dashboard';
@@ -232,6 +235,52 @@ export default function App() {
             <Route path="settings" element={<ManagerSettings />} />
             <Route path="bot-settings" element={<BotSettings />} />
             <Route path="" element={<Navigate to="dashboard" replace />} />
+          </Route>
+
+           {/* Sales Routes - Protected */}
+           <Route 
+            path="/sales/*" 
+            element={
+              <ProtectedRoute
+                isAuthenticated={!!currentUser}
+                requiredRole="sales"
+                currentRole={currentUser?.role}
+                element={
+                  <SalesLayout 
+                    user={currentUser}
+                    onLogout={handleLogout}
+                  />
+                }
+              />
+            }
+          >
+            <Route path="clients" element={<Clients />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="internal-chat" element={<InternalChat />} />
+            <Route path="" element={<Navigate to="clients" replace />} />
+          </Route>
+
+          {/* Marketer Routes - Protected */}
+          <Route 
+            path="/marketer/*" 
+            element={
+              <ProtectedRoute
+                isAuthenticated={!!currentUser}
+                requiredRole="marketer"
+                currentRole={currentUser?.role}
+                element={
+                  <MarketerLayout 
+                    user={currentUser}
+                    onLogout={handleLogout}
+                  />
+                }
+              />
+            }
+          >
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="internal-chat" element={<InternalChat />} />
+            <Route path="" element={<Navigate to="analytics" replace />} />
           </Route>
 
           {/* Employee Routes - Protected */}
