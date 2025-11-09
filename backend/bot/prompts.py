@@ -8,7 +8,6 @@ from datetime import datetime
 from db import (
     get_all_services,
     get_all_special_packages,
-    find_special_package_by_keywords,
 )
 from db.services import format_service_price_for_bot
 
@@ -29,7 +28,7 @@ class PromptBuilder:
         self,
         instagram_id: str,
         history: List[Tuple],
-        booking_progress: Dict = None,
+        booking_progress: Dict = {},
         client_language: str = 'ru'
     ) -> str:
         """
@@ -43,147 +42,71 @@ class PromptBuilder:
             self._build_personality(),
             self._build_language_settings(client_language),
             self._build_greeting_logic(history),
-            self._build_voice_handling(),
             self._build_special_packages(),
-            self._build_pricing_strategy(),
             self._build_booking_rules(),
+            self._build_booking_availability(instagram_id), 
             self._build_salon_info(),
             self._build_services_list(),
             self._build_history(history),
-            self._build_booking_progress(booking_progress),
-            self._build_algorithm(),
-            self._build_examples(),
-            self._build_dont_do(),
         ]
 
         return "\n\n".join([p for p in parts if p])
 
     def _build_identity(self) -> str:
-        """Секция IDENTITY"""
+        """Секция IDENTITY - из БД"""
+        bot_name = self.bot_settings.get('bot_name', 'AI-ассистент')
+        salon_name = self.salon.get('name', 'Салон красоты')
+        booking_url = self.salon.get('booking_url', '')
+
         return f"""=== IDENTITY ===
-Ты — {self.bot_settings['bot_name']}, AI-ассистент элитного салона красоты "{self.salon['name']}" в Dubai.
+Ты — {bot_name}, AI-ассистент салона "{salon_name}" в Dubai.
 
 ТВОЯ МИССИЯ:
-Консультировать клиентов по услугам, рассказывать о преимуществах и НАПРАВЛЯТЬ на онлайн-запись через Booking URL: {self.salon['booking_url']}"""
+Консультировать клиентов по услугам и направлять на онлайн-запись: {booking_url}"""
 
     def _build_personality(self) -> str:
-        """Секция PERSONALITY"""
-        # ✅ ЧИТАЕМ ЛИМИТ ИЗ БД
-        max_chars = self.bot_settings.get('max_message_chars', 500)
-
+        """Секция PERSONALITY - из БД"""
         return f"""=== PERSONALITY ===
-{self.bot_settings['personality_traits']}
+{self.bot_settings.get('personality_traits', '')}
 
-СТИЛЬ ОБЩЕНИЯ:
-{self.bot_settings['communication_style']}
+{self.bot_settings.get('communication_style', '')}
 
-⚠️ ГЛАВНОЕ ПРАВИЛО: ПИШ КАК ЖИВОЙ ЧЕЛОВЕК В МЕССЕНДЖЕРЕ!
-
-ДЛИНА:
-- Обычно: 1-3 предложения (макс {max_chars} символов)
-- Если клиент сомневается/спрашивает детали: можно 4-5 предложений
-- Если клиент спросил только цену: 2 предложения достаточно
-
-ЭМОДЗИ: {self.bot_settings['emoji_usage']}
-Используй где естественно (💋 для губ, 🎨 для окрашивания), но не перебарщивай
-
-ЗАПРЕЩЕННЫЕ СЛОВА/ФРАЗЫ:
-❌ "Хотите записаться?" (слишком официально)
-✅ "Записываемся?", "Подходит?", "Беру слот?"
-
-❌ "Желаете узнать подробнее?"
-✅ "Рассказать детали?", "Интересно?"
-
-❌ "Не могли бы вы..."
-✅ "Можете?", "Удобно?"
-
-КОГДА ПИСАТЬ ПОДРОБНО:
-- Клиент явно сомневается
-- Спросил "а что входит?", "а почему такая цена?"
-- Первый раз слышит про услугу
-
-КОГДА ПИСАТЬ КРАТКО:
-- Спросил только цену
-- Повторные сообщения
-- Простые услуги (маникюр, педикюр)
-
-ПРИМЕРЫ ХОРОШИХ ОТВЕТОВ:
-Клиент: "Маникюр сколько?"
-Ты: "130 AED, держится 3 недели"
-
-Клиент: "А что такое Balayage?"
-Ты: "Balayage - техника окрашивания с плавными переходами 🎨
-Выглядит естественно, растет красиво.
-От 700 до 1200 AED. Интересно?"
-
-Клиент: "Дорого"
-Ты: "Мы в премиум-сегменте 💎
-Мастера международного уровня, результат держится долго.
-Многие сначала сомневались, теперь ходят годами"""
+{self.bot_settings.get('emoji_usage', '')}"""
 
     def _build_language_settings(self, language: str) -> str:
-        """Языковые настройки - ЕДИНСТВЕННЫЙ ИСТОЧНИК ПРАВДЫ"""
-
-        # ✅ Берем ТОЛЬКО из БД
-        supported_raw = self.bot_settings.get(
-            'languages_supported', 'ru,en,ar')
+        """Языковые настройки - из БД"""
+        supported_raw = self.bot_settings.get('languages_supported', 'ru,en,ar')
         supported_langs = [lang.strip() for lang in supported_raw.split(',')]
 
-        # ✅ Проверяем что язык клиента поддерживается
         if language not in supported_langs:
-            from logger import log_warning
-            log_warning(
-                f"⚠️ Language '{language}' not in DB settings, using 'ru'", "prompts")
             language = 'ru'
 
-        # ✅ Карта инструкций
-        lang_map = {
-            'ru': "ЯЗЫК: Русский - отвечай по-русски",
-            'en': "ЯЗЫК: English - respond in English",
-            'ar': "ЯЗЫК: العربية - الرد بالعربية",
-            'hi': "ЯЗЫК: हिंदी - हिंदी में उत्तर दें",
-            'ur': "ЯЗЫК: اردو - اردو میں جواب دیں",
-            'tl': "ЯЗЫК: Filipino - tumugon sa Filipino"
-        }
-
-        lang_instruction = lang_map.get(language, lang_map['ru'])
-
         return f"""=== LANGUAGE ===
-    {lang_instruction}
-
-    ⚠️ КРИТИЧЕСКИ ВАЖНО:
-    1. Отвечай СТРОГО на языке клиента: {language}
-    2. Поддерживаемые языки (из БД): {', '.join(supported_langs)}
-    3. НЕ переключайся на другой язык даже если не уверен!"""
+Отвечай на языке: {language}
+Поддерживаемые языки: {', '.join(supported_langs)}"""
 
     def _build_greeting_logic(self, history: List[Tuple]) -> str:
-        """Логика приветствий"""
+        """Логика приветствий - из БД"""
         should_greet = self._should_greet(history)
 
         if should_greet:
-            return f"""=== GREETING (ПЕРВОЕ СООБЩЕНИЕ) ===
-Клиент написал впервые или прошло много времени:
-- Поприветствуй: "{self.bot_settings['greeting_message']}"
-- Предложи помощь: "Чем могу помочь?"
-- Если утро/день - "Доброе утро/день!", если вечер - "Добрый вечер!"
+            greeting = self.bot_settings.get('greeting_message', 'Привет!')
+            return f"""=== GREETING ===
+{greeting}
 
 ⚠️ НЕ повторяй приветствия в следующих сообщениях!"""
         else:
             return """=== ПРОДОЛЖЕНИЕ ДИАЛОГА ===
-- НЕ здоровайся снова - вы уже общаетесь!
-- Отвечай на конкретный вопрос клиента
-- Будь краткой и по делу"""
+НЕ здоровайся снова - отвечай на вопрос клиента"""
 
     def _should_greet(self, history: List[Tuple]) -> bool:
         """Определить нужно ли здороваться"""
         if len(history) <= 1:
             return True
 
-        # Если прошло много времени (>6 часов)
         if len(history) > 0:
             try:
                 last_msg = history[-1]
-                # Обработка разных форматов истории
                 if len(last_msg) >= 5:
                     timestamp = last_msg[2]
                 elif len(last_msg) >= 3:
@@ -202,50 +125,26 @@ class PromptBuilder:
 
         return False
 
-    def _build_voice_handling(self) -> str:
-        """Обработка голосовых сообщений"""
-        voice_response = self.bot_settings.get(
-            'voice_message_response',
-            'Извините, я AI-помощник и не могу прослушивать голосовые 😊'
-        )
-        return f"""=== ГОЛОСОВЫЕ СООБЩЕНИЯ ===
-Если клиент отправил голосовое, скажи весело и дружелюбно:
-"{voice_response}"
-⚠️ НЕ говори фразы типа "администратор свяжется" — ТЫ и есть главный помощник!"""
-
-    # backend/bot/prompts.py
-
     def _build_special_packages(self) -> str:
-        """Специальные пакеты"""
+        """Специальные пакеты из БД"""
         packages = get_all_special_packages(active_only=True)
 
-        # ✅ КРИТИЧЕСКИ ВАЖНО: Правило про скидки ВСЕГДА в начале
         base_rule = """=== СПЕЦИАЛЬНЫЕ ПАКЕТЫ ===
-    
-    🚨 КРИТИЧЕСКИ ВАЖНО - ЖЕЛЕЗНОЕ ПРАВИЛО:
-    НЕ ПРИДУМЫВАЙ СКИДКИ, АКЦИИ ИЛИ СПЕЦИАЛЬНЫЕ ЦЕНЫ ОТ СЕБЯ!
-    Если в списке ниже НЕТ активных спецпакетов - значит их НЕТ!
-    
-    ЗАПРЕЩЁННЫЕ ФРАЗЫ:
-    ❌ "скидка 15% для новых клиентов"
-    ❌ "акция на первое посещение"
-    ❌ "специальная цена сегодня"
-    ❌ "промо-код на скидку"
-    ❌ Любые другие выдуманные предложения!
-    
-    """
+
+🚨 НЕ ПРИДУМЫВАЙ СКИДКИ!
+Если ниже нет пакетов - значит акций НЕТ!
+
+"""
 
         if not packages:
             return base_rule + """
-    Сейчас НЕТ активных спецпакетов!
-    
-    Если клиент спросит про акции - честно скажи:
-    "Сейчас специальных акций нет, но у нас всегда премиум-качество! 💎
-    Мы в топ-1 по отзывам в JBR, работаем с лучшими материалами.
-    Многие клиентки ходят к нам годами - качество важнее временных скидок! ✨"
-    """
+Сейчас НЕТ активных акций!
 
-        packages_text = base_rule + "\n📦 ДОСТУПНЫЕ СПЕЦПАКЕТЫ:\n\n"
+Если клиент спросит:
+"Акций сейчас нет, но качество на высоте! 💎"
+"""
+
+        packages_text = base_rule + "\n📦 АКТИВНЫЕ АКЦИИ:\n\n"
 
         for pkg in packages:
             pkg_name = pkg[2]  # name_ru
@@ -257,77 +156,56 @@ class PromptBuilder:
             keywords = pkg[11] or ""
 
             packages_text += f"""🔥 {pkg_name}
-      • Обычная цена: {orig_price} {currency}
-      • Специальная цена: {special_price} {currency} (скидка {discount}%)
-      • Описание: {desc}
-      • Ключевые слова: {keywords}
-    
-    """
+- Цена: {special_price} {currency} вместо {orig_price} {currency}
+- Скидка: {discount}%
+- Описание: {desc}
+- Ключевые слова: {keywords}
 
-        packages_text += "\n⚠️ Это ВСЕ доступные акции! Других НЕТ!\n"
+"""
 
         return packages_text
 
-    def _build_pricing_strategy(self) -> str:
-        """Стратегия работы с ценами"""
-        return f"""=== PRICING STRATEGY ===
-{self.bot_settings['price_explanation']}
-
-ШАБЛОН ОТВЕТА:
-{self.bot_settings['price_response_template']}
-
-ОБОСНОВАНИЕ ПРЕМИУМ-ЦЕН:
-{self.bot_settings['premium_justification']}
-
-FOMO:
-{self.bot_settings['fomo_messages']}
-
-UPSELL:
-{self.bot_settings['upsell_techniques']}"""
-
     def _build_booking_rules(self) -> str:
-        """Правила записи"""
+        """Правила записи - из БД"""
+        booking_msg = self.bot_settings.get(
+            'booking_redirect_message',
+            'Запись онлайн: {BOOKING_URL}'
+        )
+        
+        booking_url = self.salon.get('booking_url', '')
+        
         return f"""=== BOOKING RULES ===
-⚠️ КРИТИЧЕСКИ ВАЖНО: ТЫ НЕ МОЖЕШЬ ЗАПИСЫВАТЬ!
-
-Когда клиент хочет записаться:
-"{self.bot_settings['booking_redirect_message']}"
-
-Booking URL: {self.salon['booking_url']}
-
-- НИКОГДА не собирай данные для записи
-- НЕ называй конкретные даты/время - ты их НЕ ЗНАЕШЬ!"""
+{booking_msg.replace('{BOOKING_URL}', booking_url)}"""
 
     def _build_salon_info(self) -> str:
-        """Информация о салоне"""
+        """Информация о салоне - из БД"""
         return f"""=== SALON INFO ===
-Название: {self.salon['name']}
-Адрес: {self.salon['address']}
-Часы: {self.salon['hours']}
-Телефон: {self.salon['phone']}
-Google Maps: {self.salon['google_maps']}
-Онлайн-запись: {self.salon['booking_url']}"""
+Название: {self.salon.get('name', '')}
+Адрес: {self.salon.get('address', '')}
+Часы: {self.salon.get('hours', '')}
+Телефон: {self.salon.get('phone', '')}
+Google Maps: {self.salon.get('google_maps', '')}
+Онлайн-запись: {self.salon.get('booking_url', '')}"""
 
     def _build_services_list(self) -> str:
-        """Список услуг"""
+        """Список услуг из БД"""
         services = get_all_services(active_only=True)
 
         services_by_category = {}
         for service in services:
-            category = service[7]
+            category = service[9]  # category
             if category not in services_by_category:
                 services_by_category[category] = []
-
             services_by_category[category].append(service)
 
         services_text = "=== УСЛУГИ САЛОНА ===\n\n"
+        
         for category, services_list in services_by_category.items():
             services_text += f"📂 {category}:\n"
             for service in services_list:
-                # ✅ Теперь service - это tuple из БД
                 price_str = format_service_price_for_bot(service)
                 name_ru = service[3] or service[2]
-                description = service[9] or ''
+                description = service[11] or ''  # description_ru
 
                 services_text += f"• {name_ru} - {price_str}\n"
                 if description:
@@ -337,16 +215,13 @@ Google Maps: {self.salon['google_maps']}
         return services_text
 
     def _build_history(self, history: List[Tuple]) -> str:
-        """История диалога - ИСПРАВЛЕНО для работы с 5 элементами"""
+        """История диалога"""
         if not history:
             return ""
 
-        history_text = "💬 ИСТОРИЯ РАЗГОВОРА (последние 5):\n"
+        history_text = "💬 ИСТОРИЯ (последние 5):\n"
 
-        # ✅ ИСПРАВЛЕНИЕ: Обрабатываем как 4, так и 5 элементов
         for item in history[-5:]:
-            # Если 5 элементов: (msg, sender, timestamp, msg_type, id)
-            # Если 4 элемента: (msg, sender, timestamp, msg_type)
             if len(item) >= 5:
                 msg, sender, timestamp, msg_type, msg_id = item
             else:
@@ -354,54 +229,111 @@ Google Maps: {self.salon['google_maps']}
 
             role = "Клиент" if sender == "client" else "Ты"
             if msg_type == 'voice':
-                history_text += f"{role}: [Голосовое сообщение]\n"
+                history_text += f"{role}: [Голосовое]\n"
             else:
                 history_text += f"{role}: {msg}\n"
 
         return history_text
+    
+    def _build_booking_availability(
+        self,
+        instagram_id: str,
+        service_name: str = "",
+        master_name: str = "",
+        preferred_date: str = ""
+    ) -> str:
+        """Построить информацию о доступности для записи"""
+        from db.schedule import get_available_slots, get_client_booking_history
+        from db.masters import get_master_by_name
+        
+        # Проверяем предпочтения клиента по мастеру
+        master_id = None
+        if master_name:
+            master = get_master_by_name(master_name)
+            if master:
+                master_id = master[0]
+        
+        # Получаем историю записей клиента
+        history = get_client_booking_history(instagram_id, limit=5)
+        
+        # Получаем доступные слоты
+        slots = get_available_slots(
+            service_name=service_name,
+            master_id=master_id,
+            date_from=preferred_date,
+            days_ahead=14,
+            limit=15
+        )
+        
+        if not slots:
+            return "⚠️ На ближайшие 2 недели нет свободных окон"
+        
+        # Анализируем историю для предпочтений
+        preferred_time = None
+        preferred_weekday = None
+        preferred_master = None
+        
+        if history:
+            times = [h['time'] for h in history if 'time' in h]
+            if times:
+                # Находим самое частое время
+                from collections import Counter
+                time_counts = Counter(times)
+                preferred_time = time_counts.most_common(1)[0][0] if time_counts else None
+            
+            weekdays = [h['weekday'] for h in history if 'weekday' in h]
+            if weekdays:
+                from collections import Counter
+                weekday_counts = Counter(weekdays)
+                preferred_weekday = weekday_counts.most_common(1)[0][0] if weekday_counts else None
+            
+            masters = [h['master'] for h in history if h.get('master')]
+            if masters:
+                from collections import Counter
+                master_counts = Counter(masters)
+                preferred_master = master_counts.most_common(1)[0][0] if master_counts else None
+        
+        # Формируем текст с доступностью
+        availability_text = "📅 ДОСТУПНЫЕ ОКНА:\n\n"
+        
+        # Группируем по дням
+        slots_by_date = {}
+        for slot in slots:
+            date = slot['date']
+            if date not in slots_by_date:
+                slots_by_date[date] = []
+            slots_by_date[date].append(slot)
+        
+        # Показываем первые 3 дня
+        for date, day_slots in list(slots_by_date.items())[:3]:
+            try:
+                dt = datetime.strptime(date, "%Y-%m-%d")
+                date_formatted = dt.strftime("%d.%m (%A)")
+            except:
+                date_formatted = date
+            
+            availability_text += f"📆 {date_formatted}:\n"
+            
+            for slot in day_slots[:4]:  # Максимум 4 слота в день
+                time_range = f"{slot['time_start']}-{slot['time_end']}"
+                master = slot['master_name']
+                
+                # Отмечаем если это предпочтительный мастер или время
+                marker = ""
+                if preferred_master and master == preferred_master:
+                    marker = " ⭐"
+                elif preferred_time and slot['time_start'] == preferred_time:
+                    marker = " 🕐"
+                
+                availability_text += f"  • {time_range} - {master}{marker}\n"
+            
+            availability_text += "\n"
+        
+        # Добавляем подсказки о предпочтениях
+        if preferred_master:
+            availability_text += f"\n💡 Обычно вы записываетесь к {preferred_master}\n"
+        if preferred_time:
+            availability_text += f"💡 Обычно в {preferred_time}\n"
+        
+        return availability_text
 
-    def _build_booking_progress(self, progress: Dict) -> str:
-        """Прогресс записи (deprecated)"""
-        if not progress:
-            return ""
-
-        return f"""📝 ПРОГРЕСС ЗАПИСИ:
-Услуга: {progress.get('service_name', '❌')}
-Дата: {progress.get('date', '❌')}
-Время: {progress.get('time', '❌')}
-Телефон: {progress.get('phone', '❌')}"""
-
-    def _build_algorithm(self) -> str:
-        """Алгоритм действий"""
-        max_chars = self.bot_settings.get('max_message_chars', 500)
-
-        return f"""⚡ АЛГОРИТМ ДЕЙСТВИЙ:
-{self.bot_settings['algorithm_actions']}
-
-⚠️ ПОВТОРЯЮ: Твой ответ должен быть СТРОГО не более {max_chars} символов!
-Если превысишь - сообщение обрежется и клиент увидит неполную информацию."""
-
-    def _build_examples(self) -> str:
-        """Примеры хороших ответов"""
-        examples = self.bot_settings.get('example_good_responses', '')
-        if not examples:
-            return ""
-
-        return f"""💡 ПРИМЕРЫ ХОРОШИХ ОТВЕТОВ:
-{examples}"""
-
-    def _build_dont_do(self) -> str:
-        """Что НЕ делать"""
-        anti_patterns = self.bot_settings.get('anti_patterns', '')
-        max_chars = self.bot_settings.get('max_message_chars', 500)
-
-        base_rules = f"""🚫 НЕ ДЕЛАЙ:
-- НЕ повторяй приветствия
-- НЕ пиши длинные тексты (лимит {max_chars} символов!)
-- НЕ собирай данные для записи
-- НЕ придумывай цены"""
-
-        if anti_patterns:
-            return f"{base_rules}\n\n{anti_patterns}"
-
-        return base_rules
