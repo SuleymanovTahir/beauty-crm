@@ -90,14 +90,14 @@ export class ApiClient {
       body: JSON.stringify({ client_id: clientId }),
     })
   }
-  
+
   async updateClientBotMode(clientId: string, mode: 'manual' | 'assistant' | 'autopilot') {
     return this.request(`/api/clients/${clientId}/bot-mode`, {
       method: 'POST',
       body: JSON.stringify({ mode }),
     })
   }
-  
+
   async updateBotGloballyEnabled(enabled: boolean) {
     return this.request('/api/settings/bot-globally-enabled', {
       method: 'POST',
@@ -237,14 +237,14 @@ export class ApiClient {
   async getClientNotes(clientId: string) {
     return this.request<any>(`/api/clients/${clientId}/notes`)
   }
-  
+
   async addClientNote(clientId: string, noteText: string) {
     return this.request(`/api/clients/${clientId}/notes`, {
       method: 'POST',
       body: JSON.stringify({ note_text: noteText }),
     })
   }
-  
+
   async deleteClientNote(clientId: string, noteId: number) {
     return this.request(`/api/clients/${clientId}/notes/${noteId}`, {
       method: 'DELETE',
@@ -522,7 +522,7 @@ export class ApiClient {
 
   async updateMessageTemplate(templateId: number, data: { name?: string; title?: string; content?: string; category?: string }) {
     const requestData: any = {};
-    
+
     // Добавляем только те поля, которые переданы
     if (data.title !== undefined) requestData.name = data.title;
     if (data.name !== undefined) requestData.name = data.name;
@@ -592,7 +592,46 @@ export class ApiClient {
     return this.request<any>('/api/statuses/booking')
   }
 
+  // После метода deleteClientNote добавить:
 
+  // ===== МАСТЕРА =====
+  async getMasters() {
+    return this.request<any>('/api/masters')
+  }
+
+  async addMasterTimeOff(masterId: number, data: { date_from: string; date_to: string; reason?: string }) {
+    return this.request(`/api/masters/${masterId}/time-off`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getMasterTimeOff(masterId: number) {
+    return this.request<any>(`/api/masters/${masterId}/time-off`)
+  }
+
+  async deleteMasterTimeOff(timeOffId: number) {
+    return this.request(`/api/masters/time-off/${timeOffId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async addSalonHoliday(data: { date: string; name?: string }) {
+    return this.request('/api/salon/holidays', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getSalonHolidays() {
+    return this.request<any>('/api/salon/holidays')
+  }
+
+  async deleteSalonHoliday(date: string) {
+    return this.request(`/api/salon/holidays/${date}`, {
+      method: 'DELETE',
+    })
+  }
 
 
   // ===== UNREAD COUNT =====

@@ -46,6 +46,27 @@ def create_masters_and_schedule_tables():
             FOREIGN KEY (booking_id) REFERENCES bookings(id)
         )
     """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS master_time_off (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    master_id INTEGER NOT NULL,
+    date_from TEXT NOT NULL,
+    date_to TEXT NOT NULL,
+    reason TEXT,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (master_id) REFERENCES masters(id)
+    )
+    """)
+    
+# Таблица выходных салона (общие)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS salon_holidays (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL UNIQUE,
+    name TEXT,
+    created_at TEXT NOT NULL
+    )
+    """)
     
     # Добавляем поле master в bookings если его нет
     c.execute("PRAGMA table_info(bookings)")

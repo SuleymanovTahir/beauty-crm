@@ -121,3 +121,112 @@ def update_master(master_id: int, **kwargs) -> bool:
 def delete_master(master_id: int) -> bool:
     """Удалить мастера (мягкое удаление)"""
     return update_master(master_id, is_active=0)
+
+def add_master_time_off(
+    master_id: int,
+    date_from: str,
+    date_to: str,
+    reason: str = None
+) -> int:
+    """Добавить выходной мастеру"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    now = datetime.now().isoformat()
+    
+    c.execute("""
+        INSERT INTO master_time_off (master_id, date_from, date_to, reason, created_at)
+        VALUES (?, ?, ?, ?, ?)
+    """, (master_id, date_from, date_to, reason, now))
+    
+    time_off_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    
+    return time_off_id
+
+
+def get_master_time_off(master_id: int, date_from: str = None) -> List[tuple]:
+    """Получить выходные мастера"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    if date_from:
+        c.execute("""
+            SELECT * FROM master_time_off
+            WHERE master_id = ? AND date_to >= ?
+            ORDER BY date_from
+        """, (master_id, date_from))
+    else:
+        c.execute("""
+            SELECT * FROM master_time_off
+            WHERE master_id = ?
+            ORDER BY date_from
+        """, (master_id,))
+    
+    time_offs = c.fetchall()
+    conn.close()
+    return time_offs
+
+
+def delete_master_time_off(time_off_id: int) -> bool:
+    """Удалить выходной"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("DELETE FROM master_time_off WHERE id = ?", (time_off_id,))
+    
+    conn.commit()
+    conn.close()
+    return True
+
+
+def add_salon_holiday(date: str, name: str = None) -> bool:
+    """Добавить выходной салона"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    now = datetime.now().isoformat()
+    
+    try:
+        c.execute("""
+            INSERT INTO salon_holidays (date, name, created_at)
+            VALUES (?, ?, ?)
+        """, (date, name, now))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+
+def get_salon_holidays(date_from: str = None) -> List[tuple]:
+    """Получить выходные салона"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    if date_from:
+        c.execute("""
+            SELECT * FROM salon_holidays
+            WHERE date >= ?
+            ORDER BY date
+        """, (date_from,))
+    else:
+        c.execute("SELECT * FROM salon_holidays ORDER BY date")
+    
+    holidays = c.fetchall()
+    conn.close()
+    return holidays
+
+
+def delete_salon_holiday(date: str) -> bool:
+    """Удалить выходной салона"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("DELETE FROM salon_holidays WHERE date = ?", (date,))
+    
+    conn.commit()
+    conn.close()
+    return True

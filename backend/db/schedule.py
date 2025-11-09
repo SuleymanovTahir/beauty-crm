@@ -12,32 +12,27 @@ def get_available_slots(
     service_name: str = None,
     master_id: int = None,
     date_from: str = None,
-    days_ahead: int = 7,
+    days_ahead: int = 60,
     limit: int = 20
 ) -> List[Dict]:
-    """
-    Получить доступные окна для записи
-    
-    Args:
-        service_name: Название услуги (для фильтрации по мастерам)
-        master_id: ID конкретного мастера
-        date_from: С какой даты искать (по умолчанию сегодня)
-        days_ahead: На сколько дней вперед смотреть
-        limit: Максимум результатов
-    
-    Returns:
-        List[Dict]: Список доступных окон
-    """
+    """Получить доступные окна с учетом выходных"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Определяем диапазон дат
     if not date_from:
         date_from = datetime.now().strftime("%Y-%m-%d")
     
     date_to = (datetime.now() + timedelta(days=days_ahead)).strftime("%Y-%m-%d")
     
-    # Строим запрос
+    # Получаем выходные салона
+    c.execute("""
+        SELECT date FROM salon_holidays
+        WHERE date >= ? AND date <= ?
+    """, (date_from, date_to))
+    
+    salon_holidays = {row[0] for row in c.fetchall()}
+    
+    # Базовый запрос
     query = """
         SELECT 
             ms.id,
@@ -62,7 +57,6 @@ def get_available_slots(
         params.append(master_id)
     
     if service_name:
-        # Находим подходящих мастеров
         from db.masters import get_masters_for_service
         suitable_masters = get_masters_for_service(service_name)
         if suitable_masters:
@@ -70,6 +64,14 @@ def get_available_slots(
             placeholders = ','.join(['?'] * len(master_ids))
             query += f" AND ms.master_id IN ({placeholders})"
             params.extend(master_ids)
+    
+    # Исключаем выходные мастеров
+    query += """
+        AND ms.master_id NOT IN (
+            SELECT master_id FROM master_time_off
+            WHERE ms.date BETWEEN date_from AND date_to
+        )
+    """
     
     query += " ORDER BY ms.date, ms.time_start LIMIT ?"
     params.append(limit)
@@ -79,9 +81,15 @@ def get_available_slots(
     
     slots = []
     for row in rows:
+        slot_date = row[1]
+        
+        # Пропускаем выходные салона
+        if slot_date in salon_holidays:
+            continue
+        
         slots.append({
             'slot_id': row[0],
-            'date': row[1],
+            'date': slot_date,
             'time_start': row[2],
             'time_end': row[3],
             'master_id': row[4],

@@ -29,6 +29,8 @@ from api.reports import router as reports_router
 from api.settings import router as settings_router 
 from api.public import router as public_router
 from api.notes import router as notes_router
+from api.masters import router as masters_router
+
 
 
 # Создаём директории для загрузок
@@ -59,6 +61,7 @@ app.include_router(settings_router, prefix="/api")
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 app.include_router(public_router, prefix="/public")
+app.include_router(masters_router, prefix="/api")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
