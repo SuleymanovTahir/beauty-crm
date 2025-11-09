@@ -206,6 +206,7 @@ async def startup_event():
         init_database()
         
         # Раскомментируйте следующие строки для первичной миграции:
+        # from db.migrations.add_manager_consultation import add_manager_consultation_field
         # from db.migrations.migrate_salon_settings import migrate_salon_settings
         # from db.migrations.add_bot_modes import add_bot_mode_fields
         # from db.migrations.migrate_services import migrate_services
@@ -216,6 +217,8 @@ async def startup_event():
         # migrate_services()
         # migrate_settings()
         # create_employees_tables()
+        # add_manager_consultation_field()
+
         
         # Инициализация бота
         bot = get_bot()

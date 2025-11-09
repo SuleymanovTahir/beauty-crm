@@ -50,6 +50,7 @@ interface BotSettings {
   success_metrics: string;
   ad_campaign_detection: string;
   pre_booking_data_collection: string;
+  manager_consultation_prompt: string;
 }
 
 type TabType = 'general' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
@@ -110,7 +111,8 @@ export default function BotSettings() {
     emergency_situations: '',
     success_metrics: '',
     ad_campaign_detection: '',
-    pre_booking_data_collection: ''
+    pre_booking_data_collection: '',
+    manager_consultation_prompt: '',
   });
 
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['ru', 'en', 'ar']);
@@ -179,6 +181,7 @@ export default function BotSettings() {
         success_metrics: data.success_metrics || '',
         ad_campaign_detection: data.ad_campaign_detection || '',
         pre_booking_data_collection: data.pre_booking_data_collection || t('botsettings:pre_booking_data_collection'),
+        manager_consultation_prompt: data.manager_consultation_prompt || '',
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
@@ -1004,6 +1007,32 @@ export default function BotSettings() {
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
                 {t('botsettings:pre_booking_data_collection_explanation')}
+              </p>
+            </div>
+
+            {/* ← ad_campaign_detection идет после этого */}
+            
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                🤝 Промпт для консультации менеджера
+              </label>
+              <textarea
+                value={settings.manager_consultation_prompt}
+                onChange={(e) => setSettings({ ...settings, manager_consultation_prompt: e.target.value })}
+                rows={12}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                  fontFamily: 'monospace'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Инструкции для AI когда менеджер просит совет через команду "#помоги"
               </p>
             </div>
 

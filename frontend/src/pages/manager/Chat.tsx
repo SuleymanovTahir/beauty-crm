@@ -929,34 +929,6 @@ export default function Chat() {
                   </button>
                 </div>
               )}
-
-              {/* Подсказка про команду бота */}
-              <div className="px-3 py-2 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 border-t border-gray-200">
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-white text-xs font-bold">AI</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-gray-700 mb-1">💡 Команды AI-помощника:</p>
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-600">
-                      <code className="px-2 py-0.5 bg-white rounded border border-blue-200 font-mono text-blue-700">
-                        #помоги
-                      </code>
-                      <span className="text-gray-400">или</span>
-                      <code className="px-2 py-0.5 bg-white rounded border border-blue-200 font-mono text-blue-700">
-                        бот помоги
-                      </code>
-                      <span>→ получить совет (не отправится клиенту)</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      <strong>Пример:</strong> #помоги Клиент молчит уже час, писать или ждать?
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-
-
               {/* Chat Input */}
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-end gap-2">

@@ -183,6 +183,20 @@ async def handle_webhook(request: Request):
                 message_text = message_data.get("text", "").strip()
 
                 logger.info(f"📬 Message from {sender_id}: is_echo={is_echo}, text={message_text[:50]}")
+                # ✅ ФИЛЬТРУЕМ КОМАНДУ БОТА (если менеджер написал в Instagram Direct)
+                if not is_echo and message_text:
+                    lower_text = message_text.lower()
+                    is_bot_command = (
+                        '#помоги' in lower_text or 
+                        '#бот помоги' in lower_text or
+                        'бот помоги' in lower_text or
+                        '#bot' in lower_text or
+                        '#help' in lower_text
+                    )
+                    
+                    if is_bot_command:
+                        logger.info(f"⚠️ Обнаружена команда бота от {sender_id} - пропускаем обработку")
+                        continue
 
                 if is_echo:
                     # ✅ КРИТИЧЕСКИ ВАЖНО: Проверяем sender_id
