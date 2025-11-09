@@ -293,6 +293,7 @@ async def handle_webhook(request: Request):
                     # ✅ ОПРЕДЕЛЯЕМ ЯЗЫК
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
+                    
 
                     # ✅ ПРОВЕРКА: Поддерживается ли язык? (БЕЗ локального импорта!)
                     try:
@@ -308,7 +309,20 @@ async def handle_webhook(request: Request):
                         log_info(f"🌐 Client language: {client_language} (supported: {','.join(supported_langs)})", "webhook")
                     except Exception as lang_check_error:
                         log_error(f"⚠️ Language check failed: {lang_check_error}, using 'ru'", "webhook")
-                        client_language = 'ru'               
+                        client_language = 'ru'  
+                    lower_text = message_text.lower()
+                    is_bot_command = (
+                        '#помоги' in lower_text or 
+                        '#бот помоги' in lower_text or
+                        'бот помоги' in lower_text or
+                        '#bot' in lower_text or
+                        '#help' in lower_text
+                    )
+                    
+                    if is_bot_command:
+                        log_info(f"⚠️ Обнаружена команда бота - НЕ отвечаем автопилотом", "webhook")
+                        continue  # Пропускаем автопилот, но сообщение уже сохранено в БД
+                                 
                     salon = get_salon_settings()
                     bot_globally_enabled = salon.get('bot_globally_enabled', 1)
                     
