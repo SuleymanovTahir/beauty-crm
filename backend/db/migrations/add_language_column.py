@@ -30,4 +30,11 @@ def add_language_column():
         conn.close()
 
 if __name__ == "__main__":
-    add_language_column()
+    print("=" * 70)
+    print("🔧 МИГРАЦИЯ: Добавление колонки language")
+    print("=" * 70)
+    response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
+    if response.lower() in ['yes', 'y']:
+        add_language_column()
+    else:
+        print("\n❌ Миграция отменена")

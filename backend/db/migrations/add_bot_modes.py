@@ -31,4 +31,11 @@ def add_bot_mode_fields():
     print("\n✅ Миграция завершена!")
 
 if __name__ == "__main__":
-    add_bot_mode_fields()
+    print("=" * 70)
+    print("🔧 МИГРАЦИЯ: Добавление полей для режимов бота")
+    print("=" * 70)
+    response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
+    if response.lower() in ['yes', 'y']:
+        add_bot_mode_fields()
+    else:
+        print("\n❌ Миграция отменена")

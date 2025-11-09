@@ -109,4 +109,11 @@ def migrate():
         return False
 
 if __name__ == "__main__":
-    migrate()
+    print("=" * 70)
+    print("🔧 МИГРАЦИЯ: Добавление поля notes и таблицы message_templates")
+    print("=" * 70)
+    response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
+    if response.lower() in ['yes', 'y']:
+        migrate()
+    else:
+        print("\n❌ Миграция отменена")

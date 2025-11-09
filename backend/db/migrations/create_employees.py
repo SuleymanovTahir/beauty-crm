@@ -61,4 +61,11 @@ def create_employees_tables():
 
 
 if __name__ == "__main__":
-    create_employees_tables()
+    print("=" * 70)
+    print("🔧 МИГРАЦИЯ: Создание таблиц для сотрудников салона")
+    print("=" * 70)
+    response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
+    if response.lower() in ['yes', 'y']:
+        create_employees_tables()
+    else:
+        print("\n❌ Миграция отменена")

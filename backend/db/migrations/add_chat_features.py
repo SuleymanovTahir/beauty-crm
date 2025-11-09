@@ -107,4 +107,11 @@ def add_chat_features_tables():
         conn.close()
 
 if __name__ == "__main__":
-    add_chat_features_tables()
+    print("=" * 70)
+    print("🔧 МИГРАЦИЯ: Добавление таблиц для функций чата")
+    print("=" * 70)
+    response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
+    if response.lower() in ['yes', 'y']:
+        add_chat_features_tables()
+    else:
+        print("\n❌ Миграция отменена")
