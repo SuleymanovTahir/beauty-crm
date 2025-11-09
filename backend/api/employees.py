@@ -214,3 +214,37 @@ async def get_available(
             } for e in employees
         ]
     }
+
+@router.put("/employees/{employee_id}/birthday")
+async def update_employee_birthday(
+    employee_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить дату рождения сотрудника"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        birthday = data.get('birthday')
+        
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        c.execute("""
+            UPDATE users
+            SET birthday = ?
+            WHERE id = ?
+        """, (birthday, employee_id))
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Updated birthday for employee {employee_id}", "api")
+        
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating birthday: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

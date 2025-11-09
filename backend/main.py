@@ -30,6 +30,7 @@ from api.settings import router as settings_router
 from api.public import router as public_router
 from api.notes import router as notes_router
 from api.masters import router as masters_router
+from scheduler import start_birthday_checker
 
 
 
@@ -222,12 +223,13 @@ async def startup_event():
         # add_manager_consultation_field()
 
         
-        # Инициализация бота
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
         
+        # ✅ НОВОЕ: Запуск планировщика дней рождения
+        start_birthday_checker()
+        
         log_info("✅ CRM готова к работе!", "startup")
-        log_info("🔄 Прокси для изображений активирован", "startup")  # ✅ НОВОЕ
         log_info("=" * 70, "startup")
     except Exception as e:
         log_critical(f"❌ ОШИБКА ПРИ ЗАПУСКЕ: {e}", "startup")
