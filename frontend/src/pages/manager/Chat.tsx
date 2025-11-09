@@ -59,12 +59,15 @@ export default function Chat() {
   const [searchTerm, setSearchTerm] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
+  const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
   const [botMode, setBotMode] = useState<'manual' | 'assistant' | 'autopilot'>('assistant');
   const [botSuggestion, setBotSuggestion] = useState<string | null>(null);
   const [isLoadingSuggestion, setIsLoadingSuggestion] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showReactionPicker, setShowReactionPicker] = useState<string | number | null>(null);
+  const [messageReactions, setMessageReactions] = useState<Record<string | number, Record<string, number>>>({});
 
   const [showNotes, setShowNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
@@ -398,17 +401,28 @@ export default function Chat() {
       }
 
       if (message.trim()) {
-        await api.sendMessage(selectedClient.id, message);
+        let finalMessage = message;
+
+        // Если это ответ на сообщение
+        if (replyToMessage) {
+          const quotedText = replyToMessage.message.length > 50
+            ? replyToMessage.message.substring(0, 50) + '...'
+            : replyToMessage.message;
+          finalMessage = `↩️ Ответ на: "${quotedText}"\n\n${message}`;
+        }
+
+        await api.sendMessage(selectedClient.id, finalMessage);
 
         setMessages(prev => [...prev, {
           id: Date.now(),
-          message: message,
+          message: finalMessage,
           sender: 'manager',
           timestamp: new Date().toISOString(),
           type: 'text'
         }]);
 
         setMessage('');
+        setReplyToMessage(null);  // ✅ ДОБАВЛЕНО
         toast.success('✅ Отправлено');
       }
 
@@ -613,7 +627,21 @@ export default function Chat() {
                     `}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold">
+                      {client.profile_pic && client.profile_pic.trim() !== '' ? (
+                        <img
+                          src={client.profile_pic}
+                          alt={client.display_name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                          crossOrigin="anonymous"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-semibold ${client.profile_pic && client.profile_pic.trim() !== '' ? 'hidden' : ''
+                        }`}>
                         {client.display_name.charAt(0).toUpperCase()}
                       </div>
                       {client.unread_count && client.unread_count > 0 && (
@@ -976,12 +1004,10 @@ export default function Chat() {
                           className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? '-left-32' : '-right-32'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 bg-white rounded-xl shadow-lg border border-gray-200 p-1`}
                         >
                           {/* Ответить */}
+                          {/* Ответить */}
                           <button
                             onClick={() => {
-                              const quoteText = msg.message.length > 50
-                                ? msg.message.substring(0, 50) + '...'
-                                : msg.message;
-                              setMessage(`↩️ "${quoteText}"\n\n`);
+                              setReplyToMessage(msg);
                               toast.info('💬 Ответ на сообщение');
                             }}
                             className="w-8 h-8 hover:bg-blue-50 rounded-lg flex items-center justify-center transition-colors"
@@ -993,24 +1019,62 @@ export default function Chat() {
                           </button>
 
                           {/* Реакция */}
+                          {/* Реакция */}
                           <button
-                            onClick={() => {
-                              const emoji = prompt('Введите эмодзи реакции:', '❤️');
-                              if (emoji && msg.id) {
-                                api.reactToMessage(Number(msg.id), emoji);
-                                toast.success(`${emoji} Реакция добавлена!`);
-                              }
-                            }}
-                            className="w-8 h-8 hover:bg-pink-50 rounded-lg flex items-center justify-center transition-colors"
+                            onClick={() => setShowReactionPicker(msg.id || null)}
+                            className="w-8 h-8 hover:bg-pink-50 rounded-lg flex items-center justify-center transition-colors relative"
                             title="Реакция"
                           >
                             <span className="text-lg">❤️</span>
+
+                            {/* Picker */}
+                            {showReactionPicker === msg.id && (
+                              <>
+                                <div className="fixed inset-0 z-40" onClick={() => setShowReactionPicker(null)} />
+                                <div className="absolute bottom-full mb-2 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 p-2 flex gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                  {['❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🎉'].map(emoji => (
+                                    <button
+                                      key={emoji}
+                                      onClick={async (e) => {
+                                        e.stopPropagation();
+                                        if (msg.id) {
+                                          try {
+                                            await api.reactToMessage(Number(msg.id), emoji);
+
+                                            // Обновляем локальное состояние
+                                            setMessageReactions(prev => ({
+                                              ...prev,
+                                              [msg.id!]: {
+                                                ...(prev[msg.id!] || {}),
+                                                [emoji]: ((prev[msg.id!] || {})[emoji] || 0) + 1
+                                              }
+                                            }));
+
+                                            toast.success(`${emoji} Реакция добавлена!`);
+                                            setShowReactionPicker(null);
+                                          } catch (err) {
+                                            toast.error('❌ Ошибка добавления реакции');
+                                          }
+                                        }
+                                      }}
+                                      className="w-10 h-10 hover:bg-gray-100 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-110"
+                                    >
+                                      {emoji}
+                                    </button>
+                                  ))}
+                                </div>
+                              </>
+                            )}
                           </button>
 
                           {/* Переслать */}
                           <button
                             onClick={() => {
-                              toast.info('📤 Функция пересылки в разработке');
+                              navigator.clipboard.writeText(msg.message);
+                              toast.success('📤 Сообщение скопировано для пересылки', {
+                                description: 'Выберите чат и вставьте текст (Cmd+V)',
+                                duration: 4000
+                              });
                             }}
                             className="w-8 h-8 hover:bg-purple-50 rounded-lg flex items-center justify-center transition-colors"
                             title="Переслать"
@@ -1213,14 +1277,40 @@ export default function Chat() {
               )}
 
               {/* Chat Input */}
+              {/* Chat Input */}
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+                {/* Reply Preview */}
+                {replyToMessage && (
+                  <div className="mb-2 bg-blue-50 border-l-4 border-blue-500 rounded-lg p-3 flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                        </svg>
+                        <span className="text-xs font-semibold text-blue-900">
+                          Ответ на {replyToMessage.sender === 'client' ? 'клиента' : 'менеджера'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-blue-700 truncate">
+                        {replyToMessage.message.substring(0, 80)}...
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setReplyToMessage(null)}
+                      className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-blue-100 flex items-center justify-center transition-colors"
+                    >
+                      <X className="w-4 h-4 text-blue-600" />
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
                     <div className="relative">
                       <Textarea
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder={t('chat:message')}
+                        placeholder={replyToMessage ? 'Напишите ответ...' : t('chat:message')}
                         className="resize-none border-2 border-gray-200 rounded-xl text-sm"
                         rows={2}
                         disabled={isUploadingFile}
@@ -1234,7 +1324,6 @@ export default function Chat() {
                         }}
                       />
 
-                      {/* Кнопка сброса предложения бота */}
                       {botSuggestion && (
                         <button
                           onClick={() => {
@@ -1343,119 +1432,119 @@ export default function Chat() {
           </div>
         ) : (
           <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-                      <MessageCircle className="w-12 h-12 text-pink-600" />
-                    </div>
-                    <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
-                    <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
-                  </div>
-                </div>
-        )}
+            <div className="text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+                <MessageCircle className="w-12 h-12 text-pink-600" />
               </div>
-      {/* Модальное окно "Спросить AI" */}
-            {showAskBotModal && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-                  {/* Header */}
-                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <MessageCircle className="w-5 h-5 text-blue-600" />
-                        🤖 Спросить AI-консультанта
-                      </h3>
-                      <button
-                        onClick={() => {
-                          setShowAskBotModal(false);
-                          setBotQuestion('');
-                          setBotContext('');
-                        }}
-                        className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
-                      >
-                        <X className="w-5 h-5 text-gray-500" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Body */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {/* Вопрос */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        ❓ Ваш вопрос <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        value={botQuestion}
-                        onChange={(e) => setBotQuestion(e.target.value)}
-                        placeholder="Например: Клиент говорит что дорого, как ответить?"
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                        rows={3}
-                        autoFocus
-                      />
-                    </div>
-
-                    {/* Контекст (опционально) */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        📝 Дополнительный контекст (опционально)
-                      </label>
-                      <textarea
-                        value={botContext}
-                        onChange={(e) => setBotContext(e.target.value)}
-                        placeholder="Например: Клиент уже был у нас, но недоволен результатом"
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                        rows={2}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        💡 Последние 5 сообщений будут добавлены автоматически
-                      </p>
-                    </div>
-
-                    {/* Подсказки */}
-                    <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                      <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
-                      <ul className="text-xs text-blue-700 space-y-1">
-                        <li>• Клиент жалуется на цену, что ответить?</li>
-                        <li>• Как убедить записаться прямо сейчас?</li>
-                        <li>• Клиент молчит час после моего ответа, что делать?</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
-                    <button
-                      onClick={() => {
-                        setShowAskBotModal(false);
-                        setBotQuestion('');
-                        setBotContext('');
-                      }}
-                      className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
-                    >
-                      Отмена
-                    </button>
-                    <button
-                      onClick={handleAskBot}
-                      disabled={isAskingBot || !botQuestion.trim()}
-                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isAskingBot ? (
-                        <>
-                          <Loader className="w-4 h-4 animate-spin" />
-                          <span>Думаю...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4" />
-                          <span>Получить совет</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+              <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
+              <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
+            </div>
           </div>
-          );
+        )}
+      </div>
+      {/* Модальное окно "Спросить AI" */}
+      {showAskBotModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-blue-600" />
+                  🤖 Спросить AI-консультанта
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowAskBotModal(false);
+                    setBotQuestion('');
+                    setBotContext('');
+                  }}
+                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Вопрос */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  ❓ Ваш вопрос <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={botQuestion}
+                  onChange={(e) => setBotQuestion(e.target.value)}
+                  placeholder="Например: Клиент говорит что дорого, как ответить?"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                  rows={3}
+                  autoFocus
+                />
+              </div>
+
+              {/* Контекст (опционально) */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  📝 Дополнительный контекст (опционально)
+                </label>
+                <textarea
+                  value={botContext}
+                  onChange={(e) => setBotContext(e.target.value)}
+                  placeholder="Например: Клиент уже был у нас, но недоволен результатом"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                  rows={2}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Последние 5 сообщений будут добавлены автоматически
+                </p>
+              </div>
+
+              {/* Подсказки */}
+              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+                <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
+                <ul className="text-xs text-blue-700 space-y-1">
+                  <li>• Клиент жалуется на цену, что ответить?</li>
+                  <li>• Как убедить записаться прямо сейчас?</li>
+                  <li>• Клиент молчит час после моего ответа, что делать?</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowAskBotModal(false);
+                  setBotQuestion('');
+                  setBotContext('');
+                }}
+                className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleAskBot}
+                disabled={isAskingBot || !botQuestion.trim()}
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAskingBot ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    <span>Думаю...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span>Получить совет</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
 }
