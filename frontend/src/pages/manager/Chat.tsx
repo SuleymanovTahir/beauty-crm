@@ -85,9 +85,10 @@ export default function Chat() {
   const [showAskBotModal, setShowAskBotModal] = useState(false);
   const [botQuestion, setBotQuestion] = useState('');
   const [botContext, setBotContext] = useState('');
-  const [isAskingBot, setIsAskingBot] = useState(false);
+  const [showAIButtons, setShowAIButtons] = useState(false);
   const [isSelectingMessages, setIsSelectingMessages] = useState(false);
   const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
+  const [isAskingBot, setIsAskingBot] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -117,9 +118,13 @@ export default function Chat() {
     }
   }, [clients]);
 
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (shouldAutoScroll) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, shouldAutoScroll]);
 
   useEffect(() => {
     if (!selectedClient) return;
@@ -141,11 +146,10 @@ export default function Chat() {
 
   useEffect(() => {
     if (!selectedClient || botMode !== 'assistant' || messages.length === 0) return;
-    if (isFetchingSuggestion.current) return; // Защита от дублирования
+    if (isFetchingSuggestion.current) return;
 
     const lastMsg = messages[messages.length - 1];
 
-    // Проверяем: это НОВОЕ сообщение от КЛИЕНТА?
     if (
       lastMsg.sender === 'client' &&
       lastMsg.id &&
@@ -164,12 +168,10 @@ export default function Chat() {
     }
   }, [messages, selectedClient, botMode]);
 
-  // ✅ ДОБАВЛЕНО: Сброс при смене клиента
   useEffect(() => {
     lastProcessedMessageId.current = null;
     isFetchingSuggestion.current = false;
   }, [selectedClient]);
-
 
   const loadClients = async () => {
     try {
@@ -218,13 +220,15 @@ export default function Chat() {
         return;
       }
 
+      const hasNewClientMessages = !isInitial && messagesArray.length > messages.length &&
+        messagesArray[messagesArray.length - 1]?.sender === 'client';
+
+      setShouldAutoScroll(isInitial || hasNewClientMessages);
+
       setMessages(messagesArray as Message[]);
 
     } catch (err) {
-      if (isInitial) {
-        const message = err instanceof Error ? err.message : t('chat:error_loading_messages');
-        toast.error(t('chat:error') + (message ? ': ' + message : ''));
-      }
+      console.error('Error loading messages:', err instanceof Error ? err.message : err);
     } finally {
       if (isInitial) {
         setLoadingMessages(false);
@@ -235,7 +239,6 @@ export default function Chat() {
   const handleSelectClient = async (client: Client) => {
     setSelectedClient(client);
     setBotMode((client as any).bot_mode || 'assistant');
-    loadMessages(client.id, true);
     loadMessages(client.id, true);
     setShowNotes(false);
     setShowClientInfo(false);
@@ -267,7 +270,7 @@ export default function Chat() {
 
       if (response.success) {
         setBotSuggestion(response.suggestion);
-        setMessage(response.suggestion); // Подставляем в textarea
+        setMessage(response.suggestion);
 
         toast.info(`🤖 Бот предлагает ответ (${response.unread_count} сообщ.)`, {
           description: response.suggestion.substring(0, 100) + '...',
@@ -281,13 +284,11 @@ export default function Chat() {
     }
   };
 
-
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
     const cleanMessage = message.trim();
 
-    // ✅ ШАБЛОН 1: Проверка команды бота (ПРИОРИТЕТ №1)
     const lowerMessage = cleanMessage.toLowerCase();
     const isBotHelp =
       lowerMessage.includes('#помоги') ||
@@ -302,7 +303,6 @@ export default function Chat() {
     if (isBotHelp) {
       console.log('✅ Обнаружена команда бота - НЕ отправляем клиенту!');
 
-      // Удаляем ВСЕ варианты команды
       let fullText = cleanMessage
         .replace(/#бот\s*помоги#?/gi, '')
         .replace(/#помоги#?/gi, '')
@@ -342,21 +342,19 @@ export default function Chat() {
         });
 
         setMessage('');
-        return; // ⚠️ НЕ продолжаем отправку клиенту
+        return;
       } catch (err) {
         console.error('❌ Ошибка:', err);
         toast.error('❌ Ошибка получения совета', {
           description: err instanceof Error ? err.message : 'Неизвестная ошибка'
         });
-        return; // ⚠️ Даже при ошибке НЕ отправляем клиенту
+        return;
       }
     }
 
-    // ✅ ШАБЛОН 2: Обычная отправка клиенту (только если НЕ команда бота)
     console.log('📤 Отправка сообщения клиенту');
 
     try {
-      // Отправка файлов
       if (attachedFiles.length > 0) {
         setIsUploadingFile(true);
 
@@ -399,7 +397,6 @@ export default function Chat() {
         setIsUploadingFile(false);
       }
 
-      // Отправка текста
       if (message.trim()) {
         await api.sendMessage(selectedClient.id, message);
 
@@ -424,7 +421,6 @@ export default function Chat() {
     }
   };
 
-
   const handleAskBot = async () => {
     if (!botQuestion.trim()) {
       toast.error('❌ Введите вопрос');
@@ -434,7 +430,6 @@ export default function Chat() {
     try {
       setIsAskingBot(true);
 
-      // Формируем контекст из последних сообщений
       const recentMessages = messages.slice(-5).map(msg => {
         const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
         return `${sender}: ${msg.message}`;
@@ -446,10 +441,9 @@ export default function Chat() {
 
       const response = await api.askBotAdvice(botQuestion, fullContext);
 
-      // Показываем совет в toast с большой длительностью
       toast.success('💡 Совет от AI-бота', {
         description: response.advice,
-        duration: 60000, // 60 секунд
+        duration: 60000,
         action: {
           label: '📋 Копировать',
           onClick: () => {
@@ -459,10 +453,10 @@ export default function Chat() {
         }
       });
 
-      // Закрываем модальное окно и очищаем поля
       setShowAskBotModal(false);
       setBotQuestion('');
       setBotContext('');
+      setShowAIButtons(false);
 
     } catch (err) {
       console.error('❌ Ошибка:', err);
@@ -483,9 +477,8 @@ export default function Chat() {
     try {
       setIsAskingBot(true);
 
-      // Собираем выбранные сообщения в хронологическом порядке
       const selectedMessages = messages
-        .filter(msg => selectedMessageIds.has(msg.id))
+        .filter(msg => msg.id && selectedMessageIds.has(msg.id))
         .map(msg => {
           const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
           return `${sender}: ${msg.message}`;
@@ -500,7 +493,6 @@ export default function Chat() {
       const question = "Проанализируй эти сообщения и дай совет как лучше ответить клиенту";
       const response = await api.askBotAdvice(question, selectedMessages);
 
-      // Показываем совет в toast
       toast.success('💡 Совет от AI-бота', {
         description: response.advice,
         duration: 60000,
@@ -513,9 +505,9 @@ export default function Chat() {
         }
       });
 
-      // Сбрасываем режим выделения
       setIsSelectingMessages(false);
       setSelectedMessageIds(new Set());
+      setShowAIButtons(false);
 
     } catch (err) {
       console.error('❌ Ошибка:', err);
@@ -670,6 +662,7 @@ export default function Chat() {
                   >
                     <ArrowLeft className="w-5 h-5 text-gray-700" />
                   </button>
+
                   {botMode === 'assistant' && isLoadingSuggestion && (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-100 rounded-full">
                       <Loader className="w-3 h-3 text-purple-600 animate-spin" />
@@ -687,7 +680,6 @@ export default function Chat() {
                   {botMode === 'autopilot' && (
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 rounded-full">
                       <span className="inline-flex items-center justify-center w-3 h-3 rounded-full bg-green-400">
-                        {/* Simple autopilot icon replacement */}
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 8 8">
                           <circle cx="4" cy="4" r="4" />
                         </svg>
@@ -695,6 +687,7 @@ export default function Chat() {
                       <span className="text-xs font-medium text-green-700">Автопилот</span>
                     </div>
                   )}
+
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
                       <img
@@ -742,8 +735,7 @@ export default function Chat() {
                       </Button>
                       {showMobileMenu && (
                         <>
-                          <div
-                            className="fixed inset-0 z-40"
+                          <div className="fixed inset-0 z-40"
                             onClick={() => setShowMobileMenu(false)}
                           />
                           <div className="absolute right-0 top-11 w-52 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50">
@@ -804,6 +796,7 @@ export default function Chat() {
                   onClose={() => setShowMessageSearch(false)}
                 />
               )}
+
               {/* Подсказка для режима выделения */}
               {isSelectingMessages && (
                 <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mx-4 mb-3">
@@ -816,6 +809,7 @@ export default function Chat() {
                   </p>
                 </div>
               )}
+
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-white to-gray-50/30">
                 {loadingMessages ? (
@@ -835,23 +829,23 @@ export default function Chat() {
                       className={`flex items-start gap-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                     >
                       {/* Чекбокс для режима выделения */}
-                      {isSelectingMessages && (
+                      {isSelectingMessages && msg.id && (
                         <button
                           onClick={() => {
                             const newSelected = new Set(selectedMessageIds);
-                            if (newSelected.has(msg.id)) {
-                              newSelected.delete(msg.id);
+                            if (newSelected.has(msg.id!)) {
+                              newSelected.delete(msg.id!);
                             } else {
-                              newSelected.add(msg.id);
+                              newSelected.add(msg.id!);
                             }
                             setSelectedMessageIds(newSelected);
                           }}
-                          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedMessageIds.has(msg.id)
+                          className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedMessageIds.has(msg.id!)
                             ? 'bg-blue-500 border-blue-500'
                             : 'bg-white border-gray-300 hover:border-blue-400'
                             } ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'order-2' : 'order-1'}`}
                         >
-                          {selectedMessageIds.has(msg.id) && (
+                          {selectedMessageIds.has(msg.id!) && (
                             <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
@@ -859,121 +853,187 @@ export default function Chat() {
                         </button>
                       )}
 
-                      <div
-                        className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${selectedMessageIds.has(msg.id) ? 'ring-2 ring-blue-500' : ''
-                          } ${(msg.sender === 'bot' || msg.sender === 'manager')
-                            ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
-                            : 'bg-white text-gray-900 border-2 border-gray-200'
-                          }`}
-                      >
-                        {msg.type === 'image' ? (
-                          <div className="relative group">
-                            <img
-                              src={(() => {
-                                if (msg.message.startsWith('http')) {
-                                  if (msg.message.includes('zrok.io')) {
-                                    const url = new URL(msg.message);
-                                    const filePath = url.pathname;
-                                    return `${import.meta.env.VITE_API_URL}${filePath}`;
+                      <div className="relative group">
+                        <div
+                          className={`rounded-2xl shadow-md overflow-hidden max-w-xs sm:max-w-sm md:max-w-md ${msg.id && selectedMessageIds.has(msg.id) ? 'ring-2 ring-blue-500' : ''
+                            } ${(msg.sender === 'bot' || msg.sender === 'manager')
+                              ? 'bg-gradient-to-br from-pink-500 to-purple-600 text-white'
+                              : 'bg-white text-gray-900 border-2 border-gray-200'
+                            }`}
+                        >
+                          {msg.type === 'image' ? (
+                            <div className="relative group">
+                              <img
+                                src={(() => {
+                                  if (msg.message.startsWith('http')) {
+                                    if (msg.message.includes('zrok.io')) {
+                                      const url = new URL(msg.message);
+                                      const filePath = url.pathname;
+                                      return `${import.meta.env.VITE_API_URL}${filePath}`;
+                                    }
+                                    return msg.message;
                                   }
-                                  return msg.message;
-                                }
-                                return `${import.meta.env.VITE_API_URL}${msg.message}`;
-                              })()}
-                              alt={t('chat:image')}
-                              loading="lazy"
-                              className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
-                              onClick={() => window.open(msg.message, '_blank')}
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                                const fallback = e.currentTarget.nextElementSibling;
-                                if (fallback) (fallback as HTMLElement).style.display = 'flex';
-                              }}
-                            />
-                            <div
-                              style={{ display: 'none' }}
-                              className={`px-4 py-6 flex flex-col items-center justify-center min-h-[140px] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                                }`}
-                            >
-                              <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
-                              <p className="text-sm">📷 {t('chat:image_not_available')}</p>
+                                  return `${import.meta.env.VITE_API_URL}${msg.message}`;
+                                })()}
+                                alt={t('chat:image')}
+                                loading="lazy"
+                                className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
+                                onClick={() => window.open(msg.message, '_blank')}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const fallback = e.currentTarget.nextElementSibling;
+                                  if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                                }}
+                              />
+                              <div
+                                style={{ display: 'none' }}
+                                className={`px-4 py-6 flex flex-col items-center justify-center min-h-[140px] ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                                  }`}
+                              >
+                                <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
+                                <p className="text-sm">📷 {t('chat:image_not_available')}</p>
+                              </div>
+                              <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                                <p className="text-xs">
+                                  {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
                             </div>
-                            <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                              <p className="text-xs">
+                          ) : msg.type === 'video' ? (
+                            <div className="relative">
+                              <video
+                                src={msg.message}
+                                controls
+                                className="w-full h-auto rounded-t-2xl max-h-72"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                }}
+                              />
+                              <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                                <p className="text-xs">
+                                  {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          ) : msg.type === 'audio' ? (
+                            <div className="px-4 py-3 min-w-[240px]">
+                              <audio
+                                src={msg.message}
+                                controls
+                                className="w-full"
+                              />
+                              <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                                <p className="text-xs">
+                                  {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          ) : msg.type === 'file' ? (
+                            <div className="px-4 py-3 min-w-[200px]">
+                              <a href={msg.message}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
+                                  }`}
+                              >
+                                <FileText className="w-5 h-5" />
+                                <span className="text-sm font-medium">Открыть файл</span>
+                              </a>
+                              <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
+                                <p className="text-xs">
+                                  {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="px-4 py-3">
+                              <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
+                              <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
+                                }`}>
                                 {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                   hour: '2-digit',
                                   minute: '2-digit'
                                 })}
                               </p>
                             </div>
-                          </div>
-                        ) : msg.type === 'video' ? (
-                          <div className="relative">
-                            <video
-                              src={msg.message}
-                              controls
-                              className="w-full h-auto rounded-t-2xl max-h-72"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
-                            />
-                            <div className={`px-4 py-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                              <p className="text-xs">
-                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                          </div>
-                        ) : msg.type === 'audio' ? (
-                          <div className="px-4 py-3 min-w-[240px]">
-                            <audio
-                              src={msg.message}
-                              controls
-                              className="w-full"
-                            />
-                            <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                              <p className="text-xs">
-                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                          </div>
-                        ) : msg.type === 'file' ? (
-                          <div className="px-4 py-3 min-w-[200px]">
-                            <a href={msg.message}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`flex items-center gap-2 hover:underline ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-600'
-                                }`}
-                            >
-                              <FileText className="w-5 h-5" />
-                              <span className="text-sm font-medium">Открыть файл</span>
-                            </a>
-                            <div className={`mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-600'}`}>
-                              <p className="text-xs">
-                                {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="px-4 py-3">
-                            <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
-                            <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                              }`}>
-                              {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                          </div>
-                        )}
+                          )}
+                        </div>
+
+                        {/* Кнопки действий при наведении */}
+                        <div
+                          className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? '-left-32' : '-right-32'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 bg-white rounded-xl shadow-lg border border-gray-200 p-1`}
+                        >
+                          {/* Ответить */}
+                          <button
+                            onClick={() => {
+                              const quoteText = msg.message.length > 50
+                                ? msg.message.substring(0, 50) + '...'
+                                : msg.message;
+                              setMessage(`↩️ "${quoteText}"\n\n`);
+                              toast.info('💬 Ответ на сообщение');
+                            }}
+                            className="w-8 h-8 hover:bg-blue-50 rounded-lg flex items-center justify-center transition-colors"
+                            title="Ответить"
+                          >
+                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                            </svg>
+                          </button>
+
+                          {/* Реакция */}
+                          <button
+                            onClick={() => {
+                              const emoji = prompt('Введите эмодзи реакции:', '❤️');
+                              if (emoji && msg.id) {
+                                api.reactToMessage(Number(msg.id), emoji);
+                                toast.success(`${emoji} Реакция добавлена!`);
+                              }
+                            }}
+                            className="w-8 h-8 hover:bg-pink-50 rounded-lg flex items-center justify-center transition-colors"
+                            title="Реакция"
+                          >
+                            <span className="text-lg">❤️</span>
+                          </button>
+
+                          {/* Переслать */}
+                          <button
+                            onClick={() => {
+                              toast.info('📤 Функция пересылки в разработке');
+                            }}
+                            className="w-8 h-8 hover:bg-purple-50 rounded-lg flex items-center justify-center transition-colors"
+                            title="Переслать"
+                          >
+                            <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </button>
+
+                          {/* Копировать */}
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.message);
+                              toast.success('📋 Скопировано!');
+                            }}
+                            className="w-8 h-8 hover:bg-gray-50 rounded-lg flex items-center justify-center transition-colors"
+                            title="Копировать"
+                          >
+                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -1053,40 +1113,57 @@ export default function Chat() {
                   </div>
                 </div>
               )}
+
+              {/* AI Buttons Section */}
               {selectedClient && (
                 <div className="px-3 py-2 bg-white border-t border-gray-200">
                   {!isSelectingMessages ? (
-                    <div className="flex gap-2">
-                      {botMode === 'assistant' && (
-                        <button
-                          onClick={() => fetchBotSuggestion(selectedClient.id)}
-                          disabled={isLoadingSuggestion}
-                          className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isLoadingSuggestion ? (
-                            <>
-                              <Loader className="w-4 h-4 animate-spin" />
-                              <span>Бот думает...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-4 h-4" />
-                              <span>✨ Автоподсказка</span>
-                            </>
-                          )}
-                        </button>
-                      )}
-
+                    <div className="space-y-2">
+                      {/* Кнопка-триггер */}
                       <button
-                        onClick={() => {
-                          setIsSelectingMessages(true);
-                          setSelectedMessageIds(new Set());
-                        }}
-                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
+                        onClick={() => setShowAIButtons(!showAIButtons)}
+                        className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2"
                       >
-                        <MessageCircle className="w-4 h-4" />
-                        <span>🤖 Выбрать и спросить AI</span>
+                        <Sparkles className="w-4 h-4" />
+                        <span>🤖 AI-помощник</span>
+                        {showAIButtons ? <span>▼</span> : <span>▶</span>}
                       </button>
+
+                      {/* Свернутый блок */}
+                      {showAIButtons && (
+                        <div className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                          {botMode === 'assistant' && (
+                            <button
+                              onClick={() => fetchBotSuggestion(selectedClient.id)}
+                              disabled={isLoadingSuggestion}
+                              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isLoadingSuggestion ? (
+                                <>
+                                  <Loader className="w-4 h-4 animate-spin" />
+                                  <span>Бот думает...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-4 h-4" />
+                                  <span>✨ Автоподсказка</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+
+                          <button
+                            onClick={() => {
+                              setIsSelectingMessages(true);
+                              setSelectedMessageIds(new Set());
+                            }}
+                            className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>🤖 Выбрать и спросить AI</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -1134,6 +1211,7 @@ export default function Chat() {
                   )}
                 </div>
               )}
+
               {/* Chat Input */}
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
                 <div className="flex items-end gap-2">
@@ -1156,7 +1234,7 @@ export default function Chat() {
                         }}
                       />
 
-                      {/* ✅ ДОБАВЬ КНОПКУ СБРОСА ВНУТРЬ КОНТЕЙНЕРА: */}
+                      {/* Кнопка сброса предложения бота */}
                       {botSuggestion && (
                         <button
                           onClick={() => {
@@ -1265,118 +1343,119 @@ export default function Chat() {
           </div>
         ) : (
           <div className="flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-pink-50">
-            <div className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-                <MessageCircle className="w-12 h-12 text-pink-600" />
-              </div>
-              <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
-              <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
-            </div>
-          </div>
+                  <div className="text-center">
+                    <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+                      <MessageCircle className="w-12 h-12 text-pink-600" />
+                    </div>
+                    <p className="text-lg font-bold text-gray-700">{t('chat:select_chat')}</p>
+                    <p className="text-sm text-gray-500 mt-1">{t('chat:select_dialog_from_list')}</p>
+                  </div>
+                </div>
         )}
-      </div>
+              </div>
       {/* Модальное окно "Спросить AI" */}
-      {showAskBotModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <MessageCircle className="w-5 h-5 text-blue-600" />
-                  🤖 Спросить AI-консультанта
-                </h3>
-                <button
-                  onClick={() => {
-                    setShowAskBotModal(false);
-                    setBotQuestion('');
-                    setBotContext('');
-                  }}
-                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-            </div>
+            {showAskBotModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+                  {/* Header */}
+                  <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <MessageCircle className="w-5 h-5 text-blue-600" />
+                        🤖 Спросить AI-консультанта
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setShowAskBotModal(false);
+                          setBotQuestion('');
+                          setBotContext('');
+                        }}
+                        className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                      >
+                        <X className="w-5 h-5 text-gray-500" />
+                      </button>
+                    </div>
+                  </div>
 
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* Вопрос */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  ❓ Ваш вопрос <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  value={botQuestion}
-                  onChange={(e) => setBotQuestion(e.target.value)}
-                  placeholder="Например: Клиент говорит что дорого, как ответить?"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                  rows={3}
-                  autoFocus
-                />
-              </div>
+                  {/* Body */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {/* Вопрос */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        ❓ Ваш вопрос <span className="text-red-500">*</span>
+                      </label>
+                      <textarea
+                        value={botQuestion}
+                        onChange={(e) => setBotQuestion(e.target.value)}
+                        placeholder="Например: Клиент говорит что дорого, как ответить?"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                        rows={3}
+                        autoFocus
+                      />
+                    </div>
 
-              {/* Контекст (опционально) */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  📝 Дополнительный контекст (опционально)
-                </label>
-                <textarea
-                  value={botContext}
-                  onChange={(e) => setBotContext(e.target.value)}
-                  placeholder="Например: Клиент уже был у нас, но недоволен результатом"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
-                  rows={2}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 Последние 5 сообщений будут добавлены автоматически
-                </p>
-              </div>
+                    {/* Контекст (опционально) */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        📝 Дополнительный контекст (опционально)
+                      </label>
+                      <textarea
+                        value={botContext}
+                        onChange={(e) => setBotContext(e.target.value)}
+                        placeholder="Например: Клиент уже был у нас, но недоволен результатом"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                        rows={2}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        💡 Последние 5 сообщений будут добавлены автоматически
+                      </p>
+                    </div>
 
-              {/* Подсказки */}
-              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
-                <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
-                <ul className="text-xs text-blue-700 space-y-1">
-                  <li>• Клиент жалуется на цену, что ответить?</li>
-                  <li>• Как убедить записаться прямо сейчас?</li>
-                  <li>• Клиент молчит час после моего ответа, что делать?</li>
-                </ul>
-              </div>
-            </div>
+                    {/* Подсказки */}
+                    <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+                      <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
+                      <ul className="text-xs text-blue-700 space-y-1">
+                        <li>• Клиент жалуется на цену, что ответить?</li>
+                        <li>• Как убедить записаться прямо сейчас?</li>
+                        <li>• Клиент молчит час после моего ответа, что делать?</li>
+                      </ul>
+                    </div>
+                  </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
-              <button
-                onClick={() => {
-                  setShowAskBotModal(false);
-                  setBotQuestion('');
-                  setBotContext('');
-                }}
-                className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
-              >
-                Отмена
-              </button>
-              <button
-                onClick={handleAskBot}
-                disabled={isAskingBot || !botQuestion.trim()}
-                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isAskingBot ? (
-                  <>
-                    <Loader className="w-4 h-4 animate-spin" />
-                    <span>Думаю...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    <span>Получить совет</span>
-                  </>
-                )}
-              </button>
-            </div>
+                  {/* Footer */}
+                  <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
+                    <button
+                      onClick={() => {
+                        setShowAskBotModal(false);
+                        setBotQuestion('');
+                        setBotContext('');
+                      }}
+                      className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
+                    >
+                      Отмена
+                    </button>
+                    <button
+                      onClick={handleAskBot}
+                      disabled={isAskingBot || !botQuestion.trim()}
+                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isAskingBot ? (
+                        <>
+                          <Loader className="w-4 h-4 animate-spin" />
+                          <span>Думаю...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" />
+                          <span>Получить совет</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
-    </div>
-  );
+          );
+
 }
