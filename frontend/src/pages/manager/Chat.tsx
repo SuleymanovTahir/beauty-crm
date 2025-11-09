@@ -66,9 +66,9 @@ export default function Chat() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showReactionPicker, setShowReactionPicker] = useState<string | number | null>(null);
-  const [messageReactions, setMessageReactions] = useState<Record<string | number, Record<string, number>>>({});
-
+  const [showForwardModal, setShowForwardModal] = useState(false);
+  const [forwardMessage, setForwardMessage] = useState<Message | null>(null);
+  const [forwardSearchTerm, setForwardSearchTerm] = useState('');
   const [showNotes, setShowNotes] = useState(false);
   const [showClientInfo, setShowClientInfo] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -889,6 +889,23 @@ export default function Chat() {
                               : 'bg-white text-gray-900 border-2 border-gray-200'
                             }`}
                         >
+                          {/* Reply Preview */}
+                          {msg.message.includes('↩️ Ответ на:') && (
+                            <div className={`border-l-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'border-pink-200/50 bg-pink-400/10' : 'border-blue-400/50 bg-blue-500/10'} px-2.5 py-1.5 mb-2`}>
+                              <div className="flex items-center gap-1.5 mb-0.5">
+                                <svg className={`w-3 h-3 flex-shrink-0 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-200' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                </svg>
+                                <p className={`text-xs font-bold ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-blue-900'}`}>
+                                  Вы ответили {selectedClient?.display_name}
+                                </p>
+                              </div>
+                              <p className={`text-xs ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100/90' : 'text-blue-800'} line-clamp-2`}>
+                                {msg.message.split('\n\n')[0].replace('↩️ Ответ на: "', '').replace('"', '')}
+                              </p>
+                            </div>
+                          )}
+
                           {msg.type === 'image' ? (
                             <div className="relative group">
                               <img
@@ -987,9 +1004,14 @@ export default function Chat() {
                             </div>
                           ) : (
                             <div className="px-4 py-3">
-                              <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
-                              <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'
-                                }`}>
+                              {msg.message.includes('↩️ Ответ на:') ? (
+                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                                  {msg.message.split('\n\n')[1] || msg.message}
+                                </p>
+                              ) : (
+                                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.message}</p>
+                              )}
+                              <p className={`text-xs mt-2 ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'text-pink-100' : 'text-gray-500'}`}>
                                 {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
                                   hour: '2-digit',
                                   minute: '2-digit'
@@ -1001,82 +1023,32 @@ export default function Chat() {
 
                         {/* Кнопки действий при наведении */}
                         <div
-                          className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? '-left-32' : '-right-32'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex gap-1 bg-white rounded-xl shadow-lg border border-gray-200 p-1`}
+                          className={`absolute ${(msg.sender === 'bot' || msg.sender === 'manager') ? 'right-full mr-2' : 'left-full ml-2'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col gap-1 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border border-gray-200 p-1`}
                         >
-                          {/* Ответить */}
-                          {/* Ответить */}
-                          <button
-                            onClick={() => {
-                              setReplyToMessage(msg);
-                              toast.info('💬 Ответ на сообщение');
-                            }}
-                            className="w-8 h-8 hover:bg-blue-50 rounded-lg flex items-center justify-center transition-colors"
-                            title="Ответить"
-                          >
-                            <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                            </svg>
-                          </button>
+                          {/* Ответить - только на сообщения клиента */}
+                          {msg.sender === 'client' && (
+                            <button
+                              onClick={() => {
+                                setReplyToMessage(msg);
+                                toast.info('💬 Ответ на сообщение');
+                              }}
+                              className="w-9 h-9 hover:bg-blue-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                              title="Ответить"
+                            >
+                              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                              </svg>
+                            </button>
+                          )}
 
-                          {/* Реакция */}
-                          {/* Реакция */}
-                          <button
-                            onClick={() => setShowReactionPicker(msg.id || null)}
-                            className="w-8 h-8 hover:bg-pink-50 rounded-lg flex items-center justify-center transition-colors relative"
-                            title="Реакция"
-                          >
-                            <span className="text-lg">❤️</span>
-
-                            {/* Picker */}
-                            {showReactionPicker === msg.id && (
-                              <>
-                                <div className="fixed inset-0 z-40" onClick={() => setShowReactionPicker(null)} />
-                                <div className="absolute bottom-full mb-2 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 p-2 flex gap-1 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                                  {['❤️', '👍', '😂', '😮', '😢', '🔥', '👏', '🎉'].map(emoji => (
-                                    <button
-                                      key={emoji}
-                                      onClick={async (e) => {
-                                        e.stopPropagation();
-                                        if (msg.id) {
-                                          try {
-                                            await api.reactToMessage(Number(msg.id), emoji);
-
-                                            // Обновляем локальное состояние
-                                            setMessageReactions(prev => ({
-                                              ...prev,
-                                              [msg.id!]: {
-                                                ...(prev[msg.id!] || {}),
-                                                [emoji]: ((prev[msg.id!] || {})[emoji] || 0) + 1
-                                              }
-                                            }));
-
-                                            toast.success(`${emoji} Реакция добавлена!`);
-                                            setShowReactionPicker(null);
-                                          } catch (err) {
-                                            toast.error('❌ Ошибка добавления реакции');
-                                          }
-                                        }
-                                      }}
-                                      className="w-10 h-10 hover:bg-gray-100 rounded-xl flex items-center justify-center text-2xl transition-all hover:scale-110"
-                                    >
-                                      {emoji}
-                                    </button>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-                          </button>
 
                           {/* Переслать */}
                           <button
                             onClick={() => {
-                              navigator.clipboard.writeText(msg.message);
-                              toast.success('📤 Сообщение скопировано для пересылки', {
-                                description: 'Выберите чат и вставьте текст (Cmd+V)',
-                                duration: 4000
-                              });
+                              setForwardMessage(msg);
+                              setShowForwardModal(true);
                             }}
-                            className="w-8 h-8 hover:bg-purple-50 rounded-lg flex items-center justify-center transition-colors"
+                            className="w-9 h-9 hover:bg-purple-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
                             title="Переслать"
                           >
                             <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1090,11 +1062,19 @@ export default function Chat() {
                               navigator.clipboard.writeText(msg.message);
                               toast.success('📋 Скопировано!');
                             }}
-                            className="w-8 h-8 hover:bg-gray-50 rounded-lg flex items-center justify-center transition-colors"
+                            className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
                             title="Копировать"
                           >
                             <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                          <button
+                            className="w-9 h-9 hover:bg-gray-50 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                            title="Еще"
+                          >
+                            <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                             </svg>
                           </button>
                         </div>
@@ -1277,30 +1257,31 @@ export default function Chat() {
               )}
 
               {/* Chat Input */}
-              {/* Chat Input */}
               <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
                 {/* Reply Preview */}
                 {replyToMessage && (
-                  <div className="mb-2 bg-blue-50 border-l-4 border-blue-500 rounded-lg p-3 flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                        </svg>
-                        <span className="text-xs font-semibold text-blue-900">
-                          Ответ на {replyToMessage.sender === 'client' ? 'клиента' : 'менеджера'}
-                        </span>
+                  <div className="mb-2 max-w-md">
+                    <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-2 flex items-start gap-2 shadow-sm">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <svg className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                          </svg>
+                          <span className="text-xs font-bold text-blue-900">
+                            Ответ на {replyToMessage.sender === 'client' ? selectedClient?.display_name : 'ваше сообщение'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-blue-700 truncate">
+                          {replyToMessage.message.substring(0, 60)}{replyToMessage.message.length > 60 ? '...' : ''}
+                        </p>
                       </div>
-                      <p className="text-xs text-blue-700 truncate">
-                        {replyToMessage.message.substring(0, 80)}...
-                      </p>
+                      <button
+                        onClick={() => setReplyToMessage(null)}
+                        className="flex-shrink-0 w-5 h-5 rounded-full hover:bg-blue-100 flex items-center justify-center transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5 text-blue-600" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setReplyToMessage(null)}
-                      className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-blue-100 flex items-center justify-center transition-colors"
-                    >
-                      <X className="w-4 h-4 text-blue-600" />
-                    </button>
                   </div>
                 )}
 
@@ -1539,6 +1520,103 @@ export default function Chat() {
                     <span>Получить совет</span>
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Модальное окно "Переслать" */}
+      {showForwardModal && forwardMessage && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900">Переслать</h3>
+                <button
+                  onClick={() => {
+                    setShowForwardModal(false);
+                    setForwardMessage(null);
+                    setForwardSearchTerm('');
+                  }}
+                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="p-4 border-b border-gray-200">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Поиск..."
+                  value={forwardSearchTerm}
+                  onChange={(e) => setForwardSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Clients List */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">Рекомендуемые</p>
+                {clients
+                  .filter(c => 
+                    c.id !== selectedClient?.id &&
+                    (c.display_name.toLowerCase().includes(forwardSearchTerm.toLowerCase()) ||
+                    (c.username || '').toLowerCase().includes(forwardSearchTerm.toLowerCase()))
+                  )
+                  .slice(0, 10)
+                  .map(client => (
+                    <button
+                      key={client.id}
+                      onClick={async () => {
+                        try {
+                          await api.sendMessage(client.id, `📤 Переслано:\n\n${forwardMessage.message}`);
+                          toast.success(`✅ Отправлено ${client.display_name}`);
+                          setShowForwardModal(false);
+                          setForwardMessage(null);
+                          setForwardSearchTerm('');
+                        } catch (err) {
+                          toast.error('❌ Ошибка пересылки');
+                        }
+                      }}
+                      className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 rounded-xl transition-colors"
+                    >
+                      {client.profile_pic && client.profile_pic.trim() !== '' ? (
+                        <img
+                          src={client.profile_pic}
+                          alt={client.display_name}
+                          className="w-10 h-10 rounded-full object-cover"
+                          crossOrigin="anonymous"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm">
+                          {client.display_name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="flex-1 text-left">
+                        <p className="font-medium text-gray-900 text-sm">{client.display_name}</p>
+                        <p className="text-xs text-gray-500">@{client.username}</p>
+                      </div>
+                      <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                    </button>
+                  ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50">
+              <button
+                disabled
+                className="w-full px-4 py-2.5 bg-gray-300 text-gray-500 rounded-xl font-medium text-sm cursor-not-allowed"
+              >
+                Отправить
               </button>
             </div>
           </div>

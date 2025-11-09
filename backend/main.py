@@ -17,7 +17,6 @@ from utils import ensure_upload_directories
 from api import router as api_router
 from auth import router as auth_router
 from webhooks import router as webhooks_router
-from api.reactions import router as reactions_router
 from api.templates import router as templates_router
 from api.statuses import router as statuses_router
 from api.uploads import router as upload_router
@@ -48,7 +47,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static/dist")
 # API роутеры (все через /api)
 app.include_router(api_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
-app.include_router(reactions_router, prefix="/api")
 app.include_router(templates_router, prefix="/api")
 app.include_router(statuses_router, prefix="/api")
 app.include_router(upload_router, prefix="/api")
@@ -207,7 +205,6 @@ async def startup_event():
         
         # Раскомментируйте следующие строки для первичной миграции:
 
-        # from db.migrations.create_reactions import create_reactions_table
         # from db.migrations.add_manager_consultation import add_manager_consultation_field
         # from db.migrations.migrate_salon_settings import migrate_salon_settings
         # from db.migrations.add_bot_modes import add_bot_mode_fields
@@ -219,7 +216,6 @@ async def startup_event():
         # migrate_services()
         # migrate_settings()
         # create_employees_tables()
-        # create_reactions_table()
         # add_manager_consultation_field()
 
         
