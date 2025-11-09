@@ -292,7 +292,16 @@ async def handle_webhook(request: Request):
                     # ✅ ОПРЕДЕЛЯЕМ ЯЗЫК
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
-                    
+                    # ✅ ПРОВЕРКА: Поддерживается ли язык?
+                    from bot import get_bot
+                    bot_temp = get_bot()
+                    supported_langs = bot_temp.bot_settings.get('languages_supported', 'ru,en,ar').split(',')
+
+                    if client_language not in supported_langs:
+                        log_warning(f"⚠️ Unsupported language '{client_language}', fallback to 'ru'", "webhook")
+                        client_language = 'ru'
+
+                    log_info(f"🌐 Client language: {client_language} (supported: {','.join(supported_langs)})", "webhook")                    
                     salon = get_salon_settings()
                     bot_globally_enabled = salon.get('bot_globally_enabled', 1)
                     

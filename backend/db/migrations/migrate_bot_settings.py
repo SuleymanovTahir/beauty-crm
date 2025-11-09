@@ -20,7 +20,6 @@ DEFAULT_SETTINGS = {
     "max_message_chars": 500,
     "auto_cancel_discounts": "⚠️ НЕ ПРИДУМЫВАЙ скидки от себя! Только те что есть в специальных пакетах!",
     "emoji_usage": "Умеренное (2-3 на сообщение)",
-    "languages_supported": "ru,en,ar",
 }
 from typing import Optional
 

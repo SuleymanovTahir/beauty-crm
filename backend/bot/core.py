@@ -126,6 +126,9 @@ class SalonBot:
             print(f"📝 User message: {user_message[:100]}")
             print(f"👤 Instagram ID: {instagram_id}")
             print(f"🌐 Language: {client_language}")
+            supported = self.bot_settings.get('languages_supported', 'ru,en,ar')
+            print(f"🗂️ Supported langs from DB: {supported}")
+            print(f"✅ Client lang matches: {client_language in supported.split(',')}")
             print(f"📊 History length: {len(history) if history else 0}")
 
             # ✅ ВСЕГДА используем REST API через прокси

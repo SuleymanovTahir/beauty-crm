@@ -325,12 +325,15 @@ async def ask_bot_advice(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     data = await request.json()
-    manager_question = data.get('question')
-    context = data.get('context', '')
+    manager_question = data.get('question', '').strip()
+    context = data.get('context', '').strip()
+        
+    # ✅ КРИТИЧЕСКАЯ ПРОВЕРКА
+    if not manager_question:
+        log_warning(f"⚠️ Empty question from {user['username']}", "api")
+        return JSONResponse({"error": "Question is required"}, status_code=400)
     
-    # ✅ НОВОЕ: Логирование для отладки
-    log_info(f"💡 Менеджер {user['username']} запросил совет", "api")
-    log_info(f"   Вопрос: {manager_question[:100]}...", "api")
+    log_info(f"💡 Manager advice request: Q='{manager_question[:50]}', Ctx={len(context)} chars", "api")
     if context:
         log_info(f"   Контекст: {context[:100]}...", "api")
         
