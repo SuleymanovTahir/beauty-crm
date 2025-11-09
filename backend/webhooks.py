@@ -183,44 +183,111 @@ async def handle_webhook(request: Request):
                 message_text = message_data.get("text", "").strip()
 
                 logger.info(f"📬 Message from {sender_id}: is_echo={is_echo}, text={message_text[:50]}")
-                # ✅ ФИЛЬТРУЕМ КОМАНДУ БОТА (если менеджер написал в Instagram Direct)
-
+                
+                # ✅ ОБРАБОТКА ЭХОСООБЩЕНИЙ (наши исходящие)
                 if is_echo:
-                    # ✅ КРИТИЧЕСКИ ВАЖНО: Проверяем sender_id
-                    if sender_id == "17841448618072548":
-                        # ✅ Это МЕНЕДЖЕР написал из Instagram Direct
-                        logger.info(f"📨 Manager sent via Instagram Direct to {messaging['recipient']['id']}")
-
-                        client_id = messaging.get("recipient", {}).get("id")
-
-                        if not client_id:
-                            logger.warning(f"⚠️ Cannot determine client_id from echo message")
-                            continue
-                        
-                        # ✅ СОХРАНЯЕМ ТЕКСТ если есть
-                        if message_text:
+                    logger.info(f"⏭️ Skipping echo message")
+                    
+                    # Определяем клиента (получателя)
+                    client_id = messaging.get("recipient", {}).get("id")
+                    
+                    if not client_id:
+                        logger.warning(f"⚠️ Cannot determine client_id from echo message")
+                        continue
+                    
+                    # ✅ СОХРАНЯЕМ сообщения менеджера в БД
+                    if message_text:
+                        # Проверяем: это команда бота или обычное сообщение?
+                        if '#бот помоги#' not in message_text.lower():
                             save_message(client_id, message_text, "manager", message_type="text")
                             logger.info(f"💾 Manager message saved: {message_text[:50]}")
+                    
+                    # Сохраняем файлы
+                    attachments = message_data.get("attachments", [])
+                    if attachments:
+                        for attachment in attachments:
+                            attachment_type = attachment.get("type")
+                            payload = attachment.get("payload", {})
+                            file_url = payload.get("url")
+                            save_message(client_id, file_url, "manager", message_type=attachment_type)
+                    
+                    continue
 
-                        # ✅ СОХРАНЯЕМ ФАЙЛЫ если есть
-                        attachments = message_data.get("attachments", [])
-                        if attachments:
-                            for attachment in attachments:
-                                attachment_type = attachment.get("type")
-                                payload = attachment.get("payload", {})
-                                file_url = payload.get("url")
-
-                                if attachment_type == "image":
-                                    save_message(client_id, file_url, "manager", message_type=attachment_type)
-                                else:
-                                    save_message(client_id, file_url, "manager", message_type=attachment_type)
-
+                # ✅ ПРОВЕРКА КОМАНДЫ #Бот помоги# (от ЛЮБОГО отправителя)
+                if message_text and '#бот помоги#' in message_text.lower():
+                    logger.info(f"🤖 Получена команда #Бот помоги# от {sender_id}")
+                    
+                    # Удаляем команду из текста
+                    clean_text = message_text.replace('#Бот помоги#', '').replace('#бот помоги#', '').replace('#БОТ ПОМОГИ#', '').strip()
+                    
+                    if not clean_text:
+                        await send_message(sender_id, "❌ Напишите вопрос после команды #Бот помоги#\n\nПример:\n#Бот помоги# клиент говорит что дорого, как ответить?")
                         continue
-                    else:
-                        # ✅ Это эхо от БОТА из CRM API - пропускаем
-                        logger.info(f"⏭️ Skipping echo from CRM API")
-                        continue
+                    
+                    # Разбиваем на вопрос и контекст
+                    lines = clean_text.split('\n')
+                    question = lines[0].strip()
+                    context = '\n'.join(lines[1:]).strip() if len(lines) > 1 else ''
+                    
+                    try:
+                        # Пытаемся найти контекст из истории сообщений
+                        history = get_chat_history(sender_id, limit=10)
+                        
+                        context_with_history = "📝 История последних сообщений:\n"
+                        if history:
+                            for msg in history[-5:]:
+                                sender_label = "Клиент" if msg[1] == "client" else "Менеджер"
+                                context_with_history += f"{sender_label}: {msg[0]}\n"
+                        else:
+                            context_with_history += "(История пуста)\n"
+                        
+                        context_with_history += f"\n💬 Дополнительный контекст:\n{context}" if context else ""
+                        
+                        # Генерируем совет
+                        from db import get_bot_settings
+                        bot_settings = get_bot_settings()
+                        
+                        consultation_template = bot_settings.get('manager_consultation_prompt', '')
+                        
+                        if not consultation_template:
+                            consultation_template = """Ты — консультант по продажам. 
+Дай совет менеджеру как ответить клиенту.
 
+Структура:
+1. Анализ ситуации (1-2 предложения)
+2. Рекомендованный ответ (готовый текст для отправки)
+3. Почему это сработает (1-2 предложения)"""
+                        
+                        consultation_prompt = f"""{consultation_template}
+
+{context_with_history}
+
+❓ ВОПРОС МЕНЕДЖЕРА:
+{question}
+"""
+                        
+                        logger.info(f"🤖 Генерируем консультацию для менеджера...")
+                        advice = await bot._generate_via_proxy(consultation_prompt)
+                        
+                        # Форматируем ответ
+                        formatted_response = f"""💡 Совет от AI-консультанта:
+
+{advice}
+
+---
+Используй этот ответ или адаптируй под ситуацию 🎯"""
+                        
+                        # Отправляем совет менеджеру
+                        await send_message(sender_id, formatted_response)
+                        logger.info(f"✅ Консультация отправлена менеджеру {sender_id}")
+                        
+                    except Exception as e:
+                        logger.error(f"❌ Ошибка генерации консультации: {e}")
+                        import traceback
+                        logger.error(traceback.format_exc())
+                        await send_message(sender_id, "❌ Извините, произошла ошибка при генерации совета. Попробуйте ещё раз.")
+                    
+                    continue
                 
                 # ✅ 4. ОБРАБОТКА ТЕКСТОВЫХ СООБЩЕНИЙ ОТ КЛИЕНТА
                 if not message_text:
@@ -310,18 +377,6 @@ async def handle_webhook(request: Request):
                     except Exception as lang_check_error:
                         log_error(f"⚠️ Language check failed: {lang_check_error}, using 'ru'", "webhook")
                         client_language = 'ru'  
-                    lower_text = message_text.lower()
-                    is_bot_command = (
-                        '#помоги' in lower_text or 
-                        '#бот помоги' in lower_text or
-                        'бот помоги' in lower_text or
-                        '#bot' in lower_text or
-                        '#help' in lower_text
-                    )
-                    
-                    if is_bot_command:
-                        log_info(f"⚠️ Обнаружена команда бота - НЕ отвечаем автопилотом", "webhook")
-                        continue  # Пропускаем автопилот, но сообщение уже сохранено в БД
                                  
                     salon = get_salon_settings()
                     bot_globally_enabled = salon.get('bot_globally_enabled', 1)

@@ -82,6 +82,10 @@ export default function Chat() {
 
   const lastProcessedMessageId = useRef<string | number | null>(null);
   const isFetchingSuggestion = useRef(false);
+  const [showAskBotModal, setShowAskBotModal] = useState(false);
+  const [botQuestion, setBotQuestion] = useState('');
+  const [botContext, setBotContext] = useState('');
+  const [isAskingBot, setIsAskingBot] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -415,6 +419,56 @@ export default function Chat() {
       toast.error('❌ Ошибка отправки');
     } finally {
       setIsUploadingFile(false);
+    }
+  };
+
+
+  const handleAskBot = async () => {
+    if (!botQuestion.trim()) {
+      toast.error('❌ Введите вопрос');
+      return;
+    }
+
+    try {
+      setIsAskingBot(true);
+
+      // Формируем контекст из последних сообщений
+      const recentMessages = messages.slice(-5).map(msg => {
+        const sender = msg.sender === 'client' ? 'Клиент' : 'Менеджер';
+        return `${sender}: ${msg.message}`;
+      }).join('\n');
+
+      const fullContext = botContext.trim()
+        ? `${recentMessages}\n\nДополнительно:\n${botContext}`
+        : recentMessages;
+
+      const response = await api.askBotAdvice(botQuestion, fullContext);
+
+      // Показываем совет в toast с большой длительностью
+      toast.success('💡 Совет от AI-бота', {
+        description: response.advice,
+        duration: 60000, // 60 секунд
+        action: {
+          label: '📋 Копировать',
+          onClick: () => {
+            navigator.clipboard.writeText(response.advice);
+            toast.success('✅ Скопировано!');
+          }
+        }
+      });
+
+      // Закрываем модальное окно и очищаем поля
+      setShowAskBotModal(false);
+      setBotQuestion('');
+      setBotContext('');
+
+    } catch (err) {
+      console.error('❌ Ошибка:', err);
+      toast.error('❌ Ошибка получения совета', {
+        description: err instanceof Error ? err.message : 'Неизвестная ошибка'
+      });
+    } finally {
+      setIsAskingBot(false);
     }
   };
 
@@ -907,25 +961,34 @@ export default function Chat() {
                   </div>
                 </div>
               )}
-              {/* ✅ ДОБАВЛЕНО: Кнопка запроса подсказки (только для assistant mode) */}
-              {selectedClient && botMode === 'assistant' && (
-                <div className="px-3 py-2 bg-white border-t border-gray-200">
+              {selectedClient && (
+                <div className="px-3 py-2 bg-white border-t border-gray-200 flex gap-2">
+                  {botMode === 'assistant' && (
+                    <button
+                      onClick={() => fetchBotSuggestion(selectedClient.id)}
+                      disabled={isLoadingSuggestion}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoadingSuggestion ? (
+                        <>
+                          <Loader className="w-4 h-4 animate-spin" />
+                          <span>Бот думает...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" />
+                          <span>✨ Автоподсказка</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
                   <button
-                    onClick={() => fetchBotSuggestion(selectedClient.id)}
-                    disabled={isLoadingSuggestion}
-                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium text-sm hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => setShowAskBotModal(true)}
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2"
                   >
-                    {isLoadingSuggestion ? (
-                      <>
-                        <Loader className="w-4 h-4 animate-spin" />
-                        <span>Бот думает...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4" />
-                        <span>✨ Получить подсказку от AI</span>
-                      </>
-                    )}
+                    <MessageCircle className="w-4 h-4" />
+                    <span>🤖 Спросить AI</span>
                   </button>
                 </div>
               )}
@@ -1070,6 +1133,108 @@ export default function Chat() {
           </div>
         )}
       </div>
+      {/* Модальное окно "Спросить AI" */}
+      {showAskBotModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-blue-600" />
+                  🤖 Спросить AI-консультанта
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowAskBotModal(false);
+                    setBotQuestion('');
+                    setBotContext('');
+                  }}
+                  className="w-8 h-8 rounded-lg hover:bg-white/50 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Вопрос */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  ❓ Ваш вопрос <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={botQuestion}
+                  onChange={(e) => setBotQuestion(e.target.value)}
+                  placeholder="Например: Клиент говорит что дорого, как ответить?"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                  rows={3}
+                  autoFocus
+                />
+              </div>
+
+              {/* Контекст (опционально) */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  📝 Дополнительный контекст (опционально)
+                </label>
+                <textarea
+                  value={botContext}
+                  onChange={(e) => setBotContext(e.target.value)}
+                  placeholder="Например: Клиент уже был у нас, но недоволен результатом"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm"
+                  rows={2}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Последние 5 сообщений будут добавлены автоматически
+                </p>
+              </div>
+
+              {/* Подсказки */}
+              <div className="bg-blue-50 rounded-xl p-3 border border-blue-200">
+                <p className="text-xs font-semibold text-blue-900 mb-2">💡 Примеры вопросов:</p>
+                <ul className="text-xs text-blue-700 space-y-1">
+                  <li>• Клиент жалуется на цену, что ответить?</li>
+                  <li>• Как убедить записаться прямо сейчас?</li>
+                  <li>• Клиент молчит час после моего ответа, что делать?</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowAskBotModal(false);
+                  setBotQuestion('');
+                  setBotContext('');
+                }}
+                className="flex-1 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-50 transition-colors"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleAskBot}
+                disabled={isAskingBot || !botQuestion.trim()}
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium text-sm hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAskingBot ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    <span>Думаю...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span>Получить совет</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
