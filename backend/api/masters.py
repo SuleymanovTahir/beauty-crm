@@ -166,3 +166,37 @@ async def remove_holiday(
     delete_salon_holiday(date)
     
     return {"success": True}
+
+# В конец файла:
+
+@router.post("/masters/{master_id}/services")
+async def update_master_services(
+    master_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить специализацию мастера (какие услуги он оказывает)"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    service_ids = data.get('service_ids', [])  # Массив ID услуг
+    
+    # Получаем названия услуг
+    from db.services import get_service
+    service_names = []
+    for service_id in service_ids:
+        service = get_service(service_id)
+        if service:
+            service_names.append(service['name_ru'])
+    
+    # Обновляем мастера
+    update_master(
+        master_id,
+        services=','.join(service_names)
+    )
+    
+    log_info(f"Updated services for master {master_id}", "api")
+    
+    return {"success": True, "services": service_names}
