@@ -210,6 +210,8 @@ async def startup_event():
         init_database()
         
         # Раскомментируйте следующие строки для первичной миграции:
+        # from db.migrations.add_permissions_system import add_permissions_system
+        # add_permissions_system()
 
         # from db.migrations.add_manager_consultation import add_manager_consultation_field
         # from db.migrations.migrate_salon_settings import migrate_salon_settings

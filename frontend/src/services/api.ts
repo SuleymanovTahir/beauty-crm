@@ -633,8 +633,16 @@ export class ApiClient {
     })
   }
 
+  async updateUserPermissions(userId: number, data: { permissions: any }) {
+    return this.request(`/api/users/${userId}/permissions`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
 
-  // ===== UNREAD COUNT =====
+  async getUserPermissions(userId: number) {
+    return this.request<any>(`/api/users/${userId}/permissions`)
+  }
 
 }
 

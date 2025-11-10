@@ -994,3 +994,60 @@ async def export_full_data(
     except Exception as e:
         log_error(f"Full data export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# Где-то в районе строки 100, после других экспортов
+
+@router.get("/export/analytics-anonymized")
+async def export_analytics_anonymized(
+    format: str = Query("csv"),
+    period: int = Query(30),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Экспорт анонимной аналитики (без контактов)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Проверяем права
+    if not check_permission(user, 'analytics_export_anonymized'):
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    from db.analytics import get_analytics_data
+    
+    analytics = get_analytics_data(days=period)
+    
+    # Анонимизируем данные
+    if 'clients' in analytics:
+        for client in analytics['clients']:
+            client.pop('phone', None)
+            client.pop('email', None)
+            client.pop('instagram_id', None)
+            client['name'] = 'Клиент ' + str(client.get('id', ''))[:4]
+    
+    if format == 'csv':
+        # CSV экспорт
+        import csv
+        from io import StringIO
+        
+        output = StringIO()
+        writer = csv.writer(output)
+        
+        # Заголовки
+        writer.writerow(['Период', 'Всего записей', 'Конверсия', 'Выручка'])
+        writer.writerow([
+            f"{period} дней",
+            analytics.get('total_bookings', 0),
+            f"{analytics.get('conversion_rate', 0)}%",
+            f"{analytics.get('revenue', 0)} AED"
+        ])
+        
+        return Response(
+            content=output.getvalue(),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition": f"attachment; filename=analytics_anonymized_{period}d.csv"
+            }
+        )
+    
+    return analytics

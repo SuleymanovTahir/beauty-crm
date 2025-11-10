@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -32,6 +32,9 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
+  const [userPermissions, setUserPermissions] = useState<any>({});
 
   // Загрузить пользователей при монтировании
   useEffect(() => {
@@ -249,6 +252,7 @@ export default function Users() {
           </div>
         )}
       </div>
+      
     </div>
   );
 }

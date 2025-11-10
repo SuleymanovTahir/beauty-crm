@@ -27,6 +27,7 @@ import ManagerSettings from './pages/manager/Settings';
 
 import SalesLayout from './components/layouts/SalesLayout';
 import MarketerLayout from './components/layouts/MarketerLayout';
+import InternalChat from './pages/shared/InternalChat';
 
 // Employee Pages
 import EmployeeLayout from './components/layouts/EmployeeLayout';
@@ -164,9 +165,12 @@ export default function App() {
             path="/login" 
             element={
               currentUser ? (
-                // Редирект в зависимости от роли
+                // ✅ ОБНОВИ РЕДИРЕКТ
+                currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
+                currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
+                currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
                 currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                 <Navigate to="/" replace />
               ) : (
