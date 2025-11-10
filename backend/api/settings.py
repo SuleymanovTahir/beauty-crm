@@ -2,7 +2,7 @@
 API Endpoints для настроек салона и бота
 """
 import sqlite3
-from backend.config import DATABASE_NAME
+from config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional

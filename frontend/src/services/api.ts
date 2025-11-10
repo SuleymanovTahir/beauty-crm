@@ -321,7 +321,7 @@ export class ApiClient {
     });
     if (!response.ok) throw new Error('Ошибка загрузки ролей');
     return response.json();
-  },
+  }
 
 
 
