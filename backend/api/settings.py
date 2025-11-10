@@ -79,11 +79,11 @@ async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
         log_info(f"✅ Bot settings returned: {len(settings)} fields", "api")
         return settings
     except Exception as e:
-        log_error(f"❌ Ошибка получения настроек бота: {e}", "api")
-        import traceback
-        log_error(traceback.format_exc(), "api")
-        return JSONResponse({"error": str(e)}, status_code=500)
-
+        log_error(f"Error getting bot settings: {e}", "api")
+        return JSONResponse(
+            {"error": str(e), "message": "Ошибка получения настроек бота"}, 
+            status_code=500
+        )
 
 @router.post("/settings/bot")  # ✅ НЕ /api/settings/bot
 async def update_bot_settings_api(
@@ -237,8 +237,6 @@ async def delete_custom_status_api(
 
 
 # backend/api/settings.py - ДОБАВЬТЕ В КОНЕЦ ФАЙЛА (после строки 237)
-
-# ===== АЛЬТЕРНАТИВНЫЕ ЭНДПОИНТЫ (для обратной совместимости) =====
 
 # ===== АЛЬТЕРНАТИВНЫЕ ЭНДПОИНТЫ (для обратной совместимости) =====
 

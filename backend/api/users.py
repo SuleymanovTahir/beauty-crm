@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
 import hashlib
-
+from auth import get_current_user
 from db import get_all_users, delete_user, log_activity
 from config import DATABASE_NAME
 from utils import require_auth
@@ -111,39 +111,39 @@ async def list_users(session_token: Optional[str] = Cookie(None)):
     }
 
 
-@router.get("/users/pending")
-async def get_pending_users(session_token: Optional[str] = Cookie(None)):
-    """Получить пользователей, ожидающих подтверждения"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    c.execute("""SELECT id, username, full_name, email, role, created_at 
-                 FROM users 
-                 WHERE is_active = 0 
-                 ORDER BY created_at DESC""")
-    
-    pending_users = c.fetchall()
-    conn.close()
-    
-    return {
-        "users": [
-            {
-                "id": u[0],
-                "username": u[1],
-                "full_name": u[2],
-                "email": u[3],
-                "role": u[4],
-                "created_at": u[5]
-            }
-            for u in pending_users
-        ],
-        "count": len(pending_users)
-    }
-
+@router.get("/users")
+async def get_users(current_user: dict = Depends(get_current_user)):
+    """Получить всех пользователей"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        conn.row_factory = sqlite3.Row  # ✅ ВАЖНО для dict
+        c = conn.cursor()
+        
+        c.execute("""
+            SELECT id, username, full_name, email, role, created_at, is_active
+            FROM users
+            ORDER BY created_at DESC
+        """)
+        
+        users = []
+        for row in c.fetchall():
+            users.append({
+                "id": row["id"],
+                "username": row["username"],
+                "full_name": row["full_name"],
+                "email": row["email"],
+                "role": row["role"],
+                "created_at": row["created_at"],
+                "is_active": row["is_active"]
+            })
+        
+        conn.close()
+        
+        return {"users": users}  # ✅ Обёрнуто в объект
+        
+    except Exception as e:
+        log_error(f"Error fetching users: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/approve")
 async def approve_user(

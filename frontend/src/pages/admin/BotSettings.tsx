@@ -115,13 +115,12 @@ export default function BotSettings() {
     manager_consultation_prompt: '',
   });
 
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['ru', 'en', 'ar']);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+
+
 
   useEffect(() => {
     loadSettings();
-  }, []);
-
-  useEffect(() => {
     setSettings(prev => ({
       ...prev,
       languages_supported: selectedLanguages.join(',')
@@ -131,61 +130,66 @@ export default function BotSettings() {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      console.log('🔄 ' + t('botsettings:loading_bot_settings'));
-
+      console.log('🔄 Загрузка настроек бота...');
+  
       const data = await api.getBotSettings();
-      console.log('✅ ' + t('botsettings:settings_loaded') + ':', data);
-
-      const langs = data.languages_supported ? data.languages_supported.split(',') : ['ru', 'en', 'ar'];
+      console.log('✅ Настройки загружены:', data);
+  
+      // ✅ БЕЗОПАСНОЕ ИЗВЛЕЧЕНИЕ (data может быть обёрнут или нет)
+      const botData = data.bot_settings || data;
+  
+      const langs = botData.languages_supported 
+        ? botData.languages_supported.split(',') 
+        : ['ru', 'en', 'ar'];
       setSelectedLanguages(langs);
-
+  
       setSettings({
-        bot_name: data.bot_name || t('botsettings:bot_name'),
-        personality_traits: data.personality_traits || '',
-        greeting_message: data.greeting_message || '',
-        farewell_message: data.farewell_message || '',
-        price_explanation: data.price_explanation || '',
-        price_response_template: data.price_response_template || '',
-        premium_justification: data.premium_justification || '',
-        booking_redirect_message: data.booking_redirect_message || '',
-        fomo_messages: data.fomo_messages || '',
-        upsell_techniques: data.upsell_techniques || '',
-        communication_style: data.communication_style || '',
-        max_message_chars: data.max_message_chars,
-        emoji_usage: data.emoji_usage || '',
-        languages_supported: data.languages_supported,
-        objection_expensive: data.objection_expensive || '',
-        objection_think_about_it: data.objection_think_about_it || '',
-        objection_no_time: data.objection_no_time || '',
-        objection_pain: data.objection_pain || '',
-        objection_result_doubt: data.objection_result_doubt || '',
-        objection_cheaper_elsewhere: data.objection_cheaper_elsewhere || '',
-        objection_too_far: data.objection_too_far || '',
-        objection_consult_husband: data.objection_consult_husband || '',
-        objection_first_time: data.objection_first_time || '',
-        objection_not_happy: data.objection_not_happy || '',
-        emotional_triggers: data.emotional_triggers || '',
-        social_proof_phrases: data.social_proof_phrases || '',
-        personalization_rules: data.personalization_rules || '',
-        example_dialogues: data.example_dialogues || '',
-        emotional_responses: data.emotional_responses || '',
-        anti_patterns: data.anti_patterns || '',
-        voice_message_response: data.voice_message_response || '',
-        contextual_rules: data.contextual_rules || '',
-        safety_guidelines: data.safety_guidelines || '',
-        example_good_responses: data.example_good_responses || '',
-        algorithm_actions: data.algorithm_actions || '',
-        location_features: data.location_features || '',
-        seasonality: data.seasonality || '',
-        emergency_situations: data.emergency_situations || '',
-        success_metrics: data.success_metrics || '',
-        ad_campaign_detection: data.ad_campaign_detection || '',
-        pre_booking_data_collection: data.pre_booking_data_collection || t('botsettings:pre_booking_data_collection'),
-        manager_consultation_prompt: data.manager_consultation_prompt || '',
+        bot_name: botData.bot_name || 'M.Le Diamant Assistant',
+        personality_traits: botData.personality_traits || '',
+        greeting_message: botData.greeting_message || '',
+        farewell_message: botData.farewell_message || '',
+        price_explanation: botData.price_explanation || '',
+        price_response_template: botData.price_response_template || '',
+        premium_justification: botData.premium_justification || '',
+        booking_redirect_message: botData.booking_redirect_message || '',
+        fomo_messages: botData.fomo_messages || '',
+        upsell_techniques: botData.upsell_techniques || '',
+        communication_style: botData.communication_style || '',
+        max_message_chars: botData.max_message_chars || 300,
+        emoji_usage: botData.emoji_usage || '',
+        languages_supported: botData.languages_supported || 'ru,en,ar',
+        objection_expensive: botData.objection_expensive || '',
+        objection_think_about_it: botData.objection_think_about_it || '',
+        objection_no_time: botData.objection_no_time || '',
+        objection_pain: botData.objection_pain || '',
+        objection_result_doubt: botData.objection_result_doubt || '',
+        objection_cheaper_elsewhere: botData.objection_cheaper_elsewhere || '',
+        objection_too_far: botData.objection_too_far || '',
+        objection_consult_husband: botData.objection_consult_husband || '',
+        objection_first_time: botData.objection_first_time || '',
+        objection_not_happy: botData.objection_not_happy || '',
+        emotional_triggers: botData.emotional_triggers || '',
+        social_proof_phrases: botData.social_proof_phrases || '',
+        personalization_rules: botData.personalization_rules || '',
+        example_dialogues: botData.example_dialogues || '',
+        emotional_responses: botData.emotional_responses || '',
+        anti_patterns: botData.anti_patterns || '',
+        voice_message_response: botData.voice_message_response || '',
+        contextual_rules: botData.contextual_rules || '',
+        safety_guidelines: botData.safety_guidelines || '',
+        example_good_responses: botData.example_good_responses || '',
+        algorithm_actions: botData.algorithm_actions || '',
+        location_features: botData.location_features || '',
+        seasonality: botData.seasonality || '',
+        emergency_situations: botData.emergency_situations || '',
+        success_metrics: botData.success_metrics || '',
+        ad_campaign_detection: botData.ad_campaign_detection || '',
+        pre_booking_data_collection: botData.pre_booking_data_collection || '',
+        manager_consultation_prompt: botData.manager_consultation_prompt || '',
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
-      toast.error(t('botsettings:error_loading_settings') + (err instanceof Error ? err.message : t('botsettings:unknown_error')));
+      toast.error('Ошибка загрузки: ' + (err instanceof Error ? err.message : 'Неизвестная ошибка'));
     } finally {
       setLoading(false);
     }

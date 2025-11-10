@@ -21,7 +21,7 @@ export default function AdminSettings() {
     phone: '',
     email: '',
     instagram: '',
-    language: 'ru',
+    language: '',  // ✅ Пусто - заполнится из БД
     working_hours: {
       weekdays: '',
       weekends: ''
@@ -31,7 +31,7 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false);
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
-  const [botGloballyEnabled, setBotGloballyEnabled] = useState(true);
+  const [botGloballyEnabled, setBotGloballyEnabled] = useState(false); 
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -262,7 +262,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>

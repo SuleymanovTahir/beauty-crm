@@ -419,7 +419,7 @@ export class ApiClient {
 
   // ===== BOT SETTINGS =====
   async getBotSettings() {
-    return this.request<any>('/api/settings/bot')  // ✅ Правильный путь
+    return this.request<any>('/api/bot-settings')  // ✅ Правильный путь
   }
 
   async updateBotSettings(data: any) {

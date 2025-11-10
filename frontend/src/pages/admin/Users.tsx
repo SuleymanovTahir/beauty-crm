@@ -97,10 +97,27 @@ export default function Users() {
       setLoading(true);
       setError(null);
       const data = await api.getUsers();
-
-      const usersArray = data.users || (Array.isArray(data) ? data : []);
+  
+      console.log('📥 Received users data:', data); // ✅ ДЕБАГ
+  
+      // ✅ БЕЗОПАСНОЕ ИЗВЛЕЧЕНИЕ МАССИВА
+      let usersArray: User[] = [];
+      
+      if (Array.isArray(data)) {
+        usersArray = data;
+      } else if (data && Array.isArray(data.users)) {
+        usersArray = data.users;
+      } else if (data && typeof data === 'object') {
+        // Ищем первый массив в объекте
+        const firstArrayValue = Object.values(data).find(v => Array.isArray(v));
+        if (firstArrayValue) {
+          usersArray = firstArrayValue as User[];
+        }
+      }
+  
+      console.log('✅ Parsed users array:', usersArray); // ✅ ДЕБАГ
       setUsers(usersArray);
-
+  
       if (usersArray.length === 0) {
         toast.info('Пользователи не найдены');
       }
