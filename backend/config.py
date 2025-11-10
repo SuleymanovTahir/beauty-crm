@@ -92,50 +92,143 @@ if missing_vars:
 print("✅ Config загружен успешно!")
 print(f"   Database: {DATABASE_NAME}")
 print(f"   ℹ️  Для настроек салона используйте: from database import get_salon_settings")
+# Перед строкой if __name__ == "__main__":
 
-
-# ===== РОЛИ И ПРАВА ДОСТУПА =====
+# ===== СИСТЕМА РОЛЕЙ И ПРАВ =====
 
 ROLES = {
     'director': {
         'name': 'Директор',
-        'permissions': '*'  # все права
+        'permissions': '*',  # Все права
+        'can_manage_roles': ['admin', 'manager', 'sales', 'marketer', 'employee'],
+        'hierarchy_level': 100
     },
     'admin': {
         'name': 'Администратор',
         'permissions': [
-            'clients_view', 'clients_edit', 'clients_create',
-            'bookings_view', 'bookings_edit', 'bookings_create',
-            'services_view', 'services_edit',
-            'users_view',
-            'settings_view',
-            'analytics_view'
-        ]
+            'clients_view', 'clients_create', 'clients_edit',
+            'bookings_view', 'bookings_create', 'bookings_edit',
+            'services_view',
+            'users_view', 'users_create',
+            'analytics_view_anonymized',
+            'staff_chat_own',
+            'calendar_view_all'
+        ],
+        'can_manage_roles': ['manager', 'sales', 'marketer', 'employee'],
+        'hierarchy_level': 80
+    },
+    'manager': {
+        'name': 'Менеджер',
+        'permissions': [
+            'clients_view', 'clients_create', 'clients_edit',
+            'bookings_view', 'bookings_create', 'bookings_edit',
+            'services_view',
+            'analytics_view_anonymized',
+            'staff_chat_own',
+            'calendar_view_all'
+        ],
+        'can_manage_roles': [],
+        'hierarchy_level': 60
     },
     'sales': {
         'name': 'Продажник',
         'permissions': [
-            'clients_view', 'clients_edit',
-            'instagram_chat',
-            'analytics_view', 'analytics_export_anonymized',
-            'internal_chat'
-        ]
+            'instagram_chat_view',
+            'clients_view_limited',
+            'analytics_view_stats_only',
+            'staff_chat_own',
+            'calendar_view_all_readonly'
+        ],
+        'can_manage_roles': [],
+        'hierarchy_level': 40
     },
     'marketer': {
         'name': 'Таргетолог',
         'permissions': [
-            'analytics_view', 'analytics_export_anonymized',
-            'instagram_chat',  # опционально
-            'internal_chat'
-        ]
+            'analytics_view_anonymized',
+            'clients_view_stats_only',
+            'staff_chat_own'
+        ],
+        'can_manage_roles': [],
+        'hierarchy_level': 30
     },
     'employee': {
-        'name': 'Сотрудник',
+        'name': 'Сотрудник (мастер)',
         'permissions': [
-            'bookings_view_own', 'bookings_edit_own',
+            'bookings_view_own',
             'calendar_view_own',
-            'profile_edit',
-            'internal_chat'
-        ]
+            'clients_view_own',
+            'staff_chat_own'
+        ],
+        'can_manage_roles': [],
+        'hierarchy_level': 20
     }
 }
+
+PERMISSION_DESCRIPTIONS = {
+    # Клиенты
+    'clients_view': 'Просмотр всех клиентов (с контактами)',
+    'clients_view_limited': 'Просмотр клиентов (без персональных данных)',
+    'clients_view_own': 'Просмотр только своих клиентов',
+    'clients_view_stats_only': 'Просмотр только статистики клиентов',
+    'clients_create': 'Создание клиентов',
+    'clients_edit': 'Редактирование клиентов',
+    'clients_delete': 'Удаление клиентов',
+    
+    # Записи
+    'bookings_view': 'Просмотр всех записей',
+    'bookings_view_own': 'Просмотр только своих записей',
+    'bookings_create': 'Создание записей',
+    'bookings_edit': 'Редактирование записей',
+    'bookings_delete': 'Удаление записей',
+    
+    # Календарь
+    'calendar_view_all': 'Просмотр календаря всех сотрудников',
+    'calendar_view_all_readonly': 'Просмотр календаря всех (только чтение)',
+    'calendar_view_own': 'Просмотр только своего календаря',
+    
+    # Услуги
+    'services_view': 'Просмотр услуг',
+    'services_edit': 'Редактирование услуг',
+    
+    # Пользователи
+    'users_view': 'Просмотр пользователей',
+    'users_create': 'Создание пользователей',
+    'users_edit': 'Редактирование пользователей',
+    'users_delete': 'Удаление пользователей',
+    
+    # Аналитика
+    'analytics_view': 'Полный доступ к аналитике',
+    'analytics_view_anonymized': 'Аналитика без персональных данных',
+    'analytics_view_stats_only': 'Только статистика (количество, статусы)',
+    'analytics_export_full': 'Экспорт данных с контактами',
+    'analytics_export_anonymized': 'Экспорт анонимных данных',
+    
+    # Instagram
+    'instagram_chat_view': 'Просмотр Instagram чата',
+    'instagram_chat_reply': 'Ответы в Instagram',
+    
+    # Чат сотрудников
+    'staff_chat_own': 'Свои диалоги с другими сотрудниками',
+    'staff_chat_view_all': 'Просмотр всех чатов сотрудников',
+    
+    # Настройки
+    'settings_view': 'Просмотр настроек',
+    'settings_edit': 'Изменение настроек',
+    'bot_settings_edit': 'Настройки бота',
+}
+
+def has_permission(user_role: str, permission: str) -> bool:
+    """Проверка наличия права у роли"""
+    role_data = ROLES.get(user_role, {})
+    permissions = role_data.get('permissions', [])
+    
+    if permissions == '*':
+        return True
+    
+    return permission in permissions
+
+def can_manage_role(manager_role: str, target_role: str) -> bool:
+    """Может ли менеджер управлять целевой ролью"""
+    manager_data = ROLES.get(manager_role, {})
+    return target_role in manager_data.get('can_manage_roles', [])

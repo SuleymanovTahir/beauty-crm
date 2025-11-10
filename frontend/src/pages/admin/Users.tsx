@@ -265,17 +265,19 @@ export default function Users() {
                           <Edit className="w-4 h-4" />
                         </Button>
                         
-                        {user.role !== 'director' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleOpenPermissions(user)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title="Настроить права доступа"
-                          >
-                            <Shield className="w-4 h-4" />
-                          </Button>
-                        )}
+                        {/* Показываем смену роли только если текущий пользователь может управлять этой ролью */}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowRoleDialog(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          title="Изменить роль"
+                        >
+                          <Shield className="w-4 h-4" />
+                        </Button>
                         
                         <Button
                           size="sm"

@@ -232,6 +232,8 @@ async def delete_user_api(
     return JSONResponse({"error": "Delete failed"}, status_code=400)
 
 
+# После строки 286 (после функции update_user_profile)
+
 @router.post("/users/{user_id}/role")
 async def update_user_role(
     user_id: int,
@@ -240,18 +242,29 @@ async def update_user_role(
 ):
     """Изменить роль пользователя"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    # Проверяем что пользователь может управлять ролями
+    from config import ROLES, can_manage_role
     
     if user["id"] == user_id:
-        return JSONResponse({"error": "Cannot change your own role"}, 
-                          status_code=400)
+        return JSONResponse({"error": "Нельзя изменить свою роль"}, status_code=400)
     
     data = await request.json()
     new_role = data.get('role')
     
-    if not new_role:
-        return JSONResponse({"error": "Role required"}, status_code=400)
+    if not new_role or new_role not in ROLES:
+        return JSONResponse({"error": "Неверная роль"}, status_code=400)
+    
+    # Директор может назначить любую роль
+    if user["role"] != "director":
+        # Проверяем может ли текущий пользователь назначить эту роль
+        if not can_manage_role(user["role"], new_role):
+            return JSONResponse(
+                {"error": f"У вас нет прав назначать роль '{ROLES[new_role]['name']}'"}, 
+                status_code=403
+            )
     
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -262,12 +275,15 @@ async def update_user_role(
         
         if c.rowcount > 0:
             log_activity(user["id"], "update_user_role", "user", str(user_id), 
-                        f"Role: {new_role}")
+                        f"Role changed to: {new_role}")
             conn.close()
-            return {"success": True, "message": "Role updated"}
+            return {
+                "success": True, 
+                "message": f"Роль изменена на '{ROLES[new_role]['name']}'"
+            }
         else:
             conn.close()
-            return JSONResponse({"error": "User not found"}, status_code=404)
+            return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
     except Exception as e:
         conn.rollback()
         conn.close()
@@ -437,88 +453,5 @@ async def update_user_profile(
         log_error(f"Error updating profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-# После функции update_user_profile (строка ~400)
-
-@router.get("/users/{user_id}/permissions")
-async def get_user_permissions(
-    user_id: int,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Получить права пользователя"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "director":
-        return JSONResponse({"error": "Только директор может просматривать права"}, status_code=403)
-    
-    from config import ROLES
-    
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    # Получаем пользователя
-    c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
-    result = c.fetchone()
-    
-    if not result:
-        conn.close()
-        return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
-    
-    role = result[0]
-    role_data = ROLES.get(role, {})
-    base_permissions = role_data.get('permissions', [])
-    
-    # Получаем индивидуальные права
-    c.execute("""
-        SELECT permission_key, granted
-        FROM user_permissions
-        WHERE user_id = ?
-    """, (user_id,))
-    
-    custom_permissions = {row[0]: bool(row[1]) for row in c.fetchall()}
-    conn.close()
-    
-    return {
-        "role": role,
-        "role_name": role_data.get('name', role),
-        "base_permissions": base_permissions if base_permissions != '*' else 'all',
-        "custom_permissions": custom_permissions
-    }
 
 
-@router.post("/users/{user_id}/permissions")
-async def update_user_permissions(
-    user_id: int,
-    request: Request,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Обновить индивидуальные права пользователя (только директор)"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "director":
-        return JSONResponse({"error": "Только директор может изменять права"}, status_code=403)
-    
-    data = await request.json()
-    permissions = data.get('permissions', {})
-    
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    try:
-        for permission_key, granted in permissions.items():
-            c.execute("""
-                INSERT INTO user_permissions (user_id, permission_key, granted, granted_by)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT(user_id, permission_key) 
-                DO UPDATE SET granted = ?, granted_by = ?, granted_at = CURRENT_TIMESTAMP
-            """, (user_id, permission_key, 1 if granted else 0, user['id'],
-                  1 if granted else 0, user['id']))
-        
-        conn.commit()
-        log_activity(user["id"], "update_permissions", "user", str(user_id), 
-                    f"Updated permissions")
-        
-        return {"success": True, "message": "Права обновлены"}
-    except Exception as e:
-        conn.rollback()
-        log_error(f"Error updating permissions: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=500)
-    finally:
-        conn.close()

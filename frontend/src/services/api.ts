@@ -313,6 +313,30 @@ export class ApiClient {
     return this.request<any>('/api/users')
   }
 
+  // После getUsers() (примерно строка 150)
+
+  async getRoles(): Promise<{ roles: Array<{key: string; name: string; level: number}> }> {
+    const response = await fetch('/api/roles', {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Ошибка загрузки ролей');
+    return response.json();
+  },
+
+  async updateUserRole(userId: number, data: { role: string }): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`/api/users/${userId}/role`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Ошибка изменения роли');
+    }
+    return response.json();
+  },
+
   async createUser(data: { username: string; password: string; full_name: string; email?: string; role: string }) {
     const formData = new FormData()
     formData.append('username', data.username)

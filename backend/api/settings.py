@@ -277,6 +277,77 @@ async def update_salon_settings_legacy(
     """Обновить настройки салона (альтернативный путь)"""
     return await update_salon_settings_api(request, session_token)
 
+# ПОСЛЕ строки 282 (после функции update_salon_settings_legacy)
+
+@router.get("/roles")
+async def get_all_roles(session_token: Optional[str] = Cookie(None)):
+    """Получить все доступные роли"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from config import ROLES
+    
+    # Показываем только те роли, которыми может управлять текущий пользователь
+    available_roles = []
+    user_role_data = ROLES.get(user["role"], {})
+    manageable = user_role_data.get('can_manage_roles', [])
+    
+    # Директор видит все роли
+    if user["role"] == "director":
+        manageable = list(ROLES.keys())
+    
+    for role_key in manageable:
+        role_info = ROLES.get(role_key, {})
+        available_roles.append({
+            'key': role_key,
+            'name': role_info.get('name', role_key),
+            'level': role_info.get('hierarchy_level', 0)
+        })
+    
+    # Сортируем по уровню иерархии
+    available_roles.sort(key=lambda x: x['level'], reverse=True)
+    
+    return {"roles": available_roles}
+
+
+@router.get("/permissions")
+async def get_all_permissions(session_token: Optional[str] = Cookie(None)):
+    """Получить список всех прав доступа"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from config import PERMISSION_DESCRIPTIONS
+    
+    return {"permissions": PERMISSION_DESCRIPTIONS}
+
+
+@router.get("/roles/{role_key}/permissions")
+async def get_role_permissions(
+    role_key: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить права конкретной роли"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from config import ROLES, PERMISSION_DESCRIPTIONS
+    
+    role_data = ROLES.get(role_key)
+    if not role_data:
+        return JSONResponse({"error": "Роль не найдена"}, status_code=404)
+    
+    permissions = role_data.get('permissions', [])
+    
+    return {
+        "role_key": role_key,
+        "role_name": role_data.get('name'),
+        "permissions": permissions if permissions != '*' else 'all',
+        "available_permissions": PERMISSION_DESCRIPTIONS
+    }
+
 
 @router.post("/settings/bot-globally-enabled")
 async def update_bot_enabled(
