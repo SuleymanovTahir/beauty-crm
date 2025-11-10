@@ -7,7 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import time
 
-from logger import logger, log_info, log_error, log_critical
+from logger import logger, log_info, log_error, log_critical,log_warning
+from config import DATABASE_NAME
 from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
@@ -252,4 +253,85 @@ if __name__ == "__main__":
         port=8000,
         log_level="info"
     )
+    def diagnose_database():
+        import sqlite3
+    
+        try:
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+
+            log_info("=" * 70, "diagnostics")
+            log_info("🔍 ДИАГНОСТИКА БАЗЫ ДАННЫХ", "diagnostics")
+            log_info("=" * 70, "diagnostics")
+
+            # Таблицы
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            tables = [row[0] for row in c.fetchall()]
+            log_info(f"📋 Таблиц в БД: {len(tables)}", "diagnostics")
+            for table in tables:
+                c.execute(f"SELECT COUNT(*) FROM {table}")
+                count = c.fetchone()[0]
+                log_info(f"   ✓ {table}: {count} записей", "diagnostics")
+
+            # bot_settings детально
+            if 'bot_settings' in tables:
+                log_info("", "diagnostics")
+                log_info("🤖 BOT_SETTINGS ДЕТАЛЬНО:", "diagnostics")
+
+                c.execute("PRAGMA table_info(bot_settings)")
+                columns = [col[1] for col in c.fetchall()]
+                log_info(f"   Колонок: {len(columns)}", "diagnostics")
+
+                c.execute("SELECT COUNT(*) FROM bot_settings")
+                count = c.fetchone()[0]
+                log_info(f"   Записей: {count}", "diagnostics")
+
+                if count > 0:
+                    # Проверяем ключевые поля
+                    fields_to_check = [
+                        'bot_name', 'max_message_chars', 'personality_traits',
+                        'emoji_usage', 'objection_expensive', 'emotional_triggers'
+                    ]
+
+                    for field in fields_to_check:
+                        if field in columns:
+                            c.execute(f"SELECT {field} FROM bot_settings LIMIT 1")
+                            value = c.fetchone()[0]
+
+                            if value:
+                                preview = str(value)[:50] + "..." if len(str(value)) > 50 else str(value)
+                                log_info(f"   ✅ {field}: {preview}", "diagnostics")
+                            else:
+                                log_warning(f"   ⚠️  {field}: ПУСТО", "diagnostics")
+                        else:
+                            log_warning(f"   ❌ {field}: колонка отсутствует", "diagnostics")
+
+            # employees детально
+            if 'employees' in tables:
+                log_info("", "diagnostics")
+                log_info("👥 EMPLOYEES ДЕТАЛЬНО:", "diagnostics")
+
+                c.execute("SELECT COUNT(*) FROM employees")
+                count = c.fetchone()[0]
+                log_info(f"   Записей: {count}", "diagnostics")
+
+                if count > 0:
+                    c.execute("SELECT full_name, position FROM employees ORDER BY sort_order")
+                    for i, row in enumerate(c.fetchall(), 1):
+                        log_info(f"   {i}. {row[0]} - {row[1]}", "diagnostics")
+                else:
+                    log_warning("   ⚠️  Таблица пуста! Запустите seed_employees", "diagnostics")
+            else:
+                log_warning("   ❌ Таблица employees не создана!", "diagnostics")
+
+            log_info("=" * 70, "diagnostics")
+            log_info("✅ ДИАГНОСТИКА ЗАВЕРШЕНА", "diagnostics")
+            log_info("=" * 70, "diagnostics")
+
+            conn.close()
+
+        except Exception as e:
+            log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
+            import traceback
+            log_error(traceback.format_exc(), "diagnostics")
 

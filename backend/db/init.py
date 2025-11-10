@@ -215,6 +215,20 @@ def init_database():
                   duration TEXT,
                   created_at TEXT,
                   updated_at TEXT)''')
+    c.execute('''CREATE TABLE IF NOT EXISTS employees
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  full_name TEXT NOT NULL,
+                  position TEXT,
+                  experience TEXT,
+                  photo TEXT,
+                  bio TEXT,
+                  phone TEXT,
+                  email TEXT,
+                  instagram TEXT,
+                  is_active INTEGER DEFAULT 1,
+                  sort_order INTEGER DEFAULT 0,
+                  created_at TEXT,
+                  updated_at TEXT)''')
 
     # Таблица уведомлений
     c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
