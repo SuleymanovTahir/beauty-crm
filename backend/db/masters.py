@@ -22,6 +22,102 @@ def get_all_masters(active_only: bool = True) -> List[tuple]:
     conn.close()
     return masters
 
+def get_master_services(master_id: int) -> List[Dict]:
+    """Получить услуги мастера с ценами"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT 
+            s.id,
+            s.name_ru,
+            s.name_en,
+            s.name_ar,
+            s.category,
+            s.price_min,
+            s.price_max,
+            s.currency
+        FROM services s
+        JOIN master_services ms ON s.id = ms.service_id
+        WHERE ms.master_id = ? AND s.is_active = 1
+        ORDER BY s.category, s.name_ru
+    """, (master_id,))
+    
+    services = []
+    for row in c.fetchall():
+        services.append({
+            'id': row[0],
+            'name_ru': row[1],
+            'name_en': row[2],
+            'name_ar': row[3],
+            'category': row[4],
+            'price_min': row[5],
+            'price_max': row[6],
+            'currency': row[7]
+        })
+    
+    conn.close()
+    return services
+
+
+def add_master_service(master_id: int, service_id: int) -> bool:
+    """Добавить услугу мастеру"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("""
+            INSERT INTO master_services (master_id, service_id, created_at)
+            VALUES (?, ?, ?)
+        """, (master_id, service_id, datetime.now().isoformat()))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+
+def remove_master_service(master_id: int, service_id: int) -> bool:
+    """Удалить услугу у мастера"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        DELETE FROM master_services 
+        WHERE master_id = ? AND service_id = ?
+    """, (master_id, service_id))
+    
+    conn.commit()
+    success = c.rowcount > 0
+    conn.close()
+    return success
+
+
+def update_master_services(master_id: int, service_ids: List[int]) -> bool:
+    """Обновить все услуги мастера разом"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Удаляем старые
+        c.execute("DELETE FROM master_services WHERE master_id = ?", (master_id,))
+        
+        # Добавляем новые
+        now = datetime.now().isoformat()
+        for service_id in service_ids:
+            c.execute("""
+                INSERT INTO master_services (master_id, service_id, created_at)
+                VALUES (?, ?, ?)
+            """, (master_id, service_id, now))
+        
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        return False
+    finally:
+        conn.close()
 
 def get_master_by_id(master_id: int) -> Optional[tuple]:
     """Получить мастера по ID"""

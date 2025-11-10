@@ -167,6 +167,7 @@ export default function App() {
               currentUser ? (
                 // ✅ ОБНОВИ РЕДИРЕКТ
                 currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
+                currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                 currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :

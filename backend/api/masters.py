@@ -200,3 +200,44 @@ async def update_master_services(
     log_info(f"Updated services for master {master_id}", "api")
     
     return {"success": True, "services": service_names}
+
+@router.get("/masters/{master_id}/services")
+async def get_master_services_api(
+    master_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить услуги мастера"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from db.masters import get_master_services
+    
+    services = get_master_services(master_id)
+    
+    return {"services": services}
+
+
+@router.post("/masters/{master_id}/services")
+async def update_master_services_api(
+    master_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить услуги мастера"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    service_ids = data.get('service_ids', [])
+    
+    from db.masters import update_master_services
+    
+    success = update_master_services(master_id, service_ids)
+    
+    if success:
+        log_info(f"Updated services for master {master_id}", "api")
+        return {"success": True}
+    else:
+        return JSONResponse({"error": "Update failed"}, status_code=500)

@@ -301,118 +301,94 @@ Google Maps: {self.salon.get('google_maps', '')}
         return history_text
     
     def _build_booking_availability(
-        self,
-        instagram_id: str,
-        service_name: str = "",
-        master_name: str = "",
-        preferred_date: str = ""
-    ) -> str:
-        """Построить информацию о доступности с расширенным поиском
-        
-        Args:
-            instagram_id: ID клиента в Instagram
-            service_name: Название услуги для фильтрации
-            master_name: Имя мастера для фильтрации
-            preferred_date: Предпочтительная дата в формате YYYY-MM-DD
-            
-        Returns:
-            Текст с информацией о доступных слотах
-        """
-        from db.schedule import get_available_slots, get_client_booking_history
-        from db.masters import get_master_by_name
-        from db.employees import get_employees_by_service
-        
-        master_id = None
-        if master_name:
-            master = get_master_by_name(master_name)
-            if master:
-                master_id = master[0]
-        
-        # История для анализа предпочтений
-        history = get_client_booking_history(instagram_id, limit=5)
-        
-        # ✅ СНАЧАЛА ИЩЕМ НА 2 НЕДЕЛИ
+    self,
+    instagram_id: str,
+    service_name: str = "",
+    master_name: str = "",
+    preferred_date: str = ""
+) -> str:
+    """Построить информацию о доступности мастеров"""
+    from db.schedule import get_available_slots, get_client_booking_history
+    from db.masters import get_master_by_name, get_masters_for_service, get_master_services
+    
+    master_id = None
+    if master_name:
+        master = get_master_by_name(master_name)
+        if master:
+            master_id = master[0]
+    
+    # История клиента
+    history = get_client_booking_history(instagram_id, limit=5)
+    
+    # ✅ Поиск свободных окон (до 2 месяцев)
+    slots = get_available_slots(
+        service_name=service_name,
+        master_id=master_id,
+        date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
+        days_ahead=14,
+        limit=15
+    )
+    
+    if not slots:
         slots = get_available_slots(
             service_name=service_name,
             master_id=master_id,
             date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-            days_ahead=14,
+            days_ahead=30,
             limit=15
         )
-        
-        # ✅ ЕСЛИ НЕТ - ИЩЕМ НА МЕСЯЦ
-        if not slots:
-            slots = get_available_slots(
-                service_name=service_name,
-                master_id=master_id,
-                date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-                days_ahead=30,
-                limit=15
-            )
-        
-        # ✅ ЕСЛИ НЕТ - ИЩЕМ НА 2 МЕСЯЦА (максимум)
-        if not slots:
-            slots = get_available_slots(
-                service_name=service_name,
-                master_id=master_id,
-                date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-                days_ahead=60,
-                limit=15
-            )
-        
-        # ✅ ЕСЛИ ВСЕ ЕЩЕ НЕТ - ЗНАЧИТ РЕАЛЬНО ПРОБЛЕМА
-        if not slots:
-            phone = self.salon.get('phone', '[PHONE]')
-            return f"""⚠️ К сожалению, все мастера заняты на ближайшие 2 месяца.
-        
+    
+    if not slots:
+        slots = get_available_slots(
+            service_name=service_name,
+            master_id=master_id,
+            date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
+            days_ahead=60,
+            limit=15
+        )
+    
+    if not slots:
+        phone = self.salon.get('phone', '[PHONE]')
+        return f"""⚠️ К сожалению, все мастера заняты на ближайшие 2 месяца.
+
 Рекомендую:
-- Позвонить напрямую: {phone} - возможно освободится окно
-- Оставить контакт - мы позвоним когда появится свободное время"""
+- Позвонить напрямую: {phone}
+- Оставить контакт - мы позвоним когда появится окно"""
+    
+    # ✅ ПОКАЗЫВАЕМ МАСТЕРОВ С ИХ СПЕЦИАЛИЗАЦИЕЙ
+    if service_name:
+        masters = get_masters_for_service(service_name)
         
-        # Анализируем историю для предпочтений
-        preferred_time = None
-        preferred_weekday = None
-        preferred_master = None
+        availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
         
-        if history:
-            times = [h['time'] for h in history if 'time' in h]
-            if times:
-                from collections import Counter
-                time_counts = Counter(times)
-                preferred_time = time_counts.most_common(1)[0][0] if time_counts else None
+        for master in masters[:5]:  # Показываем до 5 мастеров
+            master_id = master[0]
+            master_name = master[1]
             
-            weekdays = [h['weekday'] for h in history if 'weekday' in h]
-            if weekdays:
-                from collections import Counter
-                weekday_counts = Counter(weekdays)
-                preferred_weekday = weekday_counts.most_common(1)[0][0] if weekday_counts else None
+            # Получаем специализацию мастера
+            services = get_master_services(master_id)
+            specialties = [s['name_ru'] for s in services[:3]]  # Первые 3 услуги
             
-            masters = [h['master'] for h in history if h.get('master')]
-            if masters:
-                from collections import Counter
-                master_counts = Counter(masters)
-                preferred_master = master_counts.most_common(1)[0][0] if master_counts else None
-        
-        # ✅ ФОРМИРУЕМ ТЕКСТ - ПОКАЗЫВАЕМ ЧТО ЕСТЬ
+            availability_text += f"👤 {master_name}\n"
+            availability_text += f"   Специализация: {', '.join(specialties)}\n"
+            
+            # Ищем слоты для этого мастера
+            master_slots = [s for s in slots if s['master_id'] == master_id][:3]
+            
+            if master_slots:
+                availability_text += f"   Свободен:\n"
+                for slot in master_slots:
+                    dt = datetime.strptime(slot['date'], "%Y-%m-%d")
+                    date_formatted = dt.strftime("%d.%m (%a)")
+                    availability_text += f"      • {date_formatted} {slot['time_start']}\n"
+            else:
+                availability_text += f"   ❌ Занят в ближайшее время\n"
+            
+            availability_text += "\n"
+    else:
+        # Общий список свободных окон
         availability_text = "📅 СВОБОДНЫЕ ОКНА:\n\n"
         
-        # ✅ ОПРЕДЕЛЯЕМ ВРЕМЕННОЙ ПЕРИОД
-        first_slot_date = datetime.strptime(slots[0]['date'], "%Y-%m-%d")
-        today = datetime.now()
-        days_diff = (first_slot_date - today).days
-        
-        if days_diff <= 7:
-            period_note = ""  # Не пишем ничего - это нормально
-        elif days_diff <= 14:
-            period_note = "\n💡 Ближайшие дни заполнены, показываю через 1-2 недели\n"
-        elif days_diff <= 30:
-            period_note = "\n💡 Ближайшие недели заполнены, показываю свободные окна через месяц\n"
-        else:
-            period_note = "\n💡 Мастера очень загружены, но есть окна через 1-2 месяца\n"
-        
-        availability_text += period_note + "\n"
-        
-        # Группируем по дням
         slots_by_date = {}
         for slot in slots:
             date = slot['date']
@@ -420,35 +396,38 @@ Google Maps: {self.salon.get('google_maps', '')}
                 slots_by_date[date] = []
             slots_by_date[date].append(slot)
         
-        # Показываем первые 3 дня
         for date, day_slots in list(slots_by_date.items())[:3]:
-            try:
-                dt = datetime.strptime(date, "%Y-%m-%d")
-                date_formatted = dt.strftime("%d.%m (%A)")
-            except:
-                date_formatted = date
+            dt = datetime.strptime(date, "%Y-%m-%d")
+            date_formatted = dt.strftime("%d.%m (%A)")
             
             availability_text += f"📆 {date_formatted}:\n"
             
-            for slot in day_slots[:4]:  # Максимум 4 слота в день
+            for slot in day_slots[:4]:
                 time_range = f"{slot['time_start']}-{slot['time_end']}"
                 master = slot['master_name']
                 
-                # Отмечаем предпочтения
-                marker = ""
-                if preferred_master and master == preferred_master:
-                    marker = " ⭐"
-                elif preferred_time and slot['time_start'] == preferred_time:
-                    marker = " 🕐"
-                
-                availability_text += f"  • {time_range} - {master}{marker}\n"
+                availability_text += f"  • {time_range} - {master}\n"
             
             availability_text += "\n"
+    
+    # Анализ истории клиента
+    if history:
+        preferred_master = None
+        preferred_time = None
         
-        # Подсказки о предпочтениях
+        masters_history = [h.get('master') for h in history if h.get('master')]
+        if masters_history:
+            from collections import Counter
+            preferred_master = Counter(masters_history).most_common(1)[0][0]
+        
+        times_history = [h.get('time') for h in history if h.get('time')]
+        if times_history:
+            from collections import Counter
+            preferred_time = Counter(times_history).most_common(1)[0][0]
+        
         if preferred_master:
             availability_text += f"\n💡 Обычно вы записываетесь к {preferred_master}\n"
         if preferred_time:
             availability_text += f"💡 Обычно в {preferred_time}\n"
-        
-        return availability_text
+    
+    return availability_text
