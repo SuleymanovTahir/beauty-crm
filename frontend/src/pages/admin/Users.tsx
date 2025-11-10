@@ -20,7 +20,7 @@ interface User {
 export default function Users() {
   const navigate = useNavigate();
   const { t } = useTranslation(['admin/Users', 'common']);
-  
+
   const roleConfig: Record<string, { label: string; color: string }> = {
     director: { label: 'Директор', color: 'bg-red-100 text-red-800' },
     admin: { label: 'Администратор', color: 'bg-purple-100 text-purple-800' },
@@ -35,19 +35,54 @@ export default function Users() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Для диалога прав
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
-  const [userPermissions, setUserPermissions] = useState<Record<string, boolean>>({});
-  const [savingPermissions, setSavingPermissions] = useState(false);
 
-  // Загрузить пользователей при монтировании
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [availableRoles, setAvailableRoles] = useState<Array<{key: string; name: string; level: number}>>([]);
+  const [savingRole, setSavingRole] = useState(false);
+
   useEffect(() => {
     loadUsers();
+    loadAvailableRoles();
   }, []);
 
-  // Фильтровать пользователей при изменении поиска
+  const loadAvailableRoles = async () => {
+    try {
+      const data = await api.getRoles();
+      setAvailableRoles(data.roles || []);
+    } catch (err) {
+      console.error('Error loading roles:', err);
+    }
+  };
+
+  const getRoleDescription = (roleKey: string): string => {
+    const descriptions: Record<string, string> = {
+      director: 'Полный доступ ко всем функциям',
+      admin: 'Управление пользователями, клиентами и записями',
+      manager: 'Работа с клиентами и записями',
+      sales: 'Instagram чат, статистика',
+      marketer: 'Аналитика и статистика',
+      employee: 'Свои записи и календарь'
+    };
+    return descriptions[roleKey] || 'Роль пользователя';
+  };
+
+  const handleChangeRole = async (userId: number, newRole: string) => {
+    try {
+      setSavingRole(true);
+      await api.updateUserRole(userId, { role: newRole });
+      toast.success('Роль изменена');
+      setShowRoleDialog(false);
+      setSelectedUser(null);
+      await loadUsers();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка изменения роли';
+      toast.error(message);
+    } finally {
+      setSavingRole(false);
+    }
+  };
+
   useEffect(() => {
     const filtered = users.filter(user =>
       user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -90,37 +125,6 @@ export default function Users() {
       const message = err instanceof Error ? err.message : 'Ошибка удаления пользователя';
       toast.error(`Ошибка: ${message}`);
       console.error('Error deleting user:', err);
-    }
-  };
-
-  const handleOpenPermissions = async (user: User) => {
-    setSelectedUser(user);
-    setShowPermissionsDialog(true);
-    
-    try {
-      const data = await api.getUserPermissions(user.id);
-      setUserPermissions(data.custom_permissions || {});
-    } catch (err) {
-      console.error('Error loading permissions:', err);
-      toast.error('Ошибка загрузки прав');
-    }
-  };
-
-  const handleSavePermissions = async () => {
-    if (!selectedUser) return;
-
-    try {
-      setSavingPermissions(true);
-      await api.updateUserPermissions(selectedUser.id, { permissions: userPermissions });
-      toast.success('Права обновлены');
-      setShowPermissionsDialog(false);
-      setSelectedUser(null);
-      setUserPermissions({});
-    } catch (err) {
-      toast.error('Ошибка обновления прав');
-      console.error('Error saving permissions:', err);
-    } finally {
-      setSavingPermissions(false);
     }
   };
 
@@ -265,7 +269,6 @@ export default function Users() {
                           <Edit className="w-4 h-4" />
                         </Button>
                         
-                        {/* Показываем смену роли только если текущий пользователь может управлять этой ролью */}
                         <Button
                           size="sm"
                           variant="outline"
@@ -303,82 +306,57 @@ export default function Users() {
         )}
       </div>
 
-      {/* Диалог настройки прав */}
-      {showPermissionsDialog && selectedUser && (
+      {/* Диалог смены роли */}
+      {showRoleDialog && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-auto">
-            <div className="p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+            <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-bold text-gray-900">
-                Права доступа: {selectedUser.full_name}
+                Изменить роль: {selectedUser.full_name}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                Роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                Текущая роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
               </p>
             </div>
 
             <div className="p-6 space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800">
-                  <strong>ℹ️ Базовые права роли:</strong> Эти права назначены автоматически по роли. 
-                  Ниже можно добавить индивидуальные права для этого пользователя.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                {[
-                  { key: 'analytics_export_full', label: '📊 Экспорт всех данных (с контактами)' },
-                  { key: 'analytics_export_anonymized', label: '📈 Экспорт анонимной аналитики' },
-                  { key: 'instagram_chat', label: '💬 Доступ к Instagram чату' },
-                  { key: 'clients_delete', label: '🗑️ Удаление клиентов' },
-                  { key: 'services_edit', label: '✏️ Редактирование услуг' },
-                  { key: 'users_manage', label: '👥 Управление пользователями' },
-                  { key: 'bookings_delete', label: '📅 Удаление записей' },
-                  { key: 'settings_edit', label: '⚙️ Изменение настроек системы' },
-                ].map((perm) => (
-                  <div key={perm.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="text-sm text-gray-900">{perm.label}</span>
-                    <input
-                      type="checkbox"
-                      checked={userPermissions[perm.key] || false}
-                      onChange={(e) => {
-                        setUserPermissions({
-                          ...userPermissions,
-                          [perm.key]: e.target.checked
-                        });
-                      }}
-                      className="w-5 h-5 cursor-pointer accent-pink-600"
-                    />
+              {availableRoles.map((role) => (
+                <button
+                  key={role.key}
+                  onClick={() => handleChangeRole(selectedUser.id, role.key)}
+                  disabled={savingRole}
+                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                    selectedUser.role === role.key
+                      ? 'border-pink-500 bg-pink-50'
+                      : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">{role.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {getRoleDescription(role.key)}
+                      </p>
+                    </div>
+                    {selectedUser.role === role.key && (
+                      <Badge className="bg-pink-100 text-pink-800">Текущая</Badge>
+                    )}
                   </div>
-                ))}
-              </div>
+                </button>
+              ))}
             </div>
 
-            <div className="p-6 border-t border-gray-200 flex gap-3 sticky bottom-0 bg-white">
+            <div className="p-6 border-t border-gray-200">
               <Button 
                 variant="outline" 
                 onClick={() => {
-                  setShowPermissionsDialog(false);
+                  setShowRoleDialog(false);
                   setSelectedUser(null);
-                  setUserPermissions({});
                 }} 
-                className="flex-1"
-                disabled={savingPermissions}
+                className="w-full"
+                disabled={savingRole}
               >
-                Отмена
-              </Button>
-              <Button 
-                onClick={handleSavePermissions}
-                className="flex-1 bg-pink-600 hover:bg-pink-700"
-                disabled={savingPermissions}
-              >
-                {savingPermissions ? (
-                  <>
-                    <Loader className="w-4 h-4 mr-2 animate-spin" />
-                    Сохранение...
-                  </>
-                ) : (
-                  'Сохранить'
-                )}
+                Закрыть
               </Button>
             </div>
           </div>
