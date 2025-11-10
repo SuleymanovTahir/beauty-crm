@@ -1,7 +1,7 @@
 """
 API Endpoints для работы с пользователями
 """
-from fastapi import APIRouter, Request, Cookie
+from fastapi import APIRouter, Request, Cookie,Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
@@ -10,6 +10,7 @@ from db import get_all_users, delete_user, log_activity
 from config import DATABASE_NAME
 from utils import require_auth
 from logger import log_error
+from auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Users"])
 

@@ -121,11 +121,14 @@ export default function BotSettings() {
 
   useEffect(() => {
     loadSettings();
+  }, []); // ✅ Убрали selectedLanguages из зависимостей
+
+  useEffect(() => {
     setSettings(prev => ({
       ...prev,
       languages_supported: selectedLanguages.join(',')
     }));
-  }, [selectedLanguages]);
+  }, [selectedLanguages]); // ✅ Отдельный useEffect только для обновления настроек
 
   const loadSettings = async () => {
     try {
