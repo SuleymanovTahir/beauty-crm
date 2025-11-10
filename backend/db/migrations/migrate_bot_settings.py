@@ -193,6 +193,32 @@ def parse_instructions_file() -> dict:
     
     # === СТИЛЬ ===
     comm_section = parse_section(content, 'СТИЛЬ ОБЩЕНИЯ', 'ЯЗЫКОВАЯ')
+
+    # === MAX MESSAGE LENGTH ===
+    if 'предложения' in content or 'sentences' in content.lower():
+        # Ищем упоминание о длине сообщений
+        import re
+        length_match = re.search(r'(\d+)-(\d+)\s*предложени', content)
+        if length_match:
+            avg_sentences = (int(length_match.group(1)) + int(length_match.group(2))) // 2
+            settings['max_message_chars'] = avg_sentences * 80  # ~80 символов на предложение
+        else:
+            settings['max_message_chars'] = 300
+    
+    # Извлекаем max_message_chars из контекста
+    if '1-3 предложения' in content or '1-4 предложения' in content:
+        settings['max_message_chars'] = 250  # Среднее для 2-3 предложений
+    
+    # === PRICE RESPONSE TEMPLATE ===
+    price_template_section = parse_section(content, 'СТРУКТУРА ОТВЕТА О ЦЕНЕ', 'ПРАВИЛА ЦЕН')
+    if price_template_section:
+        # Ищем шаблон в кавычках или после "Пример:"
+        template_match = re.search(r'"([^"]*{SERVICE}[^"]*)"', price_template_section)
+        if template_match:
+            settings['price_response_template'] = template_match.group(1)
+        else:
+            settings['price_response_template'] = '{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться?'
+
     if comm_section:
         style_parts = []
         for line in comm_section.split('\n'):
@@ -345,7 +371,7 @@ def create_tables(conn):
     fomo_messages TEXT,
     upsell_techniques TEXT,
     communication_style TEXT,
-    max_message_chars INTEGER DEFAULT 500,
+    max_message_chars INTEGER DEFAULT 300,
     emoji_usage TEXT,
     languages_supported TEXT DEFAULT 'ru,en,ar',
     objection_handling TEXT,
@@ -383,17 +409,14 @@ def create_tables(conn):
     try:
         c.execute("PRAGMA table_info(bot_settings)")
         columns = [row[1] for row in c.fetchall()]
-        if 'max_message_length' in columns and 'max_message_chars' not in columns:
-        # Создаем новое поле
-            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 500")
-            # Копируем значение (1 предложение ≈ 100 символов)
-            c.execute("UPDATE bot_settings SET max_message_chars = max_message_length * 100")
-            print("✅ Поле max_message_chars добавлено")
+        if 'max_message_length' in columns:
+            c.execute("UPDATE bot_settings SET max_message_chars = max_message_length * 80 WHERE max_message_chars IS NULL OR max_message_chars = 0")
+            print("✅ Конвертировано max_message_length → max_message_chars")
             conn.commit()
         # ✅ ПРОВЕРЯЕМ ЧТО max_message_chars ЕСТЬ
         if 'max_message_chars' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 500")
-            print("✅ Добавлено поле max_message_chars со значением по умолчанию 500")
+            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 300")
+            print("✅ Добавлено поле max_message_chars")
             conn.commit()
         if 'ad_campaign_detection' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")

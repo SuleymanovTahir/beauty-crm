@@ -137,10 +137,9 @@ def update_salon_settings(data: dict) -> bool:
         return False
     finally:
         conn.close()
-# ===== НАСТРОЙКИ БОТА =====
 
-# backend/db/settings.py - строки 150-240
-# ЗАМЕНИТЕ ВСЮ ФУНКЦИЮ get_bot_settings():
+
+# ===== НАСТРОЙКИ БОТА =====
 
 def get_bot_settings() -> dict:
     """Получить настройки бота из БД"""
@@ -171,7 +170,8 @@ def get_bot_settings() -> dict:
                 "fomo_messages": row_dict.get("fomo_messages", ""),
                 "upsell_techniques": row_dict.get("upsell_techniques", ""),
                 "communication_style": row_dict.get("communication_style", ""),
-                "max_message_length": row_dict.get("max_message_length", 4),
+                "max_message_chars": row_dict.get("max_message_chars", 300),
+                "max_message_length": row_dict.get("max_message_length", 4),  # deprecated
                 "emoji_usage": row_dict.get("emoji_usage", ""),
                 "languages_supported": row_dict.get("languages_supported", "ru,en,ar"),
                 "objection_handling": row_dict.get("objection_handling", ""),
@@ -203,9 +203,10 @@ def get_bot_settings() -> dict:
                 "contextual_rules": row_dict.get("contextual_rules", ""),
                 "auto_cancel_discounts": row_dict.get("auto_cancel_discounts", ""),
                 "comment_reply_settings": row_dict.get("comment_reply_settings", "{}"),
-                "updated_at": row_dict.get("updated_at"),
                 "ad_campaign_detection": row_dict.get("ad_campaign_detection", ""),
                 "pre_booking_data_collection": row_dict.get("pre_booking_data_collection", ""),
+                "manager_consultation_prompt": row_dict.get("manager_consultation_prompt", ""),
+                "updated_at": row_dict.get("updated_at"),
             }
         else:
             log_warning("⚠️ Настройки бота пусты, используются дефолты", "database")
@@ -230,21 +231,22 @@ def _get_default_bot_settings() -> dict:
         bot_name = salon.get('bot_name', 'M.Le Diamant Assistant')
     except:
         bot_name = 'M.Le Diamant Assistant'
+    
     return {
         "id": 1,
-        "bot_name": "M.Le Diamant Assistant",
-        "personality_traits": "Обаятельная, уверенная, харизматичная, экспертная",
+        "bot_name": bot_name,
+        "personality_traits": "Профессионал с международным опытом\nУверенный, харизматичный, НЕ навязчивый",
         "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
-        "farewell_message": "Спасибо за визит! 💖",
+        "farewell_message": "Спасибо! До встречи! 💖",
         "price_explanation": "Мы в премиум-сегменте 💎",
-        "price_response_template": "{SERVICE} - {PRICE} {CURRENCY} 💎",
+        "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться?",
         "premium_justification": "",
-        "booking_redirect_message": "Я AI-ассистент, запись онлайн за 2 минуты!\nВыбирайте мастера и время здесь: {BOOKING_URL}",
+        "booking_redirect_message": "Я AI-ассистент, запись онлайн!\nВыберите время: {BOOKING_URL}",
         "fomo_messages": "",
         "upsell_techniques": "",
-        "communication_style": "Дружелюбный, экспертный, вдохновляющий",
-        "max_message_length": 4,
-        "emoji_usage": "Умеренное (2-3 на сообщение)",
+        "communication_style": "Короткий, дружелюбный, экспертный",
+        "max_message_chars": 300,
+        "emoji_usage": "Минимальное (1-2 на сообщение)",
         "languages_supported": "ru,en,ar",
         "objection_handling": "",
         "negative_handling": "",
@@ -271,8 +273,11 @@ def _get_default_bot_settings() -> dict:
         "example_dialogues": "",
         "emotional_responses": "",
         "anti_patterns": "",
-        "voice_message_response": "Извините, я AI-помощник и не могу прослушивать голосовые 😊\nПожалуйста, напишите текстом!",
+        "voice_message_response": "Извините, я AI и не слушаю голосовые 😊\nНапишите текстом!",
         "contextual_rules": "",
+        "ad_campaign_detection": "",
+        "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
+        "manager_consultation_prompt": "",
         "updated_at": None
     }
 
@@ -283,100 +288,81 @@ def update_bot_settings(data: dict) -> bool:
     c = conn.cursor()
     
     try:
-        # Получаем текущие настройки
-        c.execute("SELECT * FROM bot_settings LIMIT 1")
-        result = c.fetchone()
+        # Получаем список всех колонок
+        c.execute("PRAGMA table_info(bot_settings)")
+        columns = [row[1] for row in c.fetchall()]
         
-        if not result:
-            log_error("❌ Настройки бота не найдены!", "database")
-            conn.close()
-            return False
+        # Формируем SET часть запроса только для существующих колонок
+        set_parts = []
+        params = []
         
-        # Парсим текущие настройки
-        current = {
-            "bot_name": result[1],
-            "personality_traits": result[2],
-            "greeting_message": result[3],
-            "farewell_message": result[4],
-            "price_explanation": result[5],
-            "price_response_template": result[6],
-            "premium_justification": result[7],
-            "booking_redirect_message": result[8],
-            "fomo_messages": result[9],
-            "upsell_techniques": result[10],
-            "communication_style": result[11],
-            "max_message_length": result[12],
-            "emoji_usage": result[13],
-            "languages_supported": result[14],
-            "objection_handling": result[15],
-            "negative_handling": result[16],
-            "safety_guidelines": result[17],
-            "example_good_responses": result[18],
-            "algorithm_actions": result[19],
-            "location_features": result[20],
-            "seasonality": result[21],
-            "emergency_situations": result[22],
-            "success_metrics": result[23],
+        field_mapping = {
+            'bot_name': 'bot_name',
+            'personality_traits': 'personality_traits',
+            'greeting_message': 'greeting_message',
+            'farewell_message': 'farewell_message',
+            'price_explanation': 'price_explanation',
+            'price_response_template': 'price_response_template',
+            'premium_justification': 'premium_justification',
+            'booking_redirect_message': 'booking_redirect_message',
+            'fomo_messages': 'fomo_messages',
+            'upsell_techniques': 'upsell_techniques',
+            'communication_style': 'communication_style',
+            'max_message_chars': 'max_message_chars',
+            'emoji_usage': 'emoji_usage',
+            'languages_supported': 'languages_supported',
+            'objection_handling': 'objection_handling',
+            'negative_handling': 'negative_handling',
+            'safety_guidelines': 'safety_guidelines',
+            'example_good_responses': 'example_good_responses',
+            'algorithm_actions': 'algorithm_actions',
+            'location_features': 'location_features',
+            'seasonality': 'seasonality',
+            'emergency_situations': 'emergency_situations',
+            'success_metrics': 'success_metrics',
+            'objection_expensive': 'objection_expensive',
+            'objection_think_about_it': 'objection_think_about_it',
+            'objection_no_time': 'objection_no_time',
+            'objection_pain': 'objection_pain',
+            'objection_result_doubt': 'objection_result_doubt',
+            'objection_cheaper_elsewhere': 'objection_cheaper_elsewhere',
+            'objection_too_far': 'objection_too_far',
+            'objection_consult_husband': 'objection_consult_husband',
+            'objection_first_time': 'objection_first_time',
+            'objection_not_happy': 'objection_not_happy',
+            'emotional_triggers': 'emotional_triggers',
+            'social_proof_phrases': 'social_proof_phrases',
+            'personalization_rules': 'personalization_rules',
+            'example_dialogues': 'example_dialogues',
+            'emotional_responses': 'emotional_responses',
+            'anti_patterns': 'anti_patterns',
+            'voice_message_response': 'voice_message_response',
+            'contextual_rules': 'contextual_rules',
+            'ad_campaign_detection': 'ad_campaign_detection',
+            'pre_booking_data_collection': 'pre_booking_data_collection',
+            'manager_consultation_prompt': 'manager_consultation_prompt',
         }
         
-        # Мержим новые данные
-        merged = {**current, **data}
+        for data_key, db_column in field_mapping.items():
+            if db_column in columns and data_key in data:
+                set_parts.append(f"{db_column} = ?")
+                params.append(data[data_key])
         
-        c.execute("""UPDATE bot_settings SET
-            bot_name = ?, personality_traits = ?, greeting_message = ?,
-            farewell_message = ?, price_explanation = ?, price_response_template = ?,
-            premium_justification = ?, booking_redirect_message = ?,
-            fomo_messages = ?, upsell_techniques = ?, communication_style = ?,
-            max_message_length = ?, emoji_usage = ?, languages_supported = ?,
-            objection_handling = ?, negative_handling = ?, safety_guidelines = ?,
-            example_good_responses = ?, algorithm_actions = ?, location_features = ?,
-            seasonality = ?, emergency_situations = ?, success_metrics = ?,
-            objection_expensive = ?, objection_think_about_it = ?,
-            objection_no_time = ?, objection_pain = ?, objection_result_doubt = ?,
-            objection_cheaper_elsewhere = ?, objection_too_far = ?,
-            objection_consult_husband = ?, objection_first_time = ?,
-            objection_not_happy = ?, emotional_triggers = ?,
-            social_proof_phrases = ?, personalization_rules = ?,
-            example_dialogues = ?, emotional_responses = ?, anti_patterns = ?,
-            voice_message_response = ?, contextual_rules = ?,
-            updated_at = CURRENT_TIMESTAMP
-            WHERE id = 1""",
-          (merged.get('bot_name'), merged.get('personality_traits'),
-           merged.get('greeting_message'), merged.get('farewell_message'),
-           merged.get('price_explanation'), merged.get('price_response_template'),
-           merged.get('premium_justification'), merged.get('booking_redirect_message'),
-           merged.get('fomo_messages'), merged.get('upsell_techniques'),
-           merged.get('communication_style'), merged.get('max_message_length', 4),
-           merged.get('emoji_usage'), merged.get('languages_supported'),
-           merged.get('objection_handling'), merged.get('negative_handling'),
-           merged.get('safety_guidelines'), merged.get('example_good_responses'),
-           merged.get('algorithm_actions'), merged.get('location_features'),
-           merged.get('seasonality'), merged.get('emergency_situations'),
-           merged.get('success_metrics'),
-           merged.get('objection_expensive', ''),
-           merged.get('objection_think_about_it', ''),
-           merged.get('objection_no_time', ''),
-           merged.get('objection_pain', ''),
-           merged.get('objection_result_doubt', ''),
-           merged.get('objection_cheaper_elsewhere', ''),
-           merged.get('objection_too_far', ''),
-           merged.get('objection_consult_husband', ''),
-           merged.get('objection_first_time', ''),
-           merged.get('objection_not_happy', ''),
-           merged.get('emotional_triggers', ''),
-           merged.get('social_proof_phrases', ''),
-           merged.get('personalization_rules', ''),
-           merged.get('example_dialogues', ''),
-           merged.get('emotional_responses', ''),
-           merged.get('anti_patterns', ''),
-           merged.get('voice_message_response', 'Извините, я AI-помощник и не могу прослушивать голосовые 😊'),
-           merged.get('contextual_rules', '')))
-        
-        conn.commit()
-        log_info("✅ Настройки бота обновлены", "database")
-        return True
+        if set_parts:
+            set_parts.append("updated_at = CURRENT_TIMESTAMP")
+            query = f"UPDATE bot_settings SET {', '.join(set_parts)} WHERE id = 1"
+            c.execute(query, params)
+            conn.commit()
+            log_info(f"✅ Настройки бота обновлены ({len(set_parts)-1} полей)", "database")
+            return True
+        else:
+            log_warning("⚠️ Нет полей для обновления", "database")
+            return False
+            
     except Exception as e:
         log_error(f"Ошибка обновления настроек бота: {e}", "database")
+        import traceback
+        log_error(traceback.format_exc(), "database")
         conn.rollback()
         return False
     finally:
@@ -484,7 +470,6 @@ def delete_custom_status(status_key: str) -> bool:
 
 # ===== РОЛИ И ПРАВА ДОСТУПА =====
 
-# Доступные права в системе
 AVAILABLE_PERMISSIONS = {
     'clients_view': 'Просмотр клиентов',
     'clients_create': 'Создание клиентов',
@@ -507,7 +492,6 @@ AVAILABLE_PERMISSIONS = {
 
 def get_all_roles() -> list:
     """Получить все роли (встроенные + кастомные)"""
-    # Встроенные роли
     builtin_roles = [
         {
             'role_key': 'admin',
@@ -529,7 +513,6 @@ def get_all_roles() -> list:
         }
     ]
     
-    # Кастомные роли из БД
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
@@ -557,7 +540,6 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Проверка что это не встроенная роль
     if role_key in ['admin', 'manager', 'employee']:
         log_error(f"❌ Нельзя создать роль с ключом '{role_key}' - это встроенная роль", "database")
         return False
@@ -587,16 +569,12 @@ def delete_custom_role(role_key: str) -> bool:
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Нельзя удалить встроенные роли
     if role_key in ['admin', 'manager', 'employee']:
         log_error(f"❌ Нельзя удалить встроенную роль '{role_key}'", "database")
         return False
     
     try:
-        # Удаляем роль
         c.execute("DELETE FROM custom_roles WHERE role_key = ?", (role_key,))
-        
-        # Удаляем права этой роли
         c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
         
         conn.commit()
@@ -615,7 +593,6 @@ def get_role_permissions(role_key: str) -> dict:
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Админ имеет все права
     if role_key == 'admin':
         permissions = {}
         for perm_key in AVAILABLE_PERMISSIONS.keys():
@@ -654,16 +631,13 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    # Нельзя изменить права админа
     if role_key == 'admin':
         log_error("❌ Нельзя изменить права роли admin", "database")
         return False
     
     try:
-        # Удаляем старые права
         c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
         
-        # Добавляем новые
         for perm_key, perms in permissions.items():
             c.execute("""INSERT INTO role_permissions 
                         (role_key, permission_key, can_view, can_create, can_edit, can_delete)
@@ -701,7 +675,6 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
     c = conn.cursor()
     
     try:
-        # Получаем роль пользователя
         c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
         result = c.fetchone()
         
@@ -710,11 +683,9 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         
         role_key = result[0]
         
-        # Админ имеет все права
         if role_key == 'admin':
             return True
         
-        # Проверяем право
         column = f"can_{action}"
         c.execute(f"""SELECT {column} FROM role_permissions 
                      WHERE role_key = ? AND permission_key = ?""",
@@ -728,6 +699,7 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         return False
     finally:
         conn.close()
+
 
 def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""
