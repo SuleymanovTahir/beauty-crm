@@ -226,6 +226,9 @@ async def startup_event():
         # create_employees_tables()
         # add_manager_consultation_field()
 
+        # from db.migrations.seed_employees import seed_employees
+        # seed_employees()
+
         
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")

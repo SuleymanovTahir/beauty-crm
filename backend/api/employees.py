@@ -199,6 +199,34 @@ async def set_schedule(
     return {"success": True}
 
 
+@router.post("/employees/{employee_id}/reorder")
+async def reorder_employee(
+    employee_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Изменить порядок сортировки сотрудника"""
+    user = require_auth(session_token)
+    if not user or user["role"] != "admin":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    new_order = data.get('sort_order')
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("UPDATE employees SET sort_order = ? WHERE id = ?", (new_order, employee_id))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error reordering: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+
 @router.get("/employees/available")
 async def get_available(
     service_id: int,

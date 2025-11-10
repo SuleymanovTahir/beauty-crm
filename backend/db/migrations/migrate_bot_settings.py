@@ -125,218 +125,215 @@ def parse_instructions_file() -> dict:
     
     settings = DEFAULT_SETTINGS.copy()
     
-    # === ЛИЧНОСТЬ ===
-    personality_section = parse_section(content, 'ЛИЧНОСТЬ БОТА', 'ПРАВИЛА О ПРИВЕТСТВИИ')
-    if personality_section:
-        traits = []
-        for line in personality_section.split('\n'):
-            line = line.strip()
-            if (line.startswith('- ') or line.startswith('• ')) and len(line) > 3:
-                traits.append(line[2:])
-        if traits:
-            settings['personality_traits'] = '\n'.join(traits[:10])
+    # ✅ HARDCODE ЗНАЧЕНИЯ ИЗ ФАЙЛА (надёжнее чем парсинг)
+    settings['bot_name'] = 'M.Le Diamant Assistant'
+    settings['max_message_chars'] = 300  # ✅ 300 символов максимум
+    settings['emoji_usage'] = 'Минимальное (1-2 на сообщение, только если очень уместно)'
+    settings['personality_traits'] = '''Профессионал с международным опытом
+Уверенный, харизматичный, НЕ навязчивый
+Пишет коротко: 1-3 предложения (максимум 4 для сложных услуг)
+Натурально, без искусственности
+Смайлики — минимум (1-2 за сообщение максимум)'''
     
-    # === ПРИВЕТСТВИЕ ===
-    greeting_section = parse_section(content, 'ПРАВИЛА О ПРИВЕТСТВИИ', 'ПРАВИЛА О ЦЕНАХ')
-    greeting_quotes = extract_quotes(greeting_section)
-    for quote in greeting_quotes:
-        if 'Привет' in quote or 'Hello' in quote:
-            settings['greeting_message'] = quote
-            break
+    settings['greeting_message'] = 'Привет! 😊 Добро пожаловать в M.Le Diamant Beauty Lounge!'
+    settings['farewell_message'] = 'Спасибо за визит! До встречи! 💖'
     
-    # === ПРОЩАНИЕ ===
-    if 'Спасибо за визит' in content:
-        farewell_match = re.search(r'(Спасибо за визит[^"\n]{0,100})', content)
-        if farewell_match:
-            settings['farewell_message'] = farewell_match.group(1).strip()
+    settings['communication_style'] = '''Дружелюбный, экспертный
+Короткие ответы (1-3 предложения)
+Без лишних слов'''
     
-    # === ЦЕНЫ ===
-    pricing_section = parse_section(content, 'ПРАВИЛА О ЦЕНАХ', 'ПРАВИЛА О ЗАПИСИ')
-    if pricing_section:
-        settings['price_explanation'] = 'Мы в премиум-сегменте 💎\nНаши цены отражают качество.'
-        
-        # Price response template
-        if 'Структура ответа' in pricing_section:
-            settings['price_response_template'] = '{SERVICE} - {PRICE} {CURRENCY} 💎\n\nВключает: {BENEFITS}\nРезультат: {DURATION}\n\n{EMOTIONAL_HOOK}'
-        
-        # Premium justification
-        premium_quotes = extract_quotes(pricing_section)
-        for quote in premium_quotes:
-            if 'премиум' in quote and len(quote) > 100:
-                settings['premium_justification'] = quote
-                break
+    settings['languages_supported'] = 'ru,en,ar'
     
-    # === ЗАПИСЬ ===
-    booking_section = parse_section(content, 'ПРАВИЛА О ЗАПИСИ', 'ИНФОРМАЦИЯ О САЛОНЕ')
-    booking_quotes = extract_quotes(booking_section)
-    for quote in booking_quotes:
-        if 'AI-ассистент' in quote and 'запись' in quote:
-            settings['booking_redirect_message'] = quote
-            break
+    settings['price_explanation'] = '''Мы в премиум-сегменте 💎
+Наши цены отражают качество материалов (США/Европа)'''
     
-    # === FOMO ===
-    fomo_section = parse_section(content, 'FOMO ТЕХНИКИ', 'UPSELL')
-    fomo_messages = []
-    for line in fomo_section.split('\n'):
-        if '🔥' in line:
-            msg = line.strip().lstrip('🔥 ').strip('"')
-            if msg and len(msg) > 10:
-                fomo_messages.append(msg)
-    if fomo_messages:
-        settings['fomo_messages'] = '|'.join(fomo_messages)
+    settings['price_response_template'] = '''{SERVICE} {PRICE} AED 💎
+{DESCRIPTION}
+Записаться?'''
     
-    # === UPSELL ===
-    upsell_section = parse_section(content, 'UPSELL ТЕХНИКИ', 'СОЦИАЛЬНОЕ')
-    upsell_quotes = extract_quotes(upsell_section)
-    if upsell_quotes:
-        settings['upsell_techniques'] = '|'.join(upsell_quotes[:5])
+    settings['premium_justification'] = '''Топ-1 по отзывам в JBR
+Материалы из США (не Китай)
+Гарантия результата'''
     
-    # === СТИЛЬ ===
-    comm_section = parse_section(content, 'СТИЛЬ ОБЩЕНИЯ', 'ЯЗЫКОВАЯ')
+    settings['booking_redirect_message'] = '''Я AI-ассистент, запись онлайн!
+Выберите удобное время: https://n1314037.alteg.io'''
+    
+    settings['fomo_messages'] = 'Места быстро заканчиваются🔥|Только 2 окна осталось на эту неделю⚡|Завтра уже почти всё занято💎'
+    
+    settings['upsell_techniques'] = 'Многие берут + парафинотерапию для идеального эффекта|Советую добавить дизайн - выглядит wow✨|С массажем результат держится в 2 раза дольше'
+    
+    settings['objection_expensive'] = '''Понимаю 💎
+Мы не самые дешёвые, но:
+- Материалы США (не Китай)
+- Держится 3-4 недели (не 1)
+- Топ мастера Dubai
+Качество = экономия в долгосрочной перспективе'''
+    
+    settings['objection_think_about_it'] = '''Конечно! Подумайте 😊
+Может вопросы есть?
+Или хотите увидеть работы мастеров в Instagram?'''
+    
+    settings['objection_no_time'] = '''Понимаю ⏰
+У нас гибкий график:
+- Вечерние слоты до 21:00
+- Выходные работаем
+- Экспресс-услуги за 30 мин
+Когда примерно могли бы?'''
+    
+    settings['objection_pain'] = '''Понимаю беспокойство 💆‍♀️
+Но у нас:
+- Современное оборудование (минимум дискомфорта)
+- Мастера с опытом 5+ лет
+- Можем сделать тест на небольшом участке
+Многие удивляются насколько комфортно проходит процедура'''
+    
+    settings['objection_result_doubt'] = '''Отличный вопрос! 🎯
+У нас:
+- Портфолио 500+ работ в Instagram
+- Гарантия результата
+- Бесплатная коррекция если что-то не так
+Хотите посмотреть примеры работ?'''
+    
+    settings['objection_cheaper_elsewhere'] = '''Да, видел таких 👀
+Но вопрос в качестве:
+- Какие материалы? (мы используем USA бренды)
+- Сколько держится? (у нас 3-4 недели гарантия)
+- Сертификаты есть у мастеров?
+Дешево часто означает переделывать через неделю'''
+    
+    settings['objection_too_far'] = '''JBR - престижный район у пляжа 🌊
+Плюсы локации:
+- 5 мин от пляжа
+- Рядом Marina Mall
+- Бесплатная парковка
+- Метро DMCC в 10 минутах
+Многие совмещают визит с прогулкой по The Walk'''
+    
+    settings['objection_consult_husband'] = '''Конечно! 💑
+Кстати, может мужу тоже что-то нужно?
+У нас есть:
+- Мужской маникюр
+- Массаж
+- Уход за лицом
+20% наших клиентов - мужчины'''
+    
+    settings['objection_first_time'] = '''Отлично что решились попробовать! 🎉
+Для первого раза:
+- Мастер всё подробно объяснит
+- Можно задать любые вопросы
+- Покажем примеры работ
+- Подберём то что точно подойдёт
+Не переживайте, будет красиво и комфортно!'''
+    
+    settings['objection_not_happy'] = '''Мы гарантируем 100% качество 💎
+Если вдруг не понравится (что маловероятно):
+- Бесплатная коррекция
+- Переделаем как нужно
+- Или вернём деньги
+Но у нас 4.9★ рейтинг - такого не было'''
+    
+    settings['emotional_triggers'] = '''💖 Желание быть красивой
+⏰ Ограниченное время (дефицит мест)
+💰 Ценность инвестиции в себя
+👥 Социальное одобрение (Instagram)'''
+    
+    settings['social_proof_phrases'] = '''✅ 500+ довольных клиентов за год
+✅ Топ-1 салон в JBR по отзывам
+✅ 4.9★ рейтинг Google Maps
+✅ 95% клиентов возвращаются снова'''
+    
+    settings['personalization_rules'] = '''- Обращаться по имени если известно
+- Учитывать историю прошлых записей
+- Помнить предпочтения клиента
+- Предлагать знакомого мастера'''
+    
+    settings['emotional_responses'] = '''😊 Радость клиента: "Как здорово! Рада за вас!"
+😔 Грусть/разочарование: "Понимаю вас, давайте исправим"
+😰 Тревога: "Не переживайте, всё будет отлично"
+🤔 Сомнение: "Отличный вопрос! Давайте разберёмся"'''
+    
+    settings['anti_patterns'] = '''❌ Не извиняться без причины
+❌ Не писать "К сожалению"
+❌ Не использовать многоточие...
+❌ Не переспрашивать очевидное
+❌ Не писать длинные простыни текста'''
+    
+    settings['voice_message_response'] = 'Я AI-ассистент, не слушаю голосовые 😊\nНапишите текстом пожалуйста!'
+    
+    settings['contextual_rules'] = '''Учитывать:
+- Время суток (утро/вечер)
+- День недели (будни/выходные)
+- Сезон (лето/зима)
+- Праздники'''
+    
+    settings['safety_guidelines'] = '''🔒 НЕ разглашать личные данные других клиентов
+🔒 НЕ давать медицинские советы
+🔒 НЕ гарантировать 100% результат процедуры
+🔒 НЕ обсуждать политику/религию
+🔒 При угрозах - немедленно менеджеру'''
+    
+    settings['example_good_responses'] = '''✅ Короткие ответы (1-3 предложения)
+✅ Конкретная информация
+✅ 1-2 эмодзи максимум
+✅ Призыв к действию в конце
+✅ Натуральный тон (не робот)'''
+    
+    settings['algorithm_actions'] = '''1. Понять что хочет клиент
+2. Дать короткий полезный ответ
+3. Предложить записаться (если уместно)
+4. Не перегружать информацией'''
+    
+    settings['location_features'] = '''📍 JBR (Jumeirah Beach Residence)
+🏖️ 5 минут пешком от пляжа
+🚇 Метро DMCC - 10 минут
+🅿️ Бесплатная парковка
+🛍️ Рядом Marina Mall, The Walk'''
+    
+    settings['seasonality'] = '''☀️ Лето в Dubai (май-октябрь):
+- Акцент на охлаждающие процедуры
+- Защита от солнца
 
-    # === MAX MESSAGE LENGTH ===
-    if 'предложения' in content or 'sentences' in content.lower():
-        # Ищем упоминание о длине сообщений
-        import re
-        length_match = re.search(r'(\d+)-(\d+)\s*предложени', content)
-        if length_match:
-            avg_sentences = (int(length_match.group(1)) + int(length_match.group(2))) // 2
-            settings['max_message_chars'] = avg_sentences * 80  # ~80 символов на предложение
-        else:
-            settings['max_message_chars'] = 300
+❄️ Зима/весна (ноябрь-апрель):
+- Акцент на увлажнение
+- Подготовка к сезону'''
     
-    # Извлекаем max_message_chars из контекста
-    if '1-3 предложения' in content or '1-4 предложения' in content:
-        settings['max_message_chars'] = 250  # Среднее для 2-3 предложений
-    
-    # === PRICE RESPONSE TEMPLATE ===
-    price_template_section = parse_section(content, 'СТРУКТУРА ОТВЕТА О ЦЕНЕ', 'ПРАВИЛА ЦЕН')
-    if price_template_section:
-        # Ищем шаблон в кавычках или после "Пример:"
-        template_match = re.search(r'"([^"]*{SERVICE}[^"]*)"', price_template_section)
-        if template_match:
-            settings['price_response_template'] = template_match.group(1)
-        else:
-            settings['price_response_template'] = '{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться?'
+    settings['emergency_situations'] = '''🚨 Жалобы на здоровье после процедуры:
+   "Немедленно обратитесь к врачу! Позвоните менеджеру: +971526961100"
 
-    if comm_section:
-        style_parts = []
-        for line in comm_section.split('\n'):
-            if '**' in line and ':' in line:
-                style_parts.append(line.strip().replace('**', ''))
-        if style_parts:
-            settings['communication_style'] = '\n'.join(style_parts)
+🚨 Агрессия/оскорбления:
+   "Я AI-ассистент. По сложным вопросам свяжитесь с менеджером"
+
+🚨 Требование персональных данных:
+   "Не могу предоставить такую информацию по политике безопасности"'''
     
-    # === ВОЗРАЖЕНИЯ (ДЕТАЛЬНО) ===
-    settings['objection_expensive'] = extract_objection(content, 'Дорого')
-    settings['objection_think_about_it'] = extract_objection(content, 'Подумаю')
-    settings['objection_no_time'] = extract_objection(content, 'Нет времени')
-    settings['objection_pain'] = extract_objection(content, 'боли')
-    settings['objection_result_doubt'] = extract_objection(content, 'не уверен')
-    settings['objection_cheaper_elsewhere'] = extract_objection(content, 'дешевле')
-    settings['objection_too_far'] = extract_objection(content, 'далеко')
-    settings['objection_consult_husband'] = extract_objection(content, 'мужем')
-    settings['objection_first_time'] = extract_objection(content, 'первый раз')
-    settings['objection_not_happy'] = extract_objection(content, 'не понравится')
+    settings['success_metrics'] = '''📊 Конверсия в запись: >40%
+📊 Время первого ответа: <2 минуты
+📊 Удовлетворенность клиентов: >4.5★
+📊 Повторные записи: >60%'''
     
-    # === ЭМОЦИОНАЛЬНЫЕ ТРИГГЕРЫ ===
-    triggers_section = parse_section(content, 'ЭМОЦИОНАЛЬНЫЕ ТРИГГЕРЫ', 'СОЦИАЛЬНОЕ')
-    if triggers_section:
-        triggers = []
-        for line in triggers_section.split('\n'):
-            if '💖' in line or '⏰' in line or '💰' in line:
-                triggers.append(line.strip())
-        if triggers:
-            settings['emotional_triggers'] = '\n'.join(triggers)
+    settings['ad_campaign_detection'] = '''Если клиент спрашивает "откуда у вас мой номер?" или "как вы меня нашли?":
+
+✅ Ответ: "Мы используем таргетированную рекламу в Instagram/Facebook для продвижения наших услуг в Dubai. Если не хотите получать наши сообщения - дайте знать, удалим из базы"
+
+❌ НЕ извиняться - это нормальная практика'''
     
-    # === СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО ===
-    social_section = parse_section(content, 'СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО', 'ПЕРСОНАЛИЗАЦИЯ')
-    if social_section:
-        proofs = []
-        for line in social_section.split('\n'):
-            if line.strip().startswith('✅'):
-                proofs.append(line.strip())
-        if proofs:
-            settings['social_proof_phrases'] = '\n'.join(proofs)
+    settings['pre_booking_data_collection'] = 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'
     
-    # === ПЕРСОНАЛИЗАЦИЯ ===
-    person_section = parse_section(content, 'ПЕРСОНАЛИЗАЦИЯ', 'РАБОТА С ЭМОЦИЯМИ')
-    if person_section:
-        rules = []
-        for line in person_section.split('\n'):
-            if line.strip().startswith('-'):
-                rules.append(line.strip())
-        if rules:
-            settings['personalization_rules'] = '\n'.join(rules)
-    
-    # === ПРИМЕРЫ ДИАЛОГОВ ===
-    dialogues_section = parse_section(content, 'СУПЕР-ПРИМЕРЫ ДИАЛОГОВ', 'ФИНАЛЬНЫЙ')
-    if dialogues_section:
-        settings['example_dialogues'] = dialogues_section[:2000]
-    
-    # === ЭМОЦИОНАЛЬНЫЕ ОТВЕТЫ ===
-    emotional_section = parse_section(content, 'РАБОТА С ЭМОЦИЯМИ', 'НЕ ДЕЛАЙ')
-    if emotional_section:
-        settings['emotional_responses'] = emotional_section[:800]
-    
-    # === АНТИПАТТЕРНЫ ===
-    anti_section = parse_section(content, 'НЕ ДЕЛАЙ', 'СТИЛЬ ОБЩЕНИЯ')
-    if anti_section:
-        antipatterns = []
-        for line in anti_section.split('\n'):
-            if line.strip().startswith('❌'):
-                antipatterns.append(line.strip())
-        if antipatterns:
-            settings['anti_patterns'] = '\n'.join(antipatterns)
-    
-    # === ГОЛОСОВЫЕ ===
-    if 'ГОЛОСОВОЕ СООБЩЕНИЕ' in content:
-        voice_match = re.search(r'ГОЛОСОВОЕ СООБЩЕНИЕ.*?"([^"]+)"', content, re.DOTALL)
-        if voice_match:
-            settings['voice_message_response'] = voice_match.group(1)
-    
-    # === КОНТЕКСТНЫЕ ПРАВИЛА ===
-    contextual_section = parse_section(content, 'СЕЗОННОСТЬ', 'ЛОКАЦИЯ')
-    if contextual_section:
-        settings['contextual_rules'] = contextual_section[:800]
-    
-    # === БЕЗОПАСНОСТЬ ===
-    safety_section = parse_section(content, 'БЕЗОПАСНОСТЬ И ЭТИКА', 'СЕЗОННОСТЬ')
-    if safety_section:
-        settings['safety_guidelines'] = safety_section[:1000]
-    
-    # === ПРИМЕРЫ ОТВЕТОВ ===
-    examples_section = parse_section(content, 'ПРИМЕРЫ', 'АЛГОРИТМ')
-    if examples_section:
-        settings['example_good_responses'] = examples_section[:1000]
-    
-    # === АЛГОРИТМ ===
-    algo_section = parse_section(content, 'АЛГОРИТМ', 'РАБОТА С ВОЗРАЖЕНИЯМИ')
-    if algo_section:
-        settings['algorithm_actions'] = algo_section[:1200]
-    
-    # === ЛОКАЦИЯ ===
-    location_section = parse_section(content, 'ЛОКАЦИЯ', 'СЕЗОННОСТЬ')
-    if location_section:
-        settings['location_features'] = location_section[:600]
-    
-    # === СЕЗОННОСТЬ ===
-    season_section = parse_section(content, 'СЕЗОННОСТЬ', 'ЭКСТРЕННЫЕ')
-    if season_section:
-        settings['seasonality'] = season_section[:600]
-    
-    # === ЭКСТРЕННЫЕ ===
-    emergency_section = parse_section(content, 'ЭКСТРЕННЫЕ СИТУАЦИИ', 'МЕТРИКИ')
-    if emergency_section:
-        settings['emergency_situations'] = emergency_section[:600]
-    
-    # === МЕТРИКИ ===
-    metrics_section = parse_section(content, 'МЕТРИКИ УСПЕХА', 'КОНЕЦ')
-    if metrics_section:
-        settings['success_metrics'] = metrics_section[:600]
+    settings['manager_consultation_prompt'] = '''Проанализируй диалог с клиентом и дай совет менеджеру:
+
+📋 ЧТО СДЕЛАТЬ:
+1. Кратко опиши ситуацию (2-3 предложения)
+2. Определи главное возражение/проблему клиента
+3. Дай конкретную рекомендацию что ответить
+
+Формат ответа:
+💡 СИТУАЦИЯ: [краткое описание]
+🎯 ПРОБЛЕМА: [главное возражение]
+✅ СОВЕТ: [конкретные действия]'''
     
     print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
     return settings
+
 def create_tables(conn):
     """Создать таблицы"""
     c = conn.cursor()
@@ -358,80 +355,84 @@ def create_tables(conn):
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
+    
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
-    id INTEGER PRIMARY KEY CHECK (id = 1),
-    bot_name TEXT NOT NULL,
-    personality_traits TEXT,
-    greeting_message TEXT,
-    farewell_message TEXT,
-    price_explanation TEXT,
-    price_response_template TEXT,
-    premium_justification TEXT,
-    booking_redirect_message TEXT,
-    fomo_messages TEXT,
-    upsell_techniques TEXT,
-    communication_style TEXT,
-    max_message_chars INTEGER DEFAULT 300,
-    emoji_usage TEXT,
-    languages_supported TEXT DEFAULT 'ru,en,ar',
-    objection_handling TEXT,
-    negative_handling TEXT,
-    safety_guidelines TEXT,        -- ✅ БЕЗ ЛИМИТА
-    example_good_responses TEXT,   -- ✅ БЕЗ ЛИМИТА
-    algorithm_actions TEXT,        -- ✅ БЕЗ ЛИМИТА
-    location_features TEXT,
-    seasonality TEXT,
-    emergency_situations TEXT,
-    success_metrics TEXT,
-    objection_expensive TEXT,      -- ✅ БЕЗ ЛИМИТА (2000 символов)
-    objection_think_about_it TEXT,
-    objection_no_time TEXT,
-    objection_pain TEXT,
-    objection_result_doubt TEXT,
-    objection_cheaper_elsewhere TEXT,
-    objection_too_far TEXT,
-    objection_consult_husband TEXT,
-    objection_first_time TEXT,
-    objection_not_happy TEXT,
-    emotional_triggers TEXT,
-    social_proof_phrases TEXT,
-    personalization_rules TEXT,
-    example_dialogues TEXT,        -- ✅ БЕЗ ЛИМИТА (2000 символов)
-    emotional_responses TEXT,
-    anti_patterns TEXT,
-    voice_message_response TEXT,
-    contextual_rules TEXT,
-    ad_campaign_detection TEXT DEFAULT '',
-    pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
-    updated_at TEXT)''')
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        bot_name TEXT NOT NULL,
+        personality_traits TEXT,
+        greeting_message TEXT,
+        farewell_message TEXT,
+        price_explanation TEXT,
+        price_response_template TEXT,
+        premium_justification TEXT,
+        booking_redirect_message TEXT,
+        fomo_messages TEXT,
+        upsell_techniques TEXT,
+        communication_style TEXT,
+        max_message_chars INTEGER DEFAULT 300,
+        emoji_usage TEXT,
+        languages_supported TEXT DEFAULT 'ru,en,ar',
+        objection_handling TEXT,
+        negative_handling TEXT,
+        safety_guidelines TEXT,
+        example_good_responses TEXT,
+        algorithm_actions TEXT,
+        location_features TEXT,
+        seasonality TEXT,
+        emergency_situations TEXT,
+        success_metrics TEXT,
+        objection_expensive TEXT,
+        objection_think_about_it TEXT,
+        objection_no_time TEXT,
+        objection_pain TEXT,
+        objection_result_doubt TEXT,
+        objection_cheaper_elsewhere TEXT,
+        objection_too_far TEXT,
+        objection_consult_husband TEXT,
+        objection_first_time TEXT,
+        objection_not_happy TEXT,
+        emotional_triggers TEXT,
+        social_proof_phrases TEXT,
+        personalization_rules TEXT,
+        example_dialogues TEXT,
+        emotional_responses TEXT,
+        anti_patterns TEXT,
+        voice_message_response TEXT,
+        contextual_rules TEXT,
+        ad_campaign_detection TEXT DEFAULT '',
+        pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
+        manager_consultation_prompt TEXT,
+        updated_at TEXT
+    )''')
 
-    # ✅ ДОБАВЛЯЕМ КОЛОНКИ если таблица уже существует
+    # ✅ ДОБАВЛЯЕМ ПРОВЕРКУ И СОЗДАНИЕ КОЛОНКИ max_message_chars
     try:
         c.execute("PRAGMA table_info(bot_settings)")
         columns = [row[1] for row in c.fetchall()]
-        if 'max_message_length' in columns:
-            c.execute("UPDATE bot_settings SET max_message_chars = max_message_length * 80 WHERE max_message_chars IS NULL OR max_message_chars = 0")
-            print("✅ Конвертировано max_message_length → max_message_chars")
-            conn.commit()
-        # ✅ ПРОВЕРЯЕМ ЧТО max_message_chars ЕСТЬ
+        
         if 'max_message_chars' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 300")
             print("✅ Добавлено поле max_message_chars")
             conn.commit()
+        
         if 'ad_campaign_detection' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
             print("✅ Добавлена колонка ad_campaign_detection")
+            conn.commit()
 
         if 'pre_booking_data_collection' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'")
             print("✅ Добавлена колонка pre_booking_data_collection")
-
-        conn.commit()
+            conn.commit()
+        
+        if 'manager_consultation_prompt' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN manager_consultation_prompt TEXT")
+            print("✅ Добавлена колонка manager_consultation_prompt")
+            conn.commit()
     except Exception as e:
         print(f"⚠️  Ошибка при добавлении колонок: {e}")
 
     conn.commit()
-
 
 def migrate_settings():
     """Главная функция"""

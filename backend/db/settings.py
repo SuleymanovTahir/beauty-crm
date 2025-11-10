@@ -20,6 +20,8 @@ def get_salon_settings() -> dict:
         result = c.fetchone()
         
         if result:
+            columns = [description[0] for description in c.description]
+            row_dict = dict(zip(columns, result))
             return {
                 "id": result[0],
                 "name": result[1],
@@ -222,7 +224,6 @@ def get_bot_settings() -> dict:
         return _get_default_bot_settings()
     finally:
         conn.close()
-
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
