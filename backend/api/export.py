@@ -158,17 +158,17 @@ def export_clients_excel(clients):
             c[9] if len(c) > 9 else 0, c[4], c[5]
         ])
     
-    for column in ws.columns:
+    for col in ws.columns:
         max_length = 0
-        column_letter = column[0].column_letter
-        for cell in column:
+        col_letter = col[0].column_letter
+        for cell in col:
             try:
                 if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
+                    max_length = len(str(cell.value))
             except:
                 pass
         adjusted_width = min(max_length + 2, 50)
-        ws.column_dimensions[column_letter].width = adjusted_width
+        ws.column_dimensions[col_letter].width = adjusted_width
     
     buffer = io.BytesIO()
     wb.save(buffer)
@@ -287,17 +287,173 @@ def export_bookings_excel(bookings):
             b[6], b[8] if len(b) > 8 else 0, b[7]
         ])
     
-    for column in ws.columns:
+    for col in ws.columns:
         max_length = 0
-        column_letter = column[0].column_letter
-        for cell in column:
+        col_letter = col[0].column_letter
+        for cell in col:
             try:
                 if len(str(cell.value)) > max_length:
-                    max_length = len(cell.value)
+                    max_length = len(str(cell.value))
             except:
                 pass
         adjusted_width = min(max_length + 2, 50)
-        ws.column_dimensions[column_letter].width = adjusted_width
+        ws.column_dimensions[col_letter].width = adjusted_width
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
+# ===== ФУНКЦИИ ЭКСПОРТА ВСЕХ ДАННЫХ =====
+
+def export_full_data_csv():
+    """Экспорт всех данных (клиенты + сообщения + записи) в один CSV"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Заголовок
+    writer.writerow(['Тип', 'ID Клиента', 'Имя клиента', 'Телефон', 'Username', 
+                    'Тип данных', 'Содержание', 'Дата/Время', 'Статус', 'Доход'])
+    
+    # Получаем клиентов
+    c.execute("""SELECT instagram_id, username, phone, name, status 
+                 FROM clients ORDER BY instagram_id""")
+    clients_data = {row[0]: {'username': row[1], 'phone': row[2], 
+                             'name': row[3], 'status': row[4]} 
+                    for row in c.fetchall()}
+    
+    # Сообщения
+    c.execute("""SELECT instagram_id, message_text, sender, created_at, message_type
+                 FROM messages ORDER BY instagram_id, created_at""")
+    for row in c.fetchall():
+        client_id = row[0]
+        client = clients_data.get(client_id, {})
+        writer.writerow([
+            'Сообщение',
+            client_id,
+            client.get('name', ''),
+            client.get('phone', ''),
+            client.get('username', ''),
+            row[4] or 'text',
+            (row[1] or '')[:100],
+            row[3],
+            f"От: {row[2]}",
+            ''
+        ])
+    
+    # Записи
+    c.execute("""SELECT b.instagram_id, b.service_name, b.booking_datetime, 
+                        b.phone, b.status, b.revenue, b.client_name
+                 FROM bookings b ORDER BY b.instagram_id, b.booking_datetime""")
+    for row in c.fetchall():
+        client_id = row[0]
+        client = clients_data.get(client_id, {})
+        writer.writerow([
+            'Запись',
+            client_id,
+            row[6] or client.get('name', ''),
+            row[3] or client.get('phone', ''),
+            client.get('username', ''),
+            row[1] or '',
+            '',
+            row[2],
+            row[4],
+            row[5] or 0
+        ])
+    
+    conn.close()
+    output.seek(0)
+    return output.getvalue().encode('utf-8')
+
+
+def export_full_data_excel():
+    """Экспорт всех данных в Excel с отдельными листами"""
+    if not EXCEL_AVAILABLE:
+        raise Exception("Excel экспорт недоступен")
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    wb = Workbook()
+    
+    # ===== Лист 1: Клиенты =====
+    ws_clients = wb.active
+    ws_clients.title = "Клиенты"
+    
+    headers = ['ID', 'Имя', 'Username', 'Телефон', 'Статус', 'LTV', 
+              'Первый контакт', 'Последний контакт']
+    ws_clients.append(headers)
+    
+    c.execute("""SELECT instagram_id, name, username, phone, status, lifetime_value,
+                        first_contact, last_contact FROM clients""")
+    for row in c.fetchall():
+        ws_clients.append(row)
+    
+    # Форматирование
+    header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    for cell in ws_clients[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+    
+    # ===== Лист 2: Сообщения =====
+    ws_messages = wb.create_sheet("Сообщения")
+    headers = ['ID Клиента', 'Имя', 'Сообщение', 'Отправитель', 'Дата', 'Тип']
+    ws_messages.append(headers)
+    
+    c.execute("""SELECT m.instagram_id, c.name, m.message_text, m.sender, 
+                        m.created_at, m.message_type
+                 FROM messages m
+                 LEFT JOIN clients c ON m.instagram_id = c.instagram_id
+                 ORDER BY m.created_at DESC LIMIT 1000""")
+    for row in c.fetchall():
+        ws_messages.append([
+            row[0], row[1] or '', (row[2] or '')[:200], 
+            row[3], row[4], row[5] or 'text'
+        ])
+    
+    for cell in ws_messages[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+    
+    # ===== Лист 3: Записи =====
+    ws_bookings = wb.create_sheet("Записи")
+    headers = ['ID', 'ID Клиента', 'Клиент', 'Услуга', 'Дата/Время', 
+              'Телефон', 'Статус', 'Доход']
+    ws_bookings.append(headers)
+    
+    c.execute("""SELECT b.id, b.instagram_id, b.client_name, b.service_name,
+                        b.booking_datetime, b.phone, b.status, b.revenue
+                 FROM bookings b ORDER BY b.booking_datetime DESC""")
+    for row in c.fetchall():
+        ws_bookings.append(row)
+    
+    for cell in ws_bookings[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+    
+    # Автоширина колонок для всех листов
+    for ws in [ws_clients, ws_messages, ws_bookings]:
+        for col in ws.columns:
+            max_length = 0
+            col_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 50)
+            ws.column_dimensions[col_letter].width = adjusted_width
+    
+    conn.close()
     
     buffer = io.BytesIO()
     wb.save(buffer)
@@ -586,17 +742,17 @@ async def export_messages(
                     m[8] or m[9] or ''
                 ])
             
-            for column in ws.columns:
+            for col in ws.columns:
                 max_length = 0
-                column_letter = column[0].column_letter
-                for cell in column:
+                col_letter = col[0].column_letter
+                for cell in col:
                     try:
                         if len(str(cell.value)) > max_length:
                             max_length = len(str(cell.value))
                     except:
                         pass
                 adjusted_width = min(max_length + 2, 50)
-                ws.column_dimensions[column_letter].width = adjusted_width
+                ws.column_dimensions[col_letter].width = adjusted_width
             
             buffer = io.BytesIO()
             wb.save(buffer)
@@ -618,119 +774,25 @@ async def export_messages(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-# ДОБАВИТЬ:
-
-# ===== ЭКСПОРТ ВСЕХ ДАННЫХ =====
-
-
-@router.get("/export/messages")
-async def export_messages(
-    client_id: str = Query(None),
+@router.get("/export/full-data")
+async def export_full_data(
     format: str = Query("csv"),
-    date_from: str = Query(None),
-    date_to: str = Query(None),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Экспортировать сообщения в CSV, PDF или Excel"""
+    """Экспортировать все данные (клиенты + сообщения + записи)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    query = """SELECT m.id, m.instagram_id, c.username, c.name, m.message_text, 
-               m.sender, m.message_type, m.created_at, m.file_url, m.instagram_file_url
-               FROM messages m
-               LEFT JOIN clients c ON m.instagram_id = c.instagram_id"""
-    
-    params = []
-    conditions = []
-    
-    if client_id:
-        conditions.append("m.instagram_id = ?")
-        params.append(client_id)
-    
-    if date_from and date_to:
-        conditions.append("m.created_at >= ? AND m.created_at <= ?")
-        params.extend([date_from, date_to])
-    
-    if conditions:
-        query += " WHERE " + " AND ".join(conditions)
-    
-    query += " ORDER BY m.created_at DESC"
-    
-    c.execute(query, params)
-    messages = c.fetchall()
-    conn.close()
-    
     try:
         if format == "csv":
-            output = io.StringIO()
-            writer = csv.writer(output)
-            
-            writer.writerow(['ID', 'Instagram ID', 'Username', 'Имя', 'Сообщение', 
-                           'Отправитель', 'Тип', 'Дата', 'Файл'])
-            
-            for m in messages:
-                writer.writerow([
-                    m[0], m[1], m[2] or '', m[3] or '', 
-                    (m[4] or '')[:100], m[5], m[6], m[7], 
-                    m[8] or m[9] or ''
-                ])
-            
-            output.seek(0)
-            content = output.getvalue().encode('utf-8')
+            content = export_full_data_csv()
             media_type = "text/csv"
-            filename = f"messages_{client_id or 'all'}_{datetime.now().strftime('%Y%m%d')}.csv"
-        
+            filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
         elif format == "excel":
-            if not EXCEL_AVAILABLE:
-                return JSONResponse({"error": "Excel export not available"}, 
-                                  status_code=500)
-            
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Сообщения"
-            
-            headers = ['ID', 'Instagram ID', 'Username', 'Имя', 'Сообщение', 
-                      'Отправитель', 'Тип', 'Дата', 'Файл']
-            ws.append(headers)
-            
-            header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
-            header_font = Font(bold=True, color="FFFFFF", size=12)
-            
-            for cell in ws[1]:
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = Alignment(horizontal='center', vertical='center')
-            
-            for m in messages:
-                ws.append([
-                    m[0], m[1], m[2] or '', m[3] or '', 
-                    (m[4] or '')[:100], m[5], m[6], m[7], 
-                    m[8] or m[9] or ''
-                ])
-            
-            for column in ws.columns:
-                max_length = 0
-                column_letter = column[0].column_letter
-                for cell in column:
-                    try:
-                        if len(str(cell.value)) > max_length:
-                            max_length = len(str(cell.value))
-                    except:
-                        pass
-                adjusted_width = min(max_length + 2, 50)
-                ws.column_dimensions[column_letter].width = adjusted_width
-            
-            buffer = io.BytesIO()
-            wb.save(buffer)
-            buffer.seek(0)
-            content = buffer.getvalue()
+            content = export_full_data_excel()
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            filename = f"messages_{client_id or 'all'}_{datetime.now().strftime('%Y%m%d')}.xlsx"
-        
+            filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
         else:
             return JSONResponse({"error": "Invalid format"}, status_code=400)
         
@@ -740,162 +802,9 @@ async def export_messages(
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
     except Exception as e:
-        log_error(f"Export messages error: {e}", "export")
+        log_error(f"Full data export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
-def export_full_data_csv():
-    """Экспорт всех данных (клиенты + сообщения + записи) в один CSV"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    output = io.StringIO()
-    writer = csv.writer(output)
-    
-    # Заголовок
-    writer.writerow(['Тип', 'ID Клиента', 'Имя клиента', 'Телефон', 'Username', 
-                    'Тип данных', 'Содержание', 'Дата/Время', 'Статус', 'Доход'])
-    
-    # Получаем клиентов
-    c.execute("""SELECT instagram_id, username, phone, name, status 
-                 FROM clients ORDER BY instagram_id""")
-    clients_data = {row[0]: {'username': row[1], 'phone': row[2], 
-                             'name': row[3], 'status': row[4]} 
-                    for row in c.fetchall()}
-    
-    # Сообщения
-    c.execute("""SELECT instagram_id, message_text, sender, created_at, message_type
-                 FROM messages ORDER BY instagram_id, created_at""")
-    for row in c.fetchall():
-        client_id = row[0]
-        client = clients_data.get(client_id, {})
-        writer.writerow([
-            'Сообщение',
-            client_id,
-            client.get('name', ''),
-            client.get('phone', ''),
-            client.get('username', ''),
-            row[4] or 'text',  # message_type
-            (row[1] or '')[:100],  # message_text обрезанный
-            row[3],  # created_at
-            f"От: {row[2]}",  # sender
-            ''
-        ])
-    
-    # Записи
-    c.execute("""SELECT b.instagram_id, b.service_name, b.booking_datetime, 
-                        b.phone, b.status, b.revenue, b.client_name
-                 FROM bookings b ORDER BY b.instagram_id, b.booking_datetime""")
-    for row in c.fetchall():
-        client_id = row[0]
-        client = clients_data.get(client_id, {})
-        writer.writerow([
-            'Запись',
-            client_id,
-            row[6] or client.get('name', ''),  # client_name
-            row[3] or client.get('phone', ''),  # phone
-            client.get('username', ''),
-            row[1] or '',  # service_name
-            '',
-            row[2],  # booking_datetime
-            row[4],  # status
-            row[5] or 0  # revenue
-        ])
-    
-    conn.close()
-    output.seek(0)
-    return output.getvalue().encode('utf-8')
-
-
-def export_full_data_excel():
-    """Экспорт всех данных в Excel с отдельными листами"""
-    if not EXCEL_AVAILABLE:
-        raise Exception("Excel экспорт недоступен")
-    
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    wb = Workbook()
-    
-    # ===== Лист 1: Клиенты =====
-    ws_clients = wb.active
-    ws_clients.title = "Клиенты"
-    
-    headers = ['ID', 'Имя', 'Username', 'Телефон', 'Статус', 'LTV', 
-              'Первый контакт', 'Последний контакт']
-    ws_clients.append(headers)
-    
-    c.execute("""SELECT instagram_id, name, username, phone, status, lifetime_value,
-                        first_contact, last_contact FROM clients""")
-    for row in c.fetchall():
-        ws_clients.append(row)
-    
-    # Форматирование
-    header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
-    header_font = Font(bold=True, color="FFFFFF", size=12)
-    for cell in ws_clients[1]:
-        cell.fill = header_fill
-        cell.font = header_font
-        cell.alignment = Alignment(horizontal='center')
-    
-    # ===== Лист 2: Сообщения =====
-    ws_messages = wb.create_sheet("Сообщения")
-    headers = ['ID Клиента', 'Имя', 'Сообщение', 'Отправитель', 'Дата', 'Тип']
-    ws_messages.append(headers)
-    
-    c.execute("""SELECT m.instagram_id, c.name, m.message_text, m.sender, 
-                        m.created_at, m.message_type
-                 FROM messages m
-                 LEFT JOIN clients c ON m.instagram_id = c.instagram_id
-                 ORDER BY m.created_at DESC LIMIT 1000""")
-    for row in c.fetchall():
-        ws_messages.append([
-            row[0], row[1] or '', (row[2] or '')[:200], 
-            row[3], row[4], row[5] or 'text'
-        ])
-    
-    for cell in ws_messages[1]:
-        cell.fill = header_fill
-        cell.font = header_font
-        cell.alignment = Alignment(horizontal='center')
-    
-    # ===== Лист 3: Записи =====
-    ws_bookings = wb.create_sheet("Записи")
-    headers = ['ID', 'ID Клиента', 'Клиент', 'Услуга', 'Дата/Время', 
-              'Телефон', 'Статус', 'Доход']
-    ws_bookings.append(headers)
-    
-    c.execute("""SELECT b.id, b.instagram_id, b.client_name, b.service_name,
-                        b.booking_datetime, b.phone, b.status, b.revenue
-                 FROM bookings b ORDER BY b.booking_datetime DESC""")
-    for row in c.fetchall():
-        ws_bookings.append(row)
-    
-    for cell in ws_bookings[1]:
-        cell.fill = header_fill
-        cell.font = header_font
-        cell.alignment = Alignment(horizontal='center')
-    
-    # Автоширина колонок
-    for ws in [ws_clients, ws_messages, ws_bookings]:
-        for column in ws.columns:
-            max_length = 0
-            column_letter = column[0].column_letter
-            for cell in column:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
-            adjusted_width = min(max_length + 2, 50)
-            ws.column_dimensions[column_letter].width = adjusted_width
-    
-    conn.close()
-    
-    buffer = io.BytesIO()
-    wb.save(buffer)
-    buffer.seek(0)
-    return buffer.getvalue()
 
 @router.get("/export/bookings/template")
 async def download_import_template(
@@ -961,93 +870,3 @@ async def download_import_template(
     except Exception as e:
         log_error(f"Template download error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
-
-# ДОБАВИТЬ:
-
-@router.get("/export/full-data")
-async def export_full_data(
-    format: str = Query("csv"),
-    session_token: Optional[str] = Cookie(None)
-):
-    """Экспортировать все данные (клиенты + сообщения + записи)"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    try:
-        if format == "csv":
-            content = export_full_data_csv()
-            media_type = "text/csv"
-            filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
-        elif format == "excel":
-            content = export_full_data_excel()
-            media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
-        else:
-            return JSONResponse({"error": "Invalid format"}, status_code=400)
-        
-        return StreamingResponse(
-            iter([content]),
-            media_type=media_type,
-            headers={"Content-Disposition": f"attachment; filename={filename}"}
-        )
-    except Exception as e:
-        log_error(f"Full data export error: {e}", "export")
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-
-# Где-то в районе строки 100, после других экспортов
-
-@router.get("/export/analytics-anonymized")
-async def export_analytics_anonymized(
-    format: str = Query("csv"),
-    period: int = Query(30),
-    session_token: Optional[str] = Cookie(None)
-):
-    """Экспорт анонимной аналитики (без контактов)"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    # Проверяем права
-    if not check_permission(user, 'analytics_export_anonymized'):
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    from db.analytics import get_analytics_data
-    
-    analytics = get_analytics_data(days=period)
-    
-    # Анонимизируем данные
-    if 'clients' in analytics:
-        for client in analytics['clients']:
-            client.pop('phone', None)
-            client.pop('email', None)
-            client.pop('instagram_id', None)
-            client['name'] = 'Клиент ' + str(client.get('id', ''))[:4]
-    
-    if format == 'csv':
-        # CSV экспорт
-        import csv
-        from io import StringIO
-        
-        output = StringIO()
-        writer = csv.writer(output)
-        
-        # Заголовки
-        writer.writerow(['Период', 'Всего записей', 'Конверсия', 'Выручка'])
-        writer.writerow([
-            f"{period} дней",
-            analytics.get('total_bookings', 0),
-            f"{analytics.get('conversion_rate', 0)}%",
-            f"{analytics.get('revenue', 0)} AED"
-        ])
-        
-        return Response(
-            content=output.getvalue(),
-            media_type="text/csv",
-            headers={
-                "Content-Disposition": f"attachment; filename=analytics_anonymized_{period}d.csv"
-            }
-        )
-    
-    return analytics

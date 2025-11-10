@@ -27,7 +27,7 @@ import ManagerSettings from './pages/manager/Settings';
 
 import SalesLayout from './components/layouts/SalesLayout';
 import MarketerLayout from './components/layouts/MarketerLayout';
-import InternalChat from './pages/shared/InternalChat';
+import InternalChat from './components/shared/InternalChat';
 
 // Employee Pages
 import EmployeeLayout from './components/layouts/EmployeeLayout';
