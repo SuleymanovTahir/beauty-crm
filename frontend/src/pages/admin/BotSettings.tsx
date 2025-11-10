@@ -139,8 +139,8 @@ export default function BotSettings() {
       const botData = data.bot_settings || data;
   
       const langs = botData.languages_supported 
-        ? botData.languages_supported.split(',') 
-        : ['ru', 'en', 'ar'];
+        ? botData.languages_supported.split(',').filter(Boolean) 
+        : [];  // ✅ Пустой массив, если в БД нет данных
       setSelectedLanguages(langs);
   
       setSettings({

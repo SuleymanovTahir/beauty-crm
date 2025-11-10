@@ -6,6 +6,7 @@ from config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
+from db.settings import update_bot_globally_enabled
 
 from db import (
     get_salon_settings, update_salon_settings,

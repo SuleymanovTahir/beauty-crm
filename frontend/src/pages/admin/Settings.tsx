@@ -28,7 +28,6 @@ export default function AdminSettings() {
     }
   });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
   const [botGloballyEnabled, setBotGloballyEnabled] = useState(false); 

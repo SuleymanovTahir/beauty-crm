@@ -6,7 +6,6 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
 import hashlib
-from auth import get_current_user
 from db import get_all_users, delete_user, log_activity
 from config import DATABASE_NAME
 from utils import require_auth
@@ -86,29 +85,7 @@ async def create_user_api(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/users")
-async def list_users(session_token: Optional[str] = Cookie(None)):
-    """Получить всех пользователей (только для admin)"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    users = get_all_users()
-    
-    return {
-        "users": [
-            {
-                "id": u[0],
-                "username": u[1],
-                "full_name": u[3],
-                "email": u[4],
-                "role": u[5],
-                "created_at": u[6]
-            }
-            for u in users
-        ],
-        "count": len(users)
-    }
+
 
 
 @router.get("/users")
