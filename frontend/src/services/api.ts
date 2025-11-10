@@ -323,19 +323,7 @@ export class ApiClient {
     return response.json();
   },
 
-  async updateUserRole(userId: number, data: { role: string }): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`/api/users/${userId}/role`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Ошибка изменения роли');
-    }
-    return response.json();
-  },
+
 
   async createUser(data: { username: string; password: string; full_name: string; email?: string; role: string }) {
     const formData = new FormData()
@@ -467,9 +455,7 @@ export class ApiClient {
   }
 
   // ===== РОЛИ И ПРАВА =====
-  async getRoles() {
-    return this.request<any>('/api/roles')
-  }
+
 
   async createRole(data: { role_key: string; role_name: string; role_description?: string }) {
     return this.request('/api/roles', {
@@ -498,17 +484,11 @@ export class ApiClient {
   async getAvailablePermissions() {
     return this.request<any>('/api/permissions/available')
   }
-  // ===== PUBLIC INFO ===== (ДОБАВЛЕНО)
-  // getSalonInfo: () =>
-  //   apiCall('/api/salon-info'),
-
-  // getPublicServices: () =>
-  //   apiCall('/api/public-services'),
 
   async getUserPermissions(userId: number) {
     return this.request<any>(`/api/users/${userId}/permissions`)
   }
-
+  
   async updateUserRole(userId: number, role: string) {
     return this.request(`/api/users/${userId}/role`, {
       method: 'POST',
@@ -664,9 +644,7 @@ export class ApiClient {
     })
   }
 
-  async getUserPermissions(userId: number) {
-    return this.request<any>(`/api/users/${userId}/permissions`)
-  }
+
 
 }
 

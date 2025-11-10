@@ -5,6 +5,7 @@
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime
 
+
 from db import (
     get_all_services,
     get_all_special_packages,
@@ -319,6 +320,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         """
         from db.schedule import get_available_slots, get_client_booking_history
         from db.masters import get_master_by_name
+        from db.employees import get_employees_by_service
         
         master_id = None
         if master_name:

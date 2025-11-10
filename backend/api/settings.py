@@ -1,6 +1,8 @@
 """
 API Endpoints для настроек салона и бота
 """
+import sqlite3
+from backend.config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
@@ -371,3 +373,17 @@ async def update_bot_enabled(
     except Exception as e:
         log_error(f"Error updating bot enabled: {e}", "settings")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+def update_bot_globally_enabled(enabled: bool):
+    """Включить/выключить бота глобально"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""
+        UPDATE salon_settings 
+        SET bot_globally_enabled = ?
+        WHERE id = 1
+    """, (1 if enabled else 0,))
+    
+    conn.commit()
+    conn.close()
