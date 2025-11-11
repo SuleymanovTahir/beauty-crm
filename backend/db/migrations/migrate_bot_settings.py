@@ -417,6 +417,16 @@ def parse_instructions_file() -> dict:
     
     # 13. Остальные поля из DEFAULT_SETTINGS
     settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
+    
+    # ✅ ГАРАНТИРОВАННО БЕРЕМ ИЗ DEFAULT_SETTINGS
+    if 'booking_time_logic' not in settings or not settings.get('booking_time_logic'):
+        settings['booking_time_logic'] = DEFAULT_SETTINGS['booking_time_logic']
+        print(f"   ✅ Использую booking_time_logic из DEFAULT_SETTINGS")
+    
+    if 'booking_data_collection' not in settings or not settings.get('booking_data_collection'):
+        settings['booking_data_collection'] = DEFAULT_SETTINGS['booking_data_collection']
+        print(f"   ✅ Использую booking_data_collection из DEFAULT_SETTINGS")
+    
     if 'booking_time_logic' not in settings:
         settings['booking_time_logic'] = """A) Проверь пожелания клиента
         B) Проверь историю клиента
@@ -750,8 +760,8 @@ def migrate_settings():
                 settings.get('success_metrics', ''),
                 settings.get('ad_campaign_detection', ''),
                 settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
-                settings.get('booking_time_logic', ''),
-                settings.get('booking_data_collection', ''),
+                settings.get('booking_time_logic', DEFAULT_SETTINGS['booking_time_logic']),
+                settings.get('booking_data_collection', DEFAULT_SETTINGS['booking_data_collection']),
                 now
                 ))
             print("   ✅ bot_settings обновлены (40 полей)")
