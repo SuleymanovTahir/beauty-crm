@@ -154,11 +154,9 @@ class SalonBot:
         """Генерация через Gemini REST API с прокси"""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
     
-        # ✅ ЧИТАЕМ ИЗ БД
         max_chars = self.bot_settings.get('max_message_chars', 500)
         max_tokens = int(max_chars / 2.5)
     
-        # ✅ ДОБАВЛЯЕМ ИНСТРУКЦИЮ В ПРОМПТ
         prompt_with_limit = f"""{prompt}
     
 ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
@@ -175,7 +173,6 @@ class SalonBot:
             }
         }
     
-        # ✅ ПРАВИЛЬНЫЙ СИНТАКСИС для AsyncClient
         if self.proxy_url:
             print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
         else:
@@ -191,6 +188,22 @@ class SalonBot:
                     response = await client.post(url, json=payload)
                     data = response.json()
 
+            # ✅ ПРОВЕРКА 429 - RATE LIMIT
+            if "error" in data:
+                error_code = data["error"].get("code")
+                error_msg = data["error"].get("message", "")
+                
+                if error_code == 429:
+                    print(f"⚠️ Rate limit exceeded (429), using fallback")
+                    # Извлекаем время ожидания
+                    import re
+                    match = re.search(r'retry in ([\d.]+)s', error_msg)
+                    retry_seconds = int(float(match.group(1))) if match else 30
+                    print(f"⏱️ Need to wait {retry_seconds} seconds")
+                    raise Exception(f"Rate limit: wait {retry_seconds}s")
+                else:
+                    raise Exception(f"Gemini API error {error_code}: {error_msg}")
+
             # Извлекаем текст ответа
             if "candidates" in data and len(data["candidates"]) > 0:
                 candidate = data["candidates"][0]
@@ -199,14 +212,12 @@ class SalonBot:
                     if len(parts) > 0 and "text" in parts[0]:
                         response_text = parts[0]["text"].strip()
 
-                        # ✅ ПРИНУДИТЕЛЬНАЯ ОБРЕЗКА (на случай если бот превысил)
                         if len(response_text) > max_chars:
                             response_text = response_text[:max_chars-3] + "..."
 
                         return response_text
 
-            # Если структура ответа неожиданная
-            raise Exception(f"Unexpected Gemini response structure: {data}")
+            raise Exception(f"Unexpected Gemini response structure")
             
         except httpx.HTTPError as e:
             print(f"❌ HTTP Error: {e}")
@@ -218,9 +229,9 @@ class SalonBot:
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке"""
         responses = {
-            'ru': "Извините, что-то пошло не так. Давайте попробуем ещё раз! 😊",
-            'en': "Sorry, something went wrong. Let's try again! 😊",
-            'ar': "عذراً، حدث خطأ ما. دعونا نحاول مرة أخرى! 😊"
+            'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",
+            'en': "Sorry, I'm overwhelmed with requests right now 🤖 Our manager will respond soon! 💎",
+            'ar': "عذراً، أنا مثقل بالطلبات الآن 🤖 سيرد عليك مديرنا قريباً! 💎"
         }
         return responses.get(language, responses['ru'])
 

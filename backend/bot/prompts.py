@@ -4,8 +4,9 @@
 """
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime
+import sqlite3
 
-
+from config import DATABASE_NAME
 from db import (
     get_all_services,
     get_all_special_packages,
@@ -44,11 +45,9 @@ class PromptBuilder:
             Полный system prompt для бота
         """
         
-        # Инициализируем booking_progress если не передан
         if booking_progress is None:
             booking_progress = {}
         
-        # ✅ ИЗВЛЕКАЕМ ДАННЫЕ ИЗ booking_progress
         service_name = booking_progress.get('service_name', '')
         master_name = booking_progress.get('master', '')
         preferred_date = booking_progress.get('date', '')
@@ -95,14 +94,7 @@ class PromptBuilder:
 {self.bot_settings.get('emoji_usage', '')}"""
 
     def _build_language_settings(self, language: str) -> str:
-        """Языковые настройки - из БД
-        
-        Args:
-            language: Код языка клиента
-            
-        Returns:
-            Текст с языковыми настройками
-        """
+        """Языковые настройки - из БД"""
         supported_raw = self.bot_settings.get('languages_supported', 'ru,en,ar')
         supported_langs = [lang.strip() for lang in supported_raw.split(',')]
 
@@ -114,14 +106,7 @@ class PromptBuilder:
 Поддерживаемые языки: {', '.join(supported_langs)}"""
 
     def _build_greeting_logic(self, history: List[Tuple]) -> str:
-        """Логика приветствий - из БД
-        
-        Args:
-            history: История диалога
-            
-        Returns:
-            Текст с логикой приветствия
-        """
+        """Логика приветствий - из БД"""
         should_greet = self._should_greet(history)
 
         if should_greet:
@@ -135,14 +120,7 @@ class PromptBuilder:
 НЕ здоровайся снова - отвечай на вопрос клиента"""
 
     def _should_greet(self, history: List[Tuple]) -> bool:
-        """Определить нужно ли здороваться
-        
-        Args:
-            history: История диалога
-            
-        Returns:
-            True если нужно поздороваться
-        """
+        """Определить нужно ли здороваться"""
         if len(history) <= 1:
             return True
 
@@ -160,7 +138,7 @@ class PromptBuilder:
                 now = datetime.now()
                 time_diff = now - last_timestamp
 
-                if time_diff.total_seconds() > 21600:  # 6 часов
+                if time_diff.total_seconds() > 21600:
                     return True
             except:
                 pass
@@ -168,11 +146,7 @@ class PromptBuilder:
         return False
 
     def _build_special_packages(self) -> str:
-        """Специальные пакеты из БД
-        
-        Returns:
-            Текст со списком специальных пакетов
-        """
+        """Специальные пакеты из БД"""
         packages = get_all_special_packages(active_only=True)
 
         base_rule = """=== СПЕЦИАЛЬНЫЕ ПАКЕТЫ ===
@@ -193,7 +167,7 @@ class PromptBuilder:
         packages_text = base_rule + "\n📦 АКТИВНЫЕ АКЦИИ:\n\n"
 
         for pkg in packages:
-            pkg_name = pkg[2]  # name_ru
+            pkg_name = pkg[2]
             orig_price = pkg[5]
             special_price = pkg[6]
             currency = pkg[7]
@@ -212,11 +186,7 @@ class PromptBuilder:
         return packages_text
 
     def _build_booking_rules(self) -> str:
-        """Правила записи - из БД
-        
-        Returns:
-            Текст с правилами бронирования
-        """
+        """Правила записи - из БД"""
         booking_msg = self.bot_settings.get(
             'booking_redirect_message',
             'Запись онлайн: {BOOKING_URL}'
@@ -228,11 +198,7 @@ class PromptBuilder:
 {booking_msg.replace('{BOOKING_URL}', booking_url)}"""
 
     def _build_salon_info(self) -> str:
-        """Информация о салоне - из БД
-        
-        Returns:
-            Текст с информацией о салоне
-        """
+        """Информация о салоне - из БД"""
         return f"""=== SALON INFO ===
 Название: {self.salon.get('name', '')}
 Адрес: {self.salon.get('address', '')}
@@ -242,16 +208,12 @@ Google Maps: {self.salon.get('google_maps', '')}
 Онлайн-запись: {self.salon.get('booking_url', '')}"""
 
     def _build_services_list(self) -> str:
-        """Список услуг из БД
-        
-        Returns:
-            Текст со списком услуг по категориям
-        """
+        """Список услуг из БД"""
         services = get_all_services(active_only=True)
 
         services_by_category = {}
         for service in services:
-            category = service[9]  # category
+            category = service[9]
             if category not in services_by_category:
                 services_by_category[category] = []
             services_by_category[category].append(service)
@@ -263,7 +225,7 @@ Google Maps: {self.salon.get('google_maps', '')}
             for service in services_list:
                 price_str = format_service_price_for_bot(service)
                 name_ru = service[3] or service[2]
-                description = service[11] or ''  # description_ru
+                description = service[11] or ''
 
                 services_text += f"• {name_ru} - {price_str}\n"
                 if description:
@@ -273,14 +235,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         return services_text
 
     def _build_history(self, history: List[Tuple]) -> str:
-        """История диалога
-        
-        Args:
-            history: История сообщений
-            
-        Returns:
-            Текст с последними сообщениями из истории
-        """
+        """История диалога"""
         if not history:
             return ""
 
@@ -300,63 +255,59 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         return history_text
     
-       def _build_booking_availability(
+    def _build_booking_availability(
         self,
         instagram_id: str,
         service_name: str = "",
         master_name: str = "",
         preferred_date: str = ""
     ) -> str:
-        """Построить информацию о доступности мастеров"""
+        """Построить информацию о доступности мастеров с РАСПИСАНИЕМ"""
         from db.employees import get_employees_by_service, get_all_employees
-        from db import get_booking_history
+        from collections import Counter
         
-        # История клиента
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
+        
+        # История клиента для персонализации
         c.execute("""
-            SELECT service_name, master, datetime 
+            SELECT service_name, datetime 
             FROM bookings 
-            WHERE instagram_id = ? 
+            WHERE instagram_id = ? AND status != 'cancelled'
             ORDER BY created_at DESC 
             LIMIT 5
         """, (instagram_id,))
         history_raw = c.fetchall()
-        conn.close()
         
         history = []
         for row in history_raw:
             try:
-                dt = datetime.fromisoformat(row[2])
+                dt = datetime.fromisoformat(row[1])
                 history.append({
                     'service': row[0],
-                    'master': row[1],
+                    'weekday': dt.strftime('%A'),
                     'time': dt.strftime('%H:%M')
                 })
             except:
                 pass
-            
-        # Поиск мастера по имени
+        
+        # Поиск employee_id по имени мастера
         employee_id = None
         if master_name:
             employees = get_all_employees(active_only=True)
             for emp in employees:
-                if master_name.lower() in emp[1].lower():  # full_name
+                if master_name.lower() in emp[1].lower():
                     employee_id = emp[0]
                     break
-                
-        # Показываем мастеров для услуги
+        
+        # Получаем мастеров для услуги
         if service_name:
-            # Ищем service_id
-            conn = sqlite3.connect(DATABASE_NAME)
-            c = conn.cursor()
             c.execute("""
                 SELECT id FROM services 
                 WHERE name_ru LIKE ? OR name_en LIKE ? OR name_ar LIKE ?
                 LIMIT 1
             """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
             service_row = c.fetchone()
-            conn.close()
             
             if service_row:
                 service_id = service_row[0]
@@ -367,57 +318,106 @@ Google Maps: {self.salon.get('google_maps', '')}
             availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
             
             for emp in employees[:5]:
-                emp_name = emp[1]  # full_name
-                emp_position = emp[2]  # position
+                emp_id = emp[0]
+                emp_name = emp[1]
+                emp_position = emp[2]
                 
                 availability_text += f"👤 {emp_name}\n"
                 availability_text += f"   Должность: {emp_position}\n"
                 
-                # Получаем услуги мастера
-                conn = sqlite3.connect(DATABASE_NAME)
-                c = conn.cursor()
+                # Получаем специализацию
                 c.execute("""
                     SELECT s.name_ru 
                     FROM services s
                     JOIN employee_services es ON s.id = es.service_id
                     WHERE es.employee_id = ?
                     LIMIT 3
-                """, (emp[0],))
+                """, (emp_id,))
                 services = [row[0] for row in c.fetchall()]
-                conn.close()
                 
                 if services:
                     availability_text += f"   Специализация: {', '.join(services)}\n"
                 
+                # Расписание мастера
+                c.execute("""
+                    SELECT day_of_week, start_time, end_time
+                    FROM employee_schedule
+                    WHERE employee_id = ? AND is_active = 1
+                    ORDER BY day_of_week
+                """, (emp_id,))
+                schedule_rows = c.fetchall()
+                
+                if schedule_rows:
+                    days_map = {0: 'Пн', 1: 'Вт', 2: 'Ср', 3: 'Чт', 4: 'Пт', 5: 'Сб', 6: 'Вс'}
+                    schedule_str = ", ".join([
+                        f"{days_map[row[0]]} {row[1]}-{row[2]}" 
+                        for row in schedule_rows
+                    ])
+                    availability_text += f"   График: {schedule_str}\n"
+                
+                # Выходные мастера
+                today = datetime.now().strftime("%Y-%m-%d")
+                c.execute("""
+                    SELECT date_from, date_to, reason
+                    FROM employee_time_off
+                    WHERE employee_id = ? AND date_to >= ?
+                    ORDER BY date_from
+                    LIMIT 3
+                """, (emp_id, today))
+                time_offs = c.fetchall()
+                
+                if time_offs:
+                    for off in time_offs:
+                        date_from = datetime.strptime(off[0], "%Y-%m-%d").strftime("%d.%m")
+                        date_to = datetime.strptime(off[1], "%Y-%m-%d").strftime("%d.%m")
+                        reason = off[2] or "Выходной"
+                        availability_text += f"   ❌ Не работает: {date_from}-{date_to} ({reason})\n"
+                
                 availability_text += "\n"
         else:
-            # Общий список мастеров
             employees = get_all_employees(active_only=True)
-            
-            availability_text = "👥 НАШИ МАСТЕРА:\n\n"
+            availability_text = "👥 НАШИ МАСТЕРА И ИХ ГРАФИК:\n\n"
             
             for emp in employees[:6]:
+                emp_id = emp[0]
                 emp_name = emp[1]
                 emp_position = emp[2]
                 
                 availability_text += f"• {emp_name} - {emp_position}\n"
+                
+                c.execute("""
+                    SELECT day_of_week, start_time, end_time
+                    FROM employee_schedule
+                    WHERE employee_id = ? AND is_active = 1
+                    ORDER BY day_of_week
+                """, (emp_id,))
+                schedule_rows = c.fetchall()
+                
+                if schedule_rows:
+                    days_map = {0: 'Пн', 1: 'Вт', 2: 'Ср', 3: 'Чт', 4: 'Пт', 5: 'Сб', 6: 'Вс'}
+                    schedule_str = ", ".join([
+                        f"{days_map[row[0]]} {row[1]}-{row[2]}" 
+                        for row in schedule_rows
+                    ])
+                    availability_text += f"  График: {schedule_str}\n"
+                
+                availability_text += "\n"
         
-        # Анализ истории клиента
+        # Анализ истории
         if history:
-            from collections import Counter
+            weekdays = [h['weekday'] for h in history]
+            times = [h['time'] for h in history]
             
-            masters_history = [h['master'] for h in history if h.get('master')]
-            if masters_history:
-                preferred_master = Counter(masters_history).most_common(1)[0][0]
-                availability_text += f"\n💡 Обычно вы записываетесь к {preferred_master}\n"
+            if weekdays:
+                preferred_day = Counter(weekdays).most_common(1)[0][0]
+                availability_text += f"\n💡 Обычно вы записываетесь в {preferred_day}\n"
             
-            times_history = [h['time'] for h in history if h.get('time')]
-            if times_history:
-                preferred_time = Counter(times_history).most_common(1)[0][0]
+            if times:
+                preferred_time = Counter(times).most_common(1)[0][0]
                 availability_text += f"💡 Обычно в {preferred_time}\n"
         
-        # Ссылка на запись
         booking_url = self.salon.get('booking_url', '')
         availability_text += f"\n📲 Записаться онлайн: {booking_url}"
         
+        conn.close()
         return availability_text
