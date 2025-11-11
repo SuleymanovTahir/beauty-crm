@@ -15,27 +15,45 @@ def is_localhost() -> bool:
     except:
         return False
 
-# Определяем окружение
-if os.getenv("ENVIRONMENT"):
-    # Явно указано в переменных окружения
-    environment = os.getenv("ENVIRONMENT")
-elif os.getenv("DEV_MODE") == "1":
-    environment = "development"
-elif is_localhost():
-    environment = "development"
-else:
-    environment = "production"
+# ===== АВТООПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ =====
 
-# Выбираем файл конфигурации
+# 1. Проверяем системные переменные (docker, systemd и т.д.)
+system_env = os.getenv("ENVIRONMENT")
+
+# 2. Определяем окружение по сети (localhost vs сервер)
+if system_env:
+    # Если явно указано в системе - используем его
+    environment = system_env
+    print(f"🔧 Окружение из системной переменной: {environment}")
+elif is_localhost():
+    # Если запущено на localhost - всегда development
+    environment = "development"
+    print("🔧 Автоопределение: LOCALHOST (development)")
+else:
+    # Иначе - production
+    environment = "production"
+    print("🚀 Автоопределение: SERVER (production)")
+
+# 3. Выбираем файл конфигурации
 if environment == "development":
     env_file = ".env.local"
-    print("🔧 Режим: LOCALHOST (development)")
 else:
     env_file = ".env.production"
-    print("🚀 Режим: PRODUCTION (server)")
 
-# Загружаем правильный .env файл
-load_dotenv(env_file)
+# 4. Загружаем файл (перезаписывает системные переменные)
+if os.path.exists(env_file):
+    load_dotenv(env_file, override=True)
+    print(f"✅ Загружен: {env_file}")
+else:
+    print(f"⚠️ Файл {env_file} не найден, используем системные переменные")
+    load_dotenv()  # Загрузим .env если есть
+
+# 5. Финальная проверка после загрузки файла
+loaded_env = os.getenv("ENVIRONMENT")
+if loaded_env and loaded_env != environment:
+    print(f"⚠️ ENVIRONMENT в {env_file} ({loaded_env}) отличается от автоопределения ({environment})")
+    print(f"✅ Используем автоопределение: {environment}")
+    os.environ["ENVIRONMENT"] = environment  # Принудительно ставим правильное значение
 
 # Подавление логов
 os.environ['GRPC_VERBOSITY'] = 'ERROR'
