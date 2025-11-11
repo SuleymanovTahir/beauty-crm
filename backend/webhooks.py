@@ -19,6 +19,9 @@ from logger import logger, log_info, log_warning, log_error
 
 router = APIRouter(tags=["Webhooks"])
 
+_processed_messages = {}  # {mid: timestamp}
+_DEDUP_WINDOW = 300
+
 
 async def fetch_username_from_api(user_id: str) -> tuple:
     """Попытка получить username из Instagram API"""
@@ -177,6 +180,24 @@ async def handle_webhook(request: Request):
                     continue
                 
                 message_data = messaging["message"]
+
+                mid = message_data.get("mid")
+                if mid:
+                    now = datetime.now()
+                    # Очистка старых записей
+                    _processed_messages.clear() if len(_processed_messages) > 1000 else None
+                    for old_mid, old_time in list(_processed_messages.items()):
+                        if (now - old_time).total_seconds() > _DEDUP_WINDOW:
+                            del _processed_messages[old_mid]
+                    
+                    # Проверка дубликата
+                    if mid in _processed_messages:
+                        time_diff = (now - _processed_messages[mid]).total_seconds()
+                        logger.info(f"⏭️ Duplicate message {mid} (seen {time_diff:.1f}s ago), skipping")
+                        continue
+                    
+                    _processed_messages[mid] = now
+                    logger.info(f"✅ New message {mid}, processing")
                 
                 # ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: is_echo=True означает что ЭТО МЫ ОТПРАВИЛИ
                 is_echo = message_data.get("is_echo", False)
@@ -346,7 +367,11 @@ async def handle_webhook(request: Request):
                     
                     # ✅ ОБНОВЛЯЕМ ИМЯ (если есть)
                     if name or profile_pic:
-                        update_client_info(sender_id, name=name, profile_pic=profile_pic if profile_pic else None)
+                        update_client_info(
+                            sender_id,
+                            name=name,
+                            profile_pic=profile_pic if profile_pic else ""
+                        )
                     
                     # ✅ СОХРАНЯЕМ СООБЩЕНИЕ
                     save_message(

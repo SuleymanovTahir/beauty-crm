@@ -13,6 +13,20 @@ def save_message(instagram_id: str, message: str, sender: str,
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    # Проверка дубликата (последние 10 секунд)
+    c.execute("""
+        SELECT id FROM chat_history 
+        WHERE instagram_id = ? AND message = ? AND sender = ?
+        AND datetime(timestamp) > datetime('now', '-10 seconds')
+        LIMIT 1
+    """, (instagram_id, message, sender))
+    
+    if c.fetchone():
+        log_info(f"⏭️ Duplicate message skipped: {message[:30]}...", "db")
+        conn.close()
+        return
+
+    
     now = datetime.now().isoformat()
     is_read = 1 if sender == 'bot' else 0
     

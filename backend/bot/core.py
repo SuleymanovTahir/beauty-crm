@@ -194,13 +194,9 @@ class SalonBot:
                 error_msg = data["error"].get("message", "")
                 
                 if error_code == 429:
-                    print(f"⚠️ Rate limit exceeded (429), using fallback")
-                    # Извлекаем время ожидания
-                    import re
-                    match = re.search(r'retry in ([\d.]+)s', error_msg)
-                    retry_seconds = int(float(match.group(1))) if match else 30
-                    print(f"⏱️ Need to wait {retry_seconds} seconds")
-                    raise Exception(f"Rate limit: wait {retry_seconds}s")
+                    print(f"⚠️ Rate limit 429 - Gemini перегружен, используем fallback")
+                    # НЕ повторяем запрос - токены уже потрачены
+                    raise Exception("Rate limit exceeded")
                 else:
                     raise Exception(f"Gemini API error {error_code}: {error_msg}")
 
