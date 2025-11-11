@@ -12,7 +12,6 @@ def seed_employees():
     # ✅ УДАЛЯЕМ СТАРЫХ
     c.execute("DELETE FROM employees")
     
-    # ✅ ДОБАВЛЯЕМ НОВЫХ (в нужном порядке)
     employees = [
         {
             "full_name": "SIMO",
@@ -63,7 +62,7 @@ def seed_employees():
             "is_active": 1
         }
     ]
-    
+
     for emp in employees:
         c.execute("""
             INSERT INTO employees 
