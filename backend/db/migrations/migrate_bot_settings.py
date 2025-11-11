@@ -23,28 +23,6 @@ DEFAULT_SETTINGS = {
 }
 from typing import Optional
 
-def parse_section(content: str, section_name: str, next_section: Optional[str] = None) -> str:
-    """Извлечь текст между секциями"""
-    try:
-        start = content.find(f'[{section_name}]')
-        if start == -1:
-            start = content.find(section_name)
-        if start == -1:
-            return ""
-        
-        if next_section:
-            end = content.find(f'[{next_section}]', start)
-            if end == -1:
-                end = content.find(next_section, start)
-        else:
-            end = len(content)
-        
-        if end == -1:
-            end = len(content)
-        
-        return content[start:end].strip()
-    except:
-        return ""
 def extract_quotes(text: str) -> list:
     """Извлечь фразы в кавычках"""
     return re.findall(r'"([^"]*)"', text)
@@ -111,6 +89,37 @@ def extract_objection(content: str, objection_keyword: str) -> str:
     return response
 
     
+def parse_section(content: str, section_name: str, next_section: Optional[str] = None) -> str:
+    """Извлечь текст между секциями"""
+    try:
+        start = content.find(f'[{section_name}]')
+        if start == -1:
+            start = content.find(section_name)
+        if start == -1:
+            return ""
+        
+        if next_section:
+            end = content.find(f'[{next_section}]', start)
+            if end == -1:
+                end = content.find(next_section, start)
+        else:
+            end = len(content)
+        
+        if end == -1:
+            end = len(content)
+        
+        text = content[start:end].strip()
+        
+        # Убираем заголовок секции
+        lines = text.split('\n')
+        if lines and lines[0].startswith('['):
+            lines = lines[1:]
+        
+        return '\n'.join(lines).strip()
+    except:
+        return ""
+
+# В функции parse_instructions_file() ЗАМЕНИ блок парсинга:
 def parse_instructions_file() -> dict:
     """ПОЛНЫЙ парсинг файла"""
     
@@ -125,82 +134,81 @@ def parse_instructions_file() -> dict:
     
     settings = DEFAULT_SETTINGS.copy()
     
-    # ✅ ИСПРАВЛЕННЫЙ ПАРСИНГ - ЗАХВАТЫВАЕМ ВСЕ ПОЛЯ
+    # ✅ ПАРСИМ СЕКЦИИ ЦЕЛИКОМ
     
     # 1. Имя бота
     settings['bot_name'] = "M.Le Diamant Assistant"
     
     # 2. Личность
-    match = re.search(r'\[ЛИЧНОСТЬ\](.*?)(?=\n\[|\Z)', content, re.DOTALL)
-    if match:
-        traits_text = match.group(1).strip()
-        # Берем все строки которые есть
-        settings['personality_traits'] = traits_text.replace('\n-', '\n').strip()
+    personality_section = parse_section(content, '[ЛИЧНОСТЬ]', '[КРИТИЧЕСКИЕ ПРАВИЛА]')
+    if personality_section:
+        settings['personality_traits'] = personality_section
     
-    # 3. Приветствие
-    match = re.search(r'✅ ЗДОРОВАЙСЯ ТОЛЬКО:(.*?)(?=❌|$)', content, re.DOTALL)
-    if match:
-        settings['greeting_message'] = "Привет! 😊"
+    # 3. Критические правила
+    critical_section = parse_section(content, '[КРИТИЧЕСКИЕ ПРАВИЛА]', '[ПРИВЕТСТВИЕ]')
+    settings['safety_guidelines'] = critical_section if critical_section else ''
     
-    # 4. Коммуникация
-    match = re.search(r'\[ЛИЧНОСТЬ\].*?- Пишешь коротко: (.*?)$', content, re.MULTILINE | re.DOTALL)
-    if match:
-        settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
+    # 4. Приветствие
+    greeting_section = parse_section(content, '[ПРИВЕТСТВИЕ]', '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]')
+    settings['greeting_message'] = "Привет! 😊 Добро пожаловать в M.Le Diamant!"
     
-    # 5. Эмодзи - КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ
-    match = re.search(r'- Смайлики — (.*?)(?:\n|$)', content)
-    if match:
-        settings['emoji_usage'] = match.group(1).strip()  # ✅ "минимум (1-2 за сообщение максимум)"
+    # 5. Смайлики - ПРАВИЛЬНЫЙ ПАРСИНГ
+    emoji_match = re.search(r'Смайлики[^\n]*минимум[^(]*\(([^)]+)\)', content)
+    if emoji_match:
+        settings['emoji_usage'] = f"минимум ({emoji_match.group(1).strip()})"
     
-    # 6. Максимум символов
-    settings['max_message_chars'] = 300
+    # 6. Структура ответа о цене
+    price_section = parse_section(content, '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]', '[ЗАПИСЬ')
+    if price_section:
+        # Разбиваем на части
+        parts = price_section.split('📊 КОРОТКИЙ ФОРМАТ')
+        if len(parts) > 1:
+            template_text = parts[1].split('📊 ПРАВИЛА ЦЕН')[0] if '📊 ПРАВИЛА ЦЕН' in parts[1] else parts[1]
+            settings['price_response_template'] = template_text.strip()
     
-    # 7. Объяснение цены
-    match = re.search(r'СТРУКТУРА ОТВЕТА О ЦЕНЕ.*?📊 КОРОТКИЙ ФОРМАТ.*?\n(.*?)(?=📊|$)', content, re.DOTALL)
-    if match:
-        settings['price_explanation'] = "Премиум-сегмент 💎"
+    # 7. Premium обоснование
+    premium_match = re.search(r'Это сработает потому что[^:]*:(.*?)(?=\[|$)', content, re.DOTALL)
+    if premium_match:
+        lines = [l.strip() for l in premium_match.group(1).strip().split('\n') if l.strip() and not l.startswith('[')]
+        settings['premium_justification'] = '\n'.join(lines[:5])  # Первые 5 строк
     
-    # 8. Premium justification - ИСПРАВЛЕНО
-    match = re.search(r'Это сработает потому что.*?Цены указаны на сайте', content, re.DOTALL)
-    if match:
-        settings['premium_justification'] = "Материалы из США/Европы\nТоп-мастера\nПрестижный JBR"
+    # 8. Возражения - используем существующую функцию
+    settings['objection_expensive'] = extract_objection_v2(content, 'дорого')
+    settings['objection_think_about_it'] = extract_objection_v2(content, 'подумаю')
+    settings['objection_no_time'] = extract_objection_v2(content, 'нет времени')
+    settings['objection_pain'] = extract_objection_v2(content, 'боль')
+    settings['objection_result_doubt'] = extract_objection_v2(content, 'результат')
+    settings['objection_cheaper_elsewhere'] = extract_objection_v2(content, 'дешевле')
+    settings['objection_too_far'] = extract_objection_v2(content, 'далеко')
+    settings['objection_consult_husband'] = extract_objection_v2(content, 'муж')
+    settings['objection_first_time'] = extract_objection_v2(content, 'первый раз')
+    settings['objection_not_happy'] = extract_objection_v2(content, 'не понрав')
     
-    # ✅ ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ ПОЛЯ НАПРЯМУЮ ИЗ ТЕКСТА
+    # 9. Эмоциональные триггеры
+    emotional_section = parse_section(content, '[КОРОТКИЕ ОТВЕТЫ]', '[ЯЗЫКИ]')
+    if emotional_section:
+        settings['emotional_triggers'] = "Красота | Уверенность | Роскошь | Стиль | Престиж"
     
-    # FOMO
-    match = re.search(r'ТЫ РАБОТАЕШЬ.*?Только 3 места осталось', content, re.DOTALL)
-    if match:
-        settings['fomo_messages'] = "Сейчас у нас акция! | Только 3 места осталось | Завтра цена выше"
-    
-    # UPSELL
-    settings['upsell_techniques'] = "Комплекс процедур дешевле | С этим часто берут... | Новинка сезона"
-    
-    # Booking message
-    match = re.search(r'1️⃣ \*\*Сбор данных:\*\*(.*?)2️⃣', content, re.DOTALL)
-    if match:
-        settings['booking_redirect_message'] = "Отлично! Для записи нужно:\n- Имя\n- WhatsApp номер\nКак вас зовут?"
-    
-    # ✅ ВОЗРАЖЕНИЯ - ИСПОЛЬЗУЕМ НОВУЮ ФУНКЦИЮ
-    settings['objection_expensive'] = extract_objection_v2(content, 'дорого') or "Понимаю. Цены выше среднего, но качество топовое 💎"
-    settings['objection_think_about_it'] = extract_objection_v2(content, 'подумаю') or "Конечно! Когда удобно обсудить?"
-    settings['objection_no_time'] = extract_objection_v2(content, 'нет времени') or "Есть быстрые процедуры!"
-    settings['objection_pain'] = extract_objection_v2(content, 'боль') or "Используем анестезию 💊"
-    settings['objection_result_doubt'] = extract_objection_v2(content, 'результат') or "Даем гарантию!"
-    settings['objection_cheaper_elsewhere'] = extract_objection_v2(content, 'дешевле') or "Качество стоит своих денег 💎"
-    settings['objection_too_far'] = extract_objection_v2(content, 'далеко') or "JBR - центр, рядом метро!"
-    settings['objection_consult_husband'] = extract_objection_v2(content, 'муж') or "Конечно, посоветуйтесь!"
-    settings['objection_first_time'] = extract_objection_v2(content, 'первый раз') or "Мастер всё объяснит!"
-    settings['objection_not_happy'] = extract_objection_v2(content, 'не понрав') or "Исправим бесплатно!"
-    
-    # ✅ ОСТАЛЬНЫЕ ПОЛЯ
-    settings['emotional_triggers'] = "Красота | Уверенность | Роскошь | Стиль | Престиж"
+    # 10. Социальное доказательство
     settings['social_proof_phrases'] = "500+ довольных клиентов | Топ-1 в JBR | 5⭐ отзывы"
+    
+    # 11. FOMO сообщения
+    fomo_match = re.search(r'FOMO[^\n]*\n([^\[]+)', content)
+    if fomo_match:
+        settings['fomo_messages'] = fomo_match.group(1).strip()
+    
+    # 12. Upsell техники
+    upsell_match = re.search(r'UPSELL[^\n]*\n([^\[]+)', content)
+    if upsell_match:
+        settings['upsell_techniques'] = upsell_match.group(1).strip()
+    
+    # 13. Остальные поля из DEFAULT_SETTINGS
+    settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
     settings['personalization_rules'] = "Обращаться по имени\nУчитывать историю записей"
     settings['emotional_responses'] = "😊 Радость\n💖 Забота\n✨ Вдохновение"
     settings['anti_patterns'] = "❌ Не извиняться без причины\n❌ Не давить\n❌ Не придумывать скидки"
     settings['voice_message_response'] = "Я AI, не слушаю голосовые 😊 Напишите текстом!"
     settings['contextual_rules'] = "Учитывать время суток\nУчитывать язык клиента"
-    settings['safety_guidelines'] = "Не давать медицинских советов\nНе гарантировать 100% результат"
     settings['example_good_responses'] = "Manicure Gel 130 AED 💅\nДержится 3 недели\nЗаписаться?"
     settings['algorithm_actions'] = "1. Узнать услугу\n2. Назвать цену\n3. Предложить запись"
     settings['location_features'] = "JBR - престижный район\n5 минут от пляжа\nМетро DMCC"
@@ -213,6 +221,36 @@ def parse_instructions_file() -> dict:
     print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
     return settings
 
+
+def extract_objection_improved(content: str, keyword: str) -> str:
+    """УЛУЧШЕННАЯ версия извлечения возражений"""
+    try:
+        # Ищем блок возражения
+        pattern = rf'ВОЗРАЖЕНИЕ.*?{re.escape(keyword)}.*?✅\s*ГЕНИАЛЬНО:\s*\n(.*?)(?=\*\*ВОЗРАЖЕНИЕ|\[|$)'
+        match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+        
+        if match:
+            response = match.group(1).strip()
+            
+            # Убираем лишние маркеры
+            response = re.sub(r'❌.*?\n', '', response)
+            response = re.sub(r'✅ ГЕНИАЛЬНО:', '', response)
+            
+            # Убираем пустые строки
+            lines = [line for line in response.split('\n') if line.strip()]
+            response = '\n'.join(lines)
+            
+            # Ограничиваем длину
+            if len(response) > 2000:
+                response = response[:1997] + '...'
+            
+            return response
+        else:
+            print(f"⚠️  Возражение '{keyword}' не найдено")
+            return ""
+    except Exception as e:
+        print(f"⚠️  Ошибка парсинга возражения '{keyword}': {e}")
+        return ""
 
 def extract_objection_v2(content: str, keyword: str) -> str:
     """НОВАЯ версия - более надежная"""

@@ -70,7 +70,7 @@ export default function Users() {
   const handleChangeRole = async (userId: number, newRole: string) => {
     try {
       setSavingRole(true);
-      await api.updateUserRole(userId, { role: newRole });
+      await api.updateUserRole(userId, newRole); // fix argument type
       toast.success('Роль изменена');
       setShowRoleDialog(false);
       setSelectedUser(null);
@@ -96,36 +96,26 @@ export default function Users() {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.getUsers();
+      const response = await api.getUsers();
   
-      console.log('📥 Received users data:', data); // ✅ ДЕБАГ
+      console.log('📥 Received response:', response);
   
-      // ✅ БЕЗОПАСНОЕ ИЗВЛЕЧЕНИЕ МАССИВА
-      let usersArray: User[] = [];
-      
-      if (Array.isArray(data)) {
-        usersArray = data;
-      } else if (data && Array.isArray(data.users)) {
-        usersArray = data.users;
-      } else if (data && typeof data === 'object') {
-        // Ищем первый массив в объекте
-        const firstArrayValue = Object.values(data).find(v => Array.isArray(v));
-        if (firstArrayValue) {
-          usersArray = firstArrayValue as User[];
-        }
-      }
+      // ✅ ПРАВИЛЬНОЕ ИЗВЛЕЧЕНИЕ
+      const usersArray = Array.isArray(response) 
+        ? response 
+        : (response?.users || []);
   
-      console.log('✅ Parsed users array:', usersArray); // ✅ ДЕБАГ
+      console.log('✅ Users array:', usersArray);
       setUsers(usersArray);
   
       if (usersArray.length === 0) {
-        toast.info('Пользователи не найдены');
+        console.warn('⚠️  Массив пользователей пуст');
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Ошибка загрузки пользователей';
       setError(message);
       toast.error(`Ошибка: ${message}`);
-      console.error('Error loading users:', err);
+      console.error('❌ Error loading users:', err);
     } finally {
       setLoading(false);
     }
