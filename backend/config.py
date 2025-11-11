@@ -11,28 +11,61 @@ def is_localhost() -> bool:
     """Проверяет, запущено ли приложение на localhost"""
     try:
         hostname = socket.gethostname()
-        return hostname in ['localhost', '127.0.0.1'] or hostname.startswith('192.168.')
-    except:
-        return False
+        ip = socket.gethostbyname(hostname)
+        
+        # Локальные признаки:
+        # 1. Hostname содержит 'local', 'MacBook', 'localhost'
+        # 2. IP начинается с 127.x.x.x или 192.168.x.x или 10.x.x.x
+        # 3. Hostname не является публичным IP
+        
+        is_local = (
+            hostname in ['localhost', '127.0.0.1'] or
+            'MacBook' in hostname or
+            'local' in hostname.lower() or
+            ip.startswith('127.') or
+            ip.startswith('192.168.') or
+            ip.startswith('10.') or
+            hostname.startswith('192.168.')
+        )
+        
+        print(f"🔍 Hostname: {hostname}")
+        print(f"🔍 IP: {ip}")
+        print(f"🔍 Is localhost: {is_local}")
+        
+        return is_local
+    except Exception as e:
+        print(f"⚠️ Ошибка определения localhost: {e}")
+        return True  # По умолчанию считаем localhost (безопаснее)
 
 # ===== АВТООПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ =====
 
-# 1. Проверяем системные переменные (docker, systemd и т.д.)
+# ===== АВТООПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ =====
+
+print("=" * 70)
+print("🔍 ОПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ")
+print("=" * 70)
+
+# 1. Проверяем системные переменные (НЕ из .env файлов!)
 system_env = os.getenv("ENVIRONMENT")
+print(f"Системная переменная ENVIRONMENT: {system_env or 'не установлена'}")
 
 # 2. Определяем окружение по сети (localhost vs сервер)
-if system_env:
+localhost_check = is_localhost()
+
+if system_env in ['production', 'development']:
     # Если явно указано в системе - используем его
     environment = system_env
-    print(f"🔧 Окружение из системной переменной: {environment}")
-elif is_localhost():
+    print(f"✅ Используем системную переменную: {environment}")
+elif localhost_check:
     # Если запущено на localhost - всегда development
     environment = "development"
-    print("🔧 Автоопределение: LOCALHOST (development)")
+    print("✅ Автоопределение: LOCALHOST → development")
 else:
     # Иначе - production
     environment = "production"
-    print("🚀 Автоопределение: SERVER (production)")
+    print("✅ Автоопределение: SERVER → production")
+
+print("=" * 70)
 
 # 3. Выбираем файл конфигурации
 if environment == "development":
