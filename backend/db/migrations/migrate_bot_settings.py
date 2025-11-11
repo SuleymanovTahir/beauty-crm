@@ -480,8 +480,6 @@ def create_tables(conn):
         timezone TEXT DEFAULT 'Asia/Dubai',
         currency TEXT DEFAULT 'AED',
         updated_at TEXT,
-        booking_data_collection TEXT,
-        updated_at TEXT,
     )''')
     
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
@@ -531,6 +529,8 @@ def create_tables(conn):
         pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
         manager_consultation_prompt TEXT,
         booking_time_logic TEXT,
+        booking_data_collection TEXT,
+        updated_at TEXT,
     )''')
 
     # ✅ ДОБАВЛЯЕМ ПРОВЕРКУ И СОЗДАНИЕ КОЛОНКИ max_message_chars
