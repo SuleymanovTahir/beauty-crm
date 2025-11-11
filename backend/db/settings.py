@@ -211,6 +211,7 @@ def get_bot_settings() -> dict:
                 "manager_consultation_prompt": row_dict.get("manager_consultation_prompt", ""),
                 "booking_time_logic": row_dict.get("booking_time_logic", ""),
                 "booking_data_collection": row_dict.get("booking_data_collection", ""),
+                "booking_availability_instructions": row_dict.get("booking_availability_instructions", ""),  # ✅ ДОБАВЬ
                 "updated_at": row_dict.get("updated_at"),
             }
             
@@ -294,6 +295,9 @@ def _get_default_bot_settings() -> dict:
         "ad_campaign_detection": "",
         "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
         "manager_consultation_prompt": "",
+        "booking_data_collection": """...""",
+        "booking_availability_instructions": """...""",  # ✅ ДОБАВЬ из DEFAULT_SETTINGS
+        "updated_at": None,
         "booking_time_logic": """🎯 ЛОГИКА ВЫБОРА ВРЕМЕНИ:
 
 A) Проверь пожелания клиента:

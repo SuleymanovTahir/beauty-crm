@@ -336,11 +336,11 @@ async def startup_event():
         # migrate_settings()
         
 
-        from db.migrations.create_employees import create_employees_tables
-        create_employees_tables()
+        # from db.migrations.create_employees import create_employees_tables
+        # create_employees_tables()
 
-        from db.migrations.seed_employees import seed_employees
-        seed_employees()
+        # from db.migrations.seed_employees import seed_employees
+        # seed_employees()
 
         
         bot = get_bot()

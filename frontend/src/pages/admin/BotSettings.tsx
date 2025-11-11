@@ -20,7 +20,7 @@ interface BotSettings {
   upsell_techniques: string;
   communication_style: string;
   max_message_chars: number;
-  max_message_length?: number; 
+  max_message_length?: number;
   emoji_usage: string;
   booking_time_logic: string;
   booking_data_collection: string;
@@ -53,6 +53,7 @@ interface BotSettings {
   ad_campaign_detection: string;
   pre_booking_data_collection: string;
   manager_consultation_prompt: string;
+  booking_availability_instructions: string;
 }
 
 type TabType = 'general' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
@@ -117,6 +118,7 @@ export default function BotSettings() {
     manager_consultation_prompt: '',
     booking_time_logic: '',
     booking_data_collection: '',
+    booking_availability_instructions: '',
   });
 
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
@@ -138,18 +140,18 @@ export default function BotSettings() {
     try {
       setLoading(true);
       console.log('🔄 Загрузка настроек бота...');
-  
+
       const data = await api.getBotSettings();
       console.log('✅ Настройки загружены:', data);
-  
+
       // ✅ БЕЗОПАСНОЕ ИЗВЛЕЧЕНИЕ (data может быть обёрнут или нет)
       const botData = data.bot_settings || data;
-  
-      const langs = botData.languages_supported 
-        ? botData.languages_supported.split(',').filter(Boolean) 
+
+      const langs = botData.languages_supported
+        ? botData.languages_supported.split(',').filter(Boolean)
         : [];  // ✅ Пустой массив, если в БД нет данных
       setSelectedLanguages(langs);
-  
+
       setSettings({
         bot_name: botData.bot_name || 'M.Le Diamant Assistant',
         personality_traits: botData.personality_traits || '',
@@ -195,6 +197,7 @@ export default function BotSettings() {
         manager_consultation_prompt: botData.manager_consultation_prompt || '',
         booking_time_logic: botData.booking_time_logic || '',
         booking_data_collection: botData.booking_data_collection || '',
+        booking_availability_instructions: botData.booking_availability_instructions || '',
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
@@ -369,7 +372,7 @@ export default function BotSettings() {
                 max="2000"
                 step="50"
                 value={settings.max_message_chars || 0}
-                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value)})}
+                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value) })}
                 style={{
                   width: '100%',
                   padding: '0.75rem',
@@ -659,57 +662,80 @@ export default function BotSettings() {
                   boxSizing: 'border-box',
                   resize: 'vertical'
                 }}
-                />
-              </div>
-  
-              <div>
-                <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  🧠 Логика предложения времени
-                </label>
-                <textarea
-                  value={settings.booking_time_logic}
-                  onChange={(e) => setSettings({ ...settings, booking_time_logic: e.target.value })}
-                  rows={15}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem',
-                    boxSizing: 'border-box',
-                    resize: 'vertical',
-                    fontFamily: 'monospace'
-                  }}
-                />
-                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                  Умная логика выбора времени записи: учет пожеланий клиента, истории, смекалка при занятости
-                </p>
-              </div>
-  
-              <div>
-                <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  📋 Сбор данных для записи
-                </label>
-                <textarea
-                  value={settings.booking_data_collection}
-                  onChange={(e) => setSettings({ ...settings, booking_data_collection: e.target.value })}
-                  rows={8}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem',
-                    boxSizing: 'border-box',
-                    resize: 'vertical',
-                    fontFamily: 'monospace'
-                  }}
-                />
-                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                  Алгоритм сбора имени и WhatsApp перед записью
-                </p>
-              </div>
+              />
             </div>
+
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                🧠 Логика предложения времени
+              </label>
+              <textarea
+                value={settings.booking_time_logic}
+                onChange={(e) => setSettings({ ...settings, booking_time_logic: e.target.value })}
+                rows={15}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                  fontFamily: 'monospace'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Умная логика выбора времени записи: учет пожеланий клиента, истории, смекалка при занятости
+              </p>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                📋 Сбор данных для записи
+              </label>
+              <textarea
+                value={settings.booking_data_collection}
+                onChange={(e) => setSettings({ ...settings, booking_data_collection: e.target.value })}
+                rows={8}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                  fontFamily: 'monospace'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Алгоритм сбора имени и WhatsApp перед записью
+              </p>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                📋 Инструкции по показу мастеров
+              </label>
+              <textarea
+                value={settings.booking_availability_instructions}
+                onChange={(e) => setSettings({ ...settings, booking_availability_instructions: e.target.value })}
+                rows={15}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.95rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                  fontFamily: 'monospace'
+                }}
+              />
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Инструкции для бота: что делать если услуга не определена, как показывать мастеров, когда собирать данные
+              </p>
+            </div>
+          </div>
         )}
 
         {/* OBJECTIONS TAB */}
@@ -1072,7 +1098,7 @@ export default function BotSettings() {
             </div>
 
             {/* ← ad_campaign_detection идет после этого */}
-            
+
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                 🤝 Промпт для консультации менеджера

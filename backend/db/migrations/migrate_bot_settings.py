@@ -1,3 +1,5 @@
+from typing import Optional
+from config import DATABASE_NAME
 import sqlite3
 import os
 import re
@@ -6,7 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from config import DATABASE_NAME
 
 INSTRUCTIONS_FILE = "bot/bot_instructions_file.txt"
 # ===== ДЕФОЛТНЫЕ ЗНАЧЕНИЯ =====
@@ -20,10 +21,11 @@ DEFAULT_SETTINGS = {
     "max_message_chars": 300,
     "emoji_usage": "минимум (1-2 на сообщение)",
     "languages_supported": "ru,en,ar",
-    
+
+
     # ===== ЦЕНЫ И ПРОДАЖИ =====
     "price_response_template": "[Услуга] [цена] AED 💎\n[Что входит/результат в 1 строку]\nЗаписаться?",
-    
+
     "premium_justification": """Это работает потому что:
 - Используем материалы из США/Европы (не китайские аналоги)
 - Мастера с международными сертификатами
@@ -32,9 +34,9 @@ DEFAULT_SETTINGS = {
 - Топ-1 по отзывам в JBR""",
 
     "fomo_messages": "Сегодня только 2 окна|Завтра уже заполнено|Этот мастер расписан на месяц|Акция до конца недели",
-    
+
     "upsell_techniques": "С педикюром будет комплект|Многие берут сразу курс из 3х|Можно добавить уход|Советую взять с массажем",
-    
+
     "booking_redirect_message": """Отлично! Для записи нужно:
 - Имя
 - WhatsApp номер
@@ -198,75 +200,108 @@ G) 🧠 ВКЛЮЧАЙ СМЕКАЛКУ - НЕ СДАВАЙСЯ!
 "Спасибо, [Имя]! WhatsApp номер?"
 
 Затем предлагай конкретное время из расписания.""",
+    "booking_availability_instructions": """🎯 ЛОГИКА ПОКАЗА МАСТЕРОВ:
+
+1️⃣ ЕСЛИ УСЛУГА НЕ ОПРЕДЕЛЕНА:
+Клиент спрашивает про запись, но НЕ указал услугу.
+
+ОБЯЗАТЕЛЬНО СПРОСИ:
+"Какая услуга вас интересует?
+- Маникюр 💅
+- Педикюр 🦶
+- Стрижка/Окрашивание волос ✂️
+- Массаж 💆
+- Другое?"
+
+⚠️ НЕ показывай всех мастеров подряд!
+⚠️ НЕ начинай сбор данных!
+
+2️⃣ ЕСЛИ УСЛУГА ОПРЕДЕЛЕНА:
+Покажи ТОЛЬКО мастеров этой услуги с КОНКРЕТНЫМ временем.
+
+ПРАВИЛЬНЫЙ ФОРМАТ:
+"На [дата] по [услуга] есть:
+- [Имя мастера]: 11:00, 14:00, 17:00
+- [Имя мастера]: 10:00, 15:00, 18:30
+
+Какое время подходит?"
+
+3️⃣ КРИТИЧЕСКИ ВАЖНО:
+❌ НЕ пиши "Для записи нужны имя и WhatsApp" - РАНО!
+❌ НЕ показывай мастеров других услуг!
+✅ Дождись когда клиент ВЫБЕРЕТ время, ПОТОМ начинай сбор данных!
+
+💡 Имена мастеров показывай на языке клиента (если есть перевод в БД)""",
 }
-from typing import Optional
+
 
 def extract_quotes(text: str) -> list:
     """Извлечь фразы в кавычках"""
     return re.findall(r'"([^"]*)"', text)
 
+
 def extract_objection(content: str, objection_keyword: str) -> str:
     """Извлечь конкретное возражение - только ответ бота"""
-    
+
     pattern = rf'\*\*ВОЗРАЖЕНИЕ.*?{re.escape(objection_keyword)}.*?\*\*'
     match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
-    
+
     if not match:
         return ""
-    
+
     start_pos = match.end()
-    
+
     genius_pattern = r'✅\s*ГЕНИАЛЬНО:\s*\n'
     genius_match = re.search(genius_pattern, content[start_pos:])
-    
+
     if not genius_match:
         return ""
-    
+
     answer_start = start_pos + genius_match.end()
     rest_content = content[answer_start:]
-    
+
     end_patterns = [
         r'\n\n\*\*ВОЗРАЖЕНИЕ',
         r'\n---',
         r'\n\n\[',
         r'\n\n#',
     ]
-    
+
     end_pos = len(rest_content)
     for pattern in end_patterns:
         match = re.search(pattern, rest_content)
         if match and match.start() < end_pos:
             end_pos = match.start()
-    
+
     response = rest_content[:end_pos].strip()
-    
+
     # ✅ УБИРАЕМ ДУБЛИКАТЫ
     lines = []
     seen_genialnos = 0
     for line in response.split('\n'):
         line_stripped = line.strip()
-        
+
         # Пропускаем лишние "✅ ГЕНИАЛЬНО:"
         if line_stripped.startswith('✅ ГЕНИАЛЬНО:'):
             seen_genialnos += 1
             if seen_genialnos > 1:
                 continue
-        
+
         if line_stripped.startswith('❌'):
             continue
         if line_stripped.startswith('**ВОЗРАЖЕНИЕ'):
             break
         lines.append(line)
-    
+
     response = '\n'.join(lines).strip()
-    
+
     # ✅ Увеличиваем лимит до 2000
     if len(response) > 2000:
         response = response[:1997] + '...'
-    
+
     return response
 
-    
+
 def parse_section(content: str, section_name: str, next_section: Optional[str] = None) -> str:
     """Извлечь текст между секциями"""
     try:
@@ -275,100 +310,114 @@ def parse_section(content: str, section_name: str, next_section: Optional[str] =
             start = content.find(section_name)
         if start == -1:
             return ""
-        
+
         if next_section:
             end = content.find(f'[{next_section}]', start)
             if end == -1:
                 end = content.find(next_section, start)
         else:
             end = len(content)
-        
+
         if end == -1:
             end = len(content)
-        
+
         text = content[start:end].strip()
-        
+
         # Убираем заголовок секции
         lines = text.split('\n')
         if lines and lines[0].startswith('['):
             lines = lines[1:]
-        
+
         return '\n'.join(lines).strip()
     except:
         return ""
 
 # В функции parse_instructions_file() ЗАМЕНИ блок парсинга:
+
+
 def parse_instructions_file() -> dict:
     """ПОЛНЫЙ парсинг файла"""
-    
+
     if not os.path.exists(INSTRUCTIONS_FILE):
         print(f"⚠️  Файл {INSTRUCTIONS_FILE} не найден!")
         return DEFAULT_SETTINGS.copy()
-    
+
     print(f"📖 Читаю {INSTRUCTIONS_FILE}...")
-    
+
     with open(INSTRUCTIONS_FILE, 'r', encoding='utf-8') as f:
         content = f.read()
-    
+
     settings = DEFAULT_SETTINGS.copy()
-    
+
     # ✅ ПАРСИМ СЕКЦИИ ЦЕЛИКОМ
-    
+
     # 1. Имя бота
     settings['bot_name'] = "M.Le Diamant Assistant"
-    
+
     # 2. Личность
-    personality_section = parse_section(content, '[ЛИЧНОСТЬ]', '[КРИТИЧЕСКИЕ ПРАВИЛА]')
+    personality_section = parse_section(
+        content, '[ЛИЧНОСТЬ]', '[КРИТИЧЕСКИЕ ПРАВИЛА]')
     if personality_section:
         settings['personality_traits'] = personality_section
-    
+
     # 3. Критические правила
-    critical_section = parse_section(content, '[КРИТИЧЕСКИЕ ПРАВИЛА]', '[ПРИВЕТСТВИЕ]')
+    critical_section = parse_section(
+        content, '[КРИТИЧЕСКИЕ ПРАВИЛА]', '[ПРИВЕТСТВИЕ]')
     settings['safety_guidelines'] = critical_section if critical_section else ''
-    
+
     # 4. Приветствие
-    greeting_section = parse_section(content, '[ПРИВЕТСТВИЕ]', '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]')
+    greeting_section = parse_section(
+        content, '[ПРИВЕТСТВИЕ]', '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]')
     settings['greeting_message'] = "Привет! 😊 Добро пожаловать в M.Le Diamant!"
-    
+
     # 5. Смайлики - ПРАВИЛЬНЫЙ ПАРСИНГ
     emoji_match = re.search(r'Смайлики[^\n]*минимум[^(]*\(([^)]+)\)', content)
     if emoji_match:
         settings['emoji_usage'] = f"минимум ({emoji_match.group(1).strip()})"
-    
+
     # 6. Структура ответа о цене
-    price_section = parse_section(content, '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]', '[ЗАПИСЬ')
+    price_section = parse_section(
+        content, '[СТРУКТУРА ОТВЕТА О ЦЕНЕ]', '[ЗАПИСЬ')
     if price_section:
         # Разбиваем на части
         parts = price_section.split('📊 КОРОТКИЙ ФОРМАТ')
         if len(parts) > 1:
-            template_text = parts[1].split('📊 ПРАВИЛА ЦЕН')[0] if '📊 ПРАВИЛА ЦЕН' in parts[1] else parts[1]
+            template_text = parts[1].split('📊 ПРАВИЛА ЦЕН')[
+                0] if '📊 ПРАВИЛА ЦЕН' in parts[1] else parts[1]
             settings['price_response_template'] = template_text.strip()
     # 6.5. Логика записи и предложения времени
     # 6.5. Логика записи и предложения времени - БЕРЕМ ИЗ ФАЙЛА
     # Ищем секцию с 3️⃣ ПРЕДЛОЖЕНИЕ ВРЕМЕНИ
-    time_logic_match = re.search(r'3️⃣\s*\*\*ПРЕДЛОЖЕНИЕ ВРЕМЕНИ:\*\*(.*?)(?=4️⃣|\[АКЦИИ)', content, re.DOTALL)
+    time_logic_match = re.search(
+        r'3️⃣\s*\*\*ПРЕДЛОЖЕНИЕ ВРЕМЕНИ:\*\*(.*?)(?=4️⃣|\[АКЦИИ)', content, re.DOTALL)
     if time_logic_match:
         time_logic = time_logic_match.group(1).strip()
         settings['booking_time_logic'] = time_logic[:3000]  # Увеличил лимит
-        print(f"   ✅ Извлечена логика предложения времени ({len(time_logic)} символов)")
+        print(
+            f"   ✅ Извлечена логика предложения времени ({len(time_logic)} символов)")
     else:
         # Если не нашли - используем из DEFAULT_SETTINGS
         print(f"   ⚠️  Логика времени не найдена в файле, использую дефолт")
-    
+
     # Ищем секцию 1️⃣ Сбор данных
-    booking_data_match = re.search(r'1️⃣\s*\*\*Сбор данных:\*\*(.*?)(?=2️⃣|3️⃣)', content, re.DOTALL)
+    booking_data_match = re.search(
+        r'1️⃣\s*\*\*Сбор данных:\*\*(.*?)(?=2️⃣|3️⃣)', content, re.DOTALL)
     if booking_data_match:
         booking_data = booking_data_match.group(1).strip()
         settings['booking_data_collection'] = booking_data[:1000]
-        print(f"   ✅ Извлечен алгоритм сбора данных ({len(booking_data)} символов)")
+        print(
+            f"   ✅ Извлечен алгоритм сбора данных ({len(booking_data)} символов)")
     else:
         print(f"   ⚠️  Алгоритм сбора данных не найден, использую дефолт")
     # 7. Premium обоснование
-    premium_match = re.search(r'Это сработает потому что[^:]*:(.*?)(?=\[|$)', content, re.DOTALL)
+    premium_match = re.search(
+        r'Это сработает потому что[^:]*:(.*?)(?=\[|$)', content, re.DOTALL)
     if premium_match:
-        lines = [l.strip() for l in premium_match.group(1).strip().split('\n') if l.strip() and not l.startswith('[')]
-        settings['premium_justification'] = '\n'.join(lines[:5])  # Первые 5 строк
-    
+        lines = [l.strip() for l in premium_match.group(1).strip().split(
+            '\n') if l.strip() and not l.startswith('[')]
+        settings['premium_justification'] = '\n'.join(
+            lines[:5])  # Первые 5 строк
+
     # 8. Возражения - используем существующую функцию
     objections = {
         'objection_expensive': 'дорого',
@@ -382,16 +431,18 @@ def parse_instructions_file() -> dict:
         'objection_first_time': 'первый раз',
         'objection_not_happy': 'не понрав'
     }
-    
+
     for key, keyword in objections.items():
         extracted = extract_objection_v2(content, keyword)
-        if extracted and len(extracted) > 50:  # Проверка что нашли нормальный текст
+        # Проверка что нашли нормальный текст
+        if extracted and len(extracted) > 50:
             settings[key] = extracted
         else:
             # Используем дефолт из DEFAULT_SETTINGS
             settings[key] = DEFAULT_SETTINGS.get(key, '')
-            print(f"   ⚠️  Возражение '{keyword}' не найдено, использую дефолт")
-    
+            print(
+                f"   ⚠️  Возражение '{keyword}' не найдено, использую дефолт")
+
     # 9. Эмоциональные триггеры
     emotional_section = parse_section(content, '[КОРОТКИЕ ОТВЕТЫ]', '[ЯЗЫКИ]')
     if emotional_section:
@@ -400,7 +451,7 @@ def parse_instructions_file() -> dict:
     if language_section and 'русский' in language_section.lower():
         # Если секция есть, оставляем дефолт
         pass
-    
+
     # 10. Социальное доказательство
     settings['social_proof_phrases'] = "500+ довольных клиентов | Топ-1 в JBR | 5⭐ отзывы"
     if 'languages_supported' not in settings:
@@ -409,23 +460,25 @@ def parse_instructions_file() -> dict:
     fomo_match = re.search(r'FOMO[^\n]*\n([^\[]+)', content)
     if fomo_match:
         settings['fomo_messages'] = fomo_match.group(1).strip()
-    
+
     # 12. Upsell техники
     upsell_match = re.search(r'UPSELL[^\n]*\n([^\[]+)', content)
     if upsell_match:
         settings['upsell_techniques'] = upsell_match.group(1).strip()
-    
+
     # 13. Остальные поля из DEFAULT_SETTINGS
-    settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
-    
+    settings[
+        'communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
+
     # ✅ ГАРАНТИРОВАННО БЕРЕМ ИЗ DEFAULT_SETTINGS
 
     if 'booking_data_collection' not in settings or not settings.get('booking_data_collection'):
         settings['booking_data_collection'] = DEFAULT_SETTINGS['booking_data_collection']
         print(f"   ✅ Использую booking_data_collection из DEFAULT_SETTINGS")
     else:
-        print(f"   ✅ booking_data_collection найдена в файле ({len(settings['booking_data_collection'])} символов)")
-    
+        print(
+            f"   ✅ booking_data_collection найдена в файле ({len(settings['booking_data_collection'])} символов)")
+
     if 'booking_time_logic' not in settings:
         settings['booking_time_logic'] = """A) Проверь пожелания клиента
         B) Проверь историю клиента
@@ -448,20 +501,26 @@ def parse_instructions_file() -> dict:
     settings['success_metrics'] = "Конверсия в запись >30%\nВремя ответа <2 мин"
     settings['ad_campaign_detection'] = 'Если спросят "откуда номер" → "Таргетированная реклама в Instagram"'
     settings['pre_booking_data_collection'] = "Для записи нужно имя и WhatsApp — секунду! 😊"
-    
-    print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
+
+    print(
+        f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
     required_fields = {
         'languages_supported': 'ru,en,ar',
         'max_message_chars': 300,
         'emoji_usage': 'минимум (1-2 на сообщение)',
     }
-    
+
     for field, default_value in required_fields.items():
         if field not in settings or not settings[field]:
             settings[field] = default_value
             print(f"   ⚠️  Добавлено дефолтное значение для {field}")
-    
-    print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
+
+    print(
+        f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
+
+    if 'booking_availability_instructions' not in settings:
+        settings['booking_availability_instructions'] = DEFAULT_SETTINGS['booking_availability_instructions']
+
     return settings
 
 
@@ -471,22 +530,22 @@ def extract_objection_improved(content: str, keyword: str) -> str:
         # Ищем блок возражения
         pattern = rf'ВОЗРАЖЕНИЕ.*?{re.escape(keyword)}.*?✅\s*ГЕНИАЛЬНО:\s*\n(.*?)(?=\*\*ВОЗРАЖЕНИЕ|\[|$)'
         match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
-        
+
         if match:
             response = match.group(1).strip()
-            
+
             # Убираем лишние маркеры
             response = re.sub(r'❌.*?\n', '', response)
             response = re.sub(r'✅ ГЕНИАЛЬНО:', '', response)
-            
+
             # Убираем пустые строки
             lines = [line for line in response.split('\n') if line.strip()]
             response = '\n'.join(lines)
-            
+
             # Ограничиваем длину
             if len(response) > 2000:
                 response = response[:1997] + '...'
-            
+
             return response
         else:
             print(f"⚠️  Возражение '{keyword}' не найдено")
@@ -495,30 +554,33 @@ def extract_objection_improved(content: str, keyword: str) -> str:
         print(f"⚠️  Ошибка парсинга возражения '{keyword}': {e}")
         return ""
 
+
 def extract_objection_v2(content: str, keyword: str) -> str:
     """НОВАЯ версия - более надежная"""
     try:
         # Ищем возражение по ключевому слову
         pattern = rf'ВОЗРАЖЕНИЕ.*?{re.escape(keyword)}.*?✅ ГЕНИАЛЬНО:(.*?)(?=\*\*ВОЗРАЖЕНИЕ|$)'
         match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
-        
+
         if match:
             response = match.group(1).strip()
             # Убираем лишние пустые строки
-            response = '\n'.join(line for line in response.split('\n') if line.strip())
+            response = '\n'.join(
+                line for line in response.split('\n') if line.strip())
             # Ограничиваем длину
             if len(response) > 2000:
                 response = response[:1997] + '...'
             return response
     except Exception as e:
         print(f"⚠️  Ошибка парсинга возражения '{keyword}': {e}")
-    
+
     return ""
+
 
 def create_tables(conn):
     """Создать таблицы"""
     c = conn.cursor()
-    
+
     c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
         name TEXT NOT NULL,
@@ -536,7 +598,7 @@ def create_tables(conn):
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
-    
+
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
         bot_name TEXT NOT NULL,
@@ -585,6 +647,7 @@ def create_tables(conn):
         manager_consultation_prompt TEXT,
         booking_time_logic TEXT,
         booking_data_collection TEXT,
+        booking_availability_instructions TEXT,
         updated_at TEXT
     )''')
 
@@ -592,14 +655,16 @@ def create_tables(conn):
     try:
         c.execute("PRAGMA table_info(bot_settings)")
         columns = [row[1] for row in c.fetchall()]
-        
+
         if 'max_message_chars' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 300")
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 300")
             print("✅ Добавлено поле max_message_chars")
             conn.commit()
-        
+
         if 'ad_campaign_detection' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN ad_campaign_detection TEXT DEFAULT ''")
             print("✅ Добавлена колонка ad_campaign_detection")
             conn.commit()
 
@@ -607,18 +672,21 @@ def create_tables(conn):
             c.execute("ALTER TABLE bot_settings ADD COLUMN pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'")
             print("✅ Добавлена колонка pre_booking_data_collection")
             conn.commit()
-        
+
         if 'manager_consultation_prompt' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN manager_consultation_prompt TEXT")
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN manager_consultation_prompt TEXT")
             print("✅ Добавлена колонка manager_consultation_prompt")
             conn.commit()
         if 'booking_time_logic' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN booking_time_logic TEXT")
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN booking_time_logic TEXT")
             print("✅ Добавлена колонка booking_time_logic")
             conn.commit()
-        
+
         if 'booking_data_collection' not in columns:
-            c.execute("ALTER TABLE bot_settings ADD COLUMN booking_data_collection TEXT")
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN booking_data_collection TEXT")
             print("✅ Добавлена колонка booking_data_collection")
             conn.commit()
     except Exception as e:
@@ -626,27 +694,28 @@ def create_tables(conn):
 
     conn.commit()
 
+
 def migrate_settings():
     """Главная функция"""
-    
+
     print("=" * 70)
     print("🚀 ПОЛНАЯ МИГРАЦИЯ НАСТРОЕК БОТА")
     print("=" * 70)
     print()
-    
+
     if not os.path.exists(DATABASE_NAME):
         print(f"❌ БД {DATABASE_NAME} не найдена!")
         return 1
-    
+
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     create_tables(conn)
-    
+
     # Проверяем существующие настройки
     c.execute("SELECT COUNT(*) FROM bot_settings")
     existing = c.fetchone()[0]
-    
+
     if existing > 0:
         print("⚠️  Настройки уже есть в БД!")
         print("   Будут ОБНОВЛЕНЫ все поля из bot_instructions_file.txt")
@@ -657,15 +726,14 @@ def migrate_settings():
             return 0
     else:
         print("📝 Создаём новые настройки...")
-    
+
     # Парсим файл инструкций
     settings = parse_instructions_file()
     now = datetime.now().isoformat()
-    
+
     # === SALON SETTINGS ===
     print("\n⏭️  Пропускаем salon_settings (используй migrate_salon_settings.py)")
 
-    
     # === BOT SETTINGS ===
     print("\n💾 Заполняю bot_settings (все поля)...")
     try:
@@ -715,54 +783,61 @@ def migrate_settings():
             pre_booking_data_collection = ?,
             booking_time_logic = ?,
             booking_data_collection = ?,
+            booking_availability_instructions = ?,
             updated_at = ?
             WHERE id = 1""",
-            (
-                settings['bot_name'],
-                settings['personality_traits'],
-                settings['greeting_message'],
-                settings['farewell_message'],
-                settings['price_explanation'],
-                settings.get('price_response_template', ''),
-                settings.get('premium_justification', ''),
-                settings.get('booking_redirect_message', ''),
-                settings.get('fomo_messages', ''),
-                settings.get('upsell_techniques', ''),
-                settings['communication_style'],
-                settings['max_message_chars'],
-                settings['emoji_usage'],
-                settings['languages_supported'],
-                settings.get('objection_expensive', ''),
-                settings.get('objection_think_about_it', ''),
-                settings.get('objection_no_time', ''),
-                settings.get('objection_pain', ''),
-                settings.get('objection_result_doubt', ''),
-                settings.get('objection_cheaper_elsewhere', ''),
-                settings.get('objection_too_far', ''),
-                settings.get('objection_consult_husband', ''),
-                settings.get('objection_first_time', ''),
-                settings.get('objection_not_happy', ''),
-                settings.get('emotional_triggers', ''),
-                settings.get('social_proof_phrases', ''),
-                settings.get('personalization_rules', ''),
-                settings.get('example_dialogues', ''),
-                settings.get('emotional_responses', ''),
-                settings.get('anti_patterns', ''),
-                settings.get('voice_message_response', ''),
-                settings.get('contextual_rules', ''),
-                settings.get('safety_guidelines', ''),
-                settings.get('example_good_responses', ''),
-                settings.get('algorithm_actions', ''),
-                settings.get('location_features', ''),
-                settings.get('seasonality', ''),
-                settings.get('emergency_situations', ''),
-                settings.get('success_metrics', ''),
-                settings.get('ad_campaign_detection', ''),
-                settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
-                settings.get('booking_time_logic', DEFAULT_SETTINGS['booking_time_logic']),
-                settings.get('booking_data_collection', DEFAULT_SETTINGS['booking_data_collection']),
-                now
-                ))
+                      (
+                          settings['bot_name'],
+                          settings['personality_traits'],
+                          settings['greeting_message'],
+                          settings['farewell_message'],
+                          settings['price_explanation'],
+                          settings.get('price_response_template', ''),
+                          settings.get('premium_justification', ''),
+                          settings.get('booking_redirect_message', ''),
+                          settings.get('fomo_messages', ''),
+                          settings.get('upsell_techniques', ''),
+                          settings['communication_style'],
+                          settings['max_message_chars'],
+                          settings['emoji_usage'],
+                          settings['languages_supported'],
+                          settings.get('objection_expensive', ''),
+                          settings.get('objection_think_about_it', ''),
+                          settings.get('objection_no_time', ''),
+                          settings.get('objection_pain', ''),
+                          settings.get('objection_result_doubt', ''),
+                          settings.get('objection_cheaper_elsewhere', ''),
+                          settings.get('objection_too_far', ''),
+                          settings.get('objection_consult_husband', ''),
+                          settings.get('objection_first_time', ''),
+                          settings.get('objection_not_happy', ''),
+                          settings.get('emotional_triggers', ''),
+                          settings.get('social_proof_phrases', ''),
+                          settings.get('personalization_rules', ''),
+                          settings.get('example_dialogues', ''),
+                          settings.get('emotional_responses', ''),
+                          settings.get('anti_patterns', ''),
+                          settings.get('voice_message_response', ''),
+                          settings.get('contextual_rules', ''),
+                          settings.get('safety_guidelines', ''),
+                          settings.get('example_good_responses', ''),
+                          settings.get('algorithm_actions', ''),
+                          settings.get('location_features', ''),
+                          settings.get('seasonality', ''),
+                          settings.get('emergency_situations', ''),
+                          settings.get('success_metrics', ''),
+                          settings.get('ad_campaign_detection', ''),
+                          settings.get('pre_booking_data_collection',
+                                       'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
+                          settings.get('booking_time_logic',
+                                       DEFAULT_SETTINGS['booking_time_logic']),
+                          settings.get('booking_data_collection',
+                                       DEFAULT_SETTINGS['booking_data_collection']),
+                          settings.get('booking_availability_instructions',
+                                       # ✅ ДОБАВЬ
+                                       DEFAULT_SETTINGS['booking_availability_instructions']),
+                          now
+                      ))
             print("   ✅ bot_settings обновлены (40 полей)")
         else:
             # СОЗДАНИЕ
@@ -780,63 +855,65 @@ def migrate_settings():
                 safety_guidelines, example_good_responses, algorithm_actions,
                 location_features, seasonality, emergency_situations, success_metrics,
                 ad_campaign_detection, pre_booking_data_collection, booking_time_logic, booking_data_collection,
-                updated_at
+                booking_availability_instructions, updated_at
             ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                settings['bot_name'],
-                settings['personality_traits'],
-                settings['greeting_message'],
-                settings['farewell_message'],
-                settings['price_explanation'],
-                settings.get('price_response_template', ''),
-                settings.get('premium_justification', ''),
-                settings.get('booking_redirect_message', ''),
-                settings.get('fomo_messages', ''),
-                settings.get('upsell_techniques', ''),
-                settings['communication_style'],
-                settings['max_message_chars'],
-                settings['emoji_usage'],
-                settings['languages_supported'],
-                settings.get('objection_expensive', ''),
-                settings.get('objection_think_about_it', ''),
-                settings.get('objection_no_time', ''),
-                settings.get('objection_pain', ''),
-                settings.get('objection_result_doubt', ''),
-                settings.get('objection_cheaper_elsewhere', ''),
-                settings.get('objection_too_far', ''),
-                settings.get('objection_consult_husband', ''),
-                settings.get('objection_first_time', ''),
-                settings.get('objection_not_happy', ''),
-                settings.get('emotional_triggers', ''),
-                settings.get('social_proof_phrases', ''),
-                settings.get('personalization_rules', ''),
-                settings.get('example_dialogues', ''),
-                settings.get('emotional_responses', ''),
-                settings.get('anti_patterns', ''),
-                settings.get('voice_message_response', ''),
-                settings.get('contextual_rules', ''),
-                settings.get('safety_guidelines', ''),
-                settings.get('example_good_responses', ''),
-                settings.get('algorithm_actions', ''),
-                settings.get('location_features', ''),
-                settings.get('seasonality', ''),
-                settings.get('emergency_situations', ''),
-                settings.get('success_metrics', ''),
-                settings.get('ad_campaign_detection', ''),
-                settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
-                settings.get('booking_time_logic', ''),
-                settings.get('booking_data_collection', ''),
-                now
-            ))
+                      (
+                          settings['bot_name'],
+                          settings['personality_traits'],
+                          settings['greeting_message'],
+                          settings['farewell_message'],
+                          settings['price_explanation'],
+                          settings.get('price_response_template', ''),
+                          settings.get('premium_justification', ''),
+                          settings.get('booking_redirect_message', ''),
+                          settings.get('fomo_messages', ''),
+                          settings.get('upsell_techniques', ''),
+                          settings['communication_style'],
+                          settings['max_message_chars'],
+                          settings['emoji_usage'],
+                          settings['languages_supported'],
+                          settings.get('objection_expensive', ''),
+                          settings.get('objection_think_about_it', ''),
+                          settings.get('objection_no_time', ''),
+                          settings.get('objection_pain', ''),
+                          settings.get('objection_result_doubt', ''),
+                          settings.get('objection_cheaper_elsewhere', ''),
+                          settings.get('objection_too_far', ''),
+                          settings.get('objection_consult_husband', ''),
+                          settings.get('objection_first_time', ''),
+                          settings.get('objection_not_happy', ''),
+                          settings.get('emotional_triggers', ''),
+                          settings.get('social_proof_phrases', ''),
+                          settings.get('personalization_rules', ''),
+                          settings.get('example_dialogues', ''),
+                          settings.get('emotional_responses', ''),
+                          settings.get('anti_patterns', ''),
+                          settings.get('voice_message_response', ''),
+                          settings.get('contextual_rules', ''),
+                          settings.get('safety_guidelines', ''),
+                          settings.get('example_good_responses', ''),
+                          settings.get('algorithm_actions', ''),
+                          settings.get('location_features', ''),
+                          settings.get('seasonality', ''),
+                          settings.get('emergency_situations', ''),
+                          settings.get('success_metrics', ''),
+                          settings.get('ad_campaign_detection', ''),
+                          settings.get('pre_booking_data_collection',
+                                       'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
+                          settings.get('booking_time_logic', ''),
+                          settings.get('booking_data_collection', ''),
+                          settings.get('booking_availability_instructions', ''),
+                          now
+                      ))
             print("   ✅ bot_settings созданы (40 полей)")
     except Exception as e:
         print(f"   ❌ Ошибка bot_settings: {e}")
         import traceback
         traceback.print_exc()
-    
+
     conn.commit()
     conn.close()
-    
+
     print()
     print("=" * 70)
     print("✅ МИГРАЦИЯ ЗАВЕРШЕНА!")
@@ -848,5 +925,5 @@ def migrate_settings():
     print("   2. Откройте: http://localhost:8000/admin/bot-settings")
     print("=" * 70)
     print()
-    
+
     return 0
