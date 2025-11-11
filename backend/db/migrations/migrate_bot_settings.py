@@ -302,7 +302,21 @@ def parse_instructions_file() -> dict:
         if len(parts) > 1:
             template_text = parts[1].split('📊 ПРАВИЛА ЦЕН')[0] if '📊 ПРАВИЛА ЦЕН' in parts[1] else parts[1]
             settings['price_response_template'] = template_text.strip()
-    
+    # 6.5. Логика записи и предложения времени
+    booking_section = parse_section(content, '[ЗАПИСЬ — КРИТИЧЕСКАЯ ЛОГИКА]', '[АКЦИИ И СПЕЦПАКЕТЫ]')
+    if booking_section:
+        # Извлекаем секцию "ПРЕДЛОЖЕНИЕ ВРЕМЕНИ"
+        time_logic_match = re.search(r'3️⃣.*?ПРЕДЛОЖЕНИЕ ВРЕМЕНИ.*?:\s*(.*?)(?=4️⃣|$)', booking_section, re.DOTALL)
+        if time_logic_match:
+            time_logic = time_logic_match.group(1).strip()
+            # Сохраняем в отдельное поле или добавляем к booking_redirect_message
+            settings['booking_time_logic'] = time_logic[:2000]  # Ограничение длины
+            print(f"   ✅ Извлечена логика предложения времени ({len(time_logic)} символов)")
+        
+        # Извлекаем общий алгоритм записи
+        booking_algorithm = re.search(r'1️⃣.*?Сбор данных.*?:(.*?)(?=2️⃣|$)', booking_section, re.DOTALL)
+        if booking_algorithm:
+            settings['booking_data_collection'] = booking_algorithm.group(1).strip()[:1000]
     # 7. Premium обоснование
     premium_match = re.search(r'Это сработает потому что[^:]*:(.*?)(?=\[|$)', content, re.DOTALL)
     if premium_match:
@@ -357,6 +371,15 @@ def parse_instructions_file() -> dict:
     
     # 13. Остальные поля из DEFAULT_SETTINGS
     settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
+    if 'booking_time_logic' not in settings:
+        settings['booking_time_logic'] = """A) Проверь пожелания клиента
+        B) Проверь историю клиента
+        C) Анализируй текущее время
+        D) Предлагай КОНКРЕТНОЕ время
+        E) Если хочет к конкретному мастеру
+        F) Если НЕ подошло предложенное время
+        G) ВКЛЮЧАЙ СМЕКАЛКУ - НЕ СДАВАЙСЯ!
+        H) ЗОЛОТОЕ ПРАВИЛО"""
     settings['personalization_rules'] = "Обращаться по имени\nУчитывать историю записей"
     settings['emotional_responses'] = "😊 Радость\n💖 Забота\n✨ Вдохновение"
     settings['anti_patterns'] = "❌ Не извиняться без причины\n❌ Не давить\n❌ Не придумывать скидки"
@@ -456,7 +479,9 @@ def create_tables(conn):
         country TEXT DEFAULT 'UAE',
         timezone TEXT DEFAULT 'Asia/Dubai',
         currency TEXT DEFAULT 'AED',
-        updated_at TEXT
+        updated_at TEXT,
+        booking_data_collection TEXT,
+        updated_at TEXT,
     )''')
     
     c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
@@ -505,7 +530,7 @@ def create_tables(conn):
         ad_campaign_detection TEXT DEFAULT '',
         pre_booking_data_collection TEXT DEFAULT 'Для записи нужно имя и WhatsApp — это займет секунду! 😊',
         manager_consultation_prompt TEXT,
-        updated_at TEXT
+        booking_time_logic TEXT,
     )''')
 
     # ✅ ДОБАВЛЯЕМ ПРОВЕРКУ И СОЗДАНИЕ КОЛОНКИ max_message_chars
@@ -531,6 +556,15 @@ def create_tables(conn):
         if 'manager_consultation_prompt' not in columns:
             c.execute("ALTER TABLE bot_settings ADD COLUMN manager_consultation_prompt TEXT")
             print("✅ Добавлена колонка manager_consultation_prompt")
+            conn.commit()
+        if 'booking_time_logic' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN booking_time_logic TEXT")
+            print("✅ Добавлена колонка booking_time_logic")
+            conn.commit()
+        
+        if 'booking_data_collection' not in columns:
+            c.execute("ALTER TABLE bot_settings ADD COLUMN booking_data_collection TEXT")
+            print("✅ Добавлена колонка booking_data_collection")
             conn.commit()
     except Exception as e:
         print(f"⚠️  Ошибка при добавлении колонок: {e}")
@@ -625,6 +659,8 @@ def migrate_settings():
             ad_campaign_detection = ?,
             pre_booking_data_collection = ?,
             updated_at = ?
+            booking_time_logic = ?,
+            booking_data_collection = ?,
             WHERE id = 1""",
             (
                 settings['bot_name'],
@@ -668,6 +704,8 @@ def migrate_settings():
                 settings.get('success_metrics', ''),
                 settings.get('ad_campaign_detection', ''),
                 settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
+                settings.get('booking_time_logic', ''),
+                settings.get('booking_data_collection', ''),
                 now
                 ))
             print("   ✅ bot_settings обновлены (40 полей)")
@@ -686,7 +724,7 @@ def migrate_settings():
                 anti_patterns, voice_message_response, contextual_rules,
                 safety_guidelines, example_good_responses, algorithm_actions,
                 location_features, seasonality, emergency_situations, success_metrics,
-                ad_campaign_detection, pre_booking_data_collection,
+                ad_campaign_detection, pre_booking_data_collection,booking_time_logic, booking_data_collection,
                 updated_at
             ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
@@ -731,6 +769,8 @@ def migrate_settings():
                 settings.get('success_metrics', ''),
                 settings.get('ad_campaign_detection', ''),
                 settings.get('pre_booking_data_collection', 'Для записи нужно имя и WhatsApp — это займет секунду! 😊'),
+                settings.get('booking_time_logic', ''),
+                settings.get('booking_data_collection', ''),
                 now
             ))
             print("   ✅ bot_settings созданы (40 полей)")
