@@ -364,31 +364,56 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         # ✅ Определяем услугу из контекста
         if not service_name and history:
-            # Берём больше сообщений + проверяем ПОСЛЕДНЕЕ сообщение клиента отдельно
-            last_messages = history[-10:]  # Увеличили с 5 до 10
+            # КРИТИЧНО: Анализируем последние сообщения для понимания контекста
+            last_messages = history[-15:]  # Берем больше контекста
 
-            # Сначала проверяем самое последнее сообщение клиента
+            # Сначала проверяем: бот недавно показывал список услуг?
+            bot_showed_service_list = False
+            for item in reversed(last_messages[-5:]):  # Последние 5 сообщений
+                if len(item) >= 2:
+                    msg = item[0]
+                    sender = item[1]
+                    if sender == 'assistant' and any(word in msg.lower() for word in ['маникюр / педикюр', 'услуга интересует', 'какая услуга']):
+                        bot_showed_service_list = True
+                        break
+
             for item in reversed(last_messages):
                 if len(item) >= 2:
                     msg = item[0]
                     sender = item[1]
-
+            
                     if sender == 'client':
                         msg_lower = msg.lower().strip()
+                        
+                        # КРИТИЧНО: Если бот только что показал список, даже ОДНО слово = выбор услуги
+                        if bot_showed_service_list:
+                            # Макияж и перманентный макияж
+                            if any(word in msg_lower for word in ['макияж', 'makeup', 'مكياج', 'перманент', 'permanent']):
+                                service_name = 'Makeup'
+                                break
+                            # Ресницы и брови
+                            elif any(word in msg_lower for word in ['ресниц', 'брови', 'brow', 'lash', 'رموش', 'حواجب']):
+                                service_name = 'Lashes'
+                                break
+                            # Массаж
+                            elif any(word in msg_lower for word in ['массаж', 'massage', 'тдليك', 'спа', 'spa']):
+                                service_name = 'Massage'
+                                break
+                            # Эпиляция
+                            elif any(word in msg_lower for word in ['эпиляц', 'wax', 'إزالة', 'шугар', 'sugar']):
+                                service_name = 'Waxing'
+                                break
+                            # Чистка лица
+                            elif any(word in msg_lower for word in ['чистка', 'пилинг', 'facial', 'peel', 'تنظيف']):
+                                service_name = 'Facial'
+                                break
+                            # Баня
+                            elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
+                                service_name = 'Hammam'
+                                break
 
-                        # Расширенные ключевые слова
-                        if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
-                            service_name = 'Manicure'
-                            break
-                        elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
-                            service_name = 'Pedicure'
-                            break
-                        elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
-                            service_name = 'Hair'
-                            break
-                        elif any(word in msg_lower for word in ['массаж', 'massage', 'تدليك', 'масаж']):
-                            service_name = 'Massage'
-                            break
+            # Расширенные ключевые слова для маникюра
+            if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
 
         
         
