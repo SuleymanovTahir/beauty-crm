@@ -3,7 +3,7 @@
 Интеграция с Google Gemini AI
 """
 import google.generativeai as genai
-from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY, GEMINI_MODEL
 
 # Конфигурируем Gemini
 genai.configure(api_key=GEMINI_API_KEY)
@@ -20,7 +20,7 @@ async def ask_gemini(prompt: str, context: str = "") -> str:
     Returns:
         str: Ответ от AI или fallback сообщение при ошибке
     """
-    model = genai.GenerativeModel('gemini-2.0-flash-exp')
+    model = genai.GenerativeModel(GEMINI_MODEL)
     full_prompt = f"{context}\n\n{prompt}" if context else prompt
     
     try:

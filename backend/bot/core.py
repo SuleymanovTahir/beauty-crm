@@ -6,7 +6,7 @@ import asyncio
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 
-from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,
@@ -31,11 +31,11 @@ class SalonBot:
         # ✅ Настройка прокси для обхода геоблокировки
         environment = os.getenv("ENVIRONMENT", "development")
         proxy_url_raw = os.getenv("PROXY_URL", "")
-        
+
         print("=" * 50)
         print(f"🔍 ENVIRONMENT: {environment}")
         print(f"🔍 PROXY_URL: {'установлен' if proxy_url_raw else 'не установлен'}")
-        
+
         # Прокси активны только если:
         # 1. Окружение = production
         # 2. PROXY_URL не пустой
@@ -49,7 +49,7 @@ class SalonBot:
 
         # Настраиваем Gemini (для fallback без прокси)
         genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        self.model = genai.GenerativeModel(GEMINI_MODEL)
 
         print("✅ Бот инициализирован (Gemini через прокси)")
 
@@ -154,7 +154,7 @@ class SalonBot:
 
     async def _generate_via_proxy(self, prompt: str, max_retries: int = 3) -> str:
         """Генерация через Gemini REST API с прокси и retry механизмом"""
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 
         max_chars = self.bot_settings.get('max_message_chars', 500)
         max_tokens = int(max_chars / 2.5)

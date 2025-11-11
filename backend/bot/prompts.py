@@ -91,7 +91,11 @@ class PromptBuilder:
 
 {self.bot_settings.get('communication_style', '')}
 
-{self.bot_settings.get('emoji_usage', '')}"""
+{self.bot_settings.get('emoji_usage', '')}
+
+⚠️ КРИТИЧЕСКАЯ ИНСТРУКЦИЯ:
+НИКОГДА не пиши текст "Извините, я сейчас перегружен запросами" или подобные технические сообщения.
+Это служебное сообщение системы, НЕ твоё!"""
 
     def _build_language_settings(self, language: str) -> str:
         """Языковые настройки - из БД"""
@@ -239,14 +243,33 @@ Google Maps: {self.salon.get('google_maps', '')}
         if not history:
             return ""
 
-        history_text = "💬 ИСТОРИЯ (последние 5):\n"
+        # ✅ Фильтруем fallback и технические сообщения
+        fallback_phrases = [
+            "Извините, я сейчас перегружен",
+            "I'm overloaded with requests",
+            "أنا محمل بالطلبات",
+            "что-то пошло не так"
+        ]
 
-        for item in history[-5:]:
+        filtered_history = []
+        for item in history[-10:]:  # Берём последние 10
             if len(item) >= 5:
                 msg, sender, timestamp, msg_type, msg_id = item
             else:
                 msg, sender, timestamp, msg_type = item
 
+            # Пропускаем fallback сообщения
+            if any(phrase in msg for phrase in fallback_phrases):
+                continue
+            
+            filtered_history.append((msg, sender, timestamp, msg_type if len(item) > 3 else 'text'))
+
+        if not filtered_history:
+            return ""
+
+        history_text = "💬 ИСТОРИЯ (последние сообщения):\n"
+
+        for msg, sender, timestamp, msg_type in filtered_history[-5:]:  # Показываем последние 5
             role = "Клиент" if sender == "client" else "Ты"
             if msg_type == 'voice':
                 history_text += f"{role}: [Голосовое]\n"
