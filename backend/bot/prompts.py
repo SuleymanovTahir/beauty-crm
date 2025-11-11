@@ -390,6 +390,8 @@ Google Maps: {self.salon.get('google_maps', '')}
                             service_name = 'Massage'
                             break
 
+        
+        
         # ✅ Получаем инструкции из БД
         instructions = self.bot_settings.get('booking_availability_instructions', '')
         
@@ -403,7 +405,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         # ✅ УСЛУГА ОПРЕДЕЛЕНА - показываем мастеров
         c.execute("""
             SELECT id FROM services 
-            WHERE name_ru LIKE ? OR name_en LIKE ? OR name_ar LIKE ?
+            WHERE name LIKE ? OR name_ru LIKE ? OR name_ar LIKE ?
             LIMIT 1
         """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
         service_row = c.fetchone()
