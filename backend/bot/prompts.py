@@ -364,25 +364,32 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         # ✅ Определяем услугу из контекста
         if not service_name and history:
-            last_messages = history[-5:]
-            for item in last_messages:
+            # Берём больше сообщений + проверяем ПОСЛЕДНЕЕ сообщение клиента отдельно
+            last_messages = history[-10:]  # Увеличили с 5 до 10
+
+            # Сначала проверяем самое последнее сообщение клиента
+            for item in reversed(last_messages):
                 if len(item) >= 2:
                     msg = item[0]
                     sender = item[1]
-                    
+
                     if sender == 'client':
-                        msg_lower = msg.lower()
-                        
-                        if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'nails', 'nail']):
+                        msg_lower = msg.lower().strip()
+
+                        # Расширенные ключевые слова
+                        if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
                             service_name = 'Manicure'
                             break
-                        elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير']):
+                        elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
                             service_name = 'Pedicure'
                             break
-                        elif any(word in msg_lower for word in ['волос', 'стрижка', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist']):
+                        elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
                             service_name = 'Hair'
                             break
-                        
+                        elif any(word in msg_lower for word in ['массаж', 'massage', 'تدليك', 'масаж']):
+                            service_name = 'Massage'
+                            break
+
         # ✅ Получаем инструкции из БД
         instructions = self.bot_settings.get('booking_availability_instructions', '')
         
