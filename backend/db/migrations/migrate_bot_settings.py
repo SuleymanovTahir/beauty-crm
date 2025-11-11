@@ -419,13 +419,12 @@ def parse_instructions_file() -> dict:
     settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
     
     # ✅ ГАРАНТИРОВАННО БЕРЕМ ИЗ DEFAULT_SETTINGS
-    if 'booking_time_logic' not in settings or not settings.get('booking_time_logic'):
-        settings['booking_time_logic'] = DEFAULT_SETTINGS['booking_time_logic']
-        print(f"   ✅ Использую booking_time_logic из DEFAULT_SETTINGS")
-    
+
     if 'booking_data_collection' not in settings or not settings.get('booking_data_collection'):
         settings['booking_data_collection'] = DEFAULT_SETTINGS['booking_data_collection']
         print(f"   ✅ Использую booking_data_collection из DEFAULT_SETTINGS")
+    else:
+        print(f"   ✅ booking_data_collection найдена в файле ({len(settings['booking_data_collection'])} символов)")
     
     if 'booking_time_logic' not in settings:
         settings['booking_time_logic'] = """A) Проверь пожелания клиента

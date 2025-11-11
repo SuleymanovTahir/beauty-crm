@@ -159,7 +159,8 @@ def get_bot_settings() -> dict:
             
             log_info(f"✅ Loaded bot settings with {len(columns)} columns", "database")
             
-            return {
+            # ✅ Создаём словарь result вместо прямого return
+            result_dict = {
                 "id": row_dict.get("id"),
                 "bot_name": row_dict.get("bot_name", "M.Le Diamant Assistant"),
                 "personality_traits": row_dict.get("personality_traits", ""),
@@ -173,7 +174,7 @@ def get_bot_settings() -> dict:
                 "upsell_techniques": row_dict.get("upsell_techniques", ""),
                 "communication_style": row_dict.get("communication_style", ""),
                 "max_message_chars": row_dict.get("max_message_chars", 300),
-                "max_message_length": row_dict.get("max_message_length", 4),  # deprecated
+                "max_message_length": row_dict.get("max_message_length", 4),
                 "emoji_usage": row_dict.get("emoji_usage", ""),
                 "languages_supported": row_dict.get("languages_supported", "ru,en,ar"),
                 "objection_handling": row_dict.get("objection_handling", ""),
@@ -208,8 +209,22 @@ def get_bot_settings() -> dict:
                 "ad_campaign_detection": row_dict.get("ad_campaign_detection", ""),
                 "pre_booking_data_collection": row_dict.get("pre_booking_data_collection", ""),
                 "manager_consultation_prompt": row_dict.get("manager_consultation_prompt", ""),
+                "booking_time_logic": row_dict.get("booking_time_logic", ""),
+                "booking_data_collection": row_dict.get("booking_data_collection", ""),
                 "updated_at": row_dict.get("updated_at"),
             }
+            
+            # ✅ Дозаполняем критические пустые поля дефолтами
+            defaults = _get_default_bot_settings()
+            if not result_dict.get('booking_time_logic'):
+                result_dict['booking_time_logic'] = defaults['booking_time_logic']
+                log_info("✅ Дозаполнено booking_time_logic из дефолтов", "database")
+            if not result_dict.get('booking_data_collection'):
+                result_dict['booking_data_collection'] = defaults['booking_data_collection']
+                log_info("✅ Дозаполнено booking_data_collection из дефолтов", "database")
+            
+            return result_dict
+            
         else:
             log_warning("⚠️ Настройки бота пусты, используются дефолты", "database")
             return _get_default_bot_settings()
@@ -279,6 +294,38 @@ def _get_default_bot_settings() -> dict:
         "ad_campaign_detection": "",
         "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
         "manager_consultation_prompt": "",
+        "booking_time_logic": """🎯 ЛОГИКА ВЫБОРА ВРЕМЕНИ:
+
+A) Проверь пожелания клиента:
+   - Указал дату? → предлагай эту дату
+   - Указал время? → предлагай это время
+   - Указал мастера? → смотри когда этот мастер работает
+
+B) Проверь историю клиента:
+   - В какое время обычно записывался
+   - В какой день недели
+   - К какому мастеру ходил
+
+C) Анализируй текущее время:
+   - Клиент пишет утром → НЕ предлагай через час
+   - Предлагай через 3-4 часа минимум ИЛИ на другие дни
+
+D) Предлагай КОНКРЕТНОЕ время:
+   ✅ "Есть завтра в 15:00 у Дианы или послезавтра в 11:00. Что подходит?"
+
+G) 🧠 ВКЛЮЧАЙ СМЕКАЛКУ - НЕ СДАВАЙСЯ!
+   → Дата важна? → предложи другого мастера
+   → Мастер важен? → предложи другую дату""",
+        "booking_data_collection": """Отлично! Для записи нужно:
+- Имя
+- WhatsApp номер
+
+Как вас зовут?
+
+После получения имени:
+"Спасибо, [Имя]! WhatsApp номер?"
+
+Затем предлагай конкретное время из расписания.""",
         "updated_at": None
     }
 
