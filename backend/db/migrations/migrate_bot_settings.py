@@ -730,8 +730,14 @@ def create_tables(conn):
                 "ALTER TABLE bot_settings ADD COLUMN booking_data_collection TEXT")
             print("✅ Добавлена колонка booking_data_collection")
             conn.commit()
+        if 'booking_availability_instructions' not in columns:
+            c.execute(
+                "ALTER TABLE bot_settings ADD COLUMN booking_availability_instructions TEXT")
+            print("✅ Добавлена колонка booking_availability_instructions")
+            conn.commit()
     except Exception as e:
         print(f"⚠️  Ошибка при добавлении колонок: {e}")
+
 
     conn.commit()
 

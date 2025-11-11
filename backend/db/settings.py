@@ -448,6 +448,9 @@ def update_bot_settings(data: dict) -> bool:
             'ad_campaign_detection': 'ad_campaign_detection',
             'pre_booking_data_collection': 'pre_booking_data_collection',
             'manager_consultation_prompt': 'manager_consultation_prompt',
+            'booking_time_logic': 'booking_time_logic',
+            'booking_data_collection': 'booking_data_collection',
+            'booking_availability_instructions': 'booking_availability_instructions',
         }
 
         for data_key, db_column in field_mapping.items():
