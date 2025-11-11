@@ -285,166 +285,133 @@ Google Maps: {self.salon.get('google_maps', '')}
         master_name: str = "",
         preferred_date: str = ""
     ) -> str:
-        """Построить информацию о доступности мастеров с РАСПИСАНИЕМ"""
-        from db.employees import get_employees_by_service, get_all_employees
+        """Построить информацию о доступности с расширенным поиском и умной логикой"""
+        from db.schedule import get_available_slots, get_client_booking_history
+        from db.masters import get_master_by_name
         from collections import Counter
         
-        conn = sqlite3.connect(DATABASE_NAME)
-        c = conn.cursor()
-        
-        # История клиента для персонализации
-        c.execute("""
-            SELECT service_name, datetime 
-            FROM bookings 
-            WHERE instagram_id = ? AND status != 'cancelled'
-            ORDER BY created_at DESC 
-            LIMIT 5
-        """, (instagram_id,))
-        history_raw = c.fetchall()
-        
-        history = []
-        for row in history_raw:
-            try:
-                dt = datetime.fromisoformat(row[1])
-                history.append({
-                    'service': row[0],
-                    'weekday': dt.strftime('%A'),
-                    'time': dt.strftime('%H:%M')
-                })
-            except:
-                pass
-        
-        # Поиск employee_id по имени мастера
-        employee_id = None
+        master_id = None
         if master_name:
-            employees = get_all_employees(active_only=True)
-            for emp in employees:
-                if master_name.lower() in emp[1].lower():
-                    employee_id = emp[0]
-                    break
+            master = get_master_by_name(master_name)
+            if master:
+                master_id = master[0]
         
-        # Получаем мастеров для услуги
-        if service_name:
-            c.execute("""
-                SELECT id FROM services 
-                WHERE name_ru LIKE ? OR name_en LIKE ? OR name_ar LIKE ?
-                LIMIT 1
-            """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
-            service_row = c.fetchone()
-            
-            if service_row:
-                service_id = service_row[0]
-                employees = get_employees_by_service(service_id)
-            else:
-                employees = get_all_employees(active_only=True)
-            
-            availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
-            
-            for emp in employees[:5]:
-                emp_id = emp[0]
-                emp_name = emp[1]
-                emp_position = emp[2]
-                
-                availability_text += f"👤 {emp_name}\n"
-                availability_text += f"   Должность: {emp_position}\n"
-                
-                # Получаем специализацию
-                c.execute("""
-                    SELECT s.name_ru 
-                    FROM services s
-                    JOIN employee_services es ON s.id = es.service_id
-                    WHERE es.employee_id = ?
-                    LIMIT 3
-                """, (emp_id,))
-                services = [row[0] for row in c.fetchall()]
-                
-                if services:
-                    availability_text += f"   Специализация: {', '.join(services)}\n"
-                
-                # Расписание мастера
-                c.execute("""
-                    SELECT day_of_week, start_time, end_time
-                    FROM employee_schedule
-                    WHERE employee_id = ? AND is_active = 1
-                    ORDER BY day_of_week
-                """, (emp_id,))
-                schedule_rows = c.fetchall()
-                
-                if schedule_rows:
-                    days_map = {0: 'Пн', 1: 'Вт', 2: 'Ср', 3: 'Чт', 4: 'Пт', 5: 'Сб', 6: 'Вс'}
-                    schedule_str = ", ".join([
-                        f"{days_map[row[0]]} {row[1]}-{row[2]}" 
-                        for row in schedule_rows
-                    ])
-                    availability_text += f"   График: {schedule_str}\n"
-                
-                # Выходные мастера
-                today = datetime.now().strftime("%Y-%m-%d")
-                c.execute("""
-                    SELECT date_from, date_to, reason
-                    FROM employee_time_off
-                    WHERE employee_id = ? AND date_to >= ?
-                    ORDER BY date_from
-                    LIMIT 3
-                """, (emp_id, today))
-                time_offs = c.fetchall()
-                
-                if time_offs:
-                    for off in time_offs:
-                        date_from = datetime.strptime(off[0], "%Y-%m-%d").strftime("%d.%m")
-                        date_to = datetime.strptime(off[1], "%Y-%m-%d").strftime("%d.%m")
-                        reason = off[2] or "Выходной"
-                        availability_text += f"   ❌ Не работает: {date_from}-{date_to} ({reason})\n"
-                
-                availability_text += "\n"
-        else:
-            employees = get_all_employees(active_only=True)
-            availability_text = "👥 НАШИ МАСТЕРА И ИХ ГРАФИК:\n\n"
-            
-            for emp in employees[:6]:
-                emp_id = emp[0]
-                emp_name = emp[1]
-                emp_position = emp[2]
-                
-                availability_text += f"• {emp_name} - {emp_position}\n"
-                
-                c.execute("""
-                    SELECT day_of_week, start_time, end_time
-                    FROM employee_schedule
-                    WHERE employee_id = ? AND is_active = 1
-                    ORDER BY day_of_week
-                """, (emp_id,))
-                schedule_rows = c.fetchall()
-                
-                if schedule_rows:
-                    days_map = {0: 'Пн', 1: 'Вт', 2: 'Ср', 3: 'Чт', 4: 'Пт', 5: 'Сб', 6: 'Вс'}
-                    schedule_str = ", ".join([
-                        f"{days_map[row[0]]} {row[1]}-{row[2]}" 
-                        for row in schedule_rows
-                    ])
-                    availability_text += f"  График: {schedule_str}\n"
-                
-                availability_text += "\n"
+        # История для анализа предпочтений
+        history = get_client_booking_history(instagram_id, limit=5)
         
-        # Анализ истории
+        # ✅ ПОИСК СЛОТОВ С РАСШИРЕНИЕМ ПЕРИОДА
+        slots = get_available_slots(
+            service_name=service_name,
+            master_id=master_id,
+            date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
+            days_ahead=14,
+            limit=15
+        )
+        
+        if not slots:
+            slots = get_available_slots(
+                service_name=service_name,
+                master_id=master_id,
+                date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
+                days_ahead=30,
+                limit=15
+            )
+        
+        if not slots:
+            slots = get_available_slots(
+                service_name=service_name,
+                master_id=master_id,
+                date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
+                days_ahead=60,
+                limit=15
+            )
+        
+        if not slots:
+            phone = self.salon.get('phone', '[PHONE]')
+            return f"""⚠️ К сожалению, все мастера заняты на ближайшие 2 месяца.
+        
+Рекомендую:
+- Позвонить напрямую: {phone} - возможно освободится окно
+- Оставить контакт - мы позвоним когда появится свободное время"""
+        
+        # Анализируем историю для предпочтений
+        preferred_time = None
+        preferred_weekday = None
+        preferred_master = None
+        
         if history:
-            weekdays = [h['weekday'] for h in history]
-            times = [h['time'] for h in history]
-            
-            if weekdays:
-                preferred_day = Counter(weekdays).most_common(1)[0][0]
-                availability_text += f"\n💡 Обычно вы записываетесь в {preferred_day}\n"
-            
+            times = [h['time'] for h in history if 'time' in h]
             if times:
-                preferred_time = Counter(times).most_common(1)[0][0]
-                availability_text += f"💡 Обычно в {preferred_time}\n"
+                time_counts = Counter(times)
+                preferred_time = time_counts.most_common(1)[0][0] if time_counts else None
+            
+            weekdays = [h['weekday'] for h in history if 'weekday' in h]
+            if weekdays:
+                weekday_counts = Counter(weekdays)
+                preferred_weekday = weekday_counts.most_common(1)[0][0] if weekday_counts else None
+            
+            masters = [h['master'] for h in history if h.get('master')]
+            if masters:
+                master_counts = Counter(masters)
+                preferred_master = master_counts.most_common(1)[0][0] if master_counts else None
+        
+        # ✅ ФОРМИРУЕМ ТЕКСТ
+        availability_text = "📅 СВОБОДНЫЕ ОКНА:\n\n"
+        
+        first_slot_date = datetime.strptime(slots[0]['date'], "%Y-%m-%d")
+        today = datetime.now()
+        days_diff = (first_slot_date - today).days
+        
+        if days_diff <= 7:
+            period_note = ""
+        elif days_diff <= 14:
+            period_note = "💡 Ближайшие дни заполнены, показываю через 1-2 недели\n\n"
+        elif days_diff <= 30:
+            period_note = "💡 Ближайшие недели заполнены, показываю свободные окна через месяц\n\n"
+        else:
+            period_note = "💡 Мастера очень загружены, но есть окна через 1-2 месяца\n\n"
+        
+        availability_text += period_note
+        
+        # Группируем по дням
+        slots_by_date = {}
+        for slot in slots:
+            date = slot['date']
+            if date not in slots_by_date:
+                slots_by_date[date] = []
+            slots_by_date[date].append(slot)
+        
+        # Показываем первые 3 дня
+        for date, day_slots in list(slots_by_date.items())[:3]:
+            try:
+                dt = datetime.strptime(date, "%Y-%m-%d")
+                date_formatted = dt.strftime("%d.%m (%A)")
+            except:
+                date_formatted = date
+            
+            availability_text += f"📆 {date_formatted}:\n"
+            
+            for slot in day_slots[:4]:
+                time_range = f"{slot['time_start']}-{slot['time_end']}"
+                master = slot['master_name']
+                
+                marker = ""
+                if preferred_master and master == preferred_master:
+                    marker = " ⭐"
+                elif preferred_time and slot['time_start'] == preferred_time:
+                    marker = " 🕐"
+                
+                availability_text += f"  • {time_range} - {master}{marker}\n"
+            
+            availability_text += "\n"
+        
+        # Подсказки о предпочтениях
+        if preferred_master:
+            availability_text += f"💡 Обычно вы записываетесь к {preferred_master}\n"
+        if preferred_time:
+            availability_text += f"💡 Обычно в {preferred_time}\n"
         
         booking_url = self.salon.get('booking_url', '')
-        now = datetime.now()
-        min_booking_time = now + timedelta(hours=3)  # Минимум через 3 часа
-                
-        availability_text += f"\n💡 Показаны ближайшие реальные окна (учтено время на дорогу)"
         availability_text += f"\n📲 Или выберите сами: {booking_url}"
         
-        conn.close()
         return availability_text
