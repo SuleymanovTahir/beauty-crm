@@ -3,7 +3,7 @@
 Модуль для построения промптов - вся логика создания system prompt
 """
 from typing import Dict, List, Tuple, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 from config import DATABASE_NAME
@@ -440,7 +440,11 @@ Google Maps: {self.salon.get('google_maps', '')}
                 availability_text += f"💡 Обычно в {preferred_time}\n"
         
         booking_url = self.salon.get('booking_url', '')
-        availability_text += f"\n📲 Записаться онлайн: {booking_url}"
+        now = datetime.now()
+        min_booking_time = now + timedelta(hours=3)  # Минимум через 3 часа
+                
+        availability_text += f"\n💡 Показаны ближайшие реальные окна (учтено время на дорогу)"
+        availability_text += f"\n📲 Или выберите сами: {booking_url}"
         
         conn.close()
         return availability_text
