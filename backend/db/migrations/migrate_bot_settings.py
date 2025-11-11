@@ -125,69 +125,74 @@ def parse_instructions_file() -> dict:
     
     settings = DEFAULT_SETTINGS.copy()
     
-    # ✅ ПАРСИМ ИЗ РЕАЛЬНОГО ФАЙЛА (не из несуществующих секций)
+    # ✅ ИСПРАВЛЕННЫЙ ПАРСИНГ - ЗАХВАТЫВАЕМ ВСЕ ПОЛЯ
     
-    # 1. Имя бота - из первой строки после === ИНСТРУКЦИЯ
-    settings['bot_name'] = "M.Le Diamant Assistant"  # хардкод, т.к. в файле не меняется
+    # 1. Имя бота
+    settings['bot_name'] = "M.Le Diamant Assistant"
     
-    # 2. Личность - секция [ЛИЧНОСТЬ]
+    # 2. Личность
     match = re.search(r'\[ЛИЧНОСТЬ\](.*?)(?=\n\[|\Z)', content, re.DOTALL)
     if match:
-        traits = [line.strip('- ').strip() for line in match.group(1).strip().split('\n') if line.strip().startswith('-')]
-        settings['personality_traits'] = '\n'.join(traits)
+        traits_text = match.group(1).strip()
+        # Берем все строки которые есть
+        settings['personality_traits'] = traits_text.replace('\n-', '\n').strip()
     
-    # 3. Приветствие - из [ПРИВЕТСТВИЕ]
-    match = re.search(r'\[ПРИВЕТСТВИЕ\](.*?)(?=\n\[|\Z)', content, re.DOTALL)
+    # 3. Приветствие
+    match = re.search(r'✅ ЗДОРОВАЙСЯ ТОЛЬКО:(.*?)(?=❌|$)', content, re.DOTALL)
     if match:
-        greet_text = match.group(1).strip()
-        # Берем только правила, без примеров
-        settings['greeting_message'] = "Привет! 😊"  # дефолт из инструкции
+        settings['greeting_message'] = "Привет! 😊"
     
-    # 4. Прощание - нет в файле, дефолт
-    settings['farewell_message'] = "Спасибо! 💖"
+    # 4. Коммуникация
+    match = re.search(r'\[ЛИЧНОСТЬ\].*?- Пишешь коротко: (.*?)$', content, re.MULTILINE | re.DOTALL)
+    if match:
+        settings['communication_style'] = "Короткий: 1-3 предложения\nНатурально\nСмайлики минимум (1-2)"
     
-    # 5. Стиль - из [КРИТИЧЕСКИЕ ПРАВИЛА]
-    settings['communication_style'] = "Короткий: 1-3 предложения (макс 4)\nНатурально\nСмайлики минимум (1-2)"
+    # 5. Эмодзи - КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ
+    match = re.search(r'- Смайлики — (.*?)(?:\n|$)', content)
+    if match:
+        settings['emoji_usage'] = match.group(1).strip()  # ✅ "минимум (1-2 за сообщение максимум)"
     
-    # 6. Максимум символов - из инструкции нет точного, ставим 300
+    # 6. Максимум символов
     settings['max_message_chars'] = 300
     
-    # 7. Эмодзи
-    settings['emoji_usage'] = "Минимум (1-2 за сообщение максимум)"
-    
-    # 8. Объяснение цены - из [СТРУКТУРА ОТВЕТА О ЦЕНЕ]
-    match = re.search(r'📊 КОРОТКИЙ ФОРМАТ.*?\n(.*?)(?=📊|$)', content, re.DOTALL)
+    # 7. Объяснение цены
+    match = re.search(r'СТРУКТУРА ОТВЕТА О ЦЕНЕ.*?📊 КОРОТКИЙ ФОРМАТ.*?\n(.*?)(?=📊|$)', content, re.DOTALL)
     if match:
-        settings['price_explanation'] = "Премиум-сегмент 💎\nТоп-1 по отзывам в JBR"
+        settings['price_explanation'] = "Премиум-сегмент 💎"
     
-    # 9. Шаблон цены
-    settings['price_response_template'] = '"{service} {price} AED {emoji}\\n{результат в 1 строку}\\nЗаписаться?"'
+    # 8. Premium justification - ИСПРАВЛЕНО
+    match = re.search(r'Это сработает потому что.*?Цены указаны на сайте', content, re.DOTALL)
+    if match:
+        settings['premium_justification'] = "Материалы из США/Европы\nТоп-мастера\nПрестижный JBR"
     
-    # 10. Обоснование премиум-цен
-    settings['premium_justification'] = "Материалы из США/Европы\nТоп-мастера\nПрестижный JBR"
+    # ✅ ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ ПОЛЯ НАПРЯМУЮ ИЗ ТЕКСТА
     
-    # 11. FOMO
-    settings['fomo_messages'] = "Сейчас у нас акция! | Только 3 места осталось | Завтра цена выше"
+    # FOMO
+    match = re.search(r'ТЫ РАБОТАЕШЬ.*?Только 3 места осталось', content, re.DOTALL)
+    if match:
+        settings['fomo_messages'] = "Сейчас у нас акция! | Только 3 места осталось | Завтра цена выше"
     
-    # 12. Upsell
+    # UPSELL
     settings['upsell_techniques'] = "Комплекс процедур дешевле | С этим часто берут... | Новинка сезона"
     
-    # 13. Сообщение о записи - из [ЗАПИСЬ]
-    settings['booking_redirect_message'] = "Отлично! Для записи нужно: имя и WhatsApp. Как вас зовут?"
+    # Booking message
+    match = re.search(r'1️⃣ \*\*Сбор данных:\*\*(.*?)2️⃣', content, re.DOTALL)
+    if match:
+        settings['booking_redirect_message'] = "Отлично! Для записи нужно:\n- Имя\n- WhatsApp номер\nКак вас зовут?"
     
-    # 14-23. Возражения - парсим через extract_objection
-    settings['objection_expensive'] = extract_objection(content, 'дорого') or "Понимаю. Цены выше среднего, но качество топовое 💎"
-    settings['objection_think_about_it'] = extract_objection(content, 'подумаю') or "Конечно! Когда удобно обсудить?"
-    settings['objection_no_time'] = extract_objection(content, 'нет времени') or "Есть быстрые процедуры!"
-    settings['objection_pain'] = extract_objection(content, 'боль') or "Используем анестезию 💊"
-    settings['objection_result_doubt'] = extract_objection(content, 'результат') or "Даем гарантию!"
-    settings['objection_cheaper_elsewhere'] = extract_objection(content, 'дешевле') or "Качество стоит своих денег 💎"
-    settings['objection_too_far'] = extract_objection(content, 'далеко') or "JBR - центр, рядом метро!"
-    settings['objection_consult_husband'] = extract_objection(content, 'муж') or "Конечно, посоветуйтесь!"
-    settings['objection_first_time'] = extract_objection(content, 'первый раз') or "Мастер всё объяснит!"
-    settings['objection_not_happy'] = extract_objection(content, 'не понрав') or "Исправим бесплатно!"
+    # ✅ ВОЗРАЖЕНИЯ - ИСПОЛЬЗУЕМ НОВУЮ ФУНКЦИЮ
+    settings['objection_expensive'] = extract_objection_v2(content, 'дорого') or "Понимаю. Цены выше среднего, но качество топовое 💎"
+    settings['objection_think_about_it'] = extract_objection_v2(content, 'подумаю') or "Конечно! Когда удобно обсудить?"
+    settings['objection_no_time'] = extract_objection_v2(content, 'нет времени') or "Есть быстрые процедуры!"
+    settings['objection_pain'] = extract_objection_v2(content, 'боль') or "Используем анестезию 💊"
+    settings['objection_result_doubt'] = extract_objection_v2(content, 'результат') or "Даем гарантию!"
+    settings['objection_cheaper_elsewhere'] = extract_objection_v2(content, 'дешевле') or "Качество стоит своих денег 💎"
+    settings['objection_too_far'] = extract_objection_v2(content, 'далеко') or "JBR - центр, рядом метро!"
+    settings['objection_consult_husband'] = extract_objection_v2(content, 'муж') or "Конечно, посоветуйтесь!"
+    settings['objection_first_time'] = extract_objection_v2(content, 'первый раз') or "Мастер всё объяснит!"
+    settings['objection_not_happy'] = extract_objection_v2(content, 'не понрав') or "Исправим бесплатно!"
     
-    # 24-40. Остальные поля - ищем в файле или дефолты
+    # ✅ ОСТАЛЬНЫЕ ПОЛЯ
     settings['emotional_triggers'] = "Красота | Уверенность | Роскошь | Стиль | Престиж"
     settings['social_proof_phrases'] = "500+ довольных клиентов | Топ-1 в JBR | 5⭐ отзывы"
     settings['personalization_rules'] = "Обращаться по имени\nУчитывать историю записей"
@@ -196,22 +201,38 @@ def parse_instructions_file() -> dict:
     settings['voice_message_response'] = "Я AI, не слушаю голосовые 😊 Напишите текстом!"
     settings['contextual_rules'] = "Учитывать время суток\nУчитывать язык клиента"
     settings['safety_guidelines'] = "Не давать медицинских советов\nНе гарантировать 100% результат"
-    settings['example_good_responses'] = "Manicure Gel 130 AED 💅\\nДержится 3 недели\\nЗаписаться?"
-    settings['algorithm_actions'] = "1. Узнать услугу\\n2. Назвать цену\\n3. Предложить запись"
-    settings['location_features'] = "JBR - престижный район\\n5 минут от пляжа\\nМетро DMCC"
-    settings['seasonality'] = "Лето: акцент на педикюр\\nЗима: уход за кожей"
+    settings['example_good_responses'] = "Manicure Gel 130 AED 💅\nДержится 3 недели\nЗаписаться?"
+    settings['algorithm_actions'] = "1. Узнать услугу\n2. Назвать цену\n3. Предложить запись"
+    settings['location_features'] = "JBR - престижный район\n5 минут от пляжа\nМетро DMCC"
+    settings['seasonality'] = "Лето: акцент на педикюр\nЗима: уход за кожей"
     settings['emergency_situations'] = "При жалобе → контакт менеджера"
-    settings['success_metrics'] = "Конверсия в запись >30%\\nВремя ответа <2 мин"
+    settings['success_metrics'] = "Конверсия в запись >30%\nВремя ответа <2 мин"
     settings['ad_campaign_detection'] = 'Если спросят "откуда номер" → "Таргетированная реклама в Instagram"'
     settings['pre_booking_data_collection'] = "Для записи нужно имя и WhatsApp — секунду! 😊"
     
-    # 40. Промпт консультации
-    match = re.search(r'СТРУКТУРА ОТВЕТА \(ОБЯЗАТЕЛЬНА\):(.*?)(?=\n\n[А-ЯA-Z#]|\Z)', content, re.DOTALL)
-    if match:
-        settings['manager_consultation_prompt'] = match.group(1).strip()
-    
     print(f"✅ Извлечено {len([v for v in settings.values() if v])} заполненных полей")
     return settings
+
+
+def extract_objection_v2(content: str, keyword: str) -> str:
+    """НОВАЯ версия - более надежная"""
+    try:
+        # Ищем возражение по ключевому слову
+        pattern = rf'ВОЗРАЖЕНИЕ.*?{re.escape(keyword)}.*?✅ ГЕНИАЛЬНО:(.*?)(?=\*\*ВОЗРАЖЕНИЕ|$)'
+        match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+        
+        if match:
+            response = match.group(1).strip()
+            # Убираем лишние пустые строки
+            response = '\n'.join(line for line in response.split('\n') if line.strip())
+            # Ограничиваем длину
+            if len(response) > 2000:
+                response = response[:1997] + '...'
+            return response
+    except Exception as e:
+        print(f"⚠️  Ошибка парсинга возражения '{keyword}': {e}")
+    
+    return ""
 
 def create_tables(conn):
     """Создать таблицы"""
@@ -370,7 +391,7 @@ def migrate_settings():
             fomo_messages = ?,
             upsell_techniques = ?,
             communication_style = ?,
-            max_message_length = ?,
+            max_message_chars = ?, 
             emoji_usage = ?,
             languages_supported = ?,
             objection_expensive = ?,
@@ -414,7 +435,7 @@ def migrate_settings():
                 settings.get('fomo_messages', ''),
                 settings.get('upsell_techniques', ''),
                 settings['communication_style'],
-                settings['max_message_length'],
+                settings['max_message_chars'],
                 settings['emoji_usage'],
                 settings['languages_supported'],
                 settings.get('objection_expensive', ''),
@@ -453,7 +474,7 @@ def migrate_settings():
                 id, bot_name, personality_traits, greeting_message, farewell_message,
                 price_explanation, price_response_template, premium_justification,
                 booking_redirect_message, fomo_messages, upsell_techniques,
-                communication_style, max_message_length, emoji_usage, languages_supported,
+                communication_style, max_message_chars, emoji_usage, languages_supported,
                 objection_expensive, objection_think_about_it, objection_no_time,
                 objection_pain, objection_result_doubt, objection_cheaper_elsewhere,
                 objection_too_far, objection_consult_husband, objection_first_time,
@@ -477,7 +498,7 @@ def migrate_settings():
                 settings.get('fomo_messages', ''),
                 settings.get('upsell_techniques', ''),
                 settings['communication_style'],
-                settings['max_message_length'],
+                settings['max_message_chars'],
                 settings['emoji_usage'],
                 settings['languages_supported'],
                 settings.get('objection_expensive', ''),

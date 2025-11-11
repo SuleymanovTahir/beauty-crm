@@ -198,6 +198,112 @@ async def terms():
 async def data_deletion():
     return RedirectResponse(url="/#/data-deletion")
 
+
+@app.post("/admin/run-migration/{migration_name}")
+async def run_migration(migration_name: str):
+    """Запустить конкретную миграцию (только для разработки)"""
+    if os.getenv("ENVIRONMENT") == "production":
+        return JSONResponse({"error": "Migrations disabled in production"}, status_code=403)
+    
+    try:
+        log_info(f"🔧 Запуск миграции: {migration_name}", "migrations")
+        
+        if migration_name == "bot_settings":
+            from db.migrations.migrate_bot_settings import migrate_settings
+            result = migrate_settings()
+            return {"success": True, "migration": migration_name, "result": result}
+        
+        elif migration_name == "salon_settings":
+            from db.migrations.migrate_salon_settings import migrate_salon_settings
+            result = migrate_salon_settings()
+            return {"success": True, "migration": migration_name, "result": result}
+        
+        elif migration_name == "employees":
+            from db.migrations.create_employees import create_employees_tables
+            create_employees_tables()
+            from db.migrations.seed_employees import seed_employees
+            seed_employees()
+            return {"success": True, "migration": migration_name}
+        
+        elif migration_name == "permissions":
+            from db.migrations.add_permissions_system import add_permissions_system
+            add_permissions_system()
+            return {"success": True, "migration": migration_name}
+        
+        elif migration_name == "manager_consultation":
+            from db.migrations.add_manager_consultation import add_manager_consultation_field
+            add_manager_consultation_field()
+            return {"success": True, "migration": migration_name}
+        
+        else:
+            return JSONResponse(
+                {"error": f"Unknown migration: {migration_name}"}, 
+                status_code=400
+            )
+    
+    except Exception as e:
+        log_error(f"❌ Ошибка миграции {migration_name}: {e}", "migrations")
+        import traceback
+        log_error(traceback.format_exc(), "migrations")
+        return JSONResponse(
+            {"error": str(e), "traceback": traceback.format_exc()},
+            status_code=500
+        )
+
+
+@app.get("/admin/diagnostics")
+async def get_diagnostics():
+    """Получить диагностику БД (только для разработки)"""
+    if os.getenv("ENVIRONMENT") == "production":
+        return JSONResponse({"error": "Diagnostics disabled in production"}, status_code=403)
+    
+    import sqlite3
+    
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        # Собираем данные
+        diagnostics = {
+            "database": DATABASE_NAME,
+            "tables": {},
+            "bot_settings": {},
+            "employees": []
+        }
+        
+        # Таблицы
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        tables = [row[0] for row in c.fetchall()]
+        
+        for table in tables:
+            c.execute(f"SELECT COUNT(*) FROM {table}")
+            count = c.fetchone()[0]
+            diagnostics["tables"][table] = count
+        
+        # bot_settings
+        if 'bot_settings' in tables:
+            c.execute("SELECT * FROM bot_settings LIMIT 1")
+            row = c.fetchone()
+            if row:
+                c.execute("PRAGMA table_info(bot_settings)")
+                columns = [col[1] for col in c.fetchall()]
+                diagnostics["bot_settings"] = dict(zip(columns, row))
+        
+        # employees
+        if 'employees' in tables:
+            c.execute("SELECT full_name, position, is_active FROM employees ORDER BY sort_order")
+            diagnostics["employees"] = [
+                {"name": row[0], "position": row[1], "active": bool(row[2])}
+                for row in c.fetchall()
+            ]
+        
+        conn.close()
+        return diagnostics
+        
+    except Exception as e:
+        log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
 
 @app.on_event("startup")
