@@ -189,7 +189,7 @@ async def handle_webhook(request: Request):
                     for old_mid, old_time in list(_processed_messages.items()):
                         if (now - old_time).total_seconds() > _DEDUP_WINDOW:
                             del _processed_messages[old_mid]
-                    
+
                     # Проверка дубликата
                     if mid in _processed_messages:
                         time_diff = (now - _processed_messages[mid]).total_seconds()
@@ -205,7 +205,6 @@ async def handle_webhook(request: Request):
 
                 logger.info(f"📬 Message from {sender_id}: is_echo={is_echo}, text={message_text[:50]}")
                 
-                # ✅ ОБРАБОТКА ЭХОСООБЩЕНИЙ (наши исходящие)
                 if is_echo:
                     logger.info(f"⏭️ Skipping echo message")
                     
@@ -216,10 +215,10 @@ async def handle_webhook(request: Request):
                         logger.warning(f"⚠️ Cannot determine client_id from echo message")
                         continue
                     
-                    # ✅ СОХРАНЯЕМ сообщения менеджера в БД
+                    # ✅ СОХРАНЯЕМ только сообщения менеджера (не бота!)
                     if message_text:
-                        # Проверяем: это команда бота или обычное сообщение?
-                        if '#бот помоги#' not in message_text.lower():
+                        # Проверяем: это НЕ fallback-сообщение бота
+                        if 'я сейчас перегружен' not in message_text.lower() and '#бот помоги#' not in message_text.lower():
                             save_message(client_id, message_text, "manager", message_type="text")
                             logger.info(f"💾 Manager message saved: {message_text[:50]}")
                     
