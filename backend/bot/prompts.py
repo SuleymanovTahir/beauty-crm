@@ -300,134 +300,124 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         return history_text
     
-    def _build_booking_availability(
-    self,
-    instagram_id: str,
-    service_name: str = "",
-    master_name: str = "",
-    preferred_date: str = ""
-) -> str:
-    """Построить информацию о доступности мастеров"""
-    from db.schedule import get_available_slots, get_client_booking_history
-    from db.masters import get_master_by_name, get_masters_for_service, get_master_services
-    
-    master_id = None
-    if master_name:
-        master = get_master_by_name(master_name)
-        if master:
-            master_id = master[0]
-    
-    # История клиента
-    history = get_client_booking_history(instagram_id, limit=5)
-    
-    # ✅ Поиск свободных окон (до 2 месяцев)
-    slots = get_available_slots(
-        service_name=service_name,
-        master_id=master_id,
-        date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-        days_ahead=14,
-        limit=15
-    )
-    
-    if not slots:
-        slots = get_available_slots(
-            service_name=service_name,
-            master_id=master_id,
-            date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-            days_ahead=30,
-            limit=15
-        )
-    
-    if not slots:
-        slots = get_available_slots(
-            service_name=service_name,
-            master_id=master_id,
-            date_from=preferred_date or datetime.now().strftime("%Y-%m-%d"),
-            days_ahead=60,
-            limit=15
-        )
-    
-    if not slots:
-        phone = self.salon.get('phone', '[PHONE]')
-        return f"""⚠️ К сожалению, все мастера заняты на ближайшие 2 месяца.
-
-Рекомендую:
-- Позвонить напрямую: {phone}
-- Оставить контакт - мы позвоним когда появится окно"""
-    
-    # ✅ ПОКАЗЫВАЕМ МАСТЕРОВ С ИХ СПЕЦИАЛИЗАЦИЕЙ
-    if service_name:
-        masters = get_masters_for_service(service_name)
+       def _build_booking_availability(
+        self,
+        instagram_id: str,
+        service_name: str = "",
+        master_name: str = "",
+        preferred_date: str = ""
+    ) -> str:
+        """Построить информацию о доступности мастеров"""
+        from db.employees import get_employees_by_service, get_all_employees
+        from db import get_booking_history
         
-        availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
+        # История клиента
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        c.execute("""
+            SELECT service_name, master, datetime 
+            FROM bookings 
+            WHERE instagram_id = ? 
+            ORDER BY created_at DESC 
+            LIMIT 5
+        """, (instagram_id,))
+        history_raw = c.fetchall()
+        conn.close()
         
-        for master in masters[:5]:  # Показываем до 5 мастеров
-            master_id = master[0]
-            master_name = master[1]
+        history = []
+        for row in history_raw:
+            try:
+                dt = datetime.fromisoformat(row[2])
+                history.append({
+                    'service': row[0],
+                    'master': row[1],
+                    'time': dt.strftime('%H:%M')
+                })
+            except:
+                pass
             
-            # Получаем специализацию мастера
-            services = get_master_services(master_id)
-            specialties = [s['name_ru'] for s in services[:3]]  # Первые 3 услуги
-            
-            availability_text += f"👤 {master_name}\n"
-            availability_text += f"   Специализация: {', '.join(specialties)}\n"
-            
-            # Ищем слоты для этого мастера
-            master_slots = [s for s in slots if s['master_id'] == master_id][:3]
-            
-            if master_slots:
-                availability_text += f"   Свободен:\n"
-                for slot in master_slots:
-                    dt = datetime.strptime(slot['date'], "%Y-%m-%d")
-                    date_formatted = dt.strftime("%d.%m (%a)")
-                    availability_text += f"      • {date_formatted} {slot['time_start']}\n"
-            else:
-                availability_text += f"   ❌ Занят в ближайшее время\n"
-            
-            availability_text += "\n"
-    else:
-        # Общий список свободных окон
-        availability_text = "📅 СВОБОДНЫЕ ОКНА:\n\n"
-        
-        slots_by_date = {}
-        for slot in slots:
-            date = slot['date']
-            if date not in slots_by_date:
-                slots_by_date[date] = []
-            slots_by_date[date].append(slot)
-        
-        for date, day_slots in list(slots_by_date.items())[:3]:
-            dt = datetime.strptime(date, "%Y-%m-%d")
-            date_formatted = dt.strftime("%d.%m (%A)")
-            
-            availability_text += f"📆 {date_formatted}:\n"
-            
-            for slot in day_slots[:4]:
-                time_range = f"{slot['time_start']}-{slot['time_end']}"
-                master = slot['master_name']
+        # Поиск мастера по имени
+        employee_id = None
+        if master_name:
+            employees = get_all_employees(active_only=True)
+            for emp in employees:
+                if master_name.lower() in emp[1].lower():  # full_name
+                    employee_id = emp[0]
+                    break
                 
-                availability_text += f"  • {time_range} - {master}\n"
+        # Показываем мастеров для услуги
+        if service_name:
+            # Ищем service_id
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            c.execute("""
+                SELECT id FROM services 
+                WHERE name_ru LIKE ? OR name_en LIKE ? OR name_ar LIKE ?
+                LIMIT 1
+            """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
+            service_row = c.fetchone()
+            conn.close()
             
-            availability_text += "\n"
-    
-    # Анализ истории клиента
-    if history:
-        preferred_master = None
-        preferred_time = None
+            if service_row:
+                service_id = service_row[0]
+                employees = get_employees_by_service(service_id)
+            else:
+                employees = get_all_employees(active_only=True)
+            
+            availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
+            
+            for emp in employees[:5]:
+                emp_name = emp[1]  # full_name
+                emp_position = emp[2]  # position
+                
+                availability_text += f"👤 {emp_name}\n"
+                availability_text += f"   Должность: {emp_position}\n"
+                
+                # Получаем услуги мастера
+                conn = sqlite3.connect(DATABASE_NAME)
+                c = conn.cursor()
+                c.execute("""
+                    SELECT s.name_ru 
+                    FROM services s
+                    JOIN employee_services es ON s.id = es.service_id
+                    WHERE es.employee_id = ?
+                    LIMIT 3
+                """, (emp[0],))
+                services = [row[0] for row in c.fetchall()]
+                conn.close()
+                
+                if services:
+                    availability_text += f"   Специализация: {', '.join(services)}\n"
+                
+                availability_text += "\n"
+        else:
+            # Общий список мастеров
+            employees = get_all_employees(active_only=True)
+            
+            availability_text = "👥 НАШИ МАСТЕРА:\n\n"
+            
+            for emp in employees[:6]:
+                emp_name = emp[1]
+                emp_position = emp[2]
+                
+                availability_text += f"• {emp_name} - {emp_position}\n"
         
-        masters_history = [h.get('master') for h in history if h.get('master')]
-        if masters_history:
+        # Анализ истории клиента
+        if history:
             from collections import Counter
-            preferred_master = Counter(masters_history).most_common(1)[0][0]
+            
+            masters_history = [h['master'] for h in history if h.get('master')]
+            if masters_history:
+                preferred_master = Counter(masters_history).most_common(1)[0][0]
+                availability_text += f"\n💡 Обычно вы записываетесь к {preferred_master}\n"
+            
+            times_history = [h['time'] for h in history if h.get('time')]
+            if times_history:
+                preferred_time = Counter(times_history).most_common(1)[0][0]
+                availability_text += f"💡 Обычно в {preferred_time}\n"
         
-        times_history = [h.get('time') for h in history if h.get('time')]
-        if times_history:
-            from collections import Counter
-            preferred_time = Counter(times_history).most_common(1)[0][0]
+        # Ссылка на запись
+        booking_url = self.salon.get('booking_url', '')
+        availability_text += f"\n📲 Записаться онлайн: {booking_url}"
         
-        if preferred_master:
-            availability_text += f"\n💡 Обычно вы записываетесь к {preferred_master}\n"
-        if preferred_time:
-            availability_text += f"💡 Обычно в {preferred_time}\n"
-    
-    return availability_text
+        return availability_text
