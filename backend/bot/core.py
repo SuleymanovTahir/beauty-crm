@@ -159,8 +159,8 @@ class SalonBot:
     
         prompt_with_limit = f"""{prompt}
     
-    ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
-    """
+⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
+"""
     
         payload = {
             "contents": [{
@@ -173,93 +173,65 @@ class SalonBot:
             }
         }
     
-        # ✅ ДОБАВЛЯЕМ СПИСОК ПРОКСИ
-        proxy_list = [
-            self.proxy_url,
-            os.getenv("PROXY_URL_2"),
-            os.getenv("PROXY_URL_3"),
-        ]
-        proxy_list = [p for p in proxy_list if p]  # Убираем None
-        
-        max_retries = len(proxy_list) if proxy_list else 1
-        
-        for attempt in range(max_retries):
-            current_proxy = proxy_list[attempt % len(proxy_list)] if proxy_list else None
-            
-            if current_proxy:
-                print(f"🌐 Попытка {attempt + 1}/{max_retries}: прокси {current_proxy.split('@')[1] if '@' in current_proxy else current_proxy[:30]}")
+        if self.proxy_url:
+            print(f"🌐 Отправка через прокси: {self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]}")
+        else:
+            print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
+
+        try:
+            if self.proxy_url:
+                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxy=self.proxy_url) as client:
+                    response = await client.post(url, json=payload)
+                    data = response.json()
             else:
-                print(f"ℹ️ Попытка {attempt + 1}/{max_retries}: прямое подключение")
-    
-            try:
-                if current_proxy:
-                    async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxy=current_proxy) as client:
-                        response = await client.post(url, json=payload)
-                        data = response.json()
-                else:
-                    async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
-                        response = await client.post(url, json=payload)
-                        data = response.json()
-    
-                # ✅ ПРОВЕРКА 429 - RATE LIMIT
-                if "error" in data:
-                    error_code = data["error"].get("code")
-                    error_msg = data["error"].get("message", "")
-                    
-                    if error_code == 429:
-                        import re
-                        match = re.search(r'retry in ([\d.]+)s', error_msg)
-                        retry_seconds = int(float(match.group(1))) if match else 30
-                        
-                        # Если это последняя попытка - выбрасываем исключение
-                        if attempt == max_retries - 1:
-                            print(f"❌ Rate limit на всех прокси, ожидание невозможно")
-                            raise Exception(f"Rate limit: wait {retry_seconds}s")
-                        
-                        # Иначе пробуем следующий прокси
-                        print(f"⚠️ Rate limit на прокси {attempt + 1}, переключаемся на следующий...")
-                        continue
-                    else:
-                        raise Exception(f"Gemini API error {error_code}: {error_msg}")
-    
-                # Извлекаем текст ответа
-                if "candidates" in data and len(data["candidates"]) > 0:
-                    candidate = data["candidates"][0]
-                    if "content" in candidate and "parts" in candidate["content"]:
-                        parts = candidate["content"]["parts"]
-                        if len(parts) > 0 and "text" in parts[0]:
-                            response_text = parts[0]["text"].strip()
-    
-                            if len(response_text) > max_chars:
-                                response_text = response_text[:max_chars-3] + "..."
-    
-                            return response_text
-    
-                raise Exception(f"Unexpected Gemini response structure")
+                async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+                    response = await client.post(url, json=payload)
+                    data = response.json()
+
+            # ✅ ПРОВЕРКА 429 - RATE LIMIT
+            if "error" in data:
+                error_code = data["error"].get("code")
+                error_msg = data["error"].get("message", "")
                 
-            except httpx.HTTPError as e:
-                # Если это не последняя попытка - пробуем следующий прокси
-                if attempt < max_retries - 1:
-                    print(f"⚠️ HTTP Error на прокси {attempt + 1}: {e}, переключаемся...")
-                    continue
-                print(f"❌ HTTP Error: {e}")
-                raise
-            except Exception as e:
-                # Если это Rate limit и не последняя попытка - продолжаем
-                if "Rate limit" in str(e) and attempt < max_retries - 1:
-                    continue
-                print(f"❌ Unexpected error: {e}")
-                raise
+                if error_code == 429:
+                    print(f"⚠️ Rate limit exceeded (429), using fallback")
+                    # Извлекаем время ожидания
+                    import re
+                    match = re.search(r'retry in ([\d.]+)s', error_msg)
+                    retry_seconds = int(float(match.group(1))) if match else 30
+                    print(f"⏱️ Need to wait {retry_seconds} seconds")
+                    raise Exception(f"Rate limit: wait {retry_seconds}s")
+                else:
+                    raise Exception(f"Gemini API error {error_code}: {error_msg}")
+
+            # Извлекаем текст ответа
+            if "candidates" in data and len(data["candidates"]) > 0:
+                candidate = data["candidates"][0]
+                if "content" in candidate and "parts" in candidate["content"]:
+                    parts = candidate["content"]["parts"]
+                    if len(parts) > 0 and "text" in parts[0]:
+                        response_text = parts[0]["text"].strip()
+
+                        if len(response_text) > max_chars:
+                            response_text = response_text[:max_chars-3] + "..."
+
+                        return response_text
+
+            raise Exception(f"Unexpected Gemini response structure")
             
-        # Если все попытки исчерпаны
-        raise Exception("All proxies failed")
+        except httpx.HTTPError as e:
+            print(f"❌ HTTP Error: {e}")
+            raise
+        except Exception as e:
+            print(f"❌ Unexpected error: {e}")
+            raise
 
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке"""
         responses = {
-            'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",
-            'en': "Sorry, I'm overwhelmed with requests right now 🤖 Our manager will respond soon! 💎",
-            'ar': "عذراً، أنا مثقل بالطلبات الآن 🤖 سيرد عليك مديرنا قريباً! 💎"
+            'ru': "Извините, что-то пошло не так. Давайте попробуем ещё раз! 😊",
+            'en': "Sorry, something went wrong. Let's try again! 😊",
+            'ar': "عذراً، حدث خطأ ما. دعونا نحاول مرة أخرى! 😊"
         }
         return responses.get(language, responses['ru'])
 
