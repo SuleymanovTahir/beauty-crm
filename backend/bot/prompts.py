@@ -14,6 +14,70 @@ from db import (
 from db.services import format_service_price_for_bot
 
 
+def transliterate_to_russian(name: str) -> str:
+    """Транслитерация английского имени в русское"""
+    translit_map = {
+        'A': 'А', 'B': 'Б', 'C': 'К', 'D': 'Д', 'E': 'Е', 'F': 'Ф',
+        'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Дж', 'K': 'К', 'L': 'Л',
+        'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П', 'Q': 'К', 'R': 'Р',
+        'S': 'С', 'T': 'Т', 'U': 'У', 'V': 'В', 'W': 'В', 'X': 'Кс',
+        'Y': 'Й', 'Z': 'З',
+        'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е', 'f': 'ф',
+        'g': 'г', 'h': 'х', 'i': 'и', 'j': 'дж', 'k': 'к', 'l': 'л',
+        'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 'q': 'к', 'r': 'р',
+        's': 'с', 't': 'т', 'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс',
+        'y': 'й', 'z': 'з'
+    }
+    
+    result = []
+    for char in name:
+        result.append(translit_map.get(char, char))
+    
+    return ''.join(result)
+
+
+def translate_position(position: str, language: str) -> str:
+    """Перевод должности на нужный язык"""
+    translations = {
+        'HAIR STYLIST': {
+            'ru': 'Парикмахер',
+            'en': 'Hair Stylist',
+            'ar': 'مصفف شعر'
+        },
+        'NAIL TECHNICIAN': {
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Technician',
+            'ar': 'فني أظافر'
+        },
+        'MAKEUP ARTIST': {
+            'ru': 'Визажист',
+            'en': 'Makeup Artist',
+            'ar': 'فنان مكياج'
+        },
+        'MASSAGE THERAPIST': {
+            'ru': 'Массажист',
+            'en': 'Massage Therapist',
+            'ar': 'معالج تدليك'
+        },
+        'BEAUTICIAN': {
+            'ru': 'Косметолог',
+            'en': 'Beautician',
+            'ar': 'خبير تجميل'
+        },
+        'MASTER': {
+            'ru': 'Мастер',
+            'en': 'Master',
+            'ar': 'معلم'
+        }
+    }
+    
+    position_upper = position.upper()
+    if position_upper in translations:
+        return translations[position_upper].get(language, position)
+    
+    return position
+
+
 class PromptBuilder:
     """Построитель промптов для AI-бота"""
 
@@ -63,7 +127,9 @@ class PromptBuilder:
                 instagram_id=instagram_id,
                 service_name=service_name,
                 master_name=master_name,
-                preferred_date=preferred_date
+                preferred_date=preferred_date,
+                history=history,
+                client_language=client_language
             ), 
             self._build_salon_info(),
             self._build_services_list(),
@@ -283,11 +349,16 @@ Google Maps: {self.salon.get('google_maps', '')}
         instagram_id: str,
         service_name: str = "",
         master_name: str = "",
-        preferred_date: str = ""
+        preferred_date: str = "",
+        history: List[Tuple] = None,
+        client_language: str = 'ru'
     ) -> str:
         """Построить информацию о доступности мастеров с РАСПИСАНИЕМ"""
         from db.employees import get_employees_by_service, get_all_employees
         from collections import Counter
+        
+        if history is None:
+            history = []
         
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
@@ -302,17 +373,45 @@ Google Maps: {self.salon.get('google_maps', '')}
         """, (instagram_id,))
         history_raw = c.fetchall()
         
-        history = []
+        booking_history = []
         for row in history_raw:
             try:
                 dt = datetime.fromisoformat(row[1])
-                history.append({
+                booking_history.append({
                     'service': row[0],
                     'weekday': dt.strftime('%A'),
                     'time': dt.strftime('%H:%M')
                 })
             except:
                 pass
+        
+        # ✅ НОВОЕ: Определяем услугу из контекста диалога если не указана
+        if not service_name and history:
+            last_messages = history[-5:]  # Последние 5 сообщений
+            for item in last_messages:
+                if len(item) >= 2:
+                    msg = item[0]
+                    sender = item[1]
+                    
+                    if sender == 'client':
+                        msg_lower = msg.lower()
+                        
+                        # Ключевые слова услуг
+                        if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'nails']):
+                            service_name = 'Manicure'
+                            break
+                        elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير']):
+                            service_name = 'Pedicure'
+                            break
+                        elif any(word in msg_lower for word in ['волос', 'стрижка', 'hair', 'cut', 'شعر']):
+                            service_name = 'Hair'
+                            break
+                        elif any(word in msg_lower for word in ['массаж', 'massage', 'تدليك']):
+                            service_name = 'Massage'
+                            break
+                        elif any(word in msg_lower for word in ['макияж', 'makeup', 'مكياج']):
+                            service_name = 'Makeup'
+                            break
         
         # Поиск employee_id по имени мастера
         employee_id = None
@@ -340,13 +439,37 @@ Google Maps: {self.salon.get('google_maps', '')}
             
             availability_text = f"📅 МАСТЕРА ДЛЯ '{service_name.upper()}':\n\n"
             
+            # ✅ Определяем дату для поиска слотов
+            if preferred_date:
+                target_date = preferred_date
+            else:
+                # По умолчанию - завтра
+                target_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+            
             for emp in employees[:5]:
                 emp_id = emp[0]
-                emp_name = emp[1]
-                emp_position = emp[2]
+                emp_name = emp[1]           # full_name (англ)
+                emp_position = emp[2]       # position (англ)
                 
-                availability_text += f"👤 {emp_name}\n"
-                availability_text += f"   Должность: {emp_position}\n"
+                # Индексы новых колонок (если добавили в конец таблицы)
+                name_ru = emp[13] if len(emp) > 13 else None
+                name_ar = emp[14] if len(emp) > 14 else None
+                position_ru = emp[15] if len(emp) > 15 else None
+                position_ar = emp[16] if len(emp) > 16 else None
+                
+                # Выбираем нужный язык
+                if client_language == 'ru':
+                    emp_name_display = name_ru or emp_name
+                    emp_position_display = position_ru or emp_position
+                elif client_language == 'ar':
+                    emp_name_display = name_ar or emp_name
+                    emp_position_display = position_ar or emp_position
+                else:
+                    emp_name_display = emp_name
+                    emp_position_display = emp_position
+                
+                availability_text += f"👤 {emp_name_display}\n"
+                availability_text += f"   Должность: {emp_position_display}\n"
                 
                 # Получаем специализацию
                 c.execute("""
@@ -361,22 +484,33 @@ Google Maps: {self.salon.get('google_maps', '')}
                 if services:
                     availability_text += f"   Специализация: {', '.join(services)}\n"
                 
-                # Расписание мастера
+                # ✅ НОВОЕ: Показываем конкретные свободные слоты
                 c.execute("""
-                    SELECT day_of_week, start_time, end_time
+                    SELECT start_time, end_time
                     FROM employee_schedule
                     WHERE employee_id = ? AND is_active = 1
                     ORDER BY day_of_week
+                    LIMIT 3
                 """, (emp_id,))
                 schedule_rows = c.fetchall()
                 
                 if schedule_rows:
-                    days_map = {0: 'Пн', 1: 'Вт', 2: 'Ср', 3: 'Чт', 4: 'Пт', 5: 'Сб', 6: 'Вс'}
-                    schedule_str = ", ".join([
-                        f"{days_map[row[0]]} {row[1]}-{row[2]}" 
-                        for row in schedule_rows
-                    ])
-                    availability_text += f"   График: {schedule_str}\n"
+                    # Генерируем примерные слоты (каждый час)
+                    sample_slots = []
+                    for row in schedule_rows[:1]:  # Берем первый рабочий день
+                        start_time = row[0]
+                        try:
+                            start_hour = int(start_time.split(':')[0])
+                            # Показываем 3 слота с интервалом 2 часа
+                            for i in range(3):
+                                slot_hour = start_hour + (i * 2)
+                                if slot_hour < 21:  # До 21:00
+                                    sample_slots.append(f"{slot_hour:02d}:00")
+                        except:
+                            pass
+                    
+                    if sample_slots:
+                        availability_text += f"   🕐 Свободные слоты: {', '.join(sample_slots)}\n"
                 
                 # Выходные мастера
                 today = datetime.now().strftime("%Y-%m-%d")
@@ -406,7 +540,16 @@ Google Maps: {self.salon.get('google_maps', '')}
                 emp_name = emp[1]
                 emp_position = emp[2]
                 
-                availability_text += f"• {emp_name} - {emp_position}\n"
+                # ✅ Транслитерация имени
+                if client_language == 'ru':
+                    emp_name_display = transliterate_to_russian(emp_name)
+                else:
+                    emp_name_display = emp_name
+                
+                # ✅ Перевод должности
+                emp_position_display = translate_position(emp_position, client_language)
+                
+                availability_text += f"• {emp_name_display} - {emp_position_display}\n"
                 
                 c.execute("""
                     SELECT day_of_week, start_time, end_time
@@ -427,9 +570,9 @@ Google Maps: {self.salon.get('google_maps', '')}
                 availability_text += "\n"
         
         # Анализ истории
-        if history:
-            weekdays = [h['weekday'] for h in history]
-            times = [h['time'] for h in history]
+        if booking_history:
+            weekdays = [h['weekday'] for h in booking_history]
+            times = [h['time'] for h in booking_history]
             
             if weekdays:
                 preferred_day = Counter(weekdays).most_common(1)[0][0]
