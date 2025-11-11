@@ -316,24 +316,33 @@ async def startup_event():
         
         # Раскомментируйте следующие строки для первичной миграции:
         
-        from db.migrations.add_permissions_system import add_permissions_system
-        add_permissions_system()
+        #Миграция настроек салона
+        # from db.migrations.migrate_salon_settings import migrate_salon_settings
+        # migrate_salon_settings()  # <- Запустить ПЕРВЫМ.
 
-        from db.migrations.add_manager_consultation import add_manager_consultation_field
-        from db.migrations.migrate_salon_settings import migrate_salon_settings
-        from db.migrations.add_bot_modes import add_bot_mode_fields
-        from db.migrations.migrate_services import migrate_services
-        from db.migrations.migrate_bot_settings import migrate_settings
-        from db.migrations.create_employees import create_employees_tables
-        migrate_salon_settings()  # <- Запустить ПЕРВЫМ.
-        add_bot_mode_fields()
-        migrate_services()
-        migrate_settings()
-        create_employees_tables()
-        add_manager_consultation_field()
+        # from db.migrations.add_permissions_system import add_permissions_system
+        # add_permissions_system()
 
-        from db.migrations.seed_employees import seed_employees
-        seed_employees()
+        # from db.migrations.add_bot_modes import add_bot_mode_fields
+        # add_bot_mode_fields()
+
+        # from db.migrations.add_manager_consultation import add_manager_consultation_field
+        # add_manager_consultation_field()
+
+        # from db.migrations.migrate_services import migrate_services
+        # migrate_services()
+
+        # from db.migrations.migrate_bot_settings import migrate_settings
+        # migrate_settings()
+        
+
+        # from db.migrations.create_employees import create_employees_tables
+        # create_employees_tables()
+
+
+
+        # from db.migrations.seed_employees import seed_employees
+        # seed_employees()
 
         
         bot = get_bot()

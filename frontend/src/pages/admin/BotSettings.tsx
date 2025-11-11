@@ -659,56 +659,57 @@ export default function BotSettings() {
                   boxSizing: 'border-box',
                   resize: 'vertical'
                 }}
-              />
+                />
+              </div>
+  
               <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🧠 Логика предложения времени
-              </label>
-              <textarea
-                value={settings.booking_time_logic}
-                onChange={(e) => setSettings({ ...settings, booking_time_logic: e.target.value })}
-                rows={15}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical',
-                  fontFamily: 'monospace'
-                }}
-              />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Умная логика выбора времени записи: учет пожеланий клиента, истории, смекалка при занятости
-              </p>
+                <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  🧠 Логика предложения времени
+                </label>
+                <textarea
+                  value={settings.booking_time_logic}
+                  onChange={(e) => setSettings({ ...settings, booking_time_logic: e.target.value })}
+                  rows={15}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                    fontFamily: 'monospace'
+                  }}
+                />
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                  Умная логика выбора времени записи: учет пожеланий клиента, истории, смекалка при занятости
+                </p>
+              </div>
+  
+              <div>
+                <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  📋 Сбор данных для записи
+                </label>
+                <textarea
+                  value={settings.booking_data_collection}
+                  onChange={(e) => setSettings({ ...settings, booking_data_collection: e.target.value })}
+                  rows={8}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.95rem',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                    fontFamily: 'monospace'
+                  }}
+                />
+                <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                  Алгоритм сбора имени и WhatsApp перед записью
+                </p>
+              </div>
             </div>
-
-            <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Сбор данных для записи
-              </label>
-              <textarea
-                value={settings.booking_data_collection}
-                onChange={(e) => setSettings({ ...settings, booking_data_collection: e.target.value })}
-                rows={8}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box',
-                  resize: 'vertical',
-                  fontFamily: 'monospace'
-                }}
-              />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Алгоритм сбора имени и WhatsApp перед записью
-              </p>
-            </div>
-            </div>
-          </div>
         )}
 
         {/* OBJECTIONS TAB */}
