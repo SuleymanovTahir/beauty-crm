@@ -14,11 +14,11 @@ def get_salon_settings() -> dict:
     """Получить настройки салона из БД"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("SELECT * FROM salon_settings LIMIT 1")
         result = c.fetchone()
-        
+
         if result:
             columns = [description[0] for description in c.description]
             row_dict = dict(zip(columns, result))
@@ -49,14 +49,16 @@ def get_salon_settings() -> dict:
                 "hours_weekends": result[23] if len(result) > 23 else "10:30 - 21:00"
             }
         else:
-            log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
+            log_warning(
+                "⚠️ Настройки салона пусты, используются дефолты", "database")
             return _get_default_salon_settings()
-            
+
     except sqlite3.OperationalError as e:
         log_error(f"❌ Таблица salon_settings не существует: {e}", "database")
         return _get_default_salon_settings()
     except Exception as e:
-        log_error(f"❌ Непредвиденная ошибка в get_salon_settings: {e}", "database")
+        log_error(
+            f"❌ Непредвиденная ошибка в get_salon_settings: {e}", "database")
         return _get_default_salon_settings()
     finally:
         conn.close()
@@ -96,7 +98,7 @@ def update_salon_settings(data: dict) -> bool:
     """Обновить настройки салона"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("""UPDATE salon_settings SET
                     name = ?, name_ar = ?, address = ?, address_ar = ?,
@@ -129,7 +131,7 @@ def update_salon_settings(data: dict) -> bool:
                    data.get('country'),
                    data.get('timezone'),
                    data.get('currency')))
-        
+
         conn.commit()
         log_info("✅ Настройки салона обновлены", "database")
         return True
@@ -147,18 +149,19 @@ def get_bot_settings() -> dict:
     """Получить настройки бота из БД"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("SELECT * FROM bot_settings LIMIT 1")
         result = c.fetchone()
-        
+
         if result:
             # ✅ БЕЗОПАСНЫЙ СПОСОБ - используем названия колонок
             columns = [description[0] for description in c.description]
             row_dict = dict(zip(columns, result))
-            
-            log_info(f"✅ Loaded bot settings with {len(columns)} columns", "database")
-            
+
+            log_info(
+                f"✅ Loaded bot settings with {len(columns)} columns", "database")
+
             # ✅ Создаём словарь result вместо прямого return
             result_dict = {
                 "id": row_dict.get("id"),
@@ -211,35 +214,41 @@ def get_bot_settings() -> dict:
                 "manager_consultation_prompt": row_dict.get("manager_consultation_prompt", ""),
                 "booking_time_logic": row_dict.get("booking_time_logic", ""),
                 "booking_data_collection": row_dict.get("booking_data_collection", ""),
-                "booking_availability_instructions": row_dict.get("booking_availability_instructions", ""),  # ✅ ДОБАВЬ
+                # ✅ ДОБАВЬ
+                "booking_availability_instructions": row_dict.get("booking_availability_instructions", ""),
                 "updated_at": row_dict.get("updated_at"),
             }
-            
+
             # ✅ Дозаполняем критические пустые поля дефолтами
             defaults = _get_default_bot_settings()
             if not result_dict.get('booking_time_logic'):
                 result_dict['booking_time_logic'] = defaults['booking_time_logic']
-                log_info("✅ Дозаполнено booking_time_logic из дефолтов", "database")
+                log_info(
+                    "✅ Дозаполнено booking_time_logic из дефолтов", "database")
             if not result_dict.get('booking_data_collection'):
                 result_dict['booking_data_collection'] = defaults['booking_data_collection']
-                log_info("✅ Дозаполнено booking_data_collection из дефолтов", "database")
-            
+                log_info(
+                    "✅ Дозаполнено booking_data_collection из дефолтов", "database")
+
             return result_dict
-            
+
         else:
-            log_warning("⚠️ Настройки бота пусты, используются дефолты", "database")
+            log_warning(
+                "⚠️ Настройки бота пусты, используются дефолты", "database")
             return _get_default_bot_settings()
-            
+
     except sqlite3.OperationalError as e:
         log_error(f"❌ Таблица bot_settings не существует: {e}", "database")
         return _get_default_bot_settings()
     except Exception as e:
-        log_error(f"❌ Непредвиденная ошибка в get_bot_settings: {e}", "database")
+        log_error(
+            f"❌ Непредвиденная ошибка в get_bot_settings: {e}", "database")
         import traceback
         log_error(traceback.format_exc(), "database")
         return _get_default_bot_settings()
     finally:
         conn.close()
+
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
@@ -248,7 +257,7 @@ def _get_default_bot_settings() -> dict:
         bot_name = salon.get('bot_name', 'M.Le Diamant Assistant')
     except:
         bot_name = 'M.Le Diamant Assistant'
-    
+
     return {
         "id": 1,
         "bot_name": bot_name,
@@ -296,7 +305,53 @@ def _get_default_bot_settings() -> dict:
         "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
         "manager_consultation_prompt": "",
         "booking_data_collection": """...""",
-        "booking_availability_instructions": """...""",  # ✅ ДОБАВЬ из DEFAULT_SETTINGS
+        "booking_availability_instructions":  """Отлично! Для записи нужно:
+- Имя
+- WhatsApp номер
+
+Как вас зовут?
+
+После получения имени:
+"Спасибо, [Имя]! WhatsApp номер?"
+
+Затем предлагай конкретное время из расписания.""",
+
+        # ✅ ЗАМЕНИ строку:
+        "booking_availability_instructions": """...""",  # ❌ УДАЛИ
+
+        # ✅ НА:
+        "booking_availability_instructions": """🎯 ЛОГИКА ПОКАЗА МАСТЕРОВ:
+
+1️⃣ ЕСЛИ УСЛУГА НЕ ОПРЕДЕЛЕНА:
+Клиент спрашивает про запись, но НЕ указал услугу.
+
+ОБЯЗАТЕЛЬНО СПРОСИ:
+"Какая услуга вас интересует?
+- Маникюр 💅
+- Педикюр 🦶
+- Стрижка/Окрашивание волос ✂️
+- Массаж 💆
+- Другое?"
+
+⚠️ НЕ показывай всех мастеров подряд!
+⚠️ НЕ начинай сбор данных!
+
+2️⃣ ЕСЛИ УСЛУГА ОПРЕДЕЛЕНА:
+Покажи ТОЛЬКО мастеров этой услуги с КОНКРЕТНЫМ временем.
+
+ПРАВИЛЬНЫЙ ФОРМАТ:
+"На [дата] по [услуга] есть:
+- [Имя мастера]: 11:00, 14:00, 17:00
+- [Имя мастера]: 10:00, 15:00, 18:30
+
+Какое время подходит?"
+
+3️⃣ КРИТИЧЕСКИ ВАЖНО:
+❌ НЕ пиши "Для записи нужны имя и WhatsApp" - РАНО!
+❌ НЕ показывай мастеров других услуг!
+✅ Дождись когда клиент ВЫБЕРЕТ время, ПОТОМ начинай сбор данных!
+
+💡 Имена мастеров показывай на языке клиента (если есть перевод в БД)""",
         "updated_at": None,
         "booking_time_logic": """🎯 ЛОГИКА ВЫБОРА ВРЕМЕНИ:
 
@@ -338,16 +393,16 @@ def update_bot_settings(data: dict) -> bool:
     """Обновить настройки бота"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         # Получаем список всех колонок
         c.execute("PRAGMA table_info(bot_settings)")
         columns = [row[1] for row in c.fetchall()]
-        
+
         # Формируем SET часть запроса только для существующих колонок
         set_parts = []
         params = []
-        
+
         field_mapping = {
             'bot_name': 'bot_name',
             'personality_traits': 'personality_traits',
@@ -394,23 +449,24 @@ def update_bot_settings(data: dict) -> bool:
             'pre_booking_data_collection': 'pre_booking_data_collection',
             'manager_consultation_prompt': 'manager_consultation_prompt',
         }
-        
+
         for data_key, db_column in field_mapping.items():
             if db_column in columns and data_key in data:
                 set_parts.append(f"{db_column} = ?")
                 params.append(data[data_key])
-        
+
         if set_parts:
             set_parts.append("updated_at = CURRENT_TIMESTAMP")
             query = f"UPDATE bot_settings SET {', '.join(set_parts)} WHERE id = 1"
             c.execute(query, params)
             conn.commit()
-            log_info(f"✅ Настройки бота обновлены ({len(set_parts)-1} полей)", "database")
+            log_info(
+                f"✅ Настройки бота обновлены ({len(set_parts)-1} полей)", "database")
             return True
         else:
             log_warning("⚠️ Нет полей для обновления", "database")
             return False
-            
+
     except Exception as e:
         log_error(f"Ошибка обновления настроек бота: {e}", "database")
         import traceback
@@ -427,7 +483,7 @@ def get_custom_statuses() -> list:
     """Получить все кастомные статусы"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("SELECT * FROM custom_statuses ORDER BY created_at DESC")
         return c.fetchall()
@@ -438,12 +494,12 @@ def get_custom_statuses() -> list:
         conn.close()
 
 
-def create_custom_status(status_key: str, status_label: str, status_color: str, 
-                        status_icon: str, created_by: int) -> bool:
+def create_custom_status(status_key: str, status_label: str, status_color: str,
+                         status_icon: str, created_by: int) -> bool:
     """Создать кастомный статус"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO custom_statuses 
@@ -465,34 +521,34 @@ def create_custom_status(status_key: str, status_label: str, status_color: str,
 
 
 def update_custom_status(status_key: str, status_label: str = None,
-                        status_color: str = None, status_icon: str = None) -> bool:
+                         status_color: str = None, status_icon: str = None) -> bool:
     """Обновить кастомный статус"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         updates = []
         params = []
-        
+
         if status_label:
             updates.append("status_label = ?")
             params.append(status_label)
-        
+
         if status_color:
             updates.append("status_color = ?")
             params.append(status_color)
-        
+
         if status_icon:
             updates.append("status_icon = ?")
             params.append(status_icon)
-        
+
         if updates:
             params.append(status_key)
             query = f"UPDATE custom_statuses SET {', '.join(updates)} WHERE status_key = ?"
             c.execute(query, params)
             conn.commit()
             log_info(f"✅ Статус '{status_key}' обновлен", "database")
-        
+
         return True
     except Exception as e:
         log_error(f"Ошибка обновления статуса: {e}", "database")
@@ -506,9 +562,10 @@ def delete_custom_status(status_key: str) -> bool:
     """Удалить кастомный статус"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
-        c.execute("DELETE FROM custom_statuses WHERE status_key = ?", (status_key,))
+        c.execute("DELETE FROM custom_statuses WHERE status_key = ?",
+                  (status_key,))
         conn.commit()
         log_info(f"✅ Статус '{status_key}' удален", "database")
         return True
@@ -564,14 +621,14 @@ def get_all_roles() -> list:
             'is_builtin': True
         }
     ]
-    
+
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("SELECT role_key, role_name, role_description FROM custom_roles")
         custom_roles = c.fetchall()
-        
+
         for role in custom_roles:
             builtin_roles.append({
                 'role_key': role[0],
@@ -583,7 +640,7 @@ def get_all_roles() -> list:
         log_warning("⚠️ Таблица custom_roles не существует", "database")
     finally:
         conn.close()
-    
+
     return builtin_roles
 
 
@@ -591,17 +648,18 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
     """Создать кастомную роль"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     if role_key in ['admin', 'manager', 'employee']:
-        log_error(f"❌ Нельзя создать роль с ключом '{role_key}' - это встроенная роль", "database")
+        log_error(
+            f"❌ Нельзя создать роль с ключом '{role_key}' - это встроенная роль", "database")
         return False
-    
+
     try:
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO custom_roles (role_key, role_name, role_description, created_at, created_by)
                     VALUES (?, ?, ?, ?, ?)""",
                   (role_key, role_name, role_description, now, created_by))
-        
+
         conn.commit()
         log_info(f"✅ Кастомная роль '{role_key}' создана", "database")
         return True
@@ -620,15 +678,15 @@ def delete_custom_role(role_key: str) -> bool:
     """Удалить кастомную роль"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     if role_key in ['admin', 'manager', 'employee']:
         log_error(f"❌ Нельзя удалить встроенную роль '{role_key}'", "database")
         return False
-    
+
     try:
         c.execute("DELETE FROM custom_roles WHERE role_key = ?", (role_key,))
         c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
-        
+
         conn.commit()
         log_info(f"✅ Роль '{role_key}' удалена", "database")
         return True
@@ -644,7 +702,7 @@ def get_role_permissions(role_key: str) -> dict:
     """Получить права роли"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     if role_key == 'admin':
         permissions = {}
         for perm_key in AVAILABLE_PERMISSIONS.keys():
@@ -656,11 +714,11 @@ def get_role_permissions(role_key: str) -> dict:
             }
         conn.close()
         return permissions
-    
+
     try:
         c.execute("""SELECT permission_key, can_view, can_create, can_edit, can_delete
                     FROM role_permissions WHERE role_key = ?""", (role_key,))
-        
+
         permissions = {}
         for row in c.fetchall():
             permissions[row[0]] = {
@@ -669,7 +727,7 @@ def get_role_permissions(role_key: str) -> dict:
                 'can_edit': bool(row[3]),
                 'can_delete': bool(row[4])
             }
-        
+
         return permissions
     except sqlite3.OperationalError:
         log_warning("⚠️ Таблица role_permissions не существует", "database")
@@ -682,14 +740,14 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
     """Обновить права роли"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     if role_key == 'admin':
         log_error("❌ Нельзя изменить права роли admin", "database")
         return False
-    
+
     try:
         c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
-        
+
         for perm_key, perms in permissions.items():
             c.execute("""INSERT INTO role_permissions 
                         (role_key, permission_key, can_view, can_create, can_edit, can_delete)
@@ -699,7 +757,7 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
                        1 if perms.get('can_create') else 0,
                        1 if perms.get('can_edit') else 0,
                        1 if perms.get('can_delete') else 0))
-        
+
         conn.commit()
         log_info(f"✅ Права роли '{role_key}' обновлены", "database")
         return True
@@ -714,38 +772,38 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
 def check_user_permission(user_id: int, permission_key: str, action: str = 'view') -> bool:
     """
     Проверить есть ли у пользователя право на действие
-    
+
     Args:
         user_id: ID пользователя
         permission_key: ключ права (например 'clients_view')
         action: действие ('view', 'create', 'edit', 'delete')
-    
+
     Returns:
         bool: True если право есть
     """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
         result = c.fetchone()
-        
+
         if not result:
             return False
-        
+
         role_key = result[0]
-        
+
         if role_key == 'admin':
             return True
-        
+
         column = f"can_{action}"
         c.execute(f"""SELECT {column} FROM role_permissions 
                      WHERE role_key = ? AND permission_key = ?""",
                   (role_key, permission_key))
-        
+
         result = c.fetchone()
         return bool(result[0]) if result else False
-        
+
     except Exception as e:
         log_error(f"Ошибка проверки прав: {e}", "database")
         return False
@@ -757,12 +815,12 @@ def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     c.execute("""
         UPDATE salon_settings 
         SET bot_globally_enabled = ?
         WHERE id = 1
     """, (1 if enabled else 0,))
-    
+
     conn.commit()
     conn.close()
