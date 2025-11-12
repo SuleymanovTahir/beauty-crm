@@ -113,6 +113,8 @@ class SalonBot:
         Returns:
             str: Ответ бота
         """
+
+        
         # Построить system prompt
         system_prompt = self.build_system_prompt(
             instagram_id=instagram_id,

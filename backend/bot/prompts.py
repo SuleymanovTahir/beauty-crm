@@ -396,7 +396,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                                 service_name = 'Lashes'
                                 break
                             # Массаж
-                            elif any(word in msg_lower for word in ['массаж', 'massage', 'тдليك', 'спа', 'spa']):
+                            elif any(word in msg_lower for word in ['массаж', 'massage', 'تدليك', 'спа', 'spa']):
                                 service_name = 'Massage'
                                 break
                             # Эпиляция
@@ -408,23 +408,23 @@ Google Maps: {self.salon.get('google_maps', '')}
                                 service_name = 'Facial'
                                 break
                             # Баня
-                            # Баня
-                        elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
-                            service_name = 'Hammam'
-                            break
+                            elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
+                                service_name = 'Hammam'
+                                break
 
-                    # Расширенные ключевые слова для маникюра
-                    if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
-                        service_name = 'Manicure'
-                        break
-                    # Педикюр
-                    elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
-                        service_name = 'Pedicure'
-                        break
-                    # Волосы/стрижка
-                    elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
-                        service_name = 'Hair'
-                        break
+                        # Расширенные ключевые слова (работают всегда, не только после списка)
+                        if not service_name:  # Только если еще не определена
+                            if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
+                                service_name = 'Manicure'
+                                break
+                            # Педикюр
+                            elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
+                                service_name = 'Pedicure'
+                                break
+                            # Волосы/стрижка
+                            elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
+                                service_name = 'Hair'
+                                break
         
         
         # ✅ Получаем инструкции из БД
@@ -437,17 +437,28 @@ Google Maps: {self.salon.get('google_maps', '')}
     
     {instructions}"""
         
-        # ✅ УСЛУГА ОПРЕДЕЛЕНА - показываем мастеров
+        # ✅ УСЛУГА ОПРЕДЕЛЕНА - проверяем что она ЕСТЬ в базе
         c.execute("""
-            SELECT id FROM services 
-            WHERE name LIKE ? OR name_ru LIKE ? OR name_ar LIKE ?
+            SELECT id, name_ru, price, currency FROM services 
+            WHERE (name LIKE ? OR name_ru LIKE ? OR name_ar LIKE ?)
+            AND is_active = 1
             LIMIT 1
         """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
         service_row = c.fetchone()
         
         if not service_row:
             conn.close()
-            return f"⚠️ Услуга '{service_name}' не найдена"
+            
+            # ⚠️ Услуги нет - предложи то что есть
+            if 'makeup' in service_name.lower() or 'макияж' in service_name.lower():
+                return """=== 💄 УТОЧНЕНИЕ ===
+                У нас только перманентный макияж 😊
+                Брови 1100 AED или губы 1200 AED?
+                Или интересует что-то другое?"""
+            
+            return f"""=== 🤔 УТОЧНЕНИЕ ===
+            {service_name} не нашла в списке
+            Может маникюр, педикюр, стрижка, массаж?"""
         
         service_id = service_row[0]
         employees = get_employees_by_service(service_id)
