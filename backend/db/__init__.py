@@ -16,8 +16,16 @@ from .clients import (
     detect_and_save_language,
     get_client_bot_mode, 
     update_client_bot_mode,
-    get_client_language,
     update_client,
+    get_client_language,
+    # ✅ ДОБАВЬ ЭТИ НОВЫЕ ФУНКЦИИ:
+    auto_fill_name_from_username,        # #1
+    track_client_interest,                # #5
+    get_client_interest_count,            # #5
+    is_hot_client,                        # #5
+    calculate_client_temperature,         # #21
+    update_client_temperature,            # #21
+    calculate_no_show_risk,               # #19 - ТОЛЬКО ИЗ clients.py!
 )
 
 # Записи
@@ -27,8 +35,20 @@ from .bookings import (
     update_booking_status,
     get_booking_progress,
     update_booking_progress,
-    clear_booking_progress
+    clear_booking_progress,
+    # ✅ ДОБАВЬ ЭТИ НОВЫЕ ФУНКЦИИ:
+    get_incomplete_booking,               # #4
+    mark_booking_incomplete,              # #4
+    get_client_usual_booking_pattern,     # #7
+    get_client_course_progress,           # #11
+    add_to_waitlist,                      # #17
+    get_waitlist_for_slot,                # #17
+    mark_waitlist_notified,               # #17
+    check_if_urgent_booking,              # #18
+    get_clients_for_rebooking,            # #16
+    get_upcoming_bookings,                # #15
 )
+
 
 # Услуги
 from .services import (
@@ -112,7 +132,17 @@ __all__ = [
     "pin_client",
     "delete_client",
     "detect_and_save_language",
+    'get_client_bot_mode', 
+    "update_client_bot_mode",
+    'update_client',
     "get_client_language",
+    "auto_fill_name_from_username",
+    "track_client_interest",
+    "get_client_interest_count",
+    "is_hot_client",
+    "calculate_client_temperature",
+    "update_client_temperature",
+    "calculate_no_show_risk",
     
     # Bookings
     "get_all_bookings",
@@ -121,7 +151,16 @@ __all__ = [
     "get_booking_progress",
     "update_booking_progress",
     "clear_booking_progress",
-    'get_last_service_date',
+    "get_incomplete_booking",
+    "mark_booking_incomplete",
+    "get_client_usual_booking_pattern",
+    "get_client_course_progress",
+    "add_to_waitlist",
+    "get_waitlist_for_slot",
+    "mark_waitlist_notified",
+    "check_if_urgent_booking",
+    "get_clients_for_rebooking",
+    "get_upcoming_bookings",
     
     # Services
     "get_all_services",
@@ -168,6 +207,7 @@ __all__ = [
     "update_role_permissions",
     "check_user_permission",
     "AVAILABLE_PERMISSIONS",
+    'update_bot_globally_enabled',
     
     # Messages
     "save_message",

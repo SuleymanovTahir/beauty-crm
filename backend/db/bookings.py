@@ -396,34 +396,6 @@ def check_if_urgent_booking(message: str) -> bool:
 
 # ===== #19 - ПРЕДСКАЗАНИЕ NO-SHOW =====
 
-def calculate_no_show_risk(instagram_id: str) -> float:
-    """Рассчитать риск no-show (0.0 - 1.0)"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    # Получаем статистику
-    c.execute("""
-        SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
-            SUM(CASE WHEN status = 'no_show' THEN 1 ELSE 0 END) as no_show
-        FROM bookings
-        WHERE instagram_id = ?
-    """, (instagram_id,))
-    
-    result = c.fetchone()
-    conn.close()
-    
-    if not result or result[0] == 0:
-        return 0.0  # Новый клиент - риск низкий
-    
-    total, cancelled, no_show = result
-    
-    # Формула риска
-    risk = (cancelled + no_show * 2) / total
-    
-    return min(risk, 1.0)
-
 
 def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[str, str, str]]:
     """Получить клиентов для повторной записи (#16)"""
