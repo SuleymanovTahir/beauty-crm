@@ -408,13 +408,23 @@ Google Maps: {self.salon.get('google_maps', '')}
                                 service_name = 'Facial'
                                 break
                             # Баня
-                            elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
-                                service_name = 'Hammam'
-                                break
+                            # Баня
+                        elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
+                            service_name = 'Hammam'
+                            break
 
-            # Расширенные ключевые слова для маникюра
-            if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
-
+                    # Расширенные ключевые слова для маникюра
+                    if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
+                        service_name = 'Manicure'
+                        break
+                    # Педикюр
+                    elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
+                        service_name = 'Pedicure'
+                        break
+                    # Волосы/стрижка
+                    elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
+                        service_name = 'Hair'
+                        break
         
         
         # ✅ Получаем инструкции из БД
