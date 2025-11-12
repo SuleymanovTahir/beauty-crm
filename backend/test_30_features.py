@@ -75,9 +75,9 @@ class FeatureTester:
         """Информация"""
         self.log(f"ℹ️  {message}", BLUE)
         
-    def warning(self, message: str):
+    def warning(self, feature: str, message: str):
         """Предупреждение"""
-        self.log(f"⚠️  {message}", YELLOW)
+        self.log(f"⚠️ #{feature}: {message}", YELLOW)
     
     def setup_test_data(self):
         """Подготовить тестовые данные"""
@@ -138,7 +138,7 @@ class FeatureTester:
             ("Подумаю", "client"),  # Возражение
         ]
         
-        for msg, sender in messages:
+        for i, (msg, sender) in enumerate(messages):
             c.execute("""
                 INSERT INTO chat_history 
                 (instagram_id, message, sender, timestamp, message_type)
@@ -147,7 +147,7 @@ class FeatureTester:
                 self.test_client_id,
                 msg,
                 sender,
-                datetime.now().isoformat(),
+                (datetime.now() - timedelta(minutes=len(messages) - i)).isoformat(),
                 "text"
             ))
         
@@ -397,10 +397,10 @@ class FeatureTester:
     def test_15_booking_reminders(self):
         """#15 - Напоминание перед записью"""
         try:
-            # Создаём запись на завтра
+            # Создаём запись через 2 часа (а не через день!)
             conn = sqlite3.connect(DATABASE_NAME)
             c = conn.cursor()
-            tomorrow = datetime.now() + timedelta(days=1)
+            in_2_hours = datetime.now() + timedelta(hours=2)  # ✅ ИЗМЕНЕНО
             c.execute("""
                 INSERT INTO bookings 
                 (instagram_id, service_name, datetime, status, master, created_at)
@@ -408,16 +408,16 @@ class FeatureTester:
             """, (
                 self.test_client_id,
                 "Manicure",
-                tomorrow.isoformat(),
+                in_2_hours.isoformat(),  # ✅ ИЗМЕНЕНО
                 "confirmed",
                 "Diana",
                 datetime.now().isoformat()
             ))
             conn.commit()
             conn.close()
-            
+
             upcoming = get_upcoming_bookings(hours=48)
-            
+
             if upcoming and len(upcoming) > 0:
                 self.success("15", f"Найдено {len(upcoming)} предстоящих записей")
             else:
@@ -702,11 +702,11 @@ class FeatureTester:
     
     # ===== ЗАПУСК =====
     
-    async def main():
-        """Главная функция"""
-        tester = FeatureTester()
-        await tester.run_all_tests()
-    
-    
-    if __name__ == "__main__":
-        asyncio.run(main())
+async def main():
+    """Главная функция"""
+    tester = FeatureTester()
+    await tester.run_all_tests()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

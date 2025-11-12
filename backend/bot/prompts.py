@@ -812,6 +812,7 @@ def get_client_objection_history(instagram_id: str) -> List[str]:
         'дорого': 'price',
         'expensive': 'price',
         'подумать': 'think',
+        'подумаю': 'think',    # ✅ ДОБАВЛЕНО
         'think': 'think',
         'времени нет': 'no_time',
         'no time': 'no_time',

@@ -362,6 +362,10 @@ async def startup_event():
         # from db.migrations.add_service_courses import add_service_courses_table
         # add_service_courses_table()
         
+        # from db.migrations.add_master_field import add_master_field
+        # add_master_field()
+
+
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
         
