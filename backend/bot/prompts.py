@@ -361,6 +361,9 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
+        c.execute("SELECT name, username FROM clients WHERE instagram_id = ?", (instagram_id,))
+        client_data = c.fetchone()
+        client_has_name = bool(client_data and (client_data[0] or client_data[1]))
         
         # ✅ Определяем услугу из контекста
         if not service_name and history:
@@ -429,11 +432,47 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         # ✅ Получаем инструкции из БД
         instructions = self.bot_settings.get('booking_availability_instructions', '')
-        
+
         if not service_name:
             conn.close()
             return f"""=== ❓ УТОЧНИ УСЛУГУ ===
             {instructions}"""
+
+        # ✅ НОВОЕ: Проверка наличия имени перед запросом контактов
+        if client_has_name:
+            instructions = instructions.replace(
+                "Для записи нужно имя и WhatsApp",
+                "Для записи нужен WhatsApp"
+            )
+            instructions = instructions.replace(
+                "Как вас зовут?",
+                ""
+            )
+        
+        # ✅ НОВОЕ: Определяем текущее время для умных предложений
+        now = datetime.now()
+        current_hour = now.hour
+
+        # Словарь временных фраз
+        time_phrases = {
+            'утр': (9, 12),   # "утро", "утром"
+            'обед': (14, 17), # "после обеда", "днём"
+            'вечер': (17, 21),# "вечером", "вечер"
+        }
+
+        # Анализируем последние сообщения клиента на наличие временных фраз
+        time_preference = None
+        if history:
+            for msg in reversed(history[-5:]):  # Последние 5 сообщений
+                if msg[1] == 'client':
+                    msg_lower = msg[0].lower()
+                    for phrase, (start_h, end_h) in time_phrases.items():
+                        if phrase in msg_lower:
+                            time_preference = (start_h, end_h)
+                            break
+                    if time_preference:
+                        break
+
         
         # ✅ УСЛУГА ОПРЕДЕЛЕНА - проверяем что она ЕСТЬ в базе
         c.execute("""
@@ -502,6 +541,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                 emp_name_display = emp_name
             
             # Генерируем слоты
+            # Генерируем слоты с учётом текущего времени и предпочтений клиента
             c.execute("""
                 SELECT start_time, end_time
                 FROM employee_schedule
@@ -512,11 +552,41 @@ Google Maps: {self.salon.get('google_maps', '')}
             
             if schedule:
                 start_hour = int(schedule[0].split(':')[0])
+                end_hour = int(schedule[1].split(':')[0])
+                
                 slots = []
-                for i in range(3):
-                    hour = start_hour + (i * 2)
-                    if hour < 21:
-                        slots.append(f"{hour:02d}:00")
+                
+                # ✅ НОВОЕ: Умная логика слотов
+                # Если клиент указал временное предпочтение
+                if time_preference:
+                    pref_start, pref_end = time_preference
+                    # Генерируем слоты в диапазоне предпочтений
+                    for hour in range(max(start_hour, pref_start), min(end_hour, pref_end) + 1, 2):
+                        # Если запись на сегодня - проверяем что время не прошло
+                        if target_date == now.strftime("%Y-%m-%d"):
+                            if hour > current_hour + 2:  # Минимум через 2 часа
+                                slots.append(f"{hour:02d}:00")
+                        else:
+                            slots.append(f"{hour:02d}:00")
+                        
+                        if len(slots) >= 3:
+                            break
+                else:
+                    # Обычная логика но с проверкой текущего времени
+                    for i in range(6):  # Увеличил количество попыток
+                        hour = start_hour + (i * 2)
+                        if hour >= end_hour:
+                            break
+                            
+                        # Если запись на сегодня - не предлагаем прошедшее время
+                        if target_date == now.strftime("%Y-%m-%d"):
+                            if hour > current_hour + 2:  # Минимум через 2 часа
+                                slots.append(f"{hour:02d}:00")
+                        else:
+                            slots.append(f"{hour:02d}:00")
+                        
+                        if len(slots) >= 3:
+                            break
                 
                 if slots:
                     availability_text += f"• {emp_name_display}: {', '.join(slots)}\n"

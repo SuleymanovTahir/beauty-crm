@@ -292,3 +292,44 @@ def update_client_bot_mode(instagram_id: str, mode: str) -> bool:
     finally:
         conn.close()
 
+def auto_fill_name_from_username(instagram_id: str):
+    """
+    Автоматически заполнить имя клиента из username если имя пустое
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Получаем клиента
+        c.execute("""
+            SELECT username, name 
+            FROM clients 
+            WHERE instagram_id = ?
+        """, (instagram_id,))
+        
+        result = c.fetchone()
+        
+        if not result:
+            return False
+        
+        username, name = result
+        
+        # Если имя пустое и username есть - копируем username в name
+        if not name and username:
+            c.execute("""
+                UPDATE clients 
+                SET name = ?
+                WHERE instagram_id = ?
+            """, (username, instagram_id))
+            
+            conn.commit()
+            log_info(f"✅ Auto-filled name from username: {username}", "database")
+            return True
+        
+        return False
+        
+    except Exception as e:
+        log_error(f"❌ Error auto-filling name: {e}", "database")
+        return False
+    finally:
+        conn.close()
