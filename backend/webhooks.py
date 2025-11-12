@@ -1,5 +1,5 @@
 """
-Обработчики вебхуков Instagram - С ПОДДЕРЖКОЙ ПРОКСИ ДЛЯ ИЗОБРАЖЕНИЙ
+Обработчики вебхуков Instagram - С ПОДДЕРЖКОЙ ВСЕХ ФИШЕК
 """
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -11,7 +11,17 @@ from datetime import datetime
 from config import VERIFY_TOKEN, PAGE_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ID, DATABASE_NAME
 from db import (
     get_or_create_client, save_message, get_chat_history,
-    detect_and_save_language, get_client_language, update_client_info,get_client_bot_mode,get_salon_settings
+    detect_and_save_language, get_client_language, update_client_info,
+    get_client_bot_mode, get_salon_settings
+)
+from db.clients import (
+    auto_fill_name_from_username, 
+    track_client_interest, 
+    update_client_temperature
+)
+from db.bookings import (
+    get_incomplete_booking,
+    check_if_urgent_booking
 )
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
@@ -111,12 +121,6 @@ async def verify_webhook(request: Request):
 async def get_instagram_scoped_id(sender_id: str) -> str:
     """
     Получить Instagram-Scoped ID (IGSID) из App-Scoped ID (ASID)
-    
-    Instagram может возвращать разные ID для одного пользователя:
-    - ASID (17841448618072548) - через Messenger Platform
-    - IGSID - через Instagram Graph API
-    
-    Эта функция пытается получить стабильный IGSID
     """
     try:
         url = f"https://graph.facebook.com/v18.0/{sender_id}"
@@ -309,7 +313,7 @@ async def handle_webhook(request: Request):
                     
                     continue
                 
-                # ✅ 4. ОБРАБОТКА ТЕКСТОВЫХ СООБЩЕНИЙ ОТ КЛИЕНТА
+                # ✅ ОБРАБОТКА ТЕКСТОВЫХ СООБЩЕНИЙ ОТ КЛИЕНТА
                 if not message_text:
                     log_info(f"⚠️ Пустое сообщение от {sender_id}, пропускаем", "webhook")
                     continue
@@ -321,6 +325,8 @@ async def handle_webhook(request: Request):
                     username = ""
                     name = ""
                     profile_pic = ""
+                    
+                    # ✅ #1 - Автоматическое определение имени из Instagram
                     
                     # Пытаемся извлечь из webhook
                     username = await extract_username_from_webhook(messaging)
@@ -372,6 +378,9 @@ async def handle_webhook(request: Request):
                             profile_pic=profile_pic if profile_pic else ""
                         )
                     
+                    # ✅ #1 - Автозаполнение имени из username
+                    auto_fill_name_from_username(sender_id)
+                    
                     # ✅ СОХРАНЯЕМ СООБЩЕНИЕ
                     save_message(
                         sender_id, 
@@ -381,14 +390,30 @@ async def handle_webhook(request: Request):
                     )
                     log_info(f"💾 Сообщение сохранено в БД: {message_text[:30]}...", "webhook")
                     
+                    # ✅ #5 - Отслеживание интереса к услугам
+                    services_keywords = {
+                        'Manicure': ['маникюр', 'manicure', 'мани', 'ногти', 'nail'],
+                        'Pedicure': ['педикюр', 'pedicure', 'педи'],
+                        'Hair': ['волос', 'стрижка', 'hair', 'cut', 'окраш'],
+                        'Massage': ['массаж', 'massage', 'спа', 'spa'],
+                        'Facial': ['чистка', 'facial', 'пилинг', 'косметолог'],
+                    }
+                    
+                    message_lower = message_text.lower()
+                    for service, keywords in services_keywords.items():
+                        if any(keyword in message_lower for keyword in keywords):
+                            track_client_interest(sender_id, service)
+                            break
+                    
+                    # ✅ #21 - Обновление температуры клиента
+                    update_client_temperature(sender_id)
+                    
                     # ✅ ОПРЕДЕЛЯЕМ ЯЗЫК
                     detect_and_save_language(sender_id, message_text)
                     client_language = get_client_language(sender_id)
                     
-
-                    # ✅ ПРОВЕРКА: Поддерживается ли язык? (БЕЗ локального импорта!)
+                    # ✅ ПРОВЕРКА: Поддерживается ли язык?
                     try:
-                        # Используем УЖЕ импортированный get_bot из начала файла
                         bot_instance = get_bot()
                         supported_raw = bot_instance.bot_settings.get('languages_supported', 'ru,en,ar')
                         supported_langs = [lang.strip() for lang in supported_raw.split(',')]
@@ -429,13 +454,55 @@ async def handle_webhook(request: Request):
                     
                     history = get_chat_history(sender_id, limit=10)
                     
+                    # ✅ #4 - Проверка незавершённой записи
+                    incomplete = get_incomplete_booking(sender_id)
+                    
+                    # ✅ #18 - Детектор "скоро уезжает"
+                    is_urgent = check_if_urgent_booking(message_text)
+                    
+                    # ✅ #27 - Детектор корпоративных заявок
+                    corporate_keywords = ['команд', 'сотрудник', 'офис', 'компани', 'корпоратив', 
+                                          'группа', 'человек', 'team', 'office', 'company']
+                    is_corporate = any(keyword in message_text.lower() for keyword in corporate_keywords) and \
+                                   any(str(num) in message_text for num in range(5, 100))
+                    
+                    if is_corporate:
+                        # Уведомляем менеджера
+                        from api.notifications import create_notification
+                        from db.users import get_all_users
+                        
+                        users = get_all_users()
+                        managers = [u for u in users if u[4] in ['admin', 'manager']]
+                        
+                        for manager in managers:
+                            create_notification(
+                                user_id=str(manager[0]),
+                                title="🏢 КОРПОРАТИВНАЯ ЗАЯВКА",
+                                message=f"Клиент @{username or sender_id[:8]} запросил групповую услугу\nКонтекст: {message_text[:100]}",
+                                notification_type="urgent",
+                                action_url=f"/admin/chat?client_id={sender_id}"
+                            )
+                    
+                    if is_urgent:
+                        # Флаг срочности в контексте
+                        log_warning(f"⚡ URGENT booking request from {sender_id}", "webhook")
+                    
+                    # ✅ Передаём флаги в контекст
+                    context_flags = {
+                        'has_incomplete_booking': incomplete is not None,
+                        'incomplete_booking': incomplete,
+                        'is_urgent': is_urgent,
+                        'is_corporate': is_corporate
+                    }
+                    
                     logger.info("🤖 Generating AI response...")
                     try:
                         ai_response = await bot.generate_response(
                             user_message=message_text,
                             instagram_id=sender_id,
                             history=history,
-                            client_language=client_language
+                            client_language=client_language,
+                            context_flags=context_flags  # ✅ ДОБАВЛЕНО
                         )
                         logger.info(f"✅ AI response: {ai_response[:100]}")
                     except Exception as gen_error:

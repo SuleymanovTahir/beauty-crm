@@ -47,6 +47,7 @@ interface Client {
   profile_pic: string | null;
   notes: string;
   is_pinned: number;
+  temperature?: string;
 }
 
 
@@ -498,6 +499,7 @@ export default function Clients() {
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:contacts')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:messages')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:ltv')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:temperature')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:last_contact')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:status')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:actions')}</th>
@@ -513,7 +515,7 @@ export default function Clients() {
                         )}
                         {client.profile_pic && client.profile_pic.trim() !== '' ? (
                           <img
-                          src={`/api/proxy/image?url=${encodeURIComponent(client.profile_pic)}`}
+                            src={`/api/proxy/image?url=${encodeURIComponent(client.profile_pic)}`}
                             alt={client.display_name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                             onError={(e) => {
@@ -537,6 +539,23 @@ export default function Clients() {
                           )}
                         </div>
                       </div>
+                      {/* ✅ #21 - Температура клиента */}
+                      {client.temperature && (
+                        <div
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor:
+                              client.temperature === 'hot' ? '#ef4444' :
+                                client.temperature === 'warm' ? '#f59e0b' :
+                                  '#06b6d4'
+                          }}
+                          title={
+                            client.temperature === 'hot' ? t('clients:hot_client') :
+                              client.temperature === 'warm' ? t('clients:warm_client') :
+                                t('clients:cold_client')
+                          }
+                        />
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-gray-900">{client.phone || "-"}</p>
@@ -544,6 +563,40 @@ export default function Clients() {
                     <td className="px-6 py-4 text-sm text-gray-900">{client.total_messages}</td>
                     <td className="px-6 py-4 text-sm text-green-600 font-medium">
                       {client.lifetime_value} AED
+                    </td>
+                    <td className="px-6 py-4">
+                      {client.temperature ? (
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
+                            {client.temperature === 'hot' && (
+                              <>
+                                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                                <span className="text-xs font-medium text-red-600">
+                                  🔥 {t('clients:hot')}
+                                </span>
+                              </>
+                            )}
+                            {client.temperature === 'warm' && (
+                              <>
+                                <div className="w-3 h-3 bg-orange-500 rounded-full" />
+                                <span className="text-xs font-medium text-orange-600">
+                                  🌤️ {t('clients:warm')}
+                                </span>
+                              </>
+                            )}
+                            {client.temperature === 'cold' && (
+                              <>
+                                <div className="w-3 h-3 bg-cyan-500 rounded-full" />
+                                <span className="text-xs font-medium text-cyan-600">
+                                  ❄️ {t('clients:cold')}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {new Date(client.last_contact).toLocaleDateString("ru-RU")}

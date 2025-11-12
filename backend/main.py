@@ -346,6 +346,21 @@ async def startup_event():
         # from scheduler.birthday_checker import start_booking_scheduler
         # start_booking_scheduler()
 
+        # Миграция #5 - Таблица интересов клиентов
+        # from db.migrations.add_client_interests import add_client_interests_table
+        # add_client_interests_table()
+        
+        # Миграция #17 - Таблица листа ожидания  
+        # from db.migrations.add_waitlist import add_waitlist_table
+        # add_waitlist_table()
+        
+        # Миграция #21 - Поле temperature в clients
+        # from db.migrations.add_temperature_field import add_temperature_field
+        # add_temperature_field()
+        
+        # Миграция #11 - Таблица курсов услуг
+        # from db.migrations.add_service_courses import add_service_courses_table
+        # add_service_courses_table()
         
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")

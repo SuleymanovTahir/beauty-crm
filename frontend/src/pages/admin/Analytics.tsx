@@ -14,6 +14,11 @@ interface AnalyticsData {
   services_stats: [string, number, number][];
   status_stats: [string, number][];
   avg_response_time: number;
+  drop_off_points?: Array<{
+    stage: string;
+    count: number;
+    percentage: number;
+  }>;
 }
 
 interface Stats {
@@ -415,6 +420,107 @@ export default function Analytics() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+      {/* ✅ #20 - АНАЛИЗ ТОЧЕК ОТКАЗА */}
+      {analytics?.drop_off_points && analytics.drop_off_points.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+          <div className="p-4 md:p-6 border-b border-gray-200">
+            <h2 className="text-base md:text-xl text-gray-900 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              {t('analytics:drop_off_analysis')}
+            </h2>
+            <p className="text-xs md:text-sm text-gray-600 mt-1">
+              {t('analytics:where_clients_leave')}
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">
+                    {t('analytics:conversation_stage')}
+                  </th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">
+                    {t('analytics:drop_offs')}
+                  </th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">
+                    {t('analytics:percentage')}
+                  </th>
+                  <th className="px-3 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm text-gray-600">
+                    {t('analytics:recommendation')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {analytics.drop_off_points.map((point, index) => {
+                  const recommendations: Record<string, string> = {
+                    'after_price': t('analytics:work_on_objections'),
+                    'no_slots': t('analytics:need_more_masters'),
+                    'whatsapp_request': t('analytics:simplify_contact_collection'),
+                    'after_greeting': t('analytics:improve_greeting'),
+                    'service_selection': t('analytics:clarify_services')
+                  };
+
+                  return (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-2 h-2 rounded-full"
+                            style={{ 
+                              backgroundColor: point.percentage > 50 ? '#ef4444' : 
+                                             point.percentage > 30 ? '#f59e0b' : '#10b981'
+                            }}
+                          />
+                          {t(`analytics:stages.${point.stage}`)}
+                        </div>
+                      </td>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900 font-medium">
+                        {point.count}
+                      </td>
+                      <td className="px-3 md:px-6 py-3 md:py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
+                            <div 
+                              className="h-2 rounded-full transition-all"
+                              style={{ 
+                                width: `${point.percentage}%`,
+                                backgroundColor: point.percentage > 50 ? '#ef4444' : 
+                                               point.percentage > 30 ? '#f59e0b' : '#10b981'
+                              }}
+                            />
+                          </div>
+                          <span className="text-xs md:text-sm font-medium text-gray-900">
+                            {point.percentage.toFixed(1)}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600">
+                        {recommendations[point.stage] || t('analytics:analyze_further')}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="p-4 md:p-6 bg-blue-50 border-t border-blue-100">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                💡
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-900 mb-1">
+                  {t('analytics:optimization_tip')}
+                </p>
+                <p className="text-sm text-blue-800">
+                  {t('analytics:focus_on_highest_drop_off')}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}

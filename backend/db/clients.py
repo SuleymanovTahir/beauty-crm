@@ -333,3 +333,190 @@ def auto_fill_name_from_username(instagram_id: str):
         return False
     finally:
         conn.close()
+
+# ===== #5 - ОТСЛЕЖИВАНИЕ "ГОРЯЧИХ" КЛИЕНТОВ =====
+
+def track_client_interest(instagram_id: str, service_name: str):
+    """Отслеживать интерес клиента к услуге"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Создаём таблицу если её нет
+        c.execute('''CREATE TABLE IF NOT EXISTS client_interests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id TEXT NOT NULL,
+            service_name TEXT NOT NULL,
+            interest_count INTEGER DEFAULT 1,
+            last_asked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (client_id) REFERENCES clients(instagram_id)
+        )''')
+        
+        # Проверяем есть ли уже запись
+        c.execute("""
+            SELECT id, interest_count 
+            FROM client_interests 
+            WHERE client_id = ? AND service_name LIKE ?
+        """, (instagram_id, f"%{service_name}%"))
+        
+        existing = c.fetchone()
+        
+        if existing:
+            # Обновляем счётчик
+            c.execute("""
+                UPDATE client_interests 
+                SET interest_count = interest_count + 1,
+                    last_asked = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """, (existing[0],))
+        else:
+            # Создаём новую запись
+            c.execute("""
+                INSERT INTO client_interests 
+                (client_id, service_name, interest_count)
+                VALUES (?, ?, 1)
+            """, (instagram_id, service_name))
+        
+        conn.commit()
+        log_info(f"✅ Tracked interest: {instagram_id} -> {service_name}", "database")
+        
+    except Exception as e:
+        log_error(f"Error tracking interest: {e}", "database")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
+def get_client_interest_count(instagram_id: str, service_name: str) -> int:
+    """Получить количество запросов по услуге"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("""
+            SELECT interest_count 
+            FROM client_interests 
+            WHERE client_id = ? AND service_name LIKE ?
+        """, (instagram_id, f"%{service_name}%"))
+        
+        result = c.fetchone()
+        return result[0] if result else 0
+        
+    except:
+        return 0
+    finally:
+        conn.close()
+
+
+def is_hot_client(instagram_id: str, service_name: str = None) -> bool:
+    """Проверить является ли клиент "горячим" (#5)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        if service_name:
+            # Проверка по конкретной услуге
+            c.execute("""
+                SELECT interest_count 
+                FROM client_interests 
+                WHERE client_id = ? AND service_name LIKE ?
+            """, (instagram_id, f"%{service_name}%"))
+            
+            result = c.fetchone()
+            return result and result[0] >= 3  # 3+ запроса = горячий
+        else:
+            # Общая проверка по всем услугам
+            c.execute("""
+                SELECT SUM(interest_count) 
+                FROM client_interests 
+                WHERE client_id = ?
+            """, (instagram_id,))
+            
+            result = c.fetchone()
+            return result and result[0] >= 5  # 5+ запросов = очень горячий
+            
+    except:
+        return False
+    finally:
+        conn.close()
+
+
+# ===== #21 - СЕГМЕНТАЦИЯ ПО "ТЕМПЕРАТУРЕ" =====
+
+def calculate_client_temperature(instagram_id: str) -> str:
+    """Рассчитать температуру клиента: hot, warm, cold"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Критерии:
+        # HOT: спрашивал конкретное время записи
+        # WARM: спросил цену
+        # COLD: просто смотрит
+        
+        # Проверяем последние 5 сообщений
+        c.execute("""
+            SELECT message 
+            FROM chat_history 
+            WHERE instagram_id = ? AND sender = 'client'
+            ORDER BY timestamp DESC
+            LIMIT 5
+        """, (instagram_id,))
+        
+        messages = [row[0].lower() for row in c.fetchall()]
+        
+        # HOT: упоминание времени/даты
+        hot_keywords = ['завтра', 'сегодня', 'записаться', 'запись', 'записать', 
+                       'свободно', 'можно', 'время', 'утром', 'вечером', 'часов']
+        
+        # WARM: упоминание цены
+        warm_keywords = ['сколько', 'цена', 'стоимость', 'price', 'cost']
+        
+        # Подсчёт совпадений
+        hot_score = sum(1 for msg in messages for keyword in hot_keywords if keyword in msg)
+        warm_score = sum(1 for msg in messages for keyword in warm_keywords if keyword in msg)
+        
+        if hot_score >= 2:
+            return 'hot'
+        elif warm_score >= 1:
+            return 'warm'
+        else:
+            return 'cold'
+            
+    except Exception as e:
+        log_error(f"Error calculating temperature: {e}", "database")
+        return 'cold'
+    finally:
+        conn.close()
+
+
+def update_client_temperature(instagram_id: str):
+    """Обновить температуру клиента в БД"""
+    temperature = calculate_client_temperature(instagram_id)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Проверяем есть ли колонка temperature
+        c.execute("PRAGMA table_info(clients)")
+        columns = [row[1] for row in c.fetchall()]
+        
+        if 'temperature' not in columns:
+            # Добавляем колонку
+            c.execute("ALTER TABLE clients ADD COLUMN temperature TEXT DEFAULT 'cold'")
+        
+        # Обновляем значение
+        c.execute("""
+            UPDATE clients 
+            SET temperature = ?
+            WHERE instagram_id = ?
+        """, (temperature, instagram_id))
+        
+        conn.commit()
+        
+    except Exception as e:
+        log_error(f"Error updating temperature: {e}", "database")
+        conn.rollback()
+    finally:
+        conn.close()

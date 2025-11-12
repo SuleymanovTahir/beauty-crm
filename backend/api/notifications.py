@@ -217,3 +217,87 @@ def create_notification(user_id: str, title: str, message: str,
     except Exception as e:
         log_error(f"Error creating notification: {e}", "notifications")
         return False
+
+
+# ===== #16 - АВТОПРЕДЛОЖЕНИЕ ПОВТОРНОЙ ЗАПИСИ =====
+
+async def send_rebooking_notification(client_id: str, service_name: str, last_date: str):
+    """Отправить уведомление о повторной записи"""
+    try:
+        from integrations import send_message
+        from db.clients import get_client_by_id
+        
+        client = get_client_by_id(client_id)
+        if not client:
+            return False
+        
+        days_since = (datetime.now() - datetime.fromisoformat(last_date)).days
+        
+        message = f"""Привет! {service_name} уже {days_since} дней, пора обновить? 💅
+        
+Записать к тому же мастеру как в прошлый раз?"""
+        
+        await send_message(client_id, message)
+        log_info(f"✅ Rebooking notification sent to {client_id}", "notifications")
+        return True
+        
+    except Exception as e:
+        log_error(f"Error sending rebooking notification: {e}", "notifications")
+        return False
+
+
+# ===== #17 - УВЕДОМЛЕНИЕ ИЗ ЛИСТА ОЖИДАНИЯ =====
+
+async def notify_waitlist_slot_available(client_id: str, service: str, date: str, time: str):
+    """Уведомить клиента что слот освободился"""
+    try:
+        from integrations import send_message
+        
+        message = f"""Отличная новость! Освободилось {date} в {time} 💎
+
+Записать вас на {service}?"""
+        
+        await send_message(client_id, message)
+        
+        # Отмечаем что уведомили
+        from db.bookings import mark_waitlist_notified
+        mark_waitlist_notified(client_id, service, date, time)
+        
+        log_info(f"✅ Waitlist notification sent to {client_id}", "notifications")
+        return True
+        
+    except Exception as e:
+        log_error(f"Error sending waitlist notification: {e}", "notifications")
+        return False
+
+
+# ===== #30 - УВЕДОМЛЕНИЕ О СРОЧНОЙ ЗАПИСИ =====
+
+async def notify_manager_urgent_booking(client_id: str, reason: str):
+    """Уведомить менеджера о срочной записи"""
+    try:
+        from db.users import get_all_users
+        from db.clients import get_client_by_id
+        
+        client = get_client_by_id(client_id)
+        client_name = client[3] or client[1] or client_id[:8]
+        
+        # Получаем всех менеджеров
+        users = get_all_users()
+        managers = [u for u in users if u[4] in ['admin', 'manager']]
+        
+        for manager in managers:
+            create_notification(
+                user_id=str(manager[0]),
+                title="🚨 СРОЧНАЯ ЗАПИСЬ",
+                message=f"Клиент {client_name}: {reason}\nТребуется немедленная помощь!",
+                notification_type="urgent",
+                action_url=f"/admin/chat?client_id={client_id}"
+            )
+        
+        log_info(f"✅ Urgent booking notification sent to managers", "notifications")
+        return True
+        
+    except Exception as e:
+        log_error(f"Error sending urgent notification: {e}", "notifications")
+        return False

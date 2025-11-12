@@ -96,9 +96,10 @@ class SalonBot:
         self,
         user_message: str,
         instagram_id: str,
-        history: Optional[List[Tuple]] = None,
+        history: List[Tuple],
+        client_language: str = 'ru',
         booking_progress: Optional[Dict] = None,
-        client_language: str = 'ru'
+        context_flags: Optional[Dict] = None
     ) -> str:
         """
         Генерировать ответ используя Gemini через прокси
@@ -116,13 +117,50 @@ class SalonBot:
 
         
         # Построить system prompt
-        system_prompt = self.build_system_prompt(
+        # ✅ Добавляем context_flags в промпт
+        additional_context = ""
+        
+        if context_flags:
+            if context_flags.get('has_incomplete_booking'):
+                incomplete = context_flags['incomplete_booking']
+                additional_context += f"\n\n⚠️ У КЛИЕНТА ЕСТЬ НЕЗАВЕРШЁННАЯ ЗАПИСЬ:\n"
+                additional_context += f"Услуга: {incomplete.get('service_name', '?')}\n"
+                additional_context += f"Шаг: {incomplete.get('step', '?')}\n"
+                additional_context += "ПРЕДЛОЖИ ПРОДОЛЖИТЬ ЭТУ ЗАПИСЬ!\n"
+            
+            if context_flags.get('is_urgent'):
+                additional_context += "\n\n🚨 КЛИЕНТ УКАЗАЛ СРОЧНОСТЬ (уезжает, важное событие)\n"
+                additional_context += "ПРЕДЛОЖИ ВСЕ ВОЗМОЖНЫЕ ОКНА + ЭКСТРЕННЫЕ ВАРИАНТЫ!\n"
+            
+            if context_flags.get('is_corporate'):
+                additional_context += "\n\n🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа 5+ человек)\n"
+                additional_context += "ПЕРЕКЛЮЧИ НА МЕНЕДЖЕРА: 'Для корпоративных групп есть спецусловия! Передаю менеджеру'\n"
+            
+            # ✅ #5 - Проверка "горячего" клиента
+            from db.clients import is_hot_client, get_client_interest_count
+            if is_hot_client(instagram_id):
+                service_interest = None
+                for service in ['Manicure', 'Pedicure', 'Hair', 'Massage']:
+                    count = get_client_interest_count(instagram_id, service)
+                    if count >= 3:
+                        service_interest = service
+                        break
+                    
+                if service_interest:
+                    additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
+                    additional_context += f"Спрашивал про {service_interest} {count} раз\n"
+        
+        system_prompt = self.prompt_builder.build_full_prompt(
             instagram_id=instagram_id,
-            history=history or [],
-            booking_progress=booking_progress or {},
+            history=history,
+            booking_progress=booking_progress,
             client_language=client_language
         )
-        full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
+
+        # Добавляем дополнительный контекст
+        if additional_context:
+            system_prompt += additional_context
+            full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
 
         try:
             print("=" * 50)
