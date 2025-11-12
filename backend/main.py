@@ -343,8 +343,8 @@ async def startup_event():
         # seed_employees()
 
 
-        from scheduler.birthday_checker import start_booking_scheduler
-        start_booking_scheduler()
+        # from scheduler.birthday_checker import start_booking_scheduler
+        # start_booking_scheduler()
 
         
         bot = get_bot()
