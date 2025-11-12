@@ -332,8 +332,8 @@ async def startup_event():
         # from db.migrations.migrate_services import migrate_services
         # migrate_services()
 
-        # from db.migrations.migrate_bot_settings import migrate_settings
-        # migrate_settings()
+        from db.migrations.migrate_bot_settings import migrate_settings
+        migrate_settings()
         
 
         # from db.migrations.create_employees import create_employees_tables

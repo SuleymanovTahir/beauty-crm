@@ -430,12 +430,10 @@ Google Maps: {self.salon.get('google_maps', '')}
         # ✅ Получаем инструкции из БД
         instructions = self.bot_settings.get('booking_availability_instructions', '')
         
-        # ✅ ЕСЛИ УСЛУГА НЕ ОПРЕДЕЛЕНА
         if not service_name:
             conn.close()
             return f"""=== ❓ УТОЧНИ УСЛУГУ ===
-    
-    {instructions}"""
+            {instructions}"""
         
         # ✅ УСЛУГА ОПРЕДЕЛЕНА - проверяем что она ЕСТЬ в базе
         c.execute("""
