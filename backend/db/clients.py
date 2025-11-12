@@ -520,3 +520,37 @@ def update_client_temperature(instagram_id: str):
         conn.rollback()
     finally:
         conn.close()
+
+def calculate_no_show_risk(instagram_id: str) -> float:
+    """Рассчитать риск no-show клиента (#19)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        # Получаем статистику записей
+        c.execute("""
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
+                SUM(CASE WHEN status = 'no_show' THEN 1 ELSE 0 END) as no_show
+            FROM bookings
+            WHERE instagram_id = ?
+        """, (instagram_id,))
+        
+        result = c.fetchone()
+        
+        if not result or result[0] == 0:
+            return 0.0  # Новый клиент - риск низкий
+        
+        total, cancelled, no_show = result
+        
+        # Формула риска: (отмены + no_show*2) / всего записей
+        risk = (cancelled + no_show * 2) / total
+        
+        return min(risk, 1.0)  # Максимум 1.0
+        
+    except Exception as e:
+        log_error(f"Error calculating no-show risk: {e}", "database")
+        return 0.0
+    finally:
+        conn.close()

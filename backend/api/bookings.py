@@ -389,7 +389,7 @@ async def get_no_show_risk(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        from db.bookings import calculate_no_show_risk
+        from db.clients import calculate_no_show_risk
         risk = calculate_no_show_risk(client_id)
         
         risk_level = "low"

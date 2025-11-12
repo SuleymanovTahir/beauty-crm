@@ -56,16 +56,16 @@ class SalonBot:
     def reload_settings(self):
         """Перезагрузить настройки из БД"""
         from .prompts import PromptBuilder
-        
+
         self.salon = get_salon_settings()
         self.bot_settings = get_bot_settings()
-        
+
         # ✅ Инициализируем prompt_builder
         self.prompt_builder = PromptBuilder(
             salon=self.salon,
             bot_settings=self.bot_settings
         )
-        
+
         print(f"✅ Настройки загружены: {self.salon['name']}")
 
     def build_system_prompt(
@@ -169,8 +169,9 @@ class SalonBot:
         # Добавляем дополнительный контекст
         if additional_context:
             system_prompt += additional_context
-            full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
 
+        full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
+        
         try:
             print("=" * 50)
             print("🤖 Generating AI response (Gemini via proxy)...")

@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple, Optional
 from datetime import datetime, timedelta
 import sqlite3
 
+
 from config import DATABASE_NAME
 from db import (
     get_all_services,

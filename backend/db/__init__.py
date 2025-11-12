@@ -121,6 +121,7 @@ __all__ = [
     "get_booking_progress",
     "update_booking_progress",
     "clear_booking_progress",
+    'get_last_service_date',
     
     # Services
     "get_all_services",
