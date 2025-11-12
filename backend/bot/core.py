@@ -165,13 +165,20 @@ class SalonBot:
             booking_progress=booking_progress,
             client_language=client_language
         )
-
+        
+        # ✅ ИЗМЕНЕНИЕ: Логируем построенный промпт для отладки
+        print(f"   📝 Промпт содержит {len(system_prompt)} символов")
+        if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
+            print(f"   ✅ Блок с мастерами найден в промпте")
+        else:
+            print(f"   ⚠️ Блок с мастерами НЕ найден в промпте!")
+        
         # Добавляем дополнительный контекст
         if additional_context:
             system_prompt += additional_context
 
         full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
-        
+
         try:
             print("=" * 50)
             print("🤖 Generating AI response (Gemini via proxy)...")
