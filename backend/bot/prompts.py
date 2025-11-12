@@ -574,29 +574,20 @@ Google Maps: {self.salon.get('google_maps', '')}
             LIMIT 1
         """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
         service_row = c.fetchone()
-        
-        # ✅ ИЗМЕНЕНИЕ: Логируем что ищем
-        print(f"   🔍 Ищу услугу '{service_name}' в БД...")
-        
+
         if not service_row:
-            # ✅ ИЗМЕНЕНИЕ: Показываем ВСЕ доступные услуги из БД
-            c.execute("SELECT name_ru, name FROM services WHERE is_active = 1 LIMIT 5")
-            available = c.fetchall()
-            print(f"   ⚠️ Услуга '{service_name}' НЕ НАЙДЕНА в БД!")
-            print(f"   📋 Доступные услуги: {[s[0] or s[1] for s in available]}")
-            
             conn.close()
-        if available:
-            services_list = "\n".join([f"• {s[0] or s[1]}" for s in available[:5]])
+
+            if 'makeup' in service_name.lower() or 'макияж' in service_name.lower():
+                return """=== 💄 УТОЧНЕНИЕ ===
+У нас только перманентный макияж 😊
+Брови 1100 AED или губы 1200 AED?
+Или интересует что-то другое?"""
+
             return f"""=== 🤔 УТОЧНЕНИЕ ===
-            К сожалению, '{service_name}' не нашла.
-            У нас есть:
-            {services_list}
-            Что вас интересует?"""
-        else:
-            # return """=== 🤔 УТОЧНЕНИЕ ===
-            # Могу предложить маникюр, педикюр, стрижку, массаж?"""
-            print(f"   ✅ Услуга найдена: ID={service_row[0]}, {service_row[1]}")
+{service_name} не нашла в списке
+Может маникюр, педикюр, стрижка, массаж?"""
+
         service_id = service_row[0]
         employees = get_employees_by_service(service_id)
 
