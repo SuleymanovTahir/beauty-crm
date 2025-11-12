@@ -270,3 +270,140 @@ async def import_bookings(
     except Exception as e:
         log_error(f"Import error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/bookings/{booking_id}/waitlist")
+async def add_to_booking_waitlist(
+    booking_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Добавить клиента в лист ожидания (#17)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        data = await request.json()
+        instagram_id = data.get('instagram_id')
+        service = data.get('service')
+        preferred_date = data.get('date')
+        preferred_time = data.get('time')
+        
+        if not all([instagram_id, service, preferred_date, preferred_time]):
+            return JSONResponse({"error": "Missing required fields"}, status_code=400)
+        
+        from db.bookings import add_to_waitlist
+        add_to_waitlist(instagram_id, service, preferred_date, preferred_time)
+        
+        log_activity(user["id"], "add_to_waitlist", "booking", 
+                    str(booking_id), f"Added to waitlist")
+        
+        return {"success": True, "message": "Added to waitlist"}
+        
+    except Exception as e:
+        log_error(f"Waitlist error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/bookings/pattern/{client_id}")
+async def get_client_booking_pattern(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить обычный паттерн записи клиента (#7)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        from db.bookings import get_client_usual_booking_pattern
+        pattern = get_client_usual_booking_pattern(client_id)
+        
+        return {
+            "has_pattern": pattern is not None,
+            "pattern": pattern
+        }
+        
+    except Exception as e:
+        log_error(f"Pattern error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/bookings/incomplete/{client_id}")
+async def get_incomplete_client_booking(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить незавершённую запись (#4)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        from db.bookings import get_incomplete_booking
+        incomplete = get_incomplete_booking(client_id)
+        
+        return {
+            "has_incomplete": incomplete is not None,
+            "booking": incomplete
+        }
+        
+    except Exception as e:
+        log_error(f"Incomplete booking error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/bookings/course-progress/{client_id}")
+async def get_course_progress(
+    client_id: str,
+    service: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить прогресс по курсу (#11)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        from db.bookings import get_client_course_progress
+        progress = get_client_course_progress(client_id, service)
+        
+        return {
+            "has_course": progress is not None,
+            "progress": progress
+        }
+        
+    except Exception as e:
+        log_error(f"Course progress error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/bookings/no-show-risk/{client_id}")
+async def get_no_show_risk(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить риск no-show клиента (#19)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        from db.bookings import calculate_no_show_risk
+        risk = calculate_no_show_risk(client_id)
+        
+        risk_level = "low"
+        if risk > 0.5:
+            risk_level = "high"
+        elif risk > 0.3:
+            risk_level = "medium"
+        
+        return {
+            "risk_score": risk,
+            "risk_level": risk_level,
+            "requires_deposit": risk > 0.4
+        }
+        
+    except Exception as e:
+        log_error(f"No-show risk error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

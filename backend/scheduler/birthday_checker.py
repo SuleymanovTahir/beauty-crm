@@ -201,3 +201,149 @@ def start_birthday_checker():
     thread = threading.Thread(target=birthday_checker_loop, daemon=True)
     thread.start()
     log_info("✅ Планировщик дней рождения запущен", "birthday_checker")
+
+
+# ===== SCHEDULER ДЛЯ ЗАПИСЕЙ =====
+
+def send_booking_reminders():
+    """Отправить напоминания о записях (#15)"""
+    from db.bookings import get_upcoming_bookings
+    from integrations.instagram import send_message
+    import asyncio
+    
+    try:
+        # За 24 часа
+        bookings_24h = get_upcoming_bookings(hours=24)
+        
+        for booking in bookings_24h:
+            booking_id, instagram_id, service, dt, master, name, username = booking
+            
+            try:
+                dt_obj = datetime.fromisoformat(dt)
+                hours_until = (dt_obj - datetime.now()).total_seconds() / 3600
+                
+                # Отправляем только если близко к 24 часам (23-25 часов)
+                if 23 <= hours_until <= 25:
+                    message = f"""Напоминаю: завтра {service} в {dt_obj.strftime('%H:%M')} 💅
+{f'Мастер: {master}' if master else ''}
+
+Адрес: M.Le Diamant Beauty Lounge, JBR
+Ждём вас! 💎"""
+                    
+                    asyncio.run(send_message(instagram_id, message))
+                    log_info(f"✅ Reminder sent (24h) to {instagram_id}", "scheduler")
+                    
+            except Exception as e:
+                log_error(f"Error sending 24h reminder: {e}", "scheduler")
+        
+        # За 2 часа
+        bookings_2h = get_upcoming_bookings(hours=2)
+        
+        for booking in bookings_2h:
+            booking_id, instagram_id, service, dt, master, name, username = booking
+            
+            try:
+                dt_obj = datetime.fromisoformat(dt)
+                hours_until = (dt_obj - datetime.now()).total_seconds() / 3600
+                
+                # Отправляем только если близко к 2 часам (1.5-2.5 часа)
+                if 1.5 <= hours_until <= 2.5:
+                    message = f"""Через 2 часа увидимся! 😊
+
+{service} в {dt_obj.strftime('%H:%M')}
+Если не успеваете - дайте знать, перенесём 💖"""
+                    
+                    asyncio.run(send_message(instagram_id, message))
+                    log_info(f"✅ Reminder sent (2h) to {instagram_id}", "scheduler")
+                    
+            except Exception as e:
+                log_error(f"Error sending 2h reminder: {e}", "scheduler")
+                
+    except Exception as e:
+        log_error(f"Error in send_booking_reminders: {e}", "scheduler")
+
+
+def check_rebooking_opportunities():
+    """Проверить клиентов для повторной записи (#16)"""
+    from db.bookings import get_clients_for_rebooking
+    from integrations.instagram import send_message
+    import asyncio
+    
+    try:
+        # Маникюр (21 день)
+        manicure_clients = get_clients_for_rebooking('Manicure', 21)
+        
+        for instagram_id, name, username in manicure_clients[:5]:  # Макс 5 в день
+            try:
+                message = f"""Привет! Маникюр уже 3 недели, пора обновить? 💅
+
+Записать как в прошлый раз?"""
+                
+                asyncio.run(send_message(instagram_id, message))
+                log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
+                
+                # Делаем паузу между сообщениями
+                import time
+                time.sleep(5)
+                
+            except Exception as e:
+                log_error(f"Error sending rebooking: {e}", "scheduler")
+        
+        # Педикюр (28 дней)
+        pedicure_clients = get_clients_for_rebooking('Pedicure', 28)
+        
+        for instagram_id, name, username in pedicure_clients[:5]:
+            try:
+                message = f"""Привет! Педикюр уже месяц 🦶
+
+Хотите записаться снова?"""
+                
+                asyncio.run(send_message(instagram_id, message))
+                log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
+                
+                import time
+                time.sleep(5)
+                
+            except Exception as e:
+                log_error(f"Error sending rebooking: {e}", "scheduler")
+                
+    except Exception as e:
+        log_error(f"Error in check_rebooking_opportunities: {e}", "scheduler")
+
+
+def booking_scheduler_loop():
+    """Основной цикл scheduler для записей"""
+    log_info("📅 Запущен планировщик записей", "scheduler")
+    
+    import time
+    
+    while True:
+        try:
+            now = datetime.now()
+            
+            # Напоминания - каждый час
+            if now.minute == 0:
+                log_info("Проверка напоминаний о записях...", "scheduler")
+                send_booking_reminders()
+                time.sleep(60)
+            
+            # Повторные записи - раз в день в 10:00
+            if now.hour == 10 and now.minute == 0:
+                log_info("Проверка возможностей повторной записи...", "scheduler")
+                check_rebooking_opportunities()
+                time.sleep(60)
+            
+            time.sleep(30)  # Проверяем каждые 30 секунд
+            
+        except Exception as e:
+            log_error(f"Ошибка в booking_scheduler_loop: {e}", "scheduler")
+            time.sleep(60)
+
+
+def start_booking_scheduler():
+    """Запустить scheduler записей"""
+    import threading
+    
+    thread = threading.Thread(target=booking_scheduler_loop, daemon=True)
+    thread.start()
+    log_info("✅ Планировщик записей запущен", "scheduler")

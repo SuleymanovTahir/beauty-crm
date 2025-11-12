@@ -342,6 +342,10 @@ async def startup_event():
         # from db.migrations.seed_employees import seed_employees
         # seed_employees()
 
+
+        from scheduler.birthday_checker import start_booking_scheduler
+        start_booking_scheduler()
+
         
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
