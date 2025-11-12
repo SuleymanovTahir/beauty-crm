@@ -792,46 +792,6 @@ def analyze_client_tone(history: List[Tuple]) -> str:
         return "neutral"
 
 
-def get_client_objection_history(instagram_id: str) -> List[str]:
-    """История возражений клиента (#6)"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-
-    c.execute("""
-        SELECT message 
-        FROM chat_history 
-        WHERE instagram_id = ? AND sender = 'client'
-        ORDER BY timestamp DESC
-        LIMIT 20
-    """, (instagram_id,))
-
-    messages = [row[0] for row in c.fetchall()]
-    conn.close()
-
-    objection_keywords = {
-        'дорого': 'price',
-        'expensive': 'price',
-        'подумать': 'think',
-        'подумаю': 'think',    # ✅ ДОБАВЛЕНО
-        'think': 'think',
-        'времени нет': 'no_time',
-        'no time': 'no_time',
-        'далеко': 'far',
-        'far': 'far',
-        'больно': 'pain',
-        'painful': 'pain',
-    }
-
-    found_objections = []
-    for msg in messages:
-        msg_lower = msg.lower()
-        for keyword, obj_type in objection_keywords.items():
-            if keyword in msg_lower and obj_type not in found_objections:
-                found_objections.append(obj_type)
-
-    return found_objections
-
-
 def get_popular_booking_times(service_name: str = None) -> List[str]:
     """Популярные времена записи (#9)"""
     conn = sqlite3.connect(DATABASE_NAME)
@@ -921,6 +881,7 @@ def get_client_objection_history(instagram_id: str) -> List[str]:
         'дорого': 'price',
         'expensive': 'price',
         'подумать': 'think',
+        'подумаю': 'think',    # ✅ ДОБАВЛЕНО
         'think': 'think',
         'времени нет': 'no_time',
         'no time': 'no_time',

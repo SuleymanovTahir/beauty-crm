@@ -135,7 +135,7 @@ class FeatureTester:
             ("Конечно! Когда вам удобно?", "assistant"),
             ("Завтра после обеда было бы идеально!", "client"),
             ("Дорого", "client"),  # Возражение
-            ("Подумаю", "client"),  # Возражение
+            ("Надо подумать", "client"),
         ]
         
         for i, (msg, sender) in enumerate(messages):
