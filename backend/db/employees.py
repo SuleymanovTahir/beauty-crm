@@ -7,16 +7,34 @@ from typing import Optional, List
 from core.config import DATABASE_NAME
 
 
-def get_all_employees(active_only=True):
-    """Получить всех сотрудников"""
+def get_all_employees(active_only=True, service_providers_only=False):
+    """
+    Получить всех сотрудников
+
+    Args:
+        active_only: Только активные сотрудники
+        service_providers_only: Только обслуживающий персонал (исключить админов, директоров и т.д.)
+    """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
+    # Строим запрос с фильтрами
+    query = "SELECT * FROM employees WHERE 1=1"
+
     if active_only:
-        c.execute("SELECT * FROM employees WHERE is_active = 1 ORDER BY sort_order, full_name")
-    else:
-        c.execute("SELECT * FROM employees ORDER BY sort_order, full_name")
-    
+        query += " AND is_active = 1"
+
+    if service_providers_only:
+        # Проверяем есть ли колонка is_service_provider
+        c.execute("PRAGMA table_info(employees)")
+        columns = [row[1] for row in c.fetchall()]
+
+        if 'is_service_provider' in columns:
+            query += " AND is_service_provider = 1"
+
+    query += " ORDER BY sort_order, full_name"
+
+    c.execute(query)
     employees = c.fetchall()
     conn.close()
     return employees

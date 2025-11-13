@@ -372,6 +372,10 @@ async def startup_event():
         # from db.migrations.add_master_field import add_master_field
         # add_master_field()
 
+        # Миграция - Фильтр обслуживающего персонала (исключить Турсунай и админов)
+        # from db.migrations.add_employee_service_provider import add_employee_service_provider_field
+        # add_employee_service_provider_field()
+
         # from db.migrations.link_employees_to_services import link_employees_to_services
         # link_employees_to_services()
 
