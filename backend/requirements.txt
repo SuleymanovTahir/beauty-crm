@@ -9,4 +9,3 @@ fastapi
   openpyxl
   slowapi
   python-dotenv
-  sqlite3

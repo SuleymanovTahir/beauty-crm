@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import sqlite3
 
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from db import (
     get_all_services,
     get_all_special_packages,
@@ -741,12 +741,13 @@ Google Maps: {self.salon.get('google_maps', '')}
             name_ru = full_emp[13] if full_emp and len(full_emp) > 13 else None
             name_ar = full_emp[14] if full_emp and len(full_emp) > 14 else None
 
+            # Ensure emp_name_display is always a string
             if client_language == 'ru':
-                emp_name_display = name_ru or emp_name
+                emp_name_display = str(name_ru) if name_ru and isinstance(name_ru, str) else str(emp_name)
             elif client_language == 'ar':
-                emp_name_display = name_ar or emp_name
+                emp_name_display = str(name_ar) if name_ar and isinstance(name_ar, str) else str(emp_name)
             else:
-                emp_name_display = emp_name
+                emp_name_display = str(emp_name)
 
             try:
                 target_dt = datetime.strptime(target_date, "%Y-%m-%d")

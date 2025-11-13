@@ -5,8 +5,8 @@ import sqlite3
 from datetime import datetime
 import hashlib
 
-from config import DATABASE_NAME
-from logger import log_info, log_warning
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_warning
 
 
 

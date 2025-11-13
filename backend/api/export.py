@@ -11,9 +11,9 @@ import sqlite3
 
 from db import get_all_bookings, get_analytics_data
 from db.settings import get_salon_settings
-from config import DATABASE_NAME
-from utils import require_auth
-from logger import log_error, log_warning
+from core.config import DATABASE_NAME
+from utils.utils import require_auth
+from utils.logger import log_error, log_warning
 
 # Попытка импортировать библиотеки для PDF и Excel
 try:

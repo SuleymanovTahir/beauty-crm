@@ -2,8 +2,8 @@
 Миграция: Добавление таблицы для множественных заметок
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def migrate():
     """Выполнить миграцию"""

@@ -4,7 +4,7 @@
 import sqlite3
 from datetime import datetime
 from typing import Optional, List
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def get_all_employees(active_only=True):

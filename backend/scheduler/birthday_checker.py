@@ -3,9 +3,9 @@ import threading
 import time
 from datetime import datetime, timedelta
 from typing import List, Tuple
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from api.notifications import create_notification
-from logger import log_info, log_error
+from utils.logger import log_info, log_error
 
 
 def get_upcoming_birthdays() -> List[Tuple]:

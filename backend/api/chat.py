@@ -12,8 +12,8 @@ from db import (
     update_client_bot_mode
 )
 from integrations import send_message
-from utils import require_auth, get_total_unread
-from logger import log_error,log_info,log_warning
+from utils.utils import require_auth, get_total_unread
+from utils.logger import log_error,log_info,log_warning
 
 
 router = APIRouter(tags=["Chat"])

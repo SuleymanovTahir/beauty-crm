@@ -10,8 +10,8 @@ from db import (
     get_role_permissions, update_role_permissions, 
     check_user_permission, AVAILABLE_PERMISSIONS, log_activity
 )
-from utils import require_auth
-from logger import log_error
+from utils.utils import require_auth
+from utils.logger import log_error
 
 router = APIRouter(tags=["Roles"])
 

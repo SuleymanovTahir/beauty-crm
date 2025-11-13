@@ -2,7 +2,7 @@
 Миграция: Связать мастеров с услугами
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def link_employees_to_services():
     """Создать связи между мастерами и услугами"""

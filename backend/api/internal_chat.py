@@ -7,9 +7,9 @@ from typing import Optional
 import sqlite3
 from datetime import datetime
 
-from config import DATABASE_NAME
-from utils import require_auth, check_permission
-from logger import log_error, log_info
+from core.config import DATABASE_NAME
+from utils.utils import require_auth, check_permission
+from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Internal Chat"], prefix="/api/internal-chat")
 

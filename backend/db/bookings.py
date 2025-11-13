@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 from typing import List, Optional, Dict, Tuple
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def get_all_bookings():

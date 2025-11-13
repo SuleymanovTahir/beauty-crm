@@ -2,7 +2,7 @@
 Создание расписаний для всех мастеров
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def create_schedules():
     conn = sqlite3.connect(DATABASE_NAME)

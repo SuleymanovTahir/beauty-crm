@@ -8,7 +8,7 @@ import httpx
 import os
 from datetime import datetime
 
-from config import VERIFY_TOKEN, PAGE_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ID, DATABASE_NAME
+from core.config import VERIFY_TOKEN, PAGE_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ID, DATABASE_NAME
 from db import (
     get_or_create_client, save_message, get_chat_history,
     detect_and_save_language, get_client_language, update_client_info,
@@ -25,7 +25,7 @@ from db.bookings import (
 )
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
-from logger import logger, log_info, log_warning, log_error
+from utils.logger import logger, log_info, log_warning, log_error
 
 router = APIRouter(tags=["Webhooks"])
 

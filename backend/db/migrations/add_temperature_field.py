@@ -2,8 +2,8 @@
 Миграция: Поле temperature в clients (#21 - Сегментация по температуре)
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def add_temperature_field():
     """Добавить поле temperature в таблицу clients"""

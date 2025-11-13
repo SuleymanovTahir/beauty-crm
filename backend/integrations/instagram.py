@@ -2,8 +2,8 @@
 Интеграция с Instagram Graph API
 """
 import httpx
-from config import PAGE_ACCESS_TOKEN
-from logger import log_error,log_info
+from core.config import PAGE_ACCESS_TOKEN
+from utils.logger import log_error,log_info
 import os
 
 

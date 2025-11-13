@@ -11,9 +11,9 @@ from db import (
     get_all_special_packages, create_special_package,
     update_special_package, delete_special_package
 )
-from utils import require_auth
-from logger import log_error, log_info
-import config
+from utils.utils import require_auth
+from utils.logger import log_error, log_info
+import core.config as config
 
 router = APIRouter(tags=["Services"])
 

@@ -11,10 +11,10 @@ from db.employees import (
     remove_employee_service, get_employees_by_service,
     get_employee_schedule, set_employee_schedule, get_available_employees
 )
-from utils import require_auth
+from utils.utils import require_auth
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Employees"])
 

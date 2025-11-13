@@ -3,8 +3,8 @@
 """
 import sqlite3
 from datetime import datetime
-from logger import log_info
-from config import DATABASE_NAME
+from utils.logger import log_info
+from core.config import DATABASE_NAME
 
 
 def save_message(instagram_id: str, message: str, sender: str, 
