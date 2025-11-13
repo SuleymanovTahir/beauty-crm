@@ -323,71 +323,59 @@ async def startup_event():
         
         # Раскомментируйте следующие строки для первичной миграции:
         
-        # Миграция настроек салона
+        # ================================
+        # 1. Настройки салона (безопасно)
+        # ================================
         # from db.migrations.migrate_salon_settings import migrate_salon_settings
-        # migrate_salon_settings()  # <- Запустить ПЕРВЫМ.
+        # migrate_salon_settings()
 
+        # ================================
+        # 2. Система прав доступа (безопасно)
+        # ================================
         # from db.migrations.add_permissions_system import add_permissions_system
         # add_permissions_system()
 
+        # ================================
+        # 3. Режимы бота (безопасно)
+        # ================================
         # from db.migrations.add_bot_modes import add_bot_mode_fields
         # add_bot_mode_fields()
 
-        # from db.migrations.add_manager_consultation import add_manager_consultation_field
-        # add_manager_consultation_field()
-
-        # from db.migrations.migrate_services import migrate_services
-        # migrate_services()
-
-        # from db.migrations.migrate_bot_settings import migrate_settings
-        # migrate_settings()
-        
-
-        # from db.migrations.create_employees import create_employees_tables
-        # create_employees_tables()
-
-        # from db.migrations.seed_employees import seed_employees
-        # seed_employees()
-
-
-        # from scheduler.birthday_checker import start_booking_scheduler
-        # start_booking_scheduler()
-
-        # Миграция #5 - Таблица интересов клиентов
-        # from db.migrations.add_client_interests import add_client_interests_table
-        # add_client_interests_table()
-        
-        # Миграция #17 - Таблица листа ожидания  
-        # from db.migrations.add_waitlist import add_waitlist_table
-        # add_waitlist_table()
-        
-        # Миграция #21 - Поле temperature в clients
-        # from db.migrations.add_temperature_field import add_temperature_field
-        # add_temperature_field()
-        
-        # Миграция #11 - Таблица курсов услуг
-        # from db.migrations.add_service_courses import add_service_courses_table
-        # add_service_courses_table()
-        
+        # ================================
+        # 4. Поле master для записей (из варианта №1)
+        # ================================
         # from db.migrations.add_master_field import add_master_field
         # add_master_field()
 
-        # from db.migrations.link_employees_to_services import link_employees_to_services
-        # link_employees_to_services()
+        # ================================
+        # 5. Консультация менеджера (из варианта №2)
+        # ================================
+        # from db.migrations.add_manager_consultation import add_manager_consultation_field
+        # add_manager_consultation_field()
 
-        # from db.migrations.add_employee_translations import add_employee_translations
-        # add_employee_translations()
+        # ================================
+        # 6. Услуги (безопасно)
+        # ================================
+        # from db.migrations.migrate_services import migrate_services
+        # migrate_services()
 
-        # from db.migrations.check_schedules import check_schedules
-        # check_schedules()
+        # ================================
+        # 7. Настройки бота (безопасно)
+        # ================================
+        # from db.migrations.migrate_bot_settings import migrate_settings
+        # migrate_settings()
 
-        # from db.migrations.create_employee_schedules import create_schedules
-        # create_schedules()
+        # ============================================================
+        # 8. ОПЦИОНАЛЬНО — Только если БД пустая или тестовая!
+        # ============================================================
+        # from db.migrations.create_employees import create_employees_tables
+        # create_employees_tables()
 
-        # from db.migrations.check_translations import check_translations
-        # check_translations()
-        
-
+        # ============================================================
+        # 9. ОПЦИОНАЛЬНО — генерация тестовых сотрудников
+        # ============================================================
+        # from db.migrations.seed_employees import seed_employees
+        # seed_employees()
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
