@@ -179,19 +179,30 @@ def delete_client(instagram_id: str) -> bool:
 
 # ===== ЯЗЫКОВЫЕ ФУНКЦИИ =====
 
-def detect_and_save_language(instagram_id: str, message: str):
+def detect_and_save_language(instagram_id: str, message: str) -> str:
     """Определить язык сообщения и сохранить для клиента"""
-    # Простое определение языка по символам
     
-    # Проверка на кириллицу
-    if re.search('[а-яА-ЯёЁ]', message):
-        language = 'ru'
+    # Убираем смайлики и спецсимволы для чистого анализа
+    clean_message = re.sub(r'[^\w\s]', '', message)
+    
+    # Проверка на кириллицу (русский)
+    cyrillic_count = len(re.findall('[а-яА-ЯёЁ]', clean_message))
+    
     # Проверка на арабский
-    elif re.search('[\u0600-\u06FF]', message):
+    arabic_count = len(re.findall('[\u0600-\u06FF]', clean_message))
+    
+    # Проверка на латиницу (английский)
+    latin_count = len(re.findall('[a-zA-Z]', clean_message))
+    
+    # Определяем язык по наибольшему количеству символов
+    if cyrillic_count > arabic_count and cyrillic_count > latin_count:
+        language = 'ru'
+    elif arabic_count > cyrillic_count and arabic_count > latin_count:
         language = 'ar'
-    # По умолчанию английский
-    else:
+    elif latin_count > 0:  # Если есть хоть одна латинская буква
         language = 'en'
+    else:
+        language = 'ru'  # По умолчанию русский
     
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -202,7 +213,7 @@ def detect_and_save_language(instagram_id: str, message: str):
     conn.commit()
     conn.close()
     
-    log_info(f"✅ Language detected: {language} for {instagram_id}", "database")
+    log_info(f"✅ Language detected: {language} for {instagram_id} (cyr:{cyrillic_count}, ar:{arabic_count}, lat:{latin_count})", "database")
     
     return language
 

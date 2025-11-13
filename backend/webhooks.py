@@ -409,8 +409,8 @@ async def handle_webhook(request: Request):
                     update_client_temperature(sender_id)
                     
                     # ✅ ОПРЕДЕЛЯЕМ ЯЗЫК
-                    detect_and_save_language(sender_id, message_text)
-                    client_language = get_client_language(sender_id)
+                    # Определяем язык и используем результат
+                    client_language = detect_and_save_language(sender_id, message_text)
                     
                     # ✅ ПРОВЕРКА: Поддерживается ли язык?
                     try:
