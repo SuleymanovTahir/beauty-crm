@@ -13,6 +13,7 @@ from db import (
     get_all_special_packages,
 )
 from db.services import format_service_price_for_bot
+from db.employees import get_all_employees
 
 
 def transliterate_to_russian(name: str) -> str:
@@ -290,6 +291,34 @@ class PromptBuilder:
 
         return packages_text
 
+    def _get_employees_list(self) -> str:
+        """Получить список активных сотрудников из БД"""
+        try:
+            employees = get_all_employees(active_only=True)
+            if not employees:
+                return "Наши мастера"
+
+            # Структура таблицы employees: id, user_id, full_name, position, ...
+            # employees[i][2] = full_name
+            names = []
+            for emp in employees:
+                name = emp[2] if len(emp) > 2 else None
+                if name:
+                    names.append(name)
+
+            if len(names) == 0:
+                return "Наши мастера"
+            elif len(names) == 1:
+                return f"{names[0]}"
+            elif len(names) == 2:
+                return f"{names[0]} и {names[1]}"
+            else:
+                all_but_last = ", ".join(names[:-1])
+                return f"{all_but_last} и {names[-1]}"
+        except Exception as e:
+            # Fallback если ошибка
+            return "Наши мастера"
+
     def _build_booking_rules(self) -> str:
         """Правила записи - из БД"""
         booking_msg = self.bot_settings.get(
@@ -299,14 +328,17 @@ class PromptBuilder:
 
         booking_url = self.salon.get('booking_url', '')
 
+        # ✅ Получаем список мастеров из БД
+        employees_list = self._get_employees_list()
+
         return f"""=== 📋 BOOKING RULES - ОБЯЗАТЕЛЬНО! ===
 {booking_msg.replace('{BOOKING_URL}', booking_url)}
 
 🎯 ВАЖНЫЕ ИНСТРУКЦИИ:
 
 1. **Когда клиент хочет записаться** - ВСЕГДА предлагай мастеров:
-   ✅ "У нас работают: Ляззат, Гуля, Дженнифер. К кому хотите?"
-   ✅ "Наши мастера: Симо, Турсунай. Кого выберете?"
+   ✅ "У нас работают: {employees_list}. К кому хотите?"
+   ✅ "Кого выберете из наших мастеров?"
 
 2. **UPSELL - проверь последний визит:**
    Если клиент давно не был на педикюре (>21 день) - предложи:
@@ -558,7 +590,7 @@ Google Maps: {self.salon.get('google_maps', '')}
 
 Пример:
 Клиент: "Добрый день, хотела бы записаться на маникюр, но хотелось бы уточнить..."
-Ты: "Добрый день! Конечно помогу с выбором. У нас есть классический маникюр (100 AED)..."
+Ты: "Добрый день! Конечно помогу с выбором. У нас есть несколько вариантов маникюра..."
 """,
             'neutral': ""
         }
@@ -719,7 +751,7 @@ Google Maps: {self.salon.get('google_maps', '')}
             if 'makeup' in service_name.lower() or 'макияж' in service_name.lower():
                 return """=== 💄 УТОЧНЕНИЕ ===
 У нас только перманентный макияж 😊
-Брови 1100 AED или губы 1200 AED?
+Интересуют брови или губы?
 Или интересует что-то другое?"""
 
             return f"""=== 🤔 УТОЧНЕНИЕ ===

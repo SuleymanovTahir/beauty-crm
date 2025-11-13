@@ -184,8 +184,8 @@ def build_prompt(self):
 ## ✅ CHECKLIST ДЛЯ ПРОВЕРКИ УНИВЕРСАЛЬНОСТИ
 
 ### Файлы для проверки:
-- [ ] `bot/prompts.py` - удалить все hardcoded: имена мастеров, цены, валюты
-- [ ] `db/migrations/migrate_bot_settings.py` - заменить на placeholders
+- [x] `bot/prompts.py` - удалить все hardcoded: имена мастеров, цены, валюты ✅ ГОТОВО
+- [x] `db/migrations/migrate_bot_settings.py` - заменить на placeholders ✅ ГОТОВО
 - [ ] `db/migrations/migrate_salon_settings.py` - проверить дефолтные значения
 - [ ] `api/salary.py` - валюта должна браться из БД (строка "AED")
 - [ ] `utils/utils.py` - проверить упоминания "M Le Diamant", "AED"
