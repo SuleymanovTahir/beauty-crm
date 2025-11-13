@@ -48,6 +48,8 @@ import FAQ from './pages/public/FAQ';
 import EditUser from './pages/admin/EditUser';
 import UserCabinet from './pages/public/UserCabinet';
 import DataDeletion from './pages/public/DataDeletion';
+import Booking from './pages/public/Booking';
+import ClientCabinet from './pages/public/ClientCabinet';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -315,6 +317,8 @@ export default function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="price-list" element={<PriceList />} />
+            <Route path="booking" element={<Booking />} />
+            <Route path="client/cabinet" element={<ClientCabinet />} />
             <Route path="success" element={<Success />} />
             <Route path="terms" element={<Terms />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
@@ -323,8 +327,8 @@ export default function App() {
             <Route path="cooperation" element={<Cooperation />} />
             <Route path="faq" element={<FAQ />} />
             <Route path="data-deletion" element={<DataDeletion />} />
-            <Route 
-              path="cabinet" 
+            <Route
+              path="cabinet"
               element={
                 currentUser ? (
                   currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :

@@ -1,7 +1,58 @@
 {
-  "title": "Пользователи",
-  "user_list": "Управление пользователями",
-  "add_user": "Создать пользователя",
-  "edit_user": "Редактировать пользователя",
-  "role": "Роль"
+  "title": "إدارة المستخدمين",
+  "user_count": "مستخدمين",
+  "search_placeholder": "البحث بالاسم أو اسم المستخدم أو البريد الإلكتروني...",
+  "add_user": "إضافة مستخدم",
+
+  "role_director_label": "مدير",
+  "role_admin_label": "مسؤول",
+  "role_manager_label": "مدير",
+  "role_sales_label": "مبيعات",
+  "role_marketer_label": "مسوق",
+  "role_employee_label": "موظف",
+
+  "role_director_desc": "وصول كامل لجميع الوظائف",
+  "role_admin_desc": "إدارة المستخدمين والعملاء والحجوزات",
+  "role_manager_desc": "العمل مع العملاء والحجوزات",
+  "role_sales_desc": "محادثة إنستغرام، الإحصائيات",
+  "role_marketer_desc": "التحليلات والإحصائيات",
+  "role_employee_desc": "الحجوزات الخاصة والتقويم",
+  "role_default": "دور المستخدم",
+
+  "loading": "تحميل المستخدمين...",
+  "error_loading": "خطأ في التحميل",
+  "error_loading_users": "خطأ في تحميل المستخدمين",
+  "try_again": "حاول مرة أخرى",
+  "error": "خطأ",
+
+  "stats_total": "الإجمالي",
+  "stats_directors": "المديرون",
+  "stats_admins": "المسؤولون",
+  "stats_sales": "المبيعات",
+  "stats_employees": "الموظفون",
+
+  "table_user": "المستخدم",
+  "table_username": "اسم المستخدم",
+  "table_email": "البريد الإلكتروني",
+  "table_role": "الدور",
+  "table_created": "تاريخ الإنشاء",
+  "table_actions": "الإجراءات",
+
+  "action_edit_title": "تعديل الملف الشخصي",
+  "action_change_role_title": "تغيير الدور",
+  "action_delete_title": "حذف المستخدم",
+
+  "no_users_found": "لم يتم العثور على مستخدمين",
+
+  "role_dialog_title": "تغيير الدور",
+  "role_dialog_current": "الدور الحالي",
+  "role_dialog_current_badge": "الحالي",
+  "role_dialog_close": "إغلاق",
+
+  "role_changed": "تم تغيير الدور",
+  "error_changing_role": "خطأ في تغيير الدور",
+
+  "confirm_delete": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟",
+  "user_deleted": "تم حذف المستخدم",
+  "error_deleting_user": "خطأ في حذف المستخدم"
 }

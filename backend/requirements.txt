@@ -9,3 +9,4 @@ fastapi
   openpyxl
   slowapi
   python-dotenv
+  email-validator
