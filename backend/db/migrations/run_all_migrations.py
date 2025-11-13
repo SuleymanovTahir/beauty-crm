@@ -1,0 +1,132 @@
+"""
+Централизованная система миграций
+Запускает все необходимые миграции в правильном порядке
+"""
+import sqlite3
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error, log_warning
+from db.init import init_database
+
+def safe_run_migration(migration_name, function_name=None):
+    """
+    Безопасно запустить миграцию с обработкой ошибок
+    Args:
+        migration_name: название модуля миграции (например, 'add_client_interests')
+        function_name: название функции (если None, попробует 'migrate' и другие варианты)
+    """
+    try:
+        module = __import__(f'db.migrations.{migration_name}', fromlist=[''])
+
+        # Попробуем найти функцию
+        if function_name:
+            func = getattr(module, function_name, None)
+        else:
+            # Попробуем стандартные имена
+            func = (
+                getattr(module, 'migrate', None) or
+                getattr(module, f'{migration_name}', None) or
+                getattr(module, f'{migration_name}_table', None) or
+                getattr(module, f'{migration_name}_field', None)
+            )
+
+        if func and callable(func):
+            log_info(f"   ▸ Запуск {migration_name}...", "migrations")
+            func()
+            log_info(f"   ✅ {migration_name} выполнена", "migrations")
+            return True
+        else:
+            log_warning(f"   ⚠️ Не найдена функция в {migration_name}, пропуск", "migrations")
+            return False
+    except Exception as e:
+        log_warning(f"   ⚠️ {migration_name}: {e}", "migrations")
+        return False
+
+def run_all_migrations():
+    """Запустить все миграции в правильном порядке"""
+    log_info("🚀 Запуск всех миграций...", "migrations")
+
+    try:
+        # 1. Инициализация базовых таблиц
+        log_info("1️⃣ Инициализация базовых таблиц", "migrations")
+        init_database()
+
+        # 2. Миграции структуры БД
+        log_info("2️⃣ Миграции структуры БД", "migrations")
+
+        # Список миграций структуры
+        structure_migrations = [
+            # Client-related
+            ('add_client_interests', 'add_client_interests_table'),
+            ('add_client_accounts', None),  # использует migrate()
+            ('add_client_notes', 'add_client_notes_table'),
+            ('add_bot_modes', 'add_bot_mode_column'),
+
+            # Booking-related
+            ('add_waitlist', 'add_waitlist_table'),
+            ('add_master_field', 'add_master_field'),
+            ('add_employee_id_to_bookings', 'add_employee_id_to_bookings'),
+
+            # Service-related
+            ('add_service_courses', 'add_service_courses_table'),
+            ('add_temperature_field', 'add_temperature_field'),
+
+            # Employee-related
+            ('create_employees', 'create_employees_table'),
+            ('add_employee_translations', 'add_employee_translations'),
+            ('create_employee_schedules', 'create_employee_schedules_table'),
+            ('add_employee_service_provider', 'add_employee_service_provider'),
+            ('add_employee_birthdays', 'add_employee_birthdays'),
+            ('add_salary_system', 'add_salary_system'),
+
+            # Chat & Communication
+            ('add_chat_features', 'add_chat_features'),
+            ('add_telegram_username', 'add_telegram_username'),
+            ('add_language_column', 'add_language_column'),
+            ('add_notes_field', 'add_notes_field'),
+
+            # Settings
+            ('add_universal_settings', 'add_universal_settings'),
+            ('add_manager_consultation', 'add_manager_consultation_field'),
+
+            # User/Permissions
+            ('add_permissions_system', 'add_permissions_system'),
+            ('add_user_position', 'add_user_position_field'),
+        ]
+
+        for migration_name, function_name in structure_migrations:
+            safe_run_migration(migration_name, function_name)
+
+        # 3. Миграции данных
+        log_info("3️⃣ Миграции данных", "migrations")
+
+        data_migrations = [
+            ('migrate_salon_settings', 'migrate_salon_settings'),
+            ('migrate_bot_settings', 'migrate_bot_settings'),
+            ('migrate_services', 'migrate_services'),
+        ]
+
+        for migration_name, function_name in data_migrations:
+            safe_run_migration(migration_name, function_name)
+
+        # 4. Seed данные (опционально)
+        log_info("4️⃣ Заполнение начальных данных (опционально)", "migrations")
+
+        seed_migrations = [
+            ('seed_employees', 'seed_employees'),
+            ('link_employees_to_services', 'link_employees_to_services'),
+        ]
+
+        for migration_name, function_name in seed_migrations:
+            safe_run_migration(migration_name, function_name)
+
+        log_info("✅ Все миграции успешно выполнены!", "migrations")
+        return True
+
+    except Exception as e:
+        log_error(f"❌ Ошибка при выполнении миграций: {e}", "migrations")
+        import traceback
+        traceback.print_exc()
+        return False
+
+if __name__ == "__main__":
+    run_all_migrations()

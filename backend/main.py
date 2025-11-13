@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import time
+import os
 
 from utils.logger import logger, log_info, log_error, log_critical,log_warning
 from core.config import DATABASE_NAME
@@ -317,108 +318,13 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        
-        # Инициализация БД
-        init_database()
-        
-        # Раскомментируйте следующие строки для первичной миграции:
-        
-        # ================================
-        # 1. Настройки салона (безопасно)
-        # ================================
-        # from db.migrations.migrate_salon_settings import migrate_salon_settings
-        # migrate_salon_settings()
 
         # ================================
-        # 2. Система прав доступа (безопасно)
+        # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
-        # from db.migrations.add_permissions_system import add_permissions_system
-        # add_permissions_system()
-
-        # ================================
-        # 3. Режимы бота (безопасно)
-        # ================================
-        # from db.migrations.add_bot_modes import add_bot_mode_fields
-        # add_bot_mode_fields()
-
-        # ================================
-        # 4. Поле master для записей (из варианта №1)
-        # ================================
-        # from db.migrations.add_master_field import add_master_field
-        # add_master_field()
-
-        # ================================
-        # 5. Консультация менеджера (из варианта №2)
-        # ================================
-        # from db.migrations.add_manager_consultation import add_manager_consultation_field
-        # add_manager_consultation_field()
-
-        # ================================
-        # 6. Услуги (безопасно)
-        # ================================
-        # from db.migrations.migrate_services import migrate_services
-        # migrate_services()
-
-        # ================================
-        # 7. Настройки бота (безопасно)
-        # ================================
-        # from db.migrations.migrate_bot_settings import migrate_settings
-        # migrate_settings()
-
-        # ============================================================
-        # 8. ОПЦИОНАЛЬНО — Только если БД пустая или тестовая!
-        # ============================================================
-        # from db.migrations.create_employees import create_employees_tables
-        # create_employees_tables()
-
-        # ============================================================
-        # 9. ОПЦИОНАЛЬНО — генерация тестовых сотрудников
-        # ============================================================
-        # from db.migrations.seed_employees import seed_employees
-        # seed_employees()
-
-
-        # from scheduler.birthday_checker import start_booking_scheduler
-        # start_booking_scheduler()
-
-        # Миграция #5 - Таблица интересов клиентов
-        # from db.migrations.add_client_interests import add_client_interests_table
-        # add_client_interests_table()
-        
-        # Миграция #17 - Таблица листа ожидания  
-        # from db.migrations.add_waitlist import add_waitlist_table
-        # add_waitlist_table()
-        
-        # Миграция #21 - Поле temperature в clients
-        # from db.migrations.add_temperature_field import add_temperature_field
-        # add_temperature_field()
-        
-        # Миграция #11 - Таблица курсов услуг
-        # from db.migrations.add_service_courses import add_service_courses_table
-        # add_service_courses_table()
-        
-        # from db.migrations.add_master_field import add_master_field
-        # add_master_field()
-
-        # Миграция - Фильтр обслуживающего персонала (исключить Турсунай и админов)
-        # from db.migrations.add_employee_service_provider import add_employee_service_provider_field
-        # add_employee_service_provider_field()
-
-        # from db.migrations.link_employees_to_services import link_employees_to_services
-        # link_employees_to_services()
-
-        # from db.migrations.add_employee_translations import add_employee_translations
-        # add_employee_translations()
-
-        # from db.migrations.check_schedules import check_schedules
-        # check_schedules()
-
-        # from db.migrations.create_employee_schedules import create_schedules
-        # create_schedules()
-
-        # from db.migrations.check_translations import check_translations
-        # check_translations()
-        
+        # Раскомментируйте для запуска всех миграций:
+        from db.migrations.run_all_migrations import run_all_migrations
+        run_all_migrations()
 
 
         bot = get_bot()
