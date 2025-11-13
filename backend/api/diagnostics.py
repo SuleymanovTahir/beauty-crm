@@ -146,7 +146,16 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         has_services_block = "УСЛУГИ САЛОНА" in system_prompt or "SERVICES" in system_prompt
         
         # Считаем упоминания
-        master_mentions = system_prompt.count("Diana") + system_prompt.count("Natasha") + system_prompt.count("Liza")
+        c.execute("SELECT full_name, name_ru FROM employees WHERE is_active = 1")
+        active_masters = c.fetchall()
+        
+        master_mentions = 0
+        for eng_name, ru_name in active_masters:
+            if eng_name and eng_name in system_prompt:
+                master_mentions += 1
+            if ru_name and ru_name in system_prompt:
+                master_mentions += 1
+        
         service_mentions = system_prompt.count("Manicure") + system_prompt.count("маникюр")
         
         result["bot_prompt"] = {

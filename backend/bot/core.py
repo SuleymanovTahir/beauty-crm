@@ -75,36 +75,29 @@ class SalonBot:
         booking_progress: Optional[Dict] = None,
         client_language: str = 'ru'
     ) -> str:
-        """
-        Построить system prompt из настроек БД
-
-        Args:
-            instagram_id: ID клиента в Instagram
-            history: История сообщений
-            booking_progress: Прогресс записи (deprecated)
-            client_language: Язык клиента (ru/en/ar)
-
-        Returns:
-            str: Полный system prompt для Gemini
-        """
+        """..."""
         from .prompts import PromptBuilder
-
+    
         builder = PromptBuilder(
             salon=self.salon,
             bot_settings=self.bot_settings
         )
-        # ✅ ДЕБАГ: Проверяем есть ли мастера в промпте
-        if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
-            print(f"   ✅ Блок мастеров найден")
-        else:
-            print(f"   ⚠️ Блок мастеров ОТСУТСТВУЕТ!")
-            
-        return builder.build_full_prompt(
+        
+        # ✅ СНАЧАЛА СОЗДАЁМ ПРОМПТ
+        system_prompt = builder.build_full_prompt(
             instagram_id=instagram_id,
             history=history,
             booking_progress=booking_progress or {},
             client_language=client_language
         )
+        
+        # ✅ ПОТОМ ПРОВЕРЯЕМ
+        if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
+            print(f"   ✅ Блок мастеров найден")
+        else:
+            print(f"   ⚠️ Блок мастеров ОТСУТСТВУЕТ!")
+            
+        return system_prompt
 
     async def generate_response(
         self,

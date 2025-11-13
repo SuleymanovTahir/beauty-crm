@@ -262,6 +262,7 @@ export default function AdminSettings() {
 
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+          
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
@@ -273,6 +274,10 @@ export default function AdminSettings() {
           <TabsTrigger key="security" value="security" className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:security')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Диагностика</span>
           </TabsTrigger>
         </TabsList>
 
