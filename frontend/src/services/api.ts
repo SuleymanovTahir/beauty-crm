@@ -74,6 +74,22 @@ export class ApiClient {
     return response
   }
 
+  async register(username: string, password: string, full_name: string, email?: string) {
+    const formData = new URLSearchParams()
+    formData.append('username', username)
+    formData.append('password', password)
+    formData.append('full_name', full_name)
+    if (email) formData.append('email', email)
+
+    return this.request<any>('/api/register', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
   async askBotAdvice(question: string, context?: string) {
     return this.request('/api/chat/ask-bot', {
       method: 'POST',

@@ -53,6 +53,7 @@ import ClientCabinet from './pages/public/ClientCabinet';
 
 // Auth Pages
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
 interface User {
   id: number;
@@ -163,8 +164,8 @@ export default function App() {
       <div className="min-h-screen bg-gray-50">
         <Routes>
           {/* Auth Routes */}
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               currentUser ? (
                 // ✅ ОБНОВИ РЕДИРЕКТ
@@ -179,7 +180,18 @@ export default function App() {
               ) : (
                 <Login onLogin={handleLogin} />
               )
-            } 
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              currentUser ? (
+                <Navigate to="/admin/dashboard" replace />
+              ) : (
+                <Register />
+              )
+            }
           />
 
           {/* Admin Routes - Protected */}

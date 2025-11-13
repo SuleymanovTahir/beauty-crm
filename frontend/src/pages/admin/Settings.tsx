@@ -634,37 +634,6 @@ export default function AdminSettings() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg text-gray-900 mb-4">Диагностика системы</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Проверка работы бота, базы данных и настроек
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      const response = await fetch('/api/diagnostics/full', {
-                        credentials: 'include'
-                      });
-                      const data = await response.json();
-                      console.log('🔍 Диагностика:', data);
-
-                      // Показываем краткий результат
-                      const issues = data.issues || [];
-                      if (issues.length === 0) {
-                        toast.success('✅ Диагностика успешна! Все работает.');
-                      } else {
-                        toast.warning(`⚠️ Найдено ${issues.length} проблем. Проверь консоль (F12)`);
-                      }
-                    } catch (error) {
-                      console.error('Ошибка диагностики:', error);
-                      toast.error('Ошибка запуска диагностики');
-                    }
-                  }}
-                >
-                  🔍 Запустить диагностику
-                </Button>
-              </div>
-              <div>
                 <h3 className="text-lg text-gray-900 mb-4">{t('settings:backup')}</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   {t('settings:download_backup_for_security')}

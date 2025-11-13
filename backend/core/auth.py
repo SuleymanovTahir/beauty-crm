@@ -110,7 +110,78 @@ async def logout_api(session_token: Optional[str] = Cookie(None)):
 
 # ===== РЕГИСТРАЦИЯ =====
 
+@router.post("/register")
+async def api_register(
+    username: str = Form(...),
+    password: str = Form(...),
+    full_name: str = Form(...),
+    email: str = Form(None)
+):
+    """API: Регистрация нового пользователя (требуется подтверждение админа)"""
+    try:
+        # Валидация
+        if len(username) < 3:
+            return JSONResponse(
+                {"error": "Логин должен быть минимум 3 символа"},
+                status_code=400
+            )
 
+        if len(password) < 6:
+            return JSONResponse(
+                {"error": "Пароль должен быть минимум 6 символов"},
+                status_code=400
+            )
 
+        if not full_name or len(full_name) < 2:
+            return JSONResponse(
+                {"error": "Имя должно быть минимум 2 символа"},
+                status_code=400
+            )
+
+        # Проверяем что логин не занят
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("SELECT id FROM users WHERE username = ?", (username,))
+        if c.fetchone():
+            conn.close()
+            return JSONResponse(
+                {"error": "Пользователь с таким логином уже существует"},
+                status_code=400
+            )
+
+        # Создаём пользователя с is_active = 0 (неактивен, ждёт подтверждения)
+        import hashlib
+        from datetime import datetime
+
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        now = datetime.now().isoformat()
+
+        c.execute("""INSERT INTO users
+                     (username, password_hash, full_name, email, role, created_at, is_active)
+                     VALUES (?, ?, ?, ?, 'employee', ?, 0)""",
+                  (username, password_hash, full_name, email, now))
+
+        conn.commit()
+        user_id = c.lastrowid
+        conn.close()
+
+        log_info(f"New registration: {username} (ID: {user_id}), pending approval", "auth")
+
+        return {
+            "success": True,
+            "message": "Регистрация успешна! Ожидайте подтверждения администратора.",
+            "user_id": user_id
+        }
+
+    except sqlite3.IntegrityError:
+        log_error(f"Registration failed: username {username} already exists", "auth")
+        return JSONResponse(
+            {"error": "Пользователь с таким логином уже существует"},
+            status_code=400
+        )
+    except Exception as e:
+        log_error(f"Error in api_register: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 
