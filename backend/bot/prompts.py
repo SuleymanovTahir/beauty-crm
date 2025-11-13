@@ -377,24 +377,40 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         masters_text = "=== 👥 МАСТЕРА САЛОНА ===\n\n"
         
-        for emp in employees:
+        for emp in employees[:5]:
             emp_id = emp[0]
-            emp_name = emp[1]  # full_name
-            position = emp[2] if len(emp) > 2 else ""
-            name_ru = emp[13] if len(emp) > 13 else None
-            name_ar = emp[14] if len(emp) > 14 else None
             
-            # Выбираем имя по языку
+            # ✅ ИСПРАВЛЕНИЕ: Получаем полные данные мастера для доступа к переводам
+            from db.employees import get_employee
+            full_emp = get_employee(emp_id)
+            
+            if not full_emp:
+                continue
+            
+            emp_name = full_emp[1]  # full_name из полных данных
+            name_ru = full_emp[13] if len(full_emp) > 13 and full_emp[13] else None
+            name_ar = full_emp[14] if len(full_emp) > 14 and full_emp[14] else None
+        
             if client_language == 'ru':
-                display_name = name_ru or emp_name
+                emp_name_display = name_ru or emp_name
             elif client_language == 'ar':
-                display_name = name_ar or emp_name
+                emp_name_display = name_ar or emp_name
             else:
-                display_name = emp_name
+                emp_name_display = emp_name
             
+            # ✅ Убедимся что это строка
+            if not isinstance(emp_name_display, str):
+                emp_name_display = str(emp_name)
             # Переводим должность
-            translated_position = translate_position(position, client_language) if position else ""
             
+            # Получаем должность из полных данных (например, full_emp[2])
+            position = full_emp[2] if len(full_emp) > 2 else None
+
+            # Отображаемое имя мастера
+            display_name = emp_name_display
+
+            translated_position = translate_position(position, client_language) if position else ""
+
             if translated_position:
                 masters_text += f"• {display_name} - {translated_position}\n"
             else:
@@ -712,8 +728,12 @@ Google Maps: {self.salon.get('google_maps', '')}
             emp_id = emp[0]
             emp_name = emp[1]
 
-            name_ru = emp[13] if len(emp) > 13 else None
-            name_ar = emp[14] if len(emp) > 14 else None
+            # ✅ ИСПРАВЛЕНИЕ: Получаем полные данные мастера для доступа к переводам
+            from db.employees import get_employee
+            full_emp = get_employee(emp_id)
+
+            name_ru = full_emp[13] if full_emp and len(full_emp) > 13 else None
+            name_ar = full_emp[14] if full_emp and len(full_emp) > 14 else None
 
             if client_language == 'ru':
                 emp_name_display = name_ru or emp_name
@@ -769,7 +789,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                             break
 
                 if slots:
-                    availability_text += f"• {emp_name_display}: {', '.join(slots)}\n"
+                    availability_text += f"• {emp_name_display.upper()}: {', '.join(slots)}\n"
 
         booking_url = self.salon.get('booking_url', '')
 
