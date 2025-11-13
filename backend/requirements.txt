@@ -10,3 +10,4 @@ fastapi
   slowapi
   python-dotenv
   email-validator
+  cffi
