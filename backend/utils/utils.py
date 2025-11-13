@@ -9,8 +9,8 @@ from fastapi import Cookie, HTTPException
 
 from db import get_user_by_session, get_all_clients, get_unread_messages_count
 from db.settings import get_custom_statuses
-from config import CLIENT_STATUSES
-from logger import log_info, log_error, log_debug
+from core.config import CLIENT_STATUSES
+from utils.logger import log_info, log_error, log_debug
 
 
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====

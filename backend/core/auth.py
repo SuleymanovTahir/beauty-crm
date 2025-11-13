@@ -12,9 +12,9 @@ import sqlite3
 from db import (
     verify_user, create_session, delete_session,
 )
-from config import DATABASE_NAME
-from logger import log_info, log_error, log_warning
-from utils import require_auth
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error, log_warning
+from utils.utils import require_auth
 
 router = APIRouter(tags=["Auth"])
 

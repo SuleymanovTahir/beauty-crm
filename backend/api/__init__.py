@@ -6,6 +6,7 @@ from .clients import router as clients_router
 from .bookings import router as bookings_router
 from .services import router as services_router
 from .analytics import router as analytics_router
+from .salary import router as salary_router
 from .users import router as users_router
 from .settings import router as settings_router
 from .export import router as export_router
@@ -32,5 +33,6 @@ router.include_router(roles_router)
 router.include_router(uploads_router)
 router.include_router(employees_router)
 router.include_router(diagnostics_router)
+router.include_router(salary_router)
 
 __all__ = ["router"]
