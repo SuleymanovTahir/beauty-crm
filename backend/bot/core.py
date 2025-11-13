@@ -159,25 +159,27 @@ class SalonBot:
             
             # ✅ #10 - UPSELL: Проверка давно ли делал другие услуги
             from bot.prompts import get_last_service_date
-            from datetime import datetime, timedelta
             now = datetime.now()
             
+            # Проверяем какие услуги есть в сообщении
+            message_lower = user_message.lower()
+            
             for upsell_service in ['Pedicure', 'Manicure']:
-                if upsell_service.lower() not in user_message.lower():
+                service_ru = 'педикюр' if upsell_service == 'Pedicure' else 'маникюр'
+                
+                # Если клиент НЕ спрашивает про эту услугу
+                if service_ru not in message_lower and upsell_service.lower() not in message_lower:
                     last_date = get_last_service_date(instagram_id, upsell_service)
+                    
                     if last_date:
                         try:
                             last_dt = datetime.fromisoformat(last_date)
                             days_since = (now - last_dt).days
                             
-                            if days_since > 28:  # Более месяца
-                                service_translations = {
-                                    'Manicure': 'маникюр',
-                                    'Pedicure': 'педикюр'
-                                }
-                                additional_context += f"\n\n💡 UPSELL МОМЕНТ!\n"
-                                additional_context += f"Клиент не делал {service_translations[upsell_service]} {days_since} дней\n"
-                                additional_context += f"ПРЕДЛОЖИ добавить к записи!\n"
+                            if days_since > 21:  # Более 3 недель
+                                additional_context += f"\n\n💡 UPSELL ВОЗМОЖНОСТЬ!\n"
+                                additional_context += f"Клиент последний раз делал {service_ru} {days_since} дней назад\n"
+                                additional_context += f"МЯГКО предложи добавить {service_ru} к записи (например: 'Кстати, давно не были на {service_ru}, добавить?')\n"
                                 break
                         except:
                             pass
