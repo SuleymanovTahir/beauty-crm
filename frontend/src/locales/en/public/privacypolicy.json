@@ -1,0 +1,73 @@
+{
+  "title": "Privacy Policy",
+  "locale": "en-US",
+  "lastUpdated": "Last updated: {{date}}",
+  "sections": {
+    "introduction": {
+      "title": "1. Introduction",
+      "content": "{{salonName}} takes your privacy seriously. This Privacy Policy describes what information we collect, how we use it and protect it."
+    },
+    "collectedInfo": {
+      "title": "2. Information We Collect",
+      "description": "We may collect the following information:",
+      "items": [
+        "Name and contact information (phone, email)",
+        "Visit history and services provided",
+        "Service and procedure preferences",
+        "Medical contraindication information (with your consent)",
+        "Photos of work results (only with your written consent)"
+      ]
+    },
+    "dataUsage": {
+      "title": "3. Use of Information",
+      "description": "We use the collected information for:",
+      "items": [
+        "Organizing and confirming your appointments",
+        "Providing quality services tailored to your needs",
+        "Sending appointment reminders",
+        "Informing about new services and special offers (with your consent)",
+        "Improving the quality of our services"
+      ]
+    },
+    "dataProtection": {
+      "title": "4. Data Protection",
+      "paragraph1": "We take all necessary measures to protect your personal data from unauthorized access, modification, disclosure or destruction.",
+      "paragraph2": "Only authorized employees who are required to maintain confidentiality have access to your data."
+    },
+    "thirdParty": {
+      "title": "5. Third Party Data Transfer",
+      "paragraph1": "We do not sell, exchange or transfer your personal information to third parties without your explicit consent, except as required by law.",
+      "paragraph2": "We may share anonymized statistical information with our partners to improve service quality."
+    },
+    "cookies": {
+      "title": "6. Cookies and Tracking Technologies",
+      "content": "Our website may use cookies to improve user experience. You can disable cookies in your browser settings."
+    },
+    "rights": {
+      "title": "7. Your Rights",
+      "description": "You have the right to:",
+      "items": [
+        "Request access to your personal data",
+        "Request correction of inaccurate data",
+        "Request deletion of your data",
+        "Withdraw consent for data processing at any time",
+        "Opt out of receiving promotional mailings"
+      ]
+    },
+    "dataStorage": {
+      "title": "8. Data Storage",
+      "content": "We store your personal data only for the time necessary for the purposes stated in this Policy, or as required by law."
+    },
+    "policyChanges": {
+      "title": "9. Changes to the Policy",
+      "content": "We reserve the right to update this Privacy Policy. Updates will be posted on this page with the date of the last change indicated."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "description": "For questions regarding this Privacy Policy, you can contact us:",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address"
+    }
+  }
+}

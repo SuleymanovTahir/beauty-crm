@@ -1,0 +1,21 @@
+{
+    "not_found": "Booking not found",
+    "detailed_info": "Detailed information",
+    "booking_info": "Booking information",
+    "client": "Client",
+    "client_profile": "Client profile →",
+    "service": "Service",
+    "date_time": "Date and time",
+    "phone": "Phone",
+    "revenue": "Amount",
+    "created_at": "Created",
+    "status": "Booking status",
+    "status_new": "New",
+    "status_confirmed": "Confirmed",
+    "status_completed": "Completed",
+    "status_cancelled": "Cancelled",
+    "update_status": "Update status",
+    "current_status": "Current status",
+    "write_to_client": "💬 Write to client",
+    "status_updated": "Status updated"
+  }

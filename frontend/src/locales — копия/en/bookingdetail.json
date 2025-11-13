@@ -1,0 +1,15 @@
+{
+  "booking_info": "booking_info",
+  "booking_number": "booking_number",
+  "client": "client",
+  "detailed_info": "detailed_info",
+  "error_updating_status": "error_updating_status",
+  "not_found": "not_found",
+  "status_cancelled": "status_cancelled",
+  "status_completed": "status_completed",
+  "status_confirmed": "status_confirmed",
+  "status_new": "status_new",
+  "status_updated": "status_updated",
+  "update": "update",
+  "update_status": "update_status"
+}

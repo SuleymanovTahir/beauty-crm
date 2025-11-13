@@ -1,0 +1,14 @@
+{
+  "cancel": "cancel",
+  "client": "client",
+  "client_data_updated": "client_data_updated",
+  "client_info": "client_info",
+  "edit": "edit",
+  "error_saving": "error_saving",
+  "loading": "loading",
+  "not_found": "not_found",
+  "phone": "phone",
+  "save": "save",
+  "saving": "saving",
+  "statistics": "statistics"
+}
