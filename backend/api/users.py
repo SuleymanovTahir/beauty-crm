@@ -98,11 +98,11 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         c = conn.cursor()
         
         c.execute("""
-            SELECT id, username, full_name, email, role, created_at, is_active
+            SELECT id, username, full_name, email, role, position, created_at, is_active
             FROM users
             ORDER BY created_at DESC
         """)
-        
+
         users = []
         for row in c.fetchall():
             users.append({
@@ -111,6 +111,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "full_name": row["full_name"],
                 "email": row["email"],
                 "role": row["role"],
+                "position": row["position"],
                 "created_at": row["created_at"],
                 "is_active": row["is_active"]
             })
@@ -243,7 +244,7 @@ async def update_user_role(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     # Проверяем что пользователь может управлять ролями
-    from config import ROLES, can_manage_role
+    from core.config import ROLES, can_manage_role
     
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя изменить свою роль"}, status_code=400)
