@@ -390,6 +390,12 @@ Google Maps: {self.salon.get('google_maps', '')}
             emp_name = full_emp[1]  # full_name из полных данных
             name_ru = full_emp[13] if len(full_emp) > 13 and full_emp[13] else None
             name_ar = full_emp[14] if len(full_emp) > 14 and full_emp[14] else None
+            
+            # ✅ Убедимся что переводы - строки
+            if name_ru and not isinstance(name_ru, str):
+                name_ru = None
+            if name_ar and not isinstance(name_ar, str):
+                name_ar = None
         
             if client_language == 'ru':
                 emp_name_display = name_ru or emp_name
@@ -398,10 +404,10 @@ Google Maps: {self.salon.get('google_maps', '')}
             else:
                 emp_name_display = emp_name
             
-            # ✅ Убедимся что это строка
+            # ✅ Финальная проверка
             if not isinstance(emp_name_display, str):
-                emp_name_display = str(emp_name)
-            # Переводим должность
+                emp_name_display = str(emp_name) if emp_name else "Master"
+            
             
             # Получаем должность из полных данных (например, full_emp[2])
             position = full_emp[2] if len(full_emp) > 2 else None
