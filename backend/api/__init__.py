@@ -13,6 +13,7 @@ from .chat import router as chat_router
 from .roles import router as roles_router
 from .uploads import router as uploads_router
 from .employees import router as employees_router
+from api.diagnostics import router as diagnostics_router
 
 
 # Главный роутер API
@@ -30,5 +31,6 @@ router.include_router(chat_router)
 router.include_router(roles_router)
 router.include_router(uploads_router)
 router.include_router(employees_router)
+router.include_router(diagnostics_router)
 
 __all__ = ["router"]
