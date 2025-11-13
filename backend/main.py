@@ -63,8 +63,13 @@ app.include_router(reports_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
-app.include_router(public_router, prefix="/public")
-app.include_router(client_auth_router, prefix="/public")  # API для клиентов
+
+# Модуль публичных страниц (опциональный)
+from modules import is_module_enabled
+if is_module_enabled('public'):
+    app.include_router(public_router, prefix="/public")
+    app.include_router(client_auth_router, prefix="/public")  # API для клиентов
+    log_info("✅ Модуль 'public' подключен: /public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
@@ -387,9 +392,17 @@ async def startup_event():
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
 
-        # ✅ Запуск планировщиков
-        start_birthday_checker()  # Дни рождения сотрудников
-        start_client_birthday_checker()  # Поздравления клиентов
+        # ✅ Загрузка и проверка модулей
+        from modules import print_modules_status, is_module_enabled
+        print_modules_status()
+
+        # ✅ Запуск планировщиков (если модуль включен)
+        if is_module_enabled('scheduler'):
+            start_birthday_checker()  # Дни рождения сотрудников
+            start_client_birthday_checker()  # Поздравления клиентов
+            log_info("✅ Планировщики запущены", "startup")
+        else:
+            log_warning("⚠️  Модуль scheduler выключен", "startup")
 
         log_info("✅ CRM готова к работе!", "startup")
         log_info("=" * 70, "startup")

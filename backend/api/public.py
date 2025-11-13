@@ -261,6 +261,72 @@ async def create_booking(booking: BookingCreate):
         booking_id = c.lastrowid
         conn.commit()
 
+        # Отправляем уведомления мастеру о новой записи
+        try:
+            from modules.notifications import send_notification
+            from modules.notifications.email import format_new_booking_email
+            from modules.notifications.telegram import format_new_booking_telegram
+            from db.settings import get_salon_settings
+
+            # Получаем данные о мастере
+            employee_email = None
+            employee_telegram = None
+            employee_name = "Не указан"
+
+            if booking.employee_id:
+                c.execute("""
+                    SELECT username, full_name, email, telegram_username
+                    FROM users
+                    WHERE id = ?
+                """, (booking.employee_id,))
+                employee_data = c.fetchone()
+                if employee_data:
+                    employee_name = employee_data[1] or employee_data[0]
+                    employee_email = employee_data[2] if len(employee_data) > 2 else None
+                    employee_telegram = employee_data[3] if len(employee_data) > 3 else None
+
+            # Данные для уведомления
+            salon_data = get_salon_settings()
+            booking_data = {
+                'client_name': booking.name,
+                'phone': booking.phone,
+                'service': service_name,
+                'datetime': datetime_str,
+                'notes': booking.notes,
+                'employee_name': employee_name
+            }
+
+            # Email уведомление
+            recipients_email = [employee_email] if employee_email else []
+            recipients_telegram = [employee_telegram] if employee_telegram else []
+
+            # Если не указан мастер или нет email/telegram - отправляем в общий канал
+            if not recipients_email and not recipients_telegram:
+                recipients_email = []  # Можно добавить общий email салона из настроек
+                recipients_telegram = []  # Будет использован notification_chat_id из конфига
+
+            # Форматируем и отправляем
+            if recipients_email or recipients_telegram:
+                plain_text, html_text = format_new_booking_email(booking_data, salon_data)
+                telegram_text = format_new_booking_telegram(booking_data, salon_data)
+
+                # Асинхронная отправка (не блокирует ответ клиенту)
+                import asyncio
+                asyncio.create_task(
+                    send_notification(
+                        event='new_booking',
+                        recipients=recipients_email if recipients_email else recipients_telegram,
+                        subject=f"Новая запись: {booking.name}",
+                        message=plain_text if recipients_email else telegram_text,
+                        html=html_text if recipients_email else None
+                    )
+                )
+
+        except Exception as e:
+            # Не прерываем процесс создания записи при ошибке уведомления
+            from utils.logger import log_error
+            log_error(f"Ошибка отправки уведомления о записи: {e}", "public_api")
+
         return {
             "success": True,
             "booking_id": booking_id,
