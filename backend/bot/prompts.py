@@ -133,6 +133,7 @@ class PromptBuilder:
             self._build_greeting_logic(history),
             self._build_special_packages(),
             self._build_booking_rules(),
+            self._build_masters_list(client_language), 
             self._build_booking_availability(
                 instagram_id=instagram_id,
                 service_name=service_name,
@@ -317,6 +318,70 @@ Google Maps: {self.salon.get('google_maps', '')}
             services_text += "\n"
 
         return services_text
+
+    def _build_services_list(self) -> str:
+        """Список услуг из БД"""
+        services = get_all_services(active_only=True)
+
+        services_by_category = {}
+        for service in services:
+            category = service[9]
+            if category not in services_by_category:
+                services_by_category[category] = []
+            services_by_category[category].append(service)
+
+        services_text = "=== УСЛУГИ САЛОНА ===\n\n"
+
+        for category, services_list in services_by_category.items():
+            services_text += f"📂 {category}:\n"
+            for service in services_list:
+                price_str = format_service_price_for_bot(service)
+                name_ru = service[3] or service[2]
+                description = service[11] or ''
+
+                services_text += f"• {name_ru} - {price_str}\n"
+                if description:
+                    services_text += f"  └ {description}\n"
+            services_text += "\n"
+
+        return services_text
+
+    def _build_masters_list(self, client_language: str = 'ru') -> str:
+        """Список мастеров салона"""
+        from db.employees import get_all_employees
+        
+        employees = get_all_employees(active_only=True)
+        
+        if not employees:
+            return ""
+        
+        masters_text = "=== 👥 МАСТЕРА САЛОНА ===\n\n"
+        
+        for emp in employees:
+            emp_id = emp[0]
+            emp_name = emp[1]  # full_name
+            position = emp[2] if len(emp) > 2 else ""
+            name_ru = emp[13] if len(emp) > 13 else None
+            name_ar = emp[14] if len(emp) > 14 else None
+            
+            # Выбираем имя по языку
+            if client_language == 'ru':
+                display_name = name_ru or emp_name
+            elif client_language == 'ar':
+                display_name = name_ar or emp_name
+            else:
+                display_name = emp_name
+            
+            # Переводим должность
+            translated_position = translate_position(position, client_language) if position else ""
+            
+            if translated_position:
+                masters_text += f"• {display_name} - {translated_position}\n"
+            else:
+                masters_text += f"• {display_name}\n"
+        
+        return masters_text
+
 
     def _build_history(self, history: List[Tuple]) -> str:
         """История диалога"""
@@ -667,7 +732,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                 day_of_week = target_dt.weekday()  # 0=Пн, 6=Вс
             except:
                 day_of_week = datetime.now().weekday()
-            
+
             c.execute("""
                 SELECT start_time, end_time
                 FROM employee_schedule
