@@ -323,7 +323,7 @@ async def startup_event():
         
         # Раскомментируйте следующие строки для первичной миграции:
         
-        #Миграция настроек салона
+        # Миграция настроек салона
         # from db.migrations.migrate_salon_settings import migrate_salon_settings
         # migrate_salon_settings()  # <- Запустить ПЕРВЫМ.
 
