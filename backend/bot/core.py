@@ -123,8 +123,7 @@ class SalonBot:
         """
 
         
-        # Построить system prompt
-        # ✅ Добавляем context_flags в промпт
+        # ✅ ИСПРАВЛЕНИЕ: Сначала строим additional_context, ПОТОМ промпт
         additional_context = ""
         
         if context_flags:
@@ -137,7 +136,7 @@ class SalonBot:
             
             if context_flags.get('is_urgent'):
                 additional_context += "\n\n🚨 КЛИЕНТ УКАЗАЛ СРОЧНОСТЬ (уезжает, важное событие)\n"
-                additional_context += "ПРЕДЛОЖИ ВСЕ ВОЗМОЖНЫЕ ОКНА + ЭКСТРЕННЫЕ ВАРИАНТЫ!\n"
+                additional_context += "ПРЕДЛОЖИ ВСЕ ДОСТУПНЫЕ ОКНА СЕГОДНЯ И ЗАВТРА!\n"
             
             if context_flags.get('is_corporate'):
                 additional_context += "\n\n🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа 5+ человек)\n"
@@ -159,52 +158,39 @@ class SalonBot:
             
             # ✅ #10 - UPSELL: Проверка давно ли делал другие услуги
             from bot.prompts import get_last_service_date
+            from datetime import datetime
             now = datetime.now()
             
-            # Проверяем какие услуги есть в сообщении
             message_lower = user_message.lower()
             
             for upsell_service in ['Pedicure', 'Manicure']:
                 service_ru = 'педикюр' if upsell_service == 'Pedicure' else 'маникюр'
                 
-                # Если клиент НЕ спрашивает про эту услугу
                 if service_ru not in message_lower and upsell_service.lower() not in message_lower:
                     last_date = get_last_service_date(instagram_id, upsell_service)
                     
                     if last_date:
                         try:
+                            from datetime import datetime
                             last_dt = datetime.fromisoformat(last_date)
                             days_since = (now - last_dt).days
                             
-                            if days_since > 21:  # Более 3 недель
+                            if days_since > 21:
                                 additional_context += f"\n\n💡 UPSELL ВОЗМОЖНОСТЬ!\n"
                                 additional_context += f"Клиент последний раз делал {service_ru} {days_since} дней назад\n"
-                                additional_context += f"МЯГКО предложи добавить {service_ru} к записи (например: 'Кстати, давно не были на {service_ru}, добавить?')\n"
+                                additional_context += f"МЯГКО предложи добавить {service_ru} к записи\n"
                                 break
                         except:
                             pass
-                    
-                if service_interest:
-                    additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
-                    additional_context += f"Спрашивал про {service_interest} {count} раз\n"
-        
+                        
+        # ✅ ТЕПЕРЬ строим промпт с уже готовым additional_context
         system_prompt = self.prompt_builder.build_full_prompt(
             instagram_id=instagram_id,
             history=history,
             booking_progress=booking_progress,
-            client_language=client_language
+            client_language=client_language,
+            additional_context=additional_context  # ✅ ПЕРЕДАЁМ В ПРОМПТ
         )
-
-        # ✅ ИЗМЕНЕНИЕ: Логируем построенный промпт для отладки
-        print(f"   📝 Промпт содержит {len(system_prompt)} символов")
-        if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
-            print(f"   ✅ Блок с мастерами найден в промпте")
-        else:
-            print(f"   ⚠️ Блок с мастерами НЕ найден в промпте!")
-
-        # Добавляем дополнительный контекст
-        if additional_context:
-            system_prompt += additional_context
 
         full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
 

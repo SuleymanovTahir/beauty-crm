@@ -96,7 +96,8 @@ class PromptBuilder:
         instagram_id: str,
         history: List[Tuple],
         booking_progress: Optional[Dict] = None,
-        client_language: str = 'ru'
+        client_language: str = 'ru',
+        additional_context: str = ""  # ✅ ДОБАВЛЕНО
     ) -> str:
         """Построить полный system prompt
 
@@ -150,7 +151,13 @@ class PromptBuilder:
             self._build_objections_section(objections),
         ]
 
-        return "\n\n".join([p for p in parts if p])
+        prompt = "\n\n".join([p for p in parts if p])
+
+        # ✅ Добавляем additional_context в самый конец
+        if additional_context:
+            prompt += additional_context
+
+        return prompt
 
     def _build_identity(self) -> str:
         """Секция IDENTITY - из БД"""
@@ -186,9 +193,22 @@ class PromptBuilder:
         if language not in supported_langs:
             language = 'ru'
 
-        return f"""=== LANGUAGE ===
-Отвечай на языке: {language}
-Поддерживаемые языки: {', '.join(supported_langs)}"""
+        language_names = {
+            'ru': 'РУССКОМ',
+            'en': 'ENGLISH', 
+            'ar': 'العربية'
+        }
+
+        lang_name = language_names.get(language, language.upper())
+
+        return f"""=== 🌐 LANGUAGE - КРИТИЧЕСКИ ВАЖНО ===
+    ⚠️ ТЫ ДОЛЖЕН ОТВЕЧАТЬ СТРОГО НА ЯЗЫКЕ: {lang_name} ({language})
+
+    Клиент пишет на {lang_name} - отвечай ТОЛЬКО на {lang_name}!
+
+    НЕ СМЕШИВАЙ ЯЗЫКИ! Если клиент пишет на English - ВСЁ сообщение на English!
+
+    Поддерживаемые: {', '.join(supported_langs)}"""
 
     def _build_greeting_logic(self, history: List[Tuple]) -> str:
         """Логика приветствий - из БД"""
@@ -661,28 +681,6 @@ Google Maps: {self.salon.get('google_maps', '')}
             return f"⚠️ Нет мастеров для услуги '{service_name}'"
 
         # ✅ #10 - UPSELL: Проверяем давно ли был на других услугах
-        upsell_text = ""
-        for upsell_service in ['Manicure', 'Pedicure', 'Hair', 'Massage']:
-            if upsell_service.lower() in service_name.lower():
-                continue  # Пропускаем текущую услугу
-
-            last_date = get_last_service_date(instagram_id, upsell_service)
-            if last_date:
-                try:
-                    last_dt = datetime.fromisoformat(last_date)
-                    days_since = (now - last_dt).days
-
-                    if days_since > 21:  # Более 3 недель
-                        service_translations = {
-                            'Manicure': 'маникюре',
-                            'Pedicure': 'педикюре',
-                            'Hair': 'стрижке',
-                            'Massage': 'массаже'
-                        }
-                        upsell_text = f"\n💡 Кстати, давно не были на {service_translations.get(upsell_service, upsell_service.lower())} ({days_since} дней)\nДобавить к записи? Можем сделать всё за раз!"
-                        break
-                except:
-                    pass
 
         # Определяем дату
         if preferred_date:
@@ -701,17 +699,14 @@ Google Maps: {self.salon.get('google_maps', '')}
         popular_times = get_popular_booking_times(service_name)
         popular_times_text = f"\nБольшинство клиентов выбирают: {', '.join(popular_times)}" if popular_times else ""
 
-        availability_text = f"""=== 📅 ДОСТУПНЫЕ МАСТЕРА ===
-        Услуга: {service_name}
-        Дата: {date_display}
-        {instructions}{popular_times_text}
+        availability_text = f"""=== 📅 ЗАПИСЬ НА {service_name.upper()} ===
+
+        🎯 ДОСТУПНЫЕ МАСТЕРА НА {date_display}:
         """
 
         # ✅ #2 - Если есть любимый мастер - покажи его первым
         if preferences.get('favorite_master'):
-            availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
-
-        availability_text += "\n🎯 Доступны сейчас:\n"
+            availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n"
 
         for emp in employees[:5]:
             emp_id = emp[0]
@@ -779,12 +774,8 @@ Google Maps: {self.salon.get('google_maps', '')}
         booking_url = self.salon.get('booking_url', '')
 
         # ✅ #14 - Альтернативы если время не подходит
-        availability_text += f"\n\n📲 Или выберите сами: {booking_url}"
-        availability_text += "\n\n💬 Напишите имя мастера или время которое подходит"
-        
-        # Добавляем upsell если есть
-        if upsell_text:
-            availability_text += upsell_text
+        availability_text += f"\n\n{instructions}"
+        availability_text += f"\n📲 Выбрать самому: {booking_url}"
 
         conn.close()
         return availability_text
@@ -836,7 +827,7 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
         'last_date': bookings[0][2] if bookings else None,
         'total_visits': len(bookings)
     }
-    
+
 
 def get_popular_booking_times(service_name: str = None) -> List[str]:
     """Популярные времена записи (#9)"""
