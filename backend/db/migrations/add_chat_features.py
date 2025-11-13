@@ -2,7 +2,7 @@
 Миграция: Добавление таблиц для функций чата
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def add_chat_features_tables():
     """Добавить таблицы для реакций, шаблонов и отложенных сообщений"""

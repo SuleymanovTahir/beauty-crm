@@ -4,8 +4,8 @@
 import sqlite3
 from datetime import datetime
 
-from config import DATABASE_NAME
-from logger import log_error, log_warning, log_info
+from core.config import DATABASE_NAME
+from utils.logger import log_error, log_warning, log_info
 
 
 # ===== НАСТРОЙКИ САЛОНА =====

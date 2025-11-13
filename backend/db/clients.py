@@ -5,8 +5,8 @@ import sqlite3
 from datetime import datetime
 from typing import Optional
 import re
-from logger import log_info,log_error
-from config import DATABASE_NAME
+from utils.logger import log_info,log_error
+from core.config import DATABASE_NAME
 
 
 def get_all_clients():

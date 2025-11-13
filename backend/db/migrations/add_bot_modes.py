@@ -1,5 +1,5 @@
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def add_bot_mode_fields():
     """Добавить поля для режимов бота"""

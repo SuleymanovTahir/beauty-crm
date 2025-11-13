@@ -1,7 +1,7 @@
 import sqlite3
 import hashlib
 from datetime import datetime
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def seed_employees():

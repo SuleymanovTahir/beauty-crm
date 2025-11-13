@@ -2,7 +2,7 @@
 Проверка расписаний мастеров
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def check_schedules():
     conn = sqlite3.connect(DATABASE_NAME)

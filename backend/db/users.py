@@ -7,7 +7,7 @@ from typing import Optional, Dict
 import hashlib
 import secrets
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def get_all_users():

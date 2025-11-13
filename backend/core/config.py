@@ -106,15 +106,13 @@ INSTAGRAM_BUSINESS_ID = os.getenv("INSTAGRAM_BUSINESS_ID", "17841448618072548")
 
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Если config.py НЕ в backend/, добавляем /backend
-if not BASE_DIR.endswith('backend'):
-    DATABASE_NAME = os.path.join(BASE_DIR, "backend", "salon_bot.db")
-else:
-    DATABASE_NAME = os.path.join(BASE_DIR, "salon_bot.db")
+# Get the backend directory (parent of core/)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Database is in the backend/ directory
+DATABASE_NAME = os.path.join(BASE_DIR, "salon_bot.db")
 
 
-UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "static", "uploads")
+UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
 
 # ===== СТАТУСЫ КЛИЕНТОВ =====

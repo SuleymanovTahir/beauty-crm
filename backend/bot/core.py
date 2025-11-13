@@ -6,7 +6,7 @@ import asyncio
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 
-from config import GEMINI_API_KEY, GEMINI_MODEL
+from core.config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,

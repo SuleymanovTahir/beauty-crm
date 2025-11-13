@@ -2,7 +2,7 @@
 Миграция: Добавить переводы имён мастеров
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def add_employee_translations():
     """Добавить поля name_ru и name_ar для мастеров"""

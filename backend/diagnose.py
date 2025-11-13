@@ -4,7 +4,7 @@
 """
 import sqlite3
 import os
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def diagnose():
     print("=" * 70)

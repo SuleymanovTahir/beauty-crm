@@ -7,10 +7,10 @@ from typing import Optional
 import sqlite3
 import hashlib
 from db import get_all_users, delete_user, log_activity
-from config import DATABASE_NAME
-from utils import require_auth
-from logger import log_error
-from auth import get_current_user_or_redirect as get_current_user
+from core.config import DATABASE_NAME
+from utils.utils import require_auth
+from utils.logger import log_error
+from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Users"])
 

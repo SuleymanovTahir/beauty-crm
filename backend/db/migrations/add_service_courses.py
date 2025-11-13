@@ -2,8 +2,8 @@
 Миграция: Таблица курсовых процедур (#11 - Напоминание о курсовых процедурах)
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def add_service_courses_table():
     """Создать таблицу service_courses"""

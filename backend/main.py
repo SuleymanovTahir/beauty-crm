@@ -7,16 +7,16 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import time
 
-from logger import logger, log_info, log_error, log_critical,log_warning
-from config import DATABASE_NAME
+from utils.logger import logger, log_info, log_error, log_critical,log_warning
+from core.config import DATABASE_NAME
 from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
-from utils import ensure_upload_directories
+from utils.utils import ensure_upload_directories
 
 # Импорт роутеров
 from api import router as api_router
-from auth import router as auth_router
+from core.auth import router as auth_router
 from webhooks import router as webhooks_router
 from api.templates import router as templates_router
 from api.statuses import router as statuses_router

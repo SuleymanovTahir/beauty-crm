@@ -7,7 +7,7 @@ import sqlite3
 from datetime import datetime
 import os
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 # ===== ДЕФОЛТНЫЕ ДАННЫЕ САЛОНА =====
 # После миграции редактируются в /admin/settings

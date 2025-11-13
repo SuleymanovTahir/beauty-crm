@@ -13,7 +13,7 @@ import os
 # Добавляем путь к backend
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from db.clients import (
     auto_fill_name_from_username,
     track_client_interest,

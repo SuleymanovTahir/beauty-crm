@@ -2,7 +2,7 @@
 API Endpoints для настроек салона и бота
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
@@ -14,8 +14,8 @@ from db import (
     get_custom_statuses, create_custom_status,
     delete_custom_status, update_custom_status,
 )
-from utils import require_auth
-from logger import log_error, log_info
+from utils.utils import require_auth
+from utils.logger import log_error, log_info
 from bot import get_bot
 
 router = APIRouter(tags=["Settings"])

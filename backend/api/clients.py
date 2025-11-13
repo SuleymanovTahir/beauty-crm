@@ -6,15 +6,15 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import time
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from db import (
     get_all_clients, get_client_by_id, get_or_create_client,
     update_client_info, update_client_status, pin_client,
     delete_client, get_chat_history, get_all_bookings,
     log_activity,update_client_bot_mode
 )
-from utils import require_auth, get_total_unread, get_client_display_name
-from logger import log_error,log_info
+from utils.utils import require_auth, get_total_unread, get_client_display_name
+from utils.logger import log_error,log_info
 
 router = APIRouter(tags=["Clients"])
 

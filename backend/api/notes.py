@@ -6,9 +6,9 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
 
-from config import DATABASE_NAME
-from utils import require_auth
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.utils import require_auth
+from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Notes"])
 

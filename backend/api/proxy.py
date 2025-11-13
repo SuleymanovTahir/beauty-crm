@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import Response
 import httpx
-from logger import log_error, log_info
+from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Proxy"])
 

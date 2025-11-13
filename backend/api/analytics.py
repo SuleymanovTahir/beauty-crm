@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 
 from db import get_stats, get_analytics_data, get_funnel_data
-from utils import require_auth, get_total_unread
+from utils.utils import require_auth, get_total_unread
 
 router = APIRouter(tags=["Analytics"])
 

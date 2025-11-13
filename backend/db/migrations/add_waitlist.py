@@ -2,8 +2,8 @@
 Миграция: Таблица листа ожидания (#17 - Умная очередь ожидания)
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def add_waitlist_table():
     """Создать таблицу booking_waitlist"""

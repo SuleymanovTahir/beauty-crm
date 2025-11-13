@@ -11,9 +11,9 @@ from db import (
     get_all_bookings, save_booking, update_booking_status,
     get_or_create_client, update_client_info, log_activity
 )
-from config import DATABASE_NAME
-from utils import require_auth
-from logger import log_error, log_warning
+from core.config import DATABASE_NAME
+from utils.utils import require_auth
+from utils.logger import log_error, log_warning
 
 router = APIRouter(tags=["Bookings"])
 

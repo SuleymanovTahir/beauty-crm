@@ -2,8 +2,8 @@
 Миграция: Таблица интересов клиентов (#5 - Отслеживание горячих клиентов)
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def add_client_interests_table():
     """Создать таблицу client_interests"""

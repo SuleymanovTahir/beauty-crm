@@ -2,8 +2,8 @@
 Миграция: Добавление поля master в таблицу bookings
 """
 import sqlite3
-from config import DATABASE_NAME
-from logger import log_info, log_error
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
 
 def add_master_field():
     """Добавить поле master в таблицу bookings"""

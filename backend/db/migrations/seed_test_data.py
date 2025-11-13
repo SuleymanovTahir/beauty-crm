@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 # Добавляем путь к корню проекта
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 # Списки для генерации данных
 FIRST_NAMES = [

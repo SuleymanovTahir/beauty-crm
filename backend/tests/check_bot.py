@@ -11,7 +11,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 from bot.core import get_bot
 from db import get_or_create_client, save_message, get_chat_history
 

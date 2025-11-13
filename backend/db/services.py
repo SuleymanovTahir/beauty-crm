@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 from typing import Optional
 
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 # ===== УСЛУГИ =====

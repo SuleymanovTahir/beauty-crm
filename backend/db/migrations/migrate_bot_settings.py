@@ -1,5 +1,5 @@
 from typing import Optional
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 import sqlite3
 import os
 import re

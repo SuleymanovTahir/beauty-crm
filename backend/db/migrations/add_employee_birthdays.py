@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def add_employee_birthday_fields():

@@ -1,5 +1,5 @@
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def add_language_column():
     """Добавить колонку language в clients (если её нет)"""

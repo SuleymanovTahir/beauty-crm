@@ -1,7 +1,7 @@
 # Создай файл backend/check_services.py
 
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def check_services():
     """Проверить какие услуги есть в БД"""

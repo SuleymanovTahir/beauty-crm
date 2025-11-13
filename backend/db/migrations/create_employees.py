@@ -2,7 +2,7 @@
 Миграция: создание таблиц для сотрудников салона
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 
 def create_employees_tables():

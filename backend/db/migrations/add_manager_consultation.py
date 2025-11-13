@@ -2,7 +2,7 @@
 Миграция: Добавление поля manager_consultation_prompt
 """
 import sqlite3
-from config import DATABASE_NAME
+from core.config import DATABASE_NAME
 
 def add_manager_consultation_field():
     """Добавить поле для промпта консультации менеджера"""
