@@ -371,6 +371,16 @@ async def startup_event():
         # from db.migrations.add_employee_translations import add_employee_translations
         # add_employee_translations()
 
+        # from db.migrations.check_schedules import check_schedules
+        # check_schedules()
+
+        # from db.migrations.create_employee_schedules import create_schedules
+        # create_schedules()
+
+        # from db.migrations.check_translations import check_translations
+        # check_translations()
+        
+
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")

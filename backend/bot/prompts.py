@@ -662,12 +662,18 @@ Google Maps: {self.salon.get('google_maps', '')}
             else:
                 emp_name_display = emp_name
 
+            try:
+                target_dt = datetime.strptime(target_date, "%Y-%m-%d")
+                day_of_week = target_dt.weekday()  # 0=Пн, 6=Вс
+            except:
+                day_of_week = datetime.now().weekday()
+            
             c.execute("""
                 SELECT start_time, end_time
                 FROM employee_schedule
-                WHERE employee_id = ? AND is_active = 1
+                WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
                 LIMIT 1
-            """, (emp_id,))
+            """, (emp_id, day_of_week))
             schedule = c.fetchone()
 
             if schedule:
