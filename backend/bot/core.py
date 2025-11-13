@@ -93,7 +93,12 @@ class SalonBot:
             salon=self.salon,
             bot_settings=self.bot_settings
         )
-
+        # ✅ ДЕБАГ: Проверяем есть ли мастера в промпте
+        if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
+            print(f"   ✅ Блок мастеров найден")
+        else:
+            print(f"   ⚠️ Блок мастеров ОТСУТСТВУЕТ!")
+            
         return builder.build_full_prompt(
             instagram_id=instagram_id,
             history=history,
@@ -165,14 +170,14 @@ class SalonBot:
             booking_progress=booking_progress,
             client_language=client_language
         )
-        
+
         # ✅ ИЗМЕНЕНИЕ: Логируем построенный промпт для отладки
         print(f"   📝 Промпт содержит {len(system_prompt)} символов")
         if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
             print(f"   ✅ Блок с мастерами найден в промпте")
         else:
             print(f"   ⚠️ Блок с мастерами НЕ найден в промпте!")
-        
+
         # Добавляем дополнительный контекст
         if additional_context:
             system_prompt += additional_context

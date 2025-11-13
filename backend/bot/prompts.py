@@ -636,17 +636,17 @@ Google Maps: {self.salon.get('google_maps', '')}
         popular_times = get_popular_booking_times(service_name)
         popular_times_text = f"\nБольшинство клиентов выбирают: {', '.join(popular_times)}" if popular_times else ""
 
-        availability_text = f"""=== 📅 МАСТЕРА ДЛЯ '{service_name.upper()}' НА {date_display.upper()} ===
-
-{instructions}{popular_times_text}
-
-ДОСТУПНЫЕ МАСТЕРА:
-
-"""
+        availability_text = f"""=== 📅 ДОСТУПНЫЕ МАСТЕРА ===
+        Услуга: {service_name}
+        Дата: {date_display}
+        {instructions}{popular_times_text}
+        """
 
         # ✅ #2 - Если есть любимый мастер - покажи его первым
         if preferences.get('favorite_master'):
             availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
+
+        availability_text += "\n🎯 Доступны сейчас:\n"
 
         for emp in employees[:5]:
             emp_id = emp[0]
