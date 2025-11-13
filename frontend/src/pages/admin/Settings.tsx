@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Save, Building, Phone, Clock, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -30,7 +30,7 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
-  const [botGloballyEnabled, setBotGloballyEnabled] = useState(false); 
+  const [botGloballyEnabled, setBotGloballyEnabled] = useState(false);
 
   const [notificationSettings, setNotificationSettings] = useState({
     emailNotifications: true,
@@ -261,7 +261,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
@@ -628,7 +628,37 @@ export default function AdminSettings() {
                   </div>
                 </div>
               </div>
+              <div>
+                <h3 className="text-lg text-gray-900 mb-4">Диагностика системы</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Проверка работы бота, базы данных и настроек
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/diagnostics/full', {
+                        credentials: 'include'
+                      });
+                      const data = await response.json();
+                      console.log('🔍 Диагностика:', data);
 
+                      // Показываем краткий результат
+                      const issues = data.issues || [];
+                      if (issues.length === 0) {
+                        toast.success('✅ Диагностика успешна! Все работает.');
+                      } else {
+                        toast.warning(`⚠️ Найдено ${issues.length} проблем. Проверь консоль (F12)`);
+                      }
+                    } catch (error) {
+                      console.error('Ошибка диагностики:', error);
+                      toast.error('Ошибка запуска диагностики');
+                    }
+                  }}
+                >
+                  🔍 Запустить диагностику
+                </Button>
+              </div>
               <div>
                 <h3 className="text-lg text-gray-900 mb-4">{t('settings:backup')}</h3>
                 <p className="text-sm text-gray-600 mb-4">
@@ -637,6 +667,71 @@ export default function AdminSettings() {
                 <Button variant="outline">
                   📥 {t('settings:download_backup')}
                 </Button>
+              </div>
+            </div>
+
+          </div>
+        </TabsContent>
+        {/* Diagnostics */}
+        <TabsContent value="diagnostics">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
+              🔍 Диагностика системы
+            </h2>
+
+            <div className="space-y-6">
+              <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-blue-800 font-medium mb-2">Что проверяется:</p>
+                <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
+                  <li>База данных (таблицы, записи)</li>
+                  <li>Настройки бота (промпты, языки)</li>
+                  <li>Мастера и услуги</li>
+                  <li>Связи между таблицами</li>
+                </ul>
+              </div>
+
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                onClick={async () => {
+                  const loadingToast = toast.loading('Запуск диагностики...');
+                  
+                  try {
+                    const response = await fetch('/api/diagnostics/full', {
+                      credentials: 'include'
+                    });
+                    const data = await response.json();
+                    
+                    console.log('🔍 РЕЗУЛЬТАТЫ ДИАГНОСТИКИ:', data);
+                    
+                    toast.dismiss(loadingToast);
+                    
+                    const issues = data.issues || [];
+                    if (issues.length === 0) {
+                      toast.success('✅ Диагностика успешна! Все работает отлично.');
+                    } else {
+                      toast.warning(
+                        `⚠️ Найдено проблем: ${issues.length}. 
+                        Откройте консоль браузера (F12) для деталей.`
+                      );
+                    }
+                    
+                    // Дополнительно выводим проблемы
+                    if (issues.length > 0) {
+                      console.error('❌ ПРОБЛЕМЫ:', issues);
+                    }
+                  } catch (error) {
+                    toast.dismiss(loadingToast);
+                    console.error('Ошибка диагностики:', error);
+                    toast.error('Ошибка запуска диагностики');
+                  }
+                }}
+              >
+                🔍 Запустить полную диагностику
+              </Button>
+
+              <div className="text-sm text-gray-600">
+                💡 Результаты появятся в консоли браузера (нажмите F12)
               </div>
             </div>
           </div>
