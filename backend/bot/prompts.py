@@ -127,8 +127,14 @@ class PromptBuilder:
         master_name = booking_progress.get('master', '')
         preferred_date = booking_progress.get('date', '')
 
+        # ✅ КРИТИЧЕСКИ ВАЖНО: additional_context ПЕРВЫМ (после IDENTITY)!
+        context_part = ""
+        if additional_context:
+            context_part = f"\n\n=== 🚨 ВАЖНЫЙ КОНТЕКСТ - ЧИТАЙ ПЕРВЫМ! ==={additional_context}"
+
         parts = [
             self._build_identity(),
+            context_part,  # ✅ СРАЗУ ПОСЛЕ IDENTITY!
             self._build_personality(),
             self._build_language_settings(client_language),
             self._build_greeting_logic(history),
@@ -151,13 +157,7 @@ class PromptBuilder:
             self._build_objections_section(objections),
         ]
 
-        prompt = "\n\n".join([p for p in parts if p])
-
-        # ✅ Добавляем additional_context в самый конец
-        if additional_context:
-            prompt += additional_context
-
-        return prompt
+        return "\n\n".join([p for p in parts if p])
 
     def _build_identity(self) -> str:
         """Секция IDENTITY - из БД"""
@@ -703,10 +703,10 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         🎯 ДОСТУПНЫЕ МАСТЕРА НА {date_display}:
         """
-
+        
         # ✅ #2 - Если есть любимый мастер - покажи его первым
         if preferences.get('favorite_master'):
-            availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n"
+            availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
 
         for emp in employees[:5]:
             emp_id = emp[0]

@@ -125,7 +125,7 @@ class SalonBot:
         
         # ✅ ИСПРАВЛЕНИЕ: Сначала строим additional_context, ПОТОМ промпт
         additional_context = ""
-        
+
         if context_flags:
             if context_flags.get('has_incomplete_booking'):
                 incomplete = context_flags['incomplete_booking']
@@ -133,15 +133,16 @@ class SalonBot:
                 additional_context += f"Услуга: {incomplete.get('service_name', '?')}\n"
                 additional_context += f"Шаг: {incomplete.get('step', '?')}\n"
                 additional_context += "ПРЕДЛОЖИ ПРОДОЛЖИТЬ ЭТУ ЗАПИСЬ!\n"
-            
+
             if context_flags.get('is_urgent'):
-                additional_context += "\n\n🚨 КЛИЕНТ УКАЗАЛ СРОЧНОСТЬ (уезжает, важное событие)\n"
-                additional_context += "ПРЕДЛОЖИ ВСЕ ДОСТУПНЫЕ ОКНА СЕГОДНЯ И ЗАВТРА!\n"
-            
+                additional_context += "\n\n🚨 СРОЧНОСТЬ! КЛИЕНТ УЕЗЖАЕТ/ВАЖНОЕ СОБЫТИЕ!\n"
+                additional_context += "⚠️ НЕ ЗАДАВАЙ ВОПРОСЫ 'На какой день?' - СРАЗУ ПОКАЖИ ВСЕ ДОСТУПНЫЕ ОКНА!\n"
+                additional_context += "Формат: 'Понял срочность! Завтра есть: 11:00, 14:00, 17:00. Что удобно?'\n"
+
             if context_flags.get('is_corporate'):
                 additional_context += "\n\n🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа 5+ человек)\n"
                 additional_context += "ПЕРЕКЛЮЧИ НА МЕНЕДЖЕРА: 'Для корпоративных групп есть спецусловия! Передаю менеджеру'\n"
-            
+
             # ✅ #5 - Проверка "горячего" клиента
             from db.clients import is_hot_client, get_client_interest_count
             if is_hot_client(instagram_id):
@@ -155,30 +156,29 @@ class SalonBot:
                 if service_interest:
                     additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
                     additional_context += f"Спрашивал про {service_interest} {count} раз\n"
-            
+
             # ✅ #10 - UPSELL: Проверка давно ли делал другие услуги
             from bot.prompts import get_last_service_date
             from datetime import datetime
             now = datetime.now()
-            
+
             message_lower = user_message.lower()
-            
+
             for upsell_service in ['Pedicure', 'Manicure']:
                 service_ru = 'педикюр' if upsell_service == 'Pedicure' else 'маникюр'
-                
+
                 if service_ru not in message_lower and upsell_service.lower() not in message_lower:
                     last_date = get_last_service_date(instagram_id, upsell_service)
-                    
+
                     if last_date:
                         try:
                             from datetime import datetime
                             last_dt = datetime.fromisoformat(last_date)
                             days_since = (now - last_dt).days
-                            
+
                             if days_since > 21:
-                                additional_context += f"\n\n💡 UPSELL ВОЗМОЖНОСТЬ!\n"
-                                additional_context += f"Клиент последний раз делал {service_ru} {days_since} дней назад\n"
-                                additional_context += f"МЯГКО предложи добавить {service_ru} к записи\n"
+                                additional_context += f"\n\n💡 UPSELL! Клиент не был на {service_ru} {days_since} дней!\n"
+                                additional_context += f"⚠️ ОБЯЗАТЕЛЬНО ПРЕДЛОЖИ: 'Кстати, давно не обновляли {service_ru} - добавить к записи?'\n"
                                 break
                         except:
                             pass
