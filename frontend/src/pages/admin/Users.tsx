@@ -22,12 +22,12 @@ export default function Users() {
   const { t } = useTranslation(['admin/Users', 'common']);
 
   const roleConfig: Record<string, { label: string; color: string }> = {
-    director: { label: 'Директор', color: 'bg-red-100 text-red-800' },
-    admin: { label: 'Администратор', color: 'bg-purple-100 text-purple-800' },
-    manager: { label: 'Менеджер', color: 'bg-blue-100 text-blue-800' },
-    sales: { label: 'Продажник', color: 'bg-green-100 text-green-800' },
-    marketer: { label: 'Таргетолог', color: 'bg-orange-100 text-orange-800' },
-    employee: { label: 'Сотрудник', color: 'bg-gray-100 text-gray-800' },
+    director: { label: t('role_director_label'), color: 'bg-red-100 text-red-800' },
+    admin: { label: t('role_admin_label'), color: 'bg-purple-100 text-purple-800' },
+    manager: { label: t('role_manager_label'), color: 'bg-blue-100 text-blue-800' },
+    sales: { label: t('role_sales_label'), color: 'bg-green-100 text-green-800' },
+    marketer: { label: t('role_marketer_label'), color: 'bg-orange-100 text-orange-800' },
+    employee: { label: t('role_employee_label'), color: 'bg-gray-100 text-gray-800' },
   };
 
   const [users, setUsers] = useState<User[]>([]);
@@ -57,26 +57,26 @@ export default function Users() {
 
   const getRoleDescription = (roleKey: string): string => {
     const descriptions: Record<string, string> = {
-      director: 'Полный доступ ко всем функциям',
-      admin: 'Управление пользователями, клиентами и записями',
-      manager: 'Работа с клиентами и записями',
-      sales: 'Instagram чат, статистика',
-      marketer: 'Аналитика и статистика',
-      employee: 'Свои записи и календарь'
+      director: t('role_director_desc'),
+      admin: t('role_admin_desc'),
+      manager: t('role_manager_desc'),
+      sales: t('role_sales_desc'),
+      marketer: t('role_marketer_desc'),
+      employee: t('role_employee_desc')
     };
-    return descriptions[roleKey] || 'Роль пользователя';
+    return descriptions[roleKey] || t('role_default');
   };
 
   const handleChangeRole = async (userId: number, newRole: string) => {
     try {
       setSavingRole(true);
       await api.updateUserRole(userId, newRole); // fix argument type
-      toast.success('Роль изменена');
+      toast.success(t('role_changed'));
       setShowRoleDialog(false);
       setSelectedUser(null);
       await loadUsers();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка изменения роли';
+      const message = err instanceof Error ? err.message : t('error_changing_role');
       toast.error(message);
     } finally {
       setSavingRole(false);
@@ -112,9 +112,9 @@ export default function Users() {
         console.warn('⚠️  Массив пользователей пуст');
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки пользователей';
+      const message = err instanceof Error ? err.message : t('error_loading_users');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(`${t('error')}: ${message}`);
       console.error('❌ Error loading users:', err);
     } finally {
       setLoading(false);
@@ -122,15 +122,15 @@ export default function Users() {
   };
 
   const handleDeleteUser = async (id: number) => {
-    if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return;
+    if (!confirm(t('confirm_delete'))) return;
 
     try {
       await api.deleteUser(id);
       setUsers(users.filter(u => u.id !== id));
-      toast.success('Пользователь удален');
+      toast.success(t('user_deleted'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка удаления пользователя';
-      toast.error(`Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('error_deleting_user');
+      toast.error(`${t('error')}: ${message}`);
       console.error('Error deleting user:', err);
     }
   };
@@ -148,7 +148,7 @@ export default function Users() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка пользователей...</p>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
     );
@@ -161,10 +161,10 @@ export default function Users() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Ошибка загрузки</p>
+              <p className="text-red-800 font-medium">{t('error_loading')}</p>
               <p className="text-red-700 text-sm mt-1">{error}</p>
               <Button onClick={loadUsers} className="mt-4 bg-red-600 hover:bg-red-700">
-                Попробовать снова
+                {t('try_again')}
               </Button>
             </div>
           </div>
@@ -178,30 +178,30 @@ export default function Users() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <UsersIcon className="w-8 h-8 text-pink-600" />
-          Управление пользователями
+          {t('title')}
         </h1>
-        <p className="text-gray-600">{filteredUsers.length} пользователей</p>
+        <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Всего</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_total')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Директоров</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_directors')}</p>
           <h3 className="text-3xl text-red-600">{stats.directors}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Админов</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_admins')}</p>
           <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Продажников</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_sales')}</p>
           <h3 className="text-3xl text-green-600">{stats.sales}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Сотрудников</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_employees')}</p>
           <h3 className="text-3xl text-gray-600">{stats.employees}</h3>
         </div>
       </div>
@@ -212,7 +212,7 @@ export default function Users() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Поиск по имени, логину или email..."
+              placeholder={t('search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -223,7 +223,7 @@ export default function Users() {
             onClick={() => navigate('/admin/users/create')}
           >
             <UserPlus className="w-4 h-4 mr-2" />
-            Добавить пользователя
+            {t('add_user')}
           </Button>
         </div>
       </div>
@@ -234,12 +234,12 @@ export default function Users() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Пользователь</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Логин</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Роль</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Создан</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Действия</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_user')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_username')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -271,11 +271,11 @@ export default function Users() {
                           size="sm"
                           variant="outline"
                           onClick={() => navigate(`/admin/users/${user.id}/edit`)}
-                          title="Редактировать профиль"
+                          title={t('action_edit_title')}
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        
+
                         <Button
                           size="sm"
                           variant="outline"
@@ -284,17 +284,17 @@ export default function Users() {
                             setShowRoleDialog(true);
                           }}
                           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          title="Изменить роль"
+                          title={t('action_change_role_title')}
                         >
                           <Shield className="w-4 h-4" />
                         </Button>
-                        
+
                         <Button
                           size="sm"
                           variant="outline"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                           onClick={() => handleDeleteUser(user.id)}
-                          title="Удалить пользователя"
+                          title={t('action_delete_title')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -308,7 +308,7 @@ export default function Users() {
         ) : (
           <div className="py-20 text-center text-gray-500">
             <UsersIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p>Пользователи не найдены</p>
+            <p>{t('no_users_found')}</p>
           </div>
         )}
       </div>
@@ -319,10 +319,10 @@ export default function Users() {
           <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-bold text-gray-900">
-                Изменить роль: {selectedUser.full_name}
+                {t('role_dialog_title')}: {selectedUser.full_name}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                Текущая роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
               </p>
             </div>
 
@@ -346,7 +346,7 @@ export default function Users() {
                       </p>
                     </div>
                     {selectedUser.role === role.key && (
-                      <Badge className="bg-pink-100 text-pink-800">Текущая</Badge>
+                      <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
                     )}
                   </div>
                 </button>
@@ -354,16 +354,16 @@ export default function Users() {
             </div>
 
             <div className="p-6 border-t border-gray-200">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setShowRoleDialog(false);
                   setSelectedUser(null);
-                }} 
+                }}
                 className="w-full"
                 disabled={savingRole}
               >
-                Закрыть
+                {t('role_dialog_close')}
               </Button>
             </div>
           </div>
