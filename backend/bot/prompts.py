@@ -779,9 +779,9 @@ Google Maps: {self.salon.get('google_maps', '')}
         booking_url = self.salon.get('booking_url', '')
 
         # ✅ #14 - Альтернативы если время не подходит
-        availability_text += f"\n📲 Или выберите сами: {booking_url}"
-        availability_text += "\n\n💡 Если это время не подходит - напишите когда удобно, найдём альтернативы!"
-
+        availability_text += f"\n\n📲 Или выберите сами: {booking_url}"
+        availability_text += "\n\n💬 Напишите имя мастера или время которое подходит"
+        
         # Добавляем upsell если есть
         if upsell_text:
             availability_text += upsell_text
@@ -817,12 +817,16 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
     for service, master, dt in bookings:
         services[service] = services.get(service, 0) + 1
         if master:
-            masters[master] = masters.get(master, 0) + 1
+            # ✅ ПРОВЕРЯЕМ что мастер существует в БД
+            conn2 = sqlite3.connect(DATABASE_NAME)
+            c2 = conn2.cursor()
+            c2.execute("SELECT COUNT(*) FROM employees WHERE full_name = ? AND is_active = 1", (master,))
+            if c2.fetchone()[0] > 0:
+                masters[master] = masters.get(master, 0) + 1
+            conn2.close()
 
-    fav_service = max(services.items(), key=lambda x: x[1])[
-        0] if services else None
-    fav_master = max(masters.items(), key=lambda x: x[1])[
-        0] if masters else None
+    fav_service = max(services.items(), key=lambda x: x[1])[0] if services else None
+    fav_master = max(masters.items(), key=lambda x: x[1])[0] if masters else None
 
     return {
         'favorite_service': fav_service,
@@ -832,36 +836,7 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
         'last_date': bookings[0][2] if bookings else None,
         'total_visits': len(bookings)
     }
-
-
-def analyze_client_tone(history: List[Tuple]) -> str:
-    """Анализировать стиль общения клиента (#3 - Адаптация тона)"""
-    if not history:
-        return "neutral"
-
-    client_messages = [msg[0] for msg in history[-10:]
-                       if len(msg) >= 2 and msg[1] == "client"][-5:]
-
-    if not client_messages:
-        return "neutral"
-
-    total_length = sum(len(msg) for msg in client_messages)
-    avg_length = total_length / len(client_messages)
-
-    emoji_count = sum(msg.count('😊') + msg.count('💅') + msg.count('❤') + msg.count('🔥') +
-                      msg.count('💖') + msg.count('✨') for msg in client_messages)
-
-    short_responses = sum(1 for msg in client_messages if len(msg) < 15)
-
-    if avg_length < 20 and short_responses >= 3:
-        return "brief"
-    elif emoji_count >= 3:
-        return "friendly"
-    elif avg_length > 50:
-        return "detailed"
-    else:
-        return "neutral"
-
+    
 
 def get_popular_booking_times(service_name: str = None) -> List[str]:
     """Популярные времена записи (#9)"""

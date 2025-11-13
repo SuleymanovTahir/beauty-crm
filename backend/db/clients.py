@@ -202,6 +202,8 @@ def detect_and_save_language(instagram_id: str, message: str):
     conn.commit()
     conn.close()
     
+    log_info(f"✅ Language detected: {language} for {instagram_id}", "database")
+    
     return language
 
 

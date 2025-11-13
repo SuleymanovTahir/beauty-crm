@@ -77,12 +77,12 @@ class SalonBot:
     ) -> str:
         """..."""
         from .prompts import PromptBuilder
-    
+
         builder = PromptBuilder(
             salon=self.salon,
             bot_settings=self.bot_settings
         )
-        
+
         # ✅ СНАЧАЛА СОЗДАЁМ ПРОМПТ
         system_prompt = builder.build_full_prompt(
             instagram_id=instagram_id,
@@ -90,13 +90,13 @@ class SalonBot:
             booking_progress=booking_progress or {},
             client_language=client_language
         )
-        
+
         # ✅ ПОТОМ ПРОВЕРЯЕМ
         if "ДОСТУПНЫЕ МАСТЕРА" in system_prompt:
             print(f"   ✅ Блок мастеров найден")
         else:
             print(f"   ⚠️ Блок мастеров ОТСУТСТВУЕТ!")
-            
+
         return system_prompt
 
     async def generate_response(
@@ -152,6 +152,35 @@ class SalonBot:
                     if count >= 3:
                         service_interest = service
                         break
+                    
+                if service_interest:
+                    additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
+                    additional_context += f"Спрашивал про {service_interest} {count} раз\n"
+            
+            # ✅ #10 - UPSELL: Проверка давно ли делал другие услуги
+            from bot.prompts import get_last_service_date
+            from datetime import datetime, timedelta
+            now = datetime.now()
+            
+            for upsell_service in ['Pedicure', 'Manicure']:
+                if upsell_service.lower() not in user_message.lower():
+                    last_date = get_last_service_date(instagram_id, upsell_service)
+                    if last_date:
+                        try:
+                            last_dt = datetime.fromisoformat(last_date)
+                            days_since = (now - last_dt).days
+                            
+                            if days_since > 28:  # Более месяца
+                                service_translations = {
+                                    'Manicure': 'маникюр',
+                                    'Pedicure': 'педикюр'
+                                }
+                                additional_context += f"\n\n💡 UPSELL МОМЕНТ!\n"
+                                additional_context += f"Клиент не делал {service_translations[upsell_service]} {days_since} дней\n"
+                                additional_context += f"ПРЕДЛОЖИ добавить к записи!\n"
+                                break
+                        except:
+                            pass
                     
                 if service_interest:
                     additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
