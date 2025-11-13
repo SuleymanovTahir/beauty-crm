@@ -203,6 +203,167 @@ def start_birthday_checker():
     log_info("✅ Планировщик дней рождения запущен", "birthday_checker")
 
 
+# ===== ПОЗДРАВЛЕНИЯ КЛИЕНТОВ =====
+
+def get_client_birthdays_today() -> List[Tuple]:
+    """Получить клиентов с днем рождения сегодня"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    today = datetime.now().date()
+    today_md = today.strftime("%m-%d")
+
+    c.execute("""
+        SELECT instagram_id, name, username, birthday, email
+        FROM clients
+        WHERE birthday IS NOT NULL
+    """)
+
+    all_clients = c.fetchall()
+    conn.close()
+
+    birthday_clients = []
+
+    for client in all_clients:
+        instagram_id, name, username, birthday_str, email = client
+
+        if not birthday_str:
+            continue
+
+        try:
+            birthday_date = datetime.strptime(birthday_str, "%Y-%m-%d").date()
+            birthday_md = birthday_date.strftime("%m-%d")
+
+            if birthday_md == today_md:
+                age = today.year - birthday_date.year
+                birthday_clients.append((
+                    instagram_id,
+                    name or username,
+                    age,
+                    email
+                ))
+
+        except ValueError:
+            log_error(f"Неверный формат даты рождения для клиента {instagram_id}: {birthday_str}", "birthday_checker")
+
+    return birthday_clients
+
+
+def check_if_client_congratulated(instagram_id: str, date: str) -> bool:
+    """Проверить, было ли отправлено поздравление клиенту"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT id FROM client_notifications
+        WHERE client_instagram_id = ?
+          AND notification_type = 'birthday'
+          AND DATE(created_at) = ?
+    """, (instagram_id, date))
+
+    result = c.fetchone()
+    conn.close()
+
+    return result is not None
+
+
+async def send_birthday_congratulations():
+    """Отправить поздравления клиентам с днем рождения"""
+    from integrations.instagram import send_message
+    from db.settings import get_salon_settings
+
+    try:
+        birthday_clients = get_client_birthdays_today()
+
+        if not birthday_clients:
+            return
+
+        salon = get_salon_settings()
+        salon_name = salon.get('name', 'Наш салон')
+
+        today_str = datetime.now().date().isoformat()
+
+        for client_info in birthday_clients:
+            instagram_id, name, age, email = client_info
+
+            # Проверяем, не поздравляли ли уже сегодня
+            if check_if_client_congratulated(instagram_id, today_str):
+                continue
+
+            # Формируем поздравление
+            message = f"""🎉🎂 С Днём Рождения, {name}! 🎂🎉
+
+Команда {salon_name} поздравляет вас с этим особенным днём!
+Желаем счастья, здоровья, красоты и исполнения всех желаний! ✨
+
+🎁 Специально для вас - скидка 15% на любую услугу в день рождения!
+
+Будем рады видеть вас! 💖"""
+
+            try:
+                # Отправляем поздравление в Instagram
+                if instagram_id and not instagram_id.startswith('web_'):
+                    await send_message(instagram_id, message)
+                    log_info(f"🎂 Отправлено поздравление клиенту {name} ({instagram_id})", "birthday_checker")
+
+                # Сохраняем уведомление в БД
+                conn = sqlite3.connect(DATABASE_NAME)
+                c = conn.cursor()
+
+                c.execute("""
+                    INSERT INTO client_notifications
+                    (client_instagram_id, client_email, notification_type, title, message, sent_at, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    instagram_id,
+                    email,
+                    'birthday',
+                    'С Днём Рождения!',
+                    message,
+                    datetime.now().isoformat(),
+                    datetime.now().isoformat()
+                ))
+
+                conn.commit()
+                conn.close()
+
+            except Exception as e:
+                log_error(f"Ошибка отправки поздравления {instagram_id}: {e}", "birthday_checker")
+
+    except Exception as e:
+        log_error(f"Ошибка в send_birthday_congratulations: {e}", "birthday_checker")
+
+
+def client_birthday_checker_loop():
+    """Основной цикл проверки дней рождения клиентов"""
+    import asyncio
+
+    log_info("🎂 Запущен планировщик поздравлений клиентов", "birthday_checker")
+
+    while True:
+        try:
+            now = datetime.now()
+
+            # Поздравляем каждый день в 10:00
+            if now.hour == 10 and now.minute == 0:
+                log_info("Проверка дней рождения клиентов...", "birthday_checker")
+                asyncio.run(send_birthday_congratulations())
+                time.sleep(60)  # Спим минуту
+            else:
+                time.sleep(30)  # Проверяем каждые 30 секунд
+
+        except Exception as e:
+            log_error(f"Ошибка в цикле поздравлений клиентов: {e}", "birthday_checker")
+            time.sleep(60)
+
+
+def start_client_birthday_checker():
+    """Запустить проверку дней рождения клиентов в отдельном потоке"""
+    thread = threading.Thread(target=client_birthday_checker_loop, daemon=True)
+    thread.start()
+    log_info("✅ Планировщик поздравлений клиентов запущен", "birthday_checker")
+
+
 # ===== SCHEDULER ДЛЯ ЗАПИСЕЙ =====
 
 def send_booking_reminders():
