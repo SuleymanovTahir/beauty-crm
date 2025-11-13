@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Calendar as CalendarComponent } from '../../components/ui/calendar';
+import { PhoneInput } from '../../components/ui/phone-input';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -379,12 +380,10 @@ export default function Booking() {
                     <Phone className="w-4 h-4 inline mr-2" />
                     Телефон *
                   </Label>
-                  <Input
-                    id="phone"
+                  <PhoneInput
                     value={clientData.phone}
-                    onChange={(e) => setClientData({ ...clientData, phone: e.target.value })}
+                    onChange={(phone) => setClientData({ ...clientData, phone })}
                     placeholder="+971 50 123 4567"
-                    required
                   />
                 </div>
                 <div>
