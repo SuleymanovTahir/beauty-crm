@@ -149,10 +149,10 @@ def migrate_salon_settings():
         c.execute("""INSERT INTO salon_settings (
             id, name, address, google_maps, hours, hours_ru, hours_ar,
             hours_weekdays, hours_weekends,
-            booking_url, phone, email, instagram, 
+            booking_url, phone, email, instagram,
             bot_name, bot_name_en, bot_name_ar,
             city, country, timezone, currency, updated_at
-        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             DEFAULT_SALON_DATA["name"],
             DEFAULT_SALON_DATA["address"],

@@ -14,3 +14,4 @@ logs/*.log
 .venv
 venv/
 ENV/
+salon_bot.db
