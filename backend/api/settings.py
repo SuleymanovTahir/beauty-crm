@@ -2,9 +2,11 @@
 API Endpoints для настроек салона и бота
 """
 import sqlite3
+import os
+from datetime import datetime
 from core.config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from typing import Optional
 from db.settings import update_bot_globally_enabled
 
@@ -410,12 +412,44 @@ def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     c.execute("""
-        UPDATE salon_settings 
+        UPDATE salon_settings
         SET bot_globally_enabled = ?
         WHERE id = 1
     """, (1 if enabled else 0,))
-    
+
     conn.commit()
     conn.close()
+
+
+@router.get("/settings/download-backup")
+async def download_backup(session_token: Optional[str] = Cookie(None)):
+    """Скачать резервную копию базы данных"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        # Проверяем что файл существует
+        if not os.path.exists(DATABASE_NAME):
+            return JSONResponse({"error": "Database file not found"}, status_code=404)
+
+        # Формируем имя файла с датой
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"beauty_crm_backup_{timestamp}.db"
+
+        log_info(f"Admin {user['username']} downloading database backup", "settings")
+
+        # Отправляем файл
+        return FileResponse(
+            path=DATABASE_NAME,
+            media_type='application/x-sqlite3',
+            filename=filename,
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    except Exception as e:
+        log_error(f"Error downloading backup: {e}", "settings")
+        return JSONResponse({"error": str(e)}, status_code=500)

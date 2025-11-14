@@ -1190,7 +1190,37 @@ export default function AdminSettings() {
                 <p className="text-sm text-gray-600 mb-4">
                   {t('settings:download_backup_for_security')}
                 </p>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/settings/download-backup', {
+                        method: 'GET',
+                        credentials: 'include',
+                      });
+
+                      if (!response.ok) {
+                        throw new Error('Failed to download backup');
+                      }
+
+                      // Получаем blob и создаем ссылку для скачивания
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `beauty_crm_backup_${new Date().toISOString().slice(0, 10)}.db`;
+                      document.body.appendChild(a);
+                      a.click();
+                      window.URL.revokeObjectURL(url);
+                      document.body.removeChild(a);
+
+                      toast.success('Резервная копия скачана');
+                    } catch (error) {
+                      console.error('Error downloading backup:', error);
+                      toast.error('Ошибка скачивания резервной копии');
+                    }
+                  }}
+                >
                   📥 {t('settings:download_backup')}
                 </Button>
               </div>
