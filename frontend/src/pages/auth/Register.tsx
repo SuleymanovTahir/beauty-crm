@@ -185,7 +185,15 @@ export default function Register() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-6 flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setStep("register")}
+                disabled={loading}
+                className="text-sm"
+              >
+                ← Назад
+              </Button>
               <Button
                 variant="ghost"
                 onClick={handleResendCode}

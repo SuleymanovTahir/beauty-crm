@@ -763,6 +763,25 @@ export class ApiClient {
     })
   }
 
+  // ===== MY PROFILE =====
+  async getMyProfile() {
+    return this.request<any>('/api/my-profile')
+  }
+
+  async updateMyProfile(data: {
+    username?: string
+    full_name?: string
+    email?: string
+    current_password?: string
+    new_password?: string
+    photo_url?: string
+  }) {
+    return this.request('/api/my-profile', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
 
 }
 
