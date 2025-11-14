@@ -45,6 +45,7 @@ import About from './pages/public/About';
 import Contacts from './pages/public/Contacts';
 import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
+import Team from './pages/public/Team';
 import EditUser from './pages/admin/EditUser';
 import UserCabinet from './pages/public/UserCabinet';
 import DataDeletion from './pages/public/DataDeletion';
@@ -329,6 +330,7 @@ export default function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="price-list" element={<PriceList />} />
+            <Route path="team" element={<Team />} />
             <Route path="booking" element={<Booking />} />
             <Route path="client/cabinet" element={<ClientCabinet />} />
             <Route path="success" element={<Success />} />

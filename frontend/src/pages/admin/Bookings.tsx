@@ -192,12 +192,49 @@ export default function Bookings() {
     try {
       setLoading(true);
       setError(null);
-      const [bookingsData, clientsData, servicesData, usersData] = await Promise.all([
-        api.getBookings(),
-        api.getClients(),
-        api.getServices(),
-        api.getUsers()
-      ]);
+
+      console.log('🔄 [Bookings] Загрузка данных...');
+
+      let bookingsData, clientsData, servicesData, usersData;
+
+      try {
+        console.log('📋 [Bookings] Загрузка bookings...');
+        bookingsData = await api.getBookings();
+        console.log('✅ [Bookings] Bookings загружены:', bookingsData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки bookings:', err);
+        throw new Error(`getBookings() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('👥 [Bookings] Загрузка clients...');
+        clientsData = await api.getClients();
+        console.log('✅ [Bookings] Clients загружены:', clientsData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки clients:', err);
+        throw new Error(`getClients() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('💅 [Bookings] Загрузка services...');
+        servicesData = await api.getServices();
+        console.log('✅ [Bookings] Services загружены:', servicesData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки services:', err);
+        throw new Error(`getServices() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('🧑‍💼 [Bookings] Загрузка users (masters)...');
+        if (typeof api.getUsers !== 'function') {
+          throw new Error('api.getUsers is not a function! Check api object definition');
+        }
+        usersData = await api.getUsers();
+        console.log('✅ [Bookings] Users загружены:', usersData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки users:', err);
+        throw new Error(`getUsers() failed: ${err.message}`);
+      }
 
       setBookings(bookingsData.bookings || []);
       setClients(clientsData.clients || []);
@@ -205,9 +242,12 @@ export default function Bookings() {
       setMasters(usersData.users?.filter((u: any) =>
         u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
       ) || []);
+
+      console.log('✅ [Bookings] Все данные загружены успешно!');
     } catch (err: any) {
+      console.error('❌ [Bookings] Критическая ошибка:', err);
       setError(err.message);
-      toast.error(`${t('bookings:error')}: ${err.message}`);
+      toast.error(`Ошибка загрузки данных: ${err.message}`);
     } finally {
       setLoading(false);
     }

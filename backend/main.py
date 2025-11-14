@@ -322,25 +322,31 @@ async def startup_event():
         # ================================
         # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
-        # Раскомментируйте для запуска всех миграций:
-        from db.migrations.run_all_migrations import run_all_migrations
-        run_all_migrations()
-
+        # ✅ ЗАПУСК ВСЕХ МИГРАЦИЙ (автоматически при старте)
+        try:
+            from db.migrations.run_all_migrations import run_all_migrations
+            log_info("🔧 Запуск миграций...", "startup")
+            run_all_migrations()
+        except Exception as e:
+            log_error(f"⚠️ Ошибка миграций (не критично): {e}", "startup")
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
 
-        # ✅ Загрузка и проверка модулей
-        from modules import print_modules_status, is_module_enabled
-        print_modules_status()
+        # ✅ Загрузка и проверка модулей (опционально)
+        try:
+            from modules import print_modules_status, is_module_enabled
+            print_modules_status()
 
-        # ✅ Запуск планировщиков (если модуль включен)
-        if is_module_enabled('scheduler'):
-            start_birthday_checker()  # Дни рождения сотрудников
-            start_client_birthday_checker()  # Поздравления клиентов
-            log_info("✅ Планировщики запущены", "startup")
-        else:
-            log_warning("⚠️  Модуль scheduler выключен", "startup")
+            # ✅ Запуск планировщиков (если модуль включен)
+            if is_module_enabled('scheduler'):
+                start_birthday_checker()  # Дни рождения сотрудников
+                start_client_birthday_checker()  # Поздравления клиентов
+                log_info("✅ Планировщики запущены", "startup")
+            else:
+                log_warning("⚠️  Модуль scheduler выключен", "startup")
+        except Exception as e:
+            log_warning(f"⚠️  Модули не загружены: {e}", "startup")
 
         log_info("✅ CRM готова к работе!", "startup")
         log_info("=" * 70, "startup")

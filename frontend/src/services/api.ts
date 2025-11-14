@@ -660,6 +660,48 @@ export class ApiClient {
     })
   }
 
+  // ===== EMPLOYEE PROFILE (Self-Service) =====
+  async getMyEmployeeProfile() {
+    return this.request<any>('/api/employees/my-profile')
+  }
+
+  async updateMyEmployeeProfile(data: {
+    full_name?: string;
+    name_ru?: string;
+    name_ar?: string;
+    position?: string;
+    position_ru?: string;
+    position_ar?: string;
+    experience?: string;
+    photo?: string;
+    bio?: string;
+    phone?: string;
+    email?: string;
+    instagram?: string;
+  }) {
+    return this.request('/api/employees/my-profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async uploadFile(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(`${this.baseURL}/api/upload`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: response.statusText }))
+      throw new Error(error.error || error.detail || 'Upload failed')
+    }
+
+    return response.json()
+  }
 
 
 }
