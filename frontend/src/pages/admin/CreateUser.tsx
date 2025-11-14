@@ -18,7 +18,7 @@ export default function CreateUser() {
     email: '',
     password: '',
     role: 'employee',
-    position: ''
+    position_id: null as number | null
   });
   const [loading, setLoading] = useState(false);
   const [positions, setPositions] = useState<Array<{id: number; name: string}>>([]);
@@ -208,8 +208,8 @@ export default function CreateUser() {
             <div>
               <Label htmlFor="position">Должность</Label>
               <Select
-                value={formData.position}
-                onValueChange={(value: string) => setFormData({ ...formData, position: value })}
+                value={formData.position_id?.toString() || ""}
+                onValueChange={(value: string) => setFormData({ ...formData, position_id: value ? parseInt(value) : null })}
                 disabled={loading}
               >
                 <SelectTrigger>
@@ -218,7 +218,7 @@ export default function CreateUser() {
                 <SelectContent>
                   <SelectItem value="">Не указана</SelectItem>
                   {positions.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.name}>
+                    <SelectItem key={pos.id} value={pos.id.toString()}>
                       {pos.name}
                     </SelectItem>
                   ))}
