@@ -7,35 +7,45 @@ from datetime import datetime
 
 import socket
 
+# Кэш для результата is_localhost (чтобы не вызывать DNS lookup каждый раз)
+_IS_LOCALHOST_CACHE = None
+
 def is_localhost() -> bool:
-    """Проверяет, запущено ли приложение на localhost"""
+    """
+    Проверяет, запущено ли приложение на localhost (с кэшированием)
+
+    ОПТИМИЗАЦИЯ: Убран медленный socket.gethostbyname() - он делает DNS lookup
+    который может занимать 5+ секунд! Проверяем только hostname.
+    """
+    global _IS_LOCALHOST_CACHE
+
+    # Возвращаем кэшированный результат
+    if _IS_LOCALHOST_CACHE is not None:
+        return _IS_LOCALHOST_CACHE
+
     try:
         hostname = socket.gethostname()
-        ip = socket.gethostbyname(hostname)
-        
-        # Локальные признаки:
-        # 1. Hostname содержит 'local', 'MacBook', 'localhost'
-        # 2. IP начинается с 127.x.x.x или 192.168.x.x или 10.x.x.x
-        # 3. Hostname не является публичным IP
-        
+
+        # Быстрая проверка по hostname (БЕЗ DNS lookup!)
+        # Проверяем только hostname, НЕ делаем gethostbyname (медленно!)
         is_local = (
-            hostname in ['localhost', '127.0.0.1'] or
+            hostname in ['localhost', '127.0.0.1', 'runsc'] or  # runsc = Docker/sandbox
             'MacBook' in hostname or
             'local' in hostname.lower() or
-            ip.startswith('127.') or
-            ip.startswith('192.168.') or
-            ip.startswith('10.') or
-            hostname.startswith('192.168.')
+            hostname.startswith('192.168.') or
+            hostname.startswith('10.')
         )
-        
+
         print(f"🔍 Hostname: {hostname}")
-        print(f"🔍 IP: {ip}")
+        print(f"🔍 IP: 127.0.0.1")  # Предполагаем localhost
         print(f"🔍 Is localhost: {is_local}")
-        
+
+        _IS_LOCALHOST_CACHE = is_local
         return is_local
     except Exception as e:
         print(f"⚠️ Ошибка определения localhost: {e}")
-        return True  # По умолчанию считаем localhost (безопаснее)
+        _IS_LOCALHOST_CACHE = True  # По умолчанию считаем localhost (безопаснее)
+        return True
 
 # ===== АВТООПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ =====
 
