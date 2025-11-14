@@ -2,21 +2,39 @@
 
 Этот документ описывает утилиты для работы с базой данных Beauty CRM.
 
+## 📁 Структура папок
+
+```
+backend/
+  scripts/
+    bot/                    # Скрипты для работы с настройками бота
+      fill_bot_settings.py
+      BOT_SETTINGS_README.md
+    database/               # Скрипты для работы с БД
+      check_db.py
+    testing/                # Скрипты для тестирования
+      setup_test_notifications.py
+  docs/                     # Документация
+    UTILITIES_README.md
+```
+
 ## 📋 Список утилит
 
-### 1. fill_bot_settings.py
+### 1. scripts/bot/fill_bot_settings.py
 **Назначение:** Заполнение и проверка настроек бота
+
+**Расположение:** `scripts/bot/fill_bot_settings.py`
 
 **Использование:**
 ```bash
 # Проверить текущее состояние полей
-python fill_bot_settings.py --check
+python scripts/bot/fill_bot_settings.py --check
 
 # Заполнить только пустые поля (по умолчанию)
-python fill_bot_settings.py
+python scripts/bot/fill_bot_settings.py
 
 # Перезаписать все поля
-python fill_bot_settings.py --force
+python scripts/bot/fill_bot_settings.py --force
 ```
 
 **Заполняемые поля:**
@@ -32,12 +50,14 @@ python fill_bot_settings.py --force
 
 ---
 
-### 2. check_db.py
+### 2. scripts/database/check_db.py
 **Назначение:** Комплексная проверка состояния базы данных
+
+**Расположение:** `scripts/database/check_db.py`
 
 **Использование:**
 ```bash
-python check_db.py
+python scripts/database/check_db.py
 ```
 
 **Что проверяет:**
@@ -68,16 +88,18 @@ python check_db.py
 
 ---
 
-### 3. setup_test_notifications.py
+### 3. scripts/testing/setup_test_notifications.py
 **Назначение:** Создание тестовых данных для проверки уведомлений
+
+**Расположение:** `scripts/testing/setup_test_notifications.py`
 
 **Использование:**
 ```bash
 # Создать тестовые события на завтра
-python setup_test_notifications.py --email your@email.com
+python scripts/testing/setup_test_notifications.py --email your@email.com
 
 # Создать тестовые события через 3 дня
-python setup_test_notifications.py --email your@email.com --days 3
+python scripts/testing/setup_test_notifications.py --email your@email.com --days 3
 ```
 
 **Что создает:**
@@ -109,19 +131,19 @@ python setup_test_notifications.py --email your@email.com --days 3
 python -m db.migrations.run_all_migrations
 
 # 2. Проверить базу
-python check_db.py
+python scripts/database/check_db.py
 
 # 3. Заполнить настройки бота
-python fill_bot_settings.py
+python scripts/bot/fill_bot_settings.py
 ```
 
 ### Проверка уведомлений
 ```bash
 # 1. Создать тестовые данные
-python setup_test_notifications.py --email your@email.com
+python scripts/testing/setup_test_notifications.py --email your@email.com
 
 # 2. Проверить что данные созданы
-python check_db.py
+python scripts/database/check_db.py
 
 # 3. Запустить планировщики
 python -m scheduler.birthday_checker
@@ -131,13 +153,13 @@ python -m scheduler.booking_reminder_checker
 ### Обновление настроек бота
 ```bash
 # 1. Проверить текущее состояние
-python fill_bot_settings.py --check
+python scripts/bot/fill_bot_settings.py --check
 
 # 2. Заполнить пустые поля
-python fill_bot_settings.py
+python scripts/bot/fill_bot_settings.py
 
 # 3. Или перезаписать все
-python fill_bot_settings.py --force
+python scripts/bot/fill_bot_settings.py --force
 ```
 
 ---
@@ -153,7 +175,7 @@ python fill_bot_settings.py --force
 
 ## 📚 Дополнительная документация
 
-- `BOT_SETTINGS_README.md` - подробное описание fill_bot_settings.py
+- `scripts/bot/BOT_SETTINGS_README.md` - подробное описание fill_bot_settings.py
 - `db/migrations/README.md` - документация по миграциям
 
 ---
@@ -169,16 +191,16 @@ cd /path/to/beauty-crm/backend
 ### Пустые поля бота после миграций
 ```bash
 # Заполните их вручную
-python fill_bot_settings.py
+python scripts/bot/fill_bot_settings.py
 ```
 
 ### Не приходят уведомления
 ```bash
 # 1. Проверьте тестовые данные
-python check_db.py
+python scripts/database/check_db.py
 
 # 2. Убедитесь что email правильный
-python setup_test_notifications.py --email correct@email.com
+python scripts/testing/setup_test_notifications.py --email correct@email.com
 
 # 3. Проверьте настройки SMTP в .env файле
 ```
