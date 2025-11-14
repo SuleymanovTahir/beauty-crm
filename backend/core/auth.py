@@ -214,21 +214,23 @@ async def api_register(
         # Отправляем email с кодом верификации
         email_sent = send_verification_email(email, verification_code, full_name)
 
-        if not email_sent:
-            log_warning(f"Failed to send verification email to {email}", "auth")
-            return JSONResponse(
-                {"error": "Не удалось отправить письмо с кодом подтверждения. Проверьте email и попробуйте снова."},
-                status_code=500
-            )
-
-        log_info(f"New registration: {username} (ID: {user_id}), verification email sent", "auth")
-
-        return {
+        response_data = {
             "success": True,
             "message": "Регистрация успешна! Проверьте вашу почту и введите код подтверждения.",
             "user_id": user_id,
-            "email_sent": True
+            "email_sent": email_sent
         }
+
+        # В development режиме возвращаем код в ответе если email не отправлен
+        import os
+        if not email_sent and os.getenv("ENVIRONMENT") != "production":
+            log_warning(f"SMTP not configured - showing code in response: {verification_code}", "auth")
+            response_data["verification_code"] = verification_code
+            response_data["message"] = f"⚠️ SMTP не настроен. Ваш код: {verification_code}"
+
+        log_info(f"New registration: {username} (ID: {user_id}), code: {verification_code if not email_sent else 'sent to email'}", "auth")
+
+        return response_data
 
     except sqlite3.IntegrityError:
         log_error(f"Registration failed: username {username} already exists", "auth")

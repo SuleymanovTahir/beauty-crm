@@ -63,7 +63,13 @@ export default function Register() {
 
       if (response.success) {
         setStep("verify");
-        toast.success("Код подтверждения отправлен на вашу почту!");
+        // Если SMTP не настроен, код придет в ответе
+        if (response.verification_code) {
+          toast.success(response.message || `Ваш код: ${response.verification_code}`, { duration: 10000 });
+          console.log("Verification code:", response.verification_code);
+        } else {
+          toast.success("Код подтверждения отправлен на вашу почту!");
+        }
       } else {
         setError(response.error || "Ошибка регистрации");
         toast.error(response.error || "Ошибка регистрации");

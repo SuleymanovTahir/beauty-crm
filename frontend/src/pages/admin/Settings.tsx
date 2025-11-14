@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -40,6 +40,19 @@ export default function AdminSettings() {
     birthdayDaysAdvance: 7,
   });
 
+  // Profile state
+  const [profile, setProfile] = useState(null);
+  const [profileForm, setProfileForm] = useState({
+    username: '',
+    full_name: '',
+    email: '',
+    current_password: '',
+    new_password: '',
+    confirm_password: '',
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
   // Roles state
   const [roles, setRoles] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -60,6 +73,7 @@ export default function AdminSettings() {
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
+    loadProfile();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -89,6 +103,132 @@ export default function AdminSettings() {
     }
   };
 
+  const loadProfile = async () => {
+    try {
+      const response = await api.getMyProfile();
+      if (response.success && response.profile) {
+        setProfile(response.profile);
+        setProfileForm({
+          username: response.profile.username,
+          full_name: response.profile.full_name,
+          email: response.profile.email || '',
+          current_password: '',
+          new_password: '',
+          confirm_password: '',
+        });
+      }
+    } catch (err) {
+      console.error('Error loading profile:', err);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Файл слишком большой. Максимум 5MB');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Можно загружать только изображения');
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      const uploadResponse = await api.uploadFile(file);
+      if (uploadResponse.url) {
+        const response = await api.updateMyProfile({ photo_url: uploadResponse.url });
+        if (response.success) {
+          setProfile(response.profile);
+          toast.success('Фото обновлено');
+        }
+      }
+    } catch (err) {
+      toast.error(err.message || 'Ошибка загрузки фото');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (profileForm.username.length < 3) {
+      toast.error('Логин должен быть минимум 3 символа');
+      return;
+    }
+
+    if (profileForm.full_name.length < 2) {
+      toast.error('Имя должно быть минимум 2 символа');
+      return;
+    }
+
+    if (profileForm.email && !profileForm.email.includes('@')) {
+      toast.error('Некорректный email');
+      return;
+    }
+
+    if (profileForm.new_password) {
+      if (!profileForm.current_password) {
+        toast.error('Укажите текущий пароль');
+        return;
+      }
+
+      if (profileForm.new_password.length < 6) {
+        toast.error('Новый пароль должен быть минимум 6 символов');
+        return;
+      }
+
+      if (profileForm.new_password !== profileForm.confirm_password) {
+        toast.error('Пароли не совпадают');
+        return;
+      }
+    }
+
+    try {
+      setSavingProfile(true);
+
+      const updateData = {
+        username: profileForm.username,
+        full_name: profileForm.full_name,
+        email: profileForm.email,
+      };
+
+      if (profileForm.new_password) {
+        updateData.current_password = profileForm.current_password;
+        updateData.new_password = profileForm.new_password;
+      }
+
+      const response = await api.updateMyProfile(updateData);
+
+      if (response.success) {
+        setProfile(response.profile);
+        toast.success('Профиль обновлен');
+        setProfileForm({
+          ...profileForm,
+          current_password: '',
+          new_password: '',
+          confirm_password: '',
+        });
+
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          user.username = response.profile.username;
+          user.full_name = response.profile.full_name;
+          user.email = response.profile.email;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+      } else {
+        toast.error(response.error || 'Ошибка обновления профиля');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Ошибка обновления профиля');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
 
   const loadRoles = async () => {
@@ -261,11 +401,15 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-          
+        <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            <span className="hidden sm:inline">Профиль</span>
           </TabsTrigger>
           <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
@@ -428,6 +572,203 @@ export default function AdminSettings() {
                   {t('settings:save_changes')}
                 </Button>
               </form>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Profile Settings */}
+        <TabsContent value="profile">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h2 className="text-2xl text-gray-900 mb-6">Мой профиль</h2>
+
+            {!profile ? (
+              <div className="flex justify-center py-8">
+                <Loader className="w-8 h-8 animate-spin text-pink-500" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Фото профиля */}
+                <div className="md:col-span-1">
+                  <div className="flex flex-col items-center">
+                    <div className="relative">
+                      {profile.photo_url ? (
+                        <img
+                          src={profile.photo_url}
+                          alt={profile.full_name}
+                          className="w-32 h-32 rounded-full object-cover border-4 border-gray-100"
+                        />
+                      ) : (
+                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                          <User className="w-16 h-16 text-white" />
+                        </div>
+                      )}
+
+                      <label
+                        htmlFor="photo-upload"
+                        className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        {uploadingPhoto ? (
+                          <Loader className="w-5 h-5 animate-spin text-pink-500" />
+                        ) : (
+                          <Camera className="w-5 h-5 text-gray-600" />
+                        )}
+                      </label>
+                      <input
+                        id="photo-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                        disabled={uploadingPhoto}
+                      />
+                    </div>
+
+                    <p className="text-sm text-gray-500 mt-4 text-center">
+                      Нажмите на камеру<br />для загрузки фото<br />(макс. 5MB)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Форма редактирования */}
+                <div className="md:col-span-2">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="username">Логин</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="username"
+                          value={profileForm.username}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, username: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="full_name">Полное имя</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="full_name"
+                          value={profileForm.full_name}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, full_name: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="email"
+                          type="email"
+                          value={profileForm.email}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, email: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <h3 className="font-medium text-gray-900 mb-4">
+                        Изменить пароль (опционально)
+                      </h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="current_password">Текущий пароль</Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="current_password"
+                              type="password"
+                              value={profileForm.current_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  current_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="new_password">Новый пароль</Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="new_password"
+                              type="password"
+                              value={profileForm.new_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  new_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                              placeholder="Минимум 6 символов"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="confirm_password">
+                            Подтвердите новый пароль
+                          </Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="confirm_password"
+                              type="password"
+                              value={profileForm.confirm_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  confirm_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                              placeholder="Повторите новый пароль"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <Button
+                        onClick={handleSaveProfile}
+                        disabled={savingProfile}
+                        className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                      >
+                        {savingProfile ? (
+                          <>
+                            <Loader className="w-4 h-4 animate-spin mr-2" />
+                            Сохранение...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            Сохранить изменения
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </TabsContent>
