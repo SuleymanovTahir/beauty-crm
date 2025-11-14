@@ -92,6 +92,7 @@ def run_all_migrations():
             # User/Permissions
             ('add_permissions_system', 'add_permissions_system'),
             ('add_user_position', 'add_user_position_field'),
+            ('enhance_permissions_system', 'enhance_permissions_system'),
         ]
 
         for migration_name, function_name in structure_migrations:
