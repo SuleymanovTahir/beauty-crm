@@ -19,7 +19,7 @@ interface MarketerLayoutProps {
 export default function MarketerLayout({ user, onLogout }: MarketerLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(['components/layouts/MarketerLayout', 'common']);
+  const { t } = useTranslation(['layouts/MarketerLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {

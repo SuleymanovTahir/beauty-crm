@@ -39,5 +39,19 @@
   },
   "success": {
     "file_downloaded": "Файл успешно скачан"
-  }
+  },
+  "drop_off_analysis": "Анализ отсева",
+  "where_clients_leave": "Где клиенты уходят",
+  "conversation_stage": "Этап разговора",
+  "drop_offs": "Отсеялось",
+  "percentage": "Процент",
+  "recommendation": "Рекомендация",
+  "work_on_objections": "Работать с возражениями",
+  "need_more_masters": "Нужно больше мастеров",
+  "simplify_contact_collection": "Упростить сбор контактов",
+  "improve_greeting": "Улучшить приветствие",
+  "clarify_services": "Уточнить услуги",
+  "analyze_further": "Анализировать дальше",
+  "optimization_tip": "Совет по оптимизации",
+  "focus_on_highest_drop_off": "Сфокусируйтесь на этапе с наибольшим отсевом"
 }

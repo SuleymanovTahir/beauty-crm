@@ -22,7 +22,7 @@ interface SalesLayoutProps {
 export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(['components/layouts/SalesLayout', 'common']);
+  const { t } = useTranslation(['layouts/SalesLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 

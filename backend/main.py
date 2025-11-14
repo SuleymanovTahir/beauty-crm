@@ -334,7 +334,7 @@ async def startup_event():
         try:
             from db.migrations.run_all_migrations import run_all_migrations
             log_info("🔧 Запуск миграций...", "startup")
-            run_all_migrations()
+            # run_all_migrations()
         except Exception as e:
             log_error(f"⚠️ Ошибка миграций (не критично): {e}", "startup")
 
@@ -453,4 +453,113 @@ if __name__ == "__main__":
             log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
             import traceback
             log_error(traceback.format_exc(), "diagnostics")
+
+
+# ============================================================================
+# POSITIONS API
+# ============================================================================
+
+@app.get("/api/positions")
+async def get_positions(active_only: bool = True):
+    """Получить список всех должностей"""
+    try:
+        from db.positions import get_all_positions
+        positions = get_all_positions(active_only=active_only)
+        return {"success": True, "positions": positions}
+    except Exception as e:
+        log_error(f"Error getting positions: {e}", "api")
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/positions/{position_id}")
+async def get_position_by_id(position_id: int):
+    """Получить должность по ID"""
+    try:
+        from db.positions import get_position
+        position = get_position(position_id)
+        if position:
+            return {"success": True, "position": position}
+        else:
+            return {"success": False, "error": "Position not found"}
+    except Exception as e:
+        log_error(f"Error getting position: {e}", "api")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/positions")
+async def create_new_position(request: Request):
+    """Создать новую должность"""
+    try:
+        from db.positions import create_position
+        data = await request.json()
+
+        position_id = create_position(
+            name=data.get("name"),
+            name_en=data.get("name_en"),
+            name_ar=data.get("name_ar"),
+            description=data.get("description"),
+            sort_order=data.get("sort_order", 0)
+        )
+
+        if position_id:
+            return {"success": True, "position_id": position_id}
+        else:
+            return {"success": False, "error": "Position with this name already exists"}
+    except Exception as e:
+        log_error(f"Error creating position: {e}", "api")
+        return {"success": False, "error": str(e)}
+
+
+@app.put("/api/positions/{position_id}")
+async def update_position_by_id(position_id: int, request: Request):
+    """Обновить должность"""
+    try:
+        from db.positions import update_position
+        data = await request.json()
+
+        success = update_position(position_id, **data)
+
+        if success:
+            return {"success": True}
+        else:
+            return {"success": False, "error": "No fields to update"}
+    except Exception as e:
+        log_error(f"Error updating position: {e}", "api")
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/positions/{position_id}")
+async def delete_position_by_id(position_id: int, hard: bool = False):
+    """
+    Удалить должность
+    hard=False - мягкое удаление (деактивация)
+    hard=True - полное удаление из БД
+    """
+    try:
+        from db.positions import delete_position, hard_delete_position
+
+        if hard:
+            success = hard_delete_position(position_id)
+        else:
+            success = delete_position(position_id)
+
+        if success:
+            return {"success": True}
+        else:
+            return {"success": False, "error": "Failed to delete position"}
+    except Exception as e:
+        log_error(f"Error deleting position: {e}", "api")
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/positions/{position_id}/employees")
+async def get_employees_by_position_id(position_id: int):
+    """Получить всех сотрудников с определенной должностью"""
+    try:
+        from db.positions import get_employees_by_position
+        employees = get_employees_by_position(position_id)
+        return {"success": True, "employees": employees}
+    except Exception as e:
+        log_error(f"Error getting employees by position: {e}", "api")
+        return {"success": False, "error": str(e)}
 

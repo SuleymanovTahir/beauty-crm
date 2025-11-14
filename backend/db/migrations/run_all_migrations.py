@@ -81,6 +81,8 @@ def run_all_migrations():
             ('schema.add_employee_service_provider', 'add_employee_service_provider'),
             ('schema.add_employee_birthdays', 'add_employee_birthdays'),
             ('schema.add_salary_system', 'add_salary_system'),
+            ('schema.create_positions_table', 'create_positions_table'),
+            ('schema.link_employees_positions', 'link_employees_positions'),
 
             # Chat & Communication
             ('schema.add_chat_features', 'add_chat_features'),
@@ -101,7 +103,6 @@ def run_all_migrations():
             ('schema.add_user_subscriptions', 'add_user_subscriptions'),
             ('schema.add_subscription_channels', 'add_subscription_channels'),
             ('schema.create_broadcast_history', 'create_broadcast_history_table'),
-            ('schema.create_positions_table', 'create_positions_table'),
             ('schema.add_password_reset_fields', 'add_password_reset_fields'),
             ('schema.add_email_verification_token', 'add_email_verification_token'),
         ]

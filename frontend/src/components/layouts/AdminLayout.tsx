@@ -28,7 +28,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(['components/layouts/AdminLayout', 'common']);
+  const { t } = useTranslation(['layouts/AdminLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -65,16 +65,16 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: t('layouts:menu.dashboard'), path: '/admin/dashboard' },
-    { icon: FileText, label: t('layouts:menu.bookings'), path: '/admin/bookings' },
-    { icon: Users, label: t('layouts:menu.clients'), path: '/admin/clients' },
-    { icon: MessageSquare, label: t('layouts:menu.chat'), path: '/admin/chat', badge: unreadCount },
-    { icon: BarChart3, label: t('layouts:menu.analytics'), path: '/admin/analytics' },
-    { icon: Scissors, label: t('layouts:menu.services'), path: '/admin/services' },
-    { icon: UserCog, label: t('layouts:menu.users'), path: '/admin/users' },
-    { icon: Calendar, label: t('layouts:menu.calendar'), path: '/admin/calendar' },
-    { icon: Settings, label: t('layouts:menu.settings'), path: '/admin/settings' },
-    { icon: Bot, label: t('layouts:menu.bot_settings'), path: '/admin/bot-settings' },
+    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/admin/dashboard' },
+    { icon: FileText, label: t('menu.bookings'), path: '/admin/bookings' },
+    { icon: Users, label: t('menu.clients'), path: '/admin/clients' },
+    { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount },
+    { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics' },
+    { icon: Scissors, label: t('menu.services'), path: '/admin/services' },
+    { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar' },
+    { icon: UserCog, label: t('menu.users'), path: '/admin/users' },
+    { icon: Settings, label: t('menu.settings'), path: '/admin/settings' },
+    { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings' },
   ];
 
   return (
@@ -104,8 +104,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                 <span className="text-white">💎</span>
               </div>
               <div>
-                <span className="text-sm text-gray-900 block">{t('layouts:crm')}</span>
-                <span className="text-xs text-gray-500">{t('layouts:admin')}</span>
+                <span className="text-sm text-gray-900 block">{t('crm')}</span>
+                <span className="text-xs text-gray-500">{t('admin')}</span>
               </div>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               >
                 <LogOut size={16} />
-                <span>{t('layouts:logout')}</span>
+                <span>{t('logout')}</span>
               </button>
             </div>
           </div>

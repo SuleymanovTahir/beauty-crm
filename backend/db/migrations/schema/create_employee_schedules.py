@@ -4,6 +4,12 @@
 import sqlite3
 from core.config import DATABASE_NAME
 
+def create_employee_schedules_table():
+    """Создать таблицу расписаний (создается в create_employees.py)"""
+    # Таблица создается в create_employees.py, эта функция просто для совместимости
+    print("⏭️  Таблица employee_schedule создается в create_employees.py")
+    return True
+
 def create_schedules():
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()

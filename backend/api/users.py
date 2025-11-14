@@ -97,30 +97,47 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         conn = sqlite3.connect(DATABASE_NAME)
         conn.row_factory = sqlite3.Row  # ✅ ВАЖНО для dict
         c = conn.cursor()
-        
+
+        # JOIN users → employees → positions to get position name
         c.execute("""
-            SELECT id, username, full_name, email, role, position, created_at, is_active
-            FROM users
-            ORDER BY created_at DESC
+            SELECT
+                u.id, u.username, u.full_name, u.email, u.role,
+                u.position as position_text, u.created_at, u.is_active,
+                u.employee_id,
+                e.position_id,
+                p.name as position_name,
+                p.name_en as position_name_en,
+                p.name_ar as position_name_ar
+            FROM users u
+            LEFT JOIN employees e ON u.employee_id = e.id
+            LEFT JOIN positions p ON e.position_id = p.id
+            ORDER BY u.created_at DESC
         """)
 
         users = []
         for row in c.fetchall():
-            users.append({
+            # Use position from positions table if available, otherwise use text position
+            position_display = row["position_name"] or row["position_text"] or None
+
+            user_data = {
                 "id": row["id"],
                 "username": row["username"],
                 "full_name": row["full_name"],
                 "email": row["email"],
                 "role": row["role"],
-                "position": row["position"],
+                "position": position_display,
+                "position_id": row["position_id"],
+                "employee_id": row["employee_id"],
                 "created_at": row["created_at"],
                 "is_active": row["is_active"]
-            })
-        
+            }
+
+            users.append(user_data)
+
         conn.close()
-        
+
         return {"users": users}  # ✅ Обёрнуто в объект
-        
+
     except Exception as e:
         log_error(f"Error fetching users: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
