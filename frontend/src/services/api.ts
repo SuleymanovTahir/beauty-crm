@@ -74,12 +74,14 @@ export class ApiClient {
     return response
   }
 
-  async register(username: string, password: string, full_name: string, email: string) {
+  async register(username: string, password: string, full_name: string, email: string, privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
     formData.append('full_name', full_name)
     formData.append('email', email)
+    formData.append('privacy_accepted', privacy_accepted.toString())
+    formData.append('newsletter_subscribed', newsletter_subscribed.toString())
 
     return this.request<any>('/api/register', {
       method: 'POST',

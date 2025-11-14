@@ -139,7 +139,9 @@ async def api_register(
     username: str = Form(...),
     password: str = Form(...),
     full_name: str = Form(...),
-    email: str = Form(...)
+    email: str = Form(...),
+    privacy_accepted: bool = Form(False),
+    newsletter_subscribed: bool = Form(True)
 ):
     """API: Регистрация нового пользователя (требуется email подтверждение + одобрение админа)"""
     try:
@@ -201,14 +203,29 @@ async def api_register(
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         now = datetime.now().isoformat()
 
+        # Добавляем privacy_accepted и privacy_accepted_at
+        privacy_accepted_at = now if privacy_accepted else None
+
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, role, created_at,
-                      is_active, email_verified, verification_code, verification_code_expires)
-                     VALUES (?, ?, ?, ?, 'employee', ?, 0, 0, ?, ?)""",
-                  (username, password_hash, full_name, email, now, verification_code, code_expires))
+                      is_active, email_verified, verification_code, verification_code_expires,
+                      privacy_accepted, privacy_accepted_at)
+                     VALUES (?, ?, ?, ?, 'employee', ?, 0, 0, ?, ?, ?, ?)""",
+                  (username, password_hash, full_name, email, now, verification_code, code_expires,
+                   int(privacy_accepted), privacy_accepted_at))
+
+        user_id = c.lastrowid
+
+        # Если пользователь подписался на рассылку, создаем подписки
+        if newsletter_subscribed:
+            from core.subscriptions import CLIENT_SUBSCRIPTION_TYPES
+            for sub_type in CLIENT_SUBSCRIPTION_TYPES.keys():
+                c.execute("""INSERT INTO user_subscriptions
+                             (user_id, subscription_type, is_subscribed, created_at, updated_at)
+                             VALUES (?, ?, 1, ?, ?)""",
+                          (user_id, sub_type, now, now))
 
         conn.commit()
-        user_id = c.lastrowid
         conn.close()
 
         # Отправляем email с кодом верификации

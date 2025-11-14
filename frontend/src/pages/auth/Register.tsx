@@ -3,7 +3,8 @@ import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck } from "lu
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { Checkbox } from "../../components/ui/checkbox";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
@@ -18,6 +19,8 @@ export default function Register() {
     full_name: "",
     email: "",
   });
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
   const [verificationCode, setVerificationCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -52,6 +55,11 @@ export default function Register() {
       return;
     }
 
+    if (!privacyAccepted) {
+      setError(t('error_accept_privacy'));
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
@@ -60,7 +68,9 @@ export default function Register() {
         formData.username,
         formData.password,
         formData.full_name,
-        formData.email
+        formData.email,
+        privacyAccepted,
+        newsletterSubscribed
       );
 
       if (response.success) {
@@ -359,6 +369,41 @@ export default function Register() {
                   placeholder={t('confirm_password_placeholder')}
                   className="pl-10"
                 />
+              </div>
+            </div>
+
+            {/* Privacy and Newsletter Checkboxes */}
+            <div className="space-y-4 border-t border-gray-200 pt-4">
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="privacy"
+                  checked={privacyAccepted}
+                  onCheckedChange={(checked) => setPrivacyAccepted(checked as boolean)}
+                  className="mt-1"
+                />
+                <label htmlFor="privacy" className="text-sm text-gray-700 cursor-pointer">
+                  {t('i_accept')}{' '}
+                  <Link to="/privacy-policy" className="text-pink-600 hover:underline" target="_blank">
+                    {t('privacy_policy')}
+                  </Link>{' '}
+                  {t('and')}{' '}
+                  <Link to="/terms" className="text-pink-600 hover:underline" target="_blank">
+                    {t('terms_of_service')}
+                  </Link>
+                  {' *'}
+                </label>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="newsletter"
+                  checked={newsletterSubscribed}
+                  onCheckedChange={(checked) => setNewsletterSubscribed(checked as boolean)}
+                  className="mt-1"
+                />
+                <label htmlFor="newsletter" className="text-sm text-gray-700 cursor-pointer">
+                  {t('subscribe_to_newsletter')}
+                </label>
               </div>
             </div>
 
