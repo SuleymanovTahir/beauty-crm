@@ -16,7 +16,7 @@ const languages = [
 ];
 
 export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation('components/LanguageSwitcher');
   const [open, setOpen] = useState(false);
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
@@ -58,7 +58,7 @@ export default function LanguageSwitcher() {
               <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <div className="flex items-center gap-2">
                   <Globe className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Выберите язык</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{t('select_language')}</h3>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
