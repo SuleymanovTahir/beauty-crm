@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-from core.config import DATABASE_NAME
+from core.config import DATABASE_NAME, TELEGRAM_BOT_TOKEN
 from utils.logger import log_info, log_error
 from db.settings import get_salon_settings
 
@@ -23,8 +23,16 @@ class TelegramBot:
         self.load_token()
 
     def load_token(self):
-        """Загрузить токен из БД"""
+        """Загрузить токен из переменных окружения или БД"""
         try:
+            # Сначала пробуем загрузить из .env
+            if TELEGRAM_BOT_TOKEN:
+                self.token = TELEGRAM_BOT_TOKEN
+                self.base_url = f"https://api.telegram.org/bot{self.token}"
+                log_info("Telegram bot token loaded from .env", "telegram")
+                return
+
+            # Fallback: загрузка из БД (для обратной совместимости)
             conn = sqlite3.connect(DATABASE_NAME)
             c = conn.cursor()
             c.execute("""
@@ -38,9 +46,9 @@ class TelegramBot:
             if result and result[0]:
                 self.token = result[0]
                 self.base_url = f"https://api.telegram.org/bot{self.token}"
-                log_info("Telegram bot token loaded", "telegram")
+                log_info("Telegram bot token loaded from database", "telegram")
             else:
-                log_error("Telegram bot token not found or disabled", "telegram")
+                log_error("Telegram bot token not found in .env or database", "telegram")
         except Exception as e:
             log_error(f"Error loading Telegram token: {e}", "telegram")
 
