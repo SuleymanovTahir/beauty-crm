@@ -30,4 +30,5 @@ venv/
 
 ENV/
 
- 
+ # Node
+node_modules/
