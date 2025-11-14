@@ -65,11 +65,29 @@ export default function Login({ onLogin }: LoginProps) {
         );
         navigate("/admin/dashboard");
       } else {
+        // Проверяем, не подтвержден ли email
+        if (response.error_type === "email_not_verified" && response.email) {
+          toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+          setTimeout(() => {
+            navigate("/verify-email", { state: { email: response.email } });
+          }, 1500);
+          return;
+        }
+
         setError(t('login:authorization_error'));
         toast.error(t('login:authorization_error'));
       }
-    } catch (err) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : t('login:login_error');
+
+      // Проверяем, есть ли информация о неподтвержденном email в ошибке
+      if (err.error_type === "email_not_verified" && err.email) {
+        toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+        setTimeout(() => {
+          navigate("/verify-email", { state: { email: err.email } });
+        }, 1500);
+        return;
+      }
 
       if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {
         setError(t('login:invalid_username_or_password'));

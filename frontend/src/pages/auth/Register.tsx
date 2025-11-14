@@ -18,6 +18,8 @@ export default function Register() {
     confirmPassword: "",
     full_name: "",
     email: "",
+    role: "employee",
+    position: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
@@ -69,11 +71,22 @@ export default function Register() {
         formData.password,
         formData.full_name,
         formData.email,
+        formData.role,
+        formData.position,
         privacyAccepted,
         newsletterSubscribed
       );
 
       if (response.success) {
+        // Если это первый директор - он автоматически подтвержден
+        if (response.auto_verified && response.is_first_director) {
+          toast.success(response.message, { duration: 5000 });
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+          return;
+        }
+
         setStep("verify");
         // Если SMTP не настроен, код придет в ответе
         if (response.verification_code) {
@@ -331,6 +344,45 @@ export default function Register() {
               </div>
               <p className="text-sm text-gray-500 mt-1">
                 {t('email_hint')}
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="role">Роль *</Label>
+              <select
+                id="role"
+                required
+                disabled={loading}
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="employee">Сотрудник</option>
+                <option value="manager">Менеджер</option>
+                <option value="admin">Администратор</option>
+                <option value="director">Директор</option>
+              </select>
+              <p className="text-sm text-gray-500 mt-1">
+                Выберите вашу роль в системе
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="position">Должность *</Label>
+              <Input
+                id="position"
+                required
+                disabled={loading}
+                value={formData.position}
+                onChange={(e) =>
+                  setFormData({ ...formData, position: e.target.value })
+                }
+                placeholder="Например: Мастер маникюра, Администратор"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Укажите вашу должность
               </p>
             </div>
 

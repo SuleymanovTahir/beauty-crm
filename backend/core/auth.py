@@ -140,6 +140,8 @@ async def api_register(
     password: str = Form(...),
     full_name: str = Form(...),
     email: str = Form(...),
+    role: str = Form("employee"),
+    position: str = Form(""),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True)
 ):
@@ -203,18 +205,42 @@ async def api_register(
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         now = datetime.now().isoformat()
 
+        # Проверяем, существуют ли уже пользователи в системе
+        c.execute("SELECT COUNT(*) FROM users")
+        user_count = c.fetchone()[0]
+        is_first_user = (user_count == 0)
+
+        # Для первого пользователя с ролью director автоматически подтверждаем email и активируем
+        auto_verify = is_first_user and role == 'director'
+
         # Добавляем privacy_accepted и privacy_accepted_at
         privacy_accepted_at = now if privacy_accepted else None
 
         c.execute("""INSERT INTO users
-                     (username, password_hash, full_name, email, role, created_at,
+                     (username, password_hash, full_name, email, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
                       privacy_accepted, privacy_accepted_at)
-                     VALUES (?, ?, ?, ?, 'employee', ?, 0, 0, ?, ?, ?, ?)""",
-                  (username, password_hash, full_name, email, now, verification_code, code_expires,
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  (username, password_hash, full_name, email, role, position, now,
+                   1 if auto_verify else 0,  # is_active
+                   1 if auto_verify else 0,  # email_verified
+                   verification_code, code_expires,
                    int(privacy_accepted), privacy_accepted_at))
 
         user_id = c.lastrowid
+
+        # Создаем запись в таблице employees для сотрудников
+        if role in ['employee', 'manager', 'director', 'admin']:
+            c.execute("""INSERT INTO employees
+                         (full_name, position, email, phone, is_active, created_at, updated_at)
+                         VALUES (?, ?, ?, '', 1, ?, ?)""",
+                      (full_name, position or role, email, now, now))
+
+            employee_id = c.lastrowid
+
+            # Связываем пользователя с записью employee
+            c.execute("UPDATE users SET assigned_employee_id = ? WHERE id = ?",
+                      (employee_id, user_id))
 
         # Если пользователь подписался на рассылку, создаем подписки
         if newsletter_subscribed:
@@ -227,6 +253,18 @@ async def api_register(
 
         conn.commit()
         conn.close()
+
+        # Если это первый директор, он автоматически подтвержден
+        if auto_verify:
+            response_data = {
+                "success": True,
+                "message": "Регистрация успешна! Вы первый директор системы и автоматически подтверждены. Можете войти в систему.",
+                "user_id": user_id,
+                "auto_verified": True,
+                "is_first_director": True
+            }
+            log_info(f"First director registered and auto-verified: {username} (ID: {user_id})", "auth")
+            return response_data
 
         # Отправляем email с кодом верификации
         email_sent = send_verification_email(email, verification_code, full_name)

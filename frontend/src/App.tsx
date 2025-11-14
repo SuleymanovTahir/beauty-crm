@@ -58,6 +58,7 @@ import ClientCabinet from './pages/public/ClientCabinet';
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import VerifyEmail from './pages/auth/VerifyEmail';
 
 interface User {
   id: number;
@@ -196,6 +197,11 @@ export default function App() {
                 <Register />
               )
             }
+          />
+
+          <Route
+            path="/verify-email"
+            element={<VerifyEmail />}
           />
 
           {/* Admin Routes - Protected */}
