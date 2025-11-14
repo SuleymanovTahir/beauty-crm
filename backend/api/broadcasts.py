@@ -8,7 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
-from core.auth import get_current_user, require_role
+from utils.utils import get_current_user
 from utils.logger import log_info, log_error
 
 router = APIRouter()
@@ -33,11 +33,15 @@ class BroadcastPreviewResponse(BaseModel):
 @router.post("/broadcasts/preview", response_model=BroadcastPreviewResponse)
 async def preview_broadcast(
     broadcast: BroadcastRequest,
-    current_user: dict = Depends(require_role(["admin", "director"]))
+    current_user: dict = Depends(get_current_user)
 ):
     """
     Предпросмотр: сколько пользователей получит рассылку по каждому каналу
     """
+    # Проверка роли
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
@@ -131,11 +135,15 @@ async def preview_broadcast(
 @router.post("/broadcasts/send")
 async def send_broadcast(
     broadcast: BroadcastRequest,
-    current_user: dict = Depends(require_role(["admin", "director"]))
+    current_user: dict = Depends(get_current_user)
 ):
     """
     Отправить массовую рассылку с учетом подписок и каналов
     """
+    # Проверка роли
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
@@ -255,9 +263,13 @@ async def send_broadcast(
 
 @router.get("/broadcasts/history")
 async def get_broadcast_history(
-    current_user: dict = Depends(require_role(["admin", "director"]))
+    current_user: dict = Depends(get_current_user)
 ):
     """Получить историю рассылок"""
+    # Проверка роли
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()

@@ -8,7 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
-from core.auth import get_current_user
+from utils.utils import get_current_user
 from core.subscriptions import get_subscription_types_for_role, get_all_subscription_types
 from utils.logger import log_info, log_error
 
