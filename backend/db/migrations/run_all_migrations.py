@@ -11,22 +11,25 @@ def safe_run_migration(migration_name, function_name=None):
     """
     Безопасно запустить миграцию с обработкой ошибок
     Args:
-        migration_name: название модуля миграции (например, 'add_client_interests')
+        migration_name: название модуля миграции (например, 'schema.add_client_interests')
         function_name: название функции (если None, попробует 'migrate' и другие варианты)
     """
     try:
         module = __import__(f'db.migrations.{migration_name}', fromlist=[''])
 
         # Попробуем найти функцию
+        # Извлекаем имя файла без папки для поиска функции
+        base_name = migration_name.split('.')[-1]
+
         if function_name:
             func = getattr(module, function_name, None)
         else:
             # Попробуем стандартные имена
             func = (
                 getattr(module, 'migrate', None) or
-                getattr(module, f'{migration_name}', None) or
-                getattr(module, f'{migration_name}_table', None) or
-                getattr(module, f'{migration_name}_field', None)
+                getattr(module, f'{base_name}', None) or
+                getattr(module, f'{base_name}_table', None) or
+                getattr(module, f'{base_name}_field', None)
             )
 
         if func and callable(func):
@@ -56,43 +59,43 @@ def run_all_migrations():
         # Список миграций структуры
         structure_migrations = [
             # Client-related
-            ('add_client_interests', 'add_client_interests_table'),
-            ('add_client_accounts', None),  # использует migrate()
-            ('add_client_notes', 'add_client_notes_table'),
-            ('add_bot_modes', 'add_bot_mode_fields'),
+            ('schema.add_client_interests', 'add_client_interests_table'),
+            ('schema.add_client_accounts', None),  # использует migrate()
+            ('schema.add_client_notes', 'add_client_notes_table'),
+            ('schema.add_bot_modes', 'add_bot_mode_fields'),
 
             # Booking-related
-            ('add_waitlist', 'add_waitlist_table'),
-            ('add_master_field', 'add_master_field'),
-            ('add_employee_id_to_bookings', 'add_employee_id_to_bookings'),
+            ('schema.add_waitlist', 'add_waitlist_table'),
+            ('schema.add_master_field', 'add_master_field'),
+            ('schema.add_employee_id_to_bookings', 'add_employee_id_to_bookings'),
 
             # Service-related
-            ('add_service_courses', 'add_service_courses_table'),
-            ('add_temperature_field', 'add_temperature_field'),
+            ('schema.add_service_courses', 'add_service_courses_table'),
+            ('schema.add_temperature_field', 'add_temperature_field'),
 
             # Employee-related
-            ('create_employees', 'create_employees_table'),
-            ('create_employee_services', 'create_employee_services_table'),
-            ('add_employee_translations', 'add_employee_translations'),
-            ('create_employee_schedules', 'create_employee_schedules_table'),
-            ('add_employee_service_provider', 'add_employee_service_provider'),
-            ('add_employee_birthdays', 'add_employee_birthdays'),
-            ('add_salary_system', 'add_salary_system'),
+            ('schema.create_employees', 'create_employees_table'),
+            ('schema.create_employee_services', 'create_employee_services_table'),
+            ('schema.add_employee_translations', 'add_employee_translations'),
+            ('schema.create_employee_schedules', 'create_employee_schedules_table'),
+            ('schema.add_employee_service_provider', 'add_employee_service_provider'),
+            ('schema.add_employee_birthdays', 'add_employee_birthdays'),
+            ('schema.add_salary_system', 'add_salary_system'),
 
             # Chat & Communication
-            ('add_chat_features', 'add_chat_features'),
-            ('add_telegram_username', 'add_telegram_username'),
-            ('add_language_column', 'add_language_column'),
-            ('add_notes_field', 'add_notes_field'),
+            ('schema.add_chat_features', 'add_chat_features'),
+            ('schema.add_telegram_username', 'add_telegram_username'),
+            ('schema.add_language_column', 'add_language_column'),
+            ('schema.add_notes_field', 'add_notes_field'),
 
             # Settings
-            ('add_universal_settings', 'add_universal_settings'),
-            ('add_manager_consultation', 'add_manager_consultation_field'),
+            ('schema.add_universal_settings', 'add_universal_settings'),
+            ('schema.add_manager_consultation', 'add_manager_consultation_field'),
 
             # User/Permissions
-            ('add_permissions_system', 'add_permissions_system'),
-            ('add_user_position', 'add_user_position_field'),
-            ('enhance_permissions_system', 'enhance_permissions_system'),
+            ('schema.add_permissions_system', 'add_permissions_system'),
+            ('schema.add_user_position', 'add_user_position_field'),
+            ('schema.enhance_permissions_system', 'enhance_permissions_system'),
         ]
 
         for migration_name, function_name in structure_migrations:
@@ -102,9 +105,9 @@ def run_all_migrations():
         log_info("3️⃣ Миграции данных", "migrations")
 
         data_migrations = [
-            ('migrate_salon_settings', 'migrate_salon_settings'),
-            ('migrate_bot_settings', 'migrate_bot_settings'),
-            ('migrate_services', 'migrate_services'),
+            ('data.migrate_salon_settings', 'migrate_salon_settings'),
+            ('data.migrate_bot_settings', 'migrate_bot_settings'),
+            ('data.migrate_services', 'migrate_services'),
         ]
 
         for migration_name, function_name in data_migrations:
@@ -114,8 +117,8 @@ def run_all_migrations():
         log_info("4️⃣ Заполнение начальных данных (опционально)", "migrations")
 
         seed_migrations = [
-            ('seed_employees', 'seed_employees'),
-            ('link_employees_to_services', 'link_employees_to_services'),
+            ('data.seed_employees', 'seed_employees'),
+            ('maintenance.link_employees_to_services', 'link_employees_to_services'),
         ]
 
         for migration_name, function_name in seed_migrations:
