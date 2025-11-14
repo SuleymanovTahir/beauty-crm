@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from core.config import DATABASE_NAME
 from bot.core import get_bot
-from db import get_or_create_client, save_message, get_chat_history
+from db import get_or_create_client, save_message, get_chat_history, detect_and_save_language
 
 # Цвета
 GREEN = '\033[92m'
@@ -83,19 +83,22 @@ class IntegrationTester:
         try:
             for i, user_message in enumerate(messages):
                 self.log_user(user_message)
-                
+
                 # Сохраняем сообщение клиента
                 save_message(client_id, user_message, "client")
-                
+
+                # ✅ Определяем язык клиента из сообщения
+                client_language = detect_and_save_language(client_id, user_message)
+
                 # Получаем историю
                 history = get_chat_history(client_id, limit=10)
-                
+
                 # Генерируем ответ бота
                 bot_response = await self.bot.generate_response(
                     user_message=user_message,
                     instagram_id=client_id,
                     history=history,
-                    client_language='ru'
+                    client_language=client_language
                 )
                 
                 # Сохраняем ответ бота
