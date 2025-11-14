@@ -12,17 +12,25 @@ export default function VerifyEmail() {
   const location = useLocation();
   const email = (location.state as any)?.email || "";
 
+  console.log("VerifyEmail mounted");
+  console.log("Location state:", location.state);
+  console.log("Email from state:", email);
+
   const [verificationCode, setVerificationCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-    if (!email) {
+    console.log("VerifyEmail useEffect running, email:", email);
+    if (!email || email.trim() === "") {
+      console.log("No email found, redirecting to login");
       toast.error("Email не найден. Пожалуйста, войдите снова.");
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     }
-  }, [email, navigate]);
+  }, []);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();

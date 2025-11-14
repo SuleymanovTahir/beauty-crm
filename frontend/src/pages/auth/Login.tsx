@@ -78,16 +78,23 @@ export default function Login({ onLogin }: LoginProps) {
         toast.error(t('login:authorization_error'));
       }
     } catch (err: any) {
-      const message = err instanceof Error ? err.message : t('login:login_error');
+      console.log("Login error caught:", err);
+      console.log("Error type:", err.error_type);
+      console.log("Error email:", err.email);
+      console.log("Error status:", err.status);
 
       // Проверяем, есть ли информация о неподтвержденном email в ошибке
       if (err.error_type === "email_not_verified" && err.email) {
+        console.log("Email not verified, redirecting to verification page with email:", err.email);
         toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
         setTimeout(() => {
+          console.log("Navigating to /verify-email with email:", err.email);
           navigate("/verify-email", { state: { email: err.email } });
         }, 1500);
         return;
       }
+
+      const message = err instanceof Error ? err.message : t('login:login_error');
 
       if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {
         setError(t('login:invalid_username_or_password'));
