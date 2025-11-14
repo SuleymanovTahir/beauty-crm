@@ -1,11 +1,13 @@
 import sqlite3
 import threading
 import time
+import asyncio
 from datetime import datetime, timedelta
 from typing import List, Tuple
 from core.config import DATABASE_NAME
 from api.notifications import create_notification
 from utils.logger import log_info, log_error
+from utils.email import send_email_async
 
 
 def get_upcoming_birthdays() -> List[Tuple]:
@@ -105,19 +107,19 @@ def mark_notification_sent(user_id: int, notification_type: str, notification_da
 
 
 def get_all_staff() -> List[Tuple]:
-    """Получить всех сотрудников для уведомления"""
+    """Получить всех сотрудников для уведомления (с email)"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     c.execute("""
-        SELECT id, username, full_name
+        SELECT id, username, full_name, email
         FROM users
         WHERE role IN ('admin', 'manager', 'employee')
     """)
-    
+
     staff = c.fetchall()
     conn.close()
-    
+
     return staff
 
 
@@ -153,22 +155,58 @@ def send_birthday_notifications():
                 message = f"Сегодня день рождения у {full_name} (@{username})! Не забудьте поздравить! 🎁"
             
             # Отправляем уведомление всем сотрудникам (кроме именинника)
+            email_recipients = []
+
             for staff_member in staff:
-                staff_id, staff_username, staff_name = staff_member
-                
+                staff_id, staff_username, staff_name, staff_email = staff_member
+
                 if staff_id == user_id:  # Не отправляем уведомление самому имениннику
                     continue
-                
+
+                # Создаём уведомление в интерфейсе
                 create_notification(
                     user_id=str(staff_id),
                     title=title,
                     message=message,
                     notification_type="birthday"
                 )
-            
+
+                # Собираем email для отправки
+                if staff_email and '@' in staff_email:
+                    email_recipients.append(staff_email)
+
+            # Отправляем email всем сотрудникам
+            if email_recipients:
+                html_message = f"""
+                <html>
+                  <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                      <h1 style="color: white; margin: 0;">🎂 {title}</h1>
+                    </div>
+                    <div style="padding: 30px; background-color: #f7f7f7;">
+                      <p style="color: #666; font-size: 16px;">{message}</p>
+                      <p style="color: #999; font-size: 14px; margin-top: 20px;">
+                        Это автоматическое напоминание от системы Beauty CRM.
+                      </p>
+                    </div>
+                  </body>
+                </html>
+                """
+
+                try:
+                    asyncio.run(send_email_async(
+                        recipients=email_recipients,
+                        subject=title,
+                        message=message,
+                        html=html_message
+                    ))
+                    log_info(f"📧 Email отправлен на {len(email_recipients)} адресов", "birthday_checker")
+                except Exception as e:
+                    log_error(f"Ошибка отправки email: {e}", "birthday_checker")
+
             # Отмечаем как отправленное
             mark_notification_sent(user_id, notification_type, birthday_date)
-            
+
             log_info(f"Отправлены уведомления о ДР {full_name} (тип: {notification_type})", "birthday_checker")
             
     except Exception as e:

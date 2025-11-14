@@ -24,40 +24,40 @@ def seed_employees():
     # 3. Данные сотрудников (упрощенная версия - только существующие поля)
     employees = [
         {
-            "full_name": "SIMO",
-            "position": "HAIR STYLIST",
+            "full_name": "Simo",
+            "position": "Hair Stylist",
             "phone": None,
             "email": None,
             "sort_order": 1,
             "role": "employee"
         },
         {
-            "full_name": "MESTAN",
-            "position": "HAIR STYLIST",
+            "full_name": "Mestan",
+            "position": "Hair Stylist",
             "phone": "+971 50 180 0346",
             "email": "amandurdyyeva80@gmail.com",
             "sort_order": 2,
             "role": "employee"
         },
         {
-            "full_name": "LYAZZAT",
-            "position": "NAIL MASTER",
+            "full_name": "Lyazzat",
+            "position": "Nail Master",
             "phone": None,
             "email": None,
             "sort_order": 3,
             "role": "employee"
         },
         {
-            "full_name": "GULYA",
-            "position": "NAIL/WAXING",
+            "full_name": "Gulya",
+            "position": "Nail/Waxing",
             "phone": None,
             "email": None,
             "sort_order": 4,
             "role": "employee"
         },
         {
-            "full_name": "JENNIFER",
-            "position": "NAIL MASTER/MASSAGES",
+            "full_name": "Jennifer",
+            "position": "Nail Master/Massages",
             "phone": "+971 56 420 8308",
             "email": "peradillajennifer47@gmail.com",
             "sort_order": 5,
@@ -98,15 +98,15 @@ def seed_employees():
         temp_password = emp["full_name"][:4].lower() + "123"
         password_hash = hashlib.sha256(temp_password.encode()).hexdigest()
 
-        # Создать user
+        # Создать user (с должностью!)
         c.execute("""
-            INSERT INTO users 
-            (username, password_hash, full_name, email, role, employee_id, created_at, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+            INSERT INTO users
+            (username, password_hash, full_name, email, role, position, employee_id, created_at, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
         """, (username, password_hash, emp["full_name"], emp["email"],
-              emp["role"], employee_id, now))
+              emp["role"], emp["position"], employee_id, now))
 
-        print(f"✅ {emp['full_name']}: {username} / {temp_password}")
+        print(f"✅ {emp['full_name']}: {username} / {temp_password} - {emp['position']}")
 
     conn.commit()
     conn.close()

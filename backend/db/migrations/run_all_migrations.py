@@ -83,6 +83,7 @@ def run_all_migrations():
             ('schema.add_salary_system', 'add_salary_system'),
             ('schema.create_positions_table', 'create_positions_table'),
             ('schema.link_employees_positions', 'link_employees_positions'),
+            ('schema.add_birthday_phone_fields', 'add_birthday_phone_fields'),
 
             # Chat & Communication
             ('schema.add_chat_features', 'add_chat_features'),
@@ -94,6 +95,10 @@ def run_all_migrations():
             ('schema.add_universal_settings', 'add_universal_settings'),
             ('schema.add_manager_consultation', 'add_manager_consultation_field'),
             ('schema.add_missing_bot_fields', 'add_missing_bot_fields'),
+
+            # Notifications & Chat
+            ('schema.create_birthday_notifications', 'create_birthday_notifications_table'),
+            ('schema.create_internal_chat', 'create_internal_chat_table'),
 
             # User/Permissions
             ('schema.add_permissions_system', 'add_permissions_system'),
@@ -120,7 +125,7 @@ def run_all_migrations():
             ('data.migrate_services', 'migrate_services'),
             ('data.update_existing_users_roles', 'update_existing_users_roles'),
             ('data.add_missing_positions', 'add_missing_positions'),
-            ('data.assign_user_positions', 'assign_user_positions'),
+            # NOTE: assign_user_positions больше не нужен - должности назначаются в seed_employees
         ]
 
         for migration_name, function_name in data_migrations:

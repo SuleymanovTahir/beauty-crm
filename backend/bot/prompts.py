@@ -41,10 +41,45 @@ def transliterate_to_russian(name: str) -> str:
 def translate_position(position: str, language: str) -> str:
     """Перевод должности на нужный язык"""
     translations = {
-        'HAIR STYLIST': {
+        'Hair Stylist': {
             'ru': 'Парикмахер',
             'en': 'Hair Stylist',
             'ar': 'مصفف شعر'
+        },
+        'HAIR STYLIST': {  # Старый формат для обратной совместимости
+            'ru': 'Парикмахер',
+            'en': 'Hair Stylist',
+            'ar': 'مصفف شعر'
+        },
+        'Nail Master': {
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Master',
+            'ar': 'خبير الأظافر'
+        },
+        'NAIL MASTER': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Master',
+            'ar': 'خبير الأظافر'
+        },
+        'Nail/Waxing': {
+            'ru': 'Мастер маникюра и депиляции',
+            'en': 'Nail & Waxing Master',
+            'ar': 'خبير الأظافر والإزالة'
+        },
+        'NAIL/WAXING': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра и депиляции',
+            'en': 'Nail & Waxing Master',
+            'ar': 'خبير الأظافر والإزالة'
+        },
+        'Nail Master/Massages': {
+            'ru': 'Мастер маникюра и массажа',
+            'en': 'Nail & Massage Master',
+            'ar': 'خبير الأظافر والمساج'
+        },
+        'NAIL MASTER/MASSAGES': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра и массажа',
+            'en': 'Nail & Massage Master',
+            'ar': 'خبير الأظافر والمساج'
         },
         'NAIL TECHNICIAN': {
             'ru': 'Мастер маникюра',
@@ -73,6 +108,11 @@ def translate_position(position: str, language: str) -> str:
         }
     }
 
+    # Сначала пробуем точное совпадение
+    if position in translations:
+        return translations[position].get(language, position)
+
+    # Затем пробуем в верхнем регистре для обратной совместимости
     position_upper = position.upper()
     if position_upper in translations:
         return translations[position_upper].get(language, position)

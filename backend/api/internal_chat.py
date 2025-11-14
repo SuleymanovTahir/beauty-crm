@@ -5,13 +5,69 @@ from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
+import asyncio
 from datetime import datetime
 
 from core.config import DATABASE_NAME
 from utils.utils import require_auth, check_permission
 from utils.logger import log_error, log_info
+from utils.email import send_email_async
 
 router = APIRouter(tags=["Internal Chat"], prefix="/api/internal-chat")
+
+
+# === HELPER FUNCTIONS ===
+
+async def send_chat_email_notification(sender_name: str, recipient_email: str, recipient_name: str, message: str):
+    """Отправить email уведомление о новом сообщении в чате"""
+    if not recipient_email or '@' not in recipient_email:
+        log_info(f"Пропуск email уведомления для {recipient_name} - email не указан", "internal_chat")
+        return
+
+    try:
+        subject = f"💬 Новое сообщение от {sender_name}"
+
+        text_message = f"""
+Здравствуйте, {recipient_name}!
+
+У вас новое сообщение от {sender_name} во внутреннем чате:
+
+"{message}"
+
+Войдите в систему Beauty CRM чтобы ответить.
+        """
+
+        html_message = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0;">💬 Новое сообщение</h1>
+            </div>
+            <div style="padding: 30px; background-color: #f7f7f7;">
+              <p style="color: #666; font-size: 16px;">Здравствуйте, {recipient_name}!</p>
+              <p style="color: #666; font-size: 16px;">У вас новое сообщение от <strong>{sender_name}</strong>:</p>
+              <div style="background-color: white; padding: 20px; border-left: 4px solid #667eea; margin: 20px 0;">
+                <p style="color: #333; font-size: 14px; margin: 0;">"{message}"</p>
+              </div>
+              <p style="color: #999; font-size: 14px; margin-top: 20px;">
+                Войдите в систему Beauty CRM чтобы ответить.
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+
+        await send_email_async(
+            recipients=[recipient_email],
+            subject=subject,
+            message=text_message,
+            html=html_message
+        )
+
+        log_info(f"📧 Email уведомление отправлено: {recipient_email}", "internal_chat")
+
+    except Exception as e:
+        log_error(f"Ошибка отправки email уведомления: {e}", "internal_chat")
 
 
 @router.get("/messages")
@@ -83,13 +139,39 @@ async def send_internal_message(
         INSERT INTO internal_chat (sender_id, recipient_id, message, is_group)
         VALUES (?, ?, ?, ?)
     """, (user['id'], recipient_id, message, 1 if is_group else 0))
-    
+
     message_id = c.lastrowid
     conn.commit()
+
+    # Получаем информацию о получателе для email уведомления
+    recipient_email = None
+    recipient_name = None
+
+    if recipient_id and not is_group:
+        c.execute("""
+            SELECT email, full_name
+            FROM users
+            WHERE id = ?
+        """, (recipient_id,))
+
+        recipient_info = c.fetchone()
+        if recipient_info:
+            recipient_email = recipient_info[0]
+            recipient_name = recipient_info[1]
+
     conn.close()
-    
+
     log_info(f"Internal message sent by {user['full_name']}", "internal_chat")
-    
+
+    # Отправляем email уведомление асинхронно (только для личных сообщений)
+    if recipient_email and recipient_name and not is_group:
+        asyncio.create_task(send_chat_email_notification(
+            sender_name=user['full_name'],
+            recipient_email=recipient_email,
+            recipient_name=recipient_name,
+            message=message
+        ))
+
     return {
         "success": True,
         "message_id": message_id
