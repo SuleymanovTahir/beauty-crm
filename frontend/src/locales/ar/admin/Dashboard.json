@@ -42,5 +42,22 @@
   "confirmed": "تم التأكيد",
   "schedule_today": "جدول اليوم",
   "no_bookings": "لا توجد حجوزات اليوم",
-  "default_initials": "ع"
+  "default_initials": "ع",
+  "try_again": "Попробовать снова",
+  "no_data": "Нет данных",
+  "status_pending": "Ожидает",
+  "status_confirmed": "Подтверждено",
+  "status_completed": "Завершено",
+  "status_cancelled": "Отменено",
+  "all_bookings": "Все записи",
+  "unknown_name": "Неизвестно",
+  "no_service": "Без услуги",
+  "create_booking": "Создать запись",
+  "add_client": "Добавить клиента",
+  "create_user": "Создать пользователя",
+  "view_analytics": "Посмотреть аналитику",
+  "calendar": "التقويم",
+  "completed_bookings": "Завершенных записей",
+  "total_messages": "Всего сообщений",
+  "bot_messages": "От бота"
 }
