@@ -73,18 +73,40 @@ async def approve_user(
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
-        # Одобряем пользователя
+        # Получаем email и имя пользователя
+        c.execute("SELECT email, full_name, email_verified FROM users WHERE id = ?", (user_id,))
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        email, full_name, email_verified = result
+
+        # Проверяем что email подтвержден
+        if not email_verified:
+            conn.close()
+            return JSONResponse(
+                {"error": "Нельзя одобрить пользователя без подтверждения email"},
+                status_code=400
+            )
+
+        # Одобряем пользователя (is_active = 1)
         c.execute("""
             UPDATE users
-            SET approved = 1, approved_by = ?, approved_at = datetime('now')
+            SET approved = 1, is_active = 1, approved_by = ?, approved_at = datetime('now')
             WHERE id = ?
         """, (user["id"], user_id))
 
         conn.commit()
         conn.close()
 
+        # Отправляем уведомление на email
+        from utils.email import send_approval_notification
+        send_approval_notification(email, full_name, approved=True)
+
         log_info(f"User {user['id']} approved user {user_id}", "api")
-        return {"success": True}
+        return {"success": True, "message": "Пользователь одобрен"}
 
     except Exception as e:
         log_error(f"Error approving user: {e}", "api")
@@ -105,18 +127,32 @@ async def reject_user(
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
+        # Получаем email и имя пользователя
+        c.execute("SELECT email, full_name FROM users WHERE id = ?", (user_id,))
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        email, full_name = result
+
         # Деактивируем пользователя
         c.execute("""
             UPDATE users
-            SET is_active = 0
+            SET is_active = 0, approved = 0
             WHERE id = ?
         """, (user_id,))
 
         conn.commit()
         conn.close()
 
+        # Отправляем уведомление на email
+        from utils.email import send_approval_notification
+        send_approval_notification(email, full_name, approved=False)
+
         log_info(f"User {user['id']} rejected user {user_id}", "api")
-        return {"success": True}
+        return {"success": True, "message": "Пользователь отклонен"}
 
     except Exception as e:
         log_error(f"Error rejecting user: {e}", "api")

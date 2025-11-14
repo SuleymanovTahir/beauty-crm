@@ -219,29 +219,29 @@ async def run_migration(migration_name: str):
         log_info(f"🔧 Запуск миграции: {migration_name}", "migrations")
         
         if migration_name == "bot_settings":
-            from db.migrations.migrate_bot_settings import migrate_settings
+            from db.migrations.data.migrate_bot_settings import migrate_settings
             result = migrate_settings()
             return {"success": True, "migration": migration_name, "result": result}
-        
+
         elif migration_name == "salon_settings":
-            from db.migrations.migrate_salon_settings import migrate_salon_settings
+            from db.migrations.data.migrate_salon_settings import migrate_salon_settings
             result = migrate_salon_settings()
             return {"success": True, "migration": migration_name, "result": result}
-        
+
         elif migration_name == "employees":
-            from db.migrations.create_employees import create_employees_tables
+            from db.migrations.schema.create_employees import create_employees_tables
             create_employees_tables()
-            from db.migrations.seed_employees import seed_employees
+            from db.migrations.data.seed_employees import seed_employees
             seed_employees()
             return {"success": True, "migration": migration_name}
-        
+
         elif migration_name == "permissions":
-            from db.migrations.add_permissions_system import add_permissions_system
+            from db.migrations.schema.add_permissions_system import add_permissions_system
             add_permissions_system()
             return {"success": True, "migration": migration_name}
-        
+
         elif migration_name == "manager_consultation":
-            from db.migrations.add_manager_consultation import add_manager_consultation_field
+            from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
             add_manager_consultation_field()
             return {"success": True, "migration": migration_name}
         

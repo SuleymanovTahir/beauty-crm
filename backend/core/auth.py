@@ -47,17 +47,41 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
                 status_code=401
             )
         
-        # Проверка активации
+        # Проверка email верификации и активации
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
-        c.execute("SELECT is_active FROM users WHERE id = ?", (user["id"],))
+        c.execute("SELECT is_active, email_verified, email FROM users WHERE id = ?", (user["id"],))
         result = c.fetchone()
         conn.close()
-        
-        if not result or result[0] == 0:
+
+        if not result:
+            return JSONResponse(
+                {"error": "Пользователь не найден"},
+                status_code=404
+            )
+
+        is_active, email_verified, email = result
+
+        # Проверяем email верификацию
+        if not email_verified:
+            log_warning(f"User {username} email not verified yet", "auth")
+            return JSONResponse(
+                {
+                    "error": "Email не подтвержден",
+                    "error_type": "email_not_verified",
+                    "email": email
+                },
+                status_code=403
+            )
+
+        # Проверяем активацию администратором
+        if is_active == 0:
             log_warning(f"User {username} not activated yet", "auth")
             return JSONResponse(
-                {"error": "Ваш аккаунт еще не активирован администратором"}, 
+                {
+                    "error": "Ваш аккаунт еще не активирован администратором",
+                    "error_type": "not_approved"
+                },
                 status_code=403
             )
         
@@ -115,9 +139,9 @@ async def api_register(
     username: str = Form(...),
     password: str = Form(...),
     full_name: str = Form(...),
-    email: str = Form(None)
+    email: str = Form(...)
 ):
-    """API: Регистрация нового пользователя (требуется подтверждение админа)"""
+    """API: Регистрация нового пользователя (требуется email подтверждение + одобрение админа)"""
     try:
         # Валидация
         if len(username) < 3:
@@ -138,7 +162,13 @@ async def api_register(
                 status_code=400
             )
 
-        # Проверяем что логин не занят
+        if not email or '@' not in email:
+            return JSONResponse(
+                {"error": "Введите корректный email"},
+                status_code=400
+            )
+
+        # Проверяем что логин и email не заняты
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
@@ -150,7 +180,21 @@ async def api_register(
                 status_code=400
             )
 
-        # Создаём пользователя с is_active = 0 (неактивен, ждёт подтверждения)
+        c.execute("SELECT id FROM users WHERE email = ?", (email,))
+        if c.fetchone():
+            conn.close()
+            return JSONResponse(
+                {"error": "Пользователь с таким email уже существует"},
+                status_code=400
+            )
+
+        # Генерируем код верификации
+        from utils.email import generate_verification_code, get_code_expiry, send_verification_email
+
+        verification_code = generate_verification_code()
+        code_expires = get_code_expiry()
+
+        # Создаём пользователя с is_active = 0 и email_verified = 0
         import hashlib
         from datetime import datetime
 
@@ -158,20 +202,32 @@ async def api_register(
         now = datetime.now().isoformat()
 
         c.execute("""INSERT INTO users
-                     (username, password_hash, full_name, email, role, created_at, is_active)
-                     VALUES (?, ?, ?, ?, 'employee', ?, 0)""",
-                  (username, password_hash, full_name, email, now))
+                     (username, password_hash, full_name, email, role, created_at,
+                      is_active, email_verified, verification_code, verification_code_expires)
+                     VALUES (?, ?, ?, ?, 'employee', ?, 0, 0, ?, ?)""",
+                  (username, password_hash, full_name, email, now, verification_code, code_expires))
 
         conn.commit()
         user_id = c.lastrowid
         conn.close()
 
-        log_info(f"New registration: {username} (ID: {user_id}), pending approval", "auth")
+        # Отправляем email с кодом верификации
+        email_sent = send_verification_email(email, verification_code, full_name)
+
+        if not email_sent:
+            log_warning(f"Failed to send verification email to {email}", "auth")
+            return JSONResponse(
+                {"error": "Не удалось отправить письмо с кодом подтверждения. Проверьте email и попробуйте снова."},
+                status_code=500
+            )
+
+        log_info(f"New registration: {username} (ID: {user_id}), verification email sent", "auth")
 
         return {
             "success": True,
-            "message": "Регистрация успешна! Ожидайте подтверждения администратора.",
-            "user_id": user_id
+            "message": "Регистрация успешна! Проверьте вашу почту и введите код подтверждения.",
+            "user_id": user_id,
+            "email_sent": True
         }
 
     except sqlite3.IntegrityError:
@@ -182,6 +238,142 @@ async def api_register(
         )
     except Exception as e:
         log_error(f"Error in api_register: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/verify-email")
+async def verify_email(
+    email: str = Form(...),
+    code: str = Form(...)
+):
+    """API: Подтверждение email адреса кодом"""
+    try:
+        from datetime import datetime
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Находим пользователя с таким email и кодом
+        c.execute("""
+            SELECT id, full_name, verification_code_expires, email_verified
+            FROM users
+            WHERE email = ? AND verification_code = ?
+        """, (email, code))
+
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse(
+                {"error": "Неверный код подтверждения"},
+                status_code=400
+            )
+
+        user_id, full_name, code_expires, email_verified = result
+
+        # Проверяем, не истек ли код
+        if datetime.now().isoformat() > code_expires:
+            conn.close()
+            return JSONResponse(
+                {"error": "Код подтверждения истек. Запросите новый код."},
+                status_code=400
+            )
+
+        # Проверяем, не подтвержден ли уже email
+        if email_verified:
+            conn.close()
+            return JSONResponse(
+                {"error": "Email уже подтвержден"},
+                status_code=400
+            )
+
+        # Подтверждаем email
+        c.execute("""
+            UPDATE users
+            SET email_verified = 1, verification_code = NULL, verification_code_expires = NULL
+            WHERE id = ?
+        """, (user_id,))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"Email verified for user {user_id} ({email})", "auth")
+
+        return {
+            "success": True,
+            "message": "Email подтвержден! Ожидайте одобрения администратора для доступа к системе."
+        }
+
+    except Exception as e:
+        log_error(f"Error in verify_email: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/resend-verification")
+async def resend_verification(email: str = Form(...)):
+    """API: Повторная отправка кода верификации"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT id, full_name, email_verified
+            FROM users
+            WHERE email = ?
+        """, (email,))
+
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse(
+                {"error": "Пользователь с таким email не найден"},
+                status_code=404
+            )
+
+        user_id, full_name, email_verified = result
+
+        if email_verified:
+            conn.close()
+            return JSONResponse(
+                {"error": "Email уже подтвержден"},
+                status_code=400
+            )
+
+        # Генерируем новый код
+        from utils.email import generate_verification_code, get_code_expiry, send_verification_email
+
+        verification_code = generate_verification_code()
+        code_expires = get_code_expiry()
+
+        # Обновляем код в БД
+        c.execute("""
+            UPDATE users
+            SET verification_code = ?, verification_code_expires = ?
+            WHERE id = ?
+        """, (verification_code, code_expires, user_id))
+
+        conn.commit()
+        conn.close()
+
+        # Отправляем email
+        email_sent = send_verification_email(email, verification_code, full_name)
+
+        if not email_sent:
+            return JSONResponse(
+                {"error": "Не удалось отправить письмо. Попробуйте позже."},
+                status_code=500
+            )
+
+        log_info(f"Verification code resent to {email}", "auth")
+
+        return {
+            "success": True,
+            "message": "Код подтверждения отправлен на вашу почту"
+        }
+
+    except Exception as e:
+        log_error(f"Error in resend_verification: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 

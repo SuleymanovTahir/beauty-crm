@@ -74,14 +74,41 @@ export class ApiClient {
     return response
   }
 
-  async register(username: string, password: string, full_name: string, email?: string) {
+  async register(username: string, password: string, full_name: string, email: string) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
     formData.append('full_name', full_name)
-    if (email) formData.append('email', email)
+    formData.append('email', email)
 
     return this.request<any>('/api/register', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async verifyEmail(email: string, code: string) {
+    const formData = new URLSearchParams()
+    formData.append('email', email)
+    formData.append('code', code)
+
+    return this.request<any>('/api/verify-email', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async resendVerification(email: string) {
+    const formData = new URLSearchParams()
+    formData.append('email', email)
+
+    return this.request<any>('/api/resend-verification', {
       method: 'POST',
       body: formData,
       headers: {
@@ -701,6 +728,39 @@ export class ApiClient {
     }
 
     return response.json()
+  }
+
+  // ===== USER MANAGEMENT =====
+  async getPendingUsers() {
+    return this.request<any>('/api/pending-users')
+  }
+
+  async approveUser(userId: number) {
+    return this.request(`/api/users/${userId}/approve`, {
+      method: 'POST',
+    })
+  }
+
+  async rejectUser(userId: number) {
+    return this.request(`/api/users/${userId}/reject`, {
+      method: 'POST',
+    })
+  }
+
+  async getUserPermissions(userId: number) {
+    return this.request<any>(`/api/users/${userId}/permissions`)
+  }
+
+  async grantPermission(userId: number, resource: string) {
+    return this.request(`/api/users/${userId}/permissions/${resource}/grant`, {
+      method: 'POST',
+    })
+  }
+
+  async revokePermission(userId: number, resource: string) {
+    return this.request(`/api/users/${userId}/permissions/${resource}/revoke`, {
+      method: 'POST',
+    })
   }
 
 

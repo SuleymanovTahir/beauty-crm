@@ -17,6 +17,8 @@ import Users from './pages/admin/Users';
 import Calendar from './pages/admin/Calendar';
 import Settings from './pages/admin/Settings';
 import BotSettings from './pages/admin/BotSettings';
+import PendingUsers from './pages/admin/PendingUsers';
+import PermissionManagement from './pages/admin/PermissionManagement';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -223,6 +225,8 @@ export default function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="users" element={<Users />} />
             <Route path="users/create" element={<CreateUser />} />
+            <Route path="users/pending" element={<PendingUsers />} />
+            <Route path="users/permissions" element={<PermissionManagement />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="settings" element={<Settings />} />
             <Route path="bot-settings" element={<BotSettings />} />
