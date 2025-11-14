@@ -114,6 +114,7 @@ def run_all_migrations():
             ('data.migrate_salon_settings', 'migrate_salon_settings'),
             ('data.migrate_bot_settings', 'migrate_bot_settings'),
             ('data.migrate_services', 'migrate_services'),
+            ('data.update_existing_users_roles', 'update_existing_users_roles'),
         ]
 
         for migration_name, function_name in data_migrations:
