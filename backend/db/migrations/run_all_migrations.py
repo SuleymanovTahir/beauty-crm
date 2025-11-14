@@ -59,7 +59,7 @@ def run_all_migrations():
             ('add_client_interests', 'add_client_interests_table'),
             ('add_client_accounts', None),  # использует migrate()
             ('add_client_notes', 'add_client_notes_table'),
-            ('add_bot_modes', 'add_bot_mode_column'),
+            ('add_bot_modes', 'add_bot_mode_fields'),
 
             # Booking-related
             ('add_waitlist', 'add_waitlist_table'),
