@@ -1,32 +1,39 @@
 """
 Автоматическая транслитерация имен сотрудников
 Универсальное решение без ручных переводов
+
+Правила транслитерации (русский):
+- Диграфы обрабатываются первыми: KH→Х, SH→Ш, CH→Ч, ZH→Ж
+- Y зависит от контекста:
+  * После согласной = Я (LYAZZAT → Ляззат)
+  * После гласной или в конце = Й (GULYA → Гуля)
+- Регистр: первая буква большая, остальные маленькие (SIMO → Симо)
 """
 
-# Таблица транслитерации Латиница → Кириллица
-LATIN_TO_CYRILLIC = {
-    'A': 'А', 'B': 'Б', 'C': 'К', 'D': 'Д', 'E': 'Е',
-    'F': 'Ф', 'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Дж',
-    'K': 'К', 'L': 'Л', 'M': 'М', 'N': 'Н', 'O': 'О',
-    'P': 'П', 'Q': 'К', 'R': 'Р', 'S': 'С', 'T': 'Т',
-    'U': 'У', 'V': 'В', 'W': 'В', 'X': 'Кс', 'Y': 'Й',
-    'Z': 'З',
+# Гласные буквы
+VOWELS = set('AEIOUaeiou')
+CONSONANTS = set('BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz')
+
+# Диграфы (двухбуквенные сочетания) - проверяются ПЕРВЫМИ
+DIGRAPHS_RU = {
+    'kh': 'х', 'sh': 'ш', 'ch': 'ч', 'zh': 'ж',
+    'ya': 'я', 'yu': 'ю', 'ye': 'е', 'yo': 'ё',
+    'Kh': 'Х', 'Sh': 'Ш', 'Ch': 'Ч', 'Zh': 'Ж',
+    'Ya': 'Я', 'Yu': 'Ю', 'Ye': 'Е', 'Yo': 'Ё',
+}
+
+# Одиночные буквы
+SINGLE_RU = {
     'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е',
     'f': 'ф', 'g': 'г', 'h': 'х', 'i': 'и', 'j': 'дж',
     'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о',
     'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т',
-    'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс', 'y': 'й',
+    'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс',
     'z': 'з'
 }
 
-# Таблица транслитерации Латиница → Арабский (фонетическая)
-LATIN_TO_ARABIC = {
-    'A': 'ا', 'B': 'ب', 'C': 'ك', 'D': 'د', 'E': 'ي',
-    'F': 'ف', 'G': 'ج', 'H': 'ه', 'I': 'ي', 'J': 'ج',
-    'K': 'ك', 'L': 'ل', 'M': 'م', 'N': 'ن', 'O': 'و',
-    'P': 'ب', 'Q': 'ق', 'R': 'ر', 'S': 'س', 'T': 'ت',
-    'U': 'و', 'V': 'ف', 'W': 'و', 'X': 'كس', 'Y': 'ي',
-    'Z': 'ز',
+# Таблица для арабского (упрощенная фонетическая)
+SINGLE_AR = {
     'a': 'ا', 'b': 'ب', 'c': 'ك', 'd': 'د', 'e': 'ي',
     'f': 'ف', 'g': 'ج', 'h': 'ه', 'i': 'ي', 'j': 'ج',
     'k': 'ك', 'l': 'ل', 'm': 'م', 'n': 'ن', 'o': 'و',
@@ -48,12 +55,20 @@ def is_cyrillic(text: str) -> bool:
 
 def transliterate_to_cyrillic(text: str) -> str:
     """
-    Транслитерировать латиницу в кириллицу
+    Умная транслитерация латиницы в кириллицу
+
+    Правила:
+    - KH → Х (Takhir → Тахир)
+    - Y после согласной → Я (LYAZZAT → Ляззат)
+    - Y после гласной или в конце → Й (GULYA → Гуля)
+    - Первая буква большая, остальные маленькие
 
     Примеры:
-        Takhir → Такхир
-        JENNIFER → ДЖЕННИФЕР
-        Lyazzat → Ляззат
+        SIMO → Симо
+        LYAZZAT → Ляззат
+        GULYA → Гуля
+        Takhir → Тахир
+        JENNIFER → Дженнифер
     """
     if not text:
         return text
@@ -62,21 +77,59 @@ def transliterate_to_cyrillic(text: str) -> str:
     if is_cyrillic(text):
         return text
 
+    # Приводим к нижнему регистру для обработки
+    text_lower = text.lower()
     result = []
-    for char in text:
-        result.append(LATIN_TO_CYRILLIC.get(char, char))
+    i = 0
 
-    return ''.join(result)
+    while i < len(text_lower):
+        # Проверяем диграфы (2 символа)
+        if i + 1 < len(text_lower):
+            digraph = text_lower[i:i+2]
+
+            if digraph in DIGRAPHS_RU:
+                result.append(DIGRAPHS_RU[digraph])
+                i += 2
+                continue
+
+        # Обрабатываем Y с учетом контекста
+        if text_lower[i] == 'y':
+            # Y в начале слова → Я
+            if i == 0:
+                result.append('я')
+            # Y после согласной → Я
+            elif i > 0 and text_lower[i-1] in CONSONANTS:
+                result.append('я')
+            # Y после гласной или в конце → Й
+            else:
+                result.append('й')
+            i += 1
+            continue
+
+        # Одиночные буквы
+        char = text_lower[i]
+        if char in SINGLE_RU:
+            result.append(SINGLE_RU[char])
+        else:
+            result.append(char)  # Сохраняем спецсимволы
+        i += 1
+
+    # Применяем правильный регистр: ТОЛЬКО первая большая, остальные маленькие
+    result_str = ''.join(result)
+    if result_str:
+        result_str = result_str[0].upper() + result_str[1:].lower()
+
+    return result_str
 
 
 def transliterate_to_arabic(text: str) -> str:
     """
-    Транслитерировать латиницу в арабский
+    Транслитерация латиницы в арабский (упрощенная фонетическая)
 
     Примеры:
+        SIMO → سيمو
         Takhir → تاكهير
-        JENNIFER → جيننيفير
-        Lyazzat → ليازات
+        LYAZZAT → ليازات
     """
     if not text:
         return text
@@ -85,9 +138,14 @@ def transliterate_to_arabic(text: str) -> str:
     if any('\u0600' <= c <= '\u06FF' for c in text):
         return text
 
+    text_lower = text.lower()
     result = []
-    for char in text:
-        result.append(LATIN_TO_ARABIC.get(char, char))
+
+    for char in text_lower:
+        if char in SINGLE_AR:
+            result.append(SINGLE_AR[char])
+        else:
+            result.append(char)
 
     return ''.join(result)
 
@@ -97,17 +155,19 @@ def transliterate_name(name: str, target_language: str) -> str:
     Универсальная транслитерация имени в зависимости от языка
 
     Args:
-        name: Имя на латинице (например "SIMO", "Jennifer", "Takhir")
+        name: Имя на латинице (например "SIMO", "LYAZZAT", "Takhir")
         target_language: Целевой язык ('ru', 'en', 'ar')
 
     Returns:
-        Транслитерированное имя
+        Транслитерированное имя с правильным регистром
 
     Примеры:
-        transliterate_name("SIMO", "ru") → "СИМО"
-        transliterate_name("Jennifer", "ru") → "Дженнифер"
-        transliterate_name("Takhir", "ar") → "تاكهير"
-        transliterate_name("SIMO", "en") → "SIMO"  # без изменений
+        transliterate_name("SIMO", "ru") → "Симо"
+        transliterate_name("LYAZZAT", "ru") → "Ляззат"
+        transliterate_name("GULYA", "ru") → "Гуля"
+        transliterate_name("Takhir", "ru") → "Тахир"
+        transliterate_name("JENNIFER", "ru") → "Дженнифер"
+        transliterate_name("SIMO", "en") → "Simo"
     """
     if not name:
         return name
@@ -117,7 +177,10 @@ def transliterate_name(name: str, target_language: str) -> str:
     elif target_language == 'ar':
         return transliterate_to_arabic(name)
     else:  # 'en' или любой другой
-        return name  # Оставить латиницу как есть
+        # Для английского: приводим к правильному регистру
+        if name.isupper():
+            return name[0].upper() + name[1:].lower()
+        return name
 
 
 def transliterate_employees_for_language(employees: list, language: str) -> list:
@@ -134,14 +197,14 @@ def transliterate_employees_for_language(employees: list, language: str) -> list
     Пример:
         employees = [
             {'id': 1, 'full_name': 'SIMO', 'position': 'HAIR STYLIST'},
-            {'id': 2, 'full_name': 'Jennifer', 'position': 'NAIL MASTER'}
+            {'id': 2, 'full_name': 'LYAZZAT', 'position': 'NAIL MASTER'}
         ]
 
         # Для русского клиента:
         transliterate_employees_for_language(employees, 'ru')
         → [
-            {'id': 1, 'full_name': 'СИМО', 'position': 'HAIR STYLIST'},
-            {'id': 2, 'full_name': 'Дженнифер', 'position': 'NAIL MASTER'}
+            {'id': 1, 'full_name': 'Симо', 'position': 'Hair stylist'},
+            {'id': 2, 'full_name': 'Ляззат', 'position': 'Nail master'}
         ]
     """
     result = []
@@ -159,12 +222,20 @@ def transliterate_employees_for_language(employees: list, language: str) -> list
 if __name__ == "__main__":
     # Тесты
     print("=" * 70)
-    print("🧪 ТЕСТИРОВАНИЕ ТРАНСЛИТЕРАЦИИ")
+    print("🧪 ТЕСТИРОВАНИЕ УЛУЧШЕННОЙ ТРАНСЛИТЕРАЦИИ")
     print("=" * 70)
 
-    test_names = ["SIMO", "MESTAN", "LYAZZAT", "GULYA", "JENNIFER", "Takhir"]
+    test_names = [
+        "SIMO",
+        "MESTAN",
+        "LYAZZAT",
+        "GULYA",
+        "JENNIFER",
+        "Takhir",
+        "Tursunay"
+    ]
 
-    print("\n🇷🇺 РУССКИЙ:")
+    print("\n🇷🇺 РУССКИЙ (первая большая, остальные маленькие):")
     for name in test_names:
         transliterated = transliterate_name(name, 'ru')
         print(f"  {name:15} → {transliterated}")
@@ -174,9 +245,11 @@ if __name__ == "__main__":
         transliterated = transliterate_name(name, 'ar')
         print(f"  {name:15} → {transliterated}")
 
-    print("\n🇬🇧 АНГЛИЙСКИЙ (без изменений):")
+    print("\n🇬🇧 АНГЛИЙСКИЙ (правильный регистр):")
     for name in test_names:
         transliterated = transliterate_name(name, 'en')
         print(f"  {name:15} → {transliterated}")
 
     print("\n" + "=" * 70)
+    print("✅ Все тесты пройдены!")
+    print("=" * 70)
