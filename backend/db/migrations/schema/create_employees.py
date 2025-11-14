@@ -5,7 +5,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 
 
-def create_employees_tables():
+def create_employees_table():
     """Создать таблицы для сотрудников"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -73,6 +73,6 @@ if __name__ == "__main__":
     print("=" * 70)
     response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
     if response.lower() in ['yes', 'y']:
-        create_employees_tables()
+        create_employees_table()
     else:
         print("\n❌ Миграция отменена")
