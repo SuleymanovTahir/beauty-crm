@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save, Send, MessageCircle, Instagram, Users, Eye, History } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -70,6 +70,20 @@ export default function AdminSettings() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deletingAccount, setDeletingAccount] = useState(false);
 
+  // Broadcasts state
+  const [broadcastForm, setBroadcastForm] = useState({
+    subscription_type: '',
+    channels: [] as string[],
+    subject: '',
+    message: '',
+    target_role: '',
+  });
+  const [broadcastPreview, setBroadcastPreview] = useState<any>(null);
+  const [loadingBroadcastPreview, setLoadingBroadcastPreview] = useState(false);
+  const [sendingBroadcast, setSendingBroadcast] = useState(false);
+  const [broadcastHistory, setBroadcastHistory] = useState<any[]>([]);
+  const [loadingBroadcastHistory, setLoadingBroadcastHistory] = useState(false);
+
   // Roles state
   const [roles, setRoles] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -92,6 +106,7 @@ export default function AdminSettings() {
     loadSalonSettings();
     loadProfile();
     loadSubscriptions();
+    loadBroadcastHistory();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -491,6 +506,89 @@ export default function AdminSettings() {
     }
   };
 
+  // Broadcasts functions
+  const loadBroadcastHistory = async () => {
+    try {
+      setLoadingBroadcastHistory(true);
+      const response = await api.getBroadcastHistory();
+      setBroadcastHistory(response.history);
+    } catch (err) {
+      console.error('Error loading broadcast history:', err);
+    } finally {
+      setLoadingBroadcastHistory(false);
+    }
+  };
+
+  const handleBroadcastChannelToggle = (channel: string) => {
+    if (broadcastForm.channels.includes(channel)) {
+      setBroadcastForm({ ...broadcastForm, channels: broadcastForm.channels.filter(c => c !== channel) });
+    } else {
+      setBroadcastForm({ ...broadcastForm, channels: [...broadcastForm.channels, channel] });
+    }
+  };
+
+  const handleBroadcastPreview = async () => {
+    if (!broadcastForm.subscription_type) {
+      toast.error('Выберите тип подписки');
+      return;
+    }
+
+    if (broadcastForm.channels.length === 0) {
+      toast.error('Выберите хотя бы один канал');
+      return;
+    }
+
+    try {
+      setLoadingBroadcastPreview(true);
+      const data = await api.previewBroadcast(broadcastForm);
+      setBroadcastPreview(data);
+      toast.success(`Найдено ${data.total_users} получателей`);
+    } catch (err: any) {
+      toast.error(err.message || 'Ошибка предпросмотра');
+    } finally {
+      setLoadingBroadcastPreview(false);
+    }
+  };
+
+  const handleSendBroadcast = async () => {
+    if (!broadcastForm.subscription_type || !broadcastForm.subject || !broadcastForm.message) {
+      toast.error('Заполните все обязательные поля');
+      return;
+    }
+
+    if (broadcastForm.channels.length === 0) {
+      toast.error('Выберите хотя бы один канал');
+      return;
+    }
+
+    if (!window.confirm('Вы уверены, что хотите отправить рассылку?')) {
+      return;
+    }
+
+    try {
+      setSendingBroadcast(true);
+      const response = await api.sendBroadcast(broadcastForm);
+      toast.success(response.message);
+
+      // Reset form
+      setBroadcastForm({
+        subscription_type: '',
+        channels: [],
+        subject: '',
+        message: '',
+        target_role: '',
+      });
+      setBroadcastPreview(null);
+
+      // Reload history
+      await loadBroadcastHistory();
+    } catch (err: any) {
+      toast.error(err.message || 'Ошибка отправки');
+    } finally {
+      setSendingBroadcast(false);
+    }
+  };
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -502,7 +600,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 lg:w-auto">
 
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -527,6 +625,10 @@ export default function AdminSettings() {
           <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
             <span className="hidden sm:inline">{t('subscriptions')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2">
+            <Send className="w-4 h-4" />
+            <span className="hidden sm:inline">Рассылки</span>
           </TabsTrigger>
           <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
             <Trash2 className="w-4 h-4" />
@@ -1245,6 +1347,334 @@ export default function AdminSettings() {
                 )}
               </div>
             )}
+          </div>
+        </TabsContent>
+
+        {/* Broadcasts */}
+        <TabsContent value="broadcasts">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
+              <Send className="w-6 h-6 text-pink-600" />
+              Массовые рассылки
+            </h2>
+            <p className="text-gray-600 mb-6">Отправка уведомлений пользователям по разным каналам</p>
+
+            <Tabs defaultValue="compose" className="space-y-6">
+              <TabsList>
+                <TabsTrigger value="compose" className="flex items-center gap-2">
+                  <Send className="w-4 h-4" />
+                  Создать рассылку
+                </TabsTrigger>
+                <TabsTrigger value="history" className="flex items-center gap-2">
+                  <History className="w-4 h-4" />
+                  История
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Compose Tab */}
+              <TabsContent value="compose">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Form */}
+                  <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Параметры рассылки</h2>
+
+                    <div className="space-y-6">
+                      {/* Subscription Type */}
+                      <div>
+                        <Label htmlFor="subscription_type">Тип подписки *</Label>
+                        <Select
+                          value={broadcastForm.subscription_type}
+                          onValueChange={(value) => setBroadcastForm({ ...broadcastForm, subscription_type: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите тип" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(availableSubscriptions).map(([key, info]) => (
+                              <SelectItem key={key} value={key}>
+                                {info.name} - {info.description}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Channels */}
+                      <div>
+                        <Label>Каналы отправки *</Label>
+                        <div className="flex gap-4 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => handleBroadcastChannelToggle('email')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                              broadcastForm.channels.includes('email')
+                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            }`}
+                          >
+                            <Mail className="w-5 h-5" />
+                            Email
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleBroadcastChannelToggle('telegram')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                              broadcastForm.channels.includes('telegram')
+                                ? 'border-green-500 bg-green-50 text-green-700'
+                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            }`}
+                          >
+                            <MessageCircle className="w-5 h-5" />
+                            Telegram
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleBroadcastChannelToggle('instagram')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                              broadcastForm.channels.includes('instagram')
+                                ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                            }`}
+                          >
+                            <Instagram className="w-5 h-5" />
+                            Instagram
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Target Role (optional) */}
+                      <div>
+                        <Label htmlFor="target_role">Целевая роль (опционально)</Label>
+                        <Select
+                          value={broadcastForm.target_role}
+                          onValueChange={(value) => setBroadcastForm({ ...broadcastForm, target_role: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Все пользователи" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Все пользователи</SelectItem>
+                            <SelectItem value="admin">Администраторы</SelectItem>
+                            <SelectItem value="manager">Менеджеры</SelectItem>
+                            <SelectItem value="employee">Сотрудники</SelectItem>
+                            <SelectItem value="client">Клиенты</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Subject */}
+                      <div>
+                        <Label htmlFor="subject">Тема (для Email) *</Label>
+                        <Input
+                          id="subject"
+                          value={broadcastForm.subject}
+                          onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
+                          placeholder="Специальное предложение для вас!"
+                        />
+                      </div>
+
+                      {/* Message */}
+                      <div>
+                        <Label htmlFor="message">Сообщение *</Label>
+                        <Textarea
+                          id="message"
+                          value={broadcastForm.message}
+                          onChange={(e) => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
+                          rows={8}
+                          placeholder="Введите текст вашего сообщения..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {broadcastForm.message.length} символов
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={handleBroadcastPreview}
+                          disabled={loadingBroadcastPreview}
+                          variant="outline"
+                          className="flex-1"
+                        >
+                          {loadingBroadcastPreview ? (
+                            <>
+                              <Loader className="w-4 h-4 mr-2 animate-spin" />
+                              Загрузка...
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="w-4 h-4 mr-2" />
+                              Предпросмотр
+                            </>
+                          )}
+                        </Button>
+
+                        <Button
+                          onClick={handleSendBroadcast}
+                          disabled={sendingBroadcast || !broadcastPreview}
+                          className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                        >
+                          {sendingBroadcast ? (
+                            <>
+                              <Loader className="w-4 h-4 mr-2 animate-spin" />
+                              Отправка...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-2" />
+                              Отправить
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Preview Panel */}
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-pink-600" />
+                      Получатели
+                    </h2>
+
+                    {!broadcastPreview ? (
+                      <div className="text-center py-12">
+                        <Eye className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 text-sm">
+                          Нажмите "Предпросмотр" чтобы увидеть получателей
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Total */}
+                        <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-4">
+                          <p className="text-sm text-gray-600 mb-1">Всего получателей</p>
+                          <p className="text-3xl font-bold text-pink-600">{broadcastPreview.total_users}</p>
+                        </div>
+
+                        {/* By Channel */}
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-gray-700">По каналам:</p>
+
+                          {broadcastPreview.by_channel.email > 0 && (
+                            <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                              <div className="flex items-center gap-2">
+                                <Mail className="w-4 h-4 text-blue-600" />
+                                <span className="text-sm text-gray-700">Email</span>
+                              </div>
+                              <span className="font-bold text-blue-600">{broadcastPreview.by_channel.email}</span>
+                            </div>
+                          )}
+
+                          {broadcastPreview.by_channel.telegram > 0 && (
+                            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                              <div className="flex items-center gap-2">
+                                <MessageCircle className="w-4 h-4 text-green-600" />
+                                <span className="text-sm text-gray-700">Telegram</span>
+                              </div>
+                              <span className="font-bold text-green-600">{broadcastPreview.by_channel.telegram}</span>
+                            </div>
+                          )}
+
+                          {broadcastPreview.by_channel.instagram > 0 && (
+                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                              <div className="flex items-center gap-2">
+                                <Instagram className="w-4 h-4 text-purple-600" />
+                                <span className="text-sm text-gray-700">Instagram</span>
+                              </div>
+                              <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Sample Users */}
+                        {broadcastPreview.users_sample.length > 0 && (
+                          <div className="mt-4">
+                            <p className="text-sm font-medium text-gray-700 mb-2">Примеры получателей:</p>
+                            <div className="space-y-2">
+                              {broadcastPreview.users_sample.map((user: any, idx: number) => (
+                                <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
+                                  <p className="font-medium text-gray-900">{user.full_name}</p>
+                                  <p className="text-gray-600">{user.channel}: {user.contact}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Warning */}
+                        {broadcastPreview.total_users === 0 && (
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div className="flex items-start gap-2">
+                              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                              <p className="text-sm text-yellow-800">
+                                Нет подписанных пользователей для выбранных параметров
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* History Tab */}
+              <TabsContent value="history">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">История рассылок</h2>
+
+                  {loadingBroadcastHistory ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                    </div>
+                  ) : broadcastHistory.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <History className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p>Рассылок еще не было</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {broadcastHistory.map((item) => (
+                        <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:border-pink-300 transition-colors">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="font-medium text-gray-900">{item.subject}</h3>
+                              <p className="text-sm text-gray-600">
+                                {availableSubscriptions[item.subscription_type]?.name || item.subscription_type}
+                              </p>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {new Date(item.created_at).toLocaleString('ru-RU')}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-gray-400" />
+                              <span className="text-gray-600">Отправлено: {item.total_sent}</span>
+                            </div>
+
+                            <div className="flex gap-2">
+                              {item.channels.map((channel: string) => (
+                                <span
+                                  key={channel}
+                                  className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700"
+                                >
+                                  {channel}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </TabsContent>
 
