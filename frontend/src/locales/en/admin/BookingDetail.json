@@ -17,5 +17,12 @@
   "update_status": "Update status",
   "current_status": "Current status",
   "write_to_client": "💬 Write to client",
-  "status_updated": "Status updated"
+  "status_updated": "Status updated",
+  "booking_number": "Booking #",
+  "update": "Update",
+  "actions": "Actions",
+  "confirmed": "Confirmed",
+  "completed": "Completed",
+  "cancelled": "Cancelled",
+  "error_updating_status": "Error updating status"
 }
