@@ -78,21 +78,21 @@ def run_all_migrations():
             ('schema.create_employee_services', 'create_employee_services_table'),
             ('schema.add_employee_translations', 'add_employee_translations'),
             ('schema.create_employee_schedules', 'create_employee_schedules_table'),
-            ('schema.add_employee_service_provider', 'add_employee_service_provider'),
-            ('schema.add_employee_birthdays', 'add_employee_birthdays'),
-            ('schema.add_salary_system', 'add_salary_system'),
+            ('schema.add_employee_service_provider', 'add_employee_service_provider_field'),
+            ('schema.add_employee_birthdays', 'add_employee_birthday_fields'),
+            ('schema.add_salary_system', None),  # использует migrate()
             ('schema.create_positions_table', 'create_positions_table'),
             ('schema.link_employees_positions', 'link_employees_positions'),
             ('schema.add_birthday_phone_fields', 'add_birthday_phone_fields'),
 
             # Chat & Communication
-            ('schema.add_chat_features', 'add_chat_features'),
-            ('schema.add_telegram_username', 'add_telegram_username'),
+            ('schema.add_chat_features', 'add_chat_features_tables'),
+            ('schema.add_telegram_username', 'add_telegram_username_field'),
             ('schema.add_language_column', 'add_language_column'),
-            ('schema.add_notes_field', 'add_notes_field'),
+            ('schema.add_notes_field', None),  # использует migrate()
 
             # Settings
-            ('schema.add_universal_settings', 'add_universal_settings'),
+            ('schema.add_universal_settings', None),  # использует migrate()
             ('schema.add_manager_consultation', 'add_manager_consultation_field'),
             ('schema.add_missing_bot_fields', 'add_missing_bot_fields'),
 
