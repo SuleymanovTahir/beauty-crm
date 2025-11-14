@@ -163,8 +163,8 @@ export default function Users() {
     total: users.length,
     directors: users.filter(u => u.role === 'director').length,
     admins: users.filter(u => u.role === 'admin').length,
-    sales: users.filter(u => u.role === 'sales').length,
-    employees: users.filter(u => u.role === 'employee').length,
+    managers: users.filter(u => u.role === 'manager').length,
+    others: users.filter(u => ['employee', 'sales', 'marketer'].includes(u.role)).length,
   };
 
   if (loading) {
@@ -207,26 +207,22 @@ export default function Users() {
         <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_total')}</p>
+          <p className="text-gray-600 text-sm mb-2">Всего</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_directors')}</p>
+          <p className="text-gray-600 text-sm mb-2">Директоры</p>
           <h3 className="text-3xl text-red-600">{stats.directors}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_admins')}</p>
+          <p className="text-gray-600 text-sm mb-2">Администраторы</p>
           <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_sales')}</p>
-          <h3 className="text-3xl text-green-600">{stats.sales}</h3>
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">{t('stats_employees')}</p>
-          <h3 className="text-3xl text-gray-600">{stats.employees}</h3>
+          <p className="text-gray-600 text-sm mb-2">Менеджеры</p>
+          <h3 className="text-3xl text-blue-600">{stats.managers}</h3>
         </div>
       </div>
 
