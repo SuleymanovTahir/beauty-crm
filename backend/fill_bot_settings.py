@@ -264,6 +264,31 @@ def fill_bot_settings():
             updates['smart_objection_detection'] = detection_match.group(1).strip()[:2000]
             print("   ✅ smart_objection_detection")
 
+    # 33. booking_data_collection - CRITICAL FIX
+    booking_data = current.get('booking_data_collection', '')
+    if not booking_data or booking_data.strip() in ['...', '']:
+        data_collection_match = re.search(r'1️⃣\s*\*\*Сбор данных:\*\*(.*?)(?=2️⃣|3️⃣|\[)', content, re.DOTALL)
+        if data_collection_match:
+            updates['booking_data_collection'] = data_collection_match.group(1).strip()[:2000]
+            print("   ✅ booking_data_collection")
+        else:
+            # Fallback from [ЗАПИСЬ] section
+            booking_section_match = re.search(r'\[ЗАПИСЬ.*?\](.*?)(?:\[|$)', content, re.DOTALL)
+            if booking_section_match:
+                booking_text = booking_section_match.group(1).strip()
+                # Extract data collection part
+                if '📝 АЛГОРИТМ:' in booking_text:
+                    updates['booking_data_collection'] = booking_text[:2000]
+                    print("   ✅ booking_data_collection (from section)")
+
+    # 34. booking_availability_instructions
+    booking_avail = current.get('booking_availability_instructions', '')
+    if not booking_avail or booking_avail.strip() in ['...', '']:
+        avail_match = re.search(r'🎯 ЛОГИКА ЗАПИСИ - СНАЧАЛА УСЛУГА(.*?)(?=4️⃣|\[)', content, re.DOTALL)
+        if avail_match:
+            updates['booking_availability_instructions'] = avail_match.group(1).strip()[:2500]
+            print("   ✅ booking_availability_instructions")
+
     # Если есть обновления - применяем
     if not updates:
         print("\n✅ Все поля уже заполнены!")

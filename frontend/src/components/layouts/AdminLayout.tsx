@@ -71,8 +71,8 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount },
     { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics' },
     { icon: Scissors, label: t('menu.services'), path: '/admin/services' },
-    { icon: UserCog, label: t('menu.users'), path: '/admin/users' },
     { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar' },
+    { icon: UserCog, label: t('menu.users'), path: '/admin/users' },
     { icon: Settings, label: t('menu.settings'), path: '/admin/settings' },
     { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings' },
   ];
