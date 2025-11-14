@@ -26,42 +26,43 @@ async def create_user_api(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
-    
+
     # Валидация
     username = data.get('username', '').strip()
     password = data.get('password', '')
     full_name = data.get('full_name', '').strip()
     email = data.get('email', '').strip() or None
     role = data.get('role', 'employee')
-    
+    position = data.get('position', '').strip() or None
+
     if len(username) < 3:
         return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
-    
+
     if len(password) < 6:
         return JSONResponse({"error": "Пароль должен быть минимум 6 символов"}, status_code=400)
-    
+
     if not full_name or len(full_name) < 2:
         return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
-    
+
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         # Проверяем что логин не занят
         c.execute("SELECT id FROM users WHERE username = ?", (username,))
         if c.fetchone():
             conn.close()
             return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
-        
+
         # Создаем пользователя
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         from datetime import datetime
         now = datetime.now().isoformat()
-        
-        c.execute("""INSERT INTO users 
-                     (username, password_hash, full_name, email, role, created_at, is_active)
-                     VALUES (?, ?, ?, ?, ?, ?, 1)""",
-                  (username, password_hash, full_name, email, role, now))
+
+        c.execute("""INSERT INTO users
+                     (username, password_hash, full_name, email, role, position, created_at, is_active)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, 1)""",
+                  (username, password_hash, full_name, email, role, position, now))
         conn.commit()
         user_id = c.lastrowid
         
@@ -411,38 +412,39 @@ async def update_user_profile(
     username = data.get('username')
     full_name = data.get('full_name')
     email = data.get('email')
-    
+    position = data.get('position')
+
     if not username or len(username) < 3:
         return JSONResponse(
-            {"error": "Логин должен быть минимум 3 символа"}, 
+            {"error": "Логин должен быть минимум 3 символа"},
             status_code=400
         )
-    
+
     if not full_name or len(full_name) < 2:
         return JSONResponse(
-            {"error": "Имя должно быть минимум 2 символа"}, 
+            {"error": "Имя должно быть минимум 2 символа"},
             status_code=400
         )
-    
+
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
         # Проверяем что логин не занят
-        c.execute("SELECT id FROM users WHERE username = ? AND id != ?", 
+        c.execute("SELECT id FROM users WHERE username = ? AND id != ?",
                  (username, user_id))
         if c.fetchone():
             conn.close()
             return JSONResponse(
-                {"error": "Логин уже занят"}, 
+                {"error": "Логин уже занят"},
                 status_code=400
             )
-        
+
         # Обновляем профиль
-        c.execute("""UPDATE users 
-                    SET username = ?, full_name = ?, email = ?
+        c.execute("""UPDATE users
+                    SET username = ?, full_name = ?, email = ?, position = ?
                     WHERE id = ?""",
-                 (username, full_name, email, user_id))
+                 (username, full_name, email, position, user_id))
         conn.commit()
         
         log_activity(user["id"], "update_profile", "user", str(user_id), 

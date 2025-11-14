@@ -2,9 +2,11 @@
 API Endpoints для настроек салона и бота
 """
 import sqlite3
+import os
+from datetime import datetime
 from core.config import DATABASE_NAME
 from fastapi import APIRouter, Request, Cookie
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from typing import Optional
 from db.settings import update_bot_globally_enabled
 
@@ -308,8 +310,41 @@ async def get_all_roles(session_token: Optional[str] = Cookie(None)):
     
     # Сортируем по уровню иерархии
     available_roles.sort(key=lambda x: x['level'], reverse=True)
-    
+
     return {"roles": available_roles}
+
+
+@router.get("/positions")
+async def get_all_positions():
+    """Получить все должности"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT id, name, name_en, name_ar, description, sort_order
+            FROM positions
+            ORDER BY sort_order, name
+        """)
+
+        positions = []
+        for row in c.fetchall():
+            positions.append({
+                'id': row[0],
+                'name': row[1],
+                'name_en': row[2],
+                'name_ar': row[3],
+                'description': row[4],
+                'sort_order': row[5]
+            })
+
+        return {"positions": positions}
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error getting positions: {e}", "api")
+        return {"positions": []}
+    finally:
+        conn.close()
 
 
 @router.get("/permissions")
@@ -377,12 +412,44 @@ def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     c.execute("""
-        UPDATE salon_settings 
+        UPDATE salon_settings
         SET bot_globally_enabled = ?
         WHERE id = 1
     """, (1 if enabled else 0,))
-    
+
     conn.commit()
     conn.close()
+
+
+@router.get("/settings/download-backup")
+async def download_backup(session_token: Optional[str] = Cookie(None)):
+    """Скачать резервную копию базы данных"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        # Проверяем что файл существует
+        if not os.path.exists(DATABASE_NAME):
+            return JSONResponse({"error": "Database file not found"}, status_code=404)
+
+        # Формируем имя файла с датой
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"beauty_crm_backup_{timestamp}.db"
+
+        log_info(f"Admin {user['username']} downloading database backup", "settings")
+
+        # Отправляем файл
+        return FileResponse(
+            path=DATABASE_NAME,
+            media_type='application/x-sqlite3',
+            filename=filename,
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    except Exception as e:
+        log_error(f"Error downloading backup: {e}", "settings")
+        return JSONResponse({"error": str(e)}, status_code=500)

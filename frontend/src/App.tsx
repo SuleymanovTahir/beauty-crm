@@ -19,7 +19,6 @@ import Settings from './pages/admin/Settings';
 import BotSettings from './pages/admin/BotSettings';
 import PendingUsers from './pages/admin/PendingUsers';
 import PermissionManagement from './pages/admin/PermissionManagement';
-import Broadcasts from './pages/admin/Broadcasts';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -249,7 +248,6 @@ export default function App() {
             <Route path="calendar" element={<Calendar />} />
             <Route path="settings" element={<Settings />} />
             <Route path="bot-settings" element={<BotSettings />} />
-            <Route path="broadcasts" element={<Broadcasts />} />
             <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="users/:id/edit" element={<EditUser />} />
           </Route>

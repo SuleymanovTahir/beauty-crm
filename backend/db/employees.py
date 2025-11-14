@@ -133,10 +133,12 @@ def add_employee_service(employee_id: int, service_id: int):
     """Добавить специализацию сотруднику"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
+    now = datetime.now().isoformat()
+
     try:
-        c.execute("""INSERT INTO employee_services (employee_id, service_id)
-                     VALUES (?, ?)""", (employee_id, service_id))
+        c.execute("""INSERT INTO employee_services (employee_id, service_id, created_at)
+                     VALUES (?, ?, ?)""", (employee_id, service_id, now))
         conn.commit()
         conn.close()
         return True
@@ -245,7 +247,75 @@ def get_available_employees(service_id: int, date_time: str):
             WHERE date(?) BETWEEN date(date_from) AND date(date_to)
         )
     """, (service_id, day_of_week, time_str, time_str, date_time))
-    
+
     employees = c.fetchall()
     conn.close()
     return employees
+
+
+def get_employee_busy_slots(employee_id: int, date: str):
+    """
+    Получить занятые слоты сотрудника на определенную дату
+
+    Args:
+        employee_id: ID сотрудника
+        date: Дата в формате YYYY-MM-DD
+
+    Returns:
+        List of tuples (booking_id, start_time, end_time, service_name)
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    # Получаем все записи мастера на эту дату
+    c.execute("""
+        SELECT b.id, b.datetime, s.duration, s.name
+        FROM bookings b
+        LEFT JOIN services s ON b.service_name = s.name
+        WHERE b.instagram_id IN (
+            SELECT instagram_id FROM bookings WHERE id = b.id
+        )
+        AND b.status NOT IN ('cancelled', 'no-show')
+        AND date(b.datetime) = date(?)
+    """, (date,))
+
+    bookings = c.fetchall()
+    conn.close()
+
+    # Формируем список занятых слотов
+    busy_slots = []
+    for booking_id, datetime_str, duration, service_name in bookings:
+        if datetime_str:
+            try:
+                from datetime import datetime as dt, timedelta
+                start = dt.fromisoformat(datetime_str)
+
+                # Если есть длительность, вычисляем конец
+                if duration:
+                    # duration может быть в формате "1h", "30min", "1h 30min"
+                    hours = 0
+                    minutes = 0
+                    if 'h' in duration:
+                        hours = int(duration.split('h')[0])
+                    if 'min' in duration:
+                        min_part = duration.split('min')[0]
+                        if 'h' in min_part:
+                            minutes = int(min_part.split('h')[1].strip())
+                        else:
+                            minutes = int(min_part)
+
+                    end = start + timedelta(hours=hours, minutes=minutes)
+                else:
+                    # По умолчанию 1 час
+                    end = start + timedelta(hours=1)
+
+                busy_slots.append({
+                    'booking_id': booking_id,
+                    'start_time': start.strftime('%H:%M'),
+                    'end_time': end.strftime('%H:%M'),
+                    'service_name': service_name
+                })
+            except:
+                pass
+
+    return busy_slots

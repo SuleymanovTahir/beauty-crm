@@ -236,7 +236,7 @@ export class ApiClient {
     return this.request<any>(`/api/users/${userId}/profile`)
   }
 
-  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string }) {
+  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -393,6 +393,15 @@ export class ApiClient {
     })
   }
 
+  // ===== СОТРУДНИКИ =====
+  async getEmployeesForService(serviceId: number) {
+    return this.request<{ employees: Array<{ id: number; full_name: string; position: string; photo: string | null; is_active: boolean }> }>(`/api/services/${serviceId}/employees`)
+  }
+
+  async getEmployeeBusySlots(employeeId: number, date: string) {
+    return this.request<{ busy_slots: Array<{ booking_id: number; start_time: string; end_time: string; service_name: string }> }>(`/api/employees/${employeeId}/busy-slots?date=${date}`)
+  }
+
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {
     return this.request<any>('/api/users')
@@ -406,6 +415,10 @@ export class ApiClient {
     });
     if (!response.ok) throw new Error('Ошибка загрузки ролей');
     return response.json();
+  }
+
+  async getPositions(): Promise<{ positions: Array<{id: number; name: string; name_en: string; name_ar: string; description: string; sort_order: number}> }> {
+    return this.request('/api/positions');
   }
 
 
