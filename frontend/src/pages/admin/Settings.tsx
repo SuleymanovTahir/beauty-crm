@@ -54,7 +54,14 @@ export default function AdminSettings() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   // Subscriptions state
-  const [subscriptions, setSubscriptions] = useState<Record<string, boolean>>({});
+  const [subscriptions, setSubscriptions] = useState<Record<string, {
+    is_subscribed: boolean
+    channels: {
+      email: boolean
+      telegram: boolean
+      instagram: boolean
+    }
+  }>>({});
   const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
   const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
 
@@ -418,10 +425,37 @@ export default function AdminSettings() {
   const handleToggleSubscription = async (type: string, isSubscribed: boolean) => {
     try {
       await api.updateSubscription(type, isSubscribed);
-      setSubscriptions({ ...subscriptions, [type]: isSubscribed });
+      setSubscriptions({
+        ...subscriptions,
+        [type]: {
+          ...subscriptions[type],
+          is_subscribed: isSubscribed
+        }
+      });
       toast.success(t('subscription_updated'));
     } catch (err) {
       toast.error(t('error_updating_subscription'));
+    }
+  };
+
+  const handleToggleChannel = async (type: string, channel: 'email' | 'telegram' | 'instagram', enabled: boolean) => {
+    try {
+      await api.updateSubscription(type, subscriptions[type]?.is_subscribed || false, {
+        [channel]: enabled
+      });
+      setSubscriptions({
+        ...subscriptions,
+        [type]: {
+          ...subscriptions[type],
+          channels: {
+            ...subscriptions[type].channels,
+            [channel]: enabled
+          }
+        }
+      });
+      toast.success(t('channel_updated'));
+    } catch (err) {
+      toast.error(t('error_updating_channel'));
     }
   };
 
@@ -1143,19 +1177,66 @@ export default function AdminSettings() {
                 <Loader className="w-8 h-8 text-pink-600 animate-spin" />
               </div>
             ) : (
-              <div className="space-y-4">
-                {Object.entries(availableSubscriptions).map(([type, info]) => (
-                  <div key={type} className="flex items-start justify-between p-4 border border-gray-200 rounded-lg hover:border-pink-300 transition-colors">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{info.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{info.description}</p>
+              <div className="space-y-6">
+                {Object.entries(availableSubscriptions).map(([type, info]) => {
+                  const sub = subscriptions[type] || { is_subscribed: false, channels: { email: true, telegram: true, instagram: true } };
+
+                  return (
+                    <div key={type} className="border border-gray-200 rounded-lg overflow-hidden">
+                      {/* Main Subscription Toggle */}
+                      <div className="flex items-start justify-between p-4 bg-gray-50">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900">{info.name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{info.description}</p>
+                        </div>
+                        <Switch
+                          checked={sub.is_subscribed}
+                          onCheckedChange={(checked) => handleToggleSubscription(type, checked)}
+                        />
+                      </div>
+
+                      {/* Channel Toggles - Only shown if subscribed */}
+                      {sub.is_subscribed && (
+                        <div className="p-4 space-y-3 bg-white border-t border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase">Каналы уведомлений</p>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm text-gray-700">Email</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.email}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'email', checked)}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Smartphone className="w-4 h-4 text-green-600" />
+                              <span className="text-sm text-gray-700">Telegram</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.telegram}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'telegram', checked)}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Camera className="w-4 h-4 text-purple-600" />
+                              <span className="text-sm text-gray-700">Instagram</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.instagram}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'instagram', checked)}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <Switch
-                      checked={subscriptions[type] || false}
-                      onCheckedChange={(checked) => handleToggleSubscription(type, checked)}
-                    />
-                  </div>
-                ))}
+                  );
+                })}
 
                 {Object.keys(availableSubscriptions).length === 0 && (
                   <div className="text-center py-12 text-gray-500">

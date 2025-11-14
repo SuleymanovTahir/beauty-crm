@@ -236,20 +236,21 @@ async def delete_account(
             )
 
         # Проверяем пароль
-        from core.auth import verify_password
+        import hashlib
 
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
-        c.execute("SELECT password FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT password_hash FROM users WHERE id = ?", (user_id,))
         result = c.fetchone()
 
         if not result:
             raise HTTPException(status_code=404, detail="Пользователь не найден")
 
-        stored_password = result[0]
+        stored_password_hash = result[0]
+        input_password_hash = hashlib.sha256(delete_request.password.encode()).hexdigest()
 
-        if not verify_password(delete_request.password, stored_password):
+        if input_password_hash != stored_password_hash:
             raise HTTPException(status_code=403, detail="Неверный пароль")
 
         # Удаляем пользователя и все связанные данные

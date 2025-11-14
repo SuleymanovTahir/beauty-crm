@@ -783,18 +783,37 @@ export class ApiClient {
   // ===== SUBSCRIPTIONS =====
   async getUserSubscriptions() {
     return this.request<{
-      subscriptions: Record<string, boolean>
+      subscriptions: Record<string, {
+        is_subscribed: boolean
+        channels: {
+          email: boolean
+          telegram: boolean
+          instagram: boolean
+        }
+      }>
       available_types: Record<string, { name: string; description: string }>
     }>('/api/subscriptions')
   }
 
-  async updateSubscription(subscriptionType: string, isSubscribed: boolean) {
+  async updateSubscription(
+    subscriptionType: string,
+    isSubscribed: boolean,
+    channels?: { email?: boolean; telegram?: boolean; instagram?: boolean }
+  ) {
+    const payload: any = {
+      subscription_type: subscriptionType,
+      is_subscribed: isSubscribed,
+    }
+
+    if (channels) {
+      if (channels.email !== undefined) payload.email_enabled = channels.email
+      if (channels.telegram !== undefined) payload.telegram_enabled = channels.telegram
+      if (channels.instagram !== undefined) payload.instagram_enabled = channels.instagram
+    }
+
     return this.request('/api/subscriptions', {
       method: 'POST',
-      body: JSON.stringify({
-        subscription_type: subscriptionType,
-        is_subscribed: isSubscribed,
-      }),
+      body: JSON.stringify(payload),
     })
   }
 
@@ -814,6 +833,62 @@ export class ApiClient {
         confirm,
       }),
     })
+  }
+
+  // ===== BROADCASTS =====
+  async previewBroadcast(data: {
+    subscription_type: string
+    channels: string[]
+    subject: string
+    message: string
+    target_role?: string
+  }) {
+    return this.request<{
+      total_users: number
+      by_channel: Record<string, number>
+      users_sample: Array<{
+        id: number
+        username: string
+        full_name: string
+        role: string
+        contact: string
+        channel: string
+      }>
+    }>('/api/broadcasts/preview', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async sendBroadcast(data: {
+    subscription_type: string
+    channels: string[]
+    subject: string
+    message: string
+    target_role?: string
+  }) {
+    return this.request<{
+      success: boolean
+      results: Record<string, { sent: number; failed: number }>
+      message: string
+    }>('/api/broadcasts/send', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getBroadcastHistory() {
+    return this.request<{
+      history: Array<{
+        id: number
+        subscription_type: string
+        channels: string[]
+        subject: string
+        total_sent: number
+        created_at: string
+        results: string
+      }>
+    }>('/api/broadcasts/history')
   }
 
 

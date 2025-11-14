@@ -15,7 +15,8 @@ import {
   Scissors,
   X,
   Menu,
-  Bot
+  Bot,
+  Send
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -73,6 +74,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     { icon: Scissors, label: t('layouts:menu.services'), path: '/admin/services' },
     { icon: UserCog, label: t('layouts:menu.users'), path: '/admin/users' },
     { icon: Calendar, label: t('layouts:menu.calendar'), path: '/admin/calendar' },
+    { icon: Send, label: 'Рассылки', path: '/admin/broadcasts' },
     { icon: Settings, label: t('layouts:menu.settings'), path: '/admin/settings' },
     { icon: Bot, label: t('layouts:menu.bot_settings'), path: '/admin/bot-settings' },
   ];
