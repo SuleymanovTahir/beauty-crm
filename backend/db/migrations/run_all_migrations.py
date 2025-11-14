@@ -98,6 +98,7 @@ def run_all_migrations():
             ('schema.enhance_permissions_system', 'enhance_permissions_system'),
             ('schema.add_user_photo', 'add_user_photo_field'),
             ('schema.create_director_approvals', 'create_director_approvals_table'),
+            ('schema.add_user_subscriptions', 'add_user_subscriptions'),
         ]
 
         for migration_name, function_name in structure_migrations:

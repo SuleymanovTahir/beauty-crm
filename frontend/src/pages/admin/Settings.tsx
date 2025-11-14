@@ -53,6 +53,16 @@ export default function AdminSettings() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  // Subscriptions state
+  const [subscriptions, setSubscriptions] = useState<Record<string, boolean>>({});
+  const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
+
+  // Account deletion state
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
   // Roles state
   const [roles, setRoles] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -74,6 +84,7 @@ export default function AdminSettings() {
     loadRoles();
     loadSalonSettings();
     loadProfile();
+    loadSubscriptions();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -390,6 +401,62 @@ export default function AdminSettings() {
     }
   };
 
+  // Subscriptions functions
+  const loadSubscriptions = async () => {
+    try {
+      setLoadingSubscriptions(true);
+      const response = await api.getUserSubscriptions();
+      setSubscriptions(response.subscriptions);
+      setAvailableSubscriptions(response.available_types);
+    } catch (err) {
+      console.error('Error loading subscriptions:', err);
+    } finally {
+      setLoadingSubscriptions(false);
+    }
+  };
+
+  const handleToggleSubscription = async (type: string, isSubscribed: boolean) => {
+    try {
+      await api.updateSubscription(type, isSubscribed);
+      setSubscriptions({ ...subscriptions, [type]: isSubscribed });
+      toast.success(t('subscription_updated'));
+    } catch (err) {
+      toast.error(t('error_updating_subscription'));
+    }
+  };
+
+  // Account deletion function
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      toast.error(t('enter_password_to_delete'));
+      return;
+    }
+
+    if (deleteConfirmText !== 'DELETE') {
+      toast.error(t('type_delete_to_confirm'));
+      return;
+    }
+
+    if (!window.confirm(t('are_you_absolutely_sure'))) {
+      return;
+    }
+
+    try {
+      setDeletingAccount(true);
+      await api.deleteAccount(deletePassword, true);
+      toast.success(t('account_deleted_successfully'));
+      setTimeout(() => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('session_token');
+        window.location.href = '/';
+      }, 1500);
+    } catch (err: any) {
+      toast.error(err.message || t('error_deleting_account'));
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -401,7 +468,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 lg:w-auto">
 
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -422,6 +489,14 @@ export default function AdminSettings() {
           <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4" />
             <span className="hidden sm:inline">Диагностика</span>
+          </TabsTrigger>
+          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('subscriptions')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
+            <Trash2 className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('danger_zone')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1047,6 +1122,109 @@ export default function AdminSettings() {
 
               <div className="text-sm text-gray-600">
                 💡 Результаты появятся в консоли браузера (нажмите F12)
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Subscriptions */}
+        <TabsContent value="subscriptions">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
+                <Mail className="w-6 h-6 text-pink-600" />
+                {t('email_subscriptions')}
+              </h2>
+              <p className="text-gray-600">{t('manage_email_subscriptions')}</p>
+            </div>
+
+            {loadingSubscriptions ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {Object.entries(availableSubscriptions).map(([type, info]) => (
+                  <div key={type} className="flex items-start justify-between p-4 border border-gray-200 rounded-lg hover:border-pink-300 transition-colors">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900">{info.name}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{info.description}</p>
+                    </div>
+                    <Switch
+                      checked={subscriptions[type] || false}
+                      onCheckedChange={(checked) => handleToggleSubscription(type, checked)}
+                    />
+                  </div>
+                ))}
+
+                {Object.keys(availableSubscriptions).length === 0 && (
+                  <div className="text-center py-12 text-gray-500">
+                    {t('no_subscriptions_available')}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Danger Zone */}
+        <TabsContent value="danger">
+          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
+                <Trash2 className="w-6 h-6 text-red-600" />
+                {t('danger_zone')}
+              </h2>
+              <p className="text-gray-600">{t('irreversible_actions')}</p>
+            </div>
+
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-red-900 mb-2">{t('delete_account')}</h3>
+              <p className="text-sm text-red-700 mb-6">
+                {t('delete_account_warning')}
+              </p>
+
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <Label htmlFor="deletePassword">{t('your_password')} *</Label>
+                  <Input
+                    id="deletePassword"
+                    type="password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder={t('enter_password')}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="deleteConfirm">
+                    {t('type_delete_to_confirm_label')}
+                  </Label>
+                  <Input
+                    id="deleteConfirm"
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleDeleteAccount}
+                  disabled={deletingAccount || !deletePassword || deleteConfirmText !== 'DELETE'}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {deletingAccount ? (
+                    <>
+                      <Loader className="w-4 h-4 mr-2 animate-spin" />
+                      {t('deleting')}...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {t('delete_my_account')}
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </div>

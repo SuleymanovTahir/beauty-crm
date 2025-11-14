@@ -778,6 +778,42 @@ export class ApiClient {
     })
   }
 
+  // ===== SUBSCRIPTIONS =====
+  async getUserSubscriptions() {
+    return this.request<{
+      subscriptions: Record<string, boolean>
+      available_types: Record<string, { name: string; description: string }>
+    }>('/api/subscriptions')
+  }
+
+  async updateSubscription(subscriptionType: string, isSubscribed: boolean) {
+    return this.request('/api/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify({
+        subscription_type: subscriptionType,
+        is_subscribed: isSubscribed,
+      }),
+    })
+  }
+
+  async updateMultipleSubscriptions(subscriptions: Array<{ subscription_type: string; is_subscribed: boolean }>) {
+    return this.request('/api/subscriptions/bulk', {
+      method: 'POST',
+      body: JSON.stringify(subscriptions),
+    })
+  }
+
+  // ===== ACCOUNT DELETION =====
+  async deleteAccount(password: string, confirm: boolean = true) {
+    return this.request('/api/account/delete', {
+      method: 'POST',
+      body: JSON.stringify({
+        password,
+        confirm,
+      }),
+    })
+  }
+
 
 }
 
