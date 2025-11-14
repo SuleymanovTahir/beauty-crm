@@ -844,8 +844,13 @@ export default function Services() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="AED">AED</SelectItem>
-                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="AED">🇦🇪 AED (Dirham)</SelectItem>
+                    <SelectItem value="USD">🇺🇸 USD (Dollar)</SelectItem>
+                    <SelectItem value="EUR">🇪🇺 EUR (Euro)</SelectItem>
+                    <SelectItem value="GBP">🇬🇧 GBP (Pound)</SelectItem>
+                    <SelectItem value="RUB">🇷🇺 RUB (Ruble)</SelectItem>
+                    <SelectItem value="SAR">🇸🇦 SAR (Riyal)</SelectItem>
+                    <SelectItem value="KZT">🇰🇿 KZT (Tenge)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -971,7 +976,7 @@ export default function Services() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                   <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
                 <Input
@@ -989,6 +994,28 @@ export default function Services() {
                   value={packageFormData.special_price}
                   onChange={(e) => setPackageFormData({ ...packageFormData, special_price: Number(e.target.value) })}
                 />
+              </div>
+              <div>
+                <Label htmlFor="pkgCurrency">{t('services:currency')}</Label>
+                <Select
+                  value={packageFormData.currency}
+                  onValueChange={(value: string) =>
+                    setPackageFormData({ ...packageFormData, currency: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AED">🇦🇪 AED</SelectItem>
+                    <SelectItem value="USD">🇺🇸 USD</SelectItem>
+                    <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
+                    <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
+                    <SelectItem value="RUB">🇷🇺 RUB</SelectItem>
+                    <SelectItem value="SAR">🇸🇦 SAR</SelectItem>
+                    <SelectItem value="KZT">🇰🇿 KZT</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label>{t('services:discount')}</Label>

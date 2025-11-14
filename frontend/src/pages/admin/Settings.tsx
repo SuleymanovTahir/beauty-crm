@@ -22,6 +22,7 @@ export default function AdminSettings() {
     email: '',
     instagram: '',
     language: '',  // ✅ Пусто - заполнится из БД
+    currency: 'AED',  // Валюта по умолчанию
     working_hours: {
       weekdays: '',
       weekends: ''
@@ -122,6 +123,7 @@ export default function AdminSettings() {
         email: data.email || '',
         instagram: data.instagram || '',
         language: data.language || 'ru',
+        currency: data.currency || 'AED',
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
@@ -287,6 +289,7 @@ export default function AdminSettings() {
         email: generalSettings.email,
         instagram: generalSettings.instagram,
         language: generalSettings.language,
+        currency: generalSettings.currency,
         hours_weekdays: generalSettings.working_hours.weekdays,
         hours_weekends: generalSettings.working_hours.weekends
       });
@@ -694,6 +697,31 @@ export default function AdminSettings() {
                         <SelectItem value="ru">{t('settings:russian')}</SelectItem>
                         <SelectItem value="en">{t('settings:english')}</SelectItem>
                         <SelectItem value="ar">{t('settings:arabic')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="currency">💰 Валюта</Label>
+                    <Select
+                      value={generalSettings.currency}
+                      onValueChange={(value: string) =>
+                        setGeneralSettings({ ...generalSettings, currency: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AED">🇦🇪 AED (Dirham)</SelectItem>
+                        <SelectItem value="USD">🇺🇸 USD (Dollar)</SelectItem>
+                        <SelectItem value="EUR">🇪🇺 EUR (Euro)</SelectItem>
+                        <SelectItem value="GBP">🇬🇧 GBP (Pound)</SelectItem>
+                        <SelectItem value="RUB">🇷🇺 RUB (Ruble)</SelectItem>
+                        <SelectItem value="SAR">🇸🇦 SAR (Riyal)</SelectItem>
+                        <SelectItem value="KZT">🇰🇿 KZT (Tenge)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
