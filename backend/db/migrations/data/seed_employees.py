@@ -98,15 +98,15 @@ def seed_employees():
         temp_password = emp["full_name"][:4].lower() + "123"
         password_hash = hashlib.sha256(temp_password.encode()).hexdigest()
 
-        # Создать user
+        # Создать user (с должностью!)
         c.execute("""
-            INSERT INTO users 
-            (username, password_hash, full_name, email, role, employee_id, created_at, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+            INSERT INTO users
+            (username, password_hash, full_name, email, role, position, employee_id, created_at, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
         """, (username, password_hash, emp["full_name"], emp["email"],
-              emp["role"], employee_id, now))
+              emp["role"], emp["position"], employee_id, now))
 
-        print(f"✅ {emp['full_name']}: {username} / {temp_password}")
+        print(f"✅ {emp['full_name']}: {username} / {temp_password} - {emp['position']}")
 
     conn.commit()
     conn.close()

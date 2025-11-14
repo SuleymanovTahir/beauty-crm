@@ -120,7 +120,7 @@ def run_all_migrations():
             ('data.migrate_services', 'migrate_services'),
             ('data.update_existing_users_roles', 'update_existing_users_roles'),
             ('data.add_missing_positions', 'add_missing_positions'),
-            ('data.assign_user_positions', 'assign_user_positions'),
+            # NOTE: assign_user_positions больше не нужен - должности назначаются в seed_employees
         ]
 
         for migration_name, function_name in data_migrations:
