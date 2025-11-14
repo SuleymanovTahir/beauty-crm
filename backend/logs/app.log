@@ -172,3 +172,67 @@
 2025-11-15 00:17:03 - crm - INFO - [startup] ✅ Планировщики запущены
 2025-11-15 00:17:03 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-11-15 00:17:03 - crm - INFO - [startup] ======================================================================
+2025-11-15 00:17:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:17:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 401 (0.00s)
+2025-11-15 00:18:43 - crm - INFO - [middleware] 🔥 POST /api/login
+2025-11-15 00:18:43 - crm - INFO - [auth] API Login attempt: admin
+2025-11-15 00:18:43 - crm - INFO - [auth] Session created for admin
+2025-11-15 00:18:43 - crm - INFO - [middleware] 📤 POST /api/login → 200 (0.00s)
+2025-11-15 00:18:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:18:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:18:43 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-11-15 00:18:43 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-15 00:18:43 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-11-15 00:18:43 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-15 00:18:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:18:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:18:54 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-15 00:18:54 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-15 00:18:54 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-15 00:18:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-15 00:18:54 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-15 00:18:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-15 00:18:54 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-15 00:18:54 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-15 00:18:54 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-15 00:18:54 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-15 00:18:55 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-15 00:18:55 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-15 00:18:55 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.01s)
+2025-11-15 00:18:55 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-15 00:18:56 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-15 00:18:56 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-15 00:18:58 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-11-15 00:18:58 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-11-15 00:18:58 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-11-15 00:18:58 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-11-15 00:18:58 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-15 00:18:58 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-15 00:19:00 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-15 00:19:00 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-15 00:19:00 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-15 00:19:00 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-15 00:19:00 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-15 00:19:00 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-15 00:19:00 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-15 00:19:00 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-15 00:19:01 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-15 00:19:01 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-15 00:19:01 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 00:19:01 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.00s)
+2025-11-15 00:19:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:19:05 - crm - INFO - [middleware] 🔥 GET /api/positions
+2025-11-15 00:19:05 - crm - INFO - [middleware] 📤 GET /api/positions → 200 (0.00s)
+2025-11-15 00:19:13 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:13 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:19:23 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:23 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:19:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:19:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:19:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:19:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 00:20:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 00:20:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
