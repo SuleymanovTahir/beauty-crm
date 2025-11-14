@@ -72,6 +72,7 @@ def run_all_migrations():
 
             # Employee-related
             ('create_employees', 'create_employees_table'),
+            ('create_employee_services', 'create_employee_services_table'),
             ('add_employee_translations', 'add_employee_translations'),
             ('create_employee_schedules', 'create_employee_schedules_table'),
             ('add_employee_service_provider', 'add_employee_service_provider'),
