@@ -27,6 +27,22 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState<"register" | "verify" | "success">("register");
+  const [positions, setPositions] = useState<any[]>([]);
+
+  // Загружаем список должностей при монтировании
+  React.useEffect(() => {
+    const loadPositions = async () => {
+      try {
+        const response = await api.getPositions();
+        if (response.success && response.positions) {
+          setPositions(response.positions);
+        }
+      } catch (err) {
+        console.error("Error loading positions:", err);
+      }
+    };
+    loadPositions();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -363,6 +379,8 @@ export default function Register() {
                 <option value="manager">Менеджер</option>
                 <option value="admin">Администратор</option>
                 <option value="director">Директор</option>
+                <option value="sales">Продажи</option>
+                <option value="marketer">Маркетинг</option>
               </select>
               <p className="text-sm text-gray-500 mt-1">
                 Выберите вашу роль в системе
@@ -371,7 +389,7 @@ export default function Register() {
 
             <div>
               <Label htmlFor="position">Должность *</Label>
-              <Input
+              <select
                 id="position"
                 required
                 disabled={loading}
@@ -379,10 +397,17 @@ export default function Register() {
                 onChange={(e) =>
                   setFormData({ ...formData, position: e.target.value })
                 }
-                placeholder="Например: Мастер маникюра, Администратор"
-              />
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="">Выберите должность</option>
+                {positions.map((pos) => (
+                  <option key={pos.id} value={pos.name}>
+                    {pos.name}
+                  </option>
+                ))}
+              </select>
               <p className="text-sm text-gray-500 mt-1">
-                Укажите вашу должность
+                Выберите вашу должность
               </p>
             </div>
 

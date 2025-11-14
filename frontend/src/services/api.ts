@@ -126,6 +126,12 @@ export class ApiClient {
     })
   }
 
+  async getPositions() {
+    return this.request<any>('/api/positions', {
+      method: 'GET',
+    })
+  }
+
   async askBotAdvice(question: string, context?: string) {
     return this.request('/api/chat/ask-bot', {
       method: 'POST',

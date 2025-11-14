@@ -434,3 +434,84 @@ async def resend_verification(email: str = Form(...)):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+# ===== СПРАВОЧНИКИ =====
+
+@router.get("/positions")
+async def get_positions():
+    """API: Получить список доступных должностей"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Создаем таблицу если её нет
+        c.execute('''CREATE TABLE IF NOT EXISTS positions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            name_en TEXT,
+            name_ar TEXT,
+            description TEXT,
+            is_active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT
+        )''')
+
+        # Проверяем есть ли данные
+        c.execute("SELECT COUNT(*) FROM positions")
+        count = c.fetchone()[0]
+
+        if count == 0:
+            from datetime import datetime
+            now = datetime.now().isoformat()
+
+            # Добавляем дефолтные должности
+            default_positions = [
+                ("Мастер маникюра", "Manicure Master", "خبير مانيكير", "Специалист по маникюру", 1),
+                ("Мастер педикюра", "Pedicure Master", "خبير باديكير", "Специалист по педикюру", 2),
+                ("Мастер бровист", "Brow Master", "خبير الحواجب", "Специалист по оформлению бровей", 3),
+                ("Косметолог", "Cosmetologist", "خبير التجميل", "Специалист по косметологии", 4),
+                ("Визажист", "Makeup Artist", "فنان مكياج", "Специалист по макияжу", 5),
+                ("Парикмахер", "Hairdresser", "مصفف شعر", "Специалист по прическам", 6),
+                ("Менеджер по продажам", "Sales Manager", "مدير المبيعات", "Ответственный за продажи услуг", 7),
+                ("Таргетолог", "Targeting Specialist", "أخصائي الاستهداف", "Специалист по таргетированной рекламе", 8),
+                ("SMM-менеджер", "SMM Manager", "مدير وسائل التواصل", "Менеджер социальных сетей", 9),
+                ("Администратор", "Administrator", "مسؤول", "Администратор салона", 10),
+                ("Старший администратор", "Senior Administrator", "مسؤول أول", "Старший администратор", 11),
+                ("Директор", "Director", "مدير", "Директор салона", 12),
+            ]
+
+            for position in default_positions:
+                c.execute("""INSERT INTO positions
+                             (name, name_en, name_ar, description, sort_order, is_active, created_at, updated_at)
+                             VALUES (?, ?, ?, ?, ?, 1, ?, ?)""",
+                          (position[0], position[1], position[2], position[3], position[4], now, now))
+
+            conn.commit()
+
+        # Получаем активные должности
+        c.execute("""
+            SELECT id, name, name_en, name_ar, description
+            FROM positions
+            WHERE is_active = 1
+            ORDER BY sort_order, name
+        """)
+
+        positions = []
+        for row in c.fetchall():
+            positions.append({
+                "id": row[0],
+                "name": row[1],
+                "name_en": row[2],
+                "name_ar": row[3],
+                "description": row[4]
+            })
+
+        conn.close()
+
+        return {"success": True, "positions": positions}
+
+    except Exception as e:
+        log_error(f"Error in get_positions: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
