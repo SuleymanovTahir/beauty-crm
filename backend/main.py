@@ -326,7 +326,12 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-
+        from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
+        check_bot_settings()
+        check_users()
+        check_salon_settings()
+        fix_manager_consultation_prompt()
+        fix_booking_data_collection()
         # ================================
         # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
@@ -343,13 +348,13 @@ async def startup_event():
 
         # ✅ Загрузка и проверка модулей (опционально)
         try:
-            # from modules import print_modules_status, is_module_enabled
-            # print_modules_status()
+            from modules import print_modules_status, is_module_enabled
+            print_modules_status()
 
             # ✅ Запуск планировщиков (если модуль включен)
             if is_module_enabled('scheduler'):
-                # start_birthday_checker()  # Дни рождения сотрудников
-                # start_client_birthday_checker()  # Поздравления клиентов
+                start_birthday_checker()  # Дни рождения сотрудников
+                start_client_birthday_checker()  # Поздравления клиентов
                 log_info("✅ Планировщики запущены", "startup")
             else:
                 log_warning("⚠️  Модуль scheduler выключен", "startup")
