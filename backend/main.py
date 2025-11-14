@@ -326,12 +326,7 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
-        check_bot_settings()
-        check_users()
-        check_salon_settings()
-        fix_manager_consultation_prompt()
-        fix_booking_data_collection()
+
         # ================================
         # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
@@ -339,9 +334,23 @@ async def startup_event():
         try:
             from db.migrations.run_all_migrations import run_all_migrations
             log_info("🔧 Запуск миграций...", "startup")
-            # run_all_migrations()
+            run_all_migrations()
         except Exception as e:
             log_error(f"⚠️ Ошибка миграций (не критично): {e}", "startup")
+
+        # ================================
+        # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
+        # ================================
+        # Запускаем ПОСЛЕ миграций, когда таблицы уже созданы
+        try:
+            from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
+            check_bot_settings()
+            check_users()
+            check_salon_settings()
+            fix_manager_consultation_prompt()
+            fix_booking_data_collection()
+        except Exception as e:
+            log_error(f"⚠️ Ошибка проверки данных: {e}", "startup")
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
