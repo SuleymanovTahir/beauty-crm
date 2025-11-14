@@ -126,12 +126,6 @@ export class ApiClient {
     })
   }
 
-  async getPositions() {
-    return this.request<any>('/api/positions', {
-      method: 'GET',
-    })
-  }
-
   async forgotPassword(email: string) {
     const formData = new URLSearchParams()
     formData.append('email', email)

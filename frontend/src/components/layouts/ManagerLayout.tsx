@@ -23,16 +23,16 @@ interface ManagerLayoutProps {
 export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['components/layouts/ManagerLayout', 'common']);
+  const { t } = useTranslation(['layouts/ManagerLayout', 'common']);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const menuItems = [
-    { icon: LayoutDashboard, label: t('layouts:menu.dashboard'), path: '/manager/dashboard' },
-    { icon: MessageCircle, label: t('layouts:menu.chat'), path: '/manager/chat', badge: unreadCount },
-    { icon: Users, label: t('layouts:menu.clients'), path: '/manager/clients' },
-    { icon: BarChart3, label: t('layouts:menu.analytics'), path: '/manager/analytics' },
-    { icon: Filter, label: t('layouts:menu.funnel'), path: '/manager/funnel' },
-    { icon: Settings, label: t('layouts:menu.settings'), path: '/manager/settings' },
+    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/manager/dashboard' },
+    { icon: MessageCircle, label: t('menu.chat'), path: '/manager/chat', badge: unreadCount },
+    { icon: Users, label: t('menu.clients'), path: '/manager/clients' },
+    { icon: BarChart3, label: t('menu.analytics'), path: '/manager/analytics' },
+    { icon: Filter, label: t('menu.funnel'), path: '/manager/funnel' },
+    { icon: Settings, label: t('menu.settings'), path: '/manager/settings' },
   ];
   // Загружаем количество непрочитанных при монтировании
   useEffect(() => {
@@ -83,8 +83,8 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl text-pink-600">{t('layouts:crm')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{t('layouts:manager')}</p>
+          <h1 className="text-2xl text-pink-600">{t('crm')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('manager')}</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-4">
@@ -136,7 +136,7 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               >
                 <LogOut size={16} />
-                <span>{t('layouts:logout')}</span>
+                <span>{t('logout')}</span>
               </button>
             </div>
         </div>

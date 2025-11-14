@@ -236,35 +236,13 @@ export default function BotSettings() {
   return (
     <div style={{ padding: '1.5rem', backgroundColor: '#f9fafb', minHeight: '100vh' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
-            🤖 {t('botsettings:title')}
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-            {t('botsettings:full_configuration_of_ai_assistant')}
-          </p>
-        </div>
-
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: saving ? '#9ca3af' : '#2563eb',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '0.5rem',
-            fontWeight: '600',
-            cursor: saving ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}
-        >
-          <Save size={18} />
-          {saving ? t('botsettings:saving') : t('botsettings:save')}
-        </button>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
+          🤖 {t('botsettings:title')}
+        </h1>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+          {t('botsettings:full_configuration_of_ai_assistant')}
+        </p>
       </div>
 
       {/* Tabs */}
