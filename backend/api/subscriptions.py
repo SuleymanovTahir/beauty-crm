@@ -19,6 +19,9 @@ class SubscriptionUpdate(BaseModel):
     """Модель для обновления подписки"""
     subscription_type: str
     is_subscribed: bool
+    email_enabled: Optional[bool] = None
+    telegram_enabled: Optional[bool] = None
+    instagram_enabled: Optional[bool] = None
 
 
 class UserSubscriptionsResponse(BaseModel):
@@ -42,26 +45,36 @@ async def get_user_subscriptions(current_user: dict = Depends(get_current_user))
         # Получаем доступные типы подписок для роли
         available_types = get_subscription_types_for_role(role)
 
-        # Получаем текущие подписки пользователя
+        # Получаем текущие подписки пользователя с каналами
         c.execute("""
-            SELECT subscription_type, is_subscribed
+            SELECT subscription_type, is_subscribed, email_enabled, telegram_enabled, instagram_enabled
             FROM user_subscriptions
             WHERE user_id = ?
         """, (user_id,))
 
         user_subscriptions = {}
         for row in c.fetchall():
-            user_subscriptions[row[0]] = bool(row[1])
+            user_subscriptions[row[0]] = {
+                "is_subscribed": bool(row[1]),
+                "channels": {
+                    "email": bool(row[2]) if row[2] is not None else True,
+                    "telegram": bool(row[3]) if row[3] is not None else True,
+                    "instagram": bool(row[4]) if row[4] is not None else True
+                }
+            }
 
         # Если подписок нет, создаем дефолтные (все включены)
         if not user_subscriptions:
             for sub_type in available_types.keys():
                 c.execute("""
                     INSERT OR IGNORE INTO user_subscriptions
-                    (user_id, subscription_type, is_subscribed)
-                    VALUES (?, ?, 1)
+                    (user_id, subscription_type, is_subscribed, email_enabled, telegram_enabled, instagram_enabled)
+                    VALUES (?, ?, 1, 1, 1, 1)
                 """, (user_id, sub_type))
-                user_subscriptions[sub_type] = True
+                user_subscriptions[sub_type] = {
+                    "is_subscribed": True,
+                    "channels": {"email": True, "telegram": True, "instagram": True}
+                }
             conn.commit()
 
         conn.close()
@@ -99,17 +112,43 @@ async def update_user_subscription(
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
+        # Строим SQL запрос динамически в зависимости от того, какие каналы обновляются
+        update_fields = ["is_subscribed = ?", "updated_at = ?"]
+        update_values = [int(is_subscribed), datetime.now().isoformat()]
+
+        insert_fields = ["user_id", "subscription_type", "is_subscribed", "updated_at"]
+        insert_values = [user_id, sub_type, int(is_subscribed), datetime.now().isoformat()]
+        insert_placeholders = ["?", "?", "?", "?"]
+
+        if subscription_update.email_enabled is not None:
+            update_fields.append("email_enabled = ?")
+            update_values.append(int(subscription_update.email_enabled))
+            insert_fields.append("email_enabled")
+            insert_values.append(int(subscription_update.email_enabled))
+            insert_placeholders.append("?")
+
+        if subscription_update.telegram_enabled is not None:
+            update_fields.append("telegram_enabled = ?")
+            update_values.append(int(subscription_update.telegram_enabled))
+            insert_fields.append("telegram_enabled")
+            insert_values.append(int(subscription_update.telegram_enabled))
+            insert_placeholders.append("?")
+
+        if subscription_update.instagram_enabled is not None:
+            update_fields.append("instagram_enabled = ?")
+            update_values.append(int(subscription_update.instagram_enabled))
+            insert_fields.append("instagram_enabled")
+            insert_values.append(int(subscription_update.instagram_enabled))
+            insert_placeholders.append("?")
+
         # Обновляем или создаем подписку
-        c.execute("""
+        c.execute(f"""
             INSERT INTO user_subscriptions
-            (user_id, subscription_type, is_subscribed, updated_at)
-            VALUES (?, ?, ?, ?)
+            ({', '.join(insert_fields)})
+            VALUES ({', '.join(insert_placeholders)})
             ON CONFLICT(user_id, subscription_type)
-            DO UPDATE SET is_subscribed = ?, updated_at = ?
-        """, (
-            user_id, sub_type, int(is_subscribed), datetime.now().isoformat(),
-            int(is_subscribed), datetime.now().isoformat()
-        ))
+            DO UPDATE SET {', '.join(update_fields)}
+        """, insert_values + update_values)
 
         conn.commit()
         conn.close()

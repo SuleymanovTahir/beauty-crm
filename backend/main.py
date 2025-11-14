@@ -35,6 +35,7 @@ from api.client_auth import router as client_auth_router
 from api.user_management import router as user_management_router
 from api.data_export import router as data_export_router
 from api.subscriptions import router as subscriptions_router
+from api.broadcasts import router as broadcasts_router
 from scheduler import start_birthday_checker, start_client_birthday_checker
 from api.internal_chat import router as internal_chat_router
 
@@ -68,6 +69,7 @@ app.include_router(settings_router, prefix="/api")
 app.include_router(user_management_router)  # User management API
 app.include_router(data_export_router)  # Export/Import API
 app.include_router(subscriptions_router, prefix="/api")  # Subscriptions API
+app.include_router(broadcasts_router, prefix="/api")  # Broadcasts API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
