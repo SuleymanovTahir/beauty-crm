@@ -5,14 +5,36 @@
 
 import sqlite3
 import json
+import os
 from datetime import datetime
 
-DB_NAME = "db.sqlite"
+# Получаем путь к базе данных из конфига или используем дефолтное значение
+try:
+    from core.config import DATABASE_NAME
+    DB_NAME = DATABASE_NAME
+except ImportError:
+    # Если запускается как standalone скрипт
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    DB_NAME = os.path.join(BASE_DIR, "salon_bot.db")
+
+def table_exists(cursor, table_name):
+    """Проверить существование таблицы"""
+    cursor.execute("""
+        SELECT name FROM sqlite_master
+        WHERE type='table' AND name=?
+    """, (table_name,))
+    return cursor.fetchone() is not None
 
 def check_bot_settings():
     """Проверить настройки бота"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
+    # Проверить существование таблицы
+    if not table_exists(c, 'bot_settings'):
+        print("⚠️  Таблица bot_settings не существует, пропуск проверки")
+        conn.close()
+        return
 
     # Получить все поля
     c.execute("PRAGMA table_info(bot_settings)")
@@ -82,6 +104,12 @@ def check_users():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
+    # Проверить существование таблицы
+    if not table_exists(c, 'users'):
+        print("⚠️  Таблица users не существует, пропуск проверки")
+        conn.close()
+        return
+
     c.execute("PRAGMA table_info(users)")
     columns = [row[1] for row in c.fetchall()]
 
@@ -114,6 +142,12 @@ def check_salon_settings():
     """Проверить настройки салона"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
+    # Проверить существование таблицы
+    if not table_exists(c, 'salon_settings'):
+        print("⚠️  Таблица salon_settings не существует, пропуск проверки")
+        conn.close()
+        return
 
     c.execute("SELECT * FROM salon_settings WHERE id = 1")
     row = c.fetchone()
@@ -148,6 +182,12 @@ def fix_manager_consultation_prompt():
     """Исправить manager_consultation_prompt"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
+    # Проверить существование таблицы
+    if not table_exists(c, 'bot_settings'):
+        print("⚠️  Таблица bot_settings не существует, пропуск исправления")
+        conn.close()
+        return
 
     default_prompt = """Ты — эксперт-консультант по продажам салона красоты M.Le Diamant в Dubai.
 Менеджер обратился к тебе за советом. Ты помогаешь МЕНЕДЖЕРУ, а не общаешься с клиентом напрямую.
@@ -204,6 +244,12 @@ def fix_booking_data_collection():
     """Исправить booking_data_collection"""
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
+    # Проверить существование таблицы
+    if not table_exists(c, 'bot_settings'):
+        print("⚠️  Таблица bot_settings не существует, пропуск исправления")
+        conn.close()
+        return
 
     value = """📋 Сбор данных для записи
 

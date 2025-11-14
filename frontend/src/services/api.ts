@@ -938,7 +938,100 @@ export class ApiClient {
     }>('/api/broadcasts/history')
   }
 
+  // ===== ДОЛЖНОСТИ =====
+  async getPositions(activeOnly: boolean = true) {
+    return this.request<{
+      positions: Array<{
+        id: number
+        name: string
+        name_en?: string
+        name_ar?: string
+        description?: string
+        is_active: number
+        sort_order: number
+        created_at: string
+        updated_at: string
+      }>
+    }>(`/api/positions?active_only=${activeOnly}`)
+  }
+
+  async getPosition(id: number) {
+    return this.request<{
+      id: number
+      name: string
+      name_en?: string
+      name_ar?: string
+      description?: string
+      is_active: number
+      sort_order: number
+      employees_count: number
+      created_at: string
+      updated_at: string
+    }>(`/api/positions/${id}`)
+  }
+
+  async createPosition(data: {
+    name: string
+    name_en?: string
+    name_ar?: string
+    description?: string
+    sort_order?: number
+  }) {
+    return this.request<{
+      success: boolean
+      position_id: number
+      message: string
+    }>('/api/positions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updatePosition(id: number, data: {
+    name?: string
+    name_en?: string
+    name_ar?: string
+    description?: string
+    sort_order?: number
+    is_active?: number
+  }) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/positions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deletePosition(id: number, hardDelete: boolean = false) {
+    return this.request<{
+      success: boolean
+      message: string
+      affected_employees: number
+    }>(`/api/positions/${id}?hard_delete=${hardDelete}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getPositionEmployees(id: number) {
+    return this.request<{
+      position: {
+        id: number
+        name: string
+        description?: string
+      }
+      employees: Array<{
+        id: number
+        full_name: string
+        position: string
+        is_active: number
+      }>
+      count: number
+    }>(`/api/positions/${id}/employees`)
+  }
 
 }
+
 
 export const api = new ApiClient()

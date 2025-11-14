@@ -93,6 +93,7 @@ def run_all_migrations():
             # Settings
             ('schema.add_universal_settings', 'add_universal_settings'),
             ('schema.add_manager_consultation', 'add_manager_consultation_field'),
+            ('schema.add_missing_bot_fields', 'add_missing_bot_fields'),
 
             # User/Permissions
             ('schema.add_permissions_system', 'add_permissions_system'),
@@ -118,6 +119,8 @@ def run_all_migrations():
             ('data.migrate_bot_settings', 'migrate_bot_settings'),
             ('data.migrate_services', 'migrate_services'),
             ('data.update_existing_users_roles', 'update_existing_users_roles'),
+            ('data.add_missing_positions', 'add_missing_positions'),
+            ('data.assign_user_positions', 'assign_user_positions'),
         ]
 
         for migration_name, function_name in data_migrations:

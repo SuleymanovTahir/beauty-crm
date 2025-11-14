@@ -36,6 +36,7 @@ from api.user_management import router as user_management_router
 from api.data_export import router as data_export_router
 from api.subscriptions import router as subscriptions_router
 from api.broadcasts import router as broadcasts_router
+from api.positions import router as positions_router
 from scheduler import start_birthday_checker, start_client_birthday_checker
 from api.internal_chat import router as internal_chat_router
 
@@ -70,6 +71,7 @@ app.include_router(user_management_router)  # User management API
 app.include_router(data_export_router)  # Export/Import API
 app.include_router(subscriptions_router, prefix="/api")  # Subscriptions API
 app.include_router(broadcasts_router, prefix="/api")  # Broadcasts API
+app.include_router(positions_router, prefix="/api")  # Positions API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -326,12 +328,7 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
-        check_bot_settings()
-        check_users()
-        check_salon_settings()
-        fix_manager_consultation_prompt()
-        fix_booking_data_collection()
+
         # ================================
         # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
@@ -339,9 +336,35 @@ async def startup_event():
         try:
             from db.migrations.run_all_migrations import run_all_migrations
             log_info("🔧 Запуск миграций...", "startup")
-            # run_all_migrations()
+            migration_success = run_all_migrations()
+            if not migration_success:
+                log_error("❌ КРИТИЧЕСКАЯ ОШИБКА: Миграции не выполнены", "startup")
+                raise Exception("Миграции базы данных не выполнены")
         except Exception as e:
-            log_error(f"⚠️ Ошибка миграций (не критично): {e}", "startup")
+            log_error(f"❌ КРИТИЧЕСКАЯ ОШИБКА миграций: {e}", "startup")
+            log_error("", "startup")
+            log_error("Возможные решения:", "startup")
+            log_error(f"1. Удалите файл {DATABASE_NAME} и перезапустите приложение", "startup")
+            log_error("2. Убедитесь, что все зависимости установлены: pip install -r requirements.txt", "startup")
+            log_error("3. Проверьте права доступа к файлу базы данных", "startup")
+            log_error("", "startup")
+            import traceback
+            traceback.print_exc()
+            raise  # Прерываем запуск приложения
+
+        # ================================
+        # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
+        # ================================
+        # Запускаем ПОСЛЕ миграций, когда таблицы уже созданы
+        try:
+            from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
+            check_bot_settings()
+            check_users()
+            check_salon_settings()
+            fix_manager_consultation_prompt()
+            fix_booking_data_collection()
+        except Exception as e:
+            log_error(f"⚠️ Ошибка проверки данных: {e}", "startup")
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")

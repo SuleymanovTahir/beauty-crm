@@ -1202,3 +1202,6 @@ def migrate_settings():
     print()
 
     return 0
+
+# Алиас для совместимости с run_all_migrations.py
+migrate_bot_settings = migrate_settings

@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { PositionSelector } from '../../components/PositionSelector';
 
 interface User {
   id: number;
@@ -458,13 +459,15 @@ export default function Users() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Должность
                 </label>
-                <Input
-                  type="text"
+                <PositionSelector
                   value={editForm.position}
-                  onChange={(e) => setEditForm({ ...editForm, position: e.target.value })}
-                  placeholder="Например: Администратор, Менеджер, Мастер"
+                  onChange={(value) => setEditForm({ ...editForm, position: value })}
+                  placeholder="Выберите должность из справочника"
                   disabled={savingEdit}
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Начните вводить должность или выберите из списка. Можно создать новую должность прямо здесь.
+                </p>
               </div>
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
