@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from 'react-i18next';
 import { api } from "../../services/api";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 interface LoginProps {
   onLogin: (user: {
@@ -65,10 +66,35 @@ export default function Login({ onLogin }: LoginProps) {
         );
         navigate("/admin/dashboard");
       } else {
+        // Проверяем, не подтвержден ли email
+        if (response.error_type === "email_not_verified" && response.email) {
+          toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+          setTimeout(() => {
+            navigate("/verify-email", { state: { email: response.email } });
+          }, 1500);
+          return;
+        }
+
         setError(t('login:authorization_error'));
         toast.error(t('login:authorization_error'));
       }
-    } catch (err) {
+    } catch (err: any) {
+      console.log("Login error caught:", err);
+      console.log("Error type:", err.error_type);
+      console.log("Error email:", err.email);
+      console.log("Error status:", err.status);
+
+      // Проверяем, есть ли информация о неподтвержденном email в ошибке
+      if (err.error_type === "email_not_verified" && err.email) {
+        console.log("Email not verified, redirecting to verification page with email:", err.email);
+        toast.error("Email не подтвержден. Перенаправление на страницу верификации...");
+        setTimeout(() => {
+          console.log("Navigating to /verify-email with email:", err.email);
+          navigate("/verify-email", { state: { email: err.email } });
+        }, 1500);
+        return;
+      }
+
       const message = err instanceof Error ? err.message : t('login:login_error');
 
       if (message.includes(t('login:unauthorized')) || message.includes(t('login:401'))) {
@@ -86,6 +112,11 @@ export default function Login({ onLogin }: LoginProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+      {/* Переключатель языка */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">

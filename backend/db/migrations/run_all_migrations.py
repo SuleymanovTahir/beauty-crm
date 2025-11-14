@@ -101,6 +101,9 @@ def run_all_migrations():
             ('schema.add_user_subscriptions', 'add_user_subscriptions'),
             ('schema.add_subscription_channels', 'add_subscription_channels'),
             ('schema.create_broadcast_history', 'create_broadcast_history_table'),
+            ('schema.create_positions_table', 'create_positions_table'),
+            ('schema.add_password_reset_fields', 'add_password_reset_fields'),
+            ('schema.add_email_verification_token', 'add_email_verification_token'),
         ]
 
         for migration_name, function_name in structure_migrations:
@@ -113,6 +116,7 @@ def run_all_migrations():
             ('data.migrate_salon_settings', 'migrate_salon_settings'),
             ('data.migrate_bot_settings', 'migrate_bot_settings'),
             ('data.migrate_services', 'migrate_services'),
+            ('data.update_existing_users_roles', 'update_existing_users_roles'),
         ]
 
         for migration_name, function_name in data_migrations:

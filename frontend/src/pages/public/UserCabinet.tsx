@@ -102,8 +102,8 @@ export default function UserCabinet() {
               <p className="text-xs text-gray-500 mt-1">{t('usercabinet:passwordHint')}</p>
             </div>
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={loading}
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
               size="lg"
@@ -113,16 +113,25 @@ export default function UserCabinet() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-semibold mb-1">{t('usercabinet:credentials.title')}</p>
-              <p>{t('usercabinet:credentials.username')} <code className="bg-white px-2 py-1 rounded">admin</code></p>
-              <p>{t('usercabinet:credentials.password')} <code className="bg-white px-2 py-1 rounded">admin123</code></p>
-            </div>
+          <div className="mt-6 flex items-center justify-between text-sm">
+            <Button
+              variant="link"
+              className="text-pink-600"
+              onClick={() => navigate('/forgot-password')}
+            >
+              Забыли пароль?
+            </Button>
           </div>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate('/register')}
+            >
+              Нет аккаунта? Зарегистрироваться
+            </Button>
+
             <Button
               onClick={() => navigate('/')}
               variant="outline"
@@ -130,21 +139,6 @@ export default function UserCabinet() {
             >
               {t('usercabinet:backToHome')}
             </Button>
-          </div>
-        </div>
-
-        <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl text-pink-600 mb-1">👨‍💼</div>
-            <p className="text-xs text-gray-600">{t('usercabinet:roles.admin')}</p>
-          </div>
-          <div>
-            <div className="text-2xl text-purple-600 mb-1">📊</div>
-            <p className="text-xs text-gray-600">{t('usercabinet:roles.manager')}</p>
-          </div>
-          <div>
-            <div className="text-2xl text-blue-600 mb-1">💅</div>
-            <p className="text-xs text-gray-600">{t('usercabinet:roles.employee')}</p>
           </div>
         </div>
       </div>

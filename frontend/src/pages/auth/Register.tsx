@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function Register() {
     confirmPassword: "",
     full_name: "",
     email: "",
+    role: "employee",
+    position: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
@@ -25,6 +28,22 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState<"register" | "verify" | "success">("register");
+  const [positions, setPositions] = useState<any[]>([]);
+
+  // Загружаем список должностей при монтировании
+  React.useEffect(() => {
+    const loadPositions = async () => {
+      try {
+        const response = await api.getPositions();
+        if (response.success && response.positions) {
+          setPositions(response.positions);
+        }
+      } catch (err) {
+        console.error("Error loading positions:", err);
+      }
+    };
+    loadPositions();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,11 +88,22 @@ export default function Register() {
         formData.password,
         formData.full_name,
         formData.email,
+        formData.role,
+        formData.position,
         privacyAccepted,
         newsletterSubscribed
       );
 
       if (response.success) {
+        // Если это первый директор - он автоматически подтвержден
+        if (response.auto_verified && response.is_first_director) {
+          toast.success(response.message, { duration: 5000 });
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+          return;
+        }
+
         setStep("verify");
         // Если SMTP не настроен, код придет в ответе
         if (response.verification_code) {
@@ -152,6 +182,11 @@ export default function Register() {
   if (step === "verify") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+        {/* Переключатель языка */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -231,6 +266,11 @@ export default function Register() {
   if (step === "success") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+        {/* Переключатель языка */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -259,6 +299,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+      {/* Переключатель языка */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -331,6 +376,54 @@ export default function Register() {
               </div>
               <p className="text-sm text-gray-500 mt-1">
                 {t('email_hint')}
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="role">Роль *</Label>
+              <select
+                id="role"
+                required
+                disabled={loading}
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="employee">Сотрудник</option>
+                <option value="manager">Менеджер</option>
+                <option value="admin">Администратор</option>
+                <option value="director">Директор</option>
+                <option value="sales">Продажи</option>
+                <option value="marketer">Продвижение</option>
+              </select>
+              <p className="text-sm text-gray-500 mt-1">
+                Выберите вашу роль в системе
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="position">Должность *</Label>
+              <select
+                id="position"
+                required
+                disabled={loading}
+                value={formData.position}
+                onChange={(e) =>
+                  setFormData({ ...formData, position: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              >
+                <option value="">Выберите должность</option>
+                {positions.map((pos) => (
+                  <option key={pos.id} value={pos.name}>
+                    {pos.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-sm text-gray-500 mt-1">
+                Выберите вашу должность
               </p>
             </div>
 
