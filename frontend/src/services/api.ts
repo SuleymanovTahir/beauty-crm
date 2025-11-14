@@ -1025,6 +1025,72 @@ export class ApiClient {
     }>(`/api/positions/${id}/employees`)
   }
 
+  // ===== BOOKING REMINDER SETTINGS =====
+  async getBookingReminderSettings() {
+    return this.request<{
+      settings: Array<{
+        id: number
+        name: string
+        days_before: number
+        hours_before: number
+        notification_type: string
+        is_enabled: boolean
+      }>
+    }>('/api/booking-reminder-settings')
+  }
+
+  async createBookingReminderSetting(data: {
+    name: string
+    days_before: number
+    hours_before: number
+    notification_type?: string
+    is_enabled?: boolean
+  }) {
+    return this.request<{
+      success: boolean
+      setting_id: number
+      message: string
+    }>('/api/booking-reminder-settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateBookingReminderSetting(id: number, data: {
+    name?: string
+    days_before?: number
+    hours_before?: number
+    notification_type?: string
+    is_enabled?: boolean
+  }) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async toggleBookingReminderSetting(id: number) {
+    return this.request<{
+      success: boolean
+      is_enabled: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}/toggle`, {
+      method: 'PUT',
+    })
+  }
+
+  async deleteBookingReminderSetting(id: number) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
 }
 
 

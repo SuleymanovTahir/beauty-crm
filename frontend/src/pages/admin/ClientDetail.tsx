@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock } from 'lucide-react';
+import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -296,13 +296,55 @@ export default function ClientDetail() {
                 </p>
               </div>
 
-              <Button
-                onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
-                className="w-full bg-pink-600 hover:bg-pink-700 gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                {t('clientdetail:write_message')}
-              </Button>
+              {/* Messenger Buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 gap-2"
+                  title="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                  <span className="hidden sm:inline">Instagram</span>
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    const phone = client.phone?.replace(/[^0-9]/g, '');
+                    if (phone) {
+                      window.open(`https://wa.me/${phone}`, '_blank');
+                    } else {
+                      toast.error('Номер телефона не указан');
+                    }
+                  }}
+                  className="bg-green-500 hover:bg-green-600 gap-2"
+                  title="WhatsApp"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="hidden sm:inline">WhatsApp</span>
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    toast.info('Telegram интеграция в разработке');
+                  }}
+                  className="bg-blue-500 hover:bg-blue-600 gap-2"
+                  title="Telegram"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="hidden sm:inline">Telegram</span>
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    toast.info('TikTok интеграция в разработке');
+                  }}
+                  className="bg-black hover:bg-gray-800 gap-2"
+                  title="TikTok"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span className="hidden sm:inline">TikTok</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

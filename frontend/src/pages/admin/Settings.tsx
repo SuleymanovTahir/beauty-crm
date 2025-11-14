@@ -94,6 +94,23 @@ export default function AdminSettings() {
   const [availablePermissions, setAvailablePermissions] = useState({});
   const [savingRole, setSavingRole] = useState(false);
 
+  // Booking reminder settings state
+  const [bookingReminderSettings, setBookingReminderSettings] = useState<Array<{
+    id: number
+    name: string
+    days_before: number
+    hours_before: number
+    notification_type: string
+    is_enabled: boolean
+  }>>([]);
+  const [loadingReminderSettings, setLoadingReminderSettings] = useState(false);
+  const [showCreateReminderDialog, setShowCreateReminderDialog] = useState(false);
+  const [reminderForm, setReminderForm] = useState({
+    name: '',
+    days_before: 0,
+    hours_before: 2,
+    notification_type: 'email',
+  });
 
   const [createRoleForm, setCreateRoleForm] = useState({
     role_key: '',
@@ -107,6 +124,7 @@ export default function AdminSettings() {
     loadProfile();
     loadSubscriptions();
     loadBroadcastHistory();
+    loadBookingReminderSettings();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -519,6 +537,65 @@ export default function AdminSettings() {
     }
   };
 
+  const loadBookingReminderSettings = async () => {
+    try {
+      setLoadingReminderSettings(true);
+      const response = await api.getBookingReminderSettings();
+      setBookingReminderSettings(response.settings);
+    } catch (err) {
+      console.error('Error loading booking reminder settings:', err);
+    } finally {
+      setLoadingReminderSettings(false);
+    }
+  };
+
+  const handleCreateReminderSetting = async () => {
+    if (!reminderForm.name) {
+      toast.error('Введите название напоминания');
+      return;
+    }
+    if (reminderForm.days_before === 0 && reminderForm.hours_before === 0) {
+      toast.error('Укажите время напоминания');
+      return;
+    }
+
+    try {
+      await api.createBookingReminderSetting(reminderForm);
+      toast.success('Настройка напоминания создана');
+      setShowCreateReminderDialog(false);
+      setReminderForm({ name: '', days_before: 0, hours_before: 2, notification_type: 'email' });
+      loadBookingReminderSettings();
+    } catch (err) {
+      console.error('Error creating reminder setting:', err);
+      toast.error('Ошибка при создании настройки');
+    }
+  };
+
+  const handleToggleReminderSetting = async (id: number) => {
+    try {
+      await api.toggleBookingReminderSetting(id);
+      loadBookingReminderSettings();
+    } catch (err) {
+      console.error('Error toggling reminder setting:', err);
+      toast.error('Ошибка при изменении настройки');
+    }
+  };
+
+  const handleDeleteReminderSetting = async (id: number) => {
+    if (!confirm('Удалить эту настройку напоминания?')) {
+      return;
+    }
+
+    try {
+      await api.deleteBookingReminderSetting(id);
+      toast.success('Настройка удалена');
+      loadBookingReminderSettings();
+    } catch (err) {
+      console.error('Error deleting reminder setting:', err);
+      toast.error('Ошибка при удалении настройки');
+    }
+  };
+
   const handleBroadcastChannelToggle = (channel: string) => {
     if (broadcastForm.channels.includes(channel)) {
       setBroadcastForm({ ...broadcastForm, channels: broadcastForm.channels.filter(c => c !== channel) });
@@ -600,7 +677,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 lg:w-auto">
+        <TabsList className="flex flex-wrap w-full lg:w-auto gap-1">
 
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
@@ -1075,6 +1152,153 @@ export default function AdminSettings() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Напоминания о записях</h3>
+                  <Button
+                    type="button"
+                    onClick={() => setShowCreateReminderDialog(true)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Добавить напоминание
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Настройте автоматические напоминания клиентам о предстоящих записях
+                </p>
+
+                {loadingReminderSettings ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader className="w-6 h-6 text-pink-600 animate-spin" />
+                  </div>
+                ) : bookingReminderSettings.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                    <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p>Нет настроенных напоминаний</p>
+                    <p className="text-sm mt-1">Добавьте напоминание, чтобы автоматически уведомлять клиентов</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {bookingReminderSettings.map((setting) => (
+                      <div
+                        key={setting.id}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Bell className={`w-5 h-5 ${setting.is_enabled ? 'text-pink-600' : 'text-gray-400'}`} />
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{setting.name}</p>
+                            <p className="text-xs text-gray-600">
+                              {setting.days_before > 0 && `${setting.days_before} дн. `}
+                              {setting.hours_before > 0 && `${setting.hours_before} ч. `}
+                              до записи · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={setting.is_enabled}
+                            onCheckedChange={() => handleToggleReminderSetting(setting.id)}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteReminderSetting(setting.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Create Reminder Dialog */}
+                {showCreateReminderDialog && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">Новое напоминание</h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="reminder-name">Название *</Label>
+                          <Input
+                            id="reminder-name"
+                            value={reminderForm.name}
+                            onChange={(e) => setReminderForm({ ...reminderForm, name: e.target.value })}
+                            placeholder="Например: За 2 часа до записи"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="days-before">Дней до записи</Label>
+                            <Input
+                              id="days-before"
+                              type="number"
+                              min="0"
+                              value={reminderForm.days_before}
+                              onChange={(e) => setReminderForm({ ...reminderForm, days_before: parseInt(e.target.value) || 0 })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="hours-before">Часов до записи</Label>
+                            <Input
+                              id="hours-before"
+                              type="number"
+                              min="0"
+                              value={reminderForm.hours_before}
+                              onChange={(e) => setReminderForm({ ...reminderForm, hours_before: parseInt(e.target.value) || 0 })}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="notification-type">Тип уведомления</Label>
+                          <Select
+                            value={reminderForm.notification_type}
+                            onValueChange={(value) => setReminderForm({ ...reminderForm, notification_type: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="email">Email</SelectItem>
+                              <SelectItem value="sms">SMS</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-6">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setShowCreateReminderDialog(false);
+                            setReminderForm({ name: '', days_before: 0, hours_before: 2, notification_type: 'email' });
+                          }}
+                          className="flex-1"
+                        >
+                          Отмена
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleCreateReminderSetting}
+                          className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                        >
+                          Создать
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">

@@ -15,7 +15,9 @@ import {
   Scissors,
   X,
   Menu,
-  Bot
+  Bot,
+  Instagram,
+  ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -31,6 +33,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const { t } = useTranslation(['layouts/AdminLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showChatSubmenu, setShowChatSubmenu] = useState(false);
 
   useEffect(() => {
     loadUnreadCount();
@@ -68,13 +71,40 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/admin/dashboard' },
     { icon: FileText, label: t('menu.bookings'), path: '/admin/bookings' },
     { icon: Users, label: t('menu.clients'), path: '/admin/clients' },
-    { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount },
+    { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount, hasSubmenu: true },
     { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics' },
     { icon: Scissors, label: t('menu.services'), path: '/admin/services' },
     { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar' },
     { icon: UserCog, label: t('menu.users'), path: '/admin/users' },
     { icon: Settings, label: t('menu.settings'), path: '/admin/settings' },
     { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings' },
+  ];
+
+  const chatSubmenuItems = [
+    {
+      icon: Instagram,
+      label: 'Instagram',
+      path: '/admin/chat',
+      color: 'from-pink-500 to-purple-600'
+    },
+    {
+      icon: MessageSquare,
+      label: 'WhatsApp',
+      path: '/admin/chat?messenger=whatsapp',
+      color: 'from-green-500 to-green-600'
+    },
+    {
+      icon: MessageSquare,
+      label: 'Telegram',
+      path: '/admin/chat?messenger=telegram',
+      color: 'from-blue-500 to-blue-600'
+    },
+    {
+      icon: MessageSquare,
+      label: 'TikTok',
+      path: '/admin/chat?messenger=tiktok',
+      color: 'from-gray-900 to-black'
+    },
   ];
 
   return (
@@ -115,28 +145,85 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
             <ul className="space-y-1">
               {menuItems.map((item, index) => (
                 <li key={index}>
-                  <button
-                    onClick={() => {
-                      navigate(item.path);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`
-                      w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
-                      transition-all duration-200 relative
-                      ${location.pathname.startsWith(item.path)
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
-                        : 'text-gray-700 hover:bg-gray-100'
-                      }
-                    `}
-                  >
-                    <item.icon size={18} />
-                    <span>{item.label}</span>
-                    {item.badge && item.badge > 0 && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
-                        {item.badge > 99 ? '99+' : item.badge}
-                      </span>
-                    )}
-                  </button>
+                  {item.hasSubmenu ? (
+                    <div
+                      className="relative"
+                      onMouseEnter={() => setShowChatSubmenu(true)}
+                      onMouseLeave={() => setShowChatSubmenu(false)}
+                    >
+                      <button
+                        onClick={() => {
+                          navigate(item.path);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`
+                          w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                          transition-all duration-200 relative
+                          ${location.pathname.startsWith(item.path)
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                            : 'text-gray-700 hover:bg-gray-100'
+                          }
+                        `}
+                      >
+                        <item.icon size={18} />
+                        <span>{item.label}</span>
+                        <ChevronRight size={14} className="ml-auto" />
+                        {item.badge && item.badge > 0 && (
+                          <span className="absolute right-8 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                            {item.badge > 99 ? '99+' : item.badge}
+                          </span>
+                        )}
+                      </button>
+
+                      {/* Submenu Dropdown */}
+                      {showChatSubmenu && (
+                        <div className="absolute left-full top-0 ml-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 py-2">
+                          {chatSubmenuItems.map((subItem, subIndex) => (
+                            <button
+                              key={subIndex}
+                              onClick={() => {
+                                navigate(subItem.path);
+                                setIsMobileMenuOpen(false);
+                                setShowChatSubmenu(false);
+                              }}
+                              className={`
+                                w-full flex items-center gap-3 px-4 py-2.5 text-sm
+                                transition-all duration-200 hover:bg-gray-50
+                              `}
+                            >
+                              <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${subItem.color} flex items-center justify-center`}>
+                                <subItem.icon size={16} className="text-white" />
+                              </div>
+                              <span className="text-gray-700">{subItem.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        navigate(item.path);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`
+                        w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                        transition-all duration-200 relative
+                        ${location.pathname.startsWith(item.path)
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md'
+                          : 'text-gray-700 hover:bg-gray-100'
+                        }
+                      `}
+                    >
+                      <item.icon size={18} />
+                      <span>{item.label}</span>
+                      {item.badge && item.badge > 0 && (
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
+                          {item.badge > 99 ? '99+' : item.badge}
+                        </span>
+                      )}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
