@@ -210,13 +210,14 @@ async def api_register(
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         now = datetime.now().isoformat()
 
-        # Проверяем, существуют ли уже пользователи в системе
-        c.execute("SELECT COUNT(*) FROM users")
-        user_count = c.fetchone()[0]
-        is_first_user = (user_count == 0)
+        # Проверяем, существуют ли уже директора в системе
+        c.execute("SELECT COUNT(*) FROM users WHERE role = 'director'")
+        director_count = c.fetchone()[0]
+        is_first_director = (director_count == 0)
 
-        # Для первого пользователя с ролью director автоматически подтверждаем email и активируем
-        auto_verify = is_first_user and role == 'director'
+        # Для первого директора автоматически подтверждаем email и активируем
+        # Это решает проблему "курицы и яйца" - некому подтверждать первого директора
+        auto_verify = is_first_director and role == 'director'
 
         # Добавляем privacy_accepted и privacy_accepted_at
         privacy_accepted_at = now if privacy_accepted else None
