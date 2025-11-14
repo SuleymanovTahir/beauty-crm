@@ -66,16 +66,6 @@ export default function BotSettings() {
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation(['admin/BotSettings', 'common']);
 
-  // Языки для отображения (только чтение из БД)
-  const AVAILABLE_LANGUAGES = [
-    { code: 'ru', name: t('botsettings:russian'), flag: '🇷🇺', note: t('botsettings:main') },
-    { code: 'en', name: t('botsettings:english'), flag: '🇬🇧', note: t('botsettings:international') },
-    { code: 'ar', name: t('botsettings:arabic'), flag: '🇸🇦', note: t('botsettings:local') },
-    { code: 'hi', name: t('botsettings:hindi'), flag: '🇮🇳', note: t('botsettings:indian') },
-    { code: 'ur', name: t('botsettings:urdu'), flag: '🇵🇰', note: t('botsettings:pakistani') },
-    { code: 'tl', name: t('botsettings:filipino'), flag: '🇵🇭', note: t('botsettings:filipino') },
-  ];
-
   const [settings, setSettings] = useState<BotSettings>({
     bot_name: '',
     personality_traits: '',
@@ -338,39 +328,6 @@ export default function BotSettings() {
                 Рекомендуется 200-400 символов. Чем меньше - тем короче ответы бота.
                 <br />
                 <strong>⚠️ Бот будет СТРОГО соблюдать этот лимит!</strong>
-              </p>
-            </div>
-
-            {/* Supported Languages - Read Only Display */}
-            <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
-                🌍 {t('botsettings:supported_languages')} <span style={{ fontSize: '0.875rem', fontWeight: '400', color: '#6b7280' }}>(настраивается в БД)</span>
-              </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {settings.languages_supported.split(',').filter(Boolean).map(langCode => {
-                  const lang = AVAILABLE_LANGUAGES.find(l => l.code === langCode.trim());
-                  return lang ? (
-                    <div
-                      key={langCode}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#f3e8ff',
-                        border: '1px solid #a78bfa',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      <span>{lang.flag}</span>
-                      <span style={{ fontWeight: '600', color: '#374151' }}>{lang.name}</span>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Бот автоматически общается на этих языках. Для изменения списка обновите поле languages_supported в базе данных.
               </p>
             </div>
           </div>
