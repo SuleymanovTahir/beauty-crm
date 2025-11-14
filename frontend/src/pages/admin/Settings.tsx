@@ -127,12 +127,12 @@ export default function AdminSettings() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Файл слишком большой. Максимум 5MB');
+      toast.error(t('file_too_large'));
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Можно загружать только изображения');
+      toast.error(t('images_only'));
       return;
     }
 
@@ -143,11 +143,11 @@ export default function AdminSettings() {
         const response = await api.updateMyProfile({ photo_url: uploadResponse.url });
         if (response.success) {
           setProfile(response.profile);
-          toast.success('Фото обновлено');
+          toast.success(t('photo_updated'));
         }
       }
     } catch (err) {
-      toast.error(err.message || 'Ошибка загрузки фото');
+      toast.error(err.message || t('error_photo_upload'));
     } finally {
       setUploadingPhoto(false);
     }
@@ -155,33 +155,33 @@ export default function AdminSettings() {
 
   const handleSaveProfile = async () => {
     if (profileForm.username.length < 3) {
-      toast.error('Логин должен быть минимум 3 символа');
+      toast.error(t('error_username_too_short'));
       return;
     }
 
     if (profileForm.full_name.length < 2) {
-      toast.error('Имя должно быть минимум 2 символа');
+      toast.error(t('error_name_too_short'));
       return;
     }
 
     if (profileForm.email && !profileForm.email.includes('@')) {
-      toast.error('Некорректный email');
+      toast.error(t('error_invalid_email'));
       return;
     }
 
     if (profileForm.new_password) {
       if (!profileForm.current_password) {
-        toast.error('Укажите текущий пароль');
+        toast.error(t('error_enter_current_password'));
         return;
       }
 
       if (profileForm.new_password.length < 6) {
-        toast.error('Новый пароль должен быть минимум 6 символов');
+        toast.error(t('error_password_too_short'));
         return;
       }
 
       if (profileForm.new_password !== profileForm.confirm_password) {
-        toast.error('Пароли не совпадают');
+        toast.error(t('error_passwords_dont_match'));
         return;
       }
     }
@@ -204,7 +204,7 @@ export default function AdminSettings() {
 
       if (response.success) {
         setProfile(response.profile);
-        toast.success('Профиль обновлен');
+        toast.success(t('profile_updated'));
         setProfileForm({
           ...profileForm,
           current_password: '',
@@ -221,10 +221,10 @@ export default function AdminSettings() {
           localStorage.setItem('user', JSON.stringify(user));
         }
       } else {
-        toast.error(response.error || 'Ошибка обновления профиля');
+        toast.error(response.error || t('error_update_profile'));
       }
     } catch (err) {
-      toast.error(err.message || 'Ошибка обновления профиля');
+      toast.error(err.message || t('error_update_profile'));
     } finally {
       setSavingProfile(false);
     }
@@ -409,7 +409,7 @@ export default function AdminSettings() {
           </TabsTrigger>
           <TabsTrigger key="profile" value="profile" className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span className="hidden sm:inline">Профиль</span>
+            <span className="hidden sm:inline">{t('profile')}</span>
           </TabsTrigger>
           <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
@@ -579,7 +579,7 @@ export default function AdminSettings() {
         {/* Profile Settings */}
         <TabsContent value="profile">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6">Мой профиль</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('my_profile')}</h2>
 
             {!profile ? (
               <div className="flex justify-center py-8">
@@ -624,7 +624,7 @@ export default function AdminSettings() {
                     </div>
 
                     <p className="text-sm text-gray-500 mt-4 text-center">
-                      Нажмите на камеру<br />для загрузки фото<br />(макс. 5MB)
+                      {t('click_camera_to_upload')}<br />{t('to_upload_photo')}<br />{t('max_size')}
                     </p>
                   </div>
                 </div>
@@ -633,7 +633,7 @@ export default function AdminSettings() {
                 <div className="md:col-span-2">
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="username">Логин</Label>
+                      <Label htmlFor="username">{t('username')}</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <Input
@@ -648,7 +648,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="full_name">Полное имя</Label>
+                      <Label htmlFor="full_name">{t('full_name')}</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <Input
@@ -663,7 +663,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('email')}</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <Input
@@ -680,12 +680,12 @@ export default function AdminSettings() {
 
                     <div className="pt-4 border-t border-gray-200">
                       <h3 className="font-medium text-gray-900 mb-4">
-                        Изменить пароль (опционально)
+                        {t('change_password')}
                       </h3>
 
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="current_password">Текущий пароль</Label>
+                          <Label htmlFor="current_password">{t('current_password')}</Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <Input
@@ -704,7 +704,7 @@ export default function AdminSettings() {
                         </div>
 
                         <div>
-                          <Label htmlFor="new_password">Новый пароль</Label>
+                          <Label htmlFor="new_password">{t('new_password')}</Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <Input
@@ -718,14 +718,14 @@ export default function AdminSettings() {
                                 })
                               }
                               className="pl-10"
-                              placeholder="Минимум 6 символов"
+                              placeholder={t('new_password_placeholder')}
                             />
                           </div>
                         </div>
 
                         <div>
                           <Label htmlFor="confirm_password">
-                            Подтвердите новый пароль
+                            {t('confirm_new_password')}
                           </Label>
                           <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -740,7 +740,7 @@ export default function AdminSettings() {
                                 })
                               }
                               className="pl-10"
-                              placeholder="Повторите новый пароль"
+                              placeholder={t('repeat_new_password')}
                             />
                           </div>
                         </div>
@@ -761,7 +761,7 @@ export default function AdminSettings() {
                         ) : (
                           <>
                             <Save className="w-4 h-4 mr-2" />
-                            Сохранить изменения
+                            {t('save_changes')}
                           </>
                         )}
                       </Button>

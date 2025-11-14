@@ -6,9 +6,11 @@ import { Label } from "../../components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth/Register');
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -26,27 +28,27 @@ export default function Register() {
 
     // Валидация
     if (!formData.username || !formData.password || !formData.full_name || !formData.email) {
-      setError("Заполните все обязательные поля");
+      setError(t('error_fill_all_fields'));
       return;
     }
 
     if (formData.username.length < 3) {
-      setError("Логин должен быть минимум 3 символа");
+      setError(t('error_username_too_short'));
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Пароль должен быть минимум 6 символов");
+      setError(t('error_password_too_short'));
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Пароли не совпадают");
+      setError(t('error_passwords_dont_match'));
       return;
     }
 
     if (!formData.email.includes("@")) {
-      setError("Введите корректный email");
+      setError(t('error_invalid_email'));
       return;
     }
 
@@ -65,17 +67,17 @@ export default function Register() {
         setStep("verify");
         // Если SMTP не настроен, код придет в ответе
         if (response.verification_code) {
-          toast.success(response.message || `Ваш код: ${response.verification_code}`, { duration: 10000 });
+          toast.success(response.message || `${t('your_code')} ${response.verification_code}`, { duration: 10000 });
           console.log("Verification code:", response.verification_code);
         } else {
-          toast.success("Код подтверждения отправлен на вашу почту!");
+          toast.success(t('code_sent_to_email'));
         }
       } else {
-        setError(response.error || "Ошибка регистрации");
-        toast.error(response.error || "Ошибка регистрации");
+        setError(response.error || t('error_registration'));
+        toast.error(response.error || t('error_registration'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка регистрации";
+      const message = err instanceof Error ? err.message : t('error_registration');
       setError(message);
       toast.error(message);
       console.error("Registration error:", err);
@@ -88,7 +90,7 @@ export default function Register() {
     e.preventDefault();
 
     if (!verificationCode || verificationCode.length !== 6) {
-      setError("Введите 6-значный код");
+      setError(t('error_invalid_code'));
       return;
     }
 
@@ -100,13 +102,13 @@ export default function Register() {
 
       if (response.success) {
         setStep("success");
-        toast.success("Email подтвержден! Ожидайте одобрения администратора.");
+        toast.success(t('email_verified'));
       } else {
-        setError(response.error || "Неверный код");
-        toast.error(response.error || "Неверный код");
+        setError(response.error || t('error_verification'));
+        toast.error(response.error || t('error_verification'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка верификации";
+      const message = err instanceof Error ? err.message : t('error_verification');
       setError(message);
       toast.error(message);
       console.error("Verification error:", err);
@@ -123,12 +125,12 @@ export default function Register() {
       const response = await api.resendVerification(formData.email);
 
       if (response.success) {
-        toast.success("Новый код отправлен на вашу почту!");
+        toast.success(t('new_code_sent'));
       } else {
-        toast.error(response.error || "Ошибка отправки кода");
+        toast.error(response.error || t('error_resend'));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Ошибка отправки кода";
+      const message = err instanceof Error ? err.message : t('error_resend');
       toast.error(message);
       console.error("Resend error:", err);
     } finally {
@@ -145,8 +147,8 @@ export default function Register() {
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShieldCheck className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl text-gray-900 mb-2">Подтверждение Email</h1>
-            <p className="text-gray-600">Введите код, отправленный на {formData.email}</p>
+            <h1 className="text-4xl text-gray-900 mb-2">{t('verification_title')}</h1>
+            <p className="text-gray-600">{t('verification_subtitle')} {formData.email}</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -158,7 +160,7 @@ export default function Register() {
 
             <form onSubmit={handleVerify} className="space-y-6">
               <div>
-                <Label htmlFor="code">Код подтверждения</Label>
+                <Label htmlFor="code">{t('verification_code')}</Label>
                 <Input
                   id="code"
                   required
@@ -170,7 +172,7 @@ export default function Register() {
                   className="text-center text-2xl tracking-widest"
                 />
                 <p className="text-sm text-gray-500 mt-2">
-                  Введите 6-значный код из письма
+                  {t('verification_code_hint')}
                 </p>
               </div>
 
@@ -183,10 +185,10 @@ export default function Register() {
                 {loading ? (
                   <>
                     <Loader className="w-4 h-4 animate-spin mr-2" />
-                    Проверка...
+                    {t('verifying')}
                   </>
                 ) : (
-                  "Подтвердить"
+                  t('verify_button')
                 )}
               </Button>
             </form>
@@ -198,7 +200,7 @@ export default function Register() {
                 disabled={loading}
                 className="text-sm"
               >
-                ← Назад
+                ← {t('back_button')}
               </Button>
               <Button
                 variant="ghost"
@@ -206,7 +208,7 @@ export default function Register() {
                 disabled={loading}
                 className="text-sm"
               >
-                Не получили код? Отправить снова
+                {t('resend_code')}
               </Button>
             </div>
           </div>
@@ -224,21 +226,20 @@ export default function Register() {
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl text-gray-900 mb-2">Email подтвержден!</h1>
-            <p className="text-gray-600">Ожидайте одобрения администратора</p>
+            <h1 className="text-4xl text-gray-900 mb-2">{t('success_title')}</h1>
+            <p className="text-gray-600">{t('success_subtitle')}</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <p className="text-gray-700 mb-6">
-              Ваш email подтвержден. Администратор проверит вашу заявку и активирует ваш аккаунт.
-              Вы получите уведомление на почту, когда сможете войти в систему.
+              {t('success_message')}
             </p>
 
             <Button
               className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
               onClick={() => navigate("/login")}
             >
-              Вернуться к входу
+              {t('back_to_login')}
             </Button>
           </div>
         </div>
@@ -253,8 +254,8 @@ export default function Register() {
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <UserPlus className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">Регистрация</h1>
-          <p className="text-gray-600">Создайте аккаунт в CRM системе</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('register_title')}</h1>
+          <p className="text-gray-600">{t('register_subtitle')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -266,7 +267,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">Полное имя *</Label>
+              <Label htmlFor="full_name">{t('full_name')} *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -277,14 +278,14 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, full_name: e.target.value })
                   }
-                  placeholder="Введите ваше имя"
+                  placeholder={t('full_name_placeholder')}
                   className="pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="username">Логин *</Label>
+              <Label htmlFor="username">{t('username')} *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -295,14 +296,14 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
                   }
-                  placeholder="Придумайте логин"
+                  placeholder={t('username_placeholder')}
                   className="pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">{t('email')} *</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -314,17 +315,17 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  placeholder="Ваш email"
+                  placeholder={t('email_placeholder')}
                   className="pl-10"
                 />
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                На этот адрес будет отправлен код подтверждения
+                {t('email_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="password">Пароль *</Label>
+              <Label htmlFor="password">{t('password')} *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -336,14 +337,14 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  placeholder="Минимум 6 символов"
+                  placeholder={t('password_placeholder')}
                   className="pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">Подтверждение пароля *</Label>
+              <Label htmlFor="confirmPassword">{t('confirm_password')} *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -355,7 +356,7 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, confirmPassword: e.target.value })
                   }
-                  placeholder="Повторите пароль"
+                  placeholder={t('confirm_password_placeholder')}
                   className="pl-10"
                 />
               </div>
@@ -370,12 +371,12 @@ export default function Register() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin" />
-                  Регистрация...
+                  {t('registering')}
                 </>
               ) : (
                 <>
                   <UserPlus className="w-4 h-4" />
-                  Зарегистрироваться
+                  {t('register_button')}
                 </>
               )}
             </Button>
@@ -384,7 +385,7 @@ export default function Register() {
 
         <div className="mt-6 text-center space-y-3">
           <Button variant="outline" onClick={() => navigate("/login")}>
-            Уже есть аккаунт? Войти
+            {t('already_have_account')}
           </Button>
         </div>
       </div>

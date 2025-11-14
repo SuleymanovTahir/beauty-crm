@@ -39,6 +39,7 @@ const namespaces = [
   'public/Terms',
   'public/UserCabinet',
   'auth/Login',
+  'auth/Register',
   'layouts/AdminLayout',
   'layouts/EmployeeLayout',
   'layouts/ManagerLayout',

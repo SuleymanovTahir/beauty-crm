@@ -747,10 +747,6 @@ export class ApiClient {
     })
   }
 
-  async getUserPermissions(userId: number) {
-    return this.request<any>(`/api/users/${userId}/permissions`)
-  }
-
   async grantPermission(userId: number, resource: string) {
     return this.request(`/api/users/${userId}/permissions/${resource}/grant`, {
       method: 'POST',
