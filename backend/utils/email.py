@@ -14,8 +14,8 @@ def generate_verification_code():
     return ''.join([str(secrets.randbelow(10)) for _ in range(6)])
 
 def get_code_expiry():
-    """Получить время истечения кода (15 минут)"""
-    return (datetime.now() + timedelta(minutes=15)).isoformat()
+    """Получить время истечения кода (5 минут)"""
+    return (datetime.now() + timedelta(minutes=5)).isoformat()
 
 def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
     """
@@ -31,11 +31,11 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
     """
     try:
         # SMTP настройки из переменных окружения
-        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', '587'))
-        smtp_user = os.getenv('SMTP_USER')
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
         smtp_password = os.getenv('SMTP_PASSWORD')
-        smtp_from = os.getenv('SMTP_FROM', smtp_user)
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
 
         if not smtp_user or not smtp_password:
             log_error("SMTP credentials not configured in .env", "email")
@@ -60,7 +60,7 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
               <div style="background-color: white; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
                 <h1 style="color: #667eea; font-size: 48px; margin: 0; letter-spacing: 8px;">{code}</h1>
               </div>
-              <p style="color: #666; font-size: 14px;">Код действителен в течение 15 минут.</p>
+              <p style="color: #666; font-size: 14px;">Код действителен в течение 5 минут.</p>
               <p style="color: #999; font-size: 12px; margin-top: 30px;">
                 Если вы не регистрировались в системе, проигнорируйте это письмо.
               </p>
@@ -75,7 +75,7 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
 
         Ваш код подтверждения для регистрации: {code}
 
-        Код действителен в течение 15 минут.
+        Код действителен в течение 5 минут.
 
         Если вы не регистрировались в системе, проигнорируйте это письмо.
         """
@@ -111,11 +111,11 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
         bool: True если отправлено успешно
     """
     try:
-        smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', '587'))
-        smtp_user = os.getenv('SMTP_USER')
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
         smtp_password = os.getenv('SMTP_PASSWORD')
-        smtp_from = os.getenv('SMTP_FROM', smtp_user)
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
 
         if not smtp_user or not smtp_password:
             log_error("SMTP credentials not configured in .env", "email")
