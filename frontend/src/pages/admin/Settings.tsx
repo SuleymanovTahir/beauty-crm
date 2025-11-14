@@ -118,6 +118,23 @@ export default function AdminSettings() {
     role_description: ''
   });
 
+  // Messenger settings state
+  const [messengerSettings, setMessengerSettings] = useState<Array<{
+    id: number
+    messenger_type: string
+    is_enabled: boolean
+    display_name: string
+    has_token: boolean
+    api_token?: string
+    webhook_url?: string
+  }>>([]);
+  const [loadingMessengers, setLoadingMessengers] = useState(false);
+  const [editingMessenger, setEditingMessenger] = useState<string | null>(null);
+  const [messengerForm, setMessengerForm] = useState({
+    api_token: '',
+    webhook_url: ''
+  });
+
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
@@ -125,6 +142,7 @@ export default function AdminSettings() {
     loadSubscriptions();
     loadBroadcastHistory();
     loadBookingReminderSettings();
+    loadMessengerSettings();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -596,6 +614,54 @@ export default function AdminSettings() {
     }
   };
 
+  // Messenger functions
+  const loadMessengerSettings = async () => {
+    try {
+      setLoadingMessengers(true);
+      const response = await api.getMessengerSettings();
+      setMessengerSettings(response.settings);
+    } catch (err) {
+      console.error('Error loading messenger settings:', err);
+    } finally {
+      setLoadingMessengers(false);
+    }
+  };
+
+  const handleToggleMessenger = async (messengerType: string, currentState: boolean) => {
+    try {
+      await api.updateMessengerSetting(messengerType, { is_enabled: !currentState });
+      toast.success(`${messengerType} ${!currentState ? 'включен' : 'выключен'}`);
+      loadMessengerSettings();
+    } catch (err) {
+      console.error('Error toggling messenger:', err);
+      toast.error('Ошибка при изменении настройки');
+    }
+  };
+
+  const handleSaveMessengerConfig = async (messengerType: string) => {
+    try {
+      await api.updateMessengerSetting(messengerType, messengerForm);
+      toast.success('Настройки сохранены');
+      setEditingMessenger(null);
+      setMessengerForm({ api_token: '', webhook_url: '' });
+      loadMessengerSettings();
+    } catch (err) {
+      console.error('Error saving messenger config:', err);
+      toast.error('Ошибка при сохранении настроек');
+    }
+  };
+
+  const handleStartEditMessenger = (messengerType: string) => {
+    const messenger = messengerSettings.find(m => m.messenger_type === messengerType);
+    if (messenger) {
+      setMessengerForm({
+        api_token: messenger.api_token || '',
+        webhook_url: messenger.webhook_url || ''
+      });
+      setEditingMessenger(messengerType);
+    }
+  };
+
   const handleBroadcastChannelToggle = (channel: string) => {
     if (broadcastForm.channels.includes(channel)) {
       setBroadcastForm({ ...broadcastForm, channels: broadcastForm.channels.filter(c => c !== channel) });
@@ -706,6 +772,10 @@ export default function AdminSettings() {
           <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2">
             <Send className="w-4 h-4" />
             <span className="hidden sm:inline">Рассылки</span>
+          </TabsTrigger>
+          <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2">
+            <MessageCircle className="w-4 h-4" />
+            <span className="hidden sm:inline">Мессенджеры</span>
           </TabsTrigger>
           <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
             <Trash2 className="w-4 h-4" />
@@ -1929,6 +1999,151 @@ export default function AdminSettings() {
                 </div>
               </TabsContent>
             </Tabs>
+          </div>
+        </TabsContent>
+
+        {/* Messengers Settings */}
+        <TabsContent value="messengers">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
+              <MessageCircle className="w-6 h-6 text-pink-600" />
+              Настройки мессенджеров
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Управляйте доступными мессенджерами для общения с клиентами
+            </p>
+
+            {loadingMessengers ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {messengerSettings.map((messenger) => (
+                  <div
+                    key={messenger.messenger_type}
+                    className={`border-2 rounded-xl p-6 transition-all ${
+                      messenger.is_enabled
+                        ? 'border-pink-300 bg-pink-50'
+                        : 'border-gray-200 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                          messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
+                          messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
+                          messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
+                          'bg-black'
+                        }`}>
+                          {messenger.messenger_type === 'instagram' ? (
+                            <Instagram className="w-6 h-6 text-white" />
+                          ) : (
+                            <MessageCircle className="w-6 h-6 text-white" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">
+                            {messenger.display_name}
+                          </h3>
+                          <p className="text-xs text-gray-600">
+                            {messenger.has_token ? '✅ Настроен' : '⚠️ Требуется настройка'}
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={messenger.is_enabled}
+                        onCheckedChange={() =>
+                          handleToggleMessenger(messenger.messenger_type, messenger.is_enabled)
+                        }
+                      />
+                    </div>
+
+                    {messenger.is_enabled && (
+                      <div className="space-y-4 pt-4 border-t border-gray-200">
+                        {editingMessenger === messenger.messenger_type ? (
+                          <div className="space-y-3">
+                            {messenger.messenger_type !== 'instagram' && (
+                              <div>
+                                <Label htmlFor={`${messenger.messenger_type}-token`}>
+                                  API Token {messenger.messenger_type === 'telegram' ? '(Telegram Bot Token)' : ''}
+                                </Label>
+                                <Input
+                                  id={`${messenger.messenger_type}-token`}
+                                  type="password"
+                                  value={messengerForm.api_token}
+                                  onChange={(e) =>
+                                    setMessengerForm({ ...messengerForm, api_token: e.target.value })
+                                  }
+                                  placeholder={
+                                    messenger.messenger_type === 'telegram'
+                                      ? '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
+                                      : 'Введите API токен'
+                                  }
+                                />
+                              </div>
+                            )}
+
+                            {messenger.messenger_type === 'telegram' && (
+                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p className="text-sm text-blue-800 mb-2">
+                                  <strong>Как получить Telegram Bot Token:</strong>
+                                </p>
+                                <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+                                  <li>Откройте Telegram и найдите @BotFather</li>
+                                  <li>Отправьте команду /newbot</li>
+                                  <li>Следуйте инструкциям для создания бота</li>
+                                  <li>Скопируйте полученный токен и вставьте выше</li>
+                                </ol>
+                              </div>
+                            )}
+
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                onClick={() => handleSaveMessengerConfig(messenger.messenger_type)}
+                                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                              >
+                                <Save className="w-4 h-4 mr-2" />
+                                Сохранить
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingMessenger(null);
+                                  setMessengerForm({ api_token: '', webhook_url: '' });
+                                }}
+                              >
+                                Отмена
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            {messenger.messenger_type === 'instagram' ? (
+                              <p className="text-sm text-gray-600">
+                                Instagram использует существующую интеграцию. Настройка не требуется.
+                              </p>
+                            ) : (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleStartEditMessenger(messenger.messenger_type)}
+                              >
+                                <Edit className="w-4 h-4 mr-2" />
+                                {messenger.has_token ? 'Изменить настройки' : 'Настроить'}
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
 

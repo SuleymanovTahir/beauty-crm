@@ -1091,6 +1091,66 @@ export class ApiClient {
     })
   }
 
+  // ===== MESSENGERS =====
+  async getMessengerSettings() {
+    return this.request<{
+      settings: Array<{
+        id: number
+        messenger_type: string
+        is_enabled: boolean
+        display_name: string
+        has_token: boolean
+        api_token?: string
+        webhook_url?: string
+        config_json?: string
+        created_at: string
+        updated_at: string
+      }>
+    }>('/api/messengers/settings')
+  }
+
+  async getEnabledMessengers() {
+    return this.request<{
+      enabled_messengers: Array<{
+        type: string
+        name: string
+      }>
+    }>('/api/messengers/enabled')
+  }
+
+  async updateMessengerSetting(messengerType: string, data: {
+    is_enabled?: boolean
+    api_token?: string
+    webhook_url?: string
+    config_json?: any
+  }) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/messengers/settings/${messengerType}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getMessengerMessages(messengerType: string, clientId?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (clientId) params.append('client_id', clientId)
+    params.append('limit', limit.toString())
+
+    return this.request<{
+      messages: Array<any>
+      count: number
+    }>(`/api/messengers/${messengerType}/messages?${params}`)
+  }
+
+  async getMessengerUnreadCount() {
+    return this.request<{
+      total: number
+      by_messenger: Record<string, number>
+    }>('/api/messengers/unread-count')
+  }
+
 }
 
 

@@ -94,6 +94,7 @@ def run_all_migrations():
             # Chat & Communication
             ('schema.chat.add_chat_features', 'add_chat_features_tables'),
             ('schema.chat.create_internal_chat', 'create_internal_chat_table'),
+            ('schema.chat.add_messenger_system', 'add_messenger_system'),
 
             # Notifications
             ('schema.notifications.create_birthday_notifications', 'create_birthday_notifications_table'),

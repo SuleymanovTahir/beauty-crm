@@ -34,12 +34,23 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
+  const [enabledMessengers, setEnabledMessengers] = useState<Array<{type: string; name: string}>>([]);
 
   useEffect(() => {
     loadUnreadCount();
+    loadEnabledMessengers();
     const interval = setInterval(loadUnreadCount, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  const loadEnabledMessengers = async () => {
+    try {
+      const response = await api.getEnabledMessengers();
+      setEnabledMessengers(response.enabled_messengers);
+    } catch (err) {
+      console.error('Failed to load enabled messengers:', err);
+    }
+  };
 
   const loadUnreadCount = async () => {
     try {
@@ -80,32 +91,15 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings' },
   ];
 
-  const chatSubmenuItems = [
-    {
-      icon: Instagram,
-      label: 'Instagram',
-      path: '/admin/chat',
-      color: 'from-pink-500 to-purple-600'
-    },
-    {
-      icon: MessageSquare,
-      label: 'WhatsApp',
-      path: '/admin/chat?messenger=whatsapp',
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      icon: MessageSquare,
-      label: 'Telegram',
-      path: '/admin/chat?messenger=telegram',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      icon: MessageSquare,
-      label: 'TikTok',
-      path: '/admin/chat?messenger=tiktok',
-      color: 'from-gray-900 to-black'
-    },
-  ];
+  const chatSubmenuItems = enabledMessengers.map(messenger => ({
+    icon: messenger.type === 'instagram' ? Instagram : MessageSquare,
+    label: messenger.name,
+    path: messenger.type === 'instagram' ? '/admin/chat' : `/admin/chat?messenger=${messenger.type}`,
+    color: messenger.type === 'instagram' ? 'from-pink-500 to-purple-600' :
+           messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
+           messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
+           'from-gray-900 to-black'
+  }));
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
