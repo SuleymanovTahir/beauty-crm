@@ -9,7 +9,8 @@ from db.employees import (
     get_all_employees, get_employee, create_employee, update_employee,
     delete_employee, get_employee_services, add_employee_service,
     remove_employee_service, get_employees_by_service,
-    get_employee_schedule, set_employee_schedule, get_available_employees
+    get_employee_schedule, set_employee_schedule, get_available_employees,
+    get_employee_busy_slots
 )
 from utils.utils import require_auth
 import sqlite3
@@ -386,3 +387,33 @@ async def update_my_employee_profile(
     except Exception as e:
         log_error(f"Error updating employee profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# ===== SMART FILTERING ENDPOINTS =====
+
+@router.get("/services/{service_id}/employees")
+async def get_employees_for_service(service_id: int):
+    """Получить сотрудников, которые оказывают эту услугу"""
+    employees = get_employees_by_service(service_id)
+
+    return {
+        "employees": [
+            {
+                "id": e[0],
+                "full_name": e[1],
+                "position": e[2],
+                "photo": e[4],
+                "is_active": bool(e[9])
+            } for e in employees
+        ]
+    }
+
+
+@router.get("/employees/{employee_id}/busy-slots")
+async def get_busy_slots(employee_id: int, date: str):
+    """Получить занятые временные слоты сотрудника на дату"""
+    busy_slots = get_employee_busy_slots(employee_id, date)
+
+    return {
+        "busy_slots": busy_slots
+    }

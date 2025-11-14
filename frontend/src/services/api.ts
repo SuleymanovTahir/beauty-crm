@@ -393,6 +393,15 @@ export class ApiClient {
     })
   }
 
+  // ===== СОТРУДНИКИ =====
+  async getEmployeesForService(serviceId: number) {
+    return this.request<{ employees: Array<{ id: number; full_name: string; position: string; photo: string | null; is_active: boolean }> }>(`/api/services/${serviceId}/employees`)
+  }
+
+  async getEmployeeBusySlots(employeeId: number, date: string) {
+    return this.request<{ busy_slots: Array<{ booking_id: number; start_time: string; end_time: string; service_name: string }> }>(`/api/employees/${employeeId}/busy-slots?date=${date}`)
+  }
+
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {
     return this.request<any>('/api/users')

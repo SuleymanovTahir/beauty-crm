@@ -86,6 +86,20 @@ const api = {
     return res.blob();
   },
 
+  async getEmployeesForService(serviceId: number) {
+    const res = await fetch(`${this.baseURL}/api/services/${serviceId}/employees`, {
+      credentials: 'include'
+    });
+    return res.json();
+  },
+
+  async getEmployeeBusySlots(employeeId: number, date: string) {
+    const res = await fetch(`${this.baseURL}/api/employees/${employeeId}/busy-slots?date=${date}`, {
+      credentials: 'include'
+    });
+    return res.json();
+  },
+
   getCurrentUser() {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
@@ -118,6 +132,11 @@ export default function Bookings() {
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedService, setSelectedService] = useState<any>(null);
+
+  // Smart filtering states
+  const [filteredMasters, setFilteredMasters] = useState<any[]>([]);
+  const [busySlots, setBusySlots] = useState<any[]>([]);
+  const [loadingMasters, setLoadingMasters] = useState(false);
 
   const [addForm, setAddForm] = useState({
     phone: '',
@@ -186,7 +205,51 @@ export default function Bookings() {
     setFilteredBookings(filtered);
   }, [searchTerm, statusFilter, bookings, period, dateFrom, dateTo]);
 
+  // Smart filtering: load masters when service is selected
+  useEffect(() => {
+    const loadFilteredMasters = async () => {
+      if (selectedService) {
+        try {
+          setLoadingMasters(true);
+          const data = await api.getEmployeesForService(selectedService.id);
+          setFilteredMasters(data.employees || []);
+        } catch (err) {
+          console.error('Error loading filtered masters:', err);
+          toast.error('Ошибка загрузки мастеров');
+          setFilteredMasters(masters); // Fallback to all masters
+        } finally {
+          setLoadingMasters(false);
+        }
+      } else {
+        setFilteredMasters(masters); // No service selected, show all
+      }
+    };
 
+    loadFilteredMasters();
+  }, [selectedService, masters]);
+
+  // Load busy slots when master and date are selected
+  useEffect(() => {
+    const loadBusySlots = async () => {
+      if (addForm.master && addForm.date) {
+        try {
+          // Find master ID by name
+          const master = masters.find((m: any) => m.full_name === addForm.master);
+          if (master) {
+            const data = await api.getEmployeeBusySlots(master.id, addForm.date);
+            setBusySlots(data.busy_slots || []);
+          }
+        } catch (err) {
+          console.error('Error loading busy slots:', err);
+          setBusySlots([]);
+        }
+      } else {
+        setBusySlots([]);
+      }
+    };
+
+    loadBusySlots();
+  }, [addForm.master, addForm.date, masters]);
 
   const loadData = async () => {
     try {
@@ -1165,6 +1228,7 @@ export default function Bookings() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   {t('bookings:master')}
+                  {loadingMasters && <span style={{ marginLeft: '0.5rem', color: '#6b7280' }}>(загрузка...)</span>}
                 </label>
                 <select
                   value={addForm.master}
@@ -1174,14 +1238,43 @@ export default function Bookings() {
                     border: '1px solid #d1d5db', borderRadius: '0.5rem',
                     fontSize: '0.875rem', boxSizing: 'border-box'
                   }}
+                  disabled={loadingMasters}
                 >
                   <option value="">{t('bookings:select_master')}</option>
-                  {masters.map((m: any) => (
+                  {filteredMasters.map((m: any) => (
                     <option key={m.id} value={m.full_name}>
-                      {m.full_name} ({m.role})
+                      {m.full_name} - {m.position}
                     </option>
                   ))}
                 </select>
+                {selectedService && filteredMasters.length === 0 && !loadingMasters && (
+                  <div style={{
+                    marginTop: '0.5rem', padding: '0.5rem',
+                    backgroundColor: '#fef3c7', borderLeft: '3px solid #f59e0b',
+                    fontSize: '0.875rem', color: '#92400e'
+                  }}>
+                    ⚠️ Нет мастеров для выбранной услуги
+                  </div>
+                )}
+                {busySlots.length > 0 && addForm.time && (
+                  <div style={{
+                    marginTop: '0.5rem', padding: '0.75rem',
+                    backgroundColor: '#fef3c7', borderLeft: '3px solid #f59e0b',
+                    borderRadius: '0.375rem', fontSize: '0.875rem'
+                  }}>
+                    <div style={{ fontWeight: '600', color: '#92400e', marginBottom: '0.25rem' }}>
+                      ⚠️ Мастер занят в это время
+                    </div>
+                    <div style={{ color: '#78350f' }}>
+                      Занятые слоты:
+                      {busySlots.map((slot: any, idx: number) => (
+                        <div key={idx} style={{ marginTop: '0.25rem' }}>
+                          • {slot.start_time} - {slot.end_time} ({slot.service_name})
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Phone */}
