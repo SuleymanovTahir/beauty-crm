@@ -308,8 +308,41 @@ async def get_all_roles(session_token: Optional[str] = Cookie(None)):
     
     # Сортируем по уровню иерархии
     available_roles.sort(key=lambda x: x['level'], reverse=True)
-    
+
     return {"roles": available_roles}
+
+
+@router.get("/positions")
+async def get_all_positions():
+    """Получить все должности"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT id, name, name_en, name_ar, description, sort_order
+            FROM positions
+            ORDER BY sort_order, name
+        """)
+
+        positions = []
+        for row in c.fetchall():
+            positions.append({
+                'id': row[0],
+                'name': row[1],
+                'name_en': row[2],
+                'name_ar': row[3],
+                'description': row[4],
+                'sort_order': row[5]
+            })
+
+        return {"positions": positions}
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error getting positions: {e}", "api")
+        return {"positions": []}
+    finally:
+        conn.close()
 
 
 @router.get("/permissions")

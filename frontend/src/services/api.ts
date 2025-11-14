@@ -417,6 +417,10 @@ export class ApiClient {
     return response.json();
   }
 
+  async getPositions(): Promise<{ positions: Array<{id: number; name: string; name_en: string; name_ar: string; description: string; sort_order: number}> }> {
+    return this.request('/api/positions');
+  }
+
 
 
   async createUser(data: { username: string; password: string; full_name: string; email?: string; role: string }) {

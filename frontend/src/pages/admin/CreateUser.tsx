@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserPlus, ArrowLeft, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
+import { api } from '../../services/api';
 
 export default function CreateUser() {
   const navigate = useNavigate();
@@ -16,43 +17,57 @@ export default function CreateUser() {
     username: '',
     email: '',
     password: '',
-    role: 'employee'
+    role: 'employee',
+    position: ''
   });
   const [loading, setLoading] = useState(false);
+  const [positions, setPositions] = useState<Array<{id: number; name: string}>>([]);
+
+  useEffect(() => {
+    loadPositions();
+  }, []);
+
+  const loadPositions = async () => {
+    try {
+      const data = await api.getPositions();
+      setPositions(data.positions || []);
+    } catch (err) {
+      console.error('Error loading positions:', err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Валидация
     if (!formData.full_name.trim()) {
-      toast.error(t('createuser:errors.full_name_required'));
+      toast.error('Имя обязательно');
       return;
     }
 
     if (!formData.username.trim()) {
-      toast.error(t('createuser:errors.username_required'));
+      toast.error('Логин обязателен');
       return;
     }
 
     if (formData.username.length < 3) {
-      toast.error(t('createuser:errors.username_min_length'));
+      toast.error('Логин должен быть минимум 3 символа');
       return;
     }
 
     if (!formData.password) {
-      toast.error(t('createuser:errors.password_required'));
+      toast.error('Пароль обязателен');
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error(t('createuser:errors.password_min_length'));
+      toast.error('Пароль должен быть минимум 6 символов');
       return;
     }
 
     try {
       setLoading(true);
 
-      // Используем новый API endpoint для создания пользователя
       const response = await fetch(
         `${(window as any).VITE_API_URL || 'http://localhost:8000'}/api/users`,
         {
@@ -68,13 +83,13 @@ export default function CreateUser() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || t('createuser:errors.create_failed'));
+        throw new Error(result.error || 'Ошибка создания пользователя');
       }
 
-      toast.success(t('createuser:success.created'));
+      toast.success('Пользователь успешно создан');
       navigate('/admin/users');
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('createuser:errors.create_failed');
+      const message = err instanceof Error ? err.message : 'Ошибка создания пользователя';
       toast.error(`Ошибка: ${message}`);
       console.error('Error creating user:', err);
     } finally {
@@ -91,63 +106,63 @@ export default function CreateUser() {
         disabled={loading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        t('common:back_to_users')
+        Назад к пользователям
       </Button>
 
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <UserPlus className="w-8 h-8 text-pink-600" />
-            {t('createuser:title')}
+            Создание пользователя
           </h1>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">{t('createuser:full_name')} *</Label>
+              <Label htmlFor="full_name">Полное имя *</Label>
               <Input
                 id="full_name"
                 required
                 disabled={loading}
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                placeholder={t('createuser:placeholders.name')}
+                placeholder="Иванов Иван Иванович"
               />
             </div>
 
             <div>
-              <Label htmlFor="username">t('createuser:username') *</Label>
+              <Label htmlFor="username">Логин *</Label>
               <Input
                 id="username"
                 required
                 disabled={loading}
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder={t('createuser:placeholders.name')}
+                placeholder="ivan_ivanov"
               />
               <p className="text-sm text-gray-500 mt-1">
-                t('createuser:username_hint')
+                Минимум 3 символа. Будет использоваться для входа в систему
               </p>
             </div>
 
             <div>
-              <Label htmlFor="email">t('createuser:email')</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 disabled={loading}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder={t('createuser:placeholders.email')}
+                placeholder="user@example.com"
               />
               <p className="text-sm text-gray-500 mt-1">
-                t('createuser:email_hint')
+                Опционально. Для восстановления пароля
               </p>
             </div>
 
             <div>
-              <Label htmlFor="password">t('createuser:password') *</Label>
+              <Label htmlFor="password">Пароль *</Label>
               <Input
                 id="password"
                 type="password"
@@ -159,12 +174,12 @@ export default function CreateUser() {
                 placeholder="••••••"
               />
               <p className="text-sm text-gray-500 mt-1">
-                t('createuser:password_hint')
+                Минимум 6 символов
               </p>
             </div>
 
             <div>
-              <Label htmlFor="role">t('createuser:role') *</Label>
+              <Label htmlFor="role">Роль *</Label>
               <Select
                 value={formData.role}
                 onValueChange={(value: string) => setFormData({ ...formData, role: value })}
@@ -174,16 +189,44 @@ export default function CreateUser() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="employee">t('createuser:role_employee')</SelectItem>
-                  <SelectItem value="manager">t('createuser:manager')</SelectItem>
-                  <SelectItem value="admin">t('createuser:admin')</SelectItem>
+                  <SelectItem value="director">Директор</SelectItem>
+                  <SelectItem value="admin">Администратор</SelectItem>
+                  <SelectItem value="manager">Менеджер</SelectItem>
+                  <SelectItem value="sales">Продажи</SelectItem>
+                  <SelectItem value="marketer">Маркетолог</SelectItem>
+                  <SelectItem value="employee">Сотрудник</SelectItem>
                 </SelectContent>
               </Select>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
-                <p><strong>{t('createuser:role_employee')}:</strong> {t('createuser:role_employee_desc')}</p>
-                <p><strong>{t('createuser:role_manager')}:</strong> {t('createuser:role_manager_desc')}</p>
-                <p><strong>{t('createuser:role_admin')}:</strong> {t('createuser:role_admin_desc')}</p>
+                <p><strong>Директор:</strong> Полный доступ ко всем функциям</p>
+                <p><strong>Администратор:</strong> Управление пользователями и настройками</p>
+                <p><strong>Менеджер:</strong> Управление записями и клиентами</p>
+                <p><strong>Сотрудник:</strong> Просмотр своего расписания</p>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="position">Должность</Label>
+              <Select
+                value={formData.position}
+                onValueChange={(value: string) => setFormData({ ...formData, position: value })}
+                disabled={loading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите должность" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Не указана</SelectItem>
+                  {positions.map((pos) => (
+                    <SelectItem key={pos.id} value={pos.name}>
+                      {pos.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-gray-500 mt-1">
+                Должность для отображения (опционально)
+              </p>
             </div>
 
             <Button
@@ -194,12 +237,12 @@ export default function CreateUser() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  t('createuser:creating')
+                  Создание...
                 </>
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  t('createuser:title')
+                  Создать пользователя
                 </>
               )}
             </Button>
