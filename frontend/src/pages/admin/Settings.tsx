@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -40,6 +40,36 @@ export default function AdminSettings() {
     birthdayDaysAdvance: 7,
   });
 
+  // Profile state
+  const [profile, setProfile] = useState(null);
+  const [profileForm, setProfileForm] = useState({
+    username: '',
+    full_name: '',
+    email: '',
+    current_password: '',
+    new_password: '',
+    confirm_password: '',
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  // Subscriptions state
+  const [subscriptions, setSubscriptions] = useState<Record<string, {
+    is_subscribed: boolean
+    channels: {
+      email: boolean
+      telegram: boolean
+      instagram: boolean
+    }
+  }>>({});
+  const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
+
+  // Account deletion state
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
   // Roles state
   const [roles, setRoles] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
@@ -60,6 +90,8 @@ export default function AdminSettings() {
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
+    loadProfile();
+    loadSubscriptions();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -89,6 +121,132 @@ export default function AdminSettings() {
     }
   };
 
+  const loadProfile = async () => {
+    try {
+      const response = await api.getMyProfile();
+      if (response.success && response.profile) {
+        setProfile(response.profile);
+        setProfileForm({
+          username: response.profile.username,
+          full_name: response.profile.full_name,
+          email: response.profile.email || '',
+          current_password: '',
+          new_password: '',
+          confirm_password: '',
+        });
+      }
+    } catch (err) {
+      console.error('Error loading profile:', err);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t('file_too_large'));
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error(t('images_only'));
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      const uploadResponse = await api.uploadFile(file);
+      if (uploadResponse.url) {
+        const response = await api.updateMyProfile({ photo_url: uploadResponse.url });
+        if (response.success) {
+          setProfile(response.profile);
+          toast.success(t('photo_updated'));
+        }
+      }
+    } catch (err) {
+      toast.error(err.message || t('error_photo_upload'));
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (profileForm.username.length < 3) {
+      toast.error(t('error_username_too_short'));
+      return;
+    }
+
+    if (profileForm.full_name.length < 2) {
+      toast.error(t('error_name_too_short'));
+      return;
+    }
+
+    if (profileForm.email && !profileForm.email.includes('@')) {
+      toast.error(t('error_invalid_email'));
+      return;
+    }
+
+    if (profileForm.new_password) {
+      if (!profileForm.current_password) {
+        toast.error(t('error_enter_current_password'));
+        return;
+      }
+
+      if (profileForm.new_password.length < 6) {
+        toast.error(t('error_password_too_short'));
+        return;
+      }
+
+      if (profileForm.new_password !== profileForm.confirm_password) {
+        toast.error(t('error_passwords_dont_match'));
+        return;
+      }
+    }
+
+    try {
+      setSavingProfile(true);
+
+      const updateData = {
+        username: profileForm.username,
+        full_name: profileForm.full_name,
+        email: profileForm.email,
+      };
+
+      if (profileForm.new_password) {
+        updateData.current_password = profileForm.current_password;
+        updateData.new_password = profileForm.new_password;
+      }
+
+      const response = await api.updateMyProfile(updateData);
+
+      if (response.success) {
+        setProfile(response.profile);
+        toast.success(t('profile_updated'));
+        setProfileForm({
+          ...profileForm,
+          current_password: '',
+          new_password: '',
+          confirm_password: '',
+        });
+
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          user.username = response.profile.username;
+          user.full_name = response.profile.full_name;
+          user.email = response.profile.email;
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+      } else {
+        toast.error(response.error || t('error_update_profile'));
+      }
+    } catch (err) {
+      toast.error(err.message || t('error_update_profile'));
+    } finally {
+      setSavingProfile(false);
+    }
+  };
 
 
   const loadRoles = async () => {
@@ -250,6 +408,89 @@ export default function AdminSettings() {
     }
   };
 
+  // Subscriptions functions
+  const loadSubscriptions = async () => {
+    try {
+      setLoadingSubscriptions(true);
+      const response = await api.getUserSubscriptions();
+      setSubscriptions(response.subscriptions);
+      setAvailableSubscriptions(response.available_types);
+    } catch (err) {
+      console.error('Error loading subscriptions:', err);
+    } finally {
+      setLoadingSubscriptions(false);
+    }
+  };
+
+  const handleToggleSubscription = async (type: string, isSubscribed: boolean) => {
+    try {
+      await api.updateSubscription(type, isSubscribed);
+      setSubscriptions({
+        ...subscriptions,
+        [type]: {
+          ...subscriptions[type],
+          is_subscribed: isSubscribed
+        }
+      });
+      toast.success(t('subscription_updated'));
+    } catch (err) {
+      toast.error(t('error_updating_subscription'));
+    }
+  };
+
+  const handleToggleChannel = async (type: string, channel: 'email' | 'telegram' | 'instagram', enabled: boolean) => {
+    try {
+      await api.updateSubscription(type, subscriptions[type]?.is_subscribed || false, {
+        [channel]: enabled
+      });
+      setSubscriptions({
+        ...subscriptions,
+        [type]: {
+          ...subscriptions[type],
+          channels: {
+            ...subscriptions[type].channels,
+            [channel]: enabled
+          }
+        }
+      });
+      toast.success(t('channel_updated'));
+    } catch (err) {
+      toast.error(t('error_updating_channel'));
+    }
+  };
+
+  // Account deletion function
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      toast.error(t('enter_password_to_delete'));
+      return;
+    }
+
+    if (deleteConfirmText !== 'DELETE') {
+      toast.error(t('type_delete_to_confirm'));
+      return;
+    }
+
+    if (!window.confirm(t('are_you_absolutely_sure'))) {
+      return;
+    }
+
+    try {
+      setDeletingAccount(true);
+      await api.deleteAccount(deletePassword, true);
+      toast.success(t('account_deleted_successfully'));
+      setTimeout(() => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('session_token');
+        window.location.href = '/';
+      }, 1500);
+    } catch (err: any) {
+      toast.error(err.message || t('error_deleting_account'));
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -261,11 +502,15 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
-          
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 lg:w-auto">
+
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:general')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="profile" value="profile" className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('profile')}</span>
           </TabsTrigger>
           <TabsTrigger key="notifications" value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
@@ -278,6 +523,14 @@ export default function AdminSettings() {
           <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4" />
             <span className="hidden sm:inline">Диагностика</span>
+          </TabsTrigger>
+          <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('subscriptions')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
+            <Trash2 className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('danger_zone')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -428,6 +681,203 @@ export default function AdminSettings() {
                   {t('settings:save_changes')}
                 </Button>
               </form>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Profile Settings */}
+        <TabsContent value="profile">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h2 className="text-2xl text-gray-900 mb-6">{t('my_profile')}</h2>
+
+            {!profile ? (
+              <div className="flex justify-center py-8">
+                <Loader className="w-8 h-8 animate-spin text-pink-500" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Фото профиля */}
+                <div className="md:col-span-1">
+                  <div className="flex flex-col items-center">
+                    <div className="relative">
+                      {profile.photo_url ? (
+                        <img
+                          src={profile.photo_url}
+                          alt={profile.full_name}
+                          className="w-32 h-32 rounded-full object-cover border-4 border-gray-100"
+                        />
+                      ) : (
+                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                          <User className="w-16 h-16 text-white" />
+                        </div>
+                      )}
+
+                      <label
+                        htmlFor="photo-upload"
+                        className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        {uploadingPhoto ? (
+                          <Loader className="w-5 h-5 animate-spin text-pink-500" />
+                        ) : (
+                          <Camera className="w-5 h-5 text-gray-600" />
+                        )}
+                      </label>
+                      <input
+                        id="photo-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                        disabled={uploadingPhoto}
+                      />
+                    </div>
+
+                    <p className="text-sm text-gray-500 mt-4 text-center">
+                      {t('click_camera_to_upload')}<br />{t('to_upload_photo')}<br />{t('max_size')}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Форма редактирования */}
+                <div className="md:col-span-2">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="username">{t('username')}</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="username"
+                          value={profileForm.username}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, username: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="full_name">{t('full_name')}</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="full_name"
+                          value={profileForm.full_name}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, full_name: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">{t('email')}</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <Input
+                          id="email"
+                          type="email"
+                          value={profileForm.email}
+                          onChange={(e) =>
+                            setProfileForm({ ...profileForm, email: e.target.value })
+                          }
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200">
+                      <h3 className="font-medium text-gray-900 mb-4">
+                        {t('change_password')}
+                      </h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="current_password">{t('current_password')}</Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="current_password"
+                              type="password"
+                              value={profileForm.current_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  current_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="new_password">{t('new_password')}</Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="new_password"
+                              type="password"
+                              value={profileForm.new_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  new_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                              placeholder={t('new_password_placeholder')}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="confirm_password">
+                            {t('confirm_new_password')}
+                          </Label>
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="confirm_password"
+                              type="password"
+                              value={profileForm.confirm_password}
+                              onChange={(e) =>
+                                setProfileForm({
+                                  ...profileForm,
+                                  confirm_password: e.target.value,
+                                })
+                              }
+                              className="pl-10"
+                              placeholder={t('repeat_new_password')}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <Button
+                        onClick={handleSaveProfile}
+                        disabled={savingProfile}
+                        className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                      >
+                        {savingProfile ? (
+                          <>
+                            <Loader className="w-4 h-4 animate-spin mr-2" />
+                            Сохранение...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {t('save_changes')}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </TabsContent>
@@ -634,37 +1084,6 @@ export default function AdminSettings() {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg text-gray-900 mb-4">Диагностика системы</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Проверка работы бота, базы данных и настроек
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    try {
-                      const response = await fetch('/api/diagnostics/full', {
-                        credentials: 'include'
-                      });
-                      const data = await response.json();
-                      console.log('🔍 Диагностика:', data);
-
-                      // Показываем краткий результат
-                      const issues = data.issues || [];
-                      if (issues.length === 0) {
-                        toast.success('✅ Диагностика успешна! Все работает.');
-                      } else {
-                        toast.warning(`⚠️ Найдено ${issues.length} проблем. Проверь консоль (F12)`);
-                      }
-                    } catch (error) {
-                      console.error('Ошибка диагностики:', error);
-                      toast.error('Ошибка запуска диагностики');
-                    }
-                  }}
-                >
-                  🔍 Запустить диагностику
-                </Button>
-              </div>
-              <div>
                 <h3 className="text-lg text-gray-900 mb-4">{t('settings:backup')}</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   {t('settings:download_backup_for_security')}
@@ -737,6 +1156,156 @@ export default function AdminSettings() {
 
               <div className="text-sm text-gray-600">
                 💡 Результаты появятся в консоли браузера (нажмите F12)
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Subscriptions */}
+        <TabsContent value="subscriptions">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
+                <Mail className="w-6 h-6 text-pink-600" />
+                {t('email_subscriptions')}
+              </h2>
+              <p className="text-gray-600">{t('manage_email_subscriptions')}</p>
+            </div>
+
+            {loadingSubscriptions ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(availableSubscriptions).map(([type, info]) => {
+                  const sub = subscriptions[type] || { is_subscribed: false, channels: { email: true, telegram: true, instagram: true } };
+
+                  return (
+                    <div key={type} className="border border-gray-200 rounded-lg overflow-hidden">
+                      {/* Main Subscription Toggle */}
+                      <div className="flex items-start justify-between p-4 bg-gray-50">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900">{info.name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{info.description}</p>
+                        </div>
+                        <Switch
+                          checked={sub.is_subscribed}
+                          onCheckedChange={(checked) => handleToggleSubscription(type, checked)}
+                        />
+                      </div>
+
+                      {/* Channel Toggles - Only shown if subscribed */}
+                      {sub.is_subscribed && (
+                        <div className="p-4 space-y-3 bg-white border-t border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase">Каналы уведомлений</p>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm text-gray-700">Email</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.email}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'email', checked)}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Smartphone className="w-4 h-4 text-green-600" />
+                              <span className="text-sm text-gray-700">Telegram</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.telegram}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'telegram', checked)}
+                            />
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Camera className="w-4 h-4 text-purple-600" />
+                              <span className="text-sm text-gray-700">Instagram</span>
+                            </div>
+                            <Switch
+                              checked={sub.channels.instagram}
+                              onCheckedChange={(checked) => handleToggleChannel(type, 'instagram', checked)}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {Object.keys(availableSubscriptions).length === 0 && (
+                  <div className="text-center py-12 text-gray-500">
+                    {t('no_subscriptions_available')}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Danger Zone */}
+        <TabsContent value="danger">
+          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8">
+            <div className="mb-6">
+              <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
+                <Trash2 className="w-6 h-6 text-red-600" />
+                {t('danger_zone')}
+              </h2>
+              <p className="text-gray-600">{t('irreversible_actions')}</p>
+            </div>
+
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-red-900 mb-2">{t('delete_account')}</h3>
+              <p className="text-sm text-red-700 mb-6">
+                {t('delete_account_warning')}
+              </p>
+
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <Label htmlFor="deletePassword">{t('your_password')} *</Label>
+                  <Input
+                    id="deletePassword"
+                    type="password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder={t('enter_password')}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="deleteConfirm">
+                    {t('type_delete_to_confirm_label')}
+                  </Label>
+                  <Input
+                    id="deleteConfirm"
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                  />
+                </div>
+
+                <Button
+                  onClick={handleDeleteAccount}
+                  disabled={deletingAccount || !deletePassword || deleteConfirmText !== 'DELETE'}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                >
+                  {deletingAccount ? (
+                    <>
+                      <Loader className="w-4 h-4 mr-2 animate-spin" />
+                      {t('deleting')}...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {t('delete_my_account')}
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </div>

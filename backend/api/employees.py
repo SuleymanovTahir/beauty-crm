@@ -256,26 +256,133 @@ async def update_employee_birthday(
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "manager"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     try:
         data = await request.json()
         birthday = data.get('birthday')
-        
+
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
-        
+
         c.execute("""
             UPDATE users
             SET birthday = ?
             WHERE id = ?
         """, (birthday, employee_id))
-        
+
         conn.commit()
         conn.close()
-        
+
         log_info(f"Updated birthday for employee {employee_id}", "api")
-        
+
         return {"success": True}
     except Exception as e:
         log_error(f"Error updating birthday: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# ===== EMPLOYEE SELF-SERVICE PROFILE ENDPOINTS =====
+
+@router.get("/employees/my-profile")
+async def get_my_employee_profile(
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить профиль текущего сотрудника"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # Проверяем, есть ли у пользователя employee_id
+    employee_id = user.get("employee_id")
+    if not employee_id:
+        return JSONResponse({"error": "User is not linked to an employee"}, status_code=404)
+
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT id, full_name, name_ru, name_ar, position, position_ru, position_ar,
+                   experience, photo, bio, phone, email, instagram, is_active
+            FROM employees
+            WHERE id = ?
+        """, (employee_id,))
+
+        row = c.fetchone()
+        conn.close()
+
+        if not row:
+            return JSONResponse({"error": "Employee not found"}, status_code=404)
+
+        return {
+            "id": row[0],
+            "full_name": row[1],
+            "name_ru": row[2],
+            "name_ar": row[3],
+            "position": row[4],
+            "position_ru": row[5],
+            "position_ar": row[6],
+            "experience": row[7],
+            "photo": row[8],
+            "bio": row[9],
+            "phone": row[10],
+            "email": row[11],
+            "instagram": row[12],
+            "is_active": bool(row[13])
+        }
+    except Exception as e:
+        log_error(f"Error getting employee profile: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.put("/employees/my-profile")
+async def update_my_employee_profile(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить профиль текущего сотрудника"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    employee_id = user.get("employee_id")
+    if not employee_id:
+        return JSONResponse({"error": "User is not linked to an employee"}, status_code=404)
+
+    try:
+        data = await request.json()
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Определяем, какие поля обновлять
+        update_fields = []
+        update_values = []
+
+        allowed_fields = ['full_name', 'name_ru', 'name_ar', 'position', 'position_ru',
+                          'position_ar', 'experience', 'photo', 'bio', 'phone', 'email', 'instagram']
+
+        for field in allowed_fields:
+            if field in data:
+                update_fields.append(f"{field} = ?")
+                update_values.append(data[field])
+
+        if not update_fields:
+            return JSONResponse({"error": "No fields to update"}, status_code=400)
+
+        # Добавляем updated_at
+        update_fields.append("updated_at = datetime('now')")
+        update_values.append(employee_id)
+
+        query = f"UPDATE employees SET {', '.join(update_fields)} WHERE id = ?"
+        c.execute(query, tuple(update_values))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"Employee {employee_id} updated their profile", "api")
+
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating employee profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

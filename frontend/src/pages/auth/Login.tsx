@@ -159,7 +159,7 @@ export default function Login({ onLogin }: LoginProps) {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <Button
               variant="link"
               className="text-pink-600"
@@ -170,7 +170,14 @@ export default function Login({ onLogin }: LoginProps) {
           </div>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center space-y-3">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => navigate("/register")}
+          >
+            Нет аккаунта? Зарегистрироваться
+          </Button>
           <Button variant="outline" onClick={() => navigate("/")}>
             {t('login:return_to_home')}
           </Button>

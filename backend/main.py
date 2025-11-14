@@ -6,6 +6,7 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import time
+import os
 
 from utils.logger import logger, log_info, log_error, log_critical,log_warning
 from core.config import DATABASE_NAME
@@ -31,6 +32,10 @@ from api.settings import router as settings_router
 from api.public import router as public_router
 from api.notes import router as notes_router
 from api.client_auth import router as client_auth_router
+from api.user_management import router as user_management_router
+from api.data_export import router as data_export_router
+from api.subscriptions import router as subscriptions_router
+from api.broadcasts import router as broadcasts_router
 from scheduler import start_birthday_checker, start_client_birthday_checker
 from api.internal_chat import router as internal_chat_router
 
@@ -61,6 +66,10 @@ app.include_router(tags_router, prefix="/api")
 app.include_router(automation_router, prefix="/api")
 app.include_router(reports_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
+app.include_router(user_management_router)  # User management API
+app.include_router(data_export_router)  # Export/Import API
+app.include_router(subscriptions_router, prefix="/api")  # Subscriptions API
+app.include_router(broadcasts_router, prefix="/api")  # Broadcasts API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -214,29 +223,29 @@ async def run_migration(migration_name: str):
         log_info(f"🔧 Запуск миграции: {migration_name}", "migrations")
         
         if migration_name == "bot_settings":
-            from db.migrations.migrate_bot_settings import migrate_settings
+            from db.migrations.data.migrate_bot_settings import migrate_settings
             result = migrate_settings()
             return {"success": True, "migration": migration_name, "result": result}
-        
+
         elif migration_name == "salon_settings":
-            from db.migrations.migrate_salon_settings import migrate_salon_settings
+            from db.migrations.data.migrate_salon_settings import migrate_salon_settings
             result = migrate_salon_settings()
             return {"success": True, "migration": migration_name, "result": result}
-        
+
         elif migration_name == "employees":
-            from db.migrations.create_employees import create_employees_tables
+            from db.migrations.schema.create_employees import create_employees_tables
             create_employees_tables()
-            from db.migrations.seed_employees import seed_employees
+            from db.migrations.data.seed_employees import seed_employees
             seed_employees()
             return {"success": True, "migration": migration_name}
-        
+
         elif migration_name == "permissions":
-            from db.migrations.add_permissions_system import add_permissions_system
+            from db.migrations.schema.add_permissions_system import add_permissions_system
             add_permissions_system()
             return {"success": True, "migration": migration_name}
-        
+
         elif migration_name == "manager_consultation":
-            from db.migrations.add_manager_consultation import add_manager_consultation_field
+            from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
             add_manager_consultation_field()
             return {"success": True, "migration": migration_name}
         
@@ -317,80 +326,35 @@ async def startup_event():
     try:
         log_info("=" * 70, "startup")
         log_info("🚀 Запуск CRM системы...", "startup")
-        
-        # Инициализация БД
-        init_database()
-        
-        # Раскомментируйте следующие строки для первичной миграции:
-        
-        # ================================
-        # 1. Настройки салона (безопасно)
-        # ================================
-        # from db.migrations.migrate_salon_settings import migrate_salon_settings
-        # migrate_salon_settings()
 
         # ================================
-        # 2. Система прав доступа (безопасно)
+        # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
         # ================================
-        # from db.migrations.add_permissions_system import add_permissions_system
-        # add_permissions_system()
-
-        # ================================
-        # 3. Режимы бота (безопасно)
-        # ================================
-        # from db.migrations.add_bot_modes import add_bot_mode_fields
-        # add_bot_mode_fields()
-
-        # ================================
-        # 4. Поле master для записей (из варианта №1)
-        # ================================
-        # from db.migrations.add_master_field import add_master_field
-        # add_master_field()
-
-        # ================================
-        # 5. Консультация менеджера (из варианта №2)
-        # ================================
-        # from db.migrations.add_manager_consultation import add_manager_consultation_field
-        # add_manager_consultation_field()
-
-        # ================================
-        # 6. Услуги (безопасно)
-        # ================================
-        # from db.migrations.migrate_services import migrate_services
-        # migrate_services()
-
-        # ================================
-        # 7. Настройки бота (безопасно)
-        # ================================
-        # from db.migrations.migrate_bot_settings import migrate_settings
-        # migrate_settings()
-
-        # ============================================================
-        # 8. ОПЦИОНАЛЬНО — Только если БД пустая или тестовая!
-        # ============================================================
-        # from db.migrations.create_employees import create_employees_tables
-        # create_employees_tables()
-
-        # ============================================================
-        # 9. ОПЦИОНАЛЬНО — генерация тестовых сотрудников
-        # ============================================================
-        # from db.migrations.seed_employees import seed_employees
-        # seed_employees()
+        # ✅ ЗАПУСК ВСЕХ МИГРАЦИЙ (автоматически при старте)
+        try:
+            from db.migrations.run_all_migrations import run_all_migrations
+            log_info("🔧 Запуск миграций...", "startup")
+            # run_all_migrations()
+        except Exception as e:
+            log_error(f"⚠️ Ошибка миграций (не критично): {e}", "startup")
 
         bot = get_bot()
         log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
 
-        # ✅ Загрузка и проверка модулей
-        from modules import print_modules_status, is_module_enabled
-        print_modules_status()
+        # ✅ Загрузка и проверка модулей (опционально)
+        try:
+            # from modules import print_modules_status, is_module_enabled
+            # print_modules_status()
 
-        # ✅ Запуск планировщиков (если модуль включен)
-        if is_module_enabled('scheduler'):
-            start_birthday_checker()  # Дни рождения сотрудников
-            start_client_birthday_checker()  # Поздравления клиентов
-            log_info("✅ Планировщики запущены", "startup")
-        else:
-            log_warning("⚠️  Модуль scheduler выключен", "startup")
+            # ✅ Запуск планировщиков (если модуль включен)
+            if is_module_enabled('scheduler'):
+                # start_birthday_checker()  # Дни рождения сотрудников
+                # start_client_birthday_checker()  # Поздравления клиентов
+                log_info("✅ Планировщики запущены", "startup")
+            else:
+                log_warning("⚠️  Модуль scheduler выключен", "startup")
+        except Exception as e:
+            log_warning(f"⚠️  Модули не загружены: {e}", "startup")
 
         log_info("✅ CRM готова к работе!", "startup")
         log_info("=" * 70, "startup")

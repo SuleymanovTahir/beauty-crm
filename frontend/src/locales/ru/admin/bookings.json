@@ -23,6 +23,7 @@
   "add_booking": "Добавить запись",
   "select_client": "Выберите клиента",
   "select_service": "Выберите услугу",
+  "master": "Мастер",
   "select_master": "Выберите мастера",
   "time": "Время",
   "amount": "Сумма",

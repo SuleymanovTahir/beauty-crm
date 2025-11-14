@@ -17,6 +17,9 @@ import Users from './pages/admin/Users';
 import Calendar from './pages/admin/Calendar';
 import Settings from './pages/admin/Settings';
 import BotSettings from './pages/admin/BotSettings';
+import PendingUsers from './pages/admin/PendingUsers';
+import PermissionManagement from './pages/admin/PermissionManagement';
+import Broadcasts from './pages/admin/Broadcasts';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -45,6 +48,7 @@ import About from './pages/public/About';
 import Contacts from './pages/public/Contacts';
 import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
+import Team from './pages/public/Team';
 import EditUser from './pages/admin/EditUser';
 import UserCabinet from './pages/public/UserCabinet';
 import DataDeletion from './pages/public/DataDeletion';
@@ -53,6 +57,7 @@ import ClientCabinet from './pages/public/ClientCabinet';
 
 // Auth Pages
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
 
 interface User {
   id: number;
@@ -163,8 +168,8 @@ export default function App() {
       <div className="min-h-screen bg-gray-50">
         <Routes>
           {/* Auth Routes */}
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               currentUser ? (
                 // ✅ ОБНОВИ РЕДИРЕКТ
@@ -179,7 +184,18 @@ export default function App() {
               ) : (
                 <Login onLogin={handleLogin} />
               )
-            } 
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              currentUser ? (
+                <Navigate to="/admin/dashboard" replace />
+              ) : (
+                <Register />
+              )
+            }
           />
 
           {/* Admin Routes - Protected */}
@@ -210,9 +226,12 @@ export default function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="users" element={<Users />} />
             <Route path="users/create" element={<CreateUser />} />
+            <Route path="users/pending" element={<PendingUsers />} />
+            <Route path="users/permissions" element={<PermissionManagement />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="settings" element={<Settings />} />
             <Route path="bot-settings" element={<BotSettings />} />
+            <Route path="broadcasts" element={<Broadcasts />} />
             <Route path="" element={<Navigate to="dashboard" replace />} />
             <Route path="users/:id/edit" element={<EditUser />} />
           </Route>
@@ -317,6 +336,7 @@ export default function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="price-list" element={<PriceList />} />
+            <Route path="team" element={<Team />} />
             <Route path="booking" element={<Booking />} />
             <Route path="client/cabinet" element={<ClientCabinet />} />
             <Route path="success" element={<Success />} />

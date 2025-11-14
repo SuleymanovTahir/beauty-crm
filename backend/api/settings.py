@@ -287,7 +287,7 @@ async def get_all_roles(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    from config import ROLES
+    from core.config import ROLES
     
     # Показываем только те роли, которыми может управлять текущий пользователь
     available_roles = []
@@ -319,7 +319,7 @@ async def get_all_permissions(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    from config import PERMISSION_DESCRIPTIONS
+    from core.config import PERMISSION_DESCRIPTIONS
     
     return {"permissions": PERMISSION_DESCRIPTIONS}
 
@@ -334,7 +334,7 @@ async def get_role_permissions(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    from config import ROLES, PERMISSION_DESCRIPTIONS
+    from core.config import ROLES, PERMISSION_DESCRIPTIONS
     
     role_data = ROLES.get(role_key)
     if not role_data:

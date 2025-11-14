@@ -14,6 +14,7 @@ interface User {
   full_name: string;
   email: string;
   role: string;
+  position?: string;
   created_at: string;
 }
 
@@ -238,6 +239,7 @@ export default function Users() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_username')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Должность</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
@@ -262,6 +264,7 @@ export default function Users() {
                         {roleConfig[user.role as keyof typeof roleConfig]?.label || user.role}
                       </Badge>
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{user.position || '-'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {new Date(user.created_at).toLocaleDateString('ru-RU')}
                     </td>

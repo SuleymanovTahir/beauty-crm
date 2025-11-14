@@ -211,21 +211,24 @@ export default function Contacts() {
         </div>
       </section>
 
-      <section className="pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gray-200 rounded-2xl overflow-hidden h-[450px]">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.073739144155!2d55.139160315018805!3d25.077796983952966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b2e2c0e0e0d%3A0x0!2sDubai%20Marina!5e0!3m2!1sen!2sae!4v1634567890123!5m2!1sen!2sae"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              title="Salon Location"
-            ></iframe>
+      {salonInfo.address && (
+        <section className="pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl text-gray-900 mb-8 text-center">{t('contacts:find_us')}</h2>
+            <div className="bg-gray-200 rounded-2xl overflow-hidden h-[450px]">
+              <iframe
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(salonInfo.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                title="Salon Location"
+              ></iframe>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

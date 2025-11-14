@@ -309,6 +309,7 @@ def _get_default_bot_settings() -> dict:
         "ad_campaign_detection": "",
         "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
         "manager_consultation_prompt": "",
+        "booking_time_logic": "Предлагай конкретное время (например: 'Есть окно завтра в 14:00 или послезавтра в 17:00')",
         "booking_data_collection": """...""",
         "booking_availability_instructions": """...""",
     }

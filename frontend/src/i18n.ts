@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { autoDetectAndSetLanguage } from './utils/languageDetection';
 
 const languages = ["ru","en","es","ar","hi","kk","pt","fr","de"];
 const namespaces = [
@@ -38,6 +39,7 @@ const namespaces = [
   'public/Terms',
   'public/UserCabinet',
   'auth/Login',
+  'auth/Register',
   'layouts/AdminLayout',
   'layouts/EmployeeLayout',
   'layouts/ManagerLayout',
@@ -78,5 +80,12 @@ i18n
       caches: ['localStorage']
     }
   });
+
+// Auto-detect language based on country (only on first visit)
+autoDetectAndSetLanguage().then((detectedLang) => {
+  if (i18n.language !== detectedLang) {
+    i18n.changeLanguage(detectedLang);
+  }
+});
 
 export default i18n;

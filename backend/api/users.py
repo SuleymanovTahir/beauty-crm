@@ -98,11 +98,11 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         c = conn.cursor()
         
         c.execute("""
-            SELECT id, username, full_name, email, role, created_at, is_active
+            SELECT id, username, full_name, email, role, position, created_at, is_active
             FROM users
             ORDER BY created_at DESC
         """)
-        
+
         users = []
         for row in c.fetchall():
             users.append({
@@ -111,6 +111,7 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "full_name": row["full_name"],
                 "email": row["email"],
                 "role": row["role"],
+                "position": row["position"],
                 "created_at": row["created_at"],
                 "is_active": row["is_active"]
             })
@@ -194,20 +195,39 @@ async def delete_user_api(
 ):
     """Удалить пользователя"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
+    if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     if user["id"] == user_id:
-        return JSONResponse({"error": "Cannot delete yourself"}, status_code=400)
-    
+        return JSONResponse({"error": "Нельзя удалить самого себя"}, status_code=400)
+
+    # Проверяем роль удаляемого пользователя
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+    target_user = c.fetchone()
+    conn.close()
+
+    if not target_user:
+        return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
+
+    target_role = target_user[0]
+
+    # Админ не может удалять директоров
+    if user["role"] == "admin" and target_role == "director":
+        return JSONResponse(
+            {"error": "Админ не может удалять директоров"},
+            status_code=403
+        )
+
     success = delete_user(user_id)
-    
+
     if success:
-        log_activity(user["id"], "delete_user", "user", str(user_id), 
-                    "User deleted")
-        return {"success": True, "message": "User deleted"}
-    
-    return JSONResponse({"error": "Delete failed"}, status_code=400)
+        log_activity(user["id"], "delete_user", "user", str(user_id),
+                    f"Deleted user with role: {target_role}")
+        return {"success": True, "message": "Пользователь удалён"}
+
+    return JSONResponse({"error": "Ошибка удаления"}, status_code=400)
 
 
 # После строки 286 (после функции update_user_profile)
@@ -224,7 +244,7 @@ async def update_user_role(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     # Проверяем что пользователь может управлять ролями
-    from config import ROLES, can_manage_role
+    from core.config import ROLES, can_manage_role
     
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя изменить свою роль"}, status_code=400)
@@ -316,34 +336,40 @@ async def change_user_password(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    # Проверка прав: админ ИЛИ сам пользователь
-    if user["role"] != "admin" and user["id"] != user_id:
+
+    # Проверка прав: админ/директор ИЛИ сам пользователь
+    if user["role"] not in ["admin", "director"] and user["id"] != user_id:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     data = await request.json()
     new_password = data.get('new_password')
     old_password = data.get('old_password')
-    
+
     if not new_password or len(new_password) < 6:
         return JSONResponse(
-            {"error": "Пароль должен быть минимум 6 символов"}, 
+            {"error": "Пароль должен быть минимум 6 символов"},
             status_code=400
         )
-    
+
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
-        # Если не админ - проверяем старый пароль
-        if user["role"] != "admin":
+        # Если не админ и не директор - проверяем старый пароль
+        if user["role"] not in ["admin", "director"]:
+            if not old_password:
+                conn.close()
+                return JSONResponse(
+                    {"error": "Необходимо указать текущий пароль"},
+                    status_code=400
+                )
             old_password_hash = hashlib.sha256(old_password.encode()).hexdigest()
-            c.execute("SELECT id FROM users WHERE id = ? AND password_hash = ?", 
+            c.execute("SELECT id FROM users WHERE id = ? AND password_hash = ?",
                      (user_id, old_password_hash))
             if not c.fetchone():
                 conn.close()
                 return JSONResponse(
-                    {"error": "Неверный текущий пароль"}, 
+                    {"error": "Неверный текущий пароль"},
                     status_code=400
                 )
         

@@ -164,13 +164,12 @@ class PromptBuilder:
         """Секция IDENTITY - из БД"""
         bot_name = self.bot_settings.get('bot_name', 'AI-ассистент')
         salon_name = self.salon.get('name', 'Салон красоты')
-        booking_url = self.salon.get('booking_url', '')
-
         return f"""=== IDENTITY ===
 Ты — {bot_name}, AI-ассистент салона "{salon_name}" в Dubai.
 
 ТВОЯ МИССИЯ:
-Консультировать клиентов по услугам и направлять на онлайн-запись: {booking_url}"""
+Консультировать клиентов по услугам и САМОСТОЯТЕЛЬНО предлагать конкретное время и дату для записи.
+НЕ отправляй клиента на внешние сайты или ссылки - ты сам можешь предложить удобное время."""
 
     def _build_personality(self) -> str:
         """Секция PERSONALITY - из БД"""
@@ -294,7 +293,8 @@ class PromptBuilder:
     def _get_employees_list(self) -> str:
         """Получить список активных сотрудников из БД"""
         try:
-            employees = get_all_employees(active_only=True)
+            # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
+            employees = get_all_employees(active_only=True, service_providers_only=True)
             if not employees:
                 return "Наши мастера"
 
@@ -321,18 +321,12 @@ class PromptBuilder:
 
     def _build_booking_rules(self) -> str:
         """Правила записи - из БД"""
-        booking_msg = self.bot_settings.get(
-            'booking_redirect_message',
-            'Запись онлайн: {BOOKING_URL}'
-        )
-
-        booking_url = self.salon.get('booking_url', '')
-
         # ✅ Получаем список мастеров из БД
         employees_list = self._get_employees_list()
 
         return f"""=== 📋 BOOKING RULES - ОБЯЗАТЕЛЬНО! ===
-{booking_msg.replace('{BOOKING_URL}', booking_url)}
+📝 ТЫ САМ ПРЕДЛАГАЕШЬ ВРЕМЯ И ДАТУ - не отправляй на внешние ссылки!
+Когда клиент просит записаться - предложи конкретное время (например: "Есть окно завтра в 14:00 или 17:00. Какое удобнее?").
 
 🎯 ВАЖНЫЕ ИНСТРУКЦИИ:
 
@@ -357,8 +351,7 @@ class PromptBuilder:
 Адрес: {self.salon.get('address', '')}
 Часы: {self.salon.get('hours', '')}
 Телефон: {self.salon.get('phone', '')}
-Google Maps: {self.salon.get('google_maps', '')}
-Онлайн-запись: {self.salon.get('booking_url', '')}"""
+Google Maps: {self.salon.get('google_maps', '')}"""
 
     def _build_services_list(self) -> str:
         """Список услуг из БД"""
@@ -417,8 +410,9 @@ Google Maps: {self.salon.get('google_maps', '')}
     def _build_masters_list(self, client_language: str = 'ru') -> str:
         """Список мастеров салона"""
         from db.employees import get_all_employees
-        
-        employees = get_all_employees(active_only=True)
+
+        # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
+        employees = get_all_employees(active_only=True, service_providers_only=True)
         
         if not employees:
             return ""
@@ -861,11 +855,8 @@ Google Maps: {self.salon.get('google_maps', '')}
                 if slots:
                     availability_text += f"• {emp_name_display.upper()}: {', '.join(slots)}\n"
 
-        booking_url = self.salon.get('booking_url', '')
-
         # ✅ #14 - Альтернативы если время не подходит
         availability_text += f"\n\n{instructions}"
-        availability_text += f"\n📲 Выбрать самому: {booking_url}"
 
         conn.close()
         return availability_text

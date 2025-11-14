@@ -29,6 +29,11 @@ const api = {
     return res.json();
   },
 
+  async getUsers() {
+    const res = await fetch(`${this.baseURL}/api/users`, { credentials: 'include' });
+    return res.json();
+  },
+
   async createBooking(data: any) {
     const res = await fetch(`${this.baseURL}/api/bookings`, {
       method: 'POST',
@@ -101,6 +106,7 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [masters, setMasters] = useState<any[]>([]);
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
@@ -118,6 +124,7 @@ export default function Bookings() {
     date: '',
     time: '',
     revenue: 0,
+    master: '',
   });
 
   // Export states
@@ -185,18 +192,62 @@ export default function Bookings() {
     try {
       setLoading(true);
       setError(null);
-      const [bookingsData, clientsData, servicesData] = await Promise.all([
-        api.getBookings(),
-        api.getClients(),
-        api.getServices()
-      ]);
+
+      console.log('🔄 [Bookings] Загрузка данных...');
+
+      let bookingsData, clientsData, servicesData, usersData;
+
+      try {
+        console.log('📋 [Bookings] Загрузка bookings...');
+        bookingsData = await api.getBookings();
+        console.log('✅ [Bookings] Bookings загружены:', bookingsData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки bookings:', err);
+        throw new Error(`getBookings() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('👥 [Bookings] Загрузка clients...');
+        clientsData = await api.getClients();
+        console.log('✅ [Bookings] Clients загружены:', clientsData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки clients:', err);
+        throw new Error(`getClients() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('💅 [Bookings] Загрузка services...');
+        servicesData = await api.getServices();
+        console.log('✅ [Bookings] Services загружены:', servicesData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки services:', err);
+        throw new Error(`getServices() failed: ${err.message}`);
+      }
+
+      try {
+        console.log('🧑‍💼 [Bookings] Загрузка users (masters)...');
+        if (typeof api.getUsers !== 'function') {
+          throw new Error('api.getUsers is not a function! Check api object definition');
+        }
+        usersData = await api.getUsers();
+        console.log('✅ [Bookings] Users загружены:', usersData);
+      } catch (err: any) {
+        console.error('❌ [Bookings] Ошибка загрузки users:', err);
+        throw new Error(`getUsers() failed: ${err.message}`);
+      }
 
       setBookings(bookingsData.bookings || []);
       setClients(clientsData.clients || []);
       setServices(servicesData.services || []);
+      setMasters(usersData.users?.filter((u: any) =>
+        u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
+      ) || []);
+
+      console.log('✅ [Bookings] Все данные загружены успешно!');
     } catch (err: any) {
+      console.error('❌ [Bookings] Критическая ошибка:', err);
       setError(err.message);
-      toast.error(`${t('bookings:error')}: ${err.message}`);
+      toast.error(`Ошибка загрузки данных: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -236,6 +287,7 @@ export default function Bookings() {
         date: addForm.date,
         time: addForm.time,
         revenue: addForm.revenue || selectedService.price,
+        master: addForm.master,
       });
 
       toast.success(t('bookings:booking_created'));
@@ -254,7 +306,7 @@ export default function Bookings() {
     setServiceSearch('');
     setSelectedClient(null);
     setSelectedService(null);
-    setAddForm({ phone: '', date: '', time: '', revenue: 0 });
+    setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '' });
   };
 
   const filteredClients = clients.filter((c: any) =>
@@ -1107,6 +1159,29 @@ export default function Bookings() {
                     }}
                   />
                 </div>
+              </div>
+
+              {/* Master Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
+                  {t('bookings:master')}
+                </label>
+                <select
+                  value={addForm.master}
+                  onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
+                  style={{
+                    width: '100%', padding: '0.75rem',
+                    border: '1px solid #d1d5db', borderRadius: '0.5rem',
+                    fontSize: '0.875rem', boxSizing: 'border-box'
+                  }}
+                >
+                  <option value="">{t('bookings:select_master')}</option>
+                  {masters.map((m: any) => (
+                    <option key={m.id} value={m.full_name}>
+                      {m.full_name} ({m.role})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Phone */}

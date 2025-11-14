@@ -1,1 +1,43 @@
-{}
+{
+  "loading": "Загрузка данных воронки",
+  "title": "Воронка продаж",
+  "subtitle": "Анализ конверсии и оптимизация процесса записи",
+  "conversion": {
+    "visitor_to_engaged": "Посетители → Вовлечённые",
+    "engaged_to_booking": "Вовлечённые → Начали запись",
+    "booking_to_booked": "Начали запись → Записались",
+    "booked_to_completed": "Записались → Посетили"
+  },
+  "funnel_chart": "Визуализация воронки",
+  "losses": "Потери: {{count}}",
+  "key_metrics": "Ключевые метрики",
+  "total_conversion": "Общая конверсия",
+  "total_losses": "Всего потерь",
+  "successful_visits": "Успешных визитов",
+  "recommendations_title": "Рекомендации",
+  "recommendations": {
+    "increase_engagement": {
+      "title": "Повысить вовлечённость",
+      "description": "Теряется {{count}} посетителей на этапе вовлечения",
+      "suggestion": "Улучшите контент, добавьте интерактивные элементы"
+    },
+    "optimize_form": {
+      "title": "Оптимизировать форму записи",
+      "description": "{{percent}}% заинтересованных не начинают запись",
+      "suggestion": "Упростите форму записи, добавьте автозаполнение"
+    },
+    "reduce_noshow": {
+      "title": "Снизить количество no-show",
+      "description": "{{count}} клиентов ({{percent}}%) не пришли на запись",
+      "suggestion": "Настройте автоматические напоминания за 24 и 2 часа"
+    }
+  },
+  "all_good": "Всё отлично!",
+  "stage_details": "Детали по этапам",
+  "table": {
+    "stage": "Этап",
+    "count": "Количество",
+    "percentage": "% от общего",
+    "losses": "Потери"
+  }
+}

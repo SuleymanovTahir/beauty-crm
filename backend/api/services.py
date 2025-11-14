@@ -158,7 +158,7 @@ async def toggle_service_status(
     
     try:
         import sqlite3
-        from config import DATABASE_NAME
+        from core.config import DATABASE_NAME
         from datetime import datetime
         
         log_info(f"🔄 API: Toggle request for service {service_id}", "api")

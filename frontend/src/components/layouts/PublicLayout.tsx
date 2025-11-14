@@ -1,7 +1,7 @@
 //src/components/PublicLayout.tsx
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Phone, Mail, Instagram, Menu, X } from 'lucide-react';
+import { Phone, Mail, Instagram, Menu, X, MessageCircle } from 'lucide-react';
 import { apiClient } from '../../api/client';
 import PublicLanguageSwitcher from '../PublicLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -64,10 +64,26 @@ export default function PublicLayout() {
 
             {/* Contact Info & CTA */}
             <div className="hidden lg:flex items-center gap-4">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm">{salonInfo.phone}</span>
-              </div>
+              {salonInfo.phone && (
+                <a
+                  href={`tel:${salonInfo.phone}`}
+                  className="flex items-center gap-2 text-gray-600 hover:text-pink-600 transition-colors"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm">{salonInfo.phone}</span>
+                </a>
+              )}
+              {salonInfo.whatsapp && (
+                <a
+                  href={`https://wa.me/${salonInfo.whatsapp.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-green-600 hover:text-green-700 transition-colors"
+                  title="WhatsApp"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </a>
+              )}
               <PublicLanguageSwitcher />
               <Link
                 to="/cabinet"
@@ -148,18 +164,48 @@ export default function PublicLayout() {
             <div>
             <h3 className="text-lg mb-4">{t('public:footer.contacts')}</h3>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>{salonInfo.phone}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>{salonInfo.email}</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Instagram className="w-4 h-4" />
-                  <span>{salonInfo.instagram}</span>
-                </li>
+                {salonInfo.phone && (
+                  <li className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    <a href={`tel:${salonInfo.phone}`} className="hover:text-white transition-colors">
+                      {salonInfo.phone}
+                    </a>
+                  </li>
+                )}
+                {salonInfo.email && (
+                  <li className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    <a href={`mailto:${salonInfo.email}`} className="hover:text-white transition-colors">
+                      {salonInfo.email}
+                    </a>
+                  </li>
+                )}
+                {salonInfo.instagram && (
+                  <li className="flex items-center gap-2">
+                    <Instagram className="w-4 h-4" />
+                    <a
+                      href={`https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white transition-colors"
+                    >
+                      {salonInfo.instagram}
+                    </a>
+                  </li>
+                )}
+                {salonInfo.whatsapp && (
+                  <li className="flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    <a
+                      href={`https://wa.me/${salonInfo.whatsapp.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-white transition-colors"
+                    >
+                      WhatsApp
+                    </a>
+                  </li>
+                )}
               </ul>
             </div>
 

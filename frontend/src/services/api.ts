@@ -74,6 +74,51 @@ export class ApiClient {
     return response
   }
 
+  async register(username: string, password: string, full_name: string, email: string, privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
+    const formData = new URLSearchParams()
+    formData.append('username', username)
+    formData.append('password', password)
+    formData.append('full_name', full_name)
+    formData.append('email', email)
+    formData.append('privacy_accepted', privacy_accepted.toString())
+    formData.append('newsletter_subscribed', newsletter_subscribed.toString())
+
+    return this.request<any>('/api/register', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async verifyEmail(email: string, code: string) {
+    const formData = new URLSearchParams()
+    formData.append('email', email)
+    formData.append('code', code)
+
+    return this.request<any>('/api/verify-email', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async resendVerification(email: string) {
+    const formData = new URLSearchParams()
+    formData.append('email', email)
+
+    return this.request<any>('/api/resend-verification', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
   async askBotAdvice(question: string, context?: string) {
     return this.request('/api/chat/ask-bot', {
       method: 'POST',
@@ -644,6 +689,207 @@ export class ApiClient {
     })
   }
 
+  // ===== EMPLOYEE PROFILE (Self-Service) =====
+  async getMyEmployeeProfile() {
+    return this.request<any>('/api/employees/my-profile')
+  }
+
+  async updateMyEmployeeProfile(data: {
+    full_name?: string;
+    name_ru?: string;
+    name_ar?: string;
+    position?: string;
+    position_ru?: string;
+    position_ar?: string;
+    experience?: string;
+    photo?: string;
+    bio?: string;
+    phone?: string;
+    email?: string;
+    instagram?: string;
+  }) {
+    return this.request('/api/employees/my-profile', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async uploadFile(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(`${this.baseURL}/api/upload`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: response.statusText }))
+      throw new Error(error.error || error.detail || 'Upload failed')
+    }
+
+    return response.json()
+  }
+
+  // ===== USER MANAGEMENT =====
+  async getPendingUsers() {
+    return this.request<any>('/api/pending-users')
+  }
+
+  async approveUser(userId: number) {
+    return this.request(`/api/users/${userId}/approve`, {
+      method: 'POST',
+    })
+  }
+
+  async rejectUser(userId: number) {
+    return this.request(`/api/users/${userId}/reject`, {
+      method: 'POST',
+    })
+  }
+
+  async grantPermission(userId: number, resource: string) {
+    return this.request(`/api/users/${userId}/permissions/${resource}/grant`, {
+      method: 'POST',
+    })
+  }
+
+  async revokePermission(userId: number, resource: string) {
+    return this.request(`/api/users/${userId}/permissions/${resource}/revoke`, {
+      method: 'POST',
+    })
+  }
+
+  // ===== MY PROFILE =====
+  async getMyProfile() {
+    return this.request<any>('/api/my-profile')
+  }
+
+  async updateMyProfile(data: {
+    username?: string
+    full_name?: string
+    email?: string
+    current_password?: string
+    new_password?: string
+    photo_url?: string
+  }) {
+    return this.request('/api/my-profile', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // ===== SUBSCRIPTIONS =====
+  async getUserSubscriptions() {
+    return this.request<{
+      subscriptions: Record<string, {
+        is_subscribed: boolean
+        channels: {
+          email: boolean
+          telegram: boolean
+          instagram: boolean
+        }
+      }>
+      available_types: Record<string, { name: string; description: string }>
+    }>('/api/subscriptions')
+  }
+
+  async updateSubscription(
+    subscriptionType: string,
+    isSubscribed: boolean,
+    channels?: { email?: boolean; telegram?: boolean; instagram?: boolean }
+  ) {
+    const payload: any = {
+      subscription_type: subscriptionType,
+      is_subscribed: isSubscribed,
+    }
+
+    if (channels) {
+      if (channels.email !== undefined) payload.email_enabled = channels.email
+      if (channels.telegram !== undefined) payload.telegram_enabled = channels.telegram
+      if (channels.instagram !== undefined) payload.instagram_enabled = channels.instagram
+    }
+
+    return this.request('/api/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  }
+
+  async updateMultipleSubscriptions(subscriptions: Array<{ subscription_type: string; is_subscribed: boolean }>) {
+    return this.request('/api/subscriptions/bulk', {
+      method: 'POST',
+      body: JSON.stringify(subscriptions),
+    })
+  }
+
+  // ===== ACCOUNT DELETION =====
+  async deleteAccount(password: string, confirm: boolean = true) {
+    return this.request('/api/account/delete', {
+      method: 'POST',
+      body: JSON.stringify({
+        password,
+        confirm,
+      }),
+    })
+  }
+
+  // ===== BROADCASTS =====
+  async previewBroadcast(data: {
+    subscription_type: string
+    channels: string[]
+    subject: string
+    message: string
+    target_role?: string
+  }) {
+    return this.request<{
+      total_users: number
+      by_channel: Record<string, number>
+      users_sample: Array<{
+        id: number
+        username: string
+        full_name: string
+        role: string
+        contact: string
+        channel: string
+      }>
+    }>('/api/broadcasts/preview', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async sendBroadcast(data: {
+    subscription_type: string
+    channels: string[]
+    subject: string
+    message: string
+    target_role?: string
+  }) {
+    return this.request<{
+      success: boolean
+      results: Record<string, { sent: number; failed: number }>
+      message: string
+    }>('/api/broadcasts/send', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getBroadcastHistory() {
+    return this.request<{
+      history: Array<{
+        id: number
+        subscription_type: string
+        channels: string[]
+        subject: string
+        total_sent: number
+        created_at: string
+        results: string
+      }>
+    }>('/api/broadcasts/history')
+  }
 
 
 }

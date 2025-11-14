@@ -102,7 +102,7 @@ def check_permission(user: dict, permission: str) -> bool:
     Returns:
         bool: True если право есть
     """
-    from config import ROLES
+    from core.config import ROLES
     
     # Директор имеет все права
     if user.get('role') == 'director':

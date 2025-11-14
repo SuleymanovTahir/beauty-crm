@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X } from 'lucide-react';
+import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -30,12 +30,22 @@ interface ChatMessage {
   type?: string;
 }
 
+interface Booking {
+  id: number;
+  service: string;
+  datetime: string;
+  phone: string;
+  status: string;
+  revenue?: number;
+}
+
 export default function ClientDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation([' admin/ClientDetail', 'common']);
   const [client, setClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -65,6 +75,7 @@ export default function ClientDetail() {
       });
 
       setMessages(data.chat_history || []);
+      setBookings(data.bookings || []);
     } catch (err) {
       toast.error(t('common:loading_error'));
       console.error('Error:', err);
@@ -177,7 +188,7 @@ export default function ClientDetail() {
             {editing ? (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:name')</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:name')}</label>
                   <Input
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
@@ -185,7 +196,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:phone')</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:phone')}</label>
                   <Input
                     value={editForm.phone}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
@@ -193,7 +204,7 @@ export default function ClientDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">t('clientdetail:notes')</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">{t('clientdetail:notes')}</label>
                   <Textarea
                     value={editForm.notes}
                     onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
@@ -232,7 +243,7 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <Calendar className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">t('clientdetail:first_contact')</p>
+                    <p className="text-sm text-gray-600">{t('clientdetail:first_contact')}</p>
                     <p className="text-lg text-gray-900">
                       {new Date(client.first_contact).toLocaleDateString('ru-RU')}
                     </p>
@@ -242,14 +253,14 @@ export default function ClientDetail() {
                 <div className="flex items-start gap-4">
                   <MessageSquare className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
-                    <p className="text-sm text-gray-600">t('clientdetail:total_messages')</p>
+                    <p className="text-sm text-gray-600">{t('clientdetail:total_messages')}</p>
                     <p className="text-lg text-gray-900">{client.total_messages}</p>
                   </div>
                 </div>
 
                 {client.notes && (
                   <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                    <p className="text-sm text-gray-600">t('clientdetail:notes')</p>
+                    <p className="text-sm text-gray-600">{t('clientdetail:notes')}</p>
                     <p className="text-gray-900 mt-1">{client.notes}</p>
                   </div>
                 )}
@@ -265,21 +276,21 @@ export default function ClientDetail() {
 
             <div className="space-y-6">
               <div>
-                <p className="text-sm text-gray-600 mb-1">t('clientdetail:status')</p>
+                <p className="text-sm text-gray-600 mb-1">{t('clientdetail:status')}</p>
                 <Badge className="bg-blue-100 text-blue-800 capitalize">
                   {client.status}
                 </Badge>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600 mb-1">('clientdetail:lifetime_value')</p>
+                <p className="text-sm text-gray-600 mb-1">{t('clientdetail:lifetime_value')}</p>
                 <p className="text-2xl text-green-600 font-bold">
                   {client.lifetime_value} AED
                 </p>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600 mb-1">t('clientdetail:last_contact')</p>
+                <p className="text-sm text-gray-600 mb-1">{t('clientdetail:last_contact')}</p>
                 <p className="text-gray-900">
                   {new Date(client.last_contact).toLocaleDateString('ru-RU')}
                 </p>
@@ -290,16 +301,81 @@ export default function ClientDetail() {
                 className="w-full bg-pink-600 hover:bg-pink-700 gap-2"
               >
                 <MessageSquare className="w-4 h-4" />
-                t('clientdetail:write_message')
+                {t('clientdetail:write_message')}
               </Button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Booking History */}
+      <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-2">
+          <Clock className="w-6 h-6 text-pink-600" />
+          {t('clientdetail:booking_history')}
+        </h2>
+
+        {bookings.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('clientdetail:service')}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('clientdetail:date_time')}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('clientdetail:status')}
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('clientdetail:revenue')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {bookings.map((booking) => (
+                  <tr key={booking.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {booking.service}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {new Date(booking.datetime).toLocaleString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge className={`
+                        ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : ''}
+                        ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
+                        ${booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
+                        ${booking.status === 'completed' ? 'bg-blue-100 text-blue-800' : ''}
+                        capitalize
+                      `}>
+                        {booking.status}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                      {booking.revenue ? `${booking.revenue} AED` : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center py-8">{t('clientdetail:no_bookings')}</p>
+        )}
+      </div>
+
       {/* Chat History */}
       <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h2 className="text-2xl text-gray-900 mb-6">t('clientdetail:chat_history')</h2>
+        <h2 className="text-2xl text-gray-900 mb-6">{t('clientdetail:chat_history')}</h2>
 
         {messages.length > 0 ? (
           <div className="space-y-4">
@@ -323,7 +399,7 @@ export default function ClientDetail() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-8">t('clientdetail:no_messages')</p>
+          <p className="text-gray-500 text-center py-8">{t('clientdetail:no_messages')}</p>
         )}
       </div>
     </div>
