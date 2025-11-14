@@ -515,3 +515,139 @@ async def get_positions():
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+# ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
+
+@router.post("/forgot-password")
+async def forgot_password(email: str = Form(...)):
+    """API: Запрос на восстановление пароля"""
+    try:
+        log_info(f"Password reset request for email: {email}", "auth")
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Проверяем существует ли пользователь с таким email
+        c.execute("SELECT id, username, full_name FROM users WHERE email = ?", (email,))
+        user = c.fetchone()
+
+        if not user:
+            # Для безопасности не раскрываем существует ли email
+            log_warning(f"Password reset requested for non-existent email: {email}", "auth")
+            conn.close()
+            return {"success": True, "message": "Если email существует в системе, на него будет отправлено письмо с инструкциями"}
+
+        user_id, username, full_name = user
+
+        # Генерируем токен сброса (32 байта = 64 hex символа)
+        import secrets
+        reset_token = secrets.token_urlsafe(32)
+
+        # Токен действителен 1 час
+        from datetime import datetime, timedelta
+        expires_at = (datetime.now() + timedelta(hours=1)).isoformat()
+
+        # Сохраняем токен в БД
+        c.execute("""
+            UPDATE users
+            SET password_reset_token = ?, password_reset_expires = ?
+            WHERE id = ?
+        """, (reset_token, expires_at, user_id))
+
+        conn.commit()
+        conn.close()
+
+        # Отправляем email с ссылкой на сброс
+        from utils.email import send_password_reset_email
+        email_sent = send_password_reset_email(email, reset_token, full_name)
+
+        response_data = {
+            "success": True,
+            "message": "Если email существует в системе, на него будет отправлено письмо с инструкциями"
+        }
+
+        # В development режиме возвращаем токен в ответе если email не отправлен
+        import os
+        if not email_sent and os.getenv("ENVIRONMENT") != "production":
+            log_warning(f"SMTP not configured - showing reset token in response", "auth")
+            response_data["reset_token"] = reset_token
+            response_data["reset_url"] = f"http://localhost:5173/reset-password?token={reset_token}"
+            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: http://localhost:5173/reset-password?token={reset_token}"
+
+        log_info(f"Password reset token generated for user {username} (ID: {user_id})", "auth")
+
+        return response_data
+
+    except Exception as e:
+        log_error(f"Error in forgot_password: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/reset-password")
+async def reset_password(
+    token: str = Form(...),
+    new_password: str = Form(...)
+):
+    """API: Сброс пароля по токену"""
+    try:
+        log_info("Password reset attempt with token", "auth")
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Проверяем токен и срок действия
+        from datetime import datetime
+        now = datetime.now().isoformat()
+
+        c.execute("""
+            SELECT id, username, password_reset_expires
+            FROM users
+            WHERE password_reset_token = ?
+        """, (token,))
+
+        user = c.fetchone()
+
+        if not user:
+            log_warning("Password reset attempted with invalid token", "auth")
+            conn.close()
+            return JSONResponse(
+                {"error": "Неверный или истекший токен сброса пароля"},
+                status_code=400
+            )
+
+        user_id, username, expires_at = user
+
+        # Проверяем не истек ли токен
+        if expires_at and expires_at < now:
+            log_warning(f"Password reset attempted with expired token for user {username}", "auth")
+            conn.close()
+            return JSONResponse(
+                {"error": "Токен сброса пароля истек. Пожалуйста, запросите новый."},
+                status_code=400
+            )
+
+        # Хешируем новый пароль
+        import hashlib
+        password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+
+        # Обновляем пароль и удаляем токен
+        c.execute("""
+            UPDATE users
+            SET password_hash = ?, password_reset_token = NULL, password_reset_expires = NULL
+            WHERE id = ?
+        """, (password_hash, user_id))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"Password successfully reset for user {username} (ID: {user_id})", "auth")
+
+        return {
+            "success": True,
+            "message": "Пароль успешно изменен! Теперь вы можете войти с новым паролем."
+        }
+
+    except Exception as e:
+        log_error(f"Error in reset_password: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+

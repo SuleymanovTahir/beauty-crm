@@ -102,6 +102,7 @@ def run_all_migrations():
             ('schema.add_subscription_channels', 'add_subscription_channels'),
             ('schema.create_broadcast_history', 'create_broadcast_history_table'),
             ('schema.create_positions_table', 'create_positions_table'),
+            ('schema.add_password_reset_fields', 'add_password_reset_fields'),
         ]
 
         for migration_name, function_name in structure_migrations:

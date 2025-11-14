@@ -132,6 +132,33 @@ export class ApiClient {
     })
   }
 
+  async forgotPassword(email: string) {
+    const formData = new URLSearchParams()
+    formData.append('email', email)
+
+    return this.request<any>('/api/forgot-password', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const formData = new URLSearchParams()
+    formData.append('token', token)
+    formData.append('new_password', newPassword)
+
+    return this.request<any>('/api/reset-password', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  }
+
   async askBotAdvice(question: string, context?: string) {
     return this.request('/api/chat/ask-bot', {
       method: 'POST',

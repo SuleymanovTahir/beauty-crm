@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -181,6 +182,11 @@ export default function Register() {
   if (step === "verify") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+        {/* Переключатель языка */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -260,6 +266,11 @@ export default function Register() {
   if (step === "success") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+        {/* Переключатель языка */}
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageSwitcher />
+        </div>
+
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -288,6 +299,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-pink-50 flex items-center justify-center p-4">
+      {/* Переключатель языка */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
+
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -380,7 +396,7 @@ export default function Register() {
                 <option value="admin">Администратор</option>
                 <option value="director">Директор</option>
                 <option value="sales">Продажи</option>
-                <option value="marketer">Маркетинг</option>
+                <option value="marketer">Продвижение</option>
               </select>
               <p className="text-sm text-gray-500 mt-1">
                 Выберите вашу роль в системе
