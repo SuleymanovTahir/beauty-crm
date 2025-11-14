@@ -24,40 +24,40 @@ def seed_employees():
     # 3. Данные сотрудников (упрощенная версия - только существующие поля)
     employees = [
         {
-            "full_name": "SIMO",
-            "position": "HAIR STYLIST",
+            "full_name": "Simo",
+            "position": "Hair Stylist",
             "phone": None,
             "email": None,
             "sort_order": 1,
             "role": "employee"
         },
         {
-            "full_name": "MESTAN",
-            "position": "HAIR STYLIST",
+            "full_name": "Mestan",
+            "position": "Hair Stylist",
             "phone": "+971 50 180 0346",
             "email": "amandurdyyeva80@gmail.com",
             "sort_order": 2,
             "role": "employee"
         },
         {
-            "full_name": "LYAZZAT",
-            "position": "NAIL MASTER",
+            "full_name": "Lyazzat",
+            "position": "Nail Master",
             "phone": None,
             "email": None,
             "sort_order": 3,
             "role": "employee"
         },
         {
-            "full_name": "GULYA",
-            "position": "NAIL/WAXING",
+            "full_name": "Gulya",
+            "position": "Nail/Waxing",
             "phone": None,
             "email": None,
             "sort_order": 4,
             "role": "employee"
         },
         {
-            "full_name": "JENNIFER",
-            "position": "NAIL MASTER/MASSAGES",
+            "full_name": "Jennifer",
+            "position": "Nail Master/Massages",
             "phone": "+971 56 420 8308",
             "email": "peradillajennifer47@gmail.com",
             "sort_order": 5,

@@ -22,10 +22,10 @@ def add_missing_positions():
 
         # Должности которые нужно добавить
         new_positions = [
-            ("HAIR STYLIST", "Hair Stylist", "مصفف شعر", "Мастер-парикмахер, стилист по волосам"),
-            ("NAIL MASTER", "Nail Master", "خبير الأظافر", "Мастер маникюра и педикюра"),
-            ("NAIL/WAXING", "Nail & Waxing Master", "خبير الأظافر والإزالة", "Мастер маникюра и депиляции"),
-            ("NAIL MASTER/MASSAGES", "Nail & Massage Master", "خبير الأظافر والمساج", "Мастер маникюра и массажа"),
+            ("Hair Stylist", "Hair Stylist", "مصفف شعر", "Мастер-парикмахер, стилист по волосам"),
+            ("Nail Master", "Nail Master", "خبير الأظافر", "Мастер маникюра и педикюра"),
+            ("Nail/Waxing", "Nail & Waxing Master", "خبير الأظافر والإزالة", "Мастер маникюра и депиляции"),
+            ("Nail Master/Massages", "Nail & Massage Master", "خبير الأظافر والمساج", "Мастер маникюра и массажа"),
             ("Владелец", "Owner", "مالك", "Владелец салона красоты"),
             ("Массажист", "Massage Therapist", "معالج تدليك", "Специалист по массажу"),
         ]

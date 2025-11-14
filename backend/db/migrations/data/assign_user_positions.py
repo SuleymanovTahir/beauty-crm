@@ -19,11 +19,11 @@ def assign_user_positions():
 
         # Маппинг пользователей к их должностям
         user_positions = {
-            'simo': 'HAIR STYLIST',
-            'mestan': 'HAIR STYLIST',
-            'lyazzat': 'NAIL MASTER',
-            'gulya': 'NAIL/WAXING',
-            'jennifer': 'NAIL MASTER/MASSAGES',
+            'simo': 'Hair Stylist',
+            'mestan': 'Hair Stylist',
+            'lyazzat': 'Nail Master',
+            'gulya': 'Nail/Waxing',
+            'jennifer': 'Nail Master/Massages',
             'tursunay': 'Владелец',
             'admin': 'Администратор'
         }
