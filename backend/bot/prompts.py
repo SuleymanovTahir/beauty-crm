@@ -430,25 +430,10 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                 continue
             
             emp_name = full_emp[1]  # full_name из полных данных
-            name_ru = full_emp[13] if len(full_emp) > 13 and full_emp[13] else None
-            name_ar = full_emp[14] if len(full_emp) > 14 and full_emp[14] else None
-            
-            # ✅ Убедимся что переводы - строки
-            if name_ru and not isinstance(name_ru, str):
-                name_ru = None
-            if name_ar and not isinstance(name_ar, str):
-                name_ar = None
-        
-            if client_language == 'ru':
-                emp_name_display = name_ru or emp_name
-            elif client_language == 'ar':
-                emp_name_display = name_ar or emp_name
-            else:
-                emp_name_display = emp_name
-            
-            # ✅ Финальная проверка
-            if not isinstance(emp_name_display, str):
-                emp_name_display = str(emp_name) if emp_name else "Master"
+
+            # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
+            from utils.transliteration import transliterate_name
+            emp_name_display = transliterate_name(str(emp_name) if emp_name else "Master", client_language)
             
             
             # Получаем должность из полных данных (например, full_emp[2])
@@ -791,20 +776,9 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             emp_id = emp[0]
             emp_name = emp[1]
 
-            # ✅ ИСПРАВЛЕНИЕ: Получаем полные данные мастера для доступа к переводам
-            from db.employees import get_employee
-            full_emp = get_employee(emp_id)
-
-            name_ru = full_emp[13] if full_emp and len(full_emp) > 13 else None
-            name_ar = full_emp[14] if full_emp and len(full_emp) > 14 else None
-
-            # Ensure emp_name_display is always a string
-            if client_language == 'ru':
-                emp_name_display = str(name_ru) if name_ru and isinstance(name_ru, str) else str(emp_name)
-            elif client_language == 'ar':
-                emp_name_display = str(name_ar) if name_ar and isinstance(name_ar, str) else str(emp_name)
-            else:
-                emp_name_display = str(emp_name)
+            # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
+            from utils.transliteration import transliterate_name
+            emp_name_display = transliterate_name(str(emp_name), client_language)
 
             try:
                 target_dt = datetime.strptime(target_date, "%Y-%m-%d")
