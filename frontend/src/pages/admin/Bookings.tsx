@@ -29,6 +29,11 @@ const api = {
     return res.json();
   },
 
+  async getUsers() {
+    const res = await fetch(`${this.baseURL}/api/users`, { credentials: 'include' });
+    return res.json();
+  },
+
   async createBooking(data: any) {
     const res = await fetch(`${this.baseURL}/api/bookings`, {
       method: 'POST',
