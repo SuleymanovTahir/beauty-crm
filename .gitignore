@@ -1,21 +1,33 @@
-# Python
-venv/
 __pycache__/
+
 *.pyc
+
 *.pyo
 
-# Node
-node_modules/
+*.pyd
 
-# Environment
+.Python
+
+*.so
+
+*.egg
+
+*.egg-info/
+
+dist/
+
+build/
+
+logs/*.log
+
+*.db-journal
+
 .env
-*.log
 
-# OS
-.DS_Store
+.venv
 
-# IDE
-.idea/
-.vscode/
-# Database files
-*.db
+venv/
+
+ENV/
+
+ 
