@@ -103,6 +103,7 @@ def run_all_migrations():
             ('schema.create_broadcast_history', 'create_broadcast_history_table'),
             ('schema.create_positions_table', 'create_positions_table'),
             ('schema.add_password_reset_fields', 'add_password_reset_fields'),
+            ('schema.add_email_verification_token', 'add_email_verification_token'),
         ]
 
         for migration_name, function_name in structure_migrations:

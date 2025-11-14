@@ -98,6 +98,100 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
         log_error(f"Failed to send verification email: {e}", "email")
         return False
 
+def send_verification_link_email(to_email: str, verification_token: str, full_name: str) -> bool:
+    """
+    Отправить email со ссылкой для верификации
+
+    Args:
+        to_email: Email получателя
+        verification_token: Токен для верификации
+        full_name: Имя пользователя
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Формируем ссылку для верификации
+        verification_url = f"http://localhost:5173/verify-email?token={verification_token}"
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Подтверждение регистрации'
+        msg['From'] = smtp_from
+        msg['To'] = to_email
+
+        # HTML версия письма
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            </div>
+            <div style="padding: 30px; background-color: #f7f7f7;">
+              <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
+              <p style="color: #666; font-size: 16px;">Добро пожаловать в Beauty CRM!</p>
+              <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы подтвердить ваш email и активировать аккаунт:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{verification_url}" style="background-color: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+                  Подтвердить Email
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px;">Ссылка действительна в течение 24 часов.</p>
+              <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                Если вы не регистрировались в системе, проигнорируйте это письмо.
+              </p>
+              <p style="color: #999; font-size: 11px; margin-top: 20px;">
+                Если кнопка не работает, скопируйте эту ссылку в браузер:<br>
+                <a href="{verification_url}" style="color: #667eea; word-break: break-all;">{verification_url}</a>
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+
+        # Текстовая версия письма
+        text = f"""
+        Здравствуйте, {full_name}!
+
+        Добро пожаловать в Beauty CRM!
+
+        Перейдите по этой ссылке, чтобы подтвердить ваш email:
+        {verification_url}
+
+        Ссылка действительна в течение 24 часов.
+
+        Если вы не регистрировались в системе, проигнорируйте это письмо.
+        """
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Verification link email sent to {to_email}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send verification link email: {e}", "email")
+        return False
+
 def send_approval_notification(to_email: str, full_name: str, approved: bool) -> bool:
     """
     Отправить уведомление об одобрении/отклонении регистрации

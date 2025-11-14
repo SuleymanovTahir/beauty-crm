@@ -192,16 +192,21 @@ async def api_register(
                 status_code=400
             )
 
-        # Генерируем код верификации
-        from utils.email import generate_verification_code, get_code_expiry, send_verification_email
+        # Генерируем токен верификации
+        import hashlib
+        from datetime import datetime, timedelta
+        import secrets
+
+        # Генерируем токен (безопасная случайная строка)
+        verification_token = secrets.token_urlsafe(32)
+
+        # Для обратной совместимости также генерируем код
+        from utils.email import generate_verification_code, get_code_expiry
 
         verification_code = generate_verification_code()
         code_expires = get_code_expiry()
 
         # Создаём пользователя с is_active = 0 и email_verified = 0
-        import hashlib
-        from datetime import datetime
-
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         now = datetime.now().isoformat()
 
@@ -219,12 +224,13 @@ async def api_register(
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
-                      privacy_accepted, privacy_accepted_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      email_verification_token, privacy_accepted, privacy_accepted_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                   (username, password_hash, full_name, email, role, position, now,
                    1 if auto_verify else 0,  # is_active
                    1 if auto_verify else 0,  # email_verified
                    verification_code, code_expires,
+                   verification_token,
                    int(privacy_accepted), privacy_accepted_at))
 
         user_id = c.lastrowid
@@ -266,24 +272,26 @@ async def api_register(
             log_info(f"First director registered and auto-verified: {username} (ID: {user_id})", "auth")
             return response_data
 
-        # Отправляем email с кодом верификации
-        email_sent = send_verification_email(email, verification_code, full_name)
+        # Отправляем email со ссылкой верификации
+        from utils.email import send_verification_link_email
+        email_sent = send_verification_link_email(email, verification_token, full_name)
 
         response_data = {
             "success": True,
-            "message": "Регистрация успешна! Проверьте вашу почту и введите код подтверждения.",
+            "message": "Регистрация успешна! Проверьте вашу почту и перейдите по ссылке для подтверждения.",
             "user_id": user_id,
             "email_sent": email_sent
         }
 
-        # В development режиме возвращаем код в ответе если email не отправлен
+        # В development режиме возвращаем токен в ответе если email не отправлен
         import os
         if not email_sent and os.getenv("ENVIRONMENT") != "production":
-            log_warning(f"SMTP not configured - showing code in response: {verification_code}", "auth")
-            response_data["verification_code"] = verification_code
-            response_data["message"] = f"⚠️ SMTP не настроен. Ваш код: {verification_code}"
+            log_warning(f"SMTP not configured - showing verification link in response", "auth")
+            verification_url = f"http://localhost:5173/verify-email?token={verification_token}"
+            response_data["verification_url"] = verification_url
+            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для подтверждения: {verification_url}"
 
-        log_info(f"New registration: {username} (ID: {user_id}), code: {verification_code if not email_sent else 'sent to email'}", "auth")
+        log_info(f"New registration: {username} (ID: {user_id}), token: {'sent to email' if email_sent else verification_token[:20]+'...'}", "auth")
 
         return response_data
 
@@ -431,6 +439,86 @@ async def resend_verification(email: str = Form(...)):
 
     except Exception as e:
         log_error(f"Error in resend_verification: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/verify-email-token")
+async def verify_email_token(token: str):
+    """API: Подтверждение email по токену и автоматический вход"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Находим пользователя с таким токеном
+        c.execute("""
+            SELECT id, username, full_name, email, role, email_verified
+            FROM users
+            WHERE email_verification_token = ?
+        """, (token,))
+
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse(
+                {"error": "Неверный или истекший токен верификации"},
+                status_code=400
+            )
+
+        user_id, username, full_name, email, role, email_verified = result
+
+        # Проверяем, не подтвержден ли уже email
+        if email_verified:
+            # Email уже подтвержден - просто логиним пользователя
+            log_info(f"Email already verified for user {username}, logging in", "auth")
+        else:
+            # Подтверждаем email и активируем пользователя
+            c.execute("""
+                UPDATE users
+                SET email_verified = 1,
+                    is_active = 1,
+                    email_verification_token = NULL,
+                    verification_code = NULL,
+                    verification_code_expires = NULL
+                WHERE id = ?
+            """, (user_id,))
+
+            conn.commit()
+            log_info(f"Email verified and user activated: {username} (ID: {user_id})", "auth")
+
+        conn.close()
+
+        # Создаем сессию для автоматического входа
+        session_token = create_session(user_id)
+        log_info(f"Session created for {username} after email verification", "auth")
+
+        # Возвращаем данные для автоматического входа
+        response_data = {
+            "success": True,
+            "message": "Email подтвержден! Выполняется вход в систему...",
+            "token": session_token,
+            "user": {
+                "id": user_id,
+                "username": username,
+                "full_name": full_name,
+                "email": email,
+                "role": role
+            }
+        }
+
+        response = JSONResponse(response_data)
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax"
+        )
+
+        return response
+
+    except Exception as e:
+        log_error(f"Error in verify_email_token: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 

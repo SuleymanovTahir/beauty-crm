@@ -203,7 +203,7 @@ export default function App() {
 
           <Route
             path="/verify-email"
-            element={<VerifyEmail />}
+            element={<VerifyEmail onLogin={handleLogin} />}
           />
 
           <Route

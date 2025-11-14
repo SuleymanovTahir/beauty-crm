@@ -3,17 +3,32 @@ import { ShieldCheck, Loader, CheckCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 
-export default function VerifyEmail() {
+interface VerifyEmailProps {
+  onLogin?: (user: {
+    id: number;
+    username: string;
+    full_name: string;
+    email: string;
+    role: string;
+    token: string;
+  }) => void;
+}
+
+export default function VerifyEmail({ onLogin }: VerifyEmailProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  // Проверяем есть ли токен в URL
+  const tokenFromUrl = searchParams.get("token");
   const email = (location.state as any)?.email || "";
 
   console.log("VerifyEmail mounted");
-  console.log("Location state:", location.state);
+  console.log("Token from URL:", tokenFromUrl);
   console.log("Email from state:", email);
 
   const [verificationCode, setVerificationCode] = useState("");
@@ -21,7 +36,71 @@ export default function VerifyEmail() {
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
 
+  // Автоматическая верификация по токену из URL
   useEffect(() => {
+    const verifyByToken = async () => {
+      if (!tokenFromUrl) return;
+
+      console.log("Verifying by token:", tokenFromUrl);
+      setLoading(true);
+
+      try {
+        const response = await fetch(`http://localhost:8000/api/verify-email-token?token=${tokenFromUrl}`, {
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.token && data.user) {
+          console.log("Token verification successful, logging in");
+          setVerified(true);
+          toast.success("Email подтвержден! Выполняется вход в систему...");
+
+          // Сохраняем данные в localStorage
+          localStorage.setItem("session_token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          // Вызываем onLogin если передан
+          if (onLogin) {
+            onLogin({
+              ...data.user,
+              token: data.token
+            });
+          }
+
+          // Перенаправляем в зависимости от роли
+          setTimeout(() => {
+            const role = data.user.role;
+            if (role === 'director' || role === 'admin') {
+              navigate("/admin/dashboard");
+            } else if (role === 'manager') {
+              navigate("/manager/dashboard");
+            } else if (role === 'employee') {
+              navigate("/employee/dashboard");
+            } else {
+              navigate("/");
+            }
+          }, 2000);
+        } else {
+          setError(data.error || "Ошибка при подтверждении email");
+          toast.error(data.error || "Ошибка при подтверждении email");
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Token verification error:", err);
+        setError("Ошибка при подтверждении email");
+        toast.error("Ошибка при подтверждении email");
+        setLoading(false);
+      }
+    };
+
+    verifyByToken();
+  }, [tokenFromUrl, navigate, onLogin]);
+
+  // Проверка email из state (для старой системы с кодами)
+  useEffect(() => {
+    if (tokenFromUrl) return; // Если есть токен, не проверяем email
+
     console.log("VerifyEmail useEffect running, email:", email);
     if (!email || email.trim() === "") {
       console.log("No email found, redirecting to login");
@@ -30,7 +109,7 @@ export default function VerifyEmail() {
         navigate("/login");
       }, 2000);
     }
-  }, []);
+  }, [email, tokenFromUrl, navigate]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
