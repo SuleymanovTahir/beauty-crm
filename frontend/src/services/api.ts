@@ -236,7 +236,7 @@ export class ApiClient {
     return this.request<any>(`/api/users/${userId}/profile`)
   }
 
-  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string }) {
+  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',
       body: JSON.stringify(data),

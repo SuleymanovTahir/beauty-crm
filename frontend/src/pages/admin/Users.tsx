@@ -42,6 +42,11 @@ export default function Users() {
   const [availableRoles, setAvailableRoles] = useState<Array<{key: string; name: string; level: number}>>([]);
   const [savingRole, setSavingRole] = useState(false);
 
+  // Edit user dialog states
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editForm, setEditForm] = useState({ username: '', full_name: '', email: '', position: '' });
+  const [savingEdit, setSavingEdit] = useState(false);
+
   useEffect(() => {
     loadUsers();
     loadAvailableRoles();
@@ -81,6 +86,24 @@ export default function Users() {
       toast.error(message);
     } finally {
       setSavingRole(false);
+    }
+  };
+
+  const handleEditUser = async () => {
+    if (!selectedUser) return;
+
+    try {
+      setSavingEdit(true);
+      await api.updateUserProfile(selectedUser.id, editForm);
+      toast.success('Данные пользователя обновлены');
+      setShowEditDialog(false);
+      setSelectedUser(null);
+      await loadUsers();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Ошибка обновления пользователя';
+      toast.error(message);
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -273,7 +296,16 @@ export default function Users() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => navigate(`/admin/users/${user.id}/edit`)}
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setEditForm({
+                              username: user.username,
+                              full_name: user.full_name,
+                              email: user.email || '',
+                              position: user.position || ''
+                            });
+                            setShowEditDialog(true);
+                          }}
                           title={t('action_edit_title')}
                         >
                           <Edit className="w-4 h-4" />
@@ -367,6 +399,103 @@ export default function Users() {
                 disabled={savingRole}
               >
                 {t('role_dialog_close')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Диалог редактирования пользователя */}
+      {showEditDialog && selectedUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full shadow-2xl">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">
+                Редактирование: {selectedUser.full_name}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Изменение данных пользователя
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Логин
+                </label>
+                <Input
+                  type="text"
+                  value={editForm.username}
+                  onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                  placeholder="Логин пользователя"
+                  disabled={savingEdit}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Полное имя
+                </label>
+                <Input
+                  type="text"
+                  value={editForm.full_name}
+                  onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                  placeholder="Полное имя"
+                  disabled={savingEdit}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  placeholder="email@example.com"
+                  disabled={savingEdit}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Должность
+                </label>
+                <Input
+                  type="text"
+                  value={editForm.position}
+                  onChange={(e) => setEditForm({ ...editForm, position: e.target.value })}
+                  placeholder="Например: Администратор, Менеджер, Мастер"
+                  disabled={savingEdit}
+                />
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-sm text-yellow-800">
+                  <strong>⚠️ Важно:</strong> Пароли хранятся в зашифрованном виде и не могут быть показаны. Это обеспечивает безопасность системы.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEditDialog(false);
+                  setSelectedUser(null);
+                }}
+                className="flex-1"
+                disabled={savingEdit}
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={handleEditUser}
+                className="flex-1 bg-pink-600 hover:bg-pink-700"
+                disabled={savingEdit}
+              >
+                {savingEdit ? 'Сохранение...' : 'Сохранить'}
               </Button>
             </div>
           </div>
