@@ -25,6 +25,7 @@ from utils.utils import ensure_upload_directories
 from api import router as api_router
 from core.auth import router as auth_router
 from webhooks import router as webhooks_router
+from webhooks.telegram import router as telegram_webhook_router
 from api.templates import router as templates_router
 from api.statuses import router as statuses_router
 from api.uploads import router as upload_router
@@ -90,7 +91,8 @@ if is_module_enabled('public'):
     app.include_router(client_auth_router, prefix="/public")  # API для клиентов
     log_info("✅ Модуль 'public' подключен: /public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
-app.include_router(webhooks_router)  # для Instagram webhook
+app.include_router(webhooks_router)  # для Instagram webhook (/webhook)
+app.include_router(telegram_webhook_router)  # для Telegram webhook (/webhooks/telegram)
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
 app.include_router(internal_chat_router)
 

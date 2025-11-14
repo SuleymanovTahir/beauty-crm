@@ -81,31 +81,125 @@ Instagram использует существующую интеграцию ч�
 6. Вставьте Bot Token в поле "API Token"
 7. Нажмите **"Сохранить"**
 
-**Вариант 2: Через файл конфигурации**
+**Вариант 2: Через скрипт (для вашего токена)**
 
-Добавьте в файл `.env.local`:
-
-```bash
-TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz
-```
-
-Токен будет автоматически загружен при запуске системы.
-
-**Вариант 3: Прямо в базу данных**
+Токен уже сохранен в БД! Для проверки:
 
 ```bash
 cd /home/user/beauty-crm/backend
-sqlite3 salon_bot.db
+python scripts/setup/save_telegram_token.py
 ```
 
-```sql
-UPDATE messenger_settings
-SET api_token = '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz',
-    is_enabled = 1
-WHERE messenger_type = 'telegram';
+Вы увидите:
+```
+✅ Telegram token saved successfully!
+   Type: telegram
+   Enabled: True
+   Token: 6784705707:AAHmgFZ1G...
 ```
 
-#### Шаг 3: Проверка
+#### Шаг 3: Настройка Webhook
+
+**Что такое webhook?**
+
+Webhook - это URL на котором ваш сервер будет получать сообщения от Telegram. Когда пользователь пишет боту, Telegram отправляет POST запрос на ваш webhook.
+
+**Два варианта:**
+
+**А) Для production (реальный домен):**
+
+1. У вас должен быть публичный домен с HTTPS (например: `https://mlediamant.com`)
+2. Запустите скрипт настройки:
+
+```bash
+cd /home/user/beauty-crm/backend
+python scripts/setup/setup_telegram_webhook.py
+```
+
+3. Выберите опцию `1` (Set webhook)
+4. Введите ваш webhook URL:
+   ```
+   https://mlediamant.com/webhooks/telegram
+   ```
+   (замените `mlediamant.com` на ваш домен)
+
+5. Скрипт покажет:
+   ```
+   ✅ Webhook set successfully!
+   📊 Webhook Details:
+      URL: https://mlediamant.com/webhooks/telegram
+      Pending updates: 0
+   ```
+
+**Б) Для локального тестирования (ngrok):**
+
+Если вы хотите тестировать локально, используйте ngrok:
+
+1. Установите ngrok: https://ngrok.com/download
+2. Запустите ngrok:
+   ```bash
+   ngrok http 8000
+   ```
+3. Ngrok даст вам временный URL: `https://abc123.ngrok.io`
+4. Настройте webhook:
+   ```bash
+   cd /home/user/beauty-crm/backend
+   python scripts/setup/setup_telegram_webhook.py
+   ```
+5. Введите: `https://abc123.ngrok.io/webhooks/telegram`
+
+**Важно:** После каждого перезапуска ngrok URL меняется, нужно заново настраивать webhook!
+
+#### Шаг 4: Проверка
+
+**1. Проверьте статус webhook:**
+
+```bash
+cd /home/user/beauty-crm/backend
+python scripts/setup/setup_telegram_webhook.py
+# Выберите опцию 3 (Check webhook status)
+```
+
+Вы должны увидеть:
+```
+📊 Webhook Status:
+   URL: https://yourdomain.com/webhooks/telegram
+   Pending updates: 0
+```
+
+**2. Тест через API endpoint:**
+
+Откройте в браузере:
+```
+http://localhost:8000/webhooks/telegram/test
+```
+
+Вы должны увидеть:
+```json
+{
+  "status": "ok",
+  "message": "Telegram webhook is ready",
+  "bot": {
+    "id": 6784705707,
+    "username": "your_bot_username",
+    "first_name": "Your Bot Name"
+  }
+}
+```
+
+**3. Протестируйте в Telegram:**
+
+1. Найдите вашего бота в Telegram (по username из предыдущего шага)
+2. Нажмите **Start** или отправьте `/start`
+3. Бот должен ответить приветствием
+4. Проверьте логи backend - должны появиться записи:
+
+```
+📨 TELEGRAM WEBHOOK: POST request received
+✅ Telegram update processed successfully
+```
+
+**4. Проверьте UI:**
 
 1. Включите Telegram в настройках мессенджеров
 2. Откройте страницу любого клиента
@@ -126,14 +220,36 @@ WHERE messenger_type = 'telegram';
 
 #### Код интеграции
 
-Telegram бот (если создан):
+**Telegram Bot класс:**
 ```
 Файл: /home/user/beauty-crm/backend/integrations/telegram_bot.py
+Содержит: TelegramBot класс с методами для отправки сообщений, обработки обновлений
 ```
 
-API endpoints:
+**Webhook endpoints:**
+```
+Файл: /home/user/beauty-crm/backend/webhooks/telegram.py
+Endpoints:
+  - POST /webhooks/telegram - получение сообщений от Telegram
+  - GET  /webhooks/telegram/test - тест webhook
+  - GET  /webhooks/telegram/info - информация о webhook
+```
+
+**API endpoints для мессенджеров:**
 ```
 Файл: /home/user/beauty-crm/backend/api/messengers.py
+Endpoints:
+  - GET    /api/messengers/settings - все настройки
+  - GET    /api/messengers/enabled - только включенные
+  - PUT    /api/messengers/settings/{type} - обновить настройки
+  - GET    /api/messengers/{type}/messages - история сообщений
+  - POST   /api/messengers/{type}/messages - отправить сообщение
+```
+
+**Setup scripts:**
+```
+/home/user/beauty-crm/backend/scripts/setup/save_telegram_token.py - сохранить токен
+/home/user/beauty-crm/backend/scripts/setup/setup_telegram_webhook.py - настроить webhook
 ```
 
 ---
