@@ -335,86 +335,38 @@ async def get_diagnostics():
 @app.on_event("startup")
 async def startup_event():
     """При запуске приложения"""
-    try:
-        log_info("=" * 70, "startup")
-        log_info("🚀 Запуск CRM системы...", "startup")
+    log_info("=" * 70, "startup")
+    log_info("🚀 Запуск CRM системы...", "startup")
 
-        # ================================
-        # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
-        # ================================
-        # ✅ ЗАПУСК ВСЕХ МИГРАЦИЙ (автоматически при старте)
-        try:
-            from db.migrations.run_all_migrations import run_all_migrations
-            log_info("🔧 Запуск миграций...", "startup")
-            migration_success = run_all_migrations()
-            if not migration_success:
-                log_error("❌ КРИТИЧЕСКАЯ ОШИБКА: Миграции не выполнены", "startup")
-                raise Exception("Миграции базы данных не выполнены")
-        except Exception as e:
-            log_error(f"❌ КРИТИЧЕСКАЯ ОШИБКА миграций: {e}", "startup")
-            log_error("", "startup")
-            log_error("Возможные решения:", "startup")
-            log_error(f"1. Удалите файл {DATABASE_NAME} и перезапустите приложение", "startup")
-            log_error("2. Убедитесь, что все зависимости установлены: pip install -r requirements.txt", "startup")
-            log_error("3. Проверьте права доступа к файлу базы данных", "startup")
-            log_error("", "startup")
-            import traceback
-            traceback.print_exc()
-            raise  # Прерываем запуск приложения
+    # Запуск миграций
+    from db.migrations.run_all_migrations import run_all_migrations
+    log_info("🔧 Запуск миграций...", "startup")
+    run_all_migrations()
 
-        # ================================
-        # КОМПЛЕКСНОЕ ТЕСТИРОВАНИЕ
-        # ================================
-        # 🧪 Раскомментируйте строки ниже чтобы запускать проверку всей системы при старте
-        # Это проверит ВСЕ функции и покажет подробные ошибки
-        # try:
-        #     from comprehensive_test import run_comprehensive_test
-        #     log_info("🧪 Запуск комплексного тестирования...", "startup")
-        #     test_success = run_comprehensive_test()
-        #     if not test_success:
-        #         log_warning("⚠️ Некоторые тесты провалены (см. вывод выше)", "startup")
-        #     else:
-        #         log_info("✅ Все тесты пройдены!", "startup")
-        # except Exception as e:
-        #     log_error(f"⚠️ Ошибка запуска тестов: {e}", "startup")
+    # Проверка и исправление данных
+    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection
+    check_bot_settings()
+    check_users()
+    check_salon_settings()
+    fix_manager_consultation_prompt()
+    fix_booking_data_collection()
 
-        # ================================
-        # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
-        # ================================
-        # Запускаем ПОСЛЕ миграций, когда таблицы уже созданы
-        try:
-            from fix_data import check_bot_settings,check_users,check_salon_settings,fix_manager_consultation_prompt,fix_booking_data_collection
-            check_bot_settings()
-            check_users()
-            check_salon_settings()
-            fix_manager_consultation_prompt()
-            fix_booking_data_collection()
-        except Exception as e:
-            log_error(f"⚠️ Ошибка проверки данных: {e}", "startup")
+    # Инициализация бота
+    bot = get_bot()
+    log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
 
-        bot = get_bot()
-        log_info(f"🤖 Бот инициализирован: {bot.salon['name']}", "startup")
+    # Загрузка модулей
+    from modules import print_modules_status, is_module_enabled
+    print_modules_status()
 
-        # ✅ Загрузка и проверка модулей (опционально)
-        try:
-            from modules import print_modules_status, is_module_enabled
-            print_modules_status()
+    # Запуск планировщиков
+    if is_module_enabled('scheduler'):
+        start_birthday_checker()
+        start_client_birthday_checker()
+        log_info("✅ Планировщики запущены", "startup")
 
-            # ✅ Запуск планировщиков (если модуль включен)
-            if is_module_enabled('scheduler'):
-                start_birthday_checker()  # Дни рождения сотрудников
-                start_client_birthday_checker()  # Поздравления клиентов
-                log_info("✅ Планировщики запущены", "startup")
-            else:
-                log_warning("⚠️  Модуль scheduler выключен", "startup")
-        except Exception as e:
-            log_warning(f"⚠️  Модули не загружены: {e}", "startup")
-
-        log_info("✅ CRM готова к работе!", "startup")
-        log_info("=" * 70, "startup")
-    except Exception as e:
-        log_critical(f"❌ ОШИБКА ПРИ ЗАПУСКЕ: {e}", "startup")
-        raise
+    log_info("✅ CRM готова к работе!", "startup")
+    log_info("=" * 70, "startup")
 
 
 if __name__ == "__main__":
