@@ -24,7 +24,7 @@ class NotificationSettings(BaseModel):
     reportTime: str = "09:00"
 
 
-@router.post("/api/settings/notifications")
+@router.post("/settings/notifications")
 async def save_notification_settings(request: Request, settings: NotificationSettings):
     """
     Сохранить настройки уведомлений для пользователя
@@ -161,7 +161,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/api/settings/notifications")
+@router.get("/settings/notifications")
 async def get_notification_settings():
     """
     Получить настройки уведомлений для пользователя

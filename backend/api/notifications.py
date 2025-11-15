@@ -305,6 +305,56 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
 
 # ===== НАСТРОЙКИ УВЕДОМЛЕНИЙ =====
 
+@router.get("/notifications/settings")
+async def get_notification_settings_api():
+    """
+    Получить настройки уведомлений
+    """
+    try:
+        user_id = 1  # TODO: Get from session
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT * FROM notification_settings
+            WHERE user_id = ?
+        """, (user_id,))
+
+        row = c.fetchone()
+        conn.close()
+
+        if row:
+            return {
+                "emailNotifications": bool(row[2]),
+                "smsNotifications": bool(row[3]),
+                "bookingNotifications": bool(row[4]),
+                "chatNotifications": bool(row[5]),
+                "dailyReport": bool(row[6]),
+                "reportTime": row[7]
+            }
+        else:
+            # Default values
+            return {
+                "emailNotifications": True,
+                "smsNotifications": False,
+                "bookingNotifications": True,
+                "chatNotifications": True,
+                "dailyReport": True,
+                "reportTime": "09:00"
+            }
+    except Exception as e:
+        log_error(f"Error loading notification settings: {e}", "notifications")
+        return {
+            "emailNotifications": True,
+            "smsNotifications": False,
+            "bookingNotifications": True,
+            "chatNotifications": True,
+            "dailyReport": True,
+            "reportTime": "09:00"
+        }
+
+
 @router.post("/notifications/settings")
 async def save_notification_settings(request: Request):
     """
