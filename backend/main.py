@@ -381,6 +381,35 @@ async def startup_event():
     #     log_info("✅ Все тесты пройдены!", "startup")
 
     # ================================
+    # ТЕСТИРОВАНИЕ УВЕДОМЛЕНИЙ
+    # ================================
+    # Раскомментируйте нужные тесты для проверки при старте
+
+    # 1. Тест API уведомлений (notification_settings)
+    # from scripts.testing.api.test_notifications_api import test_database_tables, test_notifications_endpoint, test_http_request
+    # log_info("🔔 Тестирование API уведомлений...", "startup")
+    # test_database_tables()
+    # test_notifications_endpoint()
+    # test_http_request()
+
+    # 2. Тест сохранения настроек уведомлений
+    # from scripts.testing.api.test_save_notifications import test_save_notifications
+    # log_info("💾 Тестирование сохранения настроек уведомлений...", "startup")
+    # test_save_notifications()
+
+    # 3. Тест API напоминаний о записях (booking reminders)
+    # from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table, test_reminders_api_direct, test_toggle_reminder
+    # log_info("⏰ Тестирование API напоминаний о записях...", "startup")
+    # test_booking_reminder_settings_table()
+    # test_reminders_api_direct()
+    # test_toggle_reminder()
+
+    # 4. Исправление схемы таблицы notification_settings (если нужно)
+    # from scripts.testing.database.fix_notification_settings_table import fix_notification_settings_table
+    # log_info("🔧 Исправление схемы notification_settings...", "startup")
+    # fix_notification_settings_table()
+
+    # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
     # from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection, fix_missing_bot_fields
