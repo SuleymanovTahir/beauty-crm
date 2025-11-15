@@ -303,6 +303,25 @@ async def get_upcoming_reminders(
 # BOOKING REMINDER SETTINGS
 # ============================================================================
 
+def create_booking_reminder_settings_table():
+    """Создать таблицу настроек напоминаний о записях"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        days_before INTEGER DEFAULT 0,
+        hours_before INTEGER DEFAULT 0,
+        notification_type TEXT DEFAULT 'email',
+        is_enabled INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )''')
+
+    conn.commit()
+    conn.close()
+
+
 @router.get("/booking-reminder-settings")
 async def get_booking_reminder_settings(
     session_token: Optional[str] = Cookie(None)
@@ -311,6 +330,8 @@ async def get_booking_reminder_settings(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    create_booking_reminder_settings_table()
 
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -338,7 +359,9 @@ async def get_booking_reminder_settings(
         }
     except Exception as e:
         log_error(f"Error getting booking reminder settings: {e}", "reminders")
-        return JSONResponse({"error": str(e)}, status_code=500)
+        import traceback
+        log_error(f"Traceback: {traceback.format_exc()}", "reminders")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
 
@@ -352,6 +375,8 @@ async def create_booking_reminder_setting(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    create_booking_reminder_settings_table()
 
     try:
         data = await request.json()
@@ -405,6 +430,7 @@ async def update_booking_reminder_setting(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
+    create_booking_reminder_settings_table()
     data = await request.json()
 
     try:
@@ -476,6 +502,8 @@ async def toggle_booking_reminder_setting(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
+    create_booking_reminder_settings_table()
+
     try:
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
@@ -518,6 +546,8 @@ async def delete_booking_reminder_setting(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    create_booking_reminder_settings_table()
 
     try:
         conn = sqlite3.connect(DATABASE_NAME)
