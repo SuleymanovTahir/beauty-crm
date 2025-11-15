@@ -353,19 +353,19 @@ async def startup_event():
     # from db.migrations.data.bot.migrate_bot_settings import migrate_settings
     # migrate_settings()
 
-    # from db.migrations.data.migrate_salon_settings import migrate_salon_settings
+    # from db.migrations.data.salon.migrate_salon_settings import migrate_salon_settings
     # migrate_salon_settings()
 
-    # from db.migrations.schema.create_employees import create_employees_tables
-    # create_employees_tables()
+    # from db.migrations.schema.employees.create_employees import create_employees_table
+    # create_employees_table()
 
-    # from db.migrations.data.seed_employees import seed_employees
+    # from db.migrations.data.employees.seed_employees import seed_employees
     # seed_employees()
 
-    # from db.migrations.schema.add_permissions_system import add_permissions_system
+    # from db.migrations.schema.permissions.add_permissions_system import add_permissions_system
     # add_permissions_system()
 
-    # from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
+    # from db.migrations.schema.bot.add_manager_consultation import add_manager_consultation_field
     # add_manager_consultation_field()
 
     # ================================
