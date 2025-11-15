@@ -507,7 +507,11 @@ export default function Clients() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredClients.map((client) => (
-                  <tr key={client.id} className="hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={client.id}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/admin/clients/${client.id}`)}
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {client.is_pinned === 1 && (
@@ -625,7 +629,10 @@ export default function Clients() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => navigate(`/admin/clients/${client.id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/admin/clients/${client.id}`);
+                          }}
                           title={t('clients:view_client_info')}
                         >
                           <Eye className="w-4 h-4" />
@@ -635,7 +642,10 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           className="text-blue-600 hover:bg-blue-50"
-                          onClick={() => handleOpenEditDialog(client)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenEditDialog(client);
+                          }}
                           title={t('clients:edit_client')}
                         >
                           <Edit2 className="w-4 h-4" />
@@ -644,7 +654,10 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           className="text-green-600 hover:bg-green-50"
-                          onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/admin/chat?client_id=${client.id}`);
+                          }}
                           title={t('clients:write_message')}
                         >
                           <MessageSquare className="w-4 h-4" />
@@ -652,7 +665,10 @@ export default function Clients() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handlePinClient(client.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePinClient(client.id);
+                          }}
                           title={t('clients:pin_client')}
                         >
                           <Pin className={`w-4 h-4 ${client.is_pinned ? 'fill-pink-600 text-pink-600' : ''}`} />
@@ -661,7 +677,10 @@ export default function Clients() {
                           size="sm"
                           variant="outline"
                           className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                          onClick={() => handleDeleteClient(client.id, client.display_name)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClient(client.id, client.display_name);
+                          }}
                           disabled={deletingId === client.id}
                           title={t('clients:delete_client')}
                         >

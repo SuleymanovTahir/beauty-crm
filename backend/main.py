@@ -343,7 +343,7 @@ async def startup_event():
     # ================================
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()
+    # run_all_migrations()
 
     # ================================
     # РУЧНОЙ ЗАПУСК ОТДЕЛЬНЫХ МИГРАЦИЙ
