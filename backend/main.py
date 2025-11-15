@@ -383,12 +383,13 @@ async def startup_event():
     # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
-    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection
+    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection, fix_missing_bot_fields
     check_bot_settings()
     check_users()
     check_salon_settings()
     fix_manager_consultation_prompt()
     fix_booking_data_collection()
+    fix_missing_bot_fields()
 
     # Инициализация бота
     bot = get_bot()
