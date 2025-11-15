@@ -1,7 +1,7 @@
 """
 API Endpoints для напоминаний
 """
-from fastapi import APIRouter, Query, Cookie, HTTPException
+from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
@@ -345,7 +345,7 @@ async def get_booking_reminder_settings(
 
 @router.post("/booking-reminder-settings")
 async def create_booking_reminder_setting(
-    request: dict,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать настройку напоминания о записи"""
@@ -354,11 +354,12 @@ async def create_booking_reminder_setting(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        name = request.get("name")
-        days_before = request.get("days_before", 0)
-        hours_before = request.get("hours_before", 0)
-        notification_type = request.get("notification_type", "email")
-        is_enabled = request.get("is_enabled", True)
+        data = await request.json()
+        name = data.get("name")
+        days_before = data.get("days_before", 0)
+        hours_before = data.get("hours_before", 0)
+        notification_type = data.get("notification_type", "email")
+        is_enabled = data.get("is_enabled", True)
 
         if not name:
             return JSONResponse({"error": "Name is required"}, status_code=400)
@@ -396,13 +397,15 @@ async def create_booking_reminder_setting(
 @router.put("/booking-reminder-settings/{setting_id}")
 async def update_booking_reminder_setting(
     setting_id: int,
-    request: dict,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить настройку напоминания о записи"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    data = await request.json()
 
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -414,11 +417,11 @@ async def update_booking_reminder_setting(
             conn.close()
             return JSONResponse({"error": "Setting not found"}, status_code=404)
 
-        name = request.get("name")
-        days_before = request.get("days_before")
-        hours_before = request.get("hours_before")
-        notification_type = request.get("notification_type")
-        is_enabled = request.get("is_enabled")
+        name = data.get("name")
+        days_before = data.get("days_before")
+        hours_before = data.get("hours_before")
+        notification_type = data.get("notification_type")
+        is_enabled = data.get("is_enabled")
 
         # Строим динамический UPDATE
         updates = []
