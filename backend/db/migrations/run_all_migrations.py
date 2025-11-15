@@ -56,61 +56,68 @@ def run_all_migrations():
         # 2. Миграции структуры БД
         log_info("2️⃣ Миграции структуры БД", "migrations")
 
-        # Список миграций структуры
+        # Список миграций структуры (обновлено с новой категориальной структурой)
         structure_migrations = [
             # Client-related
-            ('schema.add_client_interests', 'add_client_interests_table'),
-            ('schema.add_client_accounts', None),  # использует migrate()
-            ('schema.add_client_notes', 'add_client_notes_table'),
-            ('schema.add_bot_modes', 'add_bot_mode_fields'),
+            ('schema.clients.add_client_interests', 'add_client_interests_table'),
+            ('schema.clients.add_client_accounts', None),  # использует migrate()
+            ('schema.clients.add_client_notes', 'add_client_notes_table'),
+
+            # Bot-related
+            ('schema.bot.add_bot_modes', 'add_bot_mode_fields'),
+            ('schema.bot.add_universal_settings', None),  # использует migrate()
+            ('schema.bot.add_manager_consultation', 'add_manager_consultation_field'),
+            ('schema.bot.add_missing_bot_fields', 'add_missing_bot_fields'),
+            ('schema.bot.add_temperature_field', 'add_temperature_field'),
 
             # Booking-related
-            ('schema.add_waitlist', 'add_waitlist_table'),
-            ('schema.add_master_field', 'add_master_field'),
-            ('schema.add_employee_id_to_bookings', 'add_employee_id_to_bookings'),
-
-            # Service-related
-            ('schema.add_service_courses', 'add_service_courses_table'),
-            ('schema.add_temperature_field', 'add_temperature_field'),
+            ('schema.bookings.add_waitlist', 'add_waitlist_table'),
+            ('schema.bookings.add_master_field', 'add_master_field'),
+            ('schema.bookings.add_booking_reminders_system', None),
+            ('schema.bookings.add_service_courses', 'add_service_courses_table'),
 
             # Employee-related
-            ('schema.create_employees', 'create_employees_table'),
-            ('schema.create_employee_services', 'create_employee_services_table'),
-            ('schema.add_employee_translations', 'add_employee_translations'),
-            ('schema.create_employee_schedules', 'create_employee_schedules_table'),
-            ('schema.add_employee_service_provider', 'add_employee_service_provider'),
-            ('schema.add_employee_birthdays', 'add_employee_birthdays'),
-            ('schema.add_salary_system', 'add_salary_system'),
-            ('schema.create_positions_table', 'create_positions_table'),
-            ('schema.link_employees_positions', 'link_employees_positions'),
-            ('schema.add_birthday_phone_fields', 'add_birthday_phone_fields'),
+            ('schema.employees.create_employees', 'create_employees_table'),
+            ('schema.employees.create_employee_services', 'create_employee_services_table'),
+            ('schema.employees.add_employee_translations', 'add_employee_translations'),
+            ('schema.employees.create_employee_schedules', 'create_employee_schedules_table'),
+            ('schema.employees.add_employee_service_provider', 'add_employee_service_provider_field'),
+            ('schema.employees.add_employee_birthdays', 'add_employee_birthday_fields'),
+            ('schema.employees.add_employee_id_to_bookings', 'add_employee_id_to_bookings'),
+            ('schema.employees.add_salary_system', None),  # использует migrate()
+            ('schema.employees.create_positions_table', 'create_positions_table'),
+            ('schema.employees.link_employees_positions', 'link_employees_positions'),
+
+            # Salon-related
+            ('schema.salon.add_hours_weekdays_weekends', 'add_hours_weekdays_weekends'),
 
             # Chat & Communication
-            ('schema.add_chat_features', 'add_chat_features'),
-            ('schema.add_telegram_username', 'add_telegram_username'),
-            ('schema.add_language_column', 'add_language_column'),
-            ('schema.add_notes_field', 'add_notes_field'),
+            ('schema.chat.add_chat_features', 'add_chat_features_tables'),
+            ('schema.chat.create_internal_chat', 'create_internal_chat_table'),
+            ('schema.chat.add_messenger_system', 'add_messenger_system'),
 
-            # Settings
-            ('schema.add_universal_settings', 'add_universal_settings'),
-            ('schema.add_manager_consultation', 'add_manager_consultation_field'),
-            ('schema.add_missing_bot_fields', 'add_missing_bot_fields'),
+            # Notifications
+            ('schema.notifications.create_birthday_notifications', 'create_birthday_notifications_table'),
 
-            # Notifications & Chat
-            ('schema.create_birthday_notifications', 'create_birthday_notifications_table'),
-            ('schema.create_internal_chat', 'create_internal_chat_table'),
+            # User-related
+            ('schema.users.add_telegram_username', 'add_telegram_username_field'),
+            ('schema.users.add_language_column', 'add_language_column'),
+            ('schema.users.add_user_position', 'add_user_position_field'),
+            ('schema.users.add_user_photo', 'add_user_photo_field'),
+            ('schema.users.add_user_subscriptions', 'add_user_subscriptions'),
+            ('schema.users.add_subscription_channels', 'add_subscription_channels'),
+            ('schema.users.add_password_reset_fields', 'add_password_reset_fields'),
+            ('schema.users.add_email_verification_token', 'add_email_verification_token'),
+            ('schema.users.add_birthday_phone_fields', 'add_birthday_phone_fields'),
 
-            # User/Permissions
-            ('schema.add_permissions_system', 'add_permissions_system'),
-            ('schema.add_user_position', 'add_user_position_field'),
-            ('schema.enhance_permissions_system', 'enhance_permissions_system'),
-            ('schema.add_user_photo', 'add_user_photo_field'),
-            ('schema.create_director_approvals', 'create_director_approvals_table'),
-            ('schema.add_user_subscriptions', 'add_user_subscriptions'),
-            ('schema.add_subscription_channels', 'add_subscription_channels'),
-            ('schema.create_broadcast_history', 'create_broadcast_history_table'),
-            ('schema.add_password_reset_fields', 'add_password_reset_fields'),
-            ('schema.add_email_verification_token', 'add_email_verification_token'),
+            # Permissions
+            ('schema.permissions.add_permissions_system', 'add_permissions_system'),
+            ('schema.permissions.enhance_permissions_system', 'enhance_permissions_system'),
+
+            # Other
+            ('schema.other.add_notes_field', None),  # использует migrate()
+            ('schema.other.create_director_approvals', 'create_director_approvals_table'),
+            ('schema.other.create_broadcast_history', 'create_broadcast_history_table'),
         ]
 
         for migration_name, function_name in structure_migrations:
@@ -120,11 +127,11 @@ def run_all_migrations():
         log_info("3️⃣ Миграции данных", "migrations")
 
         data_migrations = [
-            ('data.migrate_salon_settings', 'migrate_salon_settings'),
-            ('data.migrate_bot_settings', 'migrate_bot_settings'),
-            ('data.migrate_services', 'migrate_services'),
-            ('data.update_existing_users_roles', 'update_existing_users_roles'),
-            ('data.add_missing_positions', 'add_missing_positions'),
+            ('data.salon.migrate_salon_settings', 'migrate_salon_settings'),
+            ('data.bot.migrate_bot_settings', 'migrate_bot_settings'),
+            ('data.services.migrate_services', 'migrate_services'),
+            ('data.users.update_existing_users_roles', 'update_existing_users_roles'),
+            ('data.employees.add_missing_positions', 'add_missing_positions'),
             # NOTE: assign_user_positions больше не нужен - должности назначаются в seed_employees
         ]
 
@@ -135,7 +142,7 @@ def run_all_migrations():
         log_info("4️⃣ Заполнение начальных данных (опционально)", "migrations")
 
         seed_migrations = [
-            ('data.seed_employees', 'seed_employees'),
+            ('data.employees.seed_employees', 'seed_employees'),
             ('maintenance.link_employees_to_services', 'link_employees_to_services'),
         ]
 

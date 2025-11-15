@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock } from 'lucide-react';
+import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -49,6 +49,7 @@ export default function ClientDetail() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [enabledMessengers, setEnabledMessengers] = useState<Array<{type: string; name: string}>>([]);
 
   const [editForm, setEditForm] = useState({
     name: '',
@@ -59,8 +60,18 @@ export default function ClientDetail() {
   useEffect(() => {
     if (id) {
       loadClient();
+      loadEnabledMessengers();
     }
   }, [id]);
+
+  const loadEnabledMessengers = async () => {
+    try {
+      const response = await api.getEnabledMessengers();
+      setEnabledMessengers(response.enabled_messengers);
+    } catch (err) {
+      console.error('Error loading enabled messengers:', err);
+    }
+  };
 
   const loadClient = async () => {
     try {
@@ -296,13 +307,44 @@ export default function ClientDetail() {
                 </p>
               </div>
 
-              <Button
-                onClick={() => navigate(`/admin/chat?client_id=${client.id}`)}
-                className="w-full bg-pink-600 hover:bg-pink-700 gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                {t('clientdetail:write_message')}
-              </Button>
+              {/* Messenger Buttons */}
+              <div className="grid grid-cols-2 gap-2">
+                {enabledMessengers.map((messenger) => (
+                  <Button
+                    key={messenger.type}
+                    onClick={() => {
+                      if (messenger.type === 'instagram') {
+                        navigate(`/admin/chat?client_id=${client.id}`);
+                      } else if (messenger.type === 'whatsapp') {
+                        const phone = client.phone?.replace(/[^0-9]/g, '');
+                        if (phone) {
+                          window.open(`https://wa.me/${phone}`, '_blank');
+                        } else {
+                          toast.error('Номер телефона не указан');
+                        }
+                      } else if (messenger.type === 'telegram') {
+                        navigate(`/admin/chat?messenger=telegram&client_id=${client.id}`);
+                      } else if (messenger.type === 'tiktok') {
+                        toast.info('TikTok интеграция в разработке');
+                      }
+                    }}
+                    className={`gap-2 ${
+                      messenger.type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700' :
+                      messenger.type === 'whatsapp' ? 'bg-green-500 hover:bg-green-600' :
+                      messenger.type === 'telegram' ? 'bg-blue-500 hover:bg-blue-600' :
+                      'bg-black hover:bg-gray-800'
+                    }`}
+                    title={messenger.name}
+                  >
+                    {messenger.type === 'instagram' ? (
+                      <Instagram className="w-4 h-4" />
+                    ) : (
+                      <MessageSquare className="w-4 h-4" />
+                    )}
+                    <span className="hidden sm:inline">{messenger.name}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -1025,6 +1025,132 @@ export class ApiClient {
     }>(`/api/positions/${id}/employees`)
   }
 
+  // ===== BOOKING REMINDER SETTINGS =====
+  async getBookingReminderSettings() {
+    return this.request<{
+      settings: Array<{
+        id: number
+        name: string
+        days_before: number
+        hours_before: number
+        notification_type: string
+        is_enabled: boolean
+      }>
+    }>('/api/booking-reminder-settings')
+  }
+
+  async createBookingReminderSetting(data: {
+    name: string
+    days_before: number
+    hours_before: number
+    notification_type?: string
+    is_enabled?: boolean
+  }) {
+    return this.request<{
+      success: boolean
+      setting_id: number
+      message: string
+    }>('/api/booking-reminder-settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateBookingReminderSetting(id: number, data: {
+    name?: string
+    days_before?: number
+    hours_before?: number
+    notification_type?: string
+    is_enabled?: boolean
+  }) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async toggleBookingReminderSetting(id: number) {
+    return this.request<{
+      success: boolean
+      is_enabled: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}/toggle`, {
+      method: 'PUT',
+    })
+  }
+
+  async deleteBookingReminderSetting(id: number) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/booking-reminder-settings/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  // ===== MESSENGERS =====
+  async getMessengerSettings() {
+    return this.request<{
+      settings: Array<{
+        id: number
+        messenger_type: string
+        is_enabled: boolean
+        display_name: string
+        has_token: boolean
+        api_token?: string
+        webhook_url?: string
+        config_json?: string
+        created_at: string
+        updated_at: string
+      }>
+    }>('/api/messengers/settings')
+  }
+
+  async getEnabledMessengers() {
+    return this.request<{
+      enabled_messengers: Array<{
+        type: string
+        name: string
+      }>
+    }>('/api/messengers/enabled')
+  }
+
+  async updateMessengerSetting(messengerType: string, data: {
+    is_enabled?: boolean
+    api_token?: string
+    webhook_url?: string
+    config_json?: any
+  }) {
+    return this.request<{
+      success: boolean
+      message: string
+    }>(`/api/messengers/settings/${messengerType}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getMessengerMessages(messengerType: string, clientId?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (clientId) params.append('client_id', clientId)
+    params.append('limit', limit.toString())
+
+    return this.request<{
+      messages: Array<any>
+      count: number
+    }>(`/api/messengers/${messengerType}/messages?${params}`)
+  }
+
+  async getMessengerUnreadCount() {
+    return this.request<{
+      total: number
+      by_messenger: Record<string, number>
+    }>('/api/messengers/unread-count')
+  }
+
 }
 
 

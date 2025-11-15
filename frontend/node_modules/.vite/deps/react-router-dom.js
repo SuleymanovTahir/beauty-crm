@@ -351,7 +351,7 @@ var require_set_cookie = __commonJS({
   }
 });
 
-// node_modules/react-router/dist/development/chunk-UIGDSWPH.mjs
+// node_modules/react-router/dist/development/chunk-4WY6JWTD.mjs
 var React = __toESM(require_react(), 1);
 var React2 = __toESM(require_react(), 1);
 var React3 = __toESM(require_react(), 1);
@@ -1163,13 +1163,36 @@ function prependBasename({
 }) {
   return pathname === "/" ? basename : joinPaths([basename, pathname]);
 }
+var ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+var isAbsoluteUrl = (url) => ABSOLUTE_URL_REGEX.test(url);
 function resolvePath(to, fromPathname = "/") {
   let {
     pathname: toPathname,
     search = "",
     hash = ""
   } = typeof to === "string" ? parsePath(to) : to;
-  let pathname = toPathname ? toPathname.startsWith("/") ? toPathname : resolvePathname(toPathname, fromPathname) : fromPathname;
+  let pathname;
+  if (toPathname) {
+    if (isAbsoluteUrl(toPathname)) {
+      pathname = toPathname;
+    } else {
+      if (toPathname.includes("//")) {
+        let oldPathname = toPathname;
+        toPathname = toPathname.replace(/\/\/+/g, "/");
+        warning(
+          false,
+          `Pathnames cannot have embedded double slashes - normalizing ${oldPathname} -> ${toPathname}`
+        );
+      }
+      if (toPathname.startsWith("/")) {
+        pathname = resolvePathname(toPathname.substring(1), "/");
+      } else {
+        pathname = resolvePathname(toPathname, fromPathname);
+      }
+    }
+  } else {
+    pathname = fromPathname;
+  }
   return {
     pathname,
     search: normalizeSearch(search),
@@ -1613,8 +1636,6 @@ var IDLE_BLOCKER = {
   reset: void 0,
   location: void 0
 };
-var ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
-var isAbsoluteUrl = (url) => ABSOLUTE_URL_REGEX.test(url);
 var defaultMapRouteProperties = (route) => ({
   hasErrorBoundary: Boolean(route.hasErrorBoundary)
 });
@@ -2655,6 +2676,14 @@ function createRouter(init) {
       key
     );
     let actionResult = actionResults[match.route.id];
+    if (!actionResult) {
+      for (let match2 of fetchMatches) {
+        if (actionResults[match2.route.id]) {
+          actionResult = actionResults[match2.route.id];
+          break;
+        }
+      }
+    }
     if (fetchRequest.signal.aborted) {
       if (fetchControllers.get(key) === abortController) {
         fetchControllers.delete(key);
@@ -3311,22 +3340,42 @@ function createRouter(init) {
         return { type: "aborted" };
       }
       let newMatches = matchRoutes(routesToUse, pathname, basename);
+      let newPartialMatches = null;
       if (newMatches) {
-        return { type: "success", matches: newMatches };
+        if (Object.keys(newMatches[0].params).length === 0) {
+          return { type: "success", matches: newMatches };
+        } else {
+          newPartialMatches = matchRoutesImpl(
+            routesToUse,
+            pathname,
+            basename,
+            true
+          );
+          let matchedDeeper = newPartialMatches && partialMatches.length < newPartialMatches.length && compareMatches(
+            partialMatches,
+            newPartialMatches.slice(0, partialMatches.length)
+          );
+          if (!matchedDeeper) {
+            return { type: "success", matches: newMatches };
+          }
+        }
       }
-      let newPartialMatches = matchRoutesImpl(
-        routesToUse,
-        pathname,
-        basename,
-        true
-      );
-      if (!newPartialMatches || partialMatches.length === newPartialMatches.length && partialMatches.every(
-        (m, i) => m.route.id === newPartialMatches[i].route.id
-      )) {
+      if (!newPartialMatches) {
+        newPartialMatches = matchRoutesImpl(
+          routesToUse,
+          pathname,
+          basename,
+          true
+        );
+      }
+      if (!newPartialMatches || compareMatches(partialMatches, newPartialMatches)) {
         return { type: "success", matches: null };
       }
       partialMatches = newPartialMatches;
     }
+  }
+  function compareMatches(a, b) {
+    return a.length === b.length && a.every((m, i) => m.route.id === b[i].route.id);
   }
   function _internalSetRoutes(newRoutes) {
     manifest = {};
@@ -5950,8 +5999,8 @@ var RenderErrorBoundary = class extends React2.Component {
     };
   }
   componentDidCatch(error, errorInfo) {
-    if (this.props.unstable_onError) {
-      this.props.unstable_onError(error, errorInfo);
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
     } else {
       console.error(
         "React Router caught the following error during render",
@@ -6029,6 +6078,14 @@ function _renderMatches(matches, parentMatches = [], dataRouterState = null, uns
       }
     }
   }
+  let onError = dataRouterState && unstable_onError ? (error, errorInfo) => {
+    var _a, _b;
+    unstable_onError(error, {
+      location: dataRouterState.location,
+      params: ((_b = (_a = dataRouterState.matches) == null ? void 0 : _a[0]) == null ? void 0 : _b.params) ?? {},
+      errorInfo
+    });
+  } : void 0;
   return renderedMatches.reduceRight(
     (outlet, match, index) => {
       let error;
@@ -6089,7 +6146,7 @@ function _renderMatches(matches, parentMatches = [], dataRouterState = null, uns
           error,
           children: getChildren(),
           routeContext: { outlet: null, matches: matches2, isDataRoute: true },
-          unstable_onError
+          onError
         }
       ) : getChildren();
     },
@@ -6432,9 +6489,12 @@ function RouterProvider({
       setStateImpl((prevState) => {
         if (newState.errors && unstable_onError) {
           Object.entries(newState.errors).forEach(([routeId, error]) => {
-            var _a;
+            var _a, _b;
             if (((_a = prevState.errors) == null ? void 0 : _a[routeId]) !== error) {
-              unstable_onError(error);
+              unstable_onError(error, {
+                location: newState.location,
+                params: ((_b = newState.matches[0]) == null ? void 0 : _b.params) ?? {}
+              });
             }
           });
         }
@@ -6763,12 +6823,26 @@ function Await({
   resolve
 }) {
   let dataRouterContext = React3.useContext(DataRouterContext);
+  let dataRouterStateContext = React3.useContext(DataRouterStateContext);
+  let onError = React3.useCallback(
+    (error, errorInfo) => {
+      var _a, _b;
+      if (dataRouterContext && dataRouterContext.unstable_onError && dataRouterStateContext) {
+        dataRouterContext.unstable_onError(error, {
+          location: dataRouterStateContext.location,
+          params: ((_b = (_a = dataRouterStateContext.matches) == null ? void 0 : _a[0]) == null ? void 0 : _b.params) || {},
+          errorInfo
+        });
+      }
+    },
+    [dataRouterContext, dataRouterStateContext]
+  );
   return React3.createElement(
     AwaitErrorBoundary,
     {
       resolve,
       errorElement,
-      unstable_onError: dataRouterContext == null ? void 0 : dataRouterContext.unstable_onError
+      onError
     },
     React3.createElement(ResolveAwait, null, children)
   );
@@ -6782,8 +6856,8 @@ var AwaitErrorBoundary = class extends React3.Component {
     return { error };
   }
   componentDidCatch(error, errorInfo) {
-    if (this.props.unstable_onError) {
-      this.props.unstable_onError(error, errorInfo);
+    if (this.props.onError) {
+      this.props.onError(error, errorInfo);
     } else {
       console.error(
         "<Await> caught the following error during render",
@@ -6818,7 +6892,7 @@ var AwaitErrorBoundary = class extends React3.Component {
         (data2) => Object.defineProperty(resolve, "_data", { get: () => data2 }),
         (error) => {
           var _a, _b;
-          (_b = (_a = this.props).unstable_onError) == null ? void 0 : _b.call(_a, error);
+          (_b = (_a = this.props).onError) == null ? void 0 : _b.call(_a, error);
           Object.defineProperty(resolve, "_error", { get: () => error });
         }
       );
@@ -9719,7 +9793,7 @@ var isBrowser = typeof window !== "undefined" && typeof window.document !== "und
 try {
   if (isBrowser) {
     window.__reactRouterVersion = // @ts-expect-error
-    "7.9.5";
+    "7.9.6";
   }
 } catch (e) {
 }
@@ -10832,7 +10906,7 @@ function htmlEscape(str) {
   return str.replace(ESCAPE_REGEX2, (match) => ESCAPE_LOOKUP2[match]);
 }
 
-// node_modules/react-router/dist/development/chunk-JG3XND5A.mjs
+// node_modules/react-router/dist/development/chunk-G3INQAYP.mjs
 var React12 = __toESM(require_react(), 1);
 var React22 = __toESM(require_react(), 1);
 var import_cookie = __toESM(require_dist(), 1);
@@ -13332,12 +13406,12 @@ export {
 };
 /*! Bundled license information:
 
-react-router/dist/development/chunk-UIGDSWPH.mjs:
-react-router/dist/development/chunk-JG3XND5A.mjs:
+react-router/dist/development/chunk-4WY6JWTD.mjs:
+react-router/dist/development/chunk-G3INQAYP.mjs:
 react-router/dist/development/dom-export.mjs:
 react-router/dist/development/index.mjs:
   (**
-   * react-router v7.9.5
+   * react-router v7.9.6
    *
    * Copyright (c) Remix Software Inc.
    *
@@ -13349,7 +13423,7 @@ react-router/dist/development/index.mjs:
 
 react-router-dom/dist/index.mjs:
   (**
-   * react-router-dom v7.9.5
+   * react-router-dom v7.9.6
    *
    * Copyright (c) Remix Software Inc.
    *

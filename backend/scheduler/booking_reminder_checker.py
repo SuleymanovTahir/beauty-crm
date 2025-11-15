@@ -63,7 +63,7 @@ def get_bookings_needing_reminders() -> List[Dict]:
             SELECT
                 b.id, b.datetime, b.name, b.phone, b.service_name, b.master, b.notes,
                 b.instagram_id,
-                cl.email, cl.full_name, cl.phone as client_phone
+                cl.email, cl.name as full_name, cl.phone as client_phone
             FROM bookings b
             LEFT JOIN clients cl ON b.instagram_id = cl.instagram_id
             WHERE b.datetime >= ? AND b.datetime <= ?
