@@ -24,7 +24,15 @@ backend/logs/*.log
 
 *.log
 
-# *.db-journal
+# Database files
+
+*.db
+
+*.db-journal
+
+backend/salon_bot.db
+
+
 
 # .env
 
@@ -34,5 +42,5 @@ backend/logs/*.log
 
 # ENV/
 
-#  # Node
-# node_modules/
+#  Node
+node_modules/
