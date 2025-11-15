@@ -386,6 +386,13 @@ async def save_notification_settings(request: Request):
         if "no such table" in str(e).lower():
             log_info("Creating notification_settings table", "notifications")
             try:
+                # Закрываем предыдущее соединение если оно было открыто
+                try:
+                    if 'conn' in locals():
+                        conn.close()
+                except:
+                    pass
+
                 conn = sqlite3.connect(DATABASE_NAME)
                 c = conn.cursor()
                 c.execute("""
@@ -435,6 +442,8 @@ async def save_notification_settings(request: Request):
                 }
             except Exception as create_error:
                 log_error(f"Error creating notification_settings table: {create_error}", "notifications")
+                import traceback
+                log_error(traceback.format_exc(), "notifications")
                 raise HTTPException(status_code=500, detail=str(create_error))
         else:
             log_error(f"Database error: {e}", "notifications")

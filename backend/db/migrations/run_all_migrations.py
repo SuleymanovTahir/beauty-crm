@@ -128,7 +128,7 @@ def run_all_migrations():
 
         data_migrations = [
             ('data.salon.migrate_salon_settings', 'migrate_salon_settings'),
-            ('data.bot.migrate_bot_settings', 'migrate_bot_settings'),
+            ('data.bot.migrate_bot_settings', 'migrate_settings'),
             ('data.services.migrate_services', 'migrate_services'),
             ('data.users.update_existing_users_roles', 'update_existing_users_roles'),
             ('data.employees.add_missing_positions', 'add_missing_positions'),

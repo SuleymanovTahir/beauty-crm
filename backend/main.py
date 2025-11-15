@@ -343,7 +343,7 @@ async def startup_event():
     # ================================
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
-    # run_all_migrations()
+    run_all_migrations()
 
     # ================================
     # РУЧНОЙ ЗАПУСК ОТДЕЛЬНЫХ МИГРАЦИЙ
@@ -353,19 +353,19 @@ async def startup_event():
     # from db.migrations.data.bot.migrate_bot_settings import migrate_settings
     # migrate_settings()
 
-    # from db.migrations.data.migrate_salon_settings import migrate_salon_settings
+    # from db.migrations.data.salon.migrate_salon_settings import migrate_salon_settings
     # migrate_salon_settings()
 
-    # from db.migrations.schema.create_employees import create_employees_tables
-    # create_employees_tables()
+    # from db.migrations.schema.employees.create_employees import create_employees_table
+    # create_employees_table()
 
-    # from db.migrations.data.seed_employees import seed_employees
+    # from db.migrations.data.employees.seed_employees import seed_employees
     # seed_employees()
 
-    # from db.migrations.schema.add_permissions_system import add_permissions_system
+    # from db.migrations.schema.permissions.add_permissions_system import add_permissions_system
     # add_permissions_system()
 
-    # from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
+    # from db.migrations.schema.bot.add_manager_consultation import add_manager_consultation_field
     # add_manager_consultation_field()
 
     # ================================
@@ -383,12 +383,13 @@ async def startup_event():
     # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
-    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection
+    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection, fix_missing_bot_fields
     check_bot_settings()
     check_users()
     check_salon_settings()
     fix_manager_consultation_prompt()
     fix_booking_data_collection()
+    fix_missing_bot_fields()
 
     # Инициализация бота
     bot = get_bot()
@@ -607,4 +608,3 @@ async def get_employees_by_position_id(position_id: int):
     except Exception as e:
         log_error(f"Error getting employees by position: {e}", "api")
         return {"success": False, "error": str(e)}
-
