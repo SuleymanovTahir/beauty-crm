@@ -1,7 +1,7 @@
 """
 API Endpoints для уведомлений
 """
-from fastapi import APIRouter, Query, Cookie, HTTPException
+from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
@@ -297,7 +297,42 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
         
         log_info(f"✅ Urgent booking notification sent to managers", "notifications")
         return True
-        
+
     except Exception as e:
         log_error(f"Error sending urgent notification: {e}", "notifications")
         return False
+
+
+# ===== НАСТРОЙКИ УВЕДОМЛЕНИЙ =====
+
+@router.post("/notifications/settings")
+async def save_notification_settings(request: Request):
+    """
+    Сохранить настройки уведомлений
+    Alias для /api/settings/notifications для совместимости с фронтендом
+    """
+    try:
+        data = await request.json()
+        log_info(f"Saving notification settings: {data}", "notifications")
+
+        # Вызываем существующий функционал из settings.py
+        from api.settings import save_notification_settings as save_settings
+        from pydantic import BaseModel
+
+        class NotificationSettings(BaseModel):
+            emailNotifications: bool = True
+            smsNotifications: bool = False
+            bookingNotifications: bool = True
+            chatNotifications: bool = True
+            dailyReport: bool = True
+            reportTime: str = "09:00"
+            birthdayReminders: bool = True
+            birthdayDaysAdvance: int = 7
+
+        settings = NotificationSettings(**data)
+        result = await save_settings(None, settings)
+
+        return result
+    except Exception as e:
+        log_error(f"Error saving notification settings: {e}", "notifications")
+        raise HTTPException(status_code=500, detail=str(e))
