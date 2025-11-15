@@ -385,26 +385,30 @@ async def startup_event():
     # ================================
     # Раскомментируйте нужные тесты для проверки при старте
 
-    # 1. Тест API уведомлений (notification_settings)
-    # from scripts.testing.api.test_notifications_api import test_database_tables, test_notifications_endpoint, test_http_request
-    # log_info("🔔 Тестирование API уведомлений...", "startup")
-    # test_database_tables()
-    # test_notifications_endpoint()
-    # test_http_request()
+    # ⚠️  ВАЖНО: HTTP тесты НЕ РАБОТАЮТ при startup (сервер еще не запущен)
+    # Используйте startup_tests.py для проверки при старте:
 
-    # 2. Тест сохранения настроек уведомлений
-    # from scripts.testing.api.test_save_notifications import test_save_notifications
-    # log_info("💾 Тестирование сохранения настроек уведомлений...", "startup")
-    # test_save_notifications()
+    # from scripts.testing.startup_tests import run_all_startup_tests
+    # log_info("🧪 Запуск startup тестов...", "startup")
+    # run_all_startup_tests()
 
-    # 3. Тест API напоминаний о записях (booking reminders)
-    # from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table, test_reminders_api_direct, test_toggle_reminder
-    # log_info("⏰ Тестирование API напоминаний о записях...", "startup")
-    # test_booking_reminder_settings_table()
-    # test_reminders_api_direct()
-    # test_toggle_reminder()
+    # Или выборочно:
+    # from scripts.testing.startup_tests import startup_test_notifications, startup_test_reminders_api
+    # startup_test_notifications()
+    # startup_test_reminders_api()
 
-    # 4. Исправление схемы таблицы notification_settings (если нужно)
+    # ================================
+    # ПОЛНЫЕ ТЕСТЫ (С HTTP)
+    # ================================
+    # Эти тесты нужно запускать ПОСЛЕ запуска сервера, вручную:
+    # python3 scripts/testing/api/test_notifications_api.py
+    # python3 scripts/testing/api/test_reminders_api.py
+    # python3 scripts/testing/api/test_save_notifications.py
+
+    # ================================
+    # ИСПРАВЛЕНИЕ СХЕМЫ БД
+    # ================================
+    # Запустите один раз если нужно исправить схему:
     # from scripts.testing.database.fix_notification_settings_table import fix_notification_settings_table
     # log_info("🔧 Исправление схемы notification_settings...", "startup")
     # fix_notification_settings_table()
