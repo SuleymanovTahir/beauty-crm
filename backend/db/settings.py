@@ -235,6 +235,10 @@ def get_bot_settings() -> dict:
                 log_info(
                     "✅ Дозаполнено booking_data_collection из дефолтов", "database")
 
+            # ✅ Заменяем плейсхолдеры перед возвратом
+            salon_settings = get_salon_settings()
+            result_dict = _replace_bot_placeholders(result_dict, salon_settings)
+
             return result_dict
 
         else:
@@ -253,6 +257,28 @@ def get_bot_settings() -> dict:
         return _get_default_bot_settings()
     finally:
         conn.close()
+
+
+def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
+    """Заменить плейсхолдеры в настройках бота на реальные значения"""
+    replacements = {
+        '{SALON_NAME}': salon_settings.get('name', 'M.Le Diamant Beauty Lounge'),
+        '{CURRENCY}': salon_settings.get('currency', 'AED'),
+        '{LOCATION}': f"{salon_settings.get('city', 'Dubai')}, {salon_settings.get('address', '')}".strip(', '),
+        '{CITY}': salon_settings.get('city', 'Dubai'),
+        '{ADDRESS}': salon_settings.get('address', ''),
+        '{PHONE}': salon_settings.get('phone', ''),
+        '{BOOKING_URL}': salon_settings.get('booking_url', ''),
+    }
+
+    # Проходим по всем полям и заменяем плейсхолдеры
+    for key, value in bot_settings.items():
+        if isinstance(value, str):
+            for placeholder, replacement in replacements.items():
+                value = value.replace(placeholder, replacement)
+            bot_settings[key] = value
+
+    return bot_settings
 
 
 def _get_default_bot_settings() -> dict:
