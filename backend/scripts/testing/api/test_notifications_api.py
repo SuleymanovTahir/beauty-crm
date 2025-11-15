@@ -3,8 +3,13 @@
 Тестовый скрипт для проверки API уведомлений
 """
 import sys
+import os
 import traceback
 import sqlite3
+
+# Добавляем путь к backend для импортов
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
 from core.config import DATABASE_NAME
 
 def test_database_tables():

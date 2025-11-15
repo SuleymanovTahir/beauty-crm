@@ -2,8 +2,13 @@
 """
 Тест сохранения настроек уведомлений
 """
+import sys
+import os
 import requests
 import json
+
+# Добавляем путь к backend для импортов
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 def test_save_notifications():
     """Тестировать POST /api/notifications/settings"""
