@@ -309,30 +309,139 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
 async def save_notification_settings(request: Request):
     """
     Сохранить настройки уведомлений
-    Alias для /api/settings/notifications для совместимости с фронтендом
     """
     try:
         data = await request.json()
         log_info(f"Saving notification settings: {data}", "notifications")
 
-        # Вызываем существующий функционал из settings.py
-        from api.settings import save_notification_settings as save_settings
-        from pydantic import BaseModel
+        # TODO: Получить user_id из сессии когда будет авторизация
+        user_id = 1  # По умолчанию для первого пользователя
 
-        class NotificationSettings(BaseModel):
-            emailNotifications: bool = True
-            smsNotifications: bool = False
-            bookingNotifications: bool = True
-            chatNotifications: bool = True
-            dailyReport: bool = True
-            reportTime: str = "09:00"
-            birthdayReminders: bool = True
-            birthdayDaysAdvance: int = 7
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
 
-        settings = NotificationSettings(**data)
-        result = await save_settings(None, settings)
+        # Проверяем есть ли уже настройки
+        c.execute("""
+            SELECT id FROM notification_settings
+            WHERE user_id = ?
+        """, (user_id,))
+        existing = c.fetchone()
 
-        return result
+        if existing:
+            # Обновляем существующие настройки
+            c.execute("""
+                UPDATE notification_settings
+                SET
+                    email_notifications = ?,
+                    sms_notifications = ?,
+                    booking_notifications = ?,
+                    chat_notifications = ?,
+                    daily_report = ?,
+                    report_time = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+            """, (
+                1 if data.get('emailNotifications', True) else 0,
+                1 if data.get('smsNotifications', False) else 0,
+                1 if data.get('bookingNotifications', True) else 0,
+                1 if data.get('chatNotifications', True) else 0,
+                1 if data.get('dailyReport', True) else 0,
+                data.get('reportTime', '09:00'),
+                user_id
+            ))
+            log_info(f"Notification settings updated for user {user_id}", "notifications")
+        else:
+            # Создаем новые настройки
+            c.execute("""
+                INSERT INTO notification_settings (
+                    user_id,
+                    email_notifications,
+                    sms_notifications,
+                    booking_notifications,
+                    chat_notifications,
+                    daily_report,
+                    report_time
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                user_id,
+                1 if data.get('emailNotifications', True) else 0,
+                1 if data.get('smsNotifications', False) else 0,
+                1 if data.get('bookingNotifications', True) else 0,
+                1 if data.get('chatNotifications', True) else 0,
+                1 if data.get('dailyReport', True) else 0,
+                data.get('reportTime', '09:00')
+            ))
+            log_info(f"Notification settings created for user {user_id}", "notifications")
+
+        conn.commit()
+        conn.close()
+
+        return {
+            "success": True,
+            "message": "Настройки сохранены"
+        }
+
+    except sqlite3.OperationalError as e:
+        # Таблица не существует - создадим её
+        if "no such table" in str(e).lower():
+            log_info("Creating notification_settings table", "notifications")
+            try:
+                conn = sqlite3.connect(DATABASE_NAME)
+                c = conn.cursor()
+                c.execute("""
+                    CREATE TABLE IF NOT EXISTS notification_settings (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        email_notifications INTEGER DEFAULT 1,
+                        sms_notifications INTEGER DEFAULT 0,
+                        booking_notifications INTEGER DEFAULT 1,
+                        chat_notifications INTEGER DEFAULT 1,
+                        daily_report INTEGER DEFAULT 1,
+                        report_time TEXT DEFAULT '09:00',
+                        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(user_id)
+                    )
+                """)
+
+                # Вставляем настройки после создания таблицы
+                c.execute("""
+                    INSERT INTO notification_settings (
+                        user_id,
+                        email_notifications,
+                        sms_notifications,
+                        booking_notifications,
+                        chat_notifications,
+                        daily_report,
+                        report_time
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    1,
+                    1 if data.get('emailNotifications', True) else 0,
+                    1 if data.get('smsNotifications', False) else 0,
+                    1 if data.get('bookingNotifications', True) else 0,
+                    1 if data.get('chatNotifications', True) else 0,
+                    1 if data.get('dailyReport', True) else 0,
+                    data.get('reportTime', '09:00')
+                ))
+
+                conn.commit()
+                conn.close()
+
+                log_info("notification_settings table created and settings saved", "notifications")
+                return {
+                    "success": True,
+                    "message": "Настройки сохранены"
+                }
+            except Exception as create_error:
+                log_error(f"Error creating notification_settings table: {create_error}", "notifications")
+                raise HTTPException(status_code=500, detail=str(create_error))
+        else:
+            log_error(f"Database error: {e}", "notifications")
+            raise HTTPException(status_code=500, detail=str(e))
+
     except Exception as e:
         log_error(f"Error saving notification settings: {e}", "notifications")
+        import traceback
+        log_error(traceback.format_exc(), "notifications")
         raise HTTPException(status_code=500, detail=str(e))
