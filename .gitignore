@@ -1,18 +1,18 @@
-# __pycache__/
+__pycache__/
 
-# *.pyc
+*.pyc
 
-# *.pyo
+*.pyo
 
-# *.pyd
+*.pyd
 
-# .Python
+.Python
 
-# *.so
+*.so
 
-# *.egg
+*.egg
 
-# *.egg-info/
+*.egg-info/
 
 # dist/
 
