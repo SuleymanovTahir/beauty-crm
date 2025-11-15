@@ -343,7 +343,7 @@ async def startup_event():
     # ================================
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()
+    # run_all_migrations()
 
     # ================================
     # РУЧНОЙ ЗАПУСК ОТДЕЛЬНЫХ МИГРАЦИЙ
@@ -383,13 +383,13 @@ async def startup_event():
     # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
-    from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection, fix_missing_bot_fields
-    check_bot_settings()
-    check_users()
-    check_salon_settings()
-    fix_manager_consultation_prompt()
-    fix_booking_data_collection()
-    fix_missing_bot_fields()
+    # from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection, fix_missing_bot_fields
+    # check_bot_settings()
+    # check_users()
+    # check_salon_settings()
+    # fix_manager_consultation_prompt()
+    # fix_booking_data_collection()
+    # fix_missing_bot_fields()
 
     # Инициализация бота
     bot = get_bot()
