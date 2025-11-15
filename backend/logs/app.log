@@ -1139,3 +1139,5 @@
 2025-11-15 04:06:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
 2025-11-15 04:06:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
 2025-11-15 04:06:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 04:07:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 04:07:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
