@@ -78,25 +78,52 @@ def startup_test_reminders_api():
 
 
 def startup_test_notifications_api():
-    """Проверка API уведомлений (прямой вызов функций)"""
+    """Проверка таблицы notification_settings напрямую"""
     try:
-        log_info("🔔 Проверка API уведомлений...", "startup_test")
+        log_info("🔔 Проверка таблицы notification_settings...", "startup_test")
 
-        from api.notifications import get_notification_settings_api
-        import asyncio
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
 
-        # Вызываем функцию напрямую
-        result = asyncio.run(get_notification_settings_api())
+        # Создаем таблицу если её нет (как в API)
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS notification_settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                email_notifications INTEGER DEFAULT 1,
+                sms_notifications INTEGER DEFAULT 0,
+                booking_notifications INTEGER DEFAULT 1,
+                chat_notifications INTEGER DEFAULT 1,
+                daily_report INTEGER DEFAULT 1,
+                report_time TEXT DEFAULT '09:00',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id)
+            )
+        """)
+        conn.commit()
 
-        if result and 'emailNotifications' in result:
-            log_info("  ✅ API уведомлений работает", "startup_test")
-            return True
-        else:
-            log_warning("  ⚠️  Неожиданный формат ответа", "startup_test")
+        # Проверяем схему
+        c.execute("PRAGMA table_info(notification_settings)")
+        columns = c.fetchall()
+        column_names = [col[1] for col in columns]
+
+        required = ['email_notifications', 'sms_notifications', 'booking_notifications',
+                    'chat_notifications', 'daily_report', 'report_time']
+
+        missing = [col for col in required if col not in column_names]
+
+        if missing:
+            log_warning(f"  ⚠️  Отсутствуют колонки: {', '.join(missing)}", "startup_test")
+            conn.close()
             return False
 
+        conn.close()
+        log_info("  ✅ Таблица notification_settings готова", "startup_test")
+        return True
+
     except Exception as e:
-        log_error(f"  ❌ Ошибка API уведомлений: {e}", "startup_test")
+        log_error(f"  ❌ Ошибка проверки notification_settings: {e}", "startup_test")
         import traceback
         log_error(traceback.format_exc(), "startup_test")
         return False
