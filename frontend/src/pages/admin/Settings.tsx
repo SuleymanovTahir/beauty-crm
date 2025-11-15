@@ -337,7 +337,7 @@ export default function AdminSettings() {
   const handleSaveNotifications = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/notifications/settings', {
+      const response = await fetch('notifications/settings', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

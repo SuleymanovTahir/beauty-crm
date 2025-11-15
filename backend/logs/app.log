@@ -4723,3 +4723,587 @@
 2025-11-15 07:05:26 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 500 (0.00s)
 2025-11-15 07:05:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
 2025-11-15 07:05:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:05:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:05:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:05:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:05:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:14 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-15 07:06:14 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-15 07:06:14 - crm - ERROR - [notifications] Database error: table notification_settings has no column named chat_notifications
+2025-11-15 07:06:14 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 500 (0.00s)
+2025-11-15 07:06:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:41 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-15 07:06:41 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 405 (0.00s)
+2025-11-15 07:06:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:06:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:06:55 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-15 07:06:55 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 405 (0.00s)
+2025-11-15 07:07:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:07:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:07:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:07:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:07:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:07:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:07:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:08:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:08:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:09:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:09:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:10:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:10:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:11:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:11:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:11:48 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:11:48 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:11:48 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:11:48 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:11:48 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:11:48 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:11:48 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:11:48 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:11:48 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:11:48 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:48 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:11:48 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:11:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:11:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:11:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:11:48 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:11:48 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:48 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:11:48 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:11:48 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:11:48 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:11:48 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:11:48 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:11:48 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:11:49 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:11:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:11:49 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:11:49 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:11:49 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:11:49 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:11:49 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:11:49 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:11:49 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:11:49 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:49 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:11:49 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:11:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:11:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:11:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:11:49 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:11:49 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:11:49 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:11:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:11:49 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:11:49 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:11:49 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:11:49 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:11:50 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:11:50 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:11:50 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:11:50 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:11:50 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:11:50 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:11:50 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:11:50 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:11:50 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:11:50 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:50 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:11:50 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:50 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:11:50 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:11:50 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:11:50 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:11:50 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:11:50 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:11:50 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:11:50 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:11:50 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:11:50 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:11:50 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:11:50 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:11:50 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:12 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:12:12 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:12:12 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:12:12 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:12:12 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:12 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:12:12 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:12:12 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:12:12 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:12:12 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:12 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:12:12 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:12:12 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:12:12 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:12:12 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:12:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:12:12 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:12:12 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:12:12 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:12:12 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:14 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:12:14 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:12:14 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:12:14 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:12:14 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:14 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:12:14 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:12:14 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:12:14 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:12:14 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:14 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:12:14 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:12:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:12:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:12:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:12:14 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:12:14 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:14 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:12:14 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:12:14 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:12:14 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:12:14 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:12:14 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:12:14 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:15 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-15 07:12:15 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-15 07:12:15 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-15 07:12:15 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-15 07:12:15 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:15 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-15 07:12:15 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-15 07:12:15 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-15 07:12:15 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-15 07:12:15 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:15 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-15 07:12:15 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-15 07:12:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-15 07:12:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-15 07:12:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-15 07:12:15 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-15 07:12:15 - crm - INFO - [modules] ======================================================================
+2025-11-15 07:12:15 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-15 07:12:15 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-15 07:12:15 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-15 07:12:15 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-15 07:12:15 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-15 07:12:15 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-15 07:12:15 - crm - INFO - [startup] ======================================================================
+2025-11-15 07:12:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:12:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:12:23 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:12:23 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:12:23 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:12:29 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/3/toggle
+2025-11-15 07:12:29 - crm - INFO - [reminders] Booking reminder setting toggled: ID=3, enabled=True
+2025-11-15 07:12:29 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/3/toggle → 200 (0.01s)
+2025-11-15 07:12:29 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:12:29 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-15 07:12:30 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-15 07:12:30 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-15 07:12:30 - crm - ERROR - [notifications] Database error: table notification_settings has no column named chat_notifications
+2025-11-15 07:12:30 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 500 (0.00s)
+2025-11-15 07:12:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:12:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:12:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:12:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:12:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:12:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:13 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:13 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:23 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:23 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:13:51 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:13:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:13:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:13:54 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:13:56 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:14:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:08 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:14:17 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/3/toggle
+2025-11-15 07:14:17 - crm - INFO - [reminders] Booking reminder setting toggled: ID=3, enabled=False
+2025-11-15 07:14:17 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/3/toggle → 200 (0.00s)
+2025-11-15 07:14:17 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:14:17 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-15 07:14:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:46 - crm - INFO - [middleware] 🔥 GET /public/services
+2025-11-15 07:14:46 - crm - INFO - [middleware] 🔥 GET /public/salon-info
+2025-11-15 07:14:46 - crm - INFO - [middleware] 📤 GET /public/services → 200 (0.00s)
+2025-11-15 07:14:46 - crm - INFO - [middleware] 📤 GET /public/salon-info → 200 (0.00s)
+2025-11-15 07:14:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.00s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:14:58 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:14:58 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:15:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:15:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:15:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:15:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:15:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:15:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:15:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:16:58 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:16:58 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:17:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:17:18 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:18 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:17:28 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:28 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:17:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:17:40 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:17:40 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:17:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:17:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:31 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:31 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:41 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:41 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:18:51 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:18:51 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:19:01 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:19:01 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:19:11 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:19:11 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:19:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:19:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:20:07 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:20:07 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:20:12 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/2/toggle
+2025-11-15 07:20:12 - crm - INFO - [reminders] Booking reminder setting toggled: ID=2, enabled=False
+2025-11-15 07:20:12 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/2/toggle → 200 (0.00s)
+2025-11-15 07:20:12 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:20:12 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-15 07:20:14 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-15 07:20:14 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-15 07:20:14 - crm - ERROR - [notifications] Database error: table notification_settings has no column named chat_notifications
+2025-11-15 07:20:14 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 500 (0.00s)
+2025-11-15 07:20:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:37 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:37 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:20:57 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:20:57 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:21:15 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:21:15 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:21:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:19 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:21:19 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:21:19 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:21:25 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/2/toggle
+2025-11-15 07:21:25 - crm - INFO - [reminders] Booking reminder setting toggled: ID=2, enabled=True
+2025-11-15 07:21:25 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/2/toggle → 200 (0.01s)
+2025-11-15 07:21:25 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:21:25 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-15 07:21:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:21:48 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.03s)
+2025-11-15 07:21:48 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.03s)
+2025-11-15 07:21:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:21:54 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-15 07:21:54 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-15 07:21:54 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:22:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:14 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-15 07:22:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:14 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-15 07:22:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:22:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:22:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:23:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:23:04 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:04 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:23:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:23:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:23:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:23:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:23:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:24:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:24:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:24:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:24:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:25:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:25:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:25:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:25:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-15 07:26:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:26:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-15 07:26:38 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-15 07:26:38 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
