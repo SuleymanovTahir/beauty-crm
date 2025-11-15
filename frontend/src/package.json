@@ -68,5 +68,4 @@
     "terser": "*",
     "typescript": "*",
     "vite": "*"
-  },
-}
+}}

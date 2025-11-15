@@ -235,29 +235,29 @@ async def run_migration(migration_name: str):
         log_info(f"🔧 Запуск миграции: {migration_name}", "migrations")
         
         if migration_name == "bot_settings":
-            from db.migrations.data.migrate_bot_settings import migrate_settings
+            from db.migrations.data.bot.migrate_bot_settings import migrate_settings
             result = migrate_settings()
             return {"success": True, "migration": migration_name, "result": result}
 
         elif migration_name == "salon_settings":
-            from db.migrations.data.migrate_salon_settings import migrate_salon_settings
+            from db.migrations.data.salon.migrate_salon_settings import migrate_salon_settings
             result = migrate_salon_settings()
             return {"success": True, "migration": migration_name, "result": result}
 
         elif migration_name == "employees":
-            from db.migrations.schema.create_employees import create_employees_tables
-            create_employees_tables()
-            from db.migrations.data.seed_employees import seed_employees
+            from db.migrations.schema.employees.create_employees import create_employees_table
+            create_employees_table()
+            from db.migrations.data.employees.seed_employees import seed_employees
             seed_employees()
             return {"success": True, "migration": migration_name}
 
         elif migration_name == "permissions":
-            from db.migrations.schema.add_permissions_system import add_permissions_system
+            from db.migrations.schema.permissions.add_permissions_system import add_permissions_system
             add_permissions_system()
             return {"success": True, "migration": migration_name}
 
         elif migration_name == "manager_consultation":
-            from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
+            from db.migrations.schema.bot.add_manager_consultation import add_manager_consultation_field
             add_manager_consultation_field()
             return {"success": True, "migration": migration_name}
         
@@ -275,6 +275,7 @@ async def run_migration(migration_name: str):
             {"error": str(e), "traceback": traceback.format_exc()},
             status_code=500
         )
+
 
 
 @app.get("/admin/diagnostics")
@@ -379,6 +380,42 @@ async def startup_event():
     #     log_warning("⚠️ Некоторые тесты провалены (см. вывод выше)", "startup")
     # else:
     #     log_info("✅ Все тесты пройдены!", "startup")
+
+    # ================================
+    # ТЕСТИРОВАНИЕ УВЕДОМЛЕНИЙ
+    # ================================
+    # Раскомментируйте нужные тесты для проверки при старте
+
+    # ⚠️  ВАЖНО: HTTP тесты НЕ РАБОТАЮТ при startup (сервер еще не запущен)
+    # Используйте startup_tests.py для проверки при старте:
+
+    # from scripts.testing.startup_tests import run_all_startup_tests
+    # log_info("🧪 Запуск startup тестов...", "startup")
+    # run_all_startup_tests()
+
+    # Или выборочно:
+    # from scripts.testing.startup_tests import startup_test_notifications, startup_test_reminders_api
+    # startup_test_notifications()
+    # startup_test_reminders_api()
+
+    # ================================
+    # ПОЛНЫЕ ТЕСТЫ (С HTTP)
+    # ================================
+    # Эти тесты нужно запускать ПОСЛЕ запуска сервера, вручную:
+    from scripts.testing.api.test_notifications_api import test_database_tables
+    test_database_tables()
+    from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table
+    test_booking_reminder_settings_table()
+    from scripts.testing.api.test_save_notifications import test_save_notifications
+    test_save_notifications()
+
+    # ================================
+    # ИСПРАВЛЕНИЕ СХЕМЫ БД
+    # ================================
+    # Запустите один раз если нужно исправить схему:
+    # # from scripts.testing.database.fix_notification_settings_table import fix_notification_settings_table
+    # # log_info("🔧 Исправление схемы notification_settings...", "startup")
+    # # fix_notification_settings_table()
 
     # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
