@@ -316,6 +316,24 @@ async def get_notification_settings_api():
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
+        # Создаем таблицу если её нет
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS notification_settings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                email_notifications INTEGER DEFAULT 1,
+                sms_notifications INTEGER DEFAULT 0,
+                booking_notifications INTEGER DEFAULT 1,
+                chat_notifications INTEGER DEFAULT 1,
+                daily_report INTEGER DEFAULT 1,
+                report_time TEXT DEFAULT '09:00',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id)
+            )
+        """)
+        conn.commit()
+
         c.execute("""
             SELECT * FROM notification_settings
             WHERE user_id = ?
@@ -345,14 +363,9 @@ async def get_notification_settings_api():
             }
     except Exception as e:
         log_error(f"Error loading notification settings: {e}", "notifications")
-        return {
-            "emailNotifications": True,
-            "smsNotifications": False,
-            "bookingNotifications": True,
-            "chatNotifications": True,
-            "dailyReport": True,
-            "reportTime": "09:00"
-        }
+        import traceback
+        log_error(f"Traceback: {traceback.format_exc()}", "notifications")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/notifications/settings")

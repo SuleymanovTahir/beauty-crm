@@ -139,6 +139,7 @@ export default function AdminSettings() {
     loadRoles();
     loadSalonSettings();
     loadProfile();
+    loadNotificationSettings();
     loadSubscriptions();
     loadBroadcastHistory();
     loadBookingReminderSettings();
@@ -188,6 +189,26 @@ export default function AdminSettings() {
       }
     } catch (err) {
       console.error('Error loading profile:', err);
+    }
+  };
+
+  const loadNotificationSettings = async () => {
+    try {
+      const response = await fetch('/api/notifications/settings', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setNotificationSettings({
+          emailNotifications: data.emailNotifications ?? true,
+          smsNotifications: data.smsNotifications ?? false,
+          bookingNotifications: data.bookingNotifications ?? true,
+          birthdayReminders: data.birthdayReminders ?? true,
+          birthdayDaysAdvance: data.birthdayDaysAdvance ?? 7,
+        });
+      }
+    } catch (err) {
+      console.error('Error loading notification settings:', err);
     }
   };
 
@@ -337,7 +358,7 @@ export default function AdminSettings() {
   const handleSaveNotifications = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('notifications/settings', {
+      const response = await fetch('/api/notifications/settings', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
