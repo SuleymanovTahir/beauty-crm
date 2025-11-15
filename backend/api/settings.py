@@ -9,7 +9,7 @@ import sqlite3
 
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
-from db.settings import get_bot_settings, update_bot_settings
+from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
 
 router = APIRouter()
 
@@ -275,3 +275,37 @@ async def reload_bot():
         log_error(f"Error reloading bot: {e}", "settings")
         # Возвращаем success=True даже при ошибке, чтобы не блокировать UI
         return {"success": True, "message": "Settings saved (bot reload skipped)"}
+
+
+# ===== SALON SETTINGS =====
+
+@router.get("/salon-settings")
+async def get_salon_settings_api():
+    """
+    Получить настройки салона
+    """
+    try:
+        settings = get_salon_settings()
+        return settings
+    except Exception as e:
+        log_error(f"Error loading salon settings: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/salon-settings")
+async def update_salon_settings_api(request: Request):
+    """
+    Обновить настройки салона
+    """
+    try:
+        data = await request.json()
+        success = update_salon_settings(data)
+
+        if success:
+            log_info("Salon settings updated successfully", "settings")
+            return {"success": True, "message": "Salon settings updated"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to update salon settings")
+    except Exception as e:
+        log_error(f"Error updating salon settings: {e}", "settings")
+        raise HTTPException(status_code=500, detail=str(e))
