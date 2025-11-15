@@ -338,12 +338,51 @@ async def startup_event():
     log_info("=" * 70, "startup")
     log_info("🚀 Запуск CRM системы...", "startup")
 
-    # Запуск миграций
+    # ================================
+    # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
+    # ================================
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
     run_all_migrations()
 
-    # Проверка и исправление данных
+    # ================================
+    # РУЧНОЙ ЗАПУСК ОТДЕЛЬНЫХ МИГРАЦИЙ
+    # ================================
+    # Раскомментируйте нужную миграцию если хотите запустить её вручную:
+
+    # from db.migrations.data.bot.migrate_bot_settings import migrate_settings
+    # migrate_settings()
+
+    # from db.migrations.data.migrate_salon_settings import migrate_salon_settings
+    # migrate_salon_settings()
+
+    # from db.migrations.schema.create_employees import create_employees_tables
+    # create_employees_tables()
+
+    # from db.migrations.data.seed_employees import seed_employees
+    # seed_employees()
+
+    # from db.migrations.schema.add_permissions_system import add_permissions_system
+    # add_permissions_system()
+
+    # from db.migrations.schema.add_manager_consultation import add_manager_consultation_field
+    # add_manager_consultation_field()
+
+    # ================================
+    # КОМПЛЕКСНОЕ ТЕСТИРОВАНИЕ
+    # ================================
+    # Раскомментируйте если хотите запускать проверку всей системы при старте
+    # from comprehensive_test import run_comprehensive_test
+    # log_info("🧪 Запуск комплексного тестирования...", "startup")
+    # test_success = run_comprehensive_test()
+    # if not test_success:
+    #     log_warning("⚠️ Некоторые тесты провалены (см. вывод выше)", "startup")
+    # else:
+    #     log_info("✅ Все тесты пройдены!", "startup")
+
+    # ================================
+    # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
+    # ================================
     from fix_data import check_bot_settings, check_users, check_salon_settings, fix_manager_consultation_prompt, fix_booking_data_collection
     check_bot_settings()
     check_users()
