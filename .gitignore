@@ -18,7 +18,9 @@
 
 # build/
 
-# logs/*.log
+logs/*.log
+backend/logs/*.log
+*.log
 
 # *.db-journal
 
