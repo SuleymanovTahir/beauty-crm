@@ -354,6 +354,31 @@ def run_all_tests():
         results.append(("api/test_save_notifications.py - Сохранение уведомлений", False))
 
     # ========================================================================
+    # 15. Рассылки и напоминания
+    # ========================================================================
+    print_test_file(
+        "tests/test_broadcasts_and_reminders.py",
+        "Тестирование акционных рассылок и напоминаний Instagram"
+    )
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(os.path.dirname(__file__), "test_broadcasts_and_reminders.py")],
+            capture_output=True,
+            text=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        success = result.returncode == 0
+        results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", success))
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", False))
+
+    # ========================================================================
     # ИТОГИ
     # ========================================================================
     print_header("ИТОГИ ТЕСТИРОВАНИЯ")
