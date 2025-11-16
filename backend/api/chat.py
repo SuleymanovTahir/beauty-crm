@@ -20,20 +20,57 @@ router = APIRouter(tags=["Chat"])
 
 _processing_suggestions = set()
 
+def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
+    """Получить историю чата по типу мессенджера"""
+    import sqlite3
+    from core.config import DATABASE_NAME
+
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    if messenger_type == 'instagram':
+        # Для Instagram используем старую таблицу chat_history
+        c.execute("""SELECT message, sender, timestamp, message_type, id
+                     FROM chat_history
+                     WHERE instagram_id = ?
+                     ORDER BY timestamp DESC LIMIT ?""",
+                  (client_id, limit))
+    else:
+        # Для других мессенджеров используем messenger_messages
+        c.execute("""
+            SELECT message_text, sender_type, created_at,
+                   COALESCE(attachments_json, 'text'), id
+            FROM messenger_messages
+            WHERE client_id = ? AND messenger_type = ?
+            ORDER BY created_at DESC LIMIT ?
+        """, (client_id, messenger_type, limit))
+
+    messages = c.fetchall()
+    conn.close()
+
+    return list(reversed(messages))
+
+
 @router.get("/chat/messages")
 async def get_chat_messages(
     client_id: str = Query(...),
     limit: int = Query(50),
+    messenger: Optional[str] = Query('instagram'),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить сообщения чата"""
+    """Получить сообщения чата с фильтрацией по мессенджеру"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    messages_raw = get_chat_history(client_id, limit=limit)
+
+    # Валидируем тип мессенджера
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
+    if messenger not in valid_messengers:
+        messenger = 'instagram'
+
+    messages_raw = get_messenger_chat_history(client_id, messenger, limit=limit)
     mark_messages_as_read(client_id, user["id"])
-    
+
     return {
         "messages": [
             {
@@ -44,7 +81,8 @@ async def get_chat_messages(
                 "type": msg[3] if len(msg) > 3 else "text"
             }
             for msg in messages_raw
-        ]
+        ],
+        "messenger": messenger
     }
 
 

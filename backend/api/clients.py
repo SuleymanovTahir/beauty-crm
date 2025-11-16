@@ -1,7 +1,7 @@
 """
 API Endpoints для работы с клиентами
 """
-from fastapi import APIRouter, Request, Cookie, HTTPException
+from fastapi import APIRouter, Request, Cookie, HTTPException, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 import time
@@ -19,14 +19,51 @@ from utils.logger import log_error,log_info
 router = APIRouter(tags=["Clients"])
 
 
+def get_clients_by_messenger(messenger_type: str = 'instagram'):
+    """Получить клиентов по типу мессенджера"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    if messenger_type == 'instagram':
+        # Для Instagram используем старую таблицу clients
+        c.execute("""SELECT instagram_id, username, phone, name, first_contact,
+                     last_contact, total_messages, labels, status, lifetime_value,
+                     profile_pic, notes, is_pinned
+                     FROM clients ORDER BY is_pinned DESC, last_contact DESC""")
+    else:
+        # Для других мессенджеров получаем клиентов из messenger_messages
+        c.execute("""
+            SELECT DISTINCT
+                c.instagram_id, c.username, c.phone, c.name, c.first_contact,
+                c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+                c.profile_pic, c.notes, c.is_pinned
+            FROM clients c
+            JOIN messenger_messages mm ON c.instagram_id = mm.client_id
+            WHERE mm.messenger_type = ?
+            ORDER BY c.is_pinned DESC, c.last_contact DESC
+        """, (messenger_type,))
+
+    clients = c.fetchall()
+    conn.close()
+    return clients
+
+
 @router.get("/clients")
-async def list_clients(session_token: Optional[str] = Cookie(None)):
-    """Получить всех клиентов"""
+async def list_clients(
+    session_token: Optional[str] = Cookie(None),
+    messenger: Optional[str] = Query('instagram')
+):
+    """Получить всех клиентов с фильтрацией по мессенджеру"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    clients = get_all_clients()
+
+    # Валидируем тип мессенджера
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
+    if messenger not in valid_messengers:
+        messenger = 'instagram'
+
+    clients = get_clients_by_messenger(messenger)
     return {
         "clients": [
             {
@@ -43,12 +80,14 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
                 "lifetime_value": c[9] if len(c) > 9 else 0,
                 "profile_pic": c[10] if len(c) > 10 else None,
                 "notes": c[11] if len(c) > 11 else "",
-                "is_pinned": c[12] if len(c) > 12 else 0
+                "is_pinned": c[12] if len(c) > 12 else 0,
+                "messenger": messenger
             }
             for c in clients
         ],
         "count": len(clients),
-        "unread_count": get_total_unread()
+        "unread_count": get_total_unread(),
+        "messenger": messenger
     }
 
 

@@ -92,10 +92,14 @@ export default function Chat() {
   const [isSelectingMessages, setIsSelectingMessages] = useState(false);
   const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string | number>>(new Set());
   const [isAskingBot, setIsAskingBot] = useState(false);
+  const [currentMessenger, setCurrentMessenger] = useState<string>('instagram');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const clientIdFromUrl = searchParams.get('client_id');
+    const messengerFromUrl = searchParams.get('messenger') || 'instagram';
+
+    setCurrentMessenger(messengerFromUrl);
 
     if (clientIdFromUrl) {
       localStorage.setItem('selectedClientId', clientIdFromUrl);
@@ -104,7 +108,7 @@ export default function Chat() {
 
   useEffect(() => {
     loadClients();
-  }, []);
+  }, [currentMessenger]);
 
   useEffect(() => {
     if (clients.length > 0) {
@@ -180,7 +184,7 @@ export default function Chat() {
     try {
       setInitialLoading(true);
       setError(null);
-      const data = await api.getClients();
+      const data = await api.getClients(currentMessenger);
 
       const clientsArray = data.clients || (Array.isArray(data) ? data : []);
 
@@ -214,7 +218,7 @@ export default function Chat() {
         setLoadingMessages(true);
       }
 
-      const data = await api.getChatMessages(clientId, 50);
+      const data = await api.getChatMessages(clientId, 50, currentMessenger);
       const messagesArray = (data && typeof data === 'object' && 'messages' in data)
         ? data.messages
         : (Array.isArray(data) ? data : []);

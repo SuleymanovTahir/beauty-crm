@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
@@ -51,6 +51,17 @@ const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
     });
+    return res.json();
+  },
+
+  async updateBooking(id: number, data: any) {
+    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('Update failed');
     return res.json();
   },
 
@@ -124,6 +135,7 @@ export default function Bookings() {
 
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
+  const [editingBooking, setEditingBooking] = useState<any>(null);
 
   const [clientSearch, setClientSearch] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
@@ -342,7 +354,8 @@ export default function Bookings() {
 
     try {
       setAddingBooking(true);
-      await api.createBooking({
+
+      const bookingData = {
         instagram_id: selectedClient.instagram_id,
         name: selectedClient.display_name,
         phone: addForm.phone || selectedClient.phone || '',
@@ -351,9 +364,18 @@ export default function Bookings() {
         time: addForm.time,
         revenue: addForm.revenue || selectedService.price,
         master: addForm.master,
-      });
+      };
 
-      toast.success(t('bookings:booking_created'));
+      if (editingBooking) {
+        // Редактируем существующую запись
+        await api.updateBooking(editingBooking.id, bookingData);
+        toast.success(t('bookings:booking_updated'));
+      } else {
+        // Создаем новую запись
+        await api.createBooking(bookingData);
+        toast.success(t('bookings:booking_created'));
+      }
+
       setShowAddDialog(false);
       resetForm();
       await loadData();
@@ -364,12 +386,41 @@ export default function Bookings() {
     }
   };
 
+  const handleEditBooking = (booking: any) => {
+    // Находим клиента и сервис
+    const client = clients.find(c => c.instagram_id === booking.client_id);
+    const service = services.find(s => s.name_ru === booking.service || s.name === booking.service);
+
+    // Устанавливаем состояние редактирования
+    setEditingBooking(booking);
+    setSelectedClient(client);
+    setSelectedService(service);
+
+    // Парсим дату и время из datetime
+    const datetime = new Date(booking.datetime);
+    const date = datetime.toISOString().split('T')[0]; // YYYY-MM-DD
+    const time = datetime.toTimeString().slice(0, 5); // HH:MM
+
+    // Заполняем форму
+    setAddForm({
+      phone: booking.phone || '',
+      date: date,
+      time: time,
+      revenue: booking.revenue || 0,
+      master: booking.master || '',
+    });
+
+    // Открываем диалог
+    setShowAddDialog(true);
+  };
+
   const resetForm = () => {
     setClientSearch('');
     setServiceSearch('');
     setSelectedClient(null);
     setSelectedService(null);
     setAddForm({ phone: '', date: '', time: '', revenue: 0, master: '' });
+    setEditingBooking(null);
   };
 
   const filteredClients = clients.filter((c: any) =>
@@ -709,8 +760,25 @@ export default function Bookings() {
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}
+                          title={t('bookings:view')}
                         >
                           <Eye style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                        </button>
+                        <button
+                          onClick={() => handleEditBooking(booking)}
+                          style={{
+                            padding: '0.375rem 0.75rem',
+                            backgroundColor: '#fff',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          title={t('bookings:edit')}
+                        >
+                          <Edit style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
                         </button>
                         <button
                           onClick={() => navigate(`/admin/chat?client_id=${booking.client_id}`)}
@@ -724,6 +792,7 @@ export default function Bookings() {
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}
+                          title={t('bookings:chat')}
                         >
                           <MessageSquare style={{ width: '16px', height: '16px', color: '#10b981' }} />
                         </button>
