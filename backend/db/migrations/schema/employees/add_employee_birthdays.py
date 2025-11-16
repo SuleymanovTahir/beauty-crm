@@ -3,7 +3,7 @@ from datetime import datetime
 from core.config import DATABASE_NAME
 
 
-def add_employee_birthday_fields():
+def add_employee_birthdays():
     """Добавить поля для дней рождения сотрудников"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -40,4 +40,4 @@ def add_employee_birthday_fields():
 
 
 if __name__ == "__main__":
-    add_employee_birthday_fields()
+    add_employee_birthdays()

@@ -5,7 +5,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-def add_service_courses_table():
+def add_service_courses():
     """Создать таблицу service_courses"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()

@@ -6,7 +6,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-def add_user_position_field():
+def add_user_position():
     """Добавить поле position в таблицу users"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -33,4 +33,4 @@ def add_user_position_field():
         conn.close()
 
 if __name__ == "__main__":
-    add_user_position_field()
+    add_user_position()

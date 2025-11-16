@@ -5,7 +5,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-def migrate():
+def add_client_notes_table():
     """Выполнить миграцию"""
     try:
         conn = sqlite3.connect(DATABASE_NAME)
@@ -64,6 +64,6 @@ if __name__ == "__main__":
     print("=" * 70)
     response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
     if response.lower() in ['yes', 'y']:
-        migrate()
+        add_client_notes_table()
     else:
         print("\n❌ Миграция отменена")

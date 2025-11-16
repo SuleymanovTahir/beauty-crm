@@ -4,7 +4,7 @@
 import sqlite3
 from core.config import DATABASE_NAME
 
-def add_user_photo_field():
+def add_user_photo():
     """Добавить поле photo_url для фото пользователя"""
 
     conn = sqlite3.connect(DATABASE_NAME)
@@ -31,4 +31,4 @@ def add_user_photo_field():
         conn.close()
 
 if __name__ == "__main__":
-    add_user_photo_field()
+    add_user_photo()
