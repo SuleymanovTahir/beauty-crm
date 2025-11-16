@@ -15,6 +15,7 @@ from db import (
 )
 from utils.utils import require_auth, get_total_unread, get_client_display_name
 from utils.logger import log_error,log_info
+from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 
 router = APIRouter(tags=["Clients"])
 
@@ -601,20 +602,146 @@ async def update_client_bot_mode_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     try:
         data = await request.json()
         mode = data.get('mode')
-        
+
         if mode not in ['manual', 'assistant', 'autopilot']:
             return JSONResponse({"error": "Invalid mode"}, status_code=400)
-        
+
         update_client_bot_mode(client_id, mode)
-        
+
         log_info(f"🔧 Bot mode changed for {client_id}: {mode}", "api")
-        
+
         return {"success": True, "mode": mode}
-        
+
     except Exception as e:
         log_error(f"Error updating bot mode: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/preferences")
+async def get_client_preferences_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить предпочтения клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        assistant = SmartAssistant(client_id)
+
+        if not assistant.preferences:
+            return {
+                "preferences": None,
+                "has_preferences": False
+            }
+
+        return {
+            "preferences": assistant.preferences,
+            "has_preferences": True,
+            "history_count": len(assistant.history)
+        }
+
+    except Exception as e:
+        log_error(f"Error getting client preferences: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/clients/{client_id}/preferences")
+async def update_client_preferences_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить предпочтения клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        data = await request.json()
+        assistant = SmartAssistant(client_id)
+
+        success = assistant.save_preferences(data)
+
+        if success:
+            log_activity(user["id"], "update_client_preferences", "client",
+                        client_id, f"Preferences updated")
+            return {
+                "success": True,
+                "message": "Preferences saved successfully"
+            }
+        else:
+            return JSONResponse({"error": "Failed to save preferences"}, status_code=500)
+
+    except Exception as e:
+        log_error(f"Error updating client preferences: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/smart-greeting")
+async def get_smart_greeting_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить персонализированное приветствие"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        # Получаем имя клиента
+        client = get_client_by_id(client_id)
+        if not client:
+            return JSONResponse({"error": "Client not found"}, status_code=404)
+
+        client_name = client[3] or client[1] or "друг"
+        greeting = get_smart_greeting(client_id, client_name)
+
+        return {
+            "greeting": greeting,
+            "client_id": client_id,
+            "client_name": client_name
+        }
+
+    except Exception as e:
+        log_error(f"Error getting smart greeting: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/smart-suggestion")
+async def get_smart_suggestion_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить умное предложение записи"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        # Получаем имя клиента
+        client = get_client_by_id(client_id)
+        if not client:
+            return JSONResponse({"error": "Client not found"}, status_code=404)
+
+        client_name = client[3] or client[1] or "друг"
+
+        assistant = SmartAssistant(client_id)
+        suggestion = assistant.suggest_next_booking()
+        message = assistant.generate_booking_suggestion_message(client_name)
+
+        return {
+            "suggestion": suggestion,
+            "message": message,
+            "client_id": client_id,
+            "client_name": client_name
+        }
+
+    except Exception as e:
+        log_error(f"Error getting smart suggestion: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

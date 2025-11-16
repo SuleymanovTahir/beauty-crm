@@ -10,7 +10,9 @@ from core.config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,
+    get_client_by_id,
 )
+from services.smart_assistant import SmartAssistant
 
 
 class SalonBot:
@@ -122,9 +124,37 @@ class SalonBot:
             str: Ответ бота
         """
 
-        
+
         # ✅ ИСПРАВЛЕНИЕ: Сначала строим additional_context, ПОТОМ промпт
         additional_context = ""
+
+        # 🧠 УМНЫЙ АССИСТЕНТ: Персонализация на основе истории клиента
+        try:
+            assistant = SmartAssistant(instagram_id)
+
+            # Если это приветствие или начало диалога
+            if self.should_greet(history):
+                client = get_client_by_id(instagram_id)
+                client_name = client[3] if client and client[3] else "друг"
+
+                personalized_greeting = assistant.get_personalized_greeting(client_name)
+                additional_context += f"\n\n💎 ПЕРСОНАЛИЗИРОВАННОЕ ПРИВЕТСТВИЕ:\n{personalized_greeting}\n"
+                additional_context += "⚠️ ИСПОЛЬЗУЙ ЭТО ПРИВЕТСТВИЕ вместо стандартного!\n"
+
+            # Умное предложение записи (если есть история)
+            if len(history) > 0:
+                suggestion = assistant.suggest_next_booking()
+                if suggestion and suggestion.get('confidence', 0) > 0.6:
+                    suggestion_message = assistant.generate_booking_suggestion_message(
+                        client[3] if client and client[3] else "друг"
+                    )
+                    additional_context += f"\n\n🎯 УМНОЕ ПРЕДЛОЖЕНИЕ ЗАПИСИ:\n{suggestion_message}\n"
+                    additional_context += f"Рекомендуемая дата: {suggestion['recommended_date']}\n"
+                    additional_context += f"Уверенность: {suggestion['confidence']*100:.0f}%\n"
+                    additional_context += "💡 Если клиент спрашивает о записи - используй это предложение!\n"
+        except Exception as e:
+            # Не критично, если SmartAssistant не сработал
+            print(f"ℹ️ SmartAssistant skipped: {e}")
 
         if context_flags:
             if context_flags.get('has_incomplete_booking'):

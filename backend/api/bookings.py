@@ -13,7 +13,8 @@ from db import (
 )
 from core.config import DATABASE_NAME
 from utils.utils import require_auth
-from utils.logger import log_error, log_warning
+from utils.logger import log_error, log_warning, log_info
+from services.smart_assistant import SmartAssistant
 
 router = APIRouter(tags=["Bookings"])
 
@@ -142,6 +143,20 @@ async def create_booking_api(
 
         log_activity(user["id"], "create_booking", "booking", instagram_id,
                     f"Service: {service}")
+
+        # 🧠 Умный ассистент: обучаемся на основе новой записи
+        try:
+            assistant = SmartAssistant(instagram_id)
+            assistant.learn_from_booking({
+                'service': service,
+                'master': master,
+                'datetime': datetime_str,
+                'phone': phone,
+                'name': name
+            })
+            log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
+        except Exception as e:
+            log_error(f"SmartAssistant learning failed: {e}", "bookings")
 
         # Отправляем уведомление мастеру
         if master and booking_id:
