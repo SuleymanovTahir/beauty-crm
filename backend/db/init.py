@@ -82,6 +82,23 @@ def init_database():
         updated_at TEXT
     )''')
 
+    # Миграция: добавить отсутствующие колонки в bot_settings
+    c.execute("PRAGMA table_info(bot_settings)")
+    bot_columns = [col[1] for col in c.fetchall()]
+
+    # Список колонок которые могут отсутствовать в старой схеме
+    migrations_needed = {
+        'max_message_length': 'INTEGER DEFAULT 4',
+        'voice_message_response': 'TEXT',
+        'contextual_rules': 'TEXT',
+        'auto_cancel_discounts': "TEXT DEFAULT 'Не предлагай скидки и специальные предложения автоматически. Предлагай их только если клиент явно интересуется скидками.'",
+        'comment_reply_settings': "TEXT DEFAULT '{}'",
+    }
+
+    for column_name, column_type in migrations_needed.items():
+        if column_name not in bot_columns:
+            c.execute(f"ALTER TABLE bot_settings ADD COLUMN {column_name} {column_type}")
+
     # Таблица настроек салона
     c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
         id INTEGER PRIMARY KEY CHECK (id = 1),
@@ -107,6 +124,14 @@ def init_database():
         currency TEXT DEFAULT 'AED',
         updated_at TEXT
     )''')
+
+    # Миграция: добавить bot_name_en и bot_name_ar если их нет
+    c.execute("PRAGMA table_info(salon_settings)")
+    columns = [col[1] for col in c.fetchall()]
+    if 'bot_name_en' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_en TEXT")
+    if 'bot_name_ar' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_ar TEXT")
 
     # Таблица истории чата
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history
@@ -163,6 +188,22 @@ def init_database():
                   created_at TEXT,
                   last_login TEXT,
                   is_active INTEGER DEFAULT 1)''')
+
+    # Миграция: добавить отсутствующие колонки в users
+    c.execute("PRAGMA table_info(users)")
+    user_columns = [col[1] for col in c.fetchall()]
+
+    # Список колонок которые могут отсутствовать в старой схеме
+    user_migrations = {
+        'position': 'TEXT',
+        'employee_id': 'INTEGER',
+        'birthday': 'TEXT',
+        'phone': 'TEXT',
+    }
+
+    for column_name, column_type in user_migrations.items():
+        if column_name not in user_columns:
+            c.execute(f"ALTER TABLE users ADD COLUMN {column_name} {column_type}")
 
     # Таблица сессий
     c.execute('''CREATE TABLE IF NOT EXISTS sessions

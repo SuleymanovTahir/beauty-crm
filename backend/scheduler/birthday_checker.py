@@ -460,7 +460,7 @@ async def send_booking_reminders():
         log_error(f"Error in send_booking_reminders: {e}", "scheduler")
 
 
-def check_rebooking_opportunities():
+async def check_rebooking_opportunities():
     """Проверить клиентов для повторной записи (#16)"""
     from db.bookings import get_clients_for_rebooking
     from integrations.instagram import send_message
@@ -480,8 +480,7 @@ def check_rebooking_opportunities():
                 log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
                 
                 # Делаем паузу между сообщениями
-                import time
-                time.sleep(5)
+                await asyncio.sleep(5)
                 
             except Exception as e:
                 log_error(f"Error sending rebooking: {e}", "scheduler")
@@ -497,10 +496,9 @@ def check_rebooking_opportunities():
                 
                 await send_message(instagram_id, message)
                 log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
-                
-                import time
-                time.sleep(5)
-                
+
+                await asyncio.sleep(5)
+
             except Exception as e:
                 log_error(f"Error sending rebooking: {e}", "scheduler")
                 
@@ -508,39 +506,35 @@ def check_rebooking_opportunities():
         log_error(f"Error in check_rebooking_opportunities: {e}", "scheduler")
 
 
-def booking_scheduler_loop():
-    """Основной цикл scheduler для записей"""
+async def booking_scheduler_loop():
+    """Основной цикл scheduler для записей (async версия)"""
     log_info("📅 Запущен планировщик записей", "scheduler")
-    
-    import time
-    
+
     while True:
         try:
             now = datetime.now()
-            
+
             # Напоминания - каждый час
             if now.minute == 0:
                 log_info("Проверка напоминаний о записях...", "scheduler")
-                send_booking_reminders()
-                time.sleep(60)
-            
+                await send_booking_reminders()
+                await asyncio.sleep(60)
+
             # Повторные записи - раз в день в 10:00
             if now.hour == 10 and now.minute == 0:
                 log_info("Проверка возможностей повторной записи...", "scheduler")
-                check_rebooking_opportunities()
-                time.sleep(60)
-            
-            time.sleep(30)  # Проверяем каждые 30 секунд
-            
+                await check_rebooking_opportunities()
+                await asyncio.sleep(60)
+
+            await asyncio.sleep(30)  # Проверяем каждые 30 секунд
+
         except Exception as e:
             log_error(f"Ошибка в booking_scheduler_loop: {e}", "scheduler")
-            time.sleep(60)
+            await asyncio.sleep(60)
 
 
 def start_booking_scheduler():
-    """Запустить scheduler записей"""
-    import threading
-    
-    thread = threading.Thread(target=booking_scheduler_loop, daemon=True)
-    thread.start()
+    """Запустить scheduler записей как фоновую задачу"""
+    # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
+    asyncio.create_task(booking_scheduler_loop())
     log_info("✅ Планировщик записей запущен", "scheduler")
