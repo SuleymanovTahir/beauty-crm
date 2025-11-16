@@ -57,6 +57,11 @@ from .services import (
     create_service,
     update_service,
     delete_service,
+    # Функции для работы с должностями услуг
+    get_service_positions,
+    update_service_positions,
+    add_service_position,
+    remove_service_position,
     get_all_special_packages,
     get_special_package_by_id,
     find_special_package_by_keywords,

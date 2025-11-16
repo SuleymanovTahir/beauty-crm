@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { usePermissions } from '../../utils/permissions';
 
 interface AdminLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -35,6 +36,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
   const [enabledMessengers, setEnabledMessengers] = useState<Array<{type: string; name: string}>>([]);
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(user?.role || 'employee');
 
   useEffect(() => {
     loadUnreadCount();
@@ -88,18 +92,24 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     }
   };
 
-  const menuItems = [
-    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/admin/dashboard' },
-    { icon: FileText, label: t('menu.bookings'), path: '/admin/bookings' },
-    { icon: Users, label: t('menu.clients'), path: '/admin/clients' },
-    { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount, hasSubmenu: true },
-    { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics' },
-    { icon: Scissors, label: t('menu.services'), path: '/admin/services' },
-    { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar' },
-    { icon: UserCog, label: t('menu.users'), path: '/admin/users' },
-    { icon: Settings, label: t('menu.settings'), path: '/admin/settings' },
-    { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings' },
-  ];
+  // Фильтруем пункты меню на основе прав пользователя
+  const menuItems = useMemo(() => {
+    const allItems = [
+      { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/admin/dashboard', requirePermission: () => true },
+      { icon: FileText, label: t('menu.bookings'), path: '/admin/bookings', requirePermission: () => permissions.canViewAllBookings || permissions.canCreateBookings },
+      { icon: Users, label: t('menu.clients'), path: '/admin/clients', requirePermission: () => permissions.canViewAllClients },
+      { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
+      { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Scissors, label: t('menu.services'), path: '/admin/services', requirePermission: () => permissions.canViewServices },
+      { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar', requirePermission: () => permissions.canViewAllCalendars },
+      { icon: UserCog, label: t('menu.users'), path: '/admin/users', requirePermission: () => permissions.canViewAllUsers },
+      { icon: Settings, label: t('menu.settings'), path: '/admin/settings', requirePermission: () => permissions.canViewSettings },
+      { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings', requirePermission: () => permissions.canEditSettings },
+    ];
+
+    // Фильтруем только те пункты, к которым есть доступ
+    return allItems.filter(item => item.requirePermission());
+  }, [permissions, unreadCount, t]);
 
   const chatSubmenuItems = enabledMessengers.map(messenger => ({
     icon: messenger.type === 'instagram' ? Instagram : MessageSquare,

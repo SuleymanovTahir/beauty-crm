@@ -10,19 +10,71 @@ from core.config import DATABASE_NAME
 
 # ===== УСЛУГИ =====
 
-def get_all_services(active_only=True):
-    """Получить все услуги из БД"""
+def get_all_services(active_only=True, include_positions=False):
+    """Получить все услуги из БД
+
+    Args:
+        active_only: Только активные услуги
+        include_positions: Включить должности для каждой услуги
+
+    Returns:
+        List of services (tuples or dicts if include_positions=True)
+    """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     if active_only:
         c.execute("SELECT * FROM services WHERE is_active = 1 ORDER BY category, name")
     else:
         c.execute("SELECT * FROM services ORDER BY category, name")
-    
+
     services = c.fetchall()
+
+    if not include_positions:
+        conn.close()
+        return services
+
+    # Добавляем должности для каждой услуги
+    result = []
+    for service in services:
+        service_id = service[0]
+
+        # Получаем должности для этой услуги
+        c.execute("""
+            SELECT p.id, p.name
+            FROM service_positions sp
+            JOIN positions p ON sp.position_id = p.id
+            WHERE sp.service_id = ?
+            ORDER BY p.name
+        """, (service_id,))
+
+        positions = [{"id": pos[0], "name": pos[1]} for pos in c.fetchall()]
+
+        # Конвертируем tuple в dict
+        service_dict = {
+            "id": service[0],
+            "service_key": service[1],
+            "name": service[2],
+            "name_ru": service[3] if len(service) > 3 else service[2],
+            "name_ar": service[4] if len(service) > 4 else None,
+            "price": service[5] if len(service) > 5 else 0,
+            "min_price": service[6] if len(service) > 6 else None,
+            "max_price": service[7] if len(service) > 7 else None,
+            "currency": service[8] if len(service) > 8 else "AED",
+            "category": service[9] if len(service) > 9 else "other",
+            "description": service[10] if len(service) > 10 else "",
+            "description_ru": service[11] if len(service) > 11 else "",
+            "description_ar": service[12] if len(service) > 12 else "",
+            "benefits": service[13].split('|') if len(service) > 13 and service[13] else [],
+            "is_active": bool(service[14]) if len(service) > 14 and service[14] is not None else True,
+            "duration": service[15] if len(service) > 15 else None,
+            "position_id": service[16] if len(service) > 16 else None,
+            "positions": positions  # Добавляем список должностей
+        }
+        result.append(service_dict)
+
     conn.close()
-    return services
+    return result
 
 
 def get_service_by_key(service_key):
@@ -338,7 +390,7 @@ def format_service_price_for_bot(service) -> str:
     min_price = service[6] if len(service) > 6 and service[6] else None
     max_price = service[7] if len(service) > 7 and service[7] else None
     currency = service[8] if len(service) > 8 else "AED"
-    
+
     # ✅ ПРАВИЛЬНАЯ ЛОГИКА
     if min_price and max_price and min_price != max_price:
         # Проверяем правильный порядок (min всегда меньше max)
@@ -347,3 +399,141 @@ def format_service_price_for_bot(service) -> str:
         return f"от {min_price} до {max_price} {currency}"
     else:
         return f"{price} {currency}"
+
+
+# ===== SERVICE POSITIONS (Должности для услуг) =====
+
+def get_service_positions(service_id):
+    """
+    Получить список должностей, которые могут выполнять услугу
+
+    Args:
+        service_id: ID услуги
+
+    Returns:
+        List[dict]: Список должностей с id и name
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT p.id, p.name
+        FROM service_positions sp
+        JOIN positions p ON sp.position_id = p.id
+        WHERE sp.service_id = ?
+        ORDER BY p.name
+    """, (service_id,))
+
+    positions = [{"id": pos[0], "name": pos[1]} for pos in c.fetchall()]
+
+    conn.close()
+    return positions
+
+
+def update_service_positions(service_id, position_ids):
+    """
+    Обновить список должностей для услуги
+
+    Args:
+        service_id: ID услуги
+        position_ids: List[int] - список ID должностей
+
+    Returns:
+        bool: True если успешно
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        # 1. Удаляем все существующие связи для этой услуги
+        c.execute("DELETE FROM service_positions WHERE service_id = ?", (service_id,))
+
+        # 2. Добавляем новые связи
+        if position_ids:
+            for position_id in position_ids:
+                c.execute("""
+                    INSERT INTO service_positions (service_id, position_id)
+                    VALUES (?, ?)
+                """, (service_id, position_id))
+
+        conn.commit()
+        conn.close()
+
+        from utils.logger import log_info
+        log_info(f"Updated positions for service {service_id}: {position_ids}", "database")
+
+        return True
+
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+
+        from utils.logger import log_error
+        log_error(f"Error updating service positions: {e}", "database")
+        return False
+
+
+def add_service_position(service_id, position_id):
+    """
+    Добавить должность к услуге
+
+    Args:
+        service_id: ID услуги
+        position_id: ID должности
+
+    Returns:
+        bool: True если успешно
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            INSERT OR IGNORE INTO service_positions (service_id, position_id)
+            VALUES (?, ?)
+        """, (service_id, position_id))
+
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+
+        return success
+
+    except Exception as e:
+        conn.close()
+        from utils.logger import log_error
+        log_error(f"Error adding service position: {e}", "database")
+        return False
+
+
+def remove_service_position(service_id, position_id):
+    """
+    Удалить должность из услуги
+
+    Args:
+        service_id: ID услуги
+        position_id: ID должности
+
+    Returns:
+        bool: True если успешно
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            DELETE FROM service_positions
+            WHERE service_id = ? AND position_id = ?
+        """, (service_id, position_id))
+
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+
+        return success
+
+    except Exception as e:
+        conn.close()
+        from utils.logger import log_error
+        log_error(f"Error removing service position: {e}", "database")
+        return False
