@@ -235,7 +235,7 @@ def test_smart_assistant():
 
         # Пробуем получить рекомендацию
         try:
-            recommendations = assistant.get_next_visit_recommendation(test_client)
+            recommendations = assistant.get_next_visit_recommendation()
 
             if recommendations:
                 print(f"   ✅ Рекомендации работают")
