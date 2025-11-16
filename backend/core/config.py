@@ -199,7 +199,8 @@ ROLES = {
             'clients_view_limited',
             'analytics_view_stats_only',
             'staff_chat_own',
-            'calendar_view_all_readonly'
+            'calendar_view_all_readonly',
+            'bot_settings_view'
         ],
         'can_manage_roles': [],
         'hierarchy_level': 40

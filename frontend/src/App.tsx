@@ -94,10 +94,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && currentRole !== requiredRole) {
+  // Разрешаем директору заходить на /admin
+  const allowedRoles = requiredRole ? [requiredRole] : [];
+  if (requiredRole === 'admin') {
+    allowedRoles.push('director'); // Директор имеет доступ к admin панели
+  }
+
+  if (requiredRole && !allowedRoles.includes(currentRole || '')) {
     // Редирект на панель в зависимости от роли
+    if (currentRole === 'director') return <Navigate to="/admin/dashboard" replace />;
     if (currentRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
+    if (currentRole === 'sales') return <Navigate to="/sales/clients" replace />;
     if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
     return <Navigate to="/" replace />;
   }

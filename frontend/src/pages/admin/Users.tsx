@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -10,6 +10,7 @@ import { api } from '../../services/api';
 import { PositionSelector } from '../../components/PositionSelector';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions, RoleHierarchy } from '../../utils/permissions';
+import { PermissionsTab } from '../../components/admin/PermissionsTab';
 
 interface User {
   id: number;
@@ -53,6 +54,9 @@ export default function Users() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editForm, setEditForm] = useState({ username: '', full_name: '', email: '', position: '' });
   const [savingEdit, setSavingEdit] = useState(false);
+
+  // Permissions dialog states
+  const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -336,6 +340,22 @@ export default function Users() {
                           </Button>
                         )}
 
+                        {/* Кнопка управления правами только для директора */}
+                        {currentUser?.role === 'director' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowPermissionsDialog(true);
+                            }}
+                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                            title="Управление правами"
+                          >
+                            <Key className="w-4 h-4" />
+                          </Button>
+                        )}
+
                         {/* Кнопка удаления только если есть право */}
                         {permissions.canDeleteUsers && (
                           <Button
@@ -528,6 +548,40 @@ export default function Users() {
                 disabled={savingEdit}
               >
                 {savingEdit ? 'Сохранение...' : 'Сохранить'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Диалог управления правами */}
+      {showPermissionsDialog && selectedUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl max-w-4xl w-full shadow-2xl my-8">
+            <div className="p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl">
+              <h3 className="text-xl font-bold text-gray-900">
+                Управление правами: {selectedUser.full_name}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+              </p>
+            </div>
+
+            <div className="p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
+              <PermissionsTab userId={selectedUser.id} />
+            </div>
+
+            <div className="p-6 border-t border-gray-200 sticky bottom-0 bg-white rounded-b-xl">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPermissionsDialog(false);
+                  setSelectedUser(null);
+                  loadUsers(); // Перезагружаем список пользователей
+                }}
+                className="w-full"
+              >
+                Закрыть
               </Button>
             </div>
           </div>
