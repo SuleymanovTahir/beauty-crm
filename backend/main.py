@@ -408,20 +408,7 @@ async def startup_event():
 
 
 
-    # ================================
-    # ПОЛНЫЕ ТЕСТЫ (С HTTP)
-    # ================================
-    # Эти тесты нужно запускать ПОСЛЕ запуска сервера, вручную:
-    # python3 scripts/testing/api/test_notifications_api.py
-    # python3 scripts/testing/api/test_reminders_api.py
-    # python3 scripts/testing/api/test_save_notifications.py
 
-    # from scripts.testing.api.test_notifications_api import test_database_tables
-    # test_database_tables()
-    # from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table
-    # test_booking_reminder_settings_table()
-    # from scripts.testing.api.test_save_notifications import test_save_notifications
-    # test_save_notifications()
 
     # ================================
     # ИСПРАВЛЕНИЕ СХЕМЫ БД
