@@ -13,7 +13,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
 sys.path.insert(0, backend_dir)
 
-from core.config import DATABASE_NAME
+# Используем прямой путь к БД
+DATABASE_NAME = os.path.join(backend_dir, 'salon.db')
 
 
 def print_header(text):
@@ -410,6 +411,13 @@ def main():
         'Система согласований директора'
     )
 
+    # Services
+    results["schema/services/add_service_positions"] = run_migration_function(
+        'db.migrations.schema.services.add_service_positions',
+        'add_service_positions',
+        'Связь услуг с должностями (вместо категорий)'
+    )
+
     # Standalone миграции
     results["run_migration_master_schedule"] = run_migration_file(
         'run_migration_master_schedule.py',
@@ -506,6 +514,13 @@ def main():
         'link_employees_to_services',
         'Связывание сотрудников с услугами'
     )
+
+    # Удаление тестовых данных (опционально, раскомментируйте если нужно)
+    # results["maintenance/delete_test_clients"] = run_migration_function(
+    #     'db.migrations.maintenance.delete_test_clients',
+    #     'delete_test_clients',
+    #     'Удаление тестовых клиентов (@anna_hot, @elena_test, @maria_test)'
+    # )
 
     # ========================================================================
     # ИТОГИ
