@@ -354,14 +354,22 @@ async def startup_event():
     log_info("🔧 Запуск миграций...", "startup")
     # run_all_migrations()
 
+    # ================================
+    # ПОЛНОЕ ТЕСТИРОВАНИЕ (опционально)
+    # ================================
+    # Раскомментируйте для запуска всех тестов при старте
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests()
+
 #  для проверки при старте:
 
-    from scripts.testing.startup_tests import run_all_startup_tests
+    from tests.startup.startup_tests import run_all_startup_tests
     log_info("🧪 Запуск startup тестов...", "startup")
     run_all_startup_tests()
 
     # Или выборочно:
-    # from scripts.testing.startup_tests import startup_test_notifications, startup_test_reminders_api
+    # from tests.startup.startup_tests import startup_test_notifications, startup_test_reminders_api
     # startup_test_notifications()
     # startup_test_reminders_api()
 

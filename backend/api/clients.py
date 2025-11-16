@@ -53,11 +53,19 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
     c = conn.cursor()
 
     if messenger_type == 'instagram':
-        # Для Instagram используем старую таблицу clients
-        c.execute("""SELECT instagram_id, username, phone, name, first_contact,
-                     last_contact, total_messages, labels, status, lifetime_value,
-                     profile_pic, notes, is_pinned
-                     FROM clients ORDER BY is_pinned DESC, last_contact DESC""")
+        # Для Instagram проверяем наличие сообщений в chat_history
+        c.execute("""
+            SELECT DISTINCT
+                c.instagram_id, c.username, c.phone, c.name, c.first_contact,
+                c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+                c.profile_pic, c.notes, c.is_pinned
+            FROM clients c
+            WHERE EXISTS (
+                SELECT 1 FROM chat_history ch
+                WHERE ch.instagram_id = c.instagram_id
+            )
+            ORDER BY c.is_pinned DESC, c.last_contact DESC
+        """)
     else:
         # Для других мессенджеров получаем клиентов из messenger_messages
         c.execute("""
