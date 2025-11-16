@@ -1,6 +1,12 @@
 # Создай файл backend/check_services.py
 
 import sqlite3
+import sys
+import os
+
+# Добавляем путь к backend
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 from core.config import DATABASE_NAME
 
 def check_services():

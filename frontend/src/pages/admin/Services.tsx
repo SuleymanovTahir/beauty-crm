@@ -11,6 +11,8 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface Service {
   id: number;
@@ -79,6 +81,10 @@ const formatPrice = (service: Service) => {
 
 export default function Services() {
   const [activeTab, setActiveTab] = useState<TabType>('services');
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(currentUser?.role || 'employee');
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
@@ -100,6 +106,9 @@ export default function Services() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Positions state
+  const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
+
   const [serviceFormData, setServiceFormData] = useState({
     key: '',
     name: '',
@@ -113,6 +122,7 @@ export default function Services() {
     description: '',
     description_ru: '',
     benefits: '',
+    position_ids: [] as number[],
   });
 
   const [packageFormData, setPackageFormData] = useState({
@@ -134,7 +144,21 @@ export default function Services() {
 
   useEffect(() => {
     loadData();
+    loadPositions();
   }, [activeTab]);
+
+  const loadPositions = async () => {
+    try {
+      const response = await fetch('/api/positions', {
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to load positions');
+      const data = await response.json();
+      setPositions(data.positions || []);
+    } catch (err) {
+      console.error('Error loading positions:', err);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === 'services') {
@@ -195,12 +219,28 @@ export default function Services() {
       description: '',
       description_ru: '',
       benefits: '',
+      position_ids: [],
     });
     setIsServiceModalOpen(true);
   };
 
-  const handleEditService = (service: Service) => {
+  const handleEditService = async (service: Service) => {
     setEditingService(service);
+
+    // Load service positions
+    let positionIds: number[] = [];
+    try {
+      const response = await fetch(`/api/services/${service.id}/positions`, {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        positionIds = (data.positions || []).map((p: any) => p.id);
+      }
+    } catch (err) {
+      console.error('Error loading service positions:', err);
+    }
+
     setServiceFormData({
       key: service.key,
       name: service.name,
@@ -214,6 +254,7 @@ export default function Services() {
       description: service.description || '',
       description_ru: service.description_ru || '',
       benefits: Array.isArray(service.benefits) ? service.benefits.join(' | ') : '',
+      position_ids: positionIds,
     });
     setIsServiceModalOpen(true);
   };
@@ -242,12 +283,28 @@ export default function Services() {
         benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
       };
 
+      let serviceId: number;
       if (editingService) {
         await api.updateService(editingService.id, serviceData);
+        serviceId = editingService.id;
         toast.success(t('services:service_updated'));
       } else {
-        await api.createService(serviceData);
+        const response = await api.createService(serviceData);
+        serviceId = response.id;
         toast.success(t('services:service_added'));
+      }
+
+      // Save service positions
+      try {
+        await fetch(`/api/services/${serviceId}/positions`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ position_ids: serviceFormData.position_ids }),
+        });
+      } catch (err) {
+        console.error('Error saving service positions:', err);
+        toast.error('Ошибка сохранения должностей');
       }
 
       await loadData();
@@ -495,13 +552,16 @@ export default function Services() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button
-                className="bg-pink-600 hover:bg-pink-700"
-                onClick={handleOpenAddService}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('services:add_service')}
-              </Button>
+              {/* Кнопка создания только если есть право */}
+              {permissions.canEditServices && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddService}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('services:add_service')}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -562,21 +622,26 @@ export default function Services() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditService(service)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700"
-                              onClick={() => handleDeleteService(service.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {/* Кнопки редактирования и удаления только если есть право */}
+                            {permissions.canEditServices && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditService(service)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-red-600 hover:text-red-700"
+                                  onClick={() => handleDeleteService(service.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -635,13 +700,16 @@ export default function Services() {
                   <SelectItem value="inactive">{t('services:inactive')}</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                className="bg-pink-600 hover:bg-pink-700"
-                onClick={handleOpenAddPackage}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('services:create_package')}
-              </Button>
+              {/* Кнопка создания только если есть право */}
+              {permissions.canEditServices && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddPackage}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('services:create_package')}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -724,33 +792,35 @@ export default function Services() {
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEditPackage(pkg)}
-                    className="flex-1"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    {t('services:edit')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleTogglePackageActive(pkg)}
-                    className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
-                  >
-                    {pkg.is_active ? t('services:disable') : t('services:enable')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeletePackage(pkg.id)}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+                {permissions.canEditServices && (
+                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditPackage(pkg)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      {t('services:edit')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleTogglePackageActive(pkg)}
+                      className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
+                    >
+                      {pkg.is_active ? t('services:disable') : t('services:enable')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeletePackage(pkg.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -911,6 +981,41 @@ export default function Services() {
                 onChange={(e) => setServiceFormData({ ...serviceFormData, benefits: e.target.value })}
                 placeholder={t('services:long_lasting_natural_look_waterproof')}
               />
+            </div>
+
+            {/* Positions Multi-Select */}
+            <div>
+              <Label htmlFor="positions">Должности, которые могут выполнять эту услугу</Label>
+              <div className="border rounded-md p-3 max-h-48 overflow-y-auto">
+                {positions.length === 0 ? (
+                  <p className="text-sm text-gray-500">Нет доступных должностей</p>
+                ) : (
+                  <div className="space-y-2">
+                    {positions.map((position) => (
+                      <label
+                        key={position.id}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={serviceFormData.position_ids.includes(position.id)}
+                          onChange={(e) => {
+                            const newPositionIds = e.target.checked
+                              ? [...serviceFormData.position_ids, position.id]
+                              : serviceFormData.position_ids.filter(id => id !== position.id);
+                            setServiceFormData({ ...serviceFormData, position_ids: newPositionIds });
+                          }}
+                          className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500"
+                        />
+                        <span className="text-sm">{position.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Выберите должности сотрудников, которые могут оказывать эту услугу
+              </p>
             </div>
           </div>
 

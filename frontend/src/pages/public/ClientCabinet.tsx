@@ -14,7 +14,10 @@ import {
   Cake,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Edit,
+  Trash2,
+  CalendarClock
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -22,6 +25,8 @@ import { Label } from '../../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../../components/ui/dialog';
+import { Calendar as CalendarComponent } from '../../components/ui/calendar';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -42,6 +47,11 @@ interface Booking {
   completed_at: string | null;
   revenue: number;
   notes: string | null;
+}
+
+interface TimeSlot {
+  time: string;
+  available: boolean;
 }
 
 interface Notification {
@@ -86,6 +96,13 @@ export default function ClientCabinet() {
     phone: '',
     birthday: ''
   });
+
+  // Reschedule booking modal
+  const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [rescheduleDate, setRescheduleDate] = useState<Date | undefined>(undefined);
+  const [rescheduleTime, setRescheduleTime] = useState<string>('');
+  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
 
   useEffect(() => {
     // Check if already logged in
@@ -206,6 +223,95 @@ export default function ClientCabinet() {
       );
     } catch (error) {
       console.error('Error marking notification as read:', error);
+    }
+  };
+
+  // Cancel booking
+  const handleCancelBooking = async (bookingId: number) => {
+    if (!confirm('Вы уверены, что хотите отменить запись?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/public/client/bookings/${bookingId}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.ok) {
+        toast.success('Запись успешно отменена');
+        if (client) {
+          fetchClientData(client.id);
+        }
+      } else {
+        toast.error('Ошибка отмены записи');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      toast.error('Ошибка отмены записи');
+    }
+  };
+
+  // Open reschedule modal
+  const handleOpenReschedule = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setRescheduleDate(undefined);
+    setRescheduleTime('');
+    setAvailableSlots([]);
+    setIsRescheduleModalOpen(true);
+  };
+
+  // Fetch available time slots when date changes
+  useEffect(() => {
+    if (rescheduleDate && isRescheduleModalOpen) {
+      fetchAvailableSlots();
+    }
+  }, [rescheduleDate, isRescheduleModalOpen]);
+
+  const fetchAvailableSlots = async () => {
+    if (!rescheduleDate) return;
+
+    try {
+      const dateStr = rescheduleDate.toISOString().split('T')[0];
+      const response = await fetch(`/public/available-slots?date=${dateStr}`);
+      const data = await response.json();
+      setAvailableSlots(data.slots || []);
+    } catch (error) {
+      console.error('Error fetching available slots:', error);
+      toast.error('Ошибка загрузки доступных слотов');
+    }
+  };
+
+  // Reschedule booking
+  const handleRescheduleBooking = async () => {
+    if (!selectedBooking || !rescheduleDate || !rescheduleTime) {
+      toast.error('Выберите дату и время');
+      return;
+    }
+
+    try {
+      const dateStr = rescheduleDate.toISOString().split('T')[0];
+      const newDatetime = `${dateStr} ${rescheduleTime}`;
+
+      const response = await fetch(`/public/client/bookings/${selectedBooking.id}/reschedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_datetime: newDatetime })
+      });
+
+      if (response.ok) {
+        toast.success('Запись успешно перенесена');
+        setIsRescheduleModalOpen(false);
+        if (client) {
+          fetchClientData(client.id);
+        }
+      } else {
+        const error = await response.json();
+        toast.error(error.detail || 'Ошибка переноса записи');
+      }
+    } catch (error) {
+      console.error('Error rescheduling booking:', error);
+      toast.error('Ошибка переноса записи');
     }
   };
 
@@ -447,7 +553,7 @@ export default function ClientCabinet() {
                     {bookings.map((booking) => (
                       <Card key={booking.id}>
                         <CardContent className="pt-6">
-                          <div className="flex justify-between items-start">
+                          <div className="flex justify-between items-start mb-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 <h4 className="font-semibold text-lg">{booking.service_name}</h4>
@@ -473,6 +579,30 @@ export default function ClientCabinet() {
                               </p>
                             </div>
                           </div>
+
+                          {/* Action buttons - only for confirmed or pending bookings */}
+                          {(booking.status === 'confirmed' || booking.status === 'pending') && (
+                            <div className="flex gap-2 pt-4 border-t">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleOpenReschedule(booking)}
+                                className="flex-1 gap-2"
+                              >
+                                <Edit className="w-4 h-4" />
+                                Изменить время
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleCancelBooking(booking.id)}
+                                className="flex-1 gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Отменить
+                              </Button>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}
@@ -632,6 +762,84 @@ export default function ClientCabinet() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Reschedule Booking Modal */}
+        <Dialog open={isRescheduleModalOpen} onOpenChange={setIsRescheduleModalOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CalendarClock className="w-5 h-5 text-pink-600" />
+                Изменить время записи
+              </DialogTitle>
+              <DialogDescription>
+                {selectedBooking && `Услуга: ${selectedBooking.service_name}`}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-6 py-4">
+              {/* Calendar */}
+              <div>
+                <Label className="mb-3 block">Выберите новую дату:</Label>
+                <div className="flex justify-center">
+                  <CalendarComponent
+                    mode="single"
+                    selected={rescheduleDate}
+                    onSelect={setRescheduleDate}
+                    disabled={(date) => date < new Date()}
+                    className="rounded-md border"
+                  />
+                </div>
+              </div>
+
+              {/* Time slots */}
+              {rescheduleDate && (
+                <div>
+                  <Label className="mb-3 block">
+                    Доступные временные слоты на {rescheduleDate.toLocaleDateString('ru-RU')}:
+                  </Label>
+                  {availableSlots.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">
+                      Нет доступных слотов на выбранную дату
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                      {availableSlots.map((slot) => (
+                        <Button
+                          key={slot.time}
+                          variant={rescheduleTime === slot.time ? 'default' : 'outline'}
+                          disabled={!slot.available}
+                          onClick={() => setRescheduleTime(slot.time)}
+                          className={`
+                            ${rescheduleTime === slot.time ? 'bg-pink-600 hover:bg-pink-700' : ''}
+                            ${!slot.available ? 'opacity-50 cursor-not-allowed' : ''}
+                          `}
+                        >
+                          {slot.time}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsRescheduleModalOpen(false)}
+              >
+                Отмена
+              </Button>
+              <Button
+                onClick={handleRescheduleBooking}
+                disabled={!rescheduleDate || !rescheduleTime}
+                className="bg-gradient-to-r from-pink-500 to-purple-600"
+              >
+                Сохранить изменения
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

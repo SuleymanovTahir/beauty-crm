@@ -16,6 +16,7 @@ import {
   Sparkles,
   Image as ImageIcon,
   Video,
+  Shield,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
@@ -28,6 +29,8 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface Client {
   id: string;
@@ -54,6 +57,8 @@ interface Message {
 export default function Chat() {
   const location = useLocation();
   const { t } = useTranslation(['manager/Chat', 'common']);
+  const { user: currentUser } = useAuth();
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [clients, setClients] = useState<Client[]>([]);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -556,6 +561,21 @@ export default function Chat() {
   );
 
   const canSend = message.trim().length > 0 || attachedFiles.length > 0;
+
+  // Check permissions
+  if (!userPermissions.canViewAllClients) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
+          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">
+            У вас нет прав для просмотра чата с клиентами. Обратитесь к администратору.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (initialLoading) {
     return (

@@ -1,15 +1,17 @@
 //src/components/EmployLayout.tsx
+import { useMemo } from 'react';
 import Calendar from '../../pages/admin/Calendar';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { 
-  LayoutDashboard, 
+import {
+  LayoutDashboard,
   User,
   Settings,
   LogOut
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePermissions } from '../../utils/permissions';
 
 interface EmployeeLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -21,12 +23,20 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
   const navigate = useNavigate();
   const { t } = useTranslation(['components/EmployeeLayout', 'common']);
 
-  const menuItems = [
-    { icon: LayoutDashboard, label: t('menu.my_bookings'), path: '/employee/dashboard' },
-    { icon: Calendar, label: t('menu.calendar'), path: '/employee/calendar' },
-    { icon: User, label: t('menu.profile'), path: '/employee/profile' },
-    { icon: Settings, label: t('menu.settings'), path: '/employee/settings' },
-  ];
+  // Используем централизованную систему прав
+  const permissions = usePermissions(user?.role || 'employee');
+
+  // Сотрудник имеет доступ только к своим данным
+  const menuItems = useMemo(() => {
+    const allItems = [
+      { icon: LayoutDashboard, label: t('menu.my_bookings'), path: '/employee/dashboard', requirePermission: () => true },
+      { icon: Calendar, label: t('menu.calendar'), path: '/employee/calendar', requirePermission: () => true },
+      { icon: User, label: t('menu.profile'), path: '/employee/profile', requirePermission: () => true },
+      { icon: Settings, label: t('menu.settings'), path: '/employee/settings', requirePermission: () => true },
+    ];
+
+    return allItems.filter(item => item.requirePermission());
+  }, [t]);
 
   const handleLogout = async () => {
     try {

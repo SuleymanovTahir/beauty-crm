@@ -13,6 +13,7 @@ import {
   Loader,
   AlertCircle,
   ArchiveRestore,
+  Shield,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -29,6 +30,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface ClientMessage {
   id: string;
@@ -67,6 +70,8 @@ const statuses = [
 export default function Messages() {
   const navigate = useNavigate();
   useTranslation(['manager/Messages', 'common']);
+  const { user: currentUser } = useAuth();
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const [filteredMessages, setFilteredMessages] = useState<ExtendedMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -263,6 +268,21 @@ export default function Messages() {
         return null;
     }
   };
+
+  // Check permissions
+  if (!userPermissions.canViewAllClients) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
+          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">
+            У вас нет прав для просмотра клиентских сообщений. Обратитесь к администратору.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // ✅ ПОКАЗЫВАЕМ СПИННЕР ТОЛЬКО ПРИ ПЕРВИЧНОЙ ЗАГРУЗКЕ
   if (initialLoading) {

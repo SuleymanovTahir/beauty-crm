@@ -31,6 +31,8 @@ import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { usePeriodFilter } from '../../hooks/usePeriodFilter';
 import { StatusSelect } from '../../components/shared/StatusSelect';
 import { useClientStatuses } from '../../hooks/useStatuses';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface Client {
   id: string;
@@ -54,7 +56,12 @@ interface Client {
 
 export default function Clients() {
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
   const { statuses: statusConfig, addStatus: handleAddStatus } = useClientStatuses()
+
+  // Используем централизованную систему прав
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
+
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
