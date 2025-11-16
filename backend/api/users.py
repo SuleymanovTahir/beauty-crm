@@ -469,7 +469,7 @@ async def update_user_profile(
         
         conn.close()
         return {"success": True, "message": "Профиль обновлён"}
-        
+
     except Exception as e:
         conn.rollback()
         conn.close()
@@ -477,4 +477,105 @@ async def update_user_profile(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+@router.get("/users/{user_id}/notification-settings")
+async def get_user_notification_settings(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить настройки уведомлений пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # Пользователь может смотреть только свои настройки или админ любые
+    if user["id"] != user_id and user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT notify_telegram, notify_email, notify_whatsapp,
+                   notify_on_new_booking, notify_on_booking_change, notify_on_booking_cancel,
+                   telegram_chat_id, email, phone
+            FROM users
+            WHERE id = ?
+        """, (user_id,))
+
+        result = c.fetchone()
+        conn.close()
+
+        if not result:
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        return {
+            "notify_telegram": bool(result[0]) if result[0] is not None else True,
+            "notify_email": bool(result[1]) if result[1] is not None else True,
+            "notify_whatsapp": bool(result[2]) if result[2] is not None else False,
+            "notify_on_new_booking": bool(result[3]) if result[3] is not None else True,
+            "notify_on_booking_change": bool(result[4]) if result[4] is not None else True,
+            "notify_on_booking_cancel": bool(result[5]) if result[5] is not None else True,
+            "has_telegram": result[6] is not None and result[6] != "",
+            "has_email": result[7] is not None and result[7] != "",
+            "has_whatsapp": result[8] is not None and result[8] != "",
+        }
+
+    except Exception as e:
+        log_error(f"Error getting notification settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/users/{user_id}/notification-settings")
+async def update_user_notification_settings(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки уведомлений пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # Пользователь может менять только свои настройки или админ любые
+    if user["id"] != user_id and user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    data = await request.json()
+
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Обновляем настройки
+        c.execute("""
+            UPDATE users
+            SET notify_telegram = ?,
+                notify_email = ?,
+                notify_whatsapp = ?,
+                notify_on_new_booking = ?,
+                notify_on_booking_change = ?,
+                notify_on_booking_cancel = ?
+            WHERE id = ?
+        """, (
+            1 if data.get('notify_telegram', True) else 0,
+            1 if data.get('notify_email', True) else 0,
+            1 if data.get('notify_whatsapp', False) else 0,
+            1 if data.get('notify_on_new_booking', True) else 0,
+            1 if data.get('notify_on_booking_change', True) else 0,
+            1 if data.get('notify_on_booking_cancel', True) else 0,
+            user_id
+        ))
+
+        conn.commit()
+        conn.close()
+
+        log_activity(user["id"], "update_notification_settings", "user",
+                    str(user_id), "Updated notification preferences")
+
+        return {"success": True, "message": "Настройки уведомлений обновлены"}
+
+    except Exception as e:
+        log_error(f"Error updating notification settings: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 

@@ -121,7 +121,9 @@ def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
 
     # Ищем мастера по full_name или username
     c.execute("""
-        SELECT id, username, full_name, email, phone, telegram_username, telegram_chat_id, role
+        SELECT id, username, full_name, email, phone, telegram_username, telegram_chat_id, role,
+               notify_telegram, notify_email, notify_whatsapp,
+               notify_on_new_booking, notify_on_booking_change, notify_on_booking_cancel
         FROM users
         WHERE (LOWER(full_name) = LOWER(?) OR LOWER(username) = LOWER(?))
         AND role IN ('employee', 'admin', 'manager')
@@ -142,7 +144,13 @@ def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
         "phone": result[4],
         "telegram_username": result[5],
         "telegram_chat_id": result[6],
-        "role": result[7]
+        "role": result[7],
+        "notify_telegram": bool(result[8]) if len(result) > 8 and result[8] is not None else True,
+        "notify_email": bool(result[9]) if len(result) > 9 and result[9] is not None else True,
+        "notify_whatsapp": bool(result[10]) if len(result) > 10 and result[10] is not None else False,
+        "notify_on_new_booking": bool(result[11]) if len(result) > 11 and result[11] is not None else True,
+        "notify_on_booking_change": bool(result[12]) if len(result) > 12 and result[12] is not None else True,
+        "notify_on_booking_cancel": bool(result[13]) if len(result) > 13 and result[13] is not None else True,
     }
 
 
@@ -152,10 +160,14 @@ async def notify_master_about_booking(
     service: str,
     datetime_str: str,
     phone: str = "",
-    booking_id: int = None
+    booking_id: int = None,
+    notification_type: str = "new_booking"  # new_booking, booking_change, booking_cancel
 ) -> Dict[str, bool]:
     """
-    Отправить уведомление мастеру о новой записи
+    Отправить уведомление мастеру о записи
+
+    Args:
+        notification_type: тип уведомления (new_booking, booking_change, booking_cancel)
 
     Returns:
         Dict с результатами отправки по каждому каналу
@@ -176,6 +188,17 @@ async def notify_master_about_booking(
         log_error(f"Master not found: {master_name}", "notifications")
         return results
 
+    # Проверяем, хочет ли мастер получать этот тип уведомлений
+    if notification_type == "new_booking" and not master.get("notify_on_new_booking", True):
+        log_info(f"Master {master_name} disabled new booking notifications", "notifications")
+        return results
+    elif notification_type == "booking_change" and not master.get("notify_on_booking_change", True):
+        log_info(f"Master {master_name} disabled booking change notifications", "notifications")
+        return results
+    elif notification_type == "booking_cancel" and not master.get("notify_on_booking_cancel", True):
+        log_info(f"Master {master_name} disabled booking cancel notifications", "notifications")
+        return results
+
     # Форматируем дату и время
     try:
         dt = datetime.fromisoformat(datetime_str.replace(' ', 'T'))
@@ -183,9 +206,22 @@ async def notify_master_about_booking(
     except:
         formatted_datetime = datetime_str
 
-    # Формируем сообщение
+    # Формируем сообщение в зависимости от типа
+    if notification_type == "new_booking":
+        icon = "🔔"
+        title = "Новая запись!"
+    elif notification_type == "booking_change":
+        icon = "✏️"
+        title = "Запись изменена!"
+    elif notification_type == "booking_cancel":
+        icon = "❌"
+        title = "Запись отменена!"
+    else:
+        icon = "📋"
+        title = "Уведомление о записи"
+
     message = f"""
-🔔 Новая запись!
+{icon} {title}
 
 👤 Клиент: {client_name}
 💆 Услуга: {service}
@@ -198,11 +234,11 @@ async def notify_master_about_booking(
     if booking_id:
         message += f"\n📋 ID записи: #{booking_id}"
 
-    # Отправляем уведомления
+    # Отправляем уведомления согласно настройкам мастера
     tasks = []
 
     # Telegram
-    if master.get("telegram_chat_id"):
+    if master.get("notify_telegram", True) and master.get("telegram_chat_id"):
         tasks.append(send_telegram_notification(
             master.get("telegram_username", ""),
             message,
@@ -210,8 +246,8 @@ async def notify_master_about_booking(
         ))
 
     # Email
-    if master.get("email"):
-        subject = f"Новая запись на {formatted_datetime}"
+    if master.get("notify_email", True) and master.get("email"):
+        subject = f"{title} на {formatted_datetime}"
         tasks.append(send_email_notification(master["email"], subject, message))
 
     # Выполняем все задачи параллельно
