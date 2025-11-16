@@ -336,10 +336,43 @@ async def get_diagnostics():
         
         conn.close()
         return diagnostics
-        
+
     except Exception as e:
         log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@app.get("/api/diagnostics/full")
+async def run_full_diagnostics_endpoint():
+    """Запустить полную диагностику системы (только для разработки)"""
+    if os.getenv("ENVIRONMENT") == "production":
+        return JSONResponse({"error": "Diagnostics disabled in production"}, status_code=403)
+
+    try:
+        log_info("🔍 Запуск полной диагностики через API...", "diagnostics")
+
+        # Импортируем и запускаем диагностику
+        from diagnostic_full import run_full_diagnostics
+
+        result = await run_full_diagnostics()
+
+        return {
+            "success": True,
+            "diagnostics": result,
+            "message": "Полная диагностика завершена. Проверьте логи для деталей."
+        }
+
+    except Exception as e:
+        log_error(f"❌ Ошибка полной диагностики: {e}", "diagnostics")
+        import traceback
+        return JSONResponse(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            },
+            status_code=500
+        )
+
 
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
 

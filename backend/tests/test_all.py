@@ -224,13 +224,14 @@ def test_smart_assistant():
     try:
         from services.smart_assistant import SmartAssistant
 
-        assistant = SmartAssistant()
-
         # Простой тест
         test_client = "test_user_123"
 
+        # SmartAssistant требует client_id в __init__
+        assistant = SmartAssistant(client_id=test_client)
+
         # Проверяем, что assistant создается без ошибок
-        print(f"   ✅ SmartAssistant инициализирован")
+        print(f"   ✅ SmartAssistant инициализирован (client_id={test_client})")
 
         # Пробуем получить рекомендацию
         try:
