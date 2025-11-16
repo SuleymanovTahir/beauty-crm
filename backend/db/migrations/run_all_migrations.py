@@ -13,8 +13,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
 sys.path.insert(0, backend_dir)
 
-# Используем прямой путь к БД
-DATABASE_NAME = os.path.join(backend_dir, 'salon.db')
+from core.config import DATABASE_NAME
 
 
 def print_header(text):

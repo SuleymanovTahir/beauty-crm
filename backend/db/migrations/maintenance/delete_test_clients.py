@@ -6,8 +6,10 @@ import sqlite3
 import sys
 import os
 
-# Используем прямой путь к БД
-DATABASE_NAME = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'salon_bot.db')
+# Добавляем путь к backend
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+
+from core.config import DATABASE_NAME
 
 
 def delete_test_clients():

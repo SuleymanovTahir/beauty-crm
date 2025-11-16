@@ -1,6 +1,6 @@
 // frontend/src/pages/admin/EditUser.tsx
 import React, { useState, useEffect } from 'react';
-import { UserCog, ArrowLeft, Loader, Key, User as UserIcon } from 'lucide-react';
+import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { Label } from '../../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { PermissionsTab } from '../../components/admin/PermissionsTab';
 
 export default function EditUser() {
   const navigate = useNavigate();
@@ -134,7 +135,7 @@ export default function EditUser() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
                 {t('users:profile')}
@@ -142,6 +143,10 @@ export default function EditUser() {
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
               {t('users:password')}
+            </TabsTrigger>
+            <TabsTrigger value="permissions">
+              <Shield className="w-4 h-4 mr-2" />
+              Права доступа
             </TabsTrigger>
           </TabsList>
 
@@ -274,6 +279,10 @@ export default function EditUser() {
                 </Button>
               </form>
             </div>
+          </TabsContent>
+
+          <TabsContent value="permissions">
+            <PermissionsTab userId={userId} />
           </TabsContent>
         </Tabs>
       </div>

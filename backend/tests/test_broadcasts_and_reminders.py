@@ -15,8 +15,7 @@ import asyncio
 # Добавляем путь к backend
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Используем прямой путь к БД
-DATABASE_NAME = os.path.join(os.path.dirname(__file__), '..', 'salon.db')
+from core.config import DATABASE_NAME
 
 
 def print_header(text):
