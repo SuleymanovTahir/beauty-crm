@@ -1172,47 +1172,6 @@ export class ApiClient {
     }>('/api/permissions/descriptions')
   }
 
-  async getClientStatuses() {
-    return this.request<{
-      statuses: Record<string, {
-        label: string
-        color: string
-        icon: string
-      }>
-      count: number
-    }>('/api/permissions/statuses')
-  }
-
-  async getUserPermissions(userId: number) {
-    return this.request<{
-      user: {
-        id: number
-        username: string
-        full_name: string
-        role: string
-        email: string
-      }
-      role_info: {
-        name: string
-        hierarchy_level: number
-        permissions: string[] | '*'
-        can_manage_roles: string[]
-      }
-    }>(`/api/permissions/user/${userId}`)
-  }
-
-  async updateUserRole(userId: number, role: string) {
-    return this.request<{
-      success: boolean
-      message: string
-      old_role: string
-      new_role: string
-    }>(`/api/permissions/user/${userId}/role`, {
-      method: 'PUT',
-      body: JSON.stringify({ role }),
-    })
-  }
-
   async checkPermission(permission: string) {
     return this.request<{
       user_id: number
