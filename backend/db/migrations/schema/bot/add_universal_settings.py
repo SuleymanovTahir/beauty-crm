@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 from core.config import DATABASE_NAME
 
 
-def migrate():
+def add_universal_bot_settings():
     """Добавить универсальные колонки в salon_settings"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -64,4 +64,4 @@ def migrate():
 
 
 if __name__ == "__main__":
-    migrate()
+    add_universal_bot_settings()

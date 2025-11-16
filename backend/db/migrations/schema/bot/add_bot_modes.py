@@ -1,7 +1,7 @@
 import sqlite3
 from core.config import DATABASE_NAME
 
-def add_bot_mode_fields():
+def add_bot_modes():
     """Добавить поля для режимов бота"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -36,6 +36,6 @@ if __name__ == "__main__":
     print("=" * 70)
     response = input("\n⚠️  Выполнить миграцию? (yes/no): ")
     if response.lower() in ['yes', 'y']:
-        add_bot_mode_fields()
+        add_bot_modes()
     else:
         print("\n❌ Миграция отменена")

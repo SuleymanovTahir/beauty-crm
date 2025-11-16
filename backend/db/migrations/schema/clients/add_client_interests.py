@@ -5,7 +5,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-def add_client_interests_table():
+def add_client_interests():
     """Создать таблицу client_interests"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()

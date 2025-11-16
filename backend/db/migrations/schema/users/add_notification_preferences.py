@@ -8,7 +8,7 @@ from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
 
-def add_notification_preferences_fields():
+def add_notification_preferences():
     """Добавить поля настроек уведомлений в таблицу users"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -46,4 +46,4 @@ def add_notification_preferences_fields():
 
 
 if __name__ == "__main__":
-    add_notification_preferences_fields()
+    add_notification_preferences()

@@ -6,7 +6,7 @@ from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
 
-def add_employee_id_field():
+def add_employee_id_to_bookings():
     """Добавить поле employee_id в таблицу bookings"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -39,4 +39,4 @@ def add_employee_id_field():
 
 
 if __name__ == "__main__":
-    add_employee_id_field()
+    add_employee_id_to_bookings()

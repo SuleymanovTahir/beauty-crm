@@ -5,7 +5,7 @@
 import sqlite3
 from utils.logger import log_info
 
-def create_internal_chat_table():
+def create_internal_chat():
     """Создать таблицу internal_chat для внутренних сообщений"""
     from core.config import DATABASE_NAME
 

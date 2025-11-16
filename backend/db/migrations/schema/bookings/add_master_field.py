@@ -5,7 +5,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-def add_master_field():
+def add_master_field_to_bookings():
     """Добавить поле master в таблицу bookings"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -32,4 +32,4 @@ def add_master_field():
         conn.close()
 
 if __name__ == "__main__":
-    add_master_field()
+    add_master_field_to_bookings()

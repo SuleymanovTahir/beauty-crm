@@ -10,7 +10,7 @@ def create_employee_schedules_table():
     print("⏭️  Таблица employee_schedule создается в create_employees.py")
     return True
 
-def create_schedules():
+def create_employee_schedules():
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
@@ -77,12 +77,12 @@ if __name__ == "__main__":
     print("=" * 70)
     print("📅 СОЗДАНИЕ РАСПИСАНИЙ МАСТЕРОВ")
     print("=" * 70)
-    
-    success = create_schedules()
-    
+
+    success = create_employee_schedules()
+
     if success:
         print("\n✅ УСПЕХ! Расписания созданы")
     else:
         print("\n❌ ОШИБКА!")
-    
+
     print("=" * 70)

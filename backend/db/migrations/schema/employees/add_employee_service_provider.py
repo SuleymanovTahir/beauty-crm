@@ -5,7 +5,7 @@
 import sqlite3
 from core.config import DATABASE_NAME
 
-def add_employee_service_provider_field():
+def add_service_provider_fields():
     """Добавить поле is_service_provider в таблицу employees"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -43,5 +43,5 @@ if __name__ == "__main__":
     print("=" * 70)
     print("🔧 МИГРАЦИЯ: Фильтрация обслуживающего персонала")
     print("=" * 70)
-    add_employee_service_provider_field()
+    add_service_provider_fields()
     print("=" * 70)

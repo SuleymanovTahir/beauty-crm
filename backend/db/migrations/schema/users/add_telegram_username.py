@@ -7,7 +7,7 @@ from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
 
-def add_telegram_username_field():
+def add_telegram_username():
     """Добавить поле telegram_username в таблицу users"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -40,4 +40,4 @@ def add_telegram_username_field():
 
 
 if __name__ == "__main__":
-    add_telegram_username_field()
+    add_telegram_username()
