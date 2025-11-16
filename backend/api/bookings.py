@@ -117,24 +117,71 @@ async def create_booking_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     data = await request.json()
-    
+
     try:
         instagram_id = data.get('instagram_id')
         service = data.get('service')
         datetime_str = f"{data.get('date')} {data.get('time')}"
         phone = data.get('phone', '')
         name = data.get('name')
-        master = data.get('master', '')  # ✅ ДОБАВЛЕНО
-        
+        master = data.get('master', '')
+
         get_or_create_client(instagram_id, username=name)
         save_booking(instagram_id, service, datetime_str, phone, name, master=master)
-        
-        log_activity(user["id"], "create_booking", "booking", instagram_id, 
+
+        # Получаем ID созданной записи
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        c.execute("SELECT id FROM bookings WHERE instagram_id = ? ORDER BY id DESC LIMIT 1",
+                  (instagram_id,))
+        booking_result = c.fetchone()
+        booking_id = booking_result[0] if booking_result else None
+        conn.close()
+
+        log_activity(user["id"], "create_booking", "booking", instagram_id,
                     f"Service: {service}")
-        
-        return {"success": True, "message": "Booking created"}
+
+        # Отправляем уведомление мастеру
+        if master and booking_id:
+            try:
+                from notifications import notify_master_about_booking, get_master_info, save_notification_log
+
+                # Отправляем уведомления асинхронно
+                notification_results = await notify_master_about_booking(
+                    master_name=master,
+                    client_name=name,
+                    service=service,
+                    datetime_str=datetime_str,
+                    phone=phone,
+                    booking_id=booking_id
+                )
+
+                # Сохраняем логи уведомлений
+                master_info = get_master_info(master)
+                if master_info:
+                    for notif_type, success in notification_results.items():
+                        if success:
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="sent"
+                            )
+                        elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                            # Пытались отправить, но не получилось
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="failed"
+                            )
+            except Exception as e:
+                # Не блокируем создание записи, если уведомление не отправилось
+                log_error(f"Error sending master notification: {e}", "api")
+
+        return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
