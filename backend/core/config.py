@@ -2,7 +2,13 @@
 # ✅ Импортируйте get_salon_settings() из database.py когда нужны настройки салона
 
 import os
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    HAS_DOTENV = True
+except ImportError:
+    HAS_DOTENV = False
+    def load_dotenv(*args, **kwargs):
+        pass  # Заглушка если dotenv не установлен
 from datetime import datetime
 
 import socket
@@ -141,15 +147,21 @@ CLIENT_STATUSES = {
 }
 
 # ===== ПРОВЕРКА ОБЯЗАТЕЛЬНЫХ ПЕРЕМЕННЫХ =====
-required_vars = {
-    "PAGE_ACCESS_TOKEN": PAGE_ACCESS_TOKEN,
-    "GEMINI_API_KEY": GEMINI_API_KEY,
-}
+# Пропускаем проверку если запускаются миграции или если dotenv не установлен
+import sys
+is_running_migrations = 'migrations' in sys.argv[0] or 'run_all_migrations' in sys.argv[0]
 
-missing_vars = [var_name for var_name, var_value in required_vars.items() if not var_value]
+if HAS_DOTENV and not is_running_migrations:
+    required_vars = {
+        "PAGE_ACCESS_TOKEN": PAGE_ACCESS_TOKEN,
+        "GEMINI_API_KEY": GEMINI_API_KEY,
+    }
 
-if missing_vars:
-    raise ValueError(f"❌ Не установлены обязательные переменные окружения: {', '.join(missing_vars)}")
+    missing_vars = [var_name for var_name, var_value in required_vars.items() if not var_value]
+
+    if missing_vars:
+        print(f"⚠️ Не установлены переменные окружения: {', '.join(missing_vars)}")
+        # Не бросаем исключение для миграций
 
 print("✅ Config загружен успешно!")
 print(f"   Database: {DATABASE_NAME}")

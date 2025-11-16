@@ -7,9 +7,17 @@ NULL или 0 = любой мастер может выполнять
 """
 import sqlite3
 import os
+import sys
 from datetime import datetime
 
-DATABASE_NAME = os.path.join(os.path.dirname(__file__), 'salon_bot.db')
+# Получаем DATABASE_NAME из конфига (если запускается напрямую)
+# или используем переданный из run_all_migrations.py
+if 'DATABASE_NAME' not in globals():
+    # Добавляем backend в путь для импорта
+    backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    if backend_dir not in sys.path:
+        sys.path.insert(0, backend_dir)
+    from core.config import DATABASE_NAME
 
 conn = sqlite3.connect(DATABASE_NAME)
 c = conn.cursor()
@@ -49,5 +57,7 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     conn.rollback()
+    conn.close()
+    raise  # Пробрасываем исключение дальше для корректной обработки в run_all_migrations
 finally:
     conn.close()
