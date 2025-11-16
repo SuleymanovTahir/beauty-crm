@@ -1,6 +1,7 @@
 """
 Главный файл FastAPI приложения
 """
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -395,14 +396,41 @@ async def startup_event():
     # ================================
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
-    # from tests.run_all_tests import run_all_tests
-    # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests()
+    from tests.run_all_tests import run_all_tests
+    log_info("🧪 Запуск всех тестов...", "startup")
+    run_all_tests()
 
-    from diagnostic_full import run_full_diagnostics
-    import asyncio
-    log_info("🔍 Запуск полной диагностики...", "startup")
-    asyncio.create_task(run_full_diagnostics())
+    # ================================
+    # ПОЛНАЯ ДИАГНОСТИКА (опционально)
+    # ================================
+    # Раскомментируйте для запуска полной диагностики при старте
+    # from diagnostic_full import run_full_diagnostics
+    # import asyncio
+    # log_info("🔍 Запуск полной диагностики...", "startup")
+    # asyncio.create_task(run_full_diagnostics())
+
+    # ================================
+    # ТЕСТ EMAIL УВЕДОМЛЕНИЙ (опционально)
+    # ================================
+    # Раскомментируйте для тестовой отправки email при старте
+    # from test_email_notification import test_send_email
+    # log_info("📧 Тест отправки email...", "startup")
+    # asyncio.create_task(test_send_email())
+
+    # ================================
+    # ПОЛНЫЙ ТЕСТ УВЕДОМЛЕНИЙ (опционально)
+    # ================================
+    # Раскомментируйте для тестирования всех уведомлений при старте
+    # from test_notifications_full import main as test_notifications_main
+    # log_info("🔔 Тест всех уведомлений...", "startup")
+    # asyncio.create_task(test_notifications_main())
+
+    # ================================
+    # STARTUP ТЕСТЫ (опционально)
+    # ================================
+
+
+
 
     # ================================
     # STARTUP ТЕСТЫ (опционально)

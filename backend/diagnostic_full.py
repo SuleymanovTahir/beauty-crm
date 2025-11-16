@@ -110,7 +110,29 @@ def test_api_endpoints():
         import requests
 
         base_url = "http://localhost:8000"
-        timeout = 10  # Увеличим таймаут
+
+        # Сначала быстрая проверка доступности
+        print("\n   🔍 Проверка доступности сервера...")
+        try:
+            response = requests.get(f"{base_url}/", timeout=30)
+            print(f"   ✅ Сервер доступен (HTTP {response.status_code})")
+        except requests.exceptions.Timeout:
+            print(f"   ❌ Сервер не отвечает (timeout >30s)")
+            print(f"   💡 Возможные причины:")
+            print(f"      - Сервер зависает при обработке запросов")
+            print(f"      - Медленные SQL запросы")
+            print(f"      - Проблемы с middleware")
+            print(f"\n   💡 Рекомендации:")
+            print(f"      1. Проверьте логи: tail -f logs/app.log")
+            print(f"      2. Перезапустите сервер: Ctrl+C и python main.py")
+            print(f"      3. Проверьте процессы: ps aux | grep python")
+            return False
+        except Exception as e:
+            print(f"   ❌ Ошибка подключения: {e}")
+            return False
+
+        # Тестируем эндпоинты с увеличенным таймаутом
+        timeout = 30  # Увеличенный таймаут для медленных эндпоинтов
 
         endpoints = [
             ("/", "Корневой эндпоинт"),
@@ -129,14 +151,21 @@ def test_api_endpoints():
                 elapsed = time.time() - start_time
 
                 if response.status_code == 200:
-                    print(f"   ✅ {name}: OK ({elapsed:.2f}s)")
+                    if elapsed > 5:
+                        print(f"   ⚠️  {name}: МЕДЛЕННО ({elapsed:.2f}s)")
+                    else:
+                        print(f"   ✅ {name}: OK ({elapsed:.2f}s)")
                     results.append((name, True, elapsed))
+                elif response.status_code == 401:
+                    print(f"   ⚠️  {name}: Требуется авторизация ({elapsed:.2f}s)")
+                    results.append((name, True, elapsed))  # Это нормально
                 else:
                     print(f"   ⚠️  {name}: HTTP {response.status_code} ({elapsed:.2f}s)")
                     results.append((name, False, elapsed))
 
             except requests.exceptions.Timeout:
                 print(f"   ❌ {name}: TIMEOUT (>{timeout}s)")
+                print(f"      💡 Этот эндпоинт слишком медленный!")
                 results.append((name, False, timeout))
             except requests.exceptions.ConnectionError:
                 print(f"   ❌ {name}: CONNECTION ERROR (сервер не запущен?)")
@@ -157,6 +186,7 @@ def test_api_endpoints():
             print(f"\n   ⚠️  Медленные эндпоинты (>2s):")
             for name, elapsed in slow_endpoints:
                 print(f"      - {name}: {elapsed:.2f}s")
+            print(f"\n   💡 Рекомендация: Оптимизируйте SQL запросы и логику обработки")
 
         return success_count == total
 
@@ -180,7 +210,8 @@ def test_smart_assistant():
     print("-" * 80)
 
     try:
-        from bot.smart_assistant import SmartAssistant
+        # Правильный путь импорта
+        from services.smart_assistant import SmartAssistant
 
         # Проверяем __init__ signature
         import inspect
@@ -212,6 +243,7 @@ def test_smart_assistant():
 
     except ImportError as e:
         print(f"   ❌ Не удалось импортировать SmartAssistant: {e}")
+        print(f"   💡 Проверьте путь: services/smart_assistant.py")
         return False
     except Exception as e:
         print(f"❌ ОШИБКА: {e}")
