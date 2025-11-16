@@ -123,7 +123,7 @@ def get_all_staff() -> List[Tuple]:
     return staff
 
 
-def send_birthday_notifications():
+async def send_birthday_notifications():
     """Отправить уведомления о днях рождения"""
     try:
         upcoming_birthdays = get_upcoming_birthdays()
@@ -194,12 +194,12 @@ def send_birthday_notifications():
                 """
 
                 try:
-                    asyncio.run(send_email_async(
+                    await send_email_async(
                         recipients=email_recipients,
                         subject=title,
                         message=message,
                         html=html_message
-                    ))
+                    )
                     log_info(f"📧 Email отправлен на {len(email_recipients)} адресов", "birthday_checker")
                 except Exception as e:
                     log_error(f"Ошибка отправки email: {e}", "birthday_checker")
@@ -213,31 +213,31 @@ def send_birthday_notifications():
         log_error(f"Ошибка проверки дней рождения: {e}", "birthday_checker")
 
 
-def birthday_checker_loop():
-    """Основной цикл проверки дней рождения"""
+async def birthday_checker_loop():
+    """Основной цикл проверки дней рождения (async версия)"""
     log_info("🎂 Запущен планировщик проверки дней рождения", "birthday_checker")
-    
+
     while True:
         try:
             now = datetime.now()
-            
+
             # Проверяем каждый день в 09:00
             if now.hour == 9 and now.minute == 0:
                 log_info("Проверка дней рождения...", "birthday_checker")
-                send_birthday_notifications()
-                time.sleep(60)  # Спим минуту, чтобы не запустить дважды
+                await send_birthday_notifications()
+                await asyncio.sleep(60)  # Спим минуту, чтобы не запустить дважды
             else:
-                time.sleep(30)  # Проверяем каждые 30 секунд
-                
+                await asyncio.sleep(30)  # Проверяем каждые 30 секунд
+
         except Exception as e:
             log_error(f"Ошибка в цикле проверки ДР: {e}", "birthday_checker")
-            time.sleep(60)
+            await asyncio.sleep(60)
 
 
 def start_birthday_checker():
-    """Запустить проверку дней рождения в отдельном потоке"""
-    thread = threading.Thread(target=birthday_checker_loop, daemon=True)
-    thread.start()
+    """Запустить проверку дней рождения как фоновую задачу"""
+    # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
+    asyncio.create_task(birthday_checker_loop())
     log_info("✅ Планировщик дней рождения запущен", "birthday_checker")
 
 
@@ -372,10 +372,8 @@ async def send_birthday_congratulations():
         log_error(f"Ошибка в send_birthday_congratulations: {e}", "birthday_checker")
 
 
-def client_birthday_checker_loop():
-    """Основной цикл проверки дней рождения клиентов"""
-    import asyncio
-
+async def client_birthday_checker_loop():
+    """Основной цикл проверки дней рождения клиентов (async версия)"""
     log_info("🎂 Запущен планировщик поздравлений клиентов", "birthday_checker")
 
     while True:
@@ -385,26 +383,26 @@ def client_birthday_checker_loop():
             # Поздравляем каждый день в 10:00
             if now.hour == 10 and now.minute == 0:
                 log_info("Проверка дней рождения клиентов...", "birthday_checker")
-                asyncio.run(send_birthday_congratulations())
-                time.sleep(60)  # Спим минуту
+                await send_birthday_congratulations()
+                await asyncio.sleep(60)  # Спим минуту
             else:
-                time.sleep(30)  # Проверяем каждые 30 секунд
+                await asyncio.sleep(30)  # Проверяем каждые 30 секунд
 
         except Exception as e:
             log_error(f"Ошибка в цикле поздравлений клиентов: {e}", "birthday_checker")
-            time.sleep(60)
+            await asyncio.sleep(60)
 
 
 def start_client_birthday_checker():
-    """Запустить проверку дней рождения клиентов в отдельном потоке"""
-    thread = threading.Thread(target=client_birthday_checker_loop, daemon=True)
-    thread.start()
+    """Запустить проверку дней рождения клиентов как фоновую задачу"""
+    # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
+    asyncio.create_task(client_birthday_checker_loop())
     log_info("✅ Планировщик поздравлений клиентов запущен", "birthday_checker")
 
 
 # ===== SCHEDULER ДЛЯ ЗАПИСЕЙ =====
 
-def send_booking_reminders():
+async def send_booking_reminders():
     """Отправить напоминания о записях (#15)"""
     from db.bookings import get_upcoming_bookings
     from integrations.instagram import send_message
@@ -429,7 +427,7 @@ def send_booking_reminders():
 Адрес: M.Le Diamant Beauty Lounge, JBR
 Ждём вас! 💎"""
                     
-                    asyncio.run(send_message(instagram_id, message))
+                    await send_message(instagram_id, message)
                     log_info(f"✅ Reminder sent (24h) to {instagram_id}", "scheduler")
                     
             except Exception as e:
@@ -452,7 +450,7 @@ def send_booking_reminders():
 {service} в {dt_obj.strftime('%H:%M')}
 Если не успеваете - дайте знать, перенесём 💖"""
                     
-                    asyncio.run(send_message(instagram_id, message))
+                    await send_message(instagram_id, message)
                     log_info(f"✅ Reminder sent (2h) to {instagram_id}", "scheduler")
                     
             except Exception as e:
@@ -478,7 +476,7 @@ def check_rebooking_opportunities():
 
 Записать как в прошлый раз?"""
                 
-                asyncio.run(send_message(instagram_id, message))
+                await send_message(instagram_id, message)
                 log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
                 
                 # Делаем паузу между сообщениями
@@ -497,7 +495,7 @@ def check_rebooking_opportunities():
 
 Хотите записаться снова?"""
                 
-                asyncio.run(send_message(instagram_id, message))
+                await send_message(instagram_id, message)
                 log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
                 
                 import time

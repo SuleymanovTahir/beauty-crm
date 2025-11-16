@@ -442,10 +442,8 @@ async def check_and_send_reminders():
         log_error(f"Ошибка в check_and_send_reminders: {e}", "booking_reminders")
 
 
-def booking_reminder_loop():
-    """Основной цикл планировщика напоминаний"""
-    import time
-
+async def booking_reminder_loop():
+    """Основной цикл планировщика напоминаний (async версия)"""
     log_info("🔔 Запущен планировщик email-напоминаний о записях", "booking_reminders")
 
     while True:
@@ -454,24 +452,23 @@ def booking_reminder_loop():
 
             # Проверяем каждые 10 минут
             log_info(f"⏰ Проверка напоминаний: {now.strftime('%H:%M')}", "booking_reminders")
-            asyncio.run(check_and_send_reminders())
+            await check_and_send_reminders()
 
-            # Ждем 10 минут
-            time.sleep(600)
+            # Ждем 10 минут (используем async sleep вместо blocking time.sleep)
+            await asyncio.sleep(600)
 
         except Exception as e:
             log_error(f"Ошибка в booking_reminder_loop: {e}", "booking_reminders")
             import traceback
             traceback.print_exc()
-            time.sleep(60)  # При ошибке ждем минуту
+            await asyncio.sleep(60)  # При ошибке ждем минуту
 
 
 def start_booking_reminder_checker():
-    """Запустить планировщик email-напоминаний в отдельном потоке"""
-    import threading
-
-    thread = threading.Thread(target=booking_reminder_loop, daemon=True)
-    thread.start()
+    """Запустить планировщик email-напоминаний как фоновую задачу"""
+    # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
+    # Это должно вызываться из async контекста (например, из FastAPI startup event)
+    asyncio.create_task(booking_reminder_loop())
     log_info("✅ Планировщик email-напоминаний запущен (проверка каждые 10 минут)", "booking_reminders")
 
 

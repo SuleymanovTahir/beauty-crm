@@ -472,12 +472,17 @@ async def startup_event():
     from modules import print_modules_status, is_module_enabled
     print_modules_status()
 
-    # Запуск планировщиков
+    # ================================
+    # ПЛАНИРОВЩИКИ (исправлено: теперь используют asyncio.create_task)
+    # ================================
+    # ИСПРАВЛЕНИЕ: Планировщики переписаны для использования asyncio.create_task()
+    # вместо threading.Thread + asyncio.run(), что устраняет конфликт с FastAPI event loop
+    #
     if is_module_enabled('scheduler'):
         start_birthday_checker()
         start_client_birthday_checker()
         start_booking_reminder_checker()
-        log_info("✅ Планировщики запущены (включая email-напоминания о записях)", "startup")
+        log_info("✅ Планировщики запущены с async поддержкой (включая email-напоминания)", "startup")
 
     log_info("✅ CRM готова к работе!", "startup")
     log_info("=" * 70, "startup")
