@@ -82,6 +82,7 @@ export const ROLES: Record<string, Role> = {
       'analytics_view_stats_only',
       'staff_chat_own',
       'calendar_view_all_readonly',
+      'bot_settings_view',
     ],
     can_manage_roles: [],
     hierarchy_level: 40,
@@ -359,6 +360,13 @@ export class PermissionChecker {
     return role === 'director';
   }
 
+  static canViewBotSettings(role: string): boolean {
+    return (
+      ['director', 'sales'].includes(role) ||
+      RoleHierarchy.hasPermission(role, 'bot_settings_view')
+    );
+  }
+
   // === РАССЫЛКИ ===
 
   static canSendBroadcasts(role: string): boolean {
@@ -421,6 +429,7 @@ export function usePermissions(role: string) {
     // Настройки
     canViewSettings: PermissionChecker.canViewSettings(role),
     canEditSettings: PermissionChecker.canEditSettings(role),
+    canViewBotSettings: PermissionChecker.canViewBotSettings(role),
 
     // Рассылки
     canSendBroadcasts: PermissionChecker.canSendBroadcasts(role),

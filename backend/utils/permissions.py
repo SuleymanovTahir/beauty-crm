@@ -317,6 +317,11 @@ class PermissionChecker:
         """Может ли роль изменять настройки"""
         return role == 'director'
 
+    @staticmethod
+    def can_view_bot_settings(role: str) -> bool:
+        """Может ли роль просматривать настройки бота"""
+        return role in ['director', 'sales'] or RoleHierarchy.has_permission(role, 'bot_settings_view')
+
     # === РАССЫЛКИ ===
 
     @staticmethod

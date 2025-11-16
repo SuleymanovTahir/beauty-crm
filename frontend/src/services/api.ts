@@ -572,13 +572,20 @@ export class ApiClient {
   }
 
   async getUserPermissions(userId: number) {
-    return this.request<any>(`/api/users/${userId}/permissions`)
+    return this.request<any>(`/api/permissions/user/${userId}`)
   }
-  
+
   async updateUserRole(userId: number, role: string) {
     return this.request(`/api/users/${userId}/role`, {
       method: 'POST',
       body: JSON.stringify({ role }),
+    })
+  }
+
+  async updateUserCustomPermissions(userId: number, permissions: Record<string, boolean>) {
+    return this.request(`/api/permissions/user/${userId}/custom`, {
+      method: 'PUT',
+      body: JSON.stringify({ permissions }),
     })
   }
 

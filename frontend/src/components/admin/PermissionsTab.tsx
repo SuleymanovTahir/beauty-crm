@@ -2,11 +2,12 @@
  * Компонент для управления правами и ролями пользователя
  */
 import React, { useState, useEffect } from 'react';
-import { Shield, Check, X, Loader, AlertCircle } from 'lucide-react';
+import { Shield, Check, X, Loader, AlertCircle, Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface PermissionsTabProps {
   userId: number;
@@ -28,15 +29,19 @@ interface UserPermissions {
     email: string;
   };
   role_info: RoleInfo;
+  custom_permissions: Record<string, boolean>;
 }
 
 export function PermissionsTab({ userId }: PermissionsTabProps) {
+  const { user: currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingPermissions, setSavingPermissions] = useState(false);
   const [userPermissions, setUserPermissions] = useState<UserPermissions | null>(null);
   const [allRoles, setAllRoles] = useState<Record<string, RoleInfo>>({});
   const [permissionDescriptions, setPermissionDescriptions] = useState<Record<string, string>>({});
   const [selectedRole, setSelectedRole] = useState<string>('');
+  const [customPermissions, setCustomPermissions] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadData();
@@ -55,6 +60,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
       setAllRoles(rolesData.roles);
       setPermissionDescriptions(descriptionsData.permissions);
       setSelectedRole(permsData.user.role);
+      setCustomPermissions(permsData.custom_permissions || {});
     } catch (err) {
       console.error('Error loading permissions:', err);
       toast.error('Ошибка загрузки данных о правах');
@@ -79,6 +85,31 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
     } finally {
       setSaving(false);
     }
+  };
+
+  const togglePermission = (permKey: string) => {
+    setCustomPermissions(prev => ({
+      ...prev,
+      [permKey]: !prev[permKey]
+    }));
+  };
+
+  const handleSaveCustomPermissions = async () => {
+    try {
+      setSavingPermissions(true);
+      await api.updateUserCustomPermissions(userId, customPermissions);
+      toast.success('Индивидуальные права успешно обновлены');
+      await loadData();
+    } catch (err: any) {
+      toast.error(err.message || 'Ошибка сохранения прав');
+    } finally {
+      setSavingPermissions(false);
+    }
+  };
+
+  const hasCustomChanges = () => {
+    const original = userPermissions?.custom_permissions || {};
+    return JSON.stringify(original) !== JSON.stringify(customPermissions);
   };
 
   if (loading) {
@@ -167,47 +198,107 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
 
       {/* Список прав */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h2 className="text-xl text-gray-900 mb-6 font-semibold">
-          Права доступа
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl text-gray-900 font-semibold">
+            Права доступа
+          </h2>
+          {currentUser?.role === 'director' && hasCustomChanges() && (
+            <Button
+              onClick={handleSaveCustomPermissions}
+              disabled={savingPermissions}
+              className="bg-pink-600 hover:bg-pink-700"
+            >
+              {savingPermissions ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  Сохранение...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Сохранить изменения
+                </>
+              )}
+            </Button>
+          )}
+        </div>
 
         {userPermissions.role_info.permissions === '*' ? (
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
             <p className="text-green-800 font-semibold flex items-center gap-2">
               <Check className="w-5 h-5" />
-              Полный доступ ко всем функциям системы
+              Полный доступ ко всем функциям системы (роль Директор)
             </p>
           </div>
         ) : null}
 
+        {currentUser?.role === 'director' && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+            <p className="text-sm text-blue-800">
+              <strong>ℹ️ Индивидуальные права:</strong> Вы можете изменить права пользователя независимо от его роли.
+              Галочка означает, что право предоставлено. Снятая галочка означает, что право отозвано.
+            </p>
+          </div>
+        )}
+
         <div className="space-y-2">
           {Object.entries(permissionDescriptions).map(([permKey, permDescription]) => {
-            const hasPermission = currentPermissions.includes(permKey);
+            const hasRolePermission = currentPermissions.includes(permKey);
+            const hasCustomPermission = customPermissions[permKey];
+            const finalPermission = hasCustomPermission !== undefined ? hasCustomPermission : hasRolePermission;
+            const isCustomized = hasCustomPermission !== undefined;
+            const canEdit = currentUser?.role === 'director';
 
             return (
               <div
                 key={permKey}
                 className={`p-4 rounded-lg border transition-colors ${
-                  hasPermission
+                  finalPermission
                     ? 'bg-green-50 border-green-200'
+                    : isCustomized
+                    ? 'bg-red-50 border-red-200'
                     : 'bg-gray-50 border-gray-200'
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  {hasPermission ? (
-                    <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  {canEdit ? (
+                    <input
+                      type="checkbox"
+                      checked={finalPermission}
+                      onChange={() => togglePermission(permKey)}
+                      className="w-5 h-5 mt-0.5 text-pink-600 rounded border-gray-300 focus:ring-pink-500 cursor-pointer"
+                    />
                   ) : (
-                    <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                    finalPermission ? (
+                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                    )
                   )}
                   <div className="flex-1">
-                    <p className="font-mono text-sm text-gray-600">{permKey}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-mono text-sm text-gray-600">{permKey}</p>
+                      {isCustomized && (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
+                          Изменено
+                        </span>
+                      )}
+                    </div>
                     <p
                       className={`text-sm ${
-                        hasPermission ? 'text-gray-900' : 'text-gray-500'
+                        finalPermission ? 'text-gray-900' : 'text-gray-500'
                       }`}
                     >
                       {permDescription}
                     </p>
+                    {isCustomized && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {hasRolePermission
+                          ? `По роли: ${finalPermission ? 'было предоставлено' : 'предоставлено → отозвано'}`
+                          : `По роли: ${finalPermission ? 'не было → предоставлено' : 'не предоставлено'}`
+                        }
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
