@@ -72,5 +72,9 @@
     "i18n:create": "node create-locale-structure.js",
     "i18n:extract": "npx i18next-parser",
     "i18n:sync": "node auto-translate.js"
+  },
+  "overrides": {
+    "glob": "^10.0.0",
+    "rimraf": "^5.0.0"
   }
 }
