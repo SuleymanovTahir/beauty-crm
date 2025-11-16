@@ -18,16 +18,32 @@ router = APIRouter(tags=["Roles"])
 
 @router.get("/roles")
 async def list_roles(session_token: Optional[str] = Cookie(None)):
-    """Получить все роли"""
+    """Получить все роли (с учетом иерархии)"""
     user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    roles = get_all_roles()
-    
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    from core.config import ROLES, can_manage_role
+
+    # Получаем все роли
+    all_roles = get_all_roles()
+
+    # Фильтруем роли на основе иерархии
+    # Директор видит все роли
+    if user["role"] == "director":
+        manageable_roles = all_roles
+    else:
+        # Другие видят только те роли, которыми могут управлять
+        manageable_roles = [
+            role for role in all_roles
+            if can_manage_role(user["role"], role["key"])
+        ]
+
     return {
-        "roles": roles,
-        "count": len(roles)
+        "roles": manageable_roles,
+        "all_roles": all_roles,  # Для информации
+        "current_user_role": user["role"],
+        "count": len(manageable_roles)
     }
 
 

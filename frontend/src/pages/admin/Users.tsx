@@ -359,30 +359,45 @@ export default function Users() {
             </div>
 
             <div className="p-6 space-y-4">
-              {availableRoles.map((role) => (
-                <button
-                  key={role.key}
-                  onClick={() => handleChangeRole(selectedUser.id, role.key)}
-                  disabled={savingRole}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedUser.role === role.key
-                      ? 'border-pink-500 bg-pink-50'
-                      : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">{role.name}</p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {getRoleDescription(role.key)}
-                      </p>
-                    </div>
-                    {selectedUser.role === role.key && (
-                      <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
-                    )}
+              {availableRoles.length === 0 ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800">
+                    У вас нет прав для изменения ролей других пользователей.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {availableRoles.map((role) => (
+                    <button
+                      key={role.key}
+                      onClick={() => handleChangeRole(selectedUser.id, role.key)}
+                      disabled={savingRole}
+                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                        selectedUser.role === role.key
+                          ? 'border-pink-500 bg-pink-50'
+                          : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900">{role.name}</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {getRoleDescription(role.key)}
+                          </p>
+                        </div>
+                        {selectedUser.role === role.key && (
+                          <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-xs text-blue-800">
+                      <strong>ℹ️ Иерархия ролей:</strong> Вы можете назначать только те роли, которые ниже вашей в иерархии. Директор может назначать все роли.
+                    </p>
                   </div>
-                </button>
-              ))}
+                </>
+              )}
             </div>
 
             <div className="p-6 border-t border-gray-200">
