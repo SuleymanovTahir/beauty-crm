@@ -404,10 +404,10 @@ async def startup_event():
     # ПОЛНАЯ ДИАГНОСТИКА (опционально)
     # ================================
     # Раскомментируйте для запуска полной диагностики при старте
-    from diagnostic_full import run_full_diagnostics
-    import asyncio
-    log_info("🔍 Запуск полной диагностики...", "startup")
-    asyncio.create_task(run_full_diagnostics())
+    # from diagnostic_full import run_full_diagnostics
+    # import asyncio
+    # log_info("🔍 Запуск полной диагностики...", "startup")
+    # asyncio.create_task(run_full_diagnostics())
 
     # ================================
     # ТЕСТ EMAIL УВЕДОМЛЕНИЙ (опционально)
