@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { usePermissions } from '../../utils/permissions';
 
 interface SalesLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -25,6 +26,9 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
   const { t } = useTranslation(['layouts/SalesLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(user?.role || 'employee');
 
   useEffect(() => {
     loadUnreadCount();
@@ -58,12 +62,17 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
     }
   };
 
-  const menuItems = [
-    { icon: Users, label: 'Клиенты', path: '/sales/clients' },
-    { icon: MessageSquare, label: 'Instagram чат', path: '/sales/chat', badge: unreadCount },
-    { icon: BarChart3, label: 'Аналитика', path: '/sales/analytics' },
-    { icon: MessageCircle, label: 'Внутренний чат', path: '/sales/internal-chat' },
-  ];
+  // Фильтруем меню на основе прав
+  const menuItems = useMemo(() => {
+    const allItems = [
+      { icon: Users, label: 'Клиенты', path: '/sales/clients', requirePermission: () => true }, // sales видит ограниченный список
+      { icon: MessageSquare, label: 'Instagram чат', path: '/sales/chat', badge: unreadCount, requirePermission: () => permissions.canViewInstagramChat },
+      { icon: BarChart3, label: 'Аналитика', path: '/sales/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: MessageCircle, label: 'Внутренний чат', path: '/sales/internal-chat', requirePermission: () => true },
+    ];
+
+    return allItems.filter(item => item.requirePermission());
+  }, [permissions, unreadCount]);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">

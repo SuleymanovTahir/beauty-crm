@@ -1,12 +1,12 @@
 //src/components/ManagerLayout.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { 
-  LayoutDashboard, 
-  Users, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Users,
+  BarChart3,
   MessageCircle,
   Settings,
   LogOut,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { usePermissions } from '../../utils/permissions';
 
 interface ManagerLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -26,14 +27,22 @@ export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const { t } = useTranslation(['layouts/ManagerLayout', 'common']);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const menuItems = [
-    { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/manager/dashboard' },
-    { icon: MessageCircle, label: t('menu.chat'), path: '/manager/chat', badge: unreadCount },
-    { icon: Users, label: t('menu.clients'), path: '/manager/clients' },
-    { icon: BarChart3, label: t('menu.analytics'), path: '/manager/analytics' },
-    { icon: Filter, label: t('menu.funnel'), path: '/manager/funnel' },
-    { icon: Settings, label: t('menu.settings'), path: '/manager/settings' },
-  ];
+  // Используем централизованную систему прав
+  const permissions = usePermissions(user?.role || 'employee');
+
+  // Фильтруем меню на основе прав
+  const menuItems = useMemo(() => {
+    const allItems = [
+      { icon: LayoutDashboard, label: t('menu.dashboard'), path: '/manager/dashboard', requirePermission: () => true },
+      { icon: MessageCircle, label: t('menu.chat'), path: '/manager/chat', badge: unreadCount, requirePermission: () => true },
+      { icon: Users, label: t('menu.clients'), path: '/manager/clients', requirePermission: () => permissions.canViewAllClients },
+      { icon: BarChart3, label: t('menu.analytics'), path: '/manager/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Filter, label: t('menu.funnel'), path: '/manager/funnel', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Settings, label: t('menu.settings'), path: '/manager/settings', requirePermission: () => permissions.canViewSettings },
+    ];
+
+    return allItems.filter(item => item.requirePermission());
+  }, [permissions, unreadCount, t]);
   // Загружаем количество непрочитанных при монтировании
   useEffect(() => {
     loadUnreadCount();

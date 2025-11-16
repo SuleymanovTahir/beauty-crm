@@ -6,10 +6,12 @@ import {
   MessageCircle,
   LogOut,
   Menu,
-  X
+  X,
+  Send
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { usePermissions } from '../../utils/permissions';
 
 interface MarketerLayoutProps {
   user: { id: number; role: string; full_name: string } | null;
@@ -21,6 +23,9 @@ export default function MarketerLayout({ user, onLogout }: MarketerLayoutProps) 
   const location = useLocation();
   const { t } = useTranslation(['layouts/MarketerLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(user?.role || 'employee');
 
   const handleLogout = async () => {
     try {
@@ -39,10 +44,16 @@ export default function MarketerLayout({ user, onLogout }: MarketerLayoutProps) 
     }
   };
 
-  const menuItems = [
-    { icon: BarChart3, label: 'Аналитика', path: '/marketer/analytics' },
-    { icon: MessageCircle, label: 'Внутренний чат', path: '/marketer/internal-chat' },
-  ];
+  // Фильтруем меню на основе прав
+  const menuItems = useMemo(() => {
+    const allItems = [
+      { icon: BarChart3, label: 'Аналитика', path: '/marketer/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Send, label: 'Рассылки', path: '/marketer/broadcasts', requirePermission: () => permissions.canSendBroadcasts },
+      { icon: MessageCircle, label: 'Внутренний чат', path: '/marketer/internal-chat', requirePermission: () => true },
+    ];
+
+    return allItems.filter(item => item.requirePermission());
+  }, [permissions]);
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
