@@ -396,18 +396,18 @@ async def startup_event():
     # ================================
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
-    from tests.run_all_tests import run_all_tests
-    log_info("🧪 Запуск всех тестов...", "startup")
-    run_all_tests()
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests()
 
     # ================================
     # ПОЛНАЯ ДИАГНОСТИКА (опционально)
     # ================================
     # Раскомментируйте для запуска полной диагностики при старте
-    # from diagnostic_full import run_full_diagnostics
-    # import asyncio
-    # log_info("🔍 Запуск полной диагностики...", "startup")
-    # asyncio.create_task(run_full_diagnostics())
+    from diagnostic_full import run_full_diagnostics
+    import asyncio
+    log_info("🔍 Запуск полной диагностики...", "startup")
+    asyncio.create_task(run_full_diagnostics())
 
     # ================================
     # ТЕСТ EMAIL УВЕДОМЛЕНИЙ (опционально)
