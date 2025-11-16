@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PositionSelector } from '../../components/PositionSelector';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions, RoleHierarchy } from '../../utils/permissions';
 
 interface User {
   id: number;
@@ -22,6 +24,10 @@ interface User {
 export default function Users() {
   const navigate = useNavigate();
   const { t } = useTranslation(['admin/Users', 'common']);
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(currentUser?.role || 'employee');
 
   const roleConfig: Record<string, { label: string; color: string }> = {
     director: { label: t('role_director_label'), color: 'bg-red-100 text-red-800' },
@@ -239,13 +245,16 @@ export default function Users() {
               className="pl-10"
             />
           </div>
-          <Button
-            className="bg-pink-600 hover:bg-pink-700"
-            onClick={() => navigate('/admin/users/create')}
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            {t('add_user')}
-          </Button>
+          {/* Кнопка создания только для тех, у кого есть право */}
+          {permissions.canCreateUsers && (
+            <Button
+              className="bg-pink-600 hover:bg-pink-700"
+              onClick={() => navigate('/admin/users/create')}
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              {t('add_user')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -290,46 +299,55 @@ export default function Users() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setEditForm({
-                              username: user.username,
-                              full_name: user.full_name,
-                              email: user.email || '',
-                              position: user.position || ''
-                            });
-                            setShowEditDialog(true);
-                          }}
-                          title={t('action_edit_title')}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                        {/* Кнопка редактирования только если есть право */}
+                        {permissions.canEditUsers && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setEditForm({
+                                username: user.username,
+                                full_name: user.full_name,
+                                email: user.email || '',
+                                position: user.position || ''
+                              });
+                              setShowEditDialog(true);
+                            }}
+                            title={t('action_edit_title')}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        )}
 
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowRoleDialog(true);
-                          }}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          title={t('action_change_role_title')}
-                        >
-                          <Shield className="w-4 h-4" />
-                        </Button>
+                        {/* Кнопка изменения роли только если есть право управлять этой ролью */}
+                        {currentUser && RoleHierarchy.canManageRole(currentUser.role, user.role) && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowRoleDialog(true);
+                            }}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            title={t('action_change_role_title')}
+                          >
+                            <Shield className="w-4 h-4" />
+                          </Button>
+                        )}
 
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleDeleteUser(user.id)}
-                          title={t('action_delete_title')}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        {/* Кнопка удаления только если есть право */}
+                        {permissions.canDeleteUsers && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteUser(user.id)}
+                            title={t('action_delete_title')}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>

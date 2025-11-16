@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface BroadcastForm {
   subscription_type: string;
@@ -31,6 +33,11 @@ interface PreviewData {
 }
 
 export default function Broadcasts() {
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
+
   const [form, setForm] = useState<BroadcastForm>({
     subscription_type: '',
     channels: [],
@@ -141,6 +148,22 @@ export default function Broadcasts() {
       setSending(false);
     }
   };
+
+  // Проверка доступа к рассылкам
+  if (!userPermissions.canSendBroadcasts) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
+          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">
+            Функция массовых рассылок доступна только для директора, администратора и таргетолога.
+            Обратитесь к администратору для получения доступа.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">

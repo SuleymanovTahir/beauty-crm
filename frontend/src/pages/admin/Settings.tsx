@@ -11,9 +11,16 @@ import { api } from '../../services/api';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 export default function AdminSettings() {
   const { t } = useTranslation(['admin/Settings', 'common']);
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
+
   const [generalSettings, setGeneralSettings] = useState({
     salonName: '',
     city: '',
@@ -757,6 +764,21 @@ export default function AdminSettings() {
     }
   };
 
+  // Проверка доступа к настройкам
+  if (!userPermissions.canViewSettings) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
+          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">
+            У вас нет прав для просмотра настроек системы. Обратитесь к администратору.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -766,6 +788,21 @@ export default function AdminSettings() {
         </h1>
         <p className="text-gray-600">{t('settings:manage_crm_parameters')}</p>
       </div>
+
+      {/* Информация о правах доступа */}
+      {!userPermissions.canEditSettings && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-yellow-800 font-medium">Режим просмотра</p>
+              <p className="text-yellow-700 text-sm mt-1">
+                У вас есть доступ только для просмотра настроек. Редактирование доступно только директору.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Tabs defaultValue="general" className="space-y-6">
         <TabsList className="flex flex-wrap w-full lg:w-auto gap-1">
@@ -951,7 +988,11 @@ export default function AdminSettings() {
                   </div>
                 </div>
 
-                <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-pink-500 to-purple-600"
+                  disabled={!userPermissions.canEditSettings}
+                >
                   {t('settings:save_changes')}
                 </Button>
               </form>
@@ -1396,7 +1437,11 @@ export default function AdminSettings() {
                 )}
               </div>
 
-              <Button type="submit" className="bg-gradient-to-r from-pink-500 to-purple-600">
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                disabled={!userPermissions.canEditSettings}
+              >
                 {t('settings:save_notification_settings')}
               </Button>
             </form>

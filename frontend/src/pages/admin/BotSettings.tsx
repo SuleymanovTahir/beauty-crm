@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 import { Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface BotSettings {
   bot_name: string;
@@ -65,6 +67,10 @@ export default function BotSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation(['admin/BotSettings', 'common']);
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
 
   const [settings, setSettings] = useState<BotSettings>({
     bot_name: '',
@@ -219,6 +225,21 @@ export default function BotSettings() {
       <div style={{ padding: '2rem', textAlign: 'center' }}>
         <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
         <p style={{ marginTop: '1rem', color: '#6b7280' }}>{t('botsettings:loading')}</p>
+      </div>
+    );
+  }
+
+  // Проверка доступа к настройкам бота (только директор)
+  if (!userPermissions.canEditSettings) {
+    return (
+      <div style={{ padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', padding: '3rem', maxWidth: '28rem', textAlign: 'center' }}>
+          <Shield style={{ width: '4rem', height: '4rem', color: '#d1d5db', margin: '0 auto 1rem' }} />
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Доступ запрещен</h2>
+          <p style={{ color: '#6b7280' }}>
+            Настройки бота доступны только директору. Обратитесь к администратору для получения доступа.
+          </p>
+        </div>
       </div>
     );
   }

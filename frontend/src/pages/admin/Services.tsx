@@ -11,6 +11,8 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface Service {
   id: number;
@@ -79,6 +81,10 @@ const formatPrice = (service: Service) => {
 
 export default function Services() {
   const [activeTab, setActiveTab] = useState<TabType>('services');
+  const { user: currentUser } = useAuth();
+
+  // Используем централизованную систему прав
+  const permissions = usePermissions(currentUser?.role || 'employee');
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
@@ -495,13 +501,16 @@ export default function Services() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button
-                className="bg-pink-600 hover:bg-pink-700"
-                onClick={handleOpenAddService}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('services:add_service')}
-              </Button>
+              {/* Кнопка создания только если есть право */}
+              {permissions.canEditServices && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddService}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('services:add_service')}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -562,21 +571,26 @@ export default function Services() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditService(service)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700"
-                              onClick={() => handleDeleteService(service.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            {/* Кнопки редактирования и удаления только если есть право */}
+                            {permissions.canEditServices && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditService(service)}
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-red-600 hover:text-red-700"
+                                  onClick={() => handleDeleteService(service.id)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -635,13 +649,16 @@ export default function Services() {
                   <SelectItem value="inactive">{t('services:inactive')}</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                className="bg-pink-600 hover:bg-pink-700"
-                onClick={handleOpenAddPackage}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('services:create_package')}
-              </Button>
+              {/* Кнопка создания только если есть право */}
+              {permissions.canEditServices && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddPackage}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('services:create_package')}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -724,33 +741,35 @@ export default function Services() {
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEditPackage(pkg)}
-                    className="flex-1"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    {t('services:edit')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleTogglePackageActive(pkg)}
-                    className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
-                  >
-                    {pkg.is_active ? t('services:disable') : t('services:enable')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeletePackage(pkg.id)}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+                {permissions.canEditServices && (
+                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditPackage(pkg)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      {t('services:edit')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleTogglePackageActive(pkg)}
+                      className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
+                    >
+                      {pkg.is_active ? t('services:disable') : t('services:enable')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeletePackage(pkg.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
