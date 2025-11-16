@@ -11,19 +11,10 @@ import { toast } from "sonner";
 import { useTranslation } from 'react-i18next';
 import { api } from "../../services/api";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface LoginProps {
-  onLogin: (user: {
-    id: number;
-    username: string;
-    full_name: string;
-    email: string;
-    role: string;
-    token: string;
-  }) => void;
-}
-
-export default function Login({ onLogin }: LoginProps) {
+export default function Login() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(['auth/Login', 'common']);
   const [credentials, setCredentials] = useState({
@@ -51,13 +42,7 @@ export default function Login({ onLogin }: LoginProps) {
       );
 
       if (response.success && response.token) {
-        localStorage.setItem("session_token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-
-        onLogin({
-          ...response.user,
-          token: response.token,
-        });
+        login(response.user, response.token);
 
         toast.success(
           `${t('login:welcome')} ${

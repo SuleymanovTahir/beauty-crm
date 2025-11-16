@@ -6,19 +6,10 @@ import { Label } from "../../components/ui/label";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface VerifyEmailProps {
-  onLogin?: (user: {
-    id: number;
-    username: string;
-    full_name: string;
-    email: string;
-    role: string;
-    token: string;
-  }) => void;
-}
-
-export default function VerifyEmail({ onLogin }: VerifyEmailProps) {
+export default function VerifyEmail() {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -56,17 +47,8 @@ export default function VerifyEmail({ onLogin }: VerifyEmailProps) {
           setVerified(true);
           toast.success("Email подтвержден! Выполняется вход в систему...");
 
-          // Сохраняем данные в localStorage
-          localStorage.setItem("session_token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-
-          // Вызываем onLogin если передан
-          if (onLogin) {
-            onLogin({
-              ...data.user,
-              token: data.token
-            });
-          }
+          // Используем login из контекста
+          login(data.user, data.token);
 
           // Перенаправляем в зависимости от роли
           setTimeout(() => {
@@ -95,7 +77,7 @@ export default function VerifyEmail({ onLogin }: VerifyEmailProps) {
     };
 
     verifyByToken();
-  }, [tokenFromUrl, navigate, onLogin]);
+  }, [tokenFromUrl, navigate, login]);
 
   // Проверка email из state (для старой системы с кодами)
   useEffect(() => {
