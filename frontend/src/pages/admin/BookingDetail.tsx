@@ -24,7 +24,7 @@ export default function BookingDetail() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation(['admin/BookingDetail', 'common']);
+  const { t } = useTranslation(['admin/bookingdetail', 'common']);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
 
@@ -85,9 +85,9 @@ export default function BookingDetail() {
     return (
       <div className="p-8">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">t('bookingdetail:not_found')</p>
+          <p className="text-gray-600 mb-4">{t('not_found')}</p>
           <Button onClick={() => navigate('/admin/bookings')}>
-            ← t('common:back_to_bookings')
+            ← {t('common:back_to_bookings')}
           </Button>
         </div>
       </div>
@@ -119,8 +119,8 @@ export default function BookingDetail() {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div>
-        <h1 className="text-3xl text-gray-900 mb-1">{t('bookingdetail:booking_number', { id: booking.id })}</h1>
-        <p className="text-gray-600">{t('bookingdetail:detailed_info')}</p>
+          <h1 className="text-3xl text-gray-900 mb-1">{t('booking_number')} {booking.id}</h1>
+          <p className="text-gray-600">{t('detailed_info')}</p>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ export default function BookingDetail() {
         {/* Main Info */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h2 className="text-2xl text-gray-900 mb-6">{t('bookingdetail:booking_info')}</h2>
+            <h2 className="text-2xl text-gray-900 mb-6">{t('booking_info')}</h2>
 
             <div className="space-y-6">
               {/* Client */}
@@ -137,13 +137,13 @@ export default function BookingDetail() {
                   <User className="w-6 h-6 text-pink-600" />
                 </div>
                 <div>
-                <p className="text-sm text-gray-600">{t('bookingdetail:client')}</p>
+                  <p className="text-sm text-gray-600">{t('client')}</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.name}</p>
                   <button
                     onClick={() => navigate(`/admin/clients/${booking.client_id}`)}
                     className="text-sm text-pink-600 hover:underline mt-1"
                   >
-                    t('bookingdetail:client_profile') →
+                    {t('client_profile')}
                   </button>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function BookingDetail() {
                   <Briefcase className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">t('bookingdetail:service')</p>
+                  <p className="text-sm text-gray-600">{t('service')}</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.service}</p>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function BookingDetail() {
                   <Calendar className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">t('bookingdetail:date_time')</p>
+                  <p className="text-sm text-gray-600">{t('date_time')}</p>
                   <p className="text-lg text-gray-900 font-medium">{formatDate(booking.datetime)}</p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function BookingDetail() {
                   <Phone className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">t('bookingdetail:phone')</p>
+                  <p className="text-sm text-gray-600">{t('phone')}</p>
                   <p className="text-lg text-gray-900 font-medium">{booking.phone}</p>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function BookingDetail() {
                     <Briefcase className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">t('bookingdetail:revenue')</p>
+                    <p className="text-sm text-gray-600">{t('revenue')}</p>
                     <p className="text-lg text-gray-900 font-medium">{booking.revenue} AED</p>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function BookingDetail() {
                   <Clock className="w-6 h-6 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">t('bookingdetail:created_at')</p>
+                  <p className="text-sm text-gray-600">{t('created_at')}</p>
                   <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export default function BookingDetail() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
               <Edit2 className="w-5 h-5" />
-              t('bookingdetail:status')
+              {t('status')}
             </h3>
 
             <div className="space-y-4">
@@ -222,10 +222,10 @@ export default function BookingDetail() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">t('bookingdetail:status_new')</SelectItem>
-                  <SelectItem value="confirmed">t('bookingdetail:confirmed')</SelectItem>
-                  <SelectItem value="completed">t('bookingdetail:completed)</SelectItem>
-                  <SelectItem value="cancelled">t('bookingdetail:cancelled')</SelectItem>
+                  <SelectItem value="new">{t('status_new')}</SelectItem>
+                  <SelectItem value="confirmed">{t('confirmed')}</SelectItem>
+                  <SelectItem value="completed">{t('completed')}</SelectItem>
+                  <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -234,12 +234,12 @@ export default function BookingDetail() {
                 disabled={updating || newStatus === booking.status}
                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
               >
-                {updating ? t('bookingdetail:update') : t('bookingdetail:update_status')}
+                {updating ? t('update') : t('update_status')}
               </Button>
 
               {/* Current Status Badge */}
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600 mb-2">t('bookingdetail:current_status')</p>
+                <p className="text-xs text-gray-600 mb-2">{t('current_status')}</p>
                 <div className="flex items-center gap-2">
                   <div
                     className={`w-3 h-3 rounded-full ${
@@ -254,12 +254,12 @@ export default function BookingDetail() {
                   ></div>
                   <span className="text-sm text-gray-900 font-medium capitalize">
                     {booking.status === 'new'
-                      ? t('bookingdetail:status_new')
+                      ? t('status_new')
                       : booking.status === 'confirmed'
-                      ? t('bookingdetail:status_confirmed')
+                      ? t('status_confirmed')
                       : booking.status === 'completed'
-                      ? t('bookingdetail:status_completed')
-                      : t('bookingdetail:status_cancelled')}
+                      ? t('status_completed')
+                      : t('status_cancelled')}
                   </span>
                 </div>
               </div>
@@ -268,13 +268,13 @@ export default function BookingDetail() {
 
           {/* Actions */}
           <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h3 className="text-lg text-gray-900 mb-4">t('bookingdetail:actions')</h3>
+            <h3 className="text-lg text-gray-900 mb-4">{t('actions')}</h3>
             <Button
               onClick={() => navigate(`/admin/chat?client_id=${booking.client_id}`)}
               variant="outline"
               className="w-full"
             >
-              💬 t('bookingdetail:write_to_client')
+              {t('write_to_client')}
             </Button>
           </div>
         </div>

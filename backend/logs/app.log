@@ -8528,3 +8528,1957 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 03:44:44 - crm - INFO - [startup] ======================================================================
 2025-11-16 03:44:44 - crm - INFO - [startup] 🚀 Запуск CRM системы...
 2025-11-16 03:44:44 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 03:48:12 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 03:48:12 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 03:48:12 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 03:48:12 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 03:48:12 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:48:12 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 03:48:12 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 03:48:12 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 03:48:12 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 03:48:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:48:12 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 03:48:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:48:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 03:48:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 03:48:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 03:48:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 03:48:12 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 03:48:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:48:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 03:48:12 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 03:48:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 03:48:12 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 03:48:12 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 03:48:12 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 03:48:12 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:49:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:49:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:50:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:50:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:51:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:51:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:51:35 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 03:51:35 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 03:51:35 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 03:51:35 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 03:51:35 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:51:35 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 03:51:35 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 03:51:35 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 03:51:35 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 03:51:35 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:35 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 03:51:35 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:35 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 03:51:35 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 03:51:35 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 03:51:35 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 03:51:35 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 03:51:35 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:35 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 03:51:35 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 03:51:35 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 03:51:35 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 03:51:35 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 03:51:35 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 03:51:35 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 03:51:36 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 03:51:36 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 03:51:36 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 03:51:36 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 03:51:36 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 03:51:36 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 03:51:36 - crm - INFO - [startup_test]   ✅ notification_settings: 0 записей
+2025-11-16 03:51:36 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 2/5 активны
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 03:51:36 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 03:51:36 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 03:51:36 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 03:51:36 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 03:51:36 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 03:51:36 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 03:51:36 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 03:51:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 03:51:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 03:51:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 03:51:36 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 03:51:36 - crm - INFO - [modules] ======================================================================
+2025-11-16 03:51:36 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 03:51:36 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 03:51:36 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 03:51:36 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 03:51:36 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 03:51:36 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 03:51:36 - crm - INFO - [startup] ======================================================================
+2025-11-16 03:52:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-16 03:52:08 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:10 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:10 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 03:52:13 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-16 03:52:13 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-16 03:52:13 - crm - INFO - [notifications] Notification settings created for user 1
+2025-11-16 03:52:13 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 200 (0.00s)
+2025-11-16 03:52:16 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/3/toggle
+2025-11-16 03:52:16 - crm - INFO - [reminders] Booking reminder setting toggled: ID=3, enabled=True
+2025-11-16 03:52:16 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/3/toggle → 200 (0.01s)
+2025-11-16 03:52:16 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:16 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:52:17 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-16 03:52:17 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-16 03:52:17 - crm - INFO - [notifications] Notification settings updated for user 1
+2025-11-16 03:52:17 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 200 (0.00s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:19 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:19 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 03:52:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:32 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/4/toggle
+2025-11-16 03:52:32 - crm - INFO - [reminders] Booking reminder setting toggled: ID=4, enabled=True
+2025-11-16 03:52:32 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/4/toggle → 200 (0.00s)
+2025-11-16 03:52:32 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:32 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-16 03:52:33 - crm - INFO - [middleware] 🔥 PUT /api/booking-reminder-settings/5/toggle
+2025-11-16 03:52:33 - crm - INFO - [reminders] Booking reminder setting toggled: ID=5, enabled=True
+2025-11-16 03:52:33 - crm - INFO - [middleware] 📤 PUT /api/booking-reminder-settings/5/toggle → 200 (0.01s)
+2025-11-16 03:52:33 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:52:33 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.00s)
+2025-11-16 03:52:35 - crm - INFO - [middleware] 🔥 POST /api/notifications/settings
+2025-11-16 03:52:35 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'birthdayReminders': True, 'birthdayDaysAdvance': 7}
+2025-11-16 03:52:35 - crm - INFO - [notifications] Notification settings updated for user 1
+2025-11-16 03:52:35 - crm - INFO - [middleware] 📤 POST /api/notifications/settings → 200 (0.00s)
+2025-11-16 03:52:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:52:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:52:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:53:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:53:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:53:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:53:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:53:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:53:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:53:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:53:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:54:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:54:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:54:42 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:54:42 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:54:44 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 03:54:44 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 03:54:44 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 03:54:44 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:54:44 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 03:54:44 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:54:44 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 03:54:44 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 03:54:44 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 03:54:44 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 03:54:44 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 03:54:45 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-16 03:54:45 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-16 03:54:47 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 03:54:47 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 03:54:47 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 03:54:47 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 03:54:47 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:54:47 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:54:47 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 03:54:47 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 03:54:47 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 03:54:47 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 03:54:47 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 03:54:48 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-11-16 03:54:48 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 03:54:48 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-11-16 03:54:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:54:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 03:54:50 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 03:54:50 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 03:54:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:54:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:04 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 03:55:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 03:55:04 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 03:55:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 03:55:04 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:55:04 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:55:04 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 03:55:04 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 03:55:04 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 03:55:04 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 03:55:04 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 03:55:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:26 - crm - INFO - [middleware] 🔥 GET /api/services/45/employees
+2025-11-16 03:55:26 - crm - INFO - [middleware] 📤 GET /api/services/45/employees → 200 (0.00s)
+2025-11-16 03:55:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:55:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:55:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:01 - crm - INFO - [middleware] 🔥 GET /api/services/68/employees
+2025-11-16 03:56:01 - crm - INFO - [middleware] 📤 GET /api/services/68/employees → 200 (0.00s)
+2025-11-16 03:56:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:56:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:56:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:57:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:57:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:57:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:57:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:57:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:57:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:58:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:58:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 03:58:27 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon.png
+2025-11-16 03:58:27 - crm - INFO - [middleware] 📤 GET /apple-touch-icon.png → 404 (0.00s)
+2025-11-16 03:58:27 - crm - INFO - [middleware] 🔥 GET /apple-touch-icon-precomposed.png
+2025-11-16 03:58:27 - crm - INFO - [middleware] 📤 GET /apple-touch-icon-precomposed.png → 404 (0.00s)
+2025-11-16 03:58:27 - crm - INFO - [middleware] 🔥 GET /favicon.ico
+2025-11-16 03:58:27 - crm - INFO - [middleware] 📤 GET /favicon.ico → 404 (0.00s)
+2025-11-16 03:58:38 - crm - INFO - [middleware] 🔥 GET /webhook
+2025-11-16 03:58:38 - crm - INFO - [webhook] ======================================================================
+2025-11-16 03:58:38 - crm - INFO - [webhook] 🔍 ВЕРИФИКАЦИЯ WEBHOOK
+2025-11-16 03:58:38 - crm - INFO - [webhook] Mode: subscribe
+2025-11-16 03:58:38 - crm - INFO - [webhook] Token: taha
+2025-11-16 03:58:38 - crm - INFO - [webhook] Challenge: 430633125
+2025-11-16 03:58:38 - crm - INFO - [webhook] ======================================================================
+2025-11-16 03:58:38 - crm - INFO - [webhook] ✅ Webhook верифицирован!
+2025-11-16 03:58:38 - crm - INFO - [middleware] 📤 GET /webhook → 200 (0.00s)
+2025-11-16 03:58:43 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-11-16 03:58:43 - crm - INFO - ======================================================================
+2025-11-16 03:58:43 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-11-16 03:58:43 - crm - INFO - 📦 Full webhook payload: {
+  "object": "instagram",
+  "entry": [
+    {
+      "time": 1763251122965,
+      "id": "17841448618072548",
+      "messaging": [
+        {
+          "sender": {
+            "id": "1533224231180483"
+          },
+          "recipient": {
+            "id": "17841448618072548"
+          },
+          "timestamp": 1763251018067,
+          "message": {
+            "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDI2Nzk5OT...
+2025-11-16 03:58:44 - crm - INFO - 📨 Processing messaging event: {
+  "sender": {
+    "id": "1533224231180483"
+  },
+  "recipient": {
+    "id": "17841448618072548"
+  },
+  "timestamp": 1763251018067,
+  "message": {
+    "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDI2Nzk5OTk4NTI3MjM...
+2025-11-16 03:58:44 - crm - INFO - ✅ New message aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDI2Nzk5OTk4NTI3MjM5MDkyMDEzNzg2NzI2NAZDZD, processing
+2025-11-16 03:58:44 - crm - INFO - 📬 Message from 1533224231180483: is_echo=False, text=привет
+2025-11-16 03:58:44 - crm - INFO - [webhook] 📩 Получено сообщение от клиента 1533224231180483: привет
+2025-11-16 03:58:44 - crm - INFO - [webhook] ✅ API data: username=stz_192, name=Genrih, has_pic=True
+2025-11-16 03:58:44 - crm - INFO - [webhook] 👤 Username: stz_192
+2025-11-16 03:58:44 - crm - INFO - [db] ✅ Обновлена информация клиента 1533224231180483
+2025-11-16 03:58:44 - crm - INFO - [db] 💾 Сообщение сохранено: ID=1, sender=client, text=привет...
+2025-11-16 03:58:44 - crm - INFO - [webhook] 💾 Сообщение сохранено в БД: привет...
+2025-11-16 03:58:44 - crm - INFO - [database] ✅ Language detected: ru for 1533224231180483 (cyr:6, ar:0, lat:0)
+2025-11-16 03:58:44 - crm - INFO - [webhook] 🌐 Client language: ru (supported: ru,en,ar)
+2025-11-16 03:58:44 - crm - INFO - [webhook] 🌐 Global bot enabled: 1
+2025-11-16 03:58:44 - crm - INFO - [webhook] 🤖 Bot mode for 1533224231180483: assistant
+2025-11-16 03:58:44 - crm - INFO - [webhook] 🤖 Assistant mode, bot will respond + suggest
+2025-11-16 03:58:46 - crm - INFO - 🤖 Generating AI response...
+2025-11-16 03:58:47 - crm - INFO - ✅ AI response: Привет! 😊 Добро пожаловать в M Le Diamant Beauty Lounge!
+2025-11-16 03:58:47 - crm - INFO - [db] 💾 Сообщение сохранено: ID=2, sender=bot, text=Привет! 😊 Добро пожаловать в M...
+2025-11-16 03:58:48 - crm - INFO - 📤 Message sent!
+2025-11-16 03:58:48 - crm - INFO - [middleware] 📤 POST /webhook → 200 (5.44s)
+2025-11-16 03:58:49 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-11-16 03:58:49 - crm - INFO - ======================================================================
+2025-11-16 03:58:49 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-11-16 03:58:49 - crm - INFO - 📦 Full webhook payload: {
+  "object": "instagram",
+  "entry": [
+    {
+      "time": 1763251129483,
+      "id": "17841448618072548",
+      "messaging": [
+        {
+          "sender": {
+            "id": "17841448618072548"
+          },
+          "recipient": {
+            "id": "1533224231180483"
+          },
+          "timestamp": 1763251043311,
+          "message": {
+            "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDczMzY3Nz...
+2025-11-16 03:58:49 - crm - INFO - [middleware] 🔥 POST /webhook
+2025-11-16 03:58:49 - crm - INFO - ======================================================================
+2025-11-16 03:58:49 - crm - INFO - 📨 WEBHOOK: POST request received
+2025-11-16 03:58:49 - crm - INFO - 📦 Full webhook payload: {
+  "object": "instagram",
+  "entry": [
+    {
+      "time": 1763251129313,
+      "id": "17841448618072548",
+      "messaging": [
+        {
+          "sender": {
+            "id": "17841448618072548"
+          },
+          "recipient": {
+            "id": "1533224231180483"
+          },
+          "timestamp": 1763251128587,
+          "message": {
+            "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MjMwNjczMD...
+2025-11-16 03:58:50 - crm - INFO - 📨 Processing messaging event: {
+  "sender": {
+    "id": "17841448618072548"
+  },
+  "recipient": {
+    "id": "1533224231180483"
+  },
+  "timestamp": 1763251043311,
+  "message": {
+    "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDczMzY3NzUyNDc2OTA...
+2025-11-16 03:58:50 - crm - INFO - ✅ New message aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MDczMzY3NzUyNDc2OTA2NjUzNjIzOTM2NjE0NAZDZD, processing
+2025-11-16 03:58:50 - crm - INFO - 📬 Message from 17841448618072548: is_echo=True, text=тест
+2025-11-16 03:58:50 - crm - INFO - ⏭️ Skipping echo message
+2025-11-16 03:58:50 - crm - INFO - [db] 💾 Сообщение сохранено: ID=3, sender=manager, text=тест...
+2025-11-16 03:58:50 - crm - INFO - 💾 Manager message saved: тест
+2025-11-16 03:58:50 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.78s)
+2025-11-16 03:58:50 - crm - INFO - 📨 Processing messaging event: {
+  "sender": {
+    "id": "17841448618072548"
+  },
+  "recipient": {
+    "id": "1533224231180483"
+  },
+  "timestamp": 1763251128587,
+  "message": {
+    "mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MjMwNjczMDM5NTYwOTc...
+2025-11-16 03:58:50 - crm - INFO - ✅ New message aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDQ4NjE4MDcyNTQ4OjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI3NjE1MTE2NjQxMjg0MzYwMjozMjUyNjI0MjMwNjczMDM5NTYwOTcyMzYwMTY5OTIwOTIxNgZDZD, processing
+2025-11-16 03:58:50 - crm - INFO - 📬 Message from 17841448618072548: is_echo=True, text=Привет! 😊 Добро пожаловать в M Le Diamant Beauty L
+2025-11-16 03:58:50 - crm - INFO - ⏭️ Skipping echo message
+2025-11-16 03:58:50 - crm - INFO - [db] 💾 Сообщение сохранено: ID=4, sender=manager, text=Привет! 😊 Добро пожаловать в M...
+2025-11-16 03:58:50 - crm - INFO - 💾 Manager message saved: Привет! 😊 Добро пожаловать в M Le Diamant Beauty L
+2025-11-16 03:58:50 - crm - INFO - [middleware] 📤 POST /webhook → 200 (0.57s)
+2025-11-16 03:58:57 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:58:57 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:58:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:58:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 03:59:07 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 03:59:07 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 03:59:07 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 03:59:08 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:59:08 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:59:08 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 03:59:08 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 03:59:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:09 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:09 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 03:59:09 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:09 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.00s)
+2025-11-16 03:59:14 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 03:59:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 03:59:20 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 03:59:20 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:20 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:25 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:25 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:30 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:30 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:31 - crm - INFO - [middleware] 🔥 GET /api/services/44/employees
+2025-11-16 03:59:31 - crm - INFO - [middleware] 📤 GET /api/services/44/employees → 200 (0.00s)
+2025-11-16 03:59:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:37 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:37 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 03:59:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:43 - crm - INFO - [middleware] 🔥 GET /api/services/68/employees
+2025-11-16 03:59:43 - crm - INFO - [middleware] 📤 GET /api/services/68/employees → 200 (0.00s)
+2025-11-16 03:59:45 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:45 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 03:59:50 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:50 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:55 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 03:59:55 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 03:59:57 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 03:59:57 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:00 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:00:00 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:00:05 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:00:05 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:00:06 - crm - INFO - [middleware] 🔥 POST /api/bookings
+2025-11-16 04:00:06 - crm - INFO - [middleware] 📤 POST /api/bookings → 200 (0.00s)
+2025-11-16 04:00:06 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:00:06 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:00:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:00:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:00:06 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:00:06 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:00:06 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:00:06 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:00:06 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:00:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:10 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:00:10 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:00:11 - crm - INFO - [middleware] 🔥 POST /api/bookings/1/status
+2025-11-16 04:00:11 - crm - INFO - [middleware] 📤 POST /api/bookings/1/status → 200 (0.01s)
+2025-11-16 04:00:15 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:00:15 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:00:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:00:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:00:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:00:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:01:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:01:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:01:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:01:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:01:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:01:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:01:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:01:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:02:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:02:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:02:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:02:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:02:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:02:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:03:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:03:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:03:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:03:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:03:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:03:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:04:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:04:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:04:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:04:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:04:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:04:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:05:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:05:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:05:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:05:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:05:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:05:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:06:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:06:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:06:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:06:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:06:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:06:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:06:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:06:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:06:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:06:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:06:51 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:06:51 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:07:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:07:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:07:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:07:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:07:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:07:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:07:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:07:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:07:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:07:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:08:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:08:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:08:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:08:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:08:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:08:18 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:08:18 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:08:18 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:08:18 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:08:18 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 04:08:18 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:08:18 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:08:18 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:08:18 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:08:18 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:08:18 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:08:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:08:23 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:08:23 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:08:23 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:08:23 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:08:23 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:08:23 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:08:25 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:08:25 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:08:25 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 04:08:25 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:08:25 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:08:25 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:08:25 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:08:25 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:08:25 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:08:25 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:08:25 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:08:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:08:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:08:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:08:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:09:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:09:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:09:50 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:09:50 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:00 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:00 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:10:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:10:10 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:10 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:15 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-11-16 04:10:15 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-11-16 04:10:15 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-11-16 04:10:15 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-11-16 04:10:16 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:10:16 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:10:16 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:10:16 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.00s)
+2025-11-16 04:10:16 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:10:20 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:20 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:30 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:30 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:33 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:10:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:33 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:10:33 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:10:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:33 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:10:33 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.01s)
+2025-11-16 04:10:33 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.00s)
+2025-11-16 04:10:33 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:10:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 04:10:47 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 04:10:48 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:10:48 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:10:48 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:10:48 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:10:48 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:10:48 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:10:48 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:10:48 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:10:48 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:10:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:10:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:10:58 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:10:58 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:10:58 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 04:10:58 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:10:58 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:10:58 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:10:58 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:10:58 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:10:58 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:10:58 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:10:58 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.00s)
+2025-11-16 04:11:02 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:11:02 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:11:02 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:11:02 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:11:02 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:11:02 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:11:02 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:11:02 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:11:02 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.01s)
+2025-11-16 04:11:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:11:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:11:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:11:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:11:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:16 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.02s)
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 04:11:16 - crm - ERROR - [api] Error fetching users: no such column: e.position_id
+2025-11-16 04:11:16 - crm - INFO - [middleware] 📤 GET /api/users → 500 (0.01s)
+2025-11-16 04:11:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:11:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:11:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:11:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:11:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:12:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:07 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:12:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:07 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:12:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:12:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:12:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:20 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-11-16 04:12:20 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:12:20 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.01s)
+2025-11-16 04:12:26 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:26 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:12:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:36 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:36 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:37 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:37 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:46 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:46 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:12:56 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:56 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:12:57 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:12:57 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:13:06 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:13:06 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:13:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:13:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:13:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:13:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:13:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:13:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:13:16 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:13:16 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:14:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:14:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:14:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:14:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:14:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:14:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:14:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:14:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:15:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:15:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:15:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:15:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:15:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:15:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:15:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:15:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:16:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:16:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:16:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:16:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:16:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:16:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:16:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:16:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:07 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:17:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:07 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:17:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:07 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:07 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:14 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.01s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:17:14 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:17:14 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:17:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:17:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:17:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:17:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:17:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:18:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:18:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:18:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:19:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:19:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:19:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:19:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:19:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:19:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:20:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:20:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:20:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:20:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:20:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:20:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:21:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:21:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:21:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:21:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:21:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:21:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:22:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:22:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:23:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:23:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:24:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:24:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:25:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:25:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:26:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:26:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:27:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:27:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:31:49 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:31:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:31:49 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:31:49 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:31:49 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:31:49 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:31:49 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:31:49 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:31:49 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:31:49 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:31:49 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:31:49 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:31:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:31:49 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:31:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:31:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:31:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:31:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:31:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:31:49 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:31:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:31:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:31:49 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:31:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:31:49 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:31:49 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:31:49 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:31:49 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:31:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:31:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:32:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:32:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:32:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:32:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:32:25 - crm - INFO - [migration] 🔧 Linking employees with positions...
+2025-11-16 04:32:25 - crm - INFO - [migration] 📝 Creating temporary table...
+2025-11-16 04:32:25 - crm - INFO - [migration] 📋 Copying data...
+2025-11-16 04:32:25 - crm - INFO - [migration] 🔗 Matching existing positions...
+2025-11-16 04:32:25 - crm - INFO - [migration] ✅ Matched 6 positions
+2025-11-16 04:32:25 - crm - INFO - [migration] 🔄 Replacing old table...
+2025-11-16 04:32:25 - crm - INFO - [migration] 🔗 Recreating related tables...
+2025-11-16 04:32:25 - crm - INFO - [migration] ✅ Employees successfully linked with positions
+2025-11-16 04:32:29 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:32:29 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:32:29 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:32:29 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:32:29 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:32:29 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:32:29 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:32:29 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:32:29 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:32:29 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:32:29 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:32:29 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:32:29 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:32:29 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:32:29 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:32:29 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:32:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:32:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:32:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:32:29 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:32:29 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:32:29 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:32:29 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:32:29 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:32:29 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:32:29 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:32:29 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:32:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:32:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:32:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:32:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:32:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:32:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:33:17 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:17 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:33:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:33:22 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:22 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:33:22 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-11-16 04:33:22 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:33:22 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:33:22 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-11-16 04:33:22 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:33:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:33:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:33:53 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:33:53 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:34:03 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:34:03 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:34:13 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:34:13 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:34:23 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:34:23 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:35:06 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:35:06 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:35:06 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:35:06 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:35:06 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:35:06 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:35:06 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:35:06 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:35:06 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:35:06 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:35:06 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:35:06 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:35:06 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:35:06 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:35:06 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:35:06 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:35:06 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:35:06 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:35:06 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:35:06 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:35:06 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:06 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:35:06 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:35:06 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:35:06 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:35:06 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:35:06 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:35:06 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:35:12 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:35:12 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:35:12 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:35:12 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:35:12 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:35:12 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:35:12 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:35:12 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:35:12 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:35:12 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:35:12 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:35:12 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:35:12 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:35:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:35:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:35:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:35:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:35:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:35:12 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:35:12 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:35:12 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:35:12 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:35:12 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:35:12 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:35:12 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:35:12 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:35:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:35:22 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:35:22 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:35:22 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:35:22 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:35:22 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:35:22 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:35:22 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:35:22 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:35:22 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:35:22 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:35:22 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:35:22 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:35:22 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:35:22 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:35:22 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:35:22 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:35:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:35:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:35:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:35:22 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:35:22 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:22 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:35:22 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:35:22 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:35:22 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:35:22 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:35:22 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:35:22 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:35:25 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:35:25 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:35:25 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:35:25 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:35:25 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:35:25 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:35:25 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:35:25 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:35:25 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:35:25 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:35:25 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:35:25 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:35:25 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:35:25 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:35:25 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:35:25 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:35:25 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:35:25 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:35:25 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:35:25 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:25 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:35:25 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:35:25 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:35:25 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:35:25 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:35:25 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:35:25 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:35:27 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:35:27 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:35:27 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:35:27 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:35:27 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:35:27 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:35:27 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:35:27 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:35:27 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:35:27 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:35:27 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:35:27 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:35:27 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:35:27 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:35:27 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:35:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:35:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:35:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:35:27 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:35:27 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:35:27 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:35:27 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:35:27 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:35:27 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:35:27 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:35:27 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:35:27 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:36:39 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:36:39 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:36:39 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:36:39 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:36:39 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:36:39 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:36:39 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:36:39 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:36:39 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:36:39 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:36:39 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:36:39 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:36:39 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:36:39 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:36:39 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:36:39 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:36:39 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:36:39 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:36:39 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:36:39 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:36:39 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:36:39 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:36:39 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:36:39 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:36:39 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:36:39 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:36:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:36:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:36:48 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:36:48 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:36:48 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:36:48 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:36:48 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:36:48 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:36:48 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:36:48 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:48 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:48 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:36:48 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:36:48 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:36:48 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:36:48 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:36:48 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:36:48 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:36:49 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:36:49 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:36:49 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:36:49 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:36:49 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:36:49 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:36:49 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:36:49 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:36:49 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:36:49 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:36:49 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:36:49 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:36:49 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:36:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:36:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:36:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:36:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:36:49 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:36:49 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:36:49 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:36:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:36:49 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:36:49 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:36:49 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:36:49 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:36:49 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:36:49 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:37:07 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:37:07 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:37:07 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:37:07 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:37:07 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:37:07 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:37:07 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:37:07 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:37:07 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:37:07 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:37:07 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:37:07 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:37:07 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:37:07 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:37:07 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:37:07 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:37:07 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:37:07 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:37:07 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:37:07 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:07 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:37:07 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:37:07 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:37:07 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:37:07 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:37:07 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:37:07 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:37:09 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:37:09 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:37:09 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:37:09 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:37:09 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:37:09 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:37:09 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:37:09 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:37:09 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:37:09 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:37:09 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:37:09 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:37:09 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:37:09 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:37:09 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:37:09 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:37:09 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:37:09 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:37:09 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:37:09 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:09 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:37:09 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:37:09 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:37:09 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:37:09 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:37:09 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:37:09 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:37:10 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:37:10 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:37:10 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:37:10 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:37:10 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:37:10 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:37:10 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:37:10 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:37:10 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:37:10 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:37:10 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:37:10 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:37:10 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:37:10 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:37:10 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:37:10 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:37:10 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:37:10 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:37:10 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:37:10 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:10 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:37:10 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:37:10 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:37:10 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:37:10 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:37:10 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:37:10 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:37:18 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:37:18 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:37:18 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:37:18 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:37:18 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:37:18 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:37:18 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:37:18 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:37:18 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:37:18 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:37:18 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:37:18 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:37:18 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:37:18 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:37:18 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:37:18 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:37:18 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:37:18 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:37:18 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:37:18 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:37:18 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:37:18 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:37:18 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:37:18 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:37:18 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:37:18 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:37:18 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:37:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:37:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:37:27 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:37:36 - crm - INFO - [email] Email sent to ii3391609@gmail.com: 🎉 Новая запись онлайн! - M Le Diamant Beauty Lounge
+2025-11-16 04:37:45 - crm - INFO - [email] Email sent to ii3391609@gmail.com: 💅 Напоминание о записи - M Le Diamant Beauty Lounge
+2025-11-16 04:38:15 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 04:38:16 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 04:38:16 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 04:38:16 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 04:38:16 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 04:38:16 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 04:38:16 - crm - INFO - [startup] 🧪 Запуск startup тестов...
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
+2025-11-16 04:38:16 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
+2025-11-16 04:38:16 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 5/5 активны
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
+2025-11-16 04:38:16 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 5
+2025-11-16 04:38:16 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
+2025-11-16 04:38:16 - crm - INFO - [startup_test]   ✅ Таблица notification_settings готова
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
+2025-11-16 04:38:16 - crm - INFO - [startup_test] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:38:16 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 04:38:16 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 04:38:16 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 04:38:16 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 04:38:16 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 04:38:16 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 04:38:16 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 04:38:16 - crm - INFO - [modules] ======================================================================
+2025-11-16 04:38:16 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 04:38:16 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 04:38:16 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 04:38:16 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 04:38:16 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 04:38:16 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 04:38:16 - crm - INFO - [startup] ======================================================================
+2025-11-16 04:38:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:38:27 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:27 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:38:29 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:38:29 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:38:29 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:38:29 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:38:29 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:38:29 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:38:29 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:38:29 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.02s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:38:32 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:32 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:38:34 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:38:34 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:38:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:38:34 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:38:34 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:38:34 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:38:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:38:34 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:38:41 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:38:41 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:38:41 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:38:41 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:38:41 - crm - INFO - [middleware] 🔥 GET /api/proxy/image
+2025-11-16 04:38:41 - crm - INFO - [proxy] 🔄 Прокси запрос для изображения: https://scontent.cdninstagram.com/v/t51.82787-19/517331156_18013445993756626_6875219487243817134_n.j...
+2025-11-16 04:38:41 - crm - INFO - [proxy] 🔍 Полный URL: https://scontent.cdninstagram.com/v/t51.82787-19/517331156_18013445993756626_6875219487243817134_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=101&ccb=7-5&_nc_sid=bf7eb4&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=0mV2hX1ItOwQ7kNvwF1ppf0&_nc_oc=Adn23nZX6CLAET-Oc87bZIZML12GuPgXS0sGbFKpSG03_BvqgC60utDoSitfy60Yo8M&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&edm=ALmAK4EEAAAA&_nc_gid=P9lJa96COW_J1cDq0yZbJw&oh=00_Afis8ABsfe4S3OxJsli3Fs1HOVr-tX8IAQYpwb7YdIJQUQ&oe=691EFBDB
+2025-11-16 04:38:41 - crm - INFO - [proxy] ✅ Изображение загружено: 14434 bytes, тип: image/jpeg
+2025-11-16 04:38:41 - crm - INFO - [middleware] 📤 GET /api/proxy/image → 200 (0.27s)
+2025-11-16 04:38:42 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:42 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 04:38:43 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.01s)
+2025-11-16 04:38:43 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.01s)
+2025-11-16 04:38:49 - crm - INFO - [middleware] 🔥 PUT /api/messengers/settings/telegram
+2025-11-16 04:38:49 - crm - INFO - [messengers] Messenger settings updated: telegram
+2025-11-16 04:38:49 - crm - INFO - [middleware] 📤 PUT /api/messengers/settings/telegram → 200 (0.00s)
+2025-11-16 04:38:49 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:38:49 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.00s)
+2025-11-16 04:38:52 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:52 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:38:56 - crm - INFO - [middleware] 🔥 PUT /api/messengers/settings/telegram
+2025-11-16 04:38:56 - crm - INFO - [messengers] Messenger settings updated: telegram
+2025-11-16 04:38:56 - crm - INFO - [middleware] 📤 PUT /api/messengers/settings/telegram → 200 (0.00s)
+2025-11-16 04:38:56 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:38:56 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.00s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:38:59 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 04:38:59 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:38:59 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:39:00 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:39:00 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:39:00 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:39:00 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:39:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:39:19 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:19 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:39:29 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:29 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:39:39 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:39 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:39:49 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:49 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:39:59 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:39:59 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:09 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:09 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:11 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:40:11 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:11 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:40:11 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:40:11 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:40:11 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 04:40:11 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:40:11 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:40:17 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:40:17 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:40:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:31 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:31 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:35 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:40:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:35 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:40:35 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:40:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:35 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 04:40:35 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:40:35 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:40:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:40:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:40:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:41:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:41:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:41:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:41:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:41:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:41:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:41:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:42:04 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:42:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:42:04 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 04:42:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:42:04 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:42:04 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:42:04 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:42:04 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:42:04 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:42:04 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:42:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:42:13 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:42:13 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:42:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:42:19 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:42:19 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:42:19 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:42:19 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:42:19 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:42:19 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.00s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.00s)
+2025-11-16 04:42:21 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:42:21 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:42:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:42:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:42:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:42:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:42:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:43:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:43:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:43:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:43:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:43:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:43:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:43:47 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:43:47 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:43:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:43:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:44:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:44:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:44:18 - crm - INFO - [middleware] 🔥 GET /api/bot-settings
+2025-11-16 04:44:18 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 04:44:18 - crm - INFO - [middleware] 📤 GET /api/bot-settings → 200 (0.00s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 04:44:19 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.02s)
+2025-11-16 04:44:19 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 04:44:19 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 04:44:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:44:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:44:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:44:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:44:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:45:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:45:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:45:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:45:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:45:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:45:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:45:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:46:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:46:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:47:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:47:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:48:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:48:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:49:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:49:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:50:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:50:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:50:33 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:50:33 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:50:34 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:50:34 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:50:34 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 04:50:34 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 04:50:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:50:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:50:35 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:50:35 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:50:35 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 04:50:35 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.01s)
+2025-11-16 04:50:38 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:50:38 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:50:40 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:50:40 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:50:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:50:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:50:46 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:50:46 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:50:51 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:50:51 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:50:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:50:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:50:56 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:50:56 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.00s)
+2025-11-16 04:51:01 - crm - INFO - [middleware] 🔥 GET /api/chat/messages
+2025-11-16 04:51:01 - crm - INFO - [middleware] 📤 GET /api/chat/messages → 200 (0.01s)
+2025-11-16 04:51:04 - crm - INFO - [middleware] 🔥 GET /api/stats
+2025-11-16 04:51:04 - crm - INFO - [middleware] 📤 GET /api/stats → 200 (0.00s)
+2025-11-16 04:51:04 - crm - INFO - [middleware] 🔥 GET /api/analytics
+2025-11-16 04:51:04 - crm - INFO - [middleware] 📤 GET /api/analytics → 200 (0.00s)
+2025-11-16 04:51:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:51:06 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:06 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:51:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.00s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:07 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.01s)
+2025-11-16 04:51:07 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:51:11 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 04:51:11 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.01s)
+2025-11-16 04:51:11 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:51:11 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:51:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:51:19 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:19 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:51:19 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:19 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:51:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:51:25 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 04:51:25 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.00s)
+2025-11-16 04:51:25 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:51:25 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:51:27 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:27 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:27 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:51:27 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:51:29 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 04:51:29 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:51:29 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.00s)
+2025-11-16 04:51:29 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.00s)
+2025-11-16 04:51:30 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:30 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:30 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.01s)
+2025-11-16 04:51:30 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 04:51:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:51:42 - crm - INFO - [middleware] 🔥 GET /api/clients/1533224231180483
+2025-11-16 04:51:42 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 04:51:42 - crm - INFO - [middleware] 📤 GET /api/clients/1533224231180483 → 200 (0.01s)
+2025-11-16 04:51:42 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 04:51:44 - crm - INFO - [middleware] 🔥 GET /api/statuses/client
+2025-11-16 04:51:44 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:44 - crm - INFO - [middleware] 📤 GET /api/statuses/client → 200 (0.00s)
+2025-11-16 04:51:44 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:51:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:51:54 - crm - INFO - [middleware] 🔥 GET /api/statuses/booking
+2025-11-16 04:51:54 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 04:51:54 - crm - INFO - [middleware] 📤 GET /api/statuses/booking → 200 (0.01s)
+2025-11-16 04:51:54 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 04:51:54 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 04:51:54 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 04:51:54 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 04:51:54 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 04:51:54 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 04:51:54 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 04:51:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:51:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:52:05 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:05 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:52:15 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:15 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:52:25 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:25 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:52:35 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:35 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:52:45 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:45 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 04:52:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:52:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:53:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:53:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 04:54:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 04:54:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)

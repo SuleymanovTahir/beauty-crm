@@ -389,25 +389,31 @@ async def startup_event():
     # ⚠️  ВАЖНО: HTTP тесты НЕ РАБОТАЮТ при startup (сервер еще не запущен)
     # Используйте startup_tests.py для проверки при старте:
 
-    # from scripts.testing.startup_tests import run_all_startup_tests
-    # log_info("🧪 Запуск startup тестов...", "startup")
-    # run_all_startup_tests()
+    from scripts.testing.startup_tests import run_all_startup_tests
+    log_info("🧪 Запуск startup тестов...", "startup")
+    run_all_startup_tests()
 
     # Или выборочно:
     # from scripts.testing.startup_tests import startup_test_notifications, startup_test_reminders_api
     # startup_test_notifications()
     # startup_test_reminders_api()
 
+
+
     # ================================
     # ПОЛНЫЕ ТЕСТЫ (С HTTP)
     # ================================
     # Эти тесты нужно запускать ПОСЛЕ запуска сервера, вручную:
-    from scripts.testing.api.test_notifications_api import test_database_tables
-    test_database_tables()
-    from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table
-    test_booking_reminder_settings_table()
-    from scripts.testing.api.test_save_notifications import test_save_notifications
-    test_save_notifications()
+    # python3 scripts/testing/api/test_notifications_api.py
+    # python3 scripts/testing/api/test_reminders_api.py
+    # python3 scripts/testing/api/test_save_notifications.py
+
+    # from scripts.testing.api.test_notifications_api import test_database_tables
+    # test_database_tables()
+    # from scripts.testing.api.test_reminders_api import test_booking_reminder_settings_table
+    # test_booking_reminder_settings_table()
+    # from scripts.testing.api.test_save_notifications import test_save_notifications
+    # test_save_notifications()
 
     # ================================
     # ИСПРАВЛЕНИЕ СХЕМЫ БД
