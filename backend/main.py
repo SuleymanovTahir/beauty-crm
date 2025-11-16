@@ -354,48 +354,7 @@ async def startup_event():
     log_info("🔧 Запуск миграций...", "startup")
     # run_all_migrations()
 
-    # ================================
-    # РУЧНОЙ ЗАПУСК ОТДЕЛЬНЫХ МИГРАЦИЙ
-    # ================================
-    # Раскомментируйте нужную миграцию если хотите запустить её вручную:
-
-    # from db.migrations.data.bot.migrate_bot_settings import migrate_settings
-    # migrate_settings()
-
-    # from db.migrations.data.salon.migrate_salon_settings import migrate_salon_settings
-    # migrate_salon_settings()
-
-    # from db.migrations.schema.employees.create_employees import create_employees_table
-    # create_employees_table()
-
-    # from db.migrations.data.employees.seed_employees import seed_employees
-    # seed_employees()
-
-    # from db.migrations.schema.permissions.add_permissions_system import add_permissions_system
-    # add_permissions_system()
-
-    # from db.migrations.schema.bot.add_manager_consultation import add_manager_consultation_field
-    # add_manager_consultation_field()
-
-    # ================================
-    # КОМПЛЕКСНОЕ ТЕСТИРОВАНИЕ
-    # ================================
-    # Раскомментируйте если хотите запускать проверку всей системы при старте
-    # from comprehensive_test import run_comprehensive_test
-    # log_info("🧪 Запуск комплексного тестирования...", "startup")
-    # test_success = run_comprehensive_test()
-    # if not test_success:
-    #     log_warning("⚠️ Некоторые тесты провалены (см. вывод выше)", "startup")
-    # else:
-    #     log_info("✅ Все тесты пройдены!", "startup")
-
-    # ================================
-    # ТЕСТИРОВАНИЕ УВЕДОМЛЕНИЙ
-    # ================================
-    # Раскомментируйте нужные тесты для проверки при старте
-
-    # ⚠️  ВАЖНО: HTTP тесты НЕ РАБОТАЮТ при startup (сервер еще не запущен)
-    # Используйте startup_tests.py для проверки при старте:
+#  для проверки при старте:
 
     from scripts.testing.startup_tests import run_all_startup_tests
     log_info("🧪 Запуск startup тестов...", "startup")
