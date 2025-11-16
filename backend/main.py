@@ -399,6 +399,11 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
+    from diagnostic_full import run_full_diagnostics
+    import asyncio
+    log_info("🔍 Запуск полной диагностики...", "startup")
+    asyncio.create_task(run_full_diagnostics())
+
     # ================================
     # STARTUP ТЕСТЫ (опционально)
     # ================================
