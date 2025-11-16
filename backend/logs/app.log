@@ -11243,3 +11243,5 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 07:10:18 - crm - INFO - [startup] ✅ Планировщики запущены
 2025-11-16 07:10:18 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-11-16 07:10:18 - crm - INFO - [startup] ======================================================================
+2025-11-16 07:10:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 07:10:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
