@@ -49,7 +49,7 @@ def run_all_tests():
     # 4. Тесты API напоминаний
     print("\n🔔 4. Тесты API напоминаний...")
     try:
-        from scripts.testing.api.test_reminders_api import run_all_reminder_tests
+        from tests.api.test_reminders_api import run_all_reminder_tests
         result = run_all_reminder_tests()
         results.append(("API напоминаний", result))
     except Exception as e:
@@ -59,7 +59,7 @@ def run_all_tests():
     # 5. Тесты уведомлений
     print("\n📬 5. Тесты уведомлений...")
     try:
-        from scripts.testing.api.test_notifications_api import run_all_notification_tests
+        from tests.api.test_notifications_api import run_all_notification_tests
         result = run_all_notification_tests()
         results.append(("Уведомления", result))
     except Exception as e:
