@@ -39,8 +39,12 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   useEffect(() => {
     loadUnreadCount();
     loadEnabledMessengers();
-    const interval = setInterval(loadUnreadCount, 10000);
-    return () => clearInterval(interval);
+    const unreadInterval = setInterval(loadUnreadCount, 10000);
+    const messengersInterval = setInterval(loadEnabledMessengers, 30000); // Обновляем список мессенджеров каждые 30 сек
+    return () => {
+      clearInterval(unreadInterval);
+      clearInterval(messengersInterval);
+    };
   }, []);
 
   const loadEnabledMessengers = async () => {
