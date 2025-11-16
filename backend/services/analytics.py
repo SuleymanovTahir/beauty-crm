@@ -119,7 +119,7 @@ class AnalyticsService:
             "total": round(total_revenue, 2),
             "daily": daily_revenue,
             "average_check": avg_check,
-            "forecast_next_period": forecast
+            "forecast": forecast
         }
 
     def _get_booking_metrics(self, start_date: str, end_date: str) -> Dict:

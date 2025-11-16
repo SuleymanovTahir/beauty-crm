@@ -20,8 +20,8 @@ try:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             master_name TEXT NOT NULL,
             day_of_week INTEGER NOT NULL,  -- 0=Пн, 6=Вс
-            start_time TEXT NOT NULL,      -- HH:MM
-            end_time TEXT NOT NULL,        -- HH:MM
+            start_time TEXT,               -- HH:MM (NULL = выходной день)
+            end_time TEXT,                 -- HH:MM (NULL = выходной день)
             is_active INTEGER DEFAULT 1,   -- Активна ли эта смена
             created_at TEXT,
             updated_at TEXT
