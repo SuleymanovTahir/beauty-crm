@@ -92,13 +92,11 @@ def migrate_salon_settings():
     
     if existing > 0:
         print("⚠️  Настройки салона уже существуют!")
-        response = input("   Перезаписать дефолтными значениями? (yes/no): ")
-        if response.lower() not in ['yes', 'y']:
-            conn.close()
-            print("❌ Миграция отменена")
-            return 0
-        
-        # Обновляем
+        print("   ⏭️  Пропускаем обновление (данные уже существуют)")
+        conn.close()
+        return True
+
+        # Обновляем (код ниже не выполнится)
         c.execute("""UPDATE salon_settings SET
             name = ?,
             address = ?,

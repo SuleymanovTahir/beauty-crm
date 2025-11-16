@@ -161,7 +161,7 @@ def main():
 
     results["schema/employees/create_employee_schedules"] = run_migration_function(
         'db.migrations.schema.employees.create_employee_schedules',
-        'create_employee_schedules',
+        'create_employee_schedules_table',
         'Создание таблицы расписания сотрудников'
     )
 
@@ -472,6 +472,12 @@ def main():
         'db.migrations.data.employees.seed_employees',
         'seed_employees',
         'Создание начальных сотрудников из конфига'
+    )
+
+    results["data/employees/create_employee_schedules"] = run_migration_function(
+        'db.migrations.schema.employees.create_employee_schedules',
+        'create_employee_schedules',
+        'Создание расписаний для всех мастеров'
     )
 
     results["data/employees/add_missing_positions"] = run_migration_function(

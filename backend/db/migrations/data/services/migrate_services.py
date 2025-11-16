@@ -1298,11 +1298,9 @@ def migrate_services():
         
         if existing_count > 0:
             print(f"⚠️  В БД уже есть {existing_count} услуг!")
-            print("   Будут ОБНОВЛЕНЫ существующие записи и добавлены новые")
-            response = input("   Продолжить? (yes/no): ")
-            if response.lower() not in ['yes', 'y']:
-                conn.close()
-                return 0
+            print("   ⏭️  Пропускаем обновление (данные уже существуют)")
+            conn.close()
+            return True
     
     except sqlite3.OperationalError as e:
         print(f"❌ Таблица services не существует: {e}")
