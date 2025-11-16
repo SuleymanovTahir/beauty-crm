@@ -13196,3 +13196,4 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 11:57:02 - crm - INFO - [startup] ✅ Планировщики запущены
 2025-11-16 11:57:02 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-11-16 11:57:02 - crm - INFO - [startup] ======================================================================
+2025-11-16 08:14:02 - crm - ERROR - [email] SMTP credentials not configured in .env
