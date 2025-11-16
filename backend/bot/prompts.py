@@ -1,0 +1,1052 @@
+# backend/bot/prompts.py
+"""
+Модуль для построения промптов - вся логика создания system prompt
+"""
+from typing import Dict, List, Tuple, Optional
+from datetime import datetime, timedelta
+import sqlite3
+
+
+from core.config import DATABASE_NAME
+from db import (
+    get_all_services,
+    get_all_special_packages,
+)
+from db.services import format_service_price_for_bot
+from db.employees import get_all_employees
+
+
+def transliterate_to_russian(name: str) -> str:
+    """Транслитерация английского имени в русское"""
+    translit_map = {
+        'A': 'А', 'B': 'Б', 'C': 'К', 'D': 'Д', 'E': 'Е', 'F': 'Ф',
+        'G': 'Г', 'H': 'Х', 'I': 'И', 'J': 'Дж', 'K': 'К', 'L': 'Л',
+        'M': 'М', 'N': 'Н', 'O': 'О', 'P': 'П', 'Q': 'К', 'R': 'Р',
+        'S': 'С', 'T': 'Т', 'U': 'У', 'V': 'В', 'W': 'В', 'X': 'Кс',
+        'Y': 'Й', 'Z': 'З',
+        'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е', 'f': 'ф',
+        'g': 'г', 'h': 'х', 'i': 'и', 'j': 'дж', 'k': 'к', 'l': 'л',
+        'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 'q': 'к', 'r': 'р',
+        's': 'с', 't': 'т', 'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс',
+        'y': 'й', 'z': 'з'
+    }
+
+    result = []
+    for char in name:
+        result.append(translit_map.get(char, char))
+
+    return ''.join(result)
+
+
+def translate_position(position: str, language: str) -> str:
+    """Перевод должности на нужный язык"""
+    translations = {
+        'Hair Stylist': {
+            'ru': 'Парикмахер',
+            'en': 'Hair Stylist',
+            'ar': 'مصفف شعر'
+        },
+        'HAIR STYLIST': {  # Старый формат для обратной совместимости
+            'ru': 'Парикмахер',
+            'en': 'Hair Stylist',
+            'ar': 'مصفف شعر'
+        },
+        'Nail Master': {
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Master',
+            'ar': 'خبير الأظافر'
+        },
+        'NAIL MASTER': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Master',
+            'ar': 'خبير الأظافر'
+        },
+        'Nail/Waxing': {
+            'ru': 'Мастер маникюра и депиляции',
+            'en': 'Nail & Waxing Master',
+            'ar': 'خبير الأظافر والإزالة'
+        },
+        'NAIL/WAXING': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра и депиляции',
+            'en': 'Nail & Waxing Master',
+            'ar': 'خبير الأظافر والإزالة'
+        },
+        'Nail Master/Massages': {
+            'ru': 'Мастер маникюра и массажа',
+            'en': 'Nail & Massage Master',
+            'ar': 'خبير الأظافر والمساج'
+        },
+        'NAIL MASTER/MASSAGES': {  # Старый формат для обратной совместимости
+            'ru': 'Мастер маникюра и массажа',
+            'en': 'Nail & Massage Master',
+            'ar': 'خبير الأظافر والمساج'
+        },
+        'NAIL TECHNICIAN': {
+            'ru': 'Мастер маникюра',
+            'en': 'Nail Technician',
+            'ar': 'فني أظافر'
+        },
+        'MAKEUP ARTIST': {
+            'ru': 'Визажист',
+            'en': 'Makeup Artist',
+            'ar': 'فنان مكياج'
+        },
+        'MASSAGE THERAPIST': {
+            'ru': 'Массажист',
+            'en': 'Massage Therapist',
+            'ar': 'معالج تدليك'
+        },
+        'BEAUTICIAN': {
+            'ru': 'Косметолог',
+            'en': 'Beautician',
+            'ar': 'خبير تجميل'
+        },
+        'MASTER': {
+            'ru': 'Мастер',
+            'en': 'Master',
+            'ar': 'معلم'
+        }
+    }
+
+    # Сначала пробуем точное совпадение
+    if position in translations:
+        return translations[position].get(language, position)
+
+    # Затем пробуем в верхнем регистре для обратной совместимости
+    position_upper = position.upper()
+    if position_upper in translations:
+        return translations[position_upper].get(language, position)
+
+    return position
+
+
+class PromptBuilder:
+    """Построитель промптов для AI-бота"""
+
+    def __init__(self, salon: Dict, bot_settings: Dict):
+        """
+        Args:
+            salon: Настройки салона из БД
+            bot_settings: Настройки бота из БД
+        """
+        self.salon = salon
+        self.bot_settings = bot_settings
+
+    def build_full_prompt(
+        self,
+        instagram_id: str,
+        history: List[Tuple],
+        booking_progress: Optional[Dict] = None,
+        client_language: str = 'ru',
+        additional_context: str = ""  # ✅ ДОБАВЛЕНО
+    ) -> str:
+        """Построить полный system prompt
+
+        Args:
+            instagram_id: ID клиента в Instagram
+            history: История диалога
+            booking_progress: Прогресс бронирования
+            client_language: Язык клиента
+
+        Returns:
+            Полный system prompt для бота
+        """
+
+        if booking_progress is None:
+            booking_progress = {}
+
+        # ✅ #2 - Получаем предпочтения
+        preferences = get_client_recent_preferences(instagram_id)
+
+        # ✅ #3 - Анализ тона
+        client_tone = analyze_client_tone(history)
+
+        # ✅ #6 - История возражений
+        objections = get_client_objection_history(instagram_id)
+
+        service_name = booking_progress.get('service_name', '')
+        master_name = booking_progress.get('master', '')
+        preferred_date = booking_progress.get('date', '')
+
+        # ✅ КРИТИЧЕСКИ ВАЖНО: additional_context ПЕРВЫМ (после IDENTITY)!
+        context_part = ""
+        if additional_context:
+            context_part = f"\n\n=== 🚨 ВАЖНЫЙ КОНТЕКСТ - ЧИТАЙ ПЕРВЫМ! ==={additional_context}"
+
+        parts = [
+            self._build_identity(),
+            context_part,  # ✅ СРАЗУ ПОСЛЕ IDENTITY!
+            self._build_personality(),
+            self._build_language_settings(client_language),
+            self._build_greeting_logic(history),
+            self._build_special_packages(),
+            self._build_booking_rules(),
+            self._build_masters_list(client_language), 
+            self._build_booking_availability(
+                instagram_id=instagram_id,
+                service_name=service_name,
+                master_name=master_name,
+                preferred_date=preferred_date,
+                history=history,
+                client_language=client_language
+            ),
+            self._build_salon_info(),
+            self._build_services_list(),
+            self._build_history(history),
+            self._build_preferences_section(preferences),
+            self._build_tone_adaptation(client_tone),
+            self._build_objections_section(objections),
+        ]
+
+        return "\n\n".join([p for p in parts if p])
+
+    def _build_identity(self) -> str:
+        """Секция IDENTITY - из БД"""
+        bot_name = self.bot_settings.get('bot_name', 'AI-ассистент')
+        salon_name = self.salon.get('name', 'Салон красоты')
+        return f"""=== IDENTITY ===
+Ты — {bot_name}, AI-ассистент салона "{salon_name}" в Dubai.
+
+ТВОЯ МИССИЯ:
+Консультировать клиентов по услугам и САМОСТОЯТЕЛЬНО предлагать конкретное время и дату для записи.
+НЕ отправляй клиента на внешние сайты или ссылки - ты сам можешь предложить удобное время."""
+
+    def _build_personality(self) -> str:
+        """Секция PERSONALITY - из БД"""
+        return f"""=== PERSONALITY ===
+{self.bot_settings.get('personality_traits', '')}
+
+{self.bot_settings.get('communication_style', '')}
+
+{self.bot_settings.get('emoji_usage', '')}
+
+⚠️ КРИТИЧЕСКАЯ ИНСТРУКЦИЯ:
+НИКОГДА не пиши текст "Извините, я сейчас перегружен запросами" или подобные технические сообщения.
+Это служебное сообщение системы, НЕ твоё!"""
+
+    def _build_language_settings(self, language: str) -> str:
+        """Языковые настройки - из БД"""
+        supported_raw = self.bot_settings.get(
+            'languages_supported', 'ru,en,ar')
+        supported_langs = [lang.strip() for lang in supported_raw.split(',')]
+
+        if language not in supported_langs:
+            language = 'ru'
+
+        language_names = {
+            'ru': 'РУССКОМ',
+            'en': 'ENGLISH', 
+            'ar': 'العربية'
+        }
+
+        lang_name = language_names.get(language, language.upper())
+
+        return f"""=== 🌐 LANGUAGE - КРИТИЧЕСКИ ВАЖНО ===
+    ⚠️ ТЫ ДОЛЖЕН ОТВЕЧАТЬ СТРОГО НА ЯЗЫКЕ: {lang_name} ({language})
+
+    Клиент пишет на {lang_name} - отвечай ТОЛЬКО на {lang_name}!
+
+    НЕ СМЕШИВАЙ ЯЗЫКИ! Если клиент пишет на English - ВСЁ сообщение на English!
+
+    Поддерживаемые: {', '.join(supported_langs)}"""
+
+    def _build_greeting_logic(self, history: List[Tuple]) -> str:
+        """Логика приветствий - из БД"""
+        should_greet = self._should_greet(history)
+
+        if should_greet:
+            greeting = self.bot_settings.get('greeting_message', 'Привет!')
+            return f"""=== GREETING ===
+{greeting}
+
+⚠️ НЕ повторяй приветствия в следующих сообщениях!"""
+        else:
+            return """=== ПРОДОЛЖЕНИЕ ДИАЛОГА ===
+НЕ здоровайся снова - отвечай на вопрос клиента"""
+
+    def _should_greet(self, history: List[Tuple]) -> bool:
+        """Определить нужно ли здороваться"""
+        if len(history) <= 1:
+            return True
+
+        if len(history) > 0:
+            try:
+                last_msg = history[-1]
+                if len(last_msg) >= 5:
+                    timestamp = last_msg[2]
+                elif len(last_msg) >= 3:
+                    timestamp = last_msg[2]
+                else:
+                    return False
+
+                last_timestamp = datetime.fromisoformat(timestamp)
+                now = datetime.now()
+                time_diff = now - last_timestamp
+
+                if time_diff.total_seconds() > 21600:
+                    return True
+            except:
+                pass
+
+        return False
+
+    def _build_special_packages(self) -> str:
+        """Специальные пакеты из БД"""
+        packages = get_all_special_packages(active_only=True)
+
+        base_rule = """=== СПЕЦИАЛЬНЫЕ ПАКЕТЫ ===
+
+🚨 НЕ ПРИДУМЫВАЙ СКИДКИ!
+Если ниже нет пакетов - значит акций НЕТ!
+
+"""
+
+        if not packages:
+            return base_rule + """
+Сейчас НЕТ активных акций!
+
+Если клиент спросит:
+"Акций сейчас нет, но качество на высоте! 💎"
+"""
+
+        packages_text = base_rule + "\n📦 АКТИВНЫЕ АКЦИИ:\n\n"
+
+        for pkg in packages:
+            pkg_name = pkg[2]
+            orig_price = pkg[5]
+            special_price = pkg[6]
+            currency = pkg[7]
+            discount = pkg[8]
+            desc = pkg[4] or ""
+            keywords = pkg[11] or ""
+
+            packages_text += f"""🔥 {pkg_name}
+- Цена: {special_price} {currency} вместо {orig_price} {currency}
+- Скидка: {discount}%
+- Описание: {desc}
+- Ключевые слова: {keywords}
+
+"""
+
+        return packages_text
+
+    def _get_employees_list(self) -> str:
+        """Получить список активных сотрудников из БД"""
+        try:
+            # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
+            employees = get_all_employees(active_only=True, service_providers_only=True)
+            if not employees:
+                return "Наши мастера"
+
+            # Структура таблицы employees: id, user_id, full_name, position, ...
+            # employees[i][2] = full_name
+            names = []
+            for emp in employees:
+                name = emp[2] if len(emp) > 2 else None
+                if name:
+                    names.append(name)
+
+            if len(names) == 0:
+                return "Наши мастера"
+            elif len(names) == 1:
+                return f"{names[0]}"
+            elif len(names) == 2:
+                return f"{names[0]} и {names[1]}"
+            else:
+                all_but_last = ", ".join(names[:-1])
+                return f"{all_but_last} и {names[-1]}"
+        except Exception as e:
+            # Fallback если ошибка
+            return "Наши мастера"
+
+    def _build_booking_rules(self) -> str:
+        """Правила записи - из БД"""
+        # ✅ Получаем список мастеров из БД
+        employees_list = self._get_employees_list()
+
+        return f"""=== 📋 BOOKING RULES - ОБЯЗАТЕЛЬНО! ===
+📝 ТЫ САМ ПРЕДЛАГАЕШЬ ВРЕМЯ И ДАТУ - не отправляй на внешние ссылки!
+Когда клиент просит записаться - предложи конкретное время (например: "Есть окно завтра в 14:00 или 17:00. Какое удобнее?").
+
+🎯 ВАЖНЫЕ ИНСТРУКЦИИ:
+
+1. **Когда клиент хочет записаться** - ВСЕГДА предлагай мастеров:
+   ✅ "У нас работают: {employees_list}. К кому хотите?"
+   ✅ "Кого выберете из наших мастеров?"
+
+2. **UPSELL - проверь последний визит:**
+   Если клиент давно не был на педикюре (>21 день) - предложи:
+   ✅ "Кстати, педикюр тоже пора обновить 😊"
+
+3. **СРОЧНОСТЬ - если клиент пишет:**
+   "срочно", "завтра уезжаю", "скоро уезжаю" - СРАЗУ предложи ближайшие слоты:
+   ✅ "Понял срочность! Есть окно сегодня в 17:00 или завтра утром в 11:00"
+
+⚠️ Не забывай предлагать мастеров при каждом запросе о записи!"""
+
+    def _build_salon_info(self) -> str:
+        """Информация о салоне - из БД"""
+        return f"""=== SALON INFO ===
+Название: {self.salon.get('name', '')}
+Адрес: {self.salon.get('address', '')}
+Часы: {self.salon.get('hours', '')}
+Телефон: {self.salon.get('phone', '')}
+Google Maps: {self.salon.get('google_maps', '')}"""
+
+    def _build_services_list(self) -> str:
+        """Список услуг из БД"""
+        services = get_all_services(active_only=True)
+
+        services_by_category = {}
+        for service in services:
+            category = service[9]
+            if category not in services_by_category:
+                services_by_category[category] = []
+            services_by_category[category].append(service)
+
+        services_text = "=== УСЛУГИ САЛОНА ===\n\n"
+
+        for category, services_list in services_by_category.items():
+            services_text += f"📂 {category}:\n"
+            for service in services_list:
+                price_str = format_service_price_for_bot(service)
+                name_ru = service[3] or service[2]
+                description = service[11] or ''
+
+                services_text += f"• {name_ru} - {price_str}\n"
+                if description:
+                    services_text += f"  └ {description}\n"
+            services_text += "\n"
+
+        return services_text
+
+    def _build_services_list(self) -> str:
+        """Список услуг из БД"""
+        services = get_all_services(active_only=True)
+
+        services_by_category = {}
+        for service in services:
+            category = service[9]
+            if category not in services_by_category:
+                services_by_category[category] = []
+            services_by_category[category].append(service)
+
+        services_text = "=== УСЛУГИ САЛОНА ===\n\n"
+
+        for category, services_list in services_by_category.items():
+            services_text += f"📂 {category}:\n"
+            for service in services_list:
+                price_str = format_service_price_for_bot(service)
+                name_ru = service[3] or service[2]
+                description = service[11] or ''
+
+                services_text += f"• {name_ru} - {price_str}\n"
+                if description:
+                    services_text += f"  └ {description}\n"
+            services_text += "\n"
+
+        return services_text
+
+    def _build_masters_list(self, client_language: str = 'ru') -> str:
+        """Список мастеров салона"""
+        from db.employees import get_all_employees
+
+        # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
+        employees = get_all_employees(active_only=True, service_providers_only=True)
+        
+        if not employees:
+            return ""
+        
+        masters_text = "=== 👥 МАСТЕРА САЛОНА ===\n\n"
+        
+        for emp in employees[:5]:
+            emp_id = emp[0]
+            
+            # ✅ ИСПРАВЛЕНИЕ: Получаем полные данные мастера для доступа к переводам
+            from db.employees import get_employee
+            full_emp = get_employee(emp_id)
+            
+            if not full_emp:
+                continue
+            
+            emp_name = full_emp[1]  # full_name из полных данных
+
+            # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
+            from utils.transliteration import transliterate_name
+            emp_name_display = transliterate_name(str(emp_name) if emp_name else "Master", client_language)
+            
+            
+            # Получаем должность из полных данных (например, full_emp[2])
+            position = full_emp[2] if len(full_emp) > 2 else None
+
+            # Отображаемое имя мастера
+            display_name = emp_name_display
+
+            translated_position = translate_position(position, client_language) if position else ""
+
+            if translated_position:
+                masters_text += f"• {display_name} - {translated_position}\n"
+            else:
+                masters_text += f"• {display_name}\n"
+        
+        return masters_text
+
+
+    def _build_history(self, history: List[Tuple]) -> str:
+        """История диалога"""
+        if not history:
+            return ""
+
+        # ✅ Фильтруем fallback и технические сообщения
+        fallback_phrases = [
+            "Извините, я сейчас перегружен",
+            "I'm overloaded with requests",
+            "أنا محمل بالطلبات",
+            "что-то пошло не так"
+        ]
+
+        filtered_history = []
+        for item in history[-10:]:  # Берём последние 10
+            if len(item) >= 5:
+                msg, sender, timestamp, msg_type, msg_id = item
+            else:
+                msg, sender, timestamp, msg_type = item
+
+            # Пропускаем fallback сообщения
+            if any(phrase in msg for phrase in fallback_phrases):
+                continue
+
+            filtered_history.append(
+                (msg, sender, timestamp, msg_type if len(item) > 3 else 'text'))
+
+        if not filtered_history:
+            return ""
+
+        history_text = "💬 ИСТОРИЯ (последние сообщения):\n"
+
+        # Показываем последние 5
+        for msg, sender, timestamp, msg_type in filtered_history[-5:]:
+            role = "Клиент" if sender == "client" else "Ты"
+            if msg_type == 'voice':
+                history_text += f"{role}: [Голосовое]\n"
+            else:
+                history_text += f"{role}: {msg}\n"
+
+        return history_text
+
+    def _build_preferences_section(self, preferences: dict) -> str:
+        """#2 - Память о предпочтениях + #10 - Upsell"""
+        if not preferences or not preferences.get('last_service'):
+            return ""
+
+        text = "=== 💎 ПАМЯТЬ О КЛИЕНТЕ ===\n"
+
+        if preferences.get('favorite_service'):
+            text += f"Любимая услуга: {preferences['favorite_service']}\n"
+
+        if preferences.get('favorite_master'):
+            text += f"Любимый мастер: {preferences['favorite_master']}\n"
+
+        if preferences.get('last_service'):
+            text += f"Последний визит: {preferences['last_service']}\n"
+
+        if preferences.get('total_visits', 0) >= 3:
+            text += f"Постоянный клиент ({preferences['total_visits']} визитов) - особое внимание!\n"
+
+        # ✅ #10 - UPSELL: Проверяем давно ли был на педикюре
+        instagram_id = preferences.get('instagram_id', '')
+        if instagram_id:
+            last_pedicure_date = get_last_service_date(instagram_id, 'Pedicure')
+            if last_pedicure_date:
+                try:
+                    last_date = datetime.fromisoformat(last_pedicure_date)
+                    days_ago = (datetime.now() - last_date).days
+                    if days_ago > 21:
+                        text += f"\n💡 UPSELL ВОЗМОЖНОСТЬ: Педикюр был {days_ago} дней назад!\n"
+                        text += f"   Если клиент записывается на маникюр - предложи педикюр тоже!\n"
+                except:
+                    pass
+
+        text += "\n✨ ИСПОЛЬЗУЙ ЭТУ ИНФО:\n"
+        text += "- Напомни о прошлом визите естественно\n"
+        text += "- Предложи того же мастера если клиент доволен\n"
+        text += "- Для постоянных клиентов - более тёплый тон\n"
+        text += "- Если есть UPSELL возможность - предложи услугу естественно\n"
+
+        return text
+
+    def _build_tone_adaptation(self, tone: str) -> str:
+        """#3 - Адаптация под стиль клиента"""
+        tone_instructions = {
+            'brief': """=== ✍️ СТИЛЬ КЛИЕНТА: КРАТКИЙ ===
+Клиент пишет коротко - отвечай так же:
+- Короткие сообщения (1-2 предложения)
+- Минимум эмодзи (1-2)
+- Без лишних слов
+- Прямо к делу
+
+Пример:
+Клиент: "Маникюр"
+Ты: "Когда удобно?"
+""",
+            'friendly': """=== ✍️ СТИЛЬ КЛИЕНТА: ДРУЖЕЛЮБНЫЙ ===
+Клиент общительный и использует эмодзи - поддержи стиль:
+- Больше эмодзи (2-3 на сообщение)
+- Дружелюбный тон
+- Можно чуть длиннее сообщения
+- Позитив и эмоции
+
+Пример:
+Клиент: "Привет! Хочу к вам на маникюрчик 💅😊"
+Ты: "Привет! Конечно! Когда тебе удобно? 💖✨"
+""",
+            'detailed': """=== ✍️ СТИЛЬ КЛИЕНТА: ПОДРОБНЫЙ ===
+Клиент пишет развёрнуто - давай больше информации:
+- Подробные ответы
+- Больше деталей
+- Можно несколько предложений
+- Объясняй детально
+
+Пример:
+Клиент: "Добрый день, хотела бы записаться на маникюр, но хотелось бы уточнить..."
+Ты: "Добрый день! Конечно помогу с выбором. У нас есть несколько вариантов маникюра..."
+""",
+            'neutral': ""
+        }
+
+        return tone_instructions.get(tone, "")
+
+    def _build_objections_section(self, objections: List[str]) -> str:
+        """#6 - История возражений"""
+        if not objections:
+            return ""
+
+        text = "=== ⚠️ ИСТОРИЯ ВОЗРАЖЕНИЙ КЛИЕНТА ===\n"
+        text += "Клиент УЖЕ говорил:\n"
+
+        objection_responses = {
+            'price': "💰 'Дорого' - НЕ снижай цену! Подчеркни ценность и качество",
+            'think': "🤔 'Подумать' - Дай конкретную информацию, помоги с выбором",
+            'no_time': "⏰ 'Нет времени' - Покажи что процедура быстрая, предложи удобное время",
+            'far': "📍 'Далеко' - Подчеркни удобство локации, результат стоит того",
+            'pain': "😣 'Больно' - Успокой, расскажи что процедура комфортная"
+        }
+
+        for obj in objections:
+            if obj in objection_responses:
+                text += f"- {objection_responses[obj]}\n"
+
+        text += "\nМЕНЯЙ ПОДХОД если возражение повторяется!\n"
+
+        return text
+
+    def _build_booking_availability(
+        self,
+        instagram_id: str,
+        service_name: str = "",
+        master_name: str = "",
+        preferred_date: str = "",
+        history: List[Tuple] = None,
+        client_language: str = 'ru'
+    ) -> str:
+        """Построить информацию о доступности мастеров"""
+        from db.employees import get_employees_by_service, get_all_employees
+
+        if history is None:
+            history = []
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        c.execute(
+            "SELECT name, username FROM clients WHERE instagram_id = ?", (instagram_id,))
+        client_data = c.fetchone()
+        client_has_name = bool(client_data and (
+            client_data[0] or client_data[1]))
+
+        # ✅ #2 - Получаем предпочтения клиента
+        preferences = get_client_recent_preferences(instagram_id)
+
+        # ✅ Определяем услугу из контекста
+        if not service_name and history:
+            last_messages = history[-15:]
+            bot_showed_service_list = False
+            for item in reversed(last_messages[-5:]):
+                if len(item) >= 2:
+                    msg = item[0]
+                    sender = item[1]
+                    if sender == 'assistant' and any(word in msg.lower() for word in ['маникюр / педикюр', 'услуга интересует', 'какая услуга']):
+                        bot_showed_service_list = True
+                        break
+
+            for item in reversed(last_messages):
+                if len(item) >= 2:
+                    msg = item[0]
+                    sender = item[1]
+
+                    if sender == 'client':
+                        msg_lower = msg.lower().strip()
+
+                        if bot_showed_service_list:
+                            if any(word in msg_lower for word in ['макияж', 'makeup', 'مكياج', 'перманент', 'permanent']):
+                                service_name = 'Makeup'
+                                break
+                            elif any(word in msg_lower for word in ['ресниц', 'брови', 'brow', 'lash', 'رموش', 'حواجب']):
+                                service_name = 'Lashes'
+                                break
+                            elif any(word in msg_lower for word in ['массаж', 'massage', 'تدليك', 'спа', 'spa']):
+                                service_name = 'Massage'
+                                break
+                            elif any(word in msg_lower for word in ['эпиляц', 'wax', 'إزالة', 'шугар', 'sugar']):
+                                service_name = 'Waxing'
+                                break
+                            elif any(word in msg_lower for word in ['чистка', 'пилинг', 'facial', 'peel', 'تنظيف']):
+                                service_name = 'Facial'
+                                break
+                            elif any(word in msg_lower for word in ['баня', 'хамам', 'hammam', 'حمام']):
+                                service_name = 'Hammam'
+                                break
+
+                        if not service_name:
+                            if any(word in msg_lower for word in ['маникюр', 'manicure', 'مانيكير', 'ногти', 'ногт', 'nails', 'nail', 'манікюр']):
+                                service_name = 'Manicure'
+                                break
+                            elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
+                                service_name = 'Pedicure'
+                                break
+                            elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color']):
+                                service_name = 'Hair'
+                                break
+
+        instructions = self.bot_settings.get(
+            'booking_availability_instructions', '')
+
+        if not service_name:
+            conn.close()
+            return f"""=== ❓ УТОЧНИ УСЛУГУ ===
+{instructions}"""
+
+        if client_has_name:
+            instructions = instructions.replace(
+                "Для записи нужно имя и WhatsApp",
+                "Для записи нужен WhatsApp"
+            )
+            instructions = instructions.replace(
+                "Как вас зовут?",
+                ""
+            )
+
+        now = datetime.now()
+        current_hour = now.hour
+
+        time_phrases = {
+            'утр': (9, 12),
+            'обед': (14, 17),
+            'вечер': (17, 21),
+        }
+
+        time_preference = None
+        if history:
+            for msg in reversed(history[-5:]):
+                if msg[1] == 'client':
+                    msg_lower = msg[0].lower()
+                    for phrase, (start_h, end_h) in time_phrases.items():
+                        if phrase in msg_lower:
+                            time_preference = (start_h, end_h)
+                            break
+                    if time_preference:
+                        break
+
+        c.execute("""
+            SELECT id, name_ru, price, currency FROM services 
+            WHERE (name LIKE ? OR name_ru LIKE ? OR name_ar LIKE ?)
+            AND is_active = 1
+            LIMIT 1
+        """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
+        service_row = c.fetchone()
+
+        if not service_row:
+            conn.close()
+
+            if 'makeup' in service_name.lower() or 'макияж' in service_name.lower():
+                return """=== 💄 УТОЧНЕНИЕ ===
+У нас только перманентный макияж 😊
+Интересуют брови или губы?
+Или интересует что-то другое?"""
+
+            return f"""=== 🤔 УТОЧНЕНИЕ ===
+{service_name} не нашла в списке
+Может маникюр, педикюр, стрижка, массаж?"""
+
+        service_id = service_row[0]
+        employees = get_employees_by_service(service_id)
+
+        if not employees:
+            conn.close()
+            return f"⚠️ Нет мастеров для услуги '{service_name}'"
+
+        # ✅ #10 - UPSELL: Проверяем давно ли был на других услугах
+
+        # Определяем дату
+        if preferred_date:
+            target_date = preferred_date
+        else:
+            target_date = (datetime.now() + timedelta(days=1)
+                           ).strftime("%Y-%m-%d")
+
+        try:
+            date_obj = datetime.strptime(target_date, "%Y-%m-%d")
+            date_display = date_obj.strftime("%d.%m (%A)")
+        except:
+            date_display = target_date
+
+        # ✅ #9 - Популярное время
+        popular_times = get_popular_booking_times(service_name)
+        popular_times_text = f"\nБольшинство клиентов выбирают: {', '.join(popular_times)}" if popular_times else ""
+
+        availability_text = f"""=== 📅 ЗАПИСЬ НА {service_name.upper()} ===
+
+        🎯 ДОСТУПНЫЕ МАСТЕРА НА {date_display}:
+        """
+        
+        # ✅ #2 - Если есть любимый мастер - покажи его первым
+        if preferences.get('favorite_master'):
+            availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
+
+        for emp in employees[:5]:
+            emp_id = emp[0]
+            emp_name = emp[1]
+
+            # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
+            from utils.transliteration import transliterate_name
+            emp_name_display = transliterate_name(str(emp_name), client_language)
+
+            try:
+                target_dt = datetime.strptime(target_date, "%Y-%m-%d")
+                day_of_week = target_dt.weekday()  # 0=Пн, 6=Вс
+            except:
+                day_of_week = datetime.now().weekday()
+
+            c.execute("""
+                SELECT start_time, end_time
+                FROM employee_schedule
+                WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
+                LIMIT 1
+            """, (emp_id, day_of_week))
+            schedule = c.fetchone()
+
+            if schedule:
+                start_hour = int(schedule[0].split(':')[0])
+                end_hour = int(schedule[1].split(':')[0])
+
+                slots = []
+
+                if time_preference:
+                    pref_start, pref_end = time_preference
+                    for hour in range(max(start_hour, pref_start), min(end_hour, pref_end) + 1, 2):
+                        if target_date == now.strftime("%Y-%m-%d"):
+                            if hour > current_hour + 2:
+                                slots.append(f"{hour:02d}:00")
+                        else:
+                            slots.append(f"{hour:02d}:00")
+
+                        if len(slots) >= 3:
+                            break
+                else:
+                    for i in range(6):
+                        hour = start_hour + (i * 2)
+                        if hour >= end_hour:
+                            break
+
+                        if target_date == now.strftime("%Y-%m-%d"):
+                            if hour > current_hour + 2:
+                                slots.append(f"{hour:02d}:00")
+                        else:
+                            slots.append(f"{hour:02d}:00")
+
+                        if len(slots) >= 3:
+                            break
+
+                if slots:
+                    availability_text += f"• {emp_name_display.upper()}: {', '.join(slots)}\n"
+
+        # ✅ #14 - Альтернативы если время не подходит
+        availability_text += f"\n\n{instructions}"
+
+        conn.close()
+        return availability_text
+
+# В начало файла после импортов добавь:
+
+
+def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
+    """Получить последние предпочтения клиента (#2 - Умная память)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT service_name, master, datetime 
+        FROM bookings 
+        WHERE instagram_id = ? AND status = 'completed'
+        ORDER BY datetime DESC
+        LIMIT ?
+    """, (instagram_id, limit))
+
+    bookings = c.fetchall()
+    conn.close()
+
+    if not bookings:
+        return {}
+
+    services = {}
+    masters = {}
+
+    for service, master, dt in bookings:
+        services[service] = services.get(service, 0) + 1
+        if master:
+            # ✅ ПРОВЕРЯЕМ что мастер существует в БД
+            conn2 = sqlite3.connect(DATABASE_NAME)
+            c2 = conn2.cursor()
+            c2.execute("SELECT COUNT(*) FROM employees WHERE full_name = ? AND is_active = 1", (master,))
+            if c2.fetchone()[0] > 0:
+                masters[master] = masters.get(master, 0) + 1
+            conn2.close()
+
+    fav_service = max(services.items(), key=lambda x: x[1])[0] if services else None
+    fav_master = max(masters.items(), key=lambda x: x[1])[0] if masters else None
+
+    return {
+        'favorite_service': fav_service,
+        'favorite_master': fav_master,
+        'last_service': bookings[0][0] if bookings else None,
+        'last_master': bookings[0][1] if bookings else None,
+        'last_date': bookings[0][2] if bookings else None,
+        'total_visits': len(bookings)
+    }
+
+
+def get_popular_booking_times(service_name: str = None) -> List[str]:
+    """Популярные времена записи (#9)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    if service_name:
+        c.execute("""
+            SELECT datetime, COUNT(*) as count
+            FROM bookings
+            WHERE service_name LIKE ?
+            GROUP BY strftime('%H', datetime)
+            ORDER BY count DESC
+            LIMIT 3
+        """, (f"%{service_name}%",))
+    else:
+        c.execute("""
+            SELECT datetime, COUNT(*) as count
+            FROM bookings
+            GROUP BY strftime('%H', datetime)
+            ORDER BY count DESC
+            LIMIT 3
+        """)
+
+    results = c.fetchall()
+    conn.close()
+
+    popular_hours = []
+    for dt_str, count in results:
+        try:
+            dt = datetime.fromisoformat(dt_str)
+            popular_hours.append(f"{dt.hour:02d}:00")
+        except:
+            continue
+
+    return popular_hours if popular_hours else ["15:00", "18:00"]
+
+
+def analyze_client_tone(history: List[Tuple]) -> str:
+    """Анализировать стиль общения клиента (#3 - Адаптация тона)"""
+    if not history:
+        return "neutral"
+
+    # Берём последние 5 сообщений клиента
+    client_messages = [msg[0] for msg in history[-10:]
+                       if len(msg) >= 2 and msg[1] == "client"][-5:]
+
+    if not client_messages:
+        return "neutral"
+
+    # Анализ
+    total_length = sum(len(msg) for msg in client_messages)
+    avg_length = total_length / len(client_messages)
+
+    emoji_count = sum(msg.count('😊') + msg.count('💅') + msg.count('❤') + msg.count('🔥') +
+                      msg.count('💖') + msg.count('✨') for msg in client_messages)
+
+    short_responses = sum(1 for msg in client_messages if len(msg) < 15)
+
+    # Классификация
+    if avg_length < 20 and short_responses >= 3:
+        return "brief"  # Короткий стиль
+    elif emoji_count >= 3:
+        return "friendly"  # Дружелюбный
+    elif avg_length > 50:
+        return "detailed"  # Подробный
+    else:
+        return "neutral"  # Нейтральный
+
+
+def get_client_objection_history(instagram_id: str) -> List[str]:
+    """История возражений клиента (#6)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT message 
+        FROM chat_history 
+        WHERE instagram_id = ? AND sender = 'client'
+        ORDER BY timestamp DESC
+        LIMIT 20
+    """, (instagram_id,))
+
+    messages = [row[0] for row in c.fetchall()]
+    conn.close()
+
+    objection_keywords = {
+        'дорого': 'price',
+        'expensive': 'price',
+        'подумать': 'think',
+        'подумаю': 'think',    # ✅ ДОБАВЛЕНО
+        'think': 'think',
+        'времени нет': 'no_time',
+        'no time': 'no_time',
+        'далеко': 'far',
+        'far': 'far',
+        'больно': 'pain',
+        'painful': 'pain',
+    }
+
+    found_objections = []
+    for msg in messages:
+        msg_lower = msg.lower()
+        for keyword, obj_type in objection_keywords.items():
+            if keyword in msg_lower and obj_type not in found_objections:
+                found_objections.append(obj_type)
+
+    return found_objections
+
+
+def get_last_service_date(instagram_id: str, service_name: str) -> Optional[str]:
+    """Когда клиент последний раз был на услуге (#10 - Upsell)"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT datetime 
+        FROM bookings 
+        WHERE instagram_id = ? AND service_name LIKE ? AND status = 'completed'
+        ORDER BY datetime DESC
+        LIMIT 1
+    """, (instagram_id, f"%{service_name}%"))
+
+    result = c.fetchone()
+    conn.close()
+
+    return result[0] if result else None
