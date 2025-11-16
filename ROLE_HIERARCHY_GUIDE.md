@@ -153,11 +153,22 @@ can_manage_role('director', 'admin')  # True
 
 **Backend:**
 - `backend/core/config.py` - определение ROLES, функции проверки
+- `backend/utils/permissions.py` - **ЦЕНТРАЛИЗОВАННАЯ УТИЛИТА** для проверки прав и иерархии
+  - Класс `RoleHierarchy` - проверка иерархии ролей
+  - Класс `PermissionChecker` - проверка конкретных прав
+  - Декораторы `@require_role` и `@require_permission` для FastAPI
+  - Функция `validate_role_assignment()` - комплексная валидация
 - `backend/api/roles.py` - API для получения ролей
 - `backend/api/users.py` - API для изменения ролей
+- `backend/tests/test_role_hierarchy.py` - **COMPREHENSIVE ТЕСТЫ** (80 тестов)
+- `backend/scripts/set_director_roles.py` - **МИГРАЦИЯ** для установки ролей директоров
 - `backend/db/__init__.py` - функции работы с БД
 
 **Frontend:**
+- `frontend/src/utils/permissions.ts` - **ЦЕНТРАЛИЗОВАННАЯ УТИЛИТА** для проверки прав
+  - Класс `RoleHierarchy` - проверка иерархии (идентично backend)
+  - Класс `PermissionChecker` - проверка прав
+  - Хук `usePermissions()` для React компонентов
 - `frontend/src/pages/admin/Users.tsx` - UI управления пользователями
 - `frontend/src/services/api.ts` - API клиент
 
@@ -181,9 +192,104 @@ ROLES = {
 }
 ```
 
+## 🎓 Использование централизованных утилит
+
+### Backend (Python)
+
+```python
+from utils.permissions import RoleHierarchy, PermissionChecker
+
+# Проверка иерархии
+if RoleHierarchy.can_manage_role('admin', 'manager'):
+    # Админ может управлять менеджером
+    pass
+
+# Проверка конкретного права
+if PermissionChecker.can_edit_users('admin'):
+    # Админ может редактировать пользователей
+    pass
+
+# Комплексная валидация назначения роли
+success, error = RoleHierarchy.validate_role_assignment(
+    assigner_role='admin',
+    assigner_id=1,
+    target_user_id=2,
+    new_role='manager'
+)
+
+if not success:
+    return JSONResponse({"error": error}, status_code=403)
+```
+
+**Использование декораторов в FastAPI:**
+
+```python
+from utils.permissions import require_role, require_permission
+
+@router.get("/admin/users")
+@require_role(['director', 'admin'])
+async def get_users(session_token: Optional[str] = Cookie(None)):
+    # Только director и admin могут получить доступ
+    pass
+
+@router.post("/clients")
+@require_permission('clients_create')
+async def create_client(session_token: Optional[str] = Cookie(None)):
+    # Только роли с правом clients_create могут создать клиента
+    pass
+```
+
+### Frontend (TypeScript/React)
+
+```tsx
+import { RoleHierarchy, PermissionChecker, usePermissions } from '@/utils/permissions';
+
+// В компоненте
+function UserManagement() {
+  const { role } = useAuth();
+
+  // Способ 1: Использование хука
+  const permissions = usePermissions(role);
+
+  if (permissions.canEditUsers) {
+    return <EditButton />;
+  }
+
+  // Способ 2: Прямой вызов
+  if (PermissionChecker.canViewAllClients(role)) {
+    return <ClientsList />;
+  }
+
+  // Проверка иерархии
+  const canChangeRole = RoleHierarchy.canManageRole(role, 'manager');
+
+  return canChangeRole ? <RoleChangeButton /> : null;
+}
+```
+
+## 🧪 Запуск тестов иерархии
+
+```bash
+cd backend
+python tests/test_role_hierarchy.py
+```
+
+**Результат:**
+- ✅ 80 тестов проверки иерархии и прав
+- Проверяет, что директор может управлять всеми
+- Проверяет, что админ НЕ может назначить директора
+- Проверяет, что нижестоящие роли не могут управлять никем
+- Проверяет, что нельзя назначить роль выше своей
+
 ## 📝 История изменений
 
-- **2025-11-16**: Реализована система иерархии ролей
-- **2025-11-16**: Обновлены роли admin и tursunay на director
-- **2025-11-16**: Добавлена фильтрация ролей в API
-- **2025-11-16**: Обновлен UI с информацией об ограничениях
+- **2025-11-16 (09:00)**: Реализована система иерархии ролей
+- **2025-11-16 (09:15)**: Обновлены роли admin и tursunay на director
+- **2025-11-16 (09:30)**: Добавлена фильтрация ролей в API
+- **2025-11-16 (09:45)**: Обновлен UI с информацией об ограничениях
+- **2025-11-16 (10:00)**: ✨ **СОЗДАНА ЦЕНТРАЛИЗОВАННАЯ СИСТЕМА ПРАВ**
+  - Создан `backend/utils/permissions.py` - единая утилита для всего backend
+  - Создан `frontend/src/utils/permissions.ts` - единая утилита для всего frontend
+  - Создано 80 comprehensive тестов в `test_role_hierarchy.py`
+  - Создана миграция `set_director_roles.py`
+  - Все тесты прошли успешно ✅
