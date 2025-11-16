@@ -40,10 +40,16 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     loadUnreadCount();
     loadEnabledMessengers();
     const unreadInterval = setInterval(loadUnreadCount, 10000);
-    const messengersInterval = setInterval(loadEnabledMessengers, 30000); // Обновляем список мессенджеров каждые 30 сек
+
+    // Слушаем событие обновления мессенджеров
+    const handleMessengersUpdate = () => {
+      loadEnabledMessengers();
+    };
+    window.addEventListener('messengers-updated', handleMessengersUpdate);
+
     return () => {
       clearInterval(unreadInterval);
-      clearInterval(messengersInterval);
+      window.removeEventListener('messengers-updated', handleMessengersUpdate);
     };
   }, []);
 
