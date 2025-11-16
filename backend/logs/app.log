@@ -12587,3 +12587,446 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 11:24:03 - crm - INFO - [db] 💾 Сообщение сохранено: ID=131, sender=client, text=+971501234567...
 2025-11-16 11:24:03 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:0, ar:0, lat:0)
 2025-11-16 11:24:04 - crm - INFO - [db] 💾 Сообщение сохранено: ID=132, sender=assistant, text=Отлично! Для записи нужен маст...
+2025-11-16 11:37:46 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:37:46 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:37:46 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:37:46 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:37:46 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:37:46 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:37:46 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:37:46 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:37:46 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:37:46 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:37:46 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:37:46 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:37:46 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:37:46 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:37:46 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:37:46 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:37:46 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:37:46 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:37:46 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:37:46 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:37:46 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:37:46 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:37:46 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:37:46 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:38:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:38:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 11:38:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:38:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:39:23 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:39:23 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:39:23 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:39:23 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:39:23 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:39:23 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:39:23 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:39:23 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:39:23 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:23 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:39:23 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:39:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:39:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:39:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:39:23 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:39:23 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:23 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:39:23 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:39:23 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:39:23 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:39:23 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:39:23 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:39:23 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:39:23 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:39:23 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:39:28 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:39:28 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:39:28 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:39:28 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:39:28 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:39:28 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:39:28 - crm - INFO - [startup] 🔧 Запуск миграций...
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Creating positions table...
+2025-11-16 11:39:28 - crm - INFO - [migration] ⏭️ Positions already exist, skipping defaults
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Positions table created successfully
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Linking employees with positions...
+2025-11-16 11:39:28 - crm - INFO - [migration] 📝 Creating temporary table...
+2025-11-16 11:39:28 - crm - INFO - [migration] 📋 Copying data...
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔗 Matching existing positions...
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Matched 0 positions
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔄 Replacing old table...
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔗 Recreating related tables...
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Employees successfully linked with positions
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Таблица employee_services создана
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Индексы созданы
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Миграция employee_services завершена
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Adding temperature field to clients...
+2025-11-16 11:39:28 - crm - INFO - [migration] ⏭️ temperature field already exists
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Adding booking_waitlist table...
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ booking_waitlist table created
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Создание таблицы birthday_notifications...
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Таблица birthday_notifications создана
+2025-11-16 11:39:28 - crm - INFO - [migration] Добавление полей в таблицу users...
+2025-11-16 11:39:28 - crm - INFO - [migration]   ✅ Существующие пользователи одобрены автоматически
+2025-11-16 11:39:28 - crm - INFO - [migration] Заполнение базовых прав доступа...
+2025-11-16 11:39:28 - crm - INFO - [migration]   ✅ Добавлено 80 прав доступа
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Миграция permissions завершена успешно
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Adding birthday and phone fields...
+2025-11-16 11:39:28 - crm - INFO - [migration]   ℹ️  birthday field already exists in users
+2025-11-16 11:39:28 - crm - INFO - [migration]   ℹ️  phone field already exists in users
+2025-11-16 11:39:28 - crm - INFO - [migration]   ✅ Added birthday field to employees
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Birthday and phone fields migration completed
+2025-11-16 11:39:28 - crm - INFO - [migration] ✓ email_verification_token field already exists in users table
+2025-11-16 11:39:28 - crm - INFO - [migration] ✓ Password reset fields already exist in users table
+2025-11-16 11:39:28 - crm - INFO - [migration] 🔧 Создание таблицы service_positions...
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Таблица service_positions создана
+2025-11-16 11:39:28 - crm - INFO - [migration] 📊 Найдено 77 услуг для миграции
+2025-11-16 11:39:28 - crm - INFO - [migration] ✅ Мигрировано 0 связей услуг с должностями
+2025-11-16 11:39:28 - crm - INFO - [migration] 📊 Услуг: 77, Связей с должностями: 180
+2025-11-16 11:39:33 - crm - INFO - [migration] 🔧 Adding missing positions to directory...
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Hair Stylist
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Nail Master
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Nail/Waxing
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Nail Master/Massages
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Владелец
+2025-11-16 11:39:33 - crm - INFO - [migration] ⏭️  Position already exists: Массажист
+2025-11-16 11:39:33 - crm - INFO - [migration] ℹ️  All positions already exist
+2025-11-16 11:39:33 - crm - INFO - [migration] 🔧 Назначение должностей пользователям...
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  simo: должность уже установлена ('Hair Stylist')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  mestan: должность уже установлена ('Hair Stylist')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  lyazzat: должность уже установлена ('Nail Master')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  gulya: должность уже установлена ('Nail/Waxing')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  jennifer: должность уже установлена ('Nail Master/Massages')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  tursunay: должность уже установлена ('Владелец')
+2025-11-16 11:39:33 - crm - INFO - [migration]   ⏭️  admin: должность уже установлена ('Администратор')
+2025-11-16 11:39:33 - crm - INFO - [migration] ℹ️  Все пользователи уже имеют должности
+2025-11-16 11:39:34 - crm - INFO - [seed] 🧹 Cleared existing employee_services
+2025-11-16 11:39:34 - crm - INFO - [seed] ✅ Created 0 employee-service links
+2025-11-16 11:39:34 - crm - INFO - [migration] 🔄 Обновление ролей и должностей существующих пользователей...
+2025-11-16 11:39:34 - crm - INFO - [migration] ✓ Все пользователи уже имеют роль и должность
+2025-11-16 11:39:34 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:39:34 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:39:34 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:34 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:39:34 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:34 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:39:34 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:39:34 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:39:34 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:39:34 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:39:34 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:34 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:39:34 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:39:34 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:39:34 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:39:34 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:39:34 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:39:34 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:39:40 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:39:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:39:40 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:39:40 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:39:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:39:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:39:40 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:39:40 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:39:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:40 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:39:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:39:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:39:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:39:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:39:40 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:39:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:39:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:39:40 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:39:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:39:40 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:39:40 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:39:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:39:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:40:14 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:40:14 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:40:14 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:40:14 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:40:14 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:40:14 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:40:14 - crm - INFO - [startup] 🧪 Запуск всех тестов...
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер on day 0: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 0: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 1: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 2: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 3: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 4: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 5: 10:00-14:00
+2025-11-16 11:40:14 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 11:40:14 - crm - INFO - [schedule] Time off added for Тест Мастер Детальный: 2025-11-17 to 2025-11-17
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 0: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 1: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 2: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 3: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 4: 09:00-18:00
+2025-11-16 11:40:14 - crm - INFO - [schedule] Working hours set for Анна on day 5: 10:00-16:00
+2025-11-16 11:40:14 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 11:40:14 - crm - INFO - [schedule] Time off added for Анна: 2025-11-17 to 2025-11-17
+2025-11-16 11:40:14 - crm - INFO - [loyalty] Earned 120 points for test_client_123: Тестовая запись на маникюр
+2025-11-16 11:40:14 - crm - INFO - [smart_assistant] Preferences saved for client test_client_123
+2025-11-16 11:40:14 - crm - INFO - [smart_assistant] Learned from booking for client test_client_123
+2025-11-16 11:40:14 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:40:14 - crm - INFO - [db] 💾 Сообщение сохранено: ID=133, sender=client, text=Привет! Хочу записаться на ман...
+2025-11-16 11:40:14 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:29, ar:0, lat:0)
+2025-11-16 11:40:15 - crm - INFO - [db] 💾 Сообщение сохранено: ID=134, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:40:17 - crm - INFO - [db] 💾 Сообщение сохранено: ID=135, sender=client, text=Завтра после обеда...
+2025-11-16 11:40:17 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:16, ar:0, lat:0)
+2025-11-16 11:40:18 - crm - INFO - [db] 💾 Сообщение сохранено: ID=136, sender=assistant, text=Маникюр с гель-лаком? 💅 Держит...
+2025-11-16 11:40:20 - crm - INFO - [db] 💾 Сообщение сохранено: ID=137, sender=client, text=+971501234567...
+2025-11-16 11:40:20 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:0, ar:0, lat:0)
+2025-11-16 11:40:21 - crm - INFO - [db] 💾 Сообщение сохранено: ID=138, sender=assistant, text=Отлично, номер есть! 😊
+Завтра ...
+2025-11-16 11:40:26 - crm - INFO - [db] 💾 Сообщение сохранено: ID=139, sender=client, text=Сколько стоит маникюр?...
+2025-11-16 11:40:26 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:19, ar:0, lat:0)
+2025-11-16 11:40:27 - crm - INFO - [db] 💾 Сообщение сохранено: ID=140, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:40:29 - crm - INFO - [db] 💾 Сообщение сохранено: ID=141, sender=client, text=Дорого...
+2025-11-16 11:40:29 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:6, ar:0, lat:0)
+2025-11-16 11:40:31 - crm - INFO - [db] 💾 Сообщение сохранено: ID=142, sender=assistant, text=Акций сейчас нет, но качество ...
+2025-11-16 11:40:33 - crm - INFO - [db] 💾 Сообщение сохранено: ID=143, sender=client, text=А есть какие-то скидки?...
+2025-11-16 11:40:33 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:18, ar:0, lat:0)
+2025-11-16 11:40:34 - crm - INFO - [db] 💾 Сообщение сохранено: ID=144, sender=assistant, text=Акций сейчас нет, но качество ...
+2025-11-16 11:40:39 - crm - INFO - [db] 💾 Сообщение сохранено: ID=145, sender=client, text=Привет, расскажите про маникюр...
+2025-11-16 11:40:39 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_hot (cyr:26, ar:0, lat:0)
+2025-11-16 11:40:40 - crm - INFO - [db] 💾 Сообщение сохранено: ID=146, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:40:42 - crm - INFO - [db] 💾 Сообщение сохранено: ID=147, sender=client, text=А сколько держится гель-лак?...
+2025-11-16 11:40:42 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_hot (cyr:23, ar:0, lat:0)
+2025-11-16 11:40:43 - crm - INFO - [db] 💾 Сообщение сохранено: ID=148, sender=assistant, text=Гель-лак держится около 3 неде...
+2025-11-16 11:40:55 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:40:55 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:40:55 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:40:55 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:40:55 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:40:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:40:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:40:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:40:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:40:55 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:40:55 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:40:55 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:40:55 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:40:55 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:40:55 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:40:55 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:40:55 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:40:55 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:40:55 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:40:55 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 11:40:55 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 11:40:55 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:40:55 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 401 (0.00s)
+2025-11-16 11:40:55 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.00s)
+2025-11-16 11:41:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:41:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:42:58 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:42:58 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:42:58 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:42:58 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:42:58 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:42:58 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:42:58 - crm - INFO - [startup] 🧪 Запуск всех тестов...
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер on day 0: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 0: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 1: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 2: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 3: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 4: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 5: 10:00-14:00
+2025-11-16 11:42:58 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 11:42:58 - crm - INFO - [schedule] Time off added for Тест Мастер Детальный: 2025-11-17 to 2025-11-17
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 0: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 1: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 2: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 3: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 4: 09:00-18:00
+2025-11-16 11:42:58 - crm - INFO - [schedule] Working hours set for Анна on day 5: 10:00-16:00
+2025-11-16 11:42:58 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 11:42:58 - crm - INFO - [schedule] Time off added for Анна: 2025-11-17 to 2025-11-17
+2025-11-16 11:42:58 - crm - INFO - [loyalty] Earned 120 points for test_client_123: Тестовая запись на маникюр
+2025-11-16 11:42:58 - crm - INFO - [smart_assistant] Preferences saved for client test_client_123
+2025-11-16 11:42:58 - crm - INFO - [smart_assistant] Learned from booking for client test_client_123
+2025-11-16 11:42:58 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:42:58 - crm - INFO - [db] 💾 Сообщение сохранено: ID=149, sender=client, text=Привет! Хочу записаться на ман...
+2025-11-16 11:42:58 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:29, ar:0, lat:0)
+2025-11-16 11:43:00 - crm - INFO - [db] 💾 Сообщение сохранено: ID=150, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:43:02 - crm - INFO - [db] 💾 Сообщение сохранено: ID=151, sender=client, text=Завтра после обеда...
+2025-11-16 11:43:02 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:16, ar:0, lat:0)
+2025-11-16 11:43:03 - crm - INFO - [db] 💾 Сообщение сохранено: ID=152, sender=assistant, text=Маникюр гель-лак - 130 AED 💅
+Д...
+2025-11-16 11:43:05 - crm - INFO - [db] 💾 Сообщение сохранено: ID=153, sender=client, text=+971501234567...
+2025-11-16 11:43:05 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_simple (cyr:0, ar:0, lat:0)
+2025-11-16 11:43:06 - crm - INFO - [db] 💾 Сообщение сохранено: ID=154, sender=assistant, text=Отлично! 
+
+На завтра есть мест...
+2025-11-16 11:43:11 - crm - INFO - [db] 💾 Сообщение сохранено: ID=155, sender=client, text=Сколько стоит маникюр?...
+2025-11-16 11:43:11 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:19, ar:0, lat:0)
+2025-11-16 11:43:13 - crm - INFO - [db] 💾 Сообщение сохранено: ID=156, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:43:15 - crm - INFO - [db] 💾 Сообщение сохранено: ID=157, sender=client, text=Дорого...
+2025-11-16 11:43:15 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:6, ar:0, lat:0)
+2025-11-16 11:43:15 - crm - INFO - [db] 💾 Сообщение сохранено: ID=158, sender=assistant, text=Акций сейчас нет, но качество ...
+2025-11-16 11:43:17 - crm - INFO - [db] 💾 Сообщение сохранено: ID=159, sender=client, text=А есть какие-то скидки?...
+2025-11-16 11:43:17 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_price_objection (cyr:18, ar:0, lat:0)
+2025-11-16 11:43:18 - crm - INFO - [db] 💾 Сообщение сохранено: ID=160, sender=assistant, text=Акций сейчас нет, но качество ...
+2025-11-16 11:43:23 - crm - INFO - [db] 💾 Сообщение сохранено: ID=161, sender=client, text=Привет, расскажите про маникюр...
+2025-11-16 11:43:23 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_hot (cyr:26, ar:0, lat:0)
+2025-11-16 11:43:25 - crm - INFO - [db] 💾 Сообщение сохранено: ID=162, sender=assistant, text=Привет, друг! 👋 Рады видеть те...
+2025-11-16 11:43:27 - crm - INFO - [db] 💾 Сообщение сохранено: ID=163, sender=client, text=А сколько держится гель-лак?...
+2025-11-16 11:43:27 - crm - INFO - [database] ✅ Language detected: ru for test_scenario_hot (cyr:23, ar:0, lat:0)
+2025-11-16 11:43:28 - crm - INFO - [db] 💾 Сообщение сохранено: ID=164, sender=assistant, text=Гель-лак держится до 3-х недел...
+2025-11-16 11:43:40 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:43:40 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:43:40 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:43:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [telegram] Telegram bot token loaded from .env
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ Созданы директории: static/uploads/images, static/uploads/files, static/uploads/voice, logs
+2025-11-16 11:43:40 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ Модуль 'public' подключен: /public/* endpoints
+2025-11-16 11:43:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [startup] 🚀 Запуск CRM системы...
+2025-11-16 11:43:40 - crm - INFO - [database] ✅ Loaded bot settings with 57 columns
+2025-11-16 11:43:40 - crm - INFO - [startup] 🤖 Бот инициализирован: M Le Diamant Beauty Lounge
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | core            | Core CRM functionality (always enabled)
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public booking pages and client cabinet
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification system for employees
+2025-11-16 11:43:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background schedulers and automation
+2025-11-16 11:43:40 - crm - INFO - [modules] ❌ ВЫКЛЮЧЕН   | instagram       | Instagram bot integration (legacy)
+2025-11-16 11:43:40 - crm - INFO - [modules] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик проверки дней рождения
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] ✅ Планировщик дней рождения запущен
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] 🎂 Запущен планировщик поздравлений клиентов
+2025-11-16 11:43:40 - crm - INFO - [birthday_checker] ✅ Планировщик поздравлений клиентов запущен
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ Планировщики запущены
+2025-11-16 11:43:40 - crm - INFO - [startup] ✅ CRM готова к работе!
+2025-11-16 11:43:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 11:43:40 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:43:40 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:43:48 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:43:48 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 11:43:51 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:43:51 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:43:51 - crm - INFO - [middleware] 🔥 GET /api/positions
+2025-11-16 11:43:51 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 11:43:51 - crm - INFO - [middleware] 🔥 GET /api/messengers/enabled
+2025-11-16 11:43:51 - crm - INFO - [middleware] 📤 GET /api/positions → 200 (0.00s)
+2025-11-16 11:43:52 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 11:43:52 - crm - INFO - [middleware] 📤 GET /api/messengers/enabled → 200 (0.01s)
+2025-11-16 11:43:53 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 11:43:53 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 11:43:53 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 11:43:53 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 11:43:53 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 11:43:53 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 11:43:53 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 11:43:53 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.00s)
+2025-11-16 11:43:56 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 11:43:56 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 11:43:56 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 11:43:56 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.01s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 11:43:58 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.01s)
+2025-11-16 11:44:01 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:01 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 11:44:11 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:11 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:44:12 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 11:44:12 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 11:44:12 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.00s)
+2025-11-16 11:44:12 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.01s)
+2025-11-16 11:44:16 - crm - INFO - [middleware] 🔥 GET /api/positions
+2025-11-16 11:44:16 - crm - INFO - [middleware] 📤 GET /api/positions → 200 (0.00s)
+2025-11-16 11:44:21 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:21 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:44:31 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:32 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 11:44:33 - crm - INFO - [middleware] 🔥 GET /api/positions
+2025-11-16 11:44:33 - crm - INFO - [middleware] 📤 GET /api/positions → 200 (0.00s)
+2025-11-16 11:44:41 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:41 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/salon-settings
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/my-profile
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/subscriptions
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/broadcasts/history
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/booking-reminder-settings
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/messengers/settings
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/salon-settings → 200 (0.00s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 11:44:45 - crm - INFO - [middleware] 🔥 GET /api/notifications/settings
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/my-profile → 200 (0.02s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/booking-reminder-settings → 200 (0.02s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/messengers/settings → 200 (0.02s)
+2025-11-16 11:44:45 - crm - INFO - [subscriptions] Получены подписки пользователя 1
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/notifications/settings → 200 (0.01s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/subscriptions → 200 (0.02s)
+2025-11-16 11:44:45 - crm - INFO - [middleware] 📤 GET /api/broadcasts/history → 200 (0.02s)
+2025-11-16 11:44:51 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:44:51 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:45:01 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 11:45:01 - crm - INFO - [middleware] 🔥 GET /api/roles
+2025-11-16 11:45:01 - crm - INFO - [middleware] 📤 GET /api/roles → 200 (0.01s)
+2025-11-16 11:45:01 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.01s)
+2025-11-16 11:45:01 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:45:01 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 11:45:04 - crm - INFO - [middleware] 🔥 GET /api/bookings
+2025-11-16 11:45:04 - crm - INFO - [middleware] 🔥 GET /api/services
+2025-11-16 11:45:04 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 11:45:04 - crm - INFO - [middleware] 🔥 GET /api/users
+2025-11-16 11:45:04 - crm - INFO - [middleware] 📤 GET /api/bookings → 200 (0.01s)
+2025-11-16 11:45:04 - crm - INFO - [middleware] 📤 GET /api/services → 200 (0.01s)
+2025-11-16 11:45:04 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.01s)
+2025-11-16 11:45:04 - crm - INFO - [middleware] 📤 GET /api/users → 200 (0.01s)
+2025-11-16 11:45:06 - crm - INFO - [middleware] 🔥 GET /api/clients
+2025-11-16 11:45:06 - crm - INFO - [middleware] 📤 GET /api/clients → 200 (0.00s)
+2025-11-16 11:45:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/test_scenario_hot
+2025-11-16 11:45:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/test_scenario_price_objection
+2025-11-16 11:45:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/test_scenario_simple
+2025-11-16 11:45:06 - crm - INFO - [middleware] 🔥 GET /api/chat/unread/1533224231180483
+2025-11-16 11:45:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/test_scenario_hot → 200 (0.01s)
+2025-11-16 11:45:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/test_scenario_price_objection → 200 (0.01s)
+2025-11-16 11:45:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/test_scenario_simple → 200 (0.00s)
+2025-11-16 11:45:06 - crm - INFO - [middleware] 📤 GET /api/chat/unread/1533224231180483 → 200 (0.00s)
+2025-11-16 11:45:11 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:45:11 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 11:45:22 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 11:45:22 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)

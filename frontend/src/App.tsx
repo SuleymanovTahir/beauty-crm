@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import './i18n';
+import { useAuth } from './contexts/AuthContext';
 
 // Admin Pages
 import AdminLayout from './components/layouts/AdminLayout';
@@ -105,51 +106,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 };
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Проверяем авторизацию при загрузке приложения
-  useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const savedToken = localStorage.getItem('session_token');
-        const savedUser = localStorage.getItem('user');
-
-        if (savedToken && savedUser) {
-          const user = JSON.parse(savedUser);
-          setCurrentUser({
-            id: user.id,
-            username: user.username,
-            full_name: user.full_name,
-            role: user.role
-          });
-        }
-      } catch (err) {
-        console.error('Auth check error:', err);
-        localStorage.removeItem('session_token');
-        localStorage.removeItem('user');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  const handleLogin = (user: User) => {
-    const userData = {
-      id: user.id,
-      username: user.username,
-      full_name: user.full_name,
-      role: user.role
-    };
-    setCurrentUser(userData);
-  };
+  const { user: currentUser, isLoading, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('session_token');
-    localStorage.removeItem('user');
-    setCurrentUser(null);
+    logout();
   };
 
   if (isLoading) {
@@ -176,7 +136,6 @@ export default function App() {
               currentUser ? (
                 // ✅ ОБНОВИ РЕДИРЕКТ
                 currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
-                currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
                 currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                 currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
@@ -184,7 +143,7 @@ export default function App() {
                 currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                 <Navigate to="/" replace />
               ) : (
-                <Login onLogin={handleLogin} />
+                <Login />
               )
             }
           />
@@ -202,7 +161,7 @@ export default function App() {
 
           <Route
             path="/verify-email"
-            element={<VerifyEmail onLogin={handleLogin} />}
+            element={<VerifyEmail />}
           />
 
           <Route
