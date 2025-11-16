@@ -100,8 +100,8 @@ export const apiClient = {
     }),
 
   // ===== CHAT =====
-  getChatMessages: (clientId: string, limit: number = 50) =>
-    apiCall(`/api/chat/messages?client_id=${clientId}&limit=${limit}`),
+  getChatMessages: (clientId: string, limit: number = 50, messenger: string = 'instagram') =>
+    apiCall(`/api/chat/messages?client_id=${clientId}&limit=${limit}&messenger=${messenger}`),
 
   sendMessage: (clientId: string, message: string) =>
     apiCall('/api/chat/send', {

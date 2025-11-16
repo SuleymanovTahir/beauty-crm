@@ -48,8 +48,9 @@ async def list_services(
                 "description_ru": s[11] if len(s) > 11 else "",
                 "description_ar": s[12] if len(s) > 12 else "",
                 "benefits": s[13].split('|') if len(s) > 13 and s[13] else [],
-                "is_active": bool(s[14]) if len(s) > 14 and s[14] is not None else True,  # ✅ ПРАВИЛЬНЫЙ ИНДЕКС
+                "is_active": bool(s[14]) if len(s) > 14 and s[14] is not None else True,
                 "duration": s[15] if len(s) > 15 else None,
+                "position_id": s[16] if len(s) > 16 else None,
             }
             for s in services
         ],
@@ -103,7 +104,8 @@ async def create_service_api(
             category=data.get('category'),
             description=data.get('description'),
             description_ru=data.get('description_ru'),
-            benefits=data.get('benefits', [])
+            benefits=data.get('benefits', []),
+            position_id=data.get('position_id')
         )
 
         if success:

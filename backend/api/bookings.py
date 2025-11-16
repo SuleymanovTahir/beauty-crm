@@ -13,9 +13,37 @@ from db import (
 )
 from core.config import DATABASE_NAME
 from utils.utils import require_auth
-from utils.logger import log_error, log_warning
+from utils.logger import log_error, log_warning, log_info
+from services.smart_assistant import SmartAssistant
 
 router = APIRouter(tags=["Bookings"])
+
+
+def get_client_messengers_for_bookings(client_id: str):
+    """Получить список мессенджеров клиента для bookings"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    messengers = []
+
+    # Проверяем Instagram
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    if c.fetchone()[0] > 0:
+        messengers.append('instagram')
+
+    # Проверяем другие мессенджеры
+    c.execute("""
+        SELECT DISTINCT messenger_type
+        FROM messenger_messages
+        WHERE client_id = ?
+    """, (client_id,))
+
+    for row in c.fetchall():
+        if row[0] not in messengers:
+            messengers.append(row[0])
+
+    conn.close()
+    return messengers
 
 
 @router.get("/bookings")
@@ -24,23 +52,30 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     bookings = get_all_bookings()
+
+    # Добавляем информацию о мессенджерах для каждой записи
+    bookings_with_messengers = []
+    for b in bookings:
+        client_id = b[1]
+        messengers = get_client_messengers_for_bookings(client_id)
+
+        bookings_with_messengers.append({
+            "id": b[0],
+            "client_id": client_id,
+            "service": b[2],
+            "datetime": b[3],
+            "phone": b[4],
+            "name": b[5],
+            "status": b[6],
+            "created_at": b[7],
+            "revenue": b[8] if len(b) > 8 else 0,
+            "messengers": messengers
+        })
+
     return {
-        "bookings": [
-            {
-                "id": b[0],
-                "client_id": b[1],
-                "service": b[2],
-                "datetime": b[3],
-                "phone": b[4],
-                "name": b[5],
-                "status": b[6],
-                "created_at": b[7],
-                "revenue": b[8] if len(b) > 8 else 0
-            }
-            for b in bookings
-        ],
+        "bookings": bookings_with_messengers,
         "count": len(bookings)
     }
 
@@ -83,24 +118,85 @@ async def create_booking_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     data = await request.json()
-    
+
     try:
         instagram_id = data.get('instagram_id')
         service = data.get('service')
         datetime_str = f"{data.get('date')} {data.get('time')}"
         phone = data.get('phone', '')
         name = data.get('name')
-        master = data.get('master', '')  # ✅ ДОБАВЛЕНО
-        
+        master = data.get('master', '')
+
         get_or_create_client(instagram_id, username=name)
         save_booking(instagram_id, service, datetime_str, phone, name, master=master)
-        
-        log_activity(user["id"], "create_booking", "booking", instagram_id, 
+
+        # Получаем ID созданной записи
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        c.execute("SELECT id FROM bookings WHERE instagram_id = ? ORDER BY id DESC LIMIT 1",
+                  (instagram_id,))
+        booking_result = c.fetchone()
+        booking_id = booking_result[0] if booking_result else None
+        conn.close()
+
+        log_activity(user["id"], "create_booking", "booking", instagram_id,
                     f"Service: {service}")
-        
-        return {"success": True, "message": "Booking created"}
+
+        # 🧠 Умный ассистент: обучаемся на основе новой записи
+        try:
+            assistant = SmartAssistant(instagram_id)
+            assistant.learn_from_booking({
+                'service': service,
+                'master': master,
+                'datetime': datetime_str,
+                'phone': phone,
+                'name': name
+            })
+            log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
+        except Exception as e:
+            log_error(f"SmartAssistant learning failed: {e}", "bookings")
+
+        # Отправляем уведомление мастеру
+        if master and booking_id:
+            try:
+                from notifications import notify_master_about_booking, get_master_info, save_notification_log
+
+                # Отправляем уведомления асинхронно
+                notification_results = await notify_master_about_booking(
+                    master_name=master,
+                    client_name=name,
+                    service=service,
+                    datetime_str=datetime_str,
+                    phone=phone,
+                    booking_id=booking_id
+                )
+
+                # Сохраняем логи уведомлений
+                master_info = get_master_info(master)
+                if master_info:
+                    for notif_type, success in notification_results.items():
+                        if success:
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="sent"
+                            )
+                        elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                            # Пытались отправить, но не получилось
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="failed"
+                            )
+            except Exception as e:
+                # Не блокируем создание записи, если уведомление не отправилось
+                log_error(f"Error sending master notification: {e}", "api")
+
+        return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
@@ -397,13 +493,167 @@ async def get_no_show_risk(
             risk_level = "high"
         elif risk > 0.3:
             risk_level = "medium"
-        
+
         return {
             "risk_score": risk,
             "risk_level": risk_level,
             "requires_deposit": risk > 0.4
         }
-        
+
     except Exception as e:
         log_error(f"No-show risk error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.put("/bookings/{booking_id}")
+async def update_booking_api(
+    booking_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить запись (полное обновление)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    data = await request.json()
+
+    try:
+        # Получаем старую запись для сравнения
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",
+                  (booking_id,))
+        old_booking = c.fetchone()
+
+        if not old_booking:
+            conn.close()
+            return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+        old_service, old_datetime, old_master, old_name, old_phone = old_booking
+
+        # Обновляем запись
+        new_service = data.get('service', old_service)
+        new_datetime = f"{data.get('date')} {data.get('time')}" if data.get('date') and data.get('time') else old_datetime
+        new_master = data.get('master', old_master)
+        new_name = data.get('name', old_name)
+        new_phone = data.get('phone', old_phone)
+
+        c.execute("""
+            UPDATE bookings
+            SET service_name = ?, datetime = ?, master = ?, name = ?, phone = ?
+            WHERE id = ?
+        """, (new_service, new_datetime, new_master, new_name, new_phone, booking_id))
+
+        conn.commit()
+        conn.close()
+
+        log_activity(user["id"], "update_booking", "booking", str(booking_id),
+                    f"Updated booking: {new_service}")
+
+        # Отправляем уведомление мастеру об изменении
+        if new_master:
+            try:
+                from notifications import notify_master_about_booking, get_master_info, save_notification_log
+
+                notification_results = await notify_master_about_booking(
+                    master_name=new_master,
+                    client_name=new_name,
+                    service=new_service,
+                    datetime_str=new_datetime,
+                    phone=new_phone,
+                    booking_id=booking_id,
+                    notification_type="booking_change"
+                )
+
+                # Сохраняем логи
+                master_info = get_master_info(new_master)
+                if master_info:
+                    for notif_type, success in notification_results.items():
+                        if success or master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="sent" if success else "failed"
+                            )
+
+            except Exception as e:
+                log_error(f"Error sending booking change notification: {e}", "api")
+
+        return {"success": True, "message": "Booking updated", "booking_id": booking_id}
+
+    except Exception as e:
+        log_error(f"Booking update error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+@router.delete("/bookings/{booking_id}")
+async def delete_booking_api(
+    booking_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить запись (с уведомлением мастеру)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        # Получаем информацию о записи для уведомления
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",
+                  (booking_id,))
+        booking = c.fetchone()
+
+        if not booking:
+            conn.close()
+            return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+        service, datetime_str, master, name, phone = booking
+
+        # Удаляем запись
+        c.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
+        conn.commit()
+        conn.close()
+
+        log_activity(user["id"], "delete_booking", "booking", str(booking_id),
+                    f"Deleted booking: {service}")
+
+        # Отправляем уведомление мастеру об отмене
+        if master:
+            try:
+                from notifications import notify_master_about_booking, get_master_info, save_notification_log
+
+                notification_results = await notify_master_about_booking(
+                    master_name=master,
+                    client_name=name,
+                    service=service,
+                    datetime_str=datetime_str,
+                    phone=phone,
+                    booking_id=booking_id,
+                    notification_type="booking_cancel"
+                )
+
+                # Сохраняем логи
+                master_info = get_master_info(master)
+                if master_info:
+                    for notif_type, success in notification_results.items():
+                        if success or master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                            save_notification_log(
+                                master_id=master_info["id"],
+                                booking_id=booking_id,
+                                notification_type=notif_type,
+                                status="sent" if success else "failed"
+                            )
+
+            except Exception as e:
+                log_error(f"Error sending booking cancel notification: {e}", "api")
+
+        return {"success": True, "message": "Booking deleted"}
+
+    except Exception as e:
+        log_error(f"Booking deletion error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)

@@ -1,7 +1,7 @@
 """
 API Endpoints для работы с клиентами
 """
-from fastapi import APIRouter, Request, Cookie, HTTPException
+from fastapi import APIRouter, Request, Cookie, HTTPException, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 import time
@@ -15,18 +15,83 @@ from db import (
 )
 from utils.utils import require_auth, get_total_unread, get_client_display_name
 from utils.logger import log_error,log_info
+from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 
 router = APIRouter(tags=["Clients"])
 
 
+def get_client_messengers(client_id: str):
+    """Получить список мессенджеров, которыми пользуется клиент"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    messengers = []
+
+    # Проверяем Instagram (из старой таблицы)
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    if c.fetchone()[0] > 0:
+        messengers.append('instagram')
+
+    # Проверяем другие мессенджеры
+    c.execute("""
+        SELECT DISTINCT messenger_type
+        FROM messenger_messages
+        WHERE client_id = ?
+    """, (client_id,))
+
+    for row in c.fetchall():
+        if row[0] not in messengers:
+            messengers.append(row[0])
+
+    conn.close()
+    return messengers
+
+
+def get_clients_by_messenger(messenger_type: str = 'instagram'):
+    """Получить клиентов по типу мессенджера"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    if messenger_type == 'instagram':
+        # Для Instagram используем старую таблицу clients
+        c.execute("""SELECT instagram_id, username, phone, name, first_contact,
+                     last_contact, total_messages, labels, status, lifetime_value,
+                     profile_pic, notes, is_pinned
+                     FROM clients ORDER BY is_pinned DESC, last_contact DESC""")
+    else:
+        # Для других мессенджеров получаем клиентов из messenger_messages
+        c.execute("""
+            SELECT DISTINCT
+                c.instagram_id, c.username, c.phone, c.name, c.first_contact,
+                c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+                c.profile_pic, c.notes, c.is_pinned
+            FROM clients c
+            JOIN messenger_messages mm ON c.instagram_id = mm.client_id
+            WHERE mm.messenger_type = ?
+            ORDER BY c.is_pinned DESC, c.last_contact DESC
+        """, (messenger_type,))
+
+    clients = c.fetchall()
+    conn.close()
+    return clients
+
+
 @router.get("/clients")
-async def list_clients(session_token: Optional[str] = Cookie(None)):
-    """Получить всех клиентов"""
+async def list_clients(
+    session_token: Optional[str] = Cookie(None),
+    messenger: Optional[str] = Query('instagram')
+):
+    """Получить всех клиентов с фильтрацией по мессенджеру"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    clients = get_all_clients()
+
+    # Валидируем тип мессенджера
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
+    if messenger not in valid_messengers:
+        messenger = 'instagram'
+
+    clients = get_clients_by_messenger(messenger)
     return {
         "clients": [
             {
@@ -43,13 +108,29 @@ async def list_clients(session_token: Optional[str] = Cookie(None)):
                 "lifetime_value": c[9] if len(c) > 9 else 0,
                 "profile_pic": c[10] if len(c) > 10 else None,
                 "notes": c[11] if len(c) > 11 else "",
-                "is_pinned": c[12] if len(c) > 12 else 0
+                "is_pinned": c[12] if len(c) > 12 else 0,
+                "messenger": messenger
             }
             for c in clients
         ],
         "count": len(clients),
-        "unread_count": get_total_unread()
+        "unread_count": get_total_unread(),
+        "messenger": messenger
     }
+
+
+@router.get("/clients/{client_id}/messengers")
+async def get_client_messengers_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить список мессенджеров клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    messengers = get_client_messengers(client_id)
+    return {"messengers": messengers}
 
 
 @router.get("/clients/{client_id}")
@@ -185,6 +266,48 @@ async def update_client_status_api(
     return {"success": True, "message": "Client status updated"}
 
 
+@router.post("/clients/{client_id}/preferred-messenger")
+async def update_preferred_messenger_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить предпочтительный мессенджер для клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    data = await request.json()
+    preferred_messenger = data.get('preferred_messenger')
+
+    # Валидация
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok', None]
+    if preferred_messenger not in valid_messengers:
+        return JSONResponse({"error": "Invalid messenger type"}, status_code=400)
+
+    # Обновляем поле
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            UPDATE clients
+            SET preferred_messenger = ?
+            WHERE instagram_id = ?
+        """, (preferred_messenger, client_id))
+        conn.commit()
+
+        log_activity(user["id"], "update_preferred_messenger", "client",
+                    client_id, f"Preferred messenger: {preferred_messenger}")
+
+        return {"success": True, "preferred_messenger": preferred_messenger}
+    except Exception as e:
+        log_error(f"Error updating preferred messenger: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+
 @router.post("/clients/{client_id}/pin")
 async def pin_client_api(
     client_id: str,
@@ -194,17 +317,17 @@ async def pin_client_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     client = get_client_by_id(client_id)
     if not client:
         return JSONResponse({"error": "Client not found"}, status_code=404)
-    
+
     is_pinned = client[12] if len(client) > 12 else 0
     pin_client(client_id, not is_pinned)
-    
-    log_activity(user["id"], "pin_client", "client", client_id, 
+
+    log_activity(user["id"], "pin_client", "client", client_id,
                 f"{'Pinned' if not is_pinned else 'Unpinned'}")
-    
+
     return {
         "success": True,
         "pinned": not is_pinned,
@@ -479,20 +602,146 @@ async def update_client_bot_mode_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     try:
         data = await request.json()
         mode = data.get('mode')
-        
+
         if mode not in ['manual', 'assistant', 'autopilot']:
             return JSONResponse({"error": "Invalid mode"}, status_code=400)
-        
+
         update_client_bot_mode(client_id, mode)
-        
+
         log_info(f"🔧 Bot mode changed for {client_id}: {mode}", "api")
-        
+
         return {"success": True, "mode": mode}
-        
+
     except Exception as e:
         log_error(f"Error updating bot mode: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/preferences")
+async def get_client_preferences_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить предпочтения клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        assistant = SmartAssistant(client_id)
+
+        if not assistant.preferences:
+            return {
+                "preferences": None,
+                "has_preferences": False
+            }
+
+        return {
+            "preferences": assistant.preferences,
+            "has_preferences": True,
+            "history_count": len(assistant.history)
+        }
+
+    except Exception as e:
+        log_error(f"Error getting client preferences: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/clients/{client_id}/preferences")
+async def update_client_preferences_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить предпочтения клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        data = await request.json()
+        assistant = SmartAssistant(client_id)
+
+        success = assistant.save_preferences(data)
+
+        if success:
+            log_activity(user["id"], "update_client_preferences", "client",
+                        client_id, f"Preferences updated")
+            return {
+                "success": True,
+                "message": "Preferences saved successfully"
+            }
+        else:
+            return JSONResponse({"error": "Failed to save preferences"}, status_code=500)
+
+    except Exception as e:
+        log_error(f"Error updating client preferences: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/smart-greeting")
+async def get_smart_greeting_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить персонализированное приветствие"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        # Получаем имя клиента
+        client = get_client_by_id(client_id)
+        if not client:
+            return JSONResponse({"error": "Client not found"}, status_code=404)
+
+        client_name = client[3] or client[1] or "друг"
+        greeting = get_smart_greeting(client_id, client_name)
+
+        return {
+            "greeting": greeting,
+            "client_id": client_id,
+            "client_name": client_name
+        }
+
+    except Exception as e:
+        log_error(f"Error getting smart greeting: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/clients/{client_id}/smart-suggestion")
+async def get_smart_suggestion_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить умное предложение записи"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        # Получаем имя клиента
+        client = get_client_by_id(client_id)
+        if not client:
+            return JSONResponse({"error": "Client not found"}, status_code=404)
+
+        client_name = client[3] or client[1] or "друг"
+
+        assistant = SmartAssistant(client_id)
+        suggestion = assistant.suggest_next_booking()
+        message = assistant.generate_booking_suggestion_message(client_name)
+
+        return {
+            "suggestion": suggestion,
+            "message": message,
+            "client_id": client_id,
+            "client_name": client_name
+        }
+
+    except Exception as e:
+        log_error(f"Error getting smart suggestion: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

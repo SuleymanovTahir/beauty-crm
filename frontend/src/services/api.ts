@@ -244,8 +244,8 @@ export class ApiClient {
     })
   }
   // ===== КЛИЕНТЫ =====
-  async getClients() {
-    return this.request<any>('/api/clients')
+  async getClients(messenger: string = 'instagram') {
+    return this.request<any>(`/api/clients?messenger=${messenger}`)
   }
 
   async getClientUnreadCount(clientId: string) {
@@ -358,8 +358,8 @@ export class ApiClient {
   }
 
 
-  async getChatMessages(clientId: string, limit: number = 50) {
-    return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}`)
+  async getChatMessages(clientId: string, limit: number = 50, messenger: string = 'instagram') {
+    return this.request(`/api/chat/messages?client_id=${clientId}&limit=${limit}&messenger=${messenger}`)
   }
 
   // ===== УСЛУГИ =====

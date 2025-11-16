@@ -517,3 +517,247 @@ async def save_notification_settings(request: Request):
         import traceback
         log_error(traceback.format_exc(), "notifications")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===== НАПОМИНАНИЯ И РАССЫЛКИ =====
+
+@router.post("/notifications/reminders/send")
+async def send_manual_reminder(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Отправить напоминание клиенту вручную"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    data = await request.json()
+
+    try:
+        from notifications import send_reminder_via_preferred_messenger, save_reminder_log
+
+        client_id = data.get('client_id')
+        booking_id = data.get('booking_id')
+        preferred_messenger = data.get('messenger')  # Опционально
+
+        if not client_id:
+            return JSONResponse({"error": "client_id required"}, status_code=400)
+
+        # Получаем информацию о записи
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        if booking_id:
+            c.execute("""
+                SELECT name, service_name, datetime, master
+                FROM bookings
+                WHERE id = ? AND instagram_id = ?
+            """, (booking_id, client_id))
+        else:
+            # Берем ближайшую будущую запись
+            c.execute("""
+                SELECT name, service_name, datetime, master
+                FROM bookings
+                WHERE instagram_id = ? AND datetime > datetime('now')
+                ORDER BY datetime ASC LIMIT 1
+            """, (client_id,))
+
+        booking = c.fetchone()
+        conn.close()
+
+        if not booking:
+            return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+        name, service, datetime_str, master = booking
+
+        # Отправляем напоминание
+        result = await send_reminder_via_preferred_messenger(
+            client_id=client_id,
+            client_name=name or "Клиент",
+            service=service,
+            datetime_str=datetime_str,
+            master=master or "",
+            preferred_messenger=preferred_messenger
+        )
+
+        # Сохраняем лог
+        if booking_id:
+            save_reminder_log(
+                booking_id=booking_id,
+                client_id=client_id,
+                messenger_type=result['messenger'],
+                status='sent' if result['success'] else 'failed',
+                error_message=result.get('error')
+            )
+
+        return {
+            "success": result['success'],
+            "messenger": result['messenger'],
+            "error": result.get('error')
+        }
+
+    except Exception as e:
+        log_error(f"Error sending manual reminder: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/notifications/reminders/send-batch")
+async def send_batch_reminders(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Отправить напоминания для всех предстоящих записей"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    data = await request.json()
+
+    try:
+        from notifications import send_reminders_for_upcoming_bookings, save_reminder_log
+
+        hours_before = data.get('hours_before', 24)  # По умолчанию за 24 часа
+
+        # Отправляем напоминания
+        results = await send_reminders_for_upcoming_bookings(hours_before=hours_before)
+
+        # Сохраняем логи
+        for result in results:
+            if 'booking_id' in result:
+                save_reminder_log(
+                    booking_id=result['booking_id'],
+                    client_id=result['client_id'],
+                    messenger_type=result.get('messenger', 'unknown'),
+                    status='sent' if result['success'] else 'failed',
+                    error_message=result.get('error')
+                )
+
+        success_count = sum(1 for r in results if r['success'])
+        failed_count = len(results) - success_count
+
+        log_info(f"Batch reminders sent: {success_count} success, {failed_count} failed", "api")
+
+        return {
+            "success": True,
+            "total": len(results),
+            "sent": success_count,
+            "failed": failed_count,
+            "results": results
+        }
+
+    except Exception as e:
+        log_error(f"Error sending batch reminders: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/notifications/broadcast")
+async def send_broadcast_message(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Отправить рекламное сообщение всем клиентам или выбранной группе"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    data = await request.json()
+
+    try:
+        from notifications import get_client_preferred_messenger
+        from notifications.client_reminders import (
+            send_instagram_reminder,
+            send_telegram_reminder,
+            send_whatsapp_reminder
+        )
+
+        message = data.get('message')
+        target_messenger = data.get('messenger', 'all')  # all, instagram, telegram, whatsapp
+        client_filter = data.get('filter', 'all')  # all, active, vip, etc.
+
+        if not message:
+            return JSONResponse({"error": "message required"}, status_code=400)
+
+        # Получаем список клиентов
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
+        # Базовый запрос зависит от фильтра
+        if client_filter == 'active':
+            # Клиенты, которые были активны в последние 30 дней
+            c.execute("""
+                SELECT DISTINCT instagram_id, name
+                FROM bookings
+                WHERE datetime > datetime('now', '-30 days')
+            """)
+        elif client_filter == 'vip':
+            # VIP клиенты (более 5 записей)
+            c.execute("""
+                SELECT instagram_id, name, COUNT(*) as booking_count
+                FROM bookings
+                GROUP BY instagram_id
+                HAVING booking_count >= 5
+            """)
+        else:
+            # Все клиенты
+            c.execute("""
+                SELECT DISTINCT instagram_id, name
+                FROM bookings
+            """)
+
+        clients = c.fetchall()
+        conn.close()
+
+        # Отправляем сообщения
+        results = []
+        for client in clients:
+            client_id, name = client[0], client[1]
+
+            # Определяем мессенджер
+            if target_messenger == 'all':
+                messenger = get_client_preferred_messenger(client_id)
+            else:
+                messenger = target_messenger
+
+            try:
+                success = False
+
+                if messenger == 'instagram':
+                    success = await send_instagram_reminder(client_id, message)
+                elif messenger == 'telegram':
+                    success = await send_telegram_reminder(client_id, message)
+                elif messenger == 'whatsapp':
+                    success = await send_whatsapp_reminder(client_id, message)
+
+                results.append({
+                    "client_id": client_id,
+                    "client_name": name,
+                    "messenger": messenger,
+                    "success": success
+                })
+
+            except Exception as e:
+                log_error(f"Error sending broadcast to {client_id}: {e}", "api")
+                results.append({
+                    "client_id": client_id,
+                    "client_name": name,
+                    "messenger": messenger,
+                    "success": False,
+                    "error": str(e)
+                })
+
+        success_count = sum(1 for r in results if r['success'])
+        failed_count = len(results) - success_count
+
+        log_info(f"Broadcast sent: {success_count} success, {failed_count} failed", "api")
+
+        return {
+            "success": True,
+            "total": len(results),
+            "sent": success_count,
+            "failed": failed_count,
+            "results": results
+        }
+
+    except Exception as e:
+        log_error(f"Error sending broadcast: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

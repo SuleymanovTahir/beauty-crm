@@ -14,26 +14,64 @@ from db import (
 from integrations import send_message
 from utils.utils import require_auth, get_total_unread
 from utils.logger import log_error,log_info,log_warning
+from services.conversation_context import ConversationContext
 
 
 router = APIRouter(tags=["Chat"])
 
 _processing_suggestions = set()
 
+def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
+    """Получить историю чата по типу мессенджера"""
+    import sqlite3
+    from core.config import DATABASE_NAME
+
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    if messenger_type == 'instagram':
+        # Для Instagram используем старую таблицу chat_history
+        c.execute("""SELECT message, sender, timestamp, message_type, id
+                     FROM chat_history
+                     WHERE instagram_id = ?
+                     ORDER BY timestamp DESC LIMIT ?""",
+                  (client_id, limit))
+    else:
+        # Для других мессенджеров используем messenger_messages
+        c.execute("""
+            SELECT message_text, sender_type, created_at,
+                   COALESCE(attachments_json, 'text'), id
+            FROM messenger_messages
+            WHERE client_id = ? AND messenger_type = ?
+            ORDER BY created_at DESC LIMIT ?
+        """, (client_id, messenger_type, limit))
+
+    messages = c.fetchall()
+    conn.close()
+
+    return list(reversed(messages))
+
+
 @router.get("/chat/messages")
 async def get_chat_messages(
     client_id: str = Query(...),
     limit: int = Query(50),
+    messenger: Optional[str] = Query('instagram'),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить сообщения чата"""
+    """Получить сообщения чата с фильтрацией по мессенджеру"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    messages_raw = get_chat_history(client_id, limit=limit)
+
+    # Валидируем тип мессенджера
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok']
+    if messenger not in valid_messengers:
+        messenger = 'instagram'
+
+    messages_raw = get_messenger_chat_history(client_id, messenger, limit=limit)
     mark_messages_as_read(client_id, user["id"])
-    
+
     return {
         "messages": [
             {
@@ -44,7 +82,8 @@ async def get_chat_messages(
                 "type": msg[3] if len(msg) > 3 else "text"
             }
             for msg in messages_raw
-        ]
+        ],
+        "messenger": messenger
     }
 
 
@@ -497,7 +536,175 @@ async def update_client_bot_mode_api(
         log_info(f"🔧 Bot mode changed for {client_id}: {mode}", "api")
         
         return {"success": True, "mode": mode}
-        
+
     except Exception as e:
         log_error(f"Error updating bot mode: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# ========================================
+# CONVERSATION CONTEXT ENDPOINTS
+# ========================================
+
+@router.get("/chat/{client_id}/context")
+async def get_conversation_context_api(
+    client_id: str,
+    context_type: Optional[str] = Query(None),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить контекст разговора клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conv_context = ConversationContext(client_id)
+
+        if context_type:
+            # Получить конкретный тип контекста
+            context = conv_context.get_context(context_type)
+            if context:
+                return {
+                    "client_id": client_id,
+                    "context_type": context_type,
+                    "context": context
+                }
+            else:
+                return JSONResponse(
+                    {"error": f"Context type '{context_type}' not found or expired"},
+                    status_code=404
+                )
+        else:
+            # Получить все активные контексты
+            all_contexts = conv_context.get_all_active_contexts()
+            return {
+                "client_id": client_id,
+                "contexts": all_contexts,
+                "count": len(all_contexts)
+            }
+
+    except Exception as e:
+        log_error(f"Error getting conversation context: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/chat/{client_id}/context")
+async def save_conversation_context_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Сохранить контекст разговора"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        data = await request.json()
+        context_type = data.get('context_type')
+        context_data = data.get('context_data')
+        expires_in_minutes = data.get('expires_in_minutes', 30)
+
+        if not context_type or not context_data:
+            return JSONResponse(
+                {"error": "context_type and context_data are required"},
+                status_code=400
+            )
+
+        conv_context = ConversationContext(client_id)
+        success = conv_context.save_context(
+            context_type=context_type,
+            context_data=context_data,
+            expires_in_minutes=expires_in_minutes
+        )
+
+        if success:
+            log_activity(user["id"], "save_conversation_context", "client",
+                        client_id, f"Context: {context_type}")
+            return {
+                "success": True,
+                "message": "Context saved",
+                "context_type": context_type,
+                "expires_in_minutes": expires_in_minutes
+            }
+        else:
+            return JSONResponse({"error": "Failed to save context"}, status_code=500)
+
+    except Exception as e:
+        log_error(f"Error saving conversation context: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.put("/chat/{client_id}/context/{context_type}")
+async def update_conversation_context_api(
+    client_id: str,
+    context_type: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить существующий контекст разговора"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        data = await request.json()
+        update_data = data.get('update_data')
+        extend_expiry = data.get('extend_expiry', False)
+        expires_in_minutes = data.get('expires_in_minutes', 30)
+
+        if not update_data:
+            return JSONResponse({"error": "update_data is required"}, status_code=400)
+
+        conv_context = ConversationContext(client_id)
+        success = conv_context.update_context(
+            context_type=context_type,
+            update_data=update_data,
+            extend_expiry=extend_expiry,
+            expires_in_minutes=expires_in_minutes
+        )
+
+        if success:
+            log_activity(user["id"], "update_conversation_context", "client",
+                        client_id, f"Context: {context_type}")
+            return {
+                "success": True,
+                "message": "Context updated",
+                "context_type": context_type
+            }
+        else:
+            return JSONResponse({"error": "Failed to update context"}, status_code=500)
+
+    except Exception as e:
+        log_error(f"Error updating conversation context: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.delete("/chat/{client_id}/context")
+async def clear_conversation_context_api(
+    client_id: str,
+    context_type: Optional[str] = Query(None),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Удалить контекст разговора"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conv_context = ConversationContext(client_id)
+        success = conv_context.clear_context(context_type)
+
+        if success:
+            log_activity(user["id"], "clear_conversation_context", "client",
+                        client_id, f"Context: {context_type or 'all'}")
+            return {
+                "success": True,
+                "message": f"Context {'all' if not context_type else context_type} cleared"
+            }
+        else:
+            return JSONResponse({"error": "Failed to clear context"}, status_code=500)
+
+    except Exception as e:
+        log_error(f"Error clearing conversation context: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

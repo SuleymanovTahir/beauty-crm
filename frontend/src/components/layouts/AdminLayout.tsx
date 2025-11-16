@@ -39,8 +39,18 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   useEffect(() => {
     loadUnreadCount();
     loadEnabledMessengers();
-    const interval = setInterval(loadUnreadCount, 10000);
-    return () => clearInterval(interval);
+    const unreadInterval = setInterval(loadUnreadCount, 10000);
+
+    // Слушаем событие обновления мессенджеров
+    const handleMessengersUpdate = () => {
+      loadEnabledMessengers();
+    };
+    window.addEventListener('messengers-updated', handleMessengersUpdate);
+
+    return () => {
+      clearInterval(unreadInterval);
+      window.removeEventListener('messengers-updated', handleMessengersUpdate);
+    };
   }, []);
 
   const loadEnabledMessengers = async () => {

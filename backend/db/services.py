@@ -56,21 +56,21 @@ def get_service(service_id):
 
 
 def create_service(service_key, name, name_ru, price, currency, category,
-                   description=None, description_ru=None, benefits=None):
+                   description=None, description_ru=None, benefits=None, position_id=None):
     """Создать новую услугу"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     now = datetime.now().isoformat()
     benefits_str = '|'.join(benefits) if benefits else ''
-    
+
     try:
-        c.execute("""INSERT INTO services 
+        c.execute("""INSERT INTO services
                      (service_key, name, name_ru, price, currency, category,
-                      description, description_ru, benefits, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      description, description_ru, benefits, position_id, created_at, updated_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                   (service_key, name, name_ru, price, currency, category,
-                   description, description_ru, benefits_str, now, now))
+                   description, description_ru, benefits_str, position_id, now, now))
         conn.commit()
         conn.close()
         return True

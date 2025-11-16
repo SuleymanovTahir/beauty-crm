@@ -10,7 +10,10 @@ from core.config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,
+    get_client_by_id,
 )
+from services.smart_assistant import SmartAssistant
+from services.conversation_context import ConversationContext
 
 
 class SalonBot:
@@ -122,9 +125,77 @@ class SalonBot:
             str: Ответ бота
         """
 
-        
+
         # ✅ ИСПРАВЛЕНИЕ: Сначала строим additional_context, ПОТОМ промпт
         additional_context = ""
+
+        # 🧠 УМНЫЙ АССИСТЕНТ: Персонализация на основе истории клиента
+        try:
+            assistant = SmartAssistant(instagram_id)
+
+            # Если это приветствие или начало диалога
+            if self.should_greet(history):
+                client = get_client_by_id(instagram_id)
+                client_name = client[3] if client and client[3] else "друг"
+
+                personalized_greeting = assistant.get_personalized_greeting(client_name)
+                additional_context += f"\n\n💎 ПЕРСОНАЛИЗИРОВАННОЕ ПРИВЕТСТВИЕ:\n{personalized_greeting}\n"
+                additional_context += "⚠️ ИСПОЛЬЗУЙ ЭТО ПРИВЕТСТВИЕ вместо стандартного!\n"
+
+            # Умное предложение записи (если есть история)
+            if len(history) > 0:
+                suggestion = assistant.suggest_next_booking()
+                if suggestion and suggestion.get('confidence', 0) > 0.6:
+                    suggestion_message = assistant.generate_booking_suggestion_message(
+                        client[3] if client and client[3] else "друг"
+                    )
+                    additional_context += f"\n\n🎯 УМНОЕ ПРЕДЛОЖЕНИЕ ЗАПИСИ:\n{suggestion_message}\n"
+                    additional_context += f"Рекомендуемая дата: {suggestion['recommended_date']}\n"
+                    additional_context += f"Уверенность: {suggestion['confidence']*100:.0f}%\n"
+                    additional_context += "💡 Если клиент спрашивает о записи - используй это предложение!\n"
+        except Exception as e:
+            # Не критично, если SmartAssistant не сработал
+            print(f"ℹ️ SmartAssistant skipped: {e}")
+
+        # 💬 КОНТЕКСТ РАЗГОВОРА: Проверяем активные контексты
+        try:
+            conv_context = ConversationContext(instagram_id)
+            active_contexts = conv_context.get_all_active_contexts()
+
+            if active_contexts:
+                additional_context += f"\n\n📋 АКТИВНЫЕ КОНТЕКСТЫ РАЗГОВОРА:\n"
+
+                # Процесс записи в процессе
+                if "booking_in_progress" in active_contexts:
+                    booking_ctx = active_contexts["booking_in_progress"]["data"]
+                    additional_context += f"\n🔄 НЕЗАВЕРШЕННАЯ ЗАПИСЬ:\n"
+                    additional_context += f"   Текущий шаг: {booking_ctx.get('step', '?')}\n"
+                    additional_context += f"   Услуга: {booking_ctx.get('service', 'не выбрана')}\n"
+                    additional_context += f"   Мастер: {booking_ctx.get('master', 'не выбран')}\n"
+                    additional_context += f"   Дата: {booking_ctx.get('date', 'не выбрана')}\n"
+                    additional_context += f"   Время: {booking_ctx.get('time', 'не выбрано')}\n"
+                    additional_context += "⚠️ ПРОДОЛЖИ этот процесс записи! Спроси про следующий шаг.\n"
+
+                # Ожидание подтверждения
+                if "awaiting_confirmation" in active_contexts:
+                    confirm_ctx = active_contexts["awaiting_confirmation"]["data"]
+                    additional_context += f"\n⏳ ОЖИДАЕТСЯ ПОДТВЕРЖДЕНИЕ:\n"
+                    additional_context += f"   Вопрос: {confirm_ctx.get('question', '?')}\n"
+                    if "booking_details" in confirm_ctx:
+                        details = confirm_ctx["booking_details"]
+                        additional_context += f"   Детали записи: {details}\n"
+                    additional_context += "⚠️ Проверь, является ли сообщение подтверждением (да/нет).\n"
+
+                # Ожидание выбора из опций
+                if "awaiting_choice" in active_contexts:
+                    choice_ctx = active_contexts["awaiting_choice"]["data"]
+                    additional_context += f"\n🎯 ОЖИДАЕТСЯ ВЫБОР:\n"
+                    additional_context += f"   Вопрос: {choice_ctx.get('question', '?')}\n"
+                    additional_context += f"   Опции: {choice_ctx.get('options', [])}\n"
+                    additional_context += "⚠️ Проверь, выбрал ли клиент одну из опций.\n"
+
+        except Exception as e:
+            print(f"ℹ️ ConversationContext skipped: {e}")
 
         if context_flags:
             if context_flags.get('has_incomplete_booking'):

@@ -653,6 +653,8 @@ export default function AdminSettings() {
       await api.updateMessengerSetting(messengerType, { is_enabled: !currentState });
       toast.success(`${messengerType} ${!currentState ? 'включен' : 'выключен'}`);
       loadMessengerSettings();
+      // Отправляем событие для обновления меню мессенджеров
+      window.dispatchEvent(new Event('messengers-updated'));
     } catch (err) {
       console.error('Error toggling messenger:', err);
       toast.error('Ошибка при изменении настройки');
@@ -666,6 +668,8 @@ export default function AdminSettings() {
       setEditingMessenger(null);
       setMessengerForm({ api_token: '', webhook_url: '' });
       loadMessengerSettings();
+      // Отправляем событие для обновления меню мессенджеров
+      window.dispatchEvent(new Event('messengers-updated'));
     } catch (err) {
       console.error('Error saving messenger config:', err);
       toast.error('Ошибка при сохранении настроек');
