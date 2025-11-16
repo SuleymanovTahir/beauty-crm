@@ -124,6 +124,18 @@ def main():
     results = {}
 
     # ========================================================================
+    # ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ
+    # ========================================================================
+    print_header("ИНИЦИАЛИЗАЦИЯ БАЗОВЫХ ТАБЛИЦ")
+    try:
+        from db.init import init_database
+        init_database()
+        print("✅ Базовые таблицы инициализированы")
+    except Exception as e:
+        print(f"❌ Ошибка инициализации: {e}")
+        return False
+
+    # ========================================================================
     # SCHEMA МИГРАЦИИ - Изменения структуры БД
     # ========================================================================
     print_header("SCHEMA МИГРАЦИИ - Структура БД")
@@ -277,7 +289,7 @@ def main():
     # Chat
     results["schema/chat/add_chat_features"] = run_migration_function(
         'db.migrations.schema.chat.add_chat_features',
-        'add_chat_features',
+        'add_chat_features_tables',
         'Дополнительные функции чата'
     )
 
@@ -356,6 +368,13 @@ def main():
         'Поля для сброса пароля'
     )
 
+    # ВАЖНО: add_user_subscriptions должен быть ДО add_subscription_channels
+    results["schema/users/add_user_subscriptions"] = run_migration_function(
+        'db.migrations.schema.users.add_user_subscriptions',
+        'add_user_subscriptions',
+        'Подписки пользователя (создание таблицы)'
+    )
+
     results["schema/users/add_subscription_channels"] = run_migration_function(
         'db.migrations.schema.users.add_subscription_channels',
         'add_subscription_channels',
@@ -383,12 +402,6 @@ def main():
         'db.migrations.schema.users.add_user_position',
         'add_user_position',
         'Должность пользователя'
-    )
-
-    results["schema/users/add_user_subscriptions"] = run_migration_function(
-        'db.migrations.schema.users.add_user_subscriptions',
-        'add_user_subscriptions',
-        'Подписки пользователя'
     )
 
     # Other
