@@ -1151,6 +1151,98 @@ export class ApiClient {
     }>('/api/messengers/unread-count')
   }
 
+  // ===== PERMISSIONS & ROLES =====
+
+  async getAllRoles() {
+    return this.request<{
+      roles: Record<string, {
+        name: string
+        permissions: string[] | '*'
+        can_manage_roles: string[]
+        hierarchy_level: number
+      }>
+      count: number
+    }>('/api/permissions/roles')
+  }
+
+  async getPermissionDescriptions() {
+    return this.request<{
+      permissions: Record<string, string>
+      count: number
+    }>('/api/permissions/descriptions')
+  }
+
+  async getClientStatuses() {
+    return this.request<{
+      statuses: Record<string, {
+        label: string
+        color: string
+        icon: string
+      }>
+      count: number
+    }>('/api/permissions/statuses')
+  }
+
+  async getUserPermissions(userId: number) {
+    return this.request<{
+      user: {
+        id: number
+        username: string
+        full_name: string
+        role: string
+        email: string
+      }
+      role_info: {
+        name: string
+        hierarchy_level: number
+        permissions: string[] | '*'
+        can_manage_roles: string[]
+      }
+    }>(`/api/permissions/user/${userId}`)
+  }
+
+  async updateUserRole(userId: number, role: string) {
+    return this.request<{
+      success: boolean
+      message: string
+      old_role: string
+      new_role: string
+    }>(`/api/permissions/user/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ role }),
+    })
+  }
+
+  async checkPermission(permission: string) {
+    return this.request<{
+      user_id: number
+      role: string
+      permission: string
+      has_permission: boolean
+    }>('/api/permissions/check', {
+      method: 'POST',
+      body: JSON.stringify({ permission }),
+    })
+  }
+
+  async getAllUsersWithPermissions() {
+    return this.request<{
+      users: Array<{
+        id: number
+        username: string
+        full_name: string
+        role: string
+        role_name: string
+        email: string
+        is_active: boolean
+        created_at: string
+        hierarchy_level: number
+        can_edit: boolean
+      }>
+      count: number
+    }>('/api/permissions/users')
+  }
+
 }
 
 

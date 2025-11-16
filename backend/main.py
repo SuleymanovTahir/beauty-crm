@@ -51,6 +51,7 @@ from api.dashboard import router as dashboard_router
 from api.schedule import router as schedule_router
 from api.loyalty import router as loyalty_router
 from api.auto_booking import router as auto_booking_router
+from api.permissions import router as permissions_router
 
 
 
@@ -89,6 +90,7 @@ app.include_router(dashboard_router, prefix="/api")  # Dashboard & Analytics API
 app.include_router(schedule_router, prefix="/api")  # Master Schedule API
 app.include_router(loyalty_router, prefix="/api")  # Loyalty Program API
 app.include_router(auto_booking_router, prefix="/api")  # Auto-Booking API
+app.include_router(permissions_router, prefix="/api")  # Permissions & Roles API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -350,6 +352,7 @@ async def startup_event():
     # ================================
     # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
     # ================================
+    # Запускаются все миграции при каждом старте (идемпотентны)
     from db.migrations.run_all_migrations import run_all_migrations
     log_info("🔧 Запуск миграций...", "startup")
     # run_all_migrations()
@@ -357,21 +360,20 @@ async def startup_event():
     # ================================
     # ПОЛНОЕ ТЕСТИРОВАНИЕ (опционально)
     # ================================
-    # Раскомментируйте для запуска всех тестов при старте
-    # from tests.run_all_tests import run_all_tests
-    # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests()
+    # Раскомментируйте для запуска ВСЕХ тестов при старте
+    # Рекомендуется только для development окружения
+    from tests.run_all_tests import run_all_tests
+    log_info("🧪 Запуск всех тестов...", "startup")
+    run_all_tests()
 
-#  для проверки при старте:
-
-    from tests.startup.startup_tests import run_all_startup_tests
-    log_info("🧪 Запуск startup тестов...", "startup")
-    run_all_startup_tests()
-
-    # Или выборочно:
-    # from tests.startup.startup_tests import startup_test_notifications, startup_test_reminders_api
-    # startup_test_notifications()
-    # startup_test_reminders_api()
+    # ================================
+    # STARTUP ТЕСТЫ (опционально)
+    # ================================
+    # Быстрые тесты при старте (проверка критичных компонентов)
+    # Раскомментируйте для проверки работоспособности при старте
+    # from tests.startup.startup_tests import run_all_startup_tests
+    # log_info("🧪 Запуск startup тестов...", "startup")
+    # run_all_startup_tests()
 
 
 
