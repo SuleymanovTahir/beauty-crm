@@ -14361,3 +14361,11 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 13:13:14 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
 2025-11-16 13:13:24 - crm - INFO - [middleware] 🔥 GET /api/unread-count
 2025-11-16 13:13:24 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 13:13:34 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 13:13:34 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 13:13:44 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 13:13:44 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.01s)
+2025-11-16 13:13:54 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 13:13:54 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.00s)
+2025-11-16 13:14:43 - crm - INFO - [middleware] 🔥 GET /api/unread-count
+2025-11-16 13:14:43 - crm - INFO - [middleware] 📤 GET /api/unread-count → 200 (0.03s)
