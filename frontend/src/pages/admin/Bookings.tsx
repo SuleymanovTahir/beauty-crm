@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
@@ -733,7 +733,37 @@ export default function Bookings() {
                         }}>
                           {(booking.name || 'N').charAt(0).toUpperCase()}
                         </div>
-                        <span style={{ fontSize: '0.875rem', color: '#111' }}>{booking.name || t('bookings:no_name')}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                          <span style={{ fontSize: '0.875rem', color: '#111' }}>{booking.name || t('bookings:no_name')}</span>
+                          {booking.messengers && booking.messengers.length > 0 && (
+                            <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+                              {booking.messengers.map((messenger: string) => (
+                                <div
+                                  key={messenger}
+                                  style={{
+                                    width: '18px',
+                                    height: '18px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor:
+                                      messenger === 'instagram' ? '#E4405F' :
+                                      messenger === 'telegram' ? '#0088cc' :
+                                      messenger === 'whatsapp' ? '#25D366' :
+                                      '#6b7280'
+                                  }}
+                                  title={messenger}
+                                >
+                                  {messenger === 'instagram' && <Instagram size={12} color="white" />}
+                                  {messenger === 'telegram' && <Send size={12} color="white" />}
+                                  {messenger === 'whatsapp' && <MessageSquare size={12} color="white" />}
+                                  {!['instagram', 'telegram', 'whatsapp'].includes(messenger) && <MessageSquare size={12} color="white" />}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service_name || '-'}</td>
@@ -781,7 +811,12 @@ export default function Bookings() {
                           <Edit style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
                         </button>
                         <button
-                          onClick={() => navigate(`/admin/chat?client_id=${booking.client_id}`)}
+                          onClick={() => {
+                            const messenger = booking.messengers && booking.messengers.length > 0
+                              ? booking.messengers[0]
+                              : 'instagram';
+                            navigate(`/admin/chat?client_id=${booking.client_id}&messenger=${messenger}`);
+                          }}
                           style={{
                             padding: '0.375rem 0.75rem',
                             backgroundColor: '#fff',

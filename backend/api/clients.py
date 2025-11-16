@@ -19,6 +19,33 @@ from utils.logger import log_error,log_info
 router = APIRouter(tags=["Clients"])
 
 
+def get_client_messengers(client_id: str):
+    """Получить список мессенджеров, которыми пользуется клиент"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    messengers = []
+
+    # Проверяем Instagram (из старой таблицы)
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    if c.fetchone()[0] > 0:
+        messengers.append('instagram')
+
+    # Проверяем другие мессенджеры
+    c.execute("""
+        SELECT DISTINCT messenger_type
+        FROM messenger_messages
+        WHERE client_id = ?
+    """, (client_id,))
+
+    for row in c.fetchall():
+        if row[0] not in messengers:
+            messengers.append(row[0])
+
+    conn.close()
+    return messengers
+
+
 def get_clients_by_messenger(messenger_type: str = 'instagram'):
     """Получить клиентов по типу мессенджера"""
     conn = sqlite3.connect(DATABASE_NAME)
@@ -89,6 +116,20 @@ async def list_clients(
         "unread_count": get_total_unread(),
         "messenger": messenger
     }
+
+
+@router.get("/clients/{client_id}/messengers")
+async def get_client_messengers_api(
+    client_id: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить список мессенджеров клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    messengers = get_client_messengers(client_id)
+    return {"messengers": messengers}
 
 
 @router.get("/clients/{client_id}")
@@ -224,6 +265,48 @@ async def update_client_status_api(
     return {"success": True, "message": "Client status updated"}
 
 
+@router.post("/clients/{client_id}/preferred-messenger")
+async def update_preferred_messenger_api(
+    client_id: str,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить предпочтительный мессенджер для клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    data = await request.json()
+    preferred_messenger = data.get('preferred_messenger')
+
+    # Валидация
+    valid_messengers = ['instagram', 'telegram', 'whatsapp', 'tiktok', None]
+    if preferred_messenger not in valid_messengers:
+        return JSONResponse({"error": "Invalid messenger type"}, status_code=400)
+
+    # Обновляем поле
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            UPDATE clients
+            SET preferred_messenger = ?
+            WHERE instagram_id = ?
+        """, (preferred_messenger, client_id))
+        conn.commit()
+
+        log_activity(user["id"], "update_preferred_messenger", "client",
+                    client_id, f"Preferred messenger: {preferred_messenger}")
+
+        return {"success": True, "preferred_messenger": preferred_messenger}
+    except Exception as e:
+        log_error(f"Error updating preferred messenger: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+
 @router.post("/clients/{client_id}/pin")
 async def pin_client_api(
     client_id: str,
@@ -233,17 +316,17 @@ async def pin_client_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     client = get_client_by_id(client_id)
     if not client:
         return JSONResponse({"error": "Client not found"}, status_code=404)
-    
+
     is_pinned = client[12] if len(client) > 12 else 0
     pin_client(client_id, not is_pinned)
-    
-    log_activity(user["id"], "pin_client", "client", client_id, 
+
+    log_activity(user["id"], "pin_client", "client", client_id,
                 f"{'Pinned' if not is_pinned else 'Unpinned'}")
-    
+
     return {
         "success": True,
         "pinned": not is_pinned,

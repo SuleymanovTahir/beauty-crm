@@ -18,29 +18,63 @@ from utils.logger import log_error, log_warning
 router = APIRouter(tags=["Bookings"])
 
 
+def get_client_messengers_for_bookings(client_id: str):
+    """Получить список мессенджеров клиента для bookings"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+
+    messengers = []
+
+    # Проверяем Instagram
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    if c.fetchone()[0] > 0:
+        messengers.append('instagram')
+
+    # Проверяем другие мессенджеры
+    c.execute("""
+        SELECT DISTINCT messenger_type
+        FROM messenger_messages
+        WHERE client_id = ?
+    """, (client_id,))
+
+    for row in c.fetchall():
+        if row[0] not in messengers:
+            messengers.append(row[0])
+
+    conn.close()
+    return messengers
+
+
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
     """Получить все записи"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
+
     bookings = get_all_bookings()
+
+    # Добавляем информацию о мессенджерах для каждой записи
+    bookings_with_messengers = []
+    for b in bookings:
+        client_id = b[1]
+        messengers = get_client_messengers_for_bookings(client_id)
+
+        bookings_with_messengers.append({
+            "id": b[0],
+            "client_id": client_id,
+            "service": b[2],
+            "datetime": b[3],
+            "phone": b[4],
+            "name": b[5],
+            "status": b[6],
+            "created_at": b[7],
+            "revenue": b[8] if len(b) > 8 else 0,
+            "messengers": messengers
+        })
+
     return {
-        "bookings": [
-            {
-                "id": b[0],
-                "client_id": b[1],
-                "service": b[2],
-                "datetime": b[3],
-                "phone": b[4],
-                "name": b[5],
-                "status": b[6],
-                "created_at": b[7],
-                "revenue": b[8] if len(b) > 8 else 0
-            }
-            for b in bookings
-        ],
+        "bookings": bookings_with_messengers,
         "count": len(bookings)
     }
 
