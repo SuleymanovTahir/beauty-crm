@@ -12530,3 +12530,23 @@ RuntimeError: asyncio.run() cannot be called from a running event loop
 2025-11-16 10:08:40 - crm - INFO - [startup] ✅ Планировщики запущены
 2025-11-16 10:08:40 - crm - INFO - [startup] ✅ CRM готова к работе!
 2025-11-16 10:08:40 - crm - INFO - [startup] ======================================================================
+2025-11-16 06:17:38 - crm - INFO - [schedule] Working hours set for Тест Мастер on day 0: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 0: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 1: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 2: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 3: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 4: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Тест Мастер Детальный on day 5: 10:00-14:00
+2025-11-16 06:17:41 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 06:17:41 - crm - INFO - [schedule] Time off added for Тест Мастер Детальный: 2025-11-17 to 2025-11-17
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 0: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 1: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 2: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 3: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 4: 09:00-18:00
+2025-11-16 06:17:41 - crm - INFO - [schedule] Working hours set for Анна on day 5: 10:00-16:00
+2025-11-16 06:17:41 - crm - ERROR - [schedule] Error setting working hours: NOT NULL constraint failed: master_schedule.start_time
+2025-11-16 06:17:41 - crm - INFO - [schedule] Time off added for Анна: 2025-11-17 to 2025-11-17
+2025-11-16 06:17:41 - crm - INFO - [loyalty] Earned 120 points for test_client_123: Тестовая запись на маникюр
+2025-11-16 06:17:41 - crm - INFO - [smart_assistant] Preferences saved for client test_client_123
+2025-11-16 06:17:41 - crm - INFO - [smart_assistant] Learned from booking for client test_client_123

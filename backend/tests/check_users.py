@@ -3,8 +3,12 @@
 """
 import sqlite3
 import os
+import sys
 
-db_path = 'crm.db'
+# Добавляем путь к backend
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from core.config import DATABASE_NAME as db_path
 
 if not os.path.exists(db_path):
     print("❌ База данных не существует!")

@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 
 # Добавляем путь к backend
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from services.analytics import AnalyticsService
 from services.master_schedule import MasterScheduleService

@@ -8,7 +8,7 @@ import traceback
 import sqlite3
 
 # Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from core.config import DATABASE_NAME
 

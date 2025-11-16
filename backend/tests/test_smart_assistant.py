@@ -6,7 +6,7 @@ import sys
 import os
 
 # Добавляем путь к backend
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 

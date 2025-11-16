@@ -6,8 +6,10 @@ import sqlite3
 import sys
 import os
 
-# Путь к БД
-DB_PATH = "crm_system.db"
+# Добавляем путь к backend
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from core.config import DATABASE_NAME as DB_PATH
 
 def check_employees():
     """Проверить существующих сотрудников"""
