@@ -362,7 +362,7 @@ export class PermissionChecker {
   // === РАССЫЛКИ ===
 
   static canSendBroadcasts(role: string): boolean {
-    return ['director', 'admin', 'marketer'].includes(role);
+    return ['director', 'admin', 'sales'].includes(role);
   }
 
   // === INSTAGRAM ===

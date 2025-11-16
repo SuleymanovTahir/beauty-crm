@@ -9,7 +9,8 @@ import {
   MessageCircle,
   LogOut,
   Menu,
-  X
+  X,
+  Send
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -68,6 +69,7 @@ export default function SalesLayout({ user, onLogout }: SalesLayoutProps) {
       { icon: Users, label: 'Клиенты', path: '/sales/clients', requirePermission: () => true }, // sales видит ограниченный список
       { icon: MessageSquare, label: 'Instagram чат', path: '/sales/chat', badge: unreadCount, requirePermission: () => permissions.canViewInstagramChat },
       { icon: BarChart3, label: 'Аналитика', path: '/sales/analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: Send, label: 'Рассылки', path: '/sales/broadcasts', requirePermission: () => permissions.canSendBroadcasts },
       { icon: MessageCircle, label: 'Внутренний чат', path: '/sales/internal-chat', requirePermission: () => true },
     ];
 

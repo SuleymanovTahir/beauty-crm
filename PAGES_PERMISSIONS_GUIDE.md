@@ -81,7 +81,7 @@ function MyPage() {
    - Доступ только если `canEditSettings` (только директор!)
 
 5. **`admin/Broadcasts.tsx`** - рассылки
-   - Доступ только если `canSendBroadcasts` (director, admin, marketer)
+   - Доступ только если `canSendBroadcasts` (director, admin, sales)
 
 ### Важные (желательно обновить):
 
