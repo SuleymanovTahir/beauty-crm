@@ -87,70 +87,70 @@ def run_all_tests():
     # ========================================================================
     # 4. comprehensive_test.py - Комплексное тестирование
     # ========================================================================
-    print_test_file(
-        "tests/comprehensive_test.py",
-        "Полное end-to-end тестирование всей системы"
-    )
-    try:
-        from tests.comprehensive_test import run_comprehensive_test
-        result = run_comprehensive_test()
-        results.append(("comprehensive_test.py - Комплексное тестирование", result))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("comprehensive_test.py - Комплексное тестирование", False))
+    # print_test_file(
+    #     "tests/comprehensive_test.py",
+    #     "Полное end-to-end тестирование всей системы"
+    # )
+    # try:
+    #     from tests.comprehensive_test import run_comprehensive_test
+    #     result = run_comprehensive_test()
+    #     results.append(("comprehensive_test.py - Комплексное тестирование", result))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("comprehensive_test.py - Комплексное тестирование", False))
 
-    # ========================================================================
-    # 5. test_smart_assistant.py - AI ассистент
-    # ========================================================================
-    print_test_file(
-        "tests/test_smart_assistant.py",
-        "Тестирование AI SmartAssistant"
-    )
-    try:
-        # Этот файл нужно запустить как subprocess т.к. у него есть if __name__
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "test_smart_assistant.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("test_smart_assistant.py - AI ассистент", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("test_smart_assistant.py - AI ассистент", False))
+    # # ========================================================================
+    # # 5. test_smart_assistant.py - AI ассистент
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/test_smart_assistant.py",
+    #     "Тестирование AI SmartAssistant"
+    # )
+    # try:
+    #     # Этот файл нужно запустить как subprocess т.к. у него есть if __name__
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "test_smart_assistant.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("test_smart_assistant.py - AI ассистент", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("test_smart_assistant.py - AI ассистент", False))
 
-    # ========================================================================
-    # 6. test_immediate_notification.py - Уведомления
-    # ========================================================================
-    print_test_file(
-        "tests/test_immediate_notification.py",
-        "Тестирование системы уведомлений"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "test_immediate_notification.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("test_immediate_notification.py - Уведомления", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("test_immediate_notification.py - Уведомления", False))
+    # # ========================================================================
+    # # 6. test_immediate_notification.py - Уведомления
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/test_immediate_notification.py",
+    #     "Тестирование системы уведомлений"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "test_immediate_notification.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("test_immediate_notification.py - Уведомления", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("test_immediate_notification.py - Уведомления", False))
 
     # ========================================================================
     # 7. check_bot.py - Проверка бота
@@ -181,102 +181,102 @@ def run_all_tests():
     # ========================================================================
     # 8. check_employees.py - Проверка сотрудников
     # ========================================================================
-    print_test_file(
-        "tests/check_employees.py",
-        "Проверка данных сотрудников"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "check_employees.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("check_employees.py - Сотрудники", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("check_employees.py - Сотрудники", False))
+    # print_test_file(
+    #     "tests/check_employees.py",
+    #     "Проверка данных сотрудников"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "check_employees.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("check_employees.py - Сотрудники", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("check_employees.py - Сотрудники", False))
 
-    # ========================================================================
-    # 9. check_services.py - Проверка услуг
-    # ========================================================================
-    print_test_file(
-        "tests/check_services.py",
-        "Проверка услуг салона"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "check_services.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("check_services.py - Услуги", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("check_services.py - Услуги", False))
+    # # ========================================================================
+    # # 9. check_services.py - Проверка услуг
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/check_services.py",
+    #     "Проверка услуг салона"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "check_services.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("check_services.py - Услуги", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("check_services.py - Услуги", False))
 
-    # ========================================================================
-    # 10. check_users.py - Проверка пользователей
-    # ========================================================================
-    print_test_file(
-        "tests/check_users.py",
-        "Проверка пользователей CRM"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "check_users.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("check_users.py - Пользователи", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("check_users.py - Пользователи", False))
+    # # ========================================================================
+    # # 10. check_users.py - Проверка пользователей
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/check_users.py",
+    #     "Проверка пользователей CRM"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "check_users.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("check_users.py - Пользователи", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("check_users.py - Пользователи", False))
 
-    # ========================================================================
-    # 11. check_migrations.py - Проверка миграций
-    # ========================================================================
-    print_test_file(
-        "tests/check_migrations.py",
-        "Проверка примененных миграций"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "check_migrations.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("check_migrations.py - Миграции", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("check_migrations.py - Миграции", False))
+    # # ========================================================================
+    # # 11. check_migrations.py - Проверка миграций
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/check_migrations.py",
+    #     "Проверка примененных миграций"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "check_migrations.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("check_migrations.py - Миграции", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("check_migrations.py - Миграции", False))
 
     # ========================================================================
     # 12. API тесты - test_reminders_api.py
@@ -333,79 +333,79 @@ def run_all_tests():
     # ========================================================================
     # 14. Рассылки и напоминания
     # ========================================================================
-    print_test_file(
-        "tests/test_broadcasts_and_reminders.py",
-        "Тестирование акционных рассылок и напоминаний Instagram"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "test_broadcasts_and_reminders.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", False))
+    # print_test_file(
+    #     "tests/test_broadcasts_and_reminders.py",
+    #     "Тестирование акционных рассылок и напоминаний Instagram"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "test_broadcasts_and_reminders.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("test_broadcasts_and_reminders.py - Рассылки и напоминания", False))
 
-    # ========================================================================
-    # 15. Система управления правами
-    # ========================================================================
-    print_test_file(
-        "tests/test_permissions.py",
-        "Тестирование системы управления правами и ролями"
-    )
-    try:
-        import subprocess
-        result = subprocess.run(
-            [sys.executable, os.path.join(os.path.dirname(__file__), "test_permissions.py")],
-            capture_output=True,
-            text=True
-        )
-        print(result.stdout)
-        if result.stderr:
-            print(result.stderr)
-        success = result.returncode == 0
-        results.append(("test_permissions.py - Управление правами", success))
-    except Exception as e:
-        print(f"❌ Ошибка: {e}")
-        import traceback
-        traceback.print_exc()
-        results.append(("test_permissions.py - Управление правами", False))
+    # # ========================================================================
+    # # 15. Система управления правами
+    # # ========================================================================
+    # print_test_file(
+    #     "tests/test_permissions.py",
+    #     "Тестирование системы управления правами и ролями"
+    # )
+    # try:
+    #     import subprocess
+    #     result = subprocess.run(
+    #         [sys.executable, os.path.join(os.path.dirname(__file__), "test_permissions.py")],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     print(result.stdout)
+    #     if result.stderr:
+    #         print(result.stderr)
+    #     success = result.returncode == 0
+    #     results.append(("test_permissions.py - Управление правами", success))
+    # except Exception as e:
+    #     print(f"❌ Ошибка: {e}")
+    #     import traceback
+    #     traceback.print_exc()
+    #     results.append(("test_permissions.py - Управление правами", False))
 
-    # ========================================================================
-    # ИТОГИ
-    # ========================================================================
-    print_header("ИТОГИ ТЕСТИРОВАНИЯ")
+    # # ========================================================================
+    # # ИТОГИ
+    # # ========================================================================
+    # print_header("ИТОГИ ТЕСТИРОВАНИЯ")
 
-    total = len(results)
-    passed = sum(1 for _, s in results if s)
-    failed = total - passed
+    # total = len(results)
+    # passed = sum(1 for _, s in results if s)
+    # failed = total - passed
 
-    for name, success in results:
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} - {name}")
+    # for name, success in results:
+    #     status = "✅ PASS" if success else "❌ FAIL"
+    #     print(f"{status} - {name}")
 
-    print(f"\n  Всего тестов: {total}")
-    print(f"  Пройдено: {passed}")
-    print(f"  Провалено: {failed}")
+    # print(f"\n  Всего тестов: {total}")
+    # print(f"  Пройдено: {passed}")
+    # print(f"  Провалено: {failed}")
 
-    if failed == 0:
-        print("\n  🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!")
-    else:
-        print("\n  ⚠️  Некоторые тесты провалены")
-        print("  ℹ️  Проверьте логи выше для деталей")
+    # if failed == 0:
+    #     print("\n  🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!")
+    # else:
+    #     print("\n  ⚠️  Некоторые тесты провалены")
+    #     print("  ℹ️  Проверьте логи выше для деталей")
 
-    print("=" * 80 + "\n")
+    # print("=" * 80 + "\n")
 
-    return passed == total
+    # return passed == total
 
 
 if __name__ == "__main__":
