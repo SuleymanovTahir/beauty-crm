@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Filter, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, RefreshCw, Download, Loader, AlertCircle } from 'lucide-react';
+import { Filter, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, RefreshCw, Download, Loader, AlertCircle, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface FunnelData {
   visitors: number;
@@ -46,6 +48,8 @@ const stageDescriptions = [
 
 export default function Funnel() {
   const { t } = useTranslation(['manager/Funnel', 'common']);
+  const { user: currentUser } = useAuth();
+  const userPermissions = usePermissions(currentUser?.role || 'employee');
   const [funnel, setFunnel] = useState<FunnelData | null>(null);
   const [period, setPeriod] = useState('month');
   const [loading, setLoading] = useState(true);
@@ -70,6 +74,21 @@ export default function Funnel() {
       setLoading(false);
     }
   };
+
+  // Check permissions
+  if (!userPermissions.canViewAnalytics) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
+          <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <p className="text-gray-600">
+            У вас нет прав для просмотра аналитики. Обратитесь к администратору.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
