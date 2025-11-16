@@ -1133,12 +1133,14 @@ export default function Bookings() {
         }}>
           <div style={{
             backgroundColor: '#fff', borderRadius: '1rem',
-            width: '100%', maxWidth: '600px', overflow: 'auto',
-            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
+            width: '100%', maxWidth: '600px', maxHeight: '90vh',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+            display: 'flex', flexDirection: 'column', overflow: 'hidden'
           }}>
             <div style={{
               padding: '1.5rem', borderBottom: '1px solid #e5e7eb',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              flexShrink: 0
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
                 {t('bookings:add_booking')}
@@ -1149,7 +1151,7 @@ export default function Bookings() {
               }}>×</button>
             </div>
 
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', flex: 1 }}>
               {/* Client Search */}
               <div style={{ position: 'relative' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
@@ -1428,7 +1430,7 @@ export default function Bookings() {
 
             <div style={{
               padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb',
-              display: 'flex', gap: '0.75rem'
+              display: 'flex', gap: '0.75rem', flexShrink: 0
             }}>
               <button
                 onClick={() => { setShowAddDialog(false); resetForm(); }}
