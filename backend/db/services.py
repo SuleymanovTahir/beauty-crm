@@ -391,14 +391,23 @@ def format_service_price_for_bot(service) -> str:
     max_price = service[7] if len(service) > 7 and service[7] else None
     currency = service[8] if len(service) > 8 else "AED"
 
-    # ✅ ПРАВИЛЬНАЯ ЛОГИКА
+    # Убираем .0 у целых чисел
+    def format_number(num):
+        if num is None:
+            return None
+        return int(num) if num == int(num) else num
+
+    # ✅ НОВАЯ ЛОГИКА: Показываем ценность, а не пугаем диапазоном
     if min_price and max_price and min_price != max_price:
         # Проверяем правильный порядок (min всегда меньше max)
         if min_price > max_price:
             min_price, max_price = max_price, min_price  # Меняем местами
-        return f"от {min_price} до {max_price} {currency}"
+        # Показываем максимальную цену как ценность
+        max_clean = format_number(max_price)
+        return f"всего лишь {max_clean} дирхам"
     else:
-        return f"{price} {currency}"
+        price_clean = format_number(price)
+        return f"{price_clean} {currency}"
 
 
 # ===== SERVICE POSITIONS (Должности для услуг) =====
