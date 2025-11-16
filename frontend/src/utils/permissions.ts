@@ -362,7 +362,7 @@ export class PermissionChecker {
 
   static canViewBotSettings(role: string): boolean {
     return (
-      ['director', 'sales'].includes(role) ||
+      ['director', 'admin', 'sales'].includes(role) ||
       RoleHierarchy.hasPermission(role, 'bot_settings_view')
     );
   }

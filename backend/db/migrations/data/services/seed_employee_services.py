@@ -35,12 +35,12 @@ def seed_employee_services():
                 services_by_category[category] = []
             services_by_category[category].append((service_id, name))
 
-        # Position to categories mapping
+        # Position to categories mapping (case-insensitive)
         position_rules = {
-            'HAIR STYLIST': ['Hair', 'Brows', 'Lashes'],
-            'NAIL MASTER': ['Nails'],
-            'NAIL/WAXING': ['Nails', 'Waxing', 'Brows'],
-            'NAIL MASTER/MASSAGES': ['Nails', 'Massage'],
+            'Hair Stylist': ['Hair', 'Brows', 'Lashes'],
+            'Nail Master': ['Nails'],
+            'Nail/Waxing': ['Nails', 'Waxing', 'Brows'],
+            'Nail Master/Massages': ['Nails', 'Massage'],
             'Владелец': []  # Owner can do everything or nothing (admin role)
         }
 
