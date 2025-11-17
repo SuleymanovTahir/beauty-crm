@@ -15,7 +15,7 @@ from core.config import DATABASE_NAME
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
 from services.smart_assistant import SmartAssistant
-from notifications import notify_master_about_booking, get_master_info, save_notification_log
+from notifications.master_notifications import notify_master_about_booking, get_master_info, save_notification_log
 
 router = APIRouter(tags=["Bookings"])
 
@@ -311,6 +311,9 @@ async def import_bookings(
             wb = load_workbook(io.BytesIO(content))
             ws = wb.active
             
+            if ws is None:
+                return JSONResponse({"error": "No active worksheet found"}, status_code=400)
+            
             headers = [cell.value for cell in ws[1]]
             
             for row in ws.iter_rows(min_row=2, values_only=True):
@@ -318,25 +321,18 @@ async def import_bookings(
                     row_dict = dict(zip(headers, row))
                     
                     # Извлекаем данные из row_dict с fallback значениями
-                    instagram_id: str = (
-                        row_dict.get('instagram_id') or
-                        row_dict.get('ID') or
-                        f"import_{int(time.time())}_{imported_count}"
-                    )
-                    name: str = (
-                        row_dict.get('name') or
-                        row_dict.get('Имя') or
-                        'Импортированный клиент'
-                    )
-                    phone: str = str(row_dict.get('phone') or row_dict.get('Телефон') or '')
-                    service: str = row_dict.get('service') or row_dict.get('Услуга') or 'Неизвестно'
-                    datetime_str: str = str(
+                    instagram_id = str(row_dict.get('instagram_id') or row_dict.get('ID') or f"import_{int(time.time())}_{imported_count}")
+                    name = str(row_dict.get('name') or row_dict.get('Имя') or 'Импортированный клиент')
+                    phone = str(row_dict.get('phone') or row_dict.get('Телефон') or '')
+                    service = str(row_dict.get('service') or row_dict.get('Услуга') or 'Неизвестно')
+                    datetime_str = str(
                         row_dict.get('datetime') or
                         row_dict.get('Дата/Время') or
                         datetime.now().isoformat()
                     )
-                    status: str = row_dict.get('status') or row_dict.get('Статус') or 'pending'
-                    revenue: float = float(row_dict.get('revenue') or row_dict.get('Доход') or 0)
+                    status = str(row_dict.get('status') or row_dict.get('Статус') or 'pending')
+                    revenue = row_dict.get('revenue') or row_dict.get('Доход') or 0
+
                     
                     get_or_create_client(instagram_id, username=name)
                     
@@ -632,7 +628,6 @@ async def delete_booking_api(
         # Отправляем уведомление мастеру об отмене
         if master:
             try:
-                from notifications import notify_master_about_booking, get_master_info, save_notification_log
 
                 notification_results = await notify_master_about_booking(
                     master_name=master,
