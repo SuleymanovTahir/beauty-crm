@@ -17,6 +17,7 @@ interface Booking {
   status: string;
   created_at: string;
   revenue: number;
+  master?: string;
 }
 
 export default function BookingDetail() {
@@ -158,6 +159,19 @@ export default function BookingDetail() {
                   <p className="text-lg text-gray-900 font-medium">{booking.service}</p>
                 </div>
               </div>
+
+              {/* Master */}
+              {booking.master && (
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <User className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{t('master')}</p>
+                    <p className="text-lg text-gray-900 font-medium">{booking.master}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Date & Time */}
               <div className="flex items-start gap-4">

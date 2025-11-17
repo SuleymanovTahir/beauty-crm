@@ -714,6 +714,7 @@ export default function Bookings() {
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>ID</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:client')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:service')}</th>
+                  <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:master')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:date')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:phone')}</th>
                   <th style={{ padding: '1rem 1.5rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#6b7280' }}>{t('bookings:status')}</th>
@@ -766,7 +767,8 @@ export default function Bookings() {
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service_name || '-'}</td>
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{booking.service || booking.service_name || '-'}</td>
+                    <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{booking.master || '-'}</td>
                     <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#111' }}>{formatDateTime(booking.datetime)}</td>
                     <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>{booking.phone || '-'}</td>
                     <td style={{ padding: '1rem 1.5rem' }}>
