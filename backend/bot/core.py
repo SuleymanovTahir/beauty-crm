@@ -5,6 +5,8 @@ import os
 import asyncio
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
+from bot.tools import get_available_time_slots, check_time_slot_available
+
 
 from core.config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
@@ -104,196 +106,246 @@ class SalonBot:
 
     async def generate_response(
         self,
-        user_message: str,
         instagram_id: str,
+        user_message: str,
         history: List[Tuple],
-        client_language: str = 'ru',
+        bot_settings: Dict,
+        salon_info: Dict,
         booking_progress: Optional[Dict] = None,
-        context_flags: Optional[Dict] = None
+        client_language: str = 'ru',
+        context_flags: Optional[Dict] = None  # ✅ ДОБАВЛЕНО
     ) -> str:
         """
-        Генерировать ответ используя Gemini через прокси
-
+        Генерация ответа от AI с проверкой доступных слотов в БД
+        
         Args:
-            user_message: Сообщение от клиента
             instagram_id: ID клиента
-            history: История чата
-            booking_progress: Прогресс записи
+            user_message: Сообщение от клиента
+            history: История диалога
+            bot_settings: Настройки бота из БД
+            salon_info: Информация о салоне
+            booking_progress: Прогресс бронирования
             client_language: Язык клиента
-
+            context_flags: Флаги контекста (срочность, незавершённая запись и т.д.)
+            
         Returns:
-            str: Ответ бота
+            str: Ответ от AI
         """
-
-
-        # ✅ ИСПРАВЛЕНИЕ: Сначала строим additional_context, ПОТОМ промпт
-        additional_context = ""
-
-        # 🧠 УМНЫЙ АССИСТЕНТ: Персонализация на основе истории клиента
         try:
-            assistant = SmartAssistant(instagram_id)
-
-            # Если это приветствие или начало диалога
-            if self.should_greet(history):
-                client = get_client_by_id(instagram_id)
-                client_name = client[3] if client and client[3] else "друг"
-
-                personalized_greeting = assistant.get_personalized_greeting(client_name)
-                additional_context += f"\n\n💎 ПЕРСОНАЛИЗИРОВАННОЕ ПРИВЕТСТВИЕ:\n{personalized_greeting}\n"
-                additional_context += "⚠️ ИСПОЛЬЗУЙ ЭТО ПРИВЕТСТВИЕ вместо стандартного!\n"
-
-            # Умное предложение записи (если есть история)
-            if len(history) > 0:
-                suggestion = assistant.suggest_next_booking()
-                if suggestion and suggestion.get('confidence', 0) > 0.6:
-                    suggestion_message = assistant.generate_booking_suggestion_message(
-                        client[3] if client and client[3] else "друг"
-                    )
-                    additional_context += f"\n\n🎯 УМНОЕ ПРЕДЛОЖЕНИЕ ЗАПИСИ:\n{suggestion_message}\n"
-                    additional_context += f"Рекомендуемая дата: {suggestion['recommended_date']}\n"
-                    additional_context += f"Уверенность: {suggestion['confidence']*100:.0f}%\n"
-                    additional_context += "💡 Если клиент спрашивает о записи - используй это предложение!\n"
-        except Exception as e:
-            # Не критично, если SmartAssistant не сработал
-            print(f"ℹ️ SmartAssistant skipped: {e}")
-
-        # 💬 КОНТЕКСТ РАЗГОВОРА: Проверяем активные контексты
-        try:
-            conv_context = ConversationContext(instagram_id)
-            active_contexts = conv_context.get_all_active_contexts()
-
-            if active_contexts:
-                additional_context += f"\n\n📋 АКТИВНЫЕ КОНТЕКСТЫ РАЗГОВОРА:\n"
-
-                # Процесс записи в процессе
-                if "booking_in_progress" in active_contexts:
-                    booking_ctx = active_contexts["booking_in_progress"]["data"]
-                    additional_context += f"\n🔄 НЕЗАВЕРШЕННАЯ ЗАПИСЬ:\n"
-                    additional_context += f"   Текущий шаг: {booking_ctx.get('step', '?')}\n"
-                    additional_context += f"   Услуга: {booking_ctx.get('service', 'не выбрана')}\n"
-                    additional_context += f"   Мастер: {booking_ctx.get('master', 'не выбран')}\n"
-                    additional_context += f"   Дата: {booking_ctx.get('date', 'не выбрана')}\n"
-                    additional_context += f"   Время: {booking_ctx.get('time', 'не выбрано')}\n"
-                    additional_context += "⚠️ ПРОДОЛЖИ этот процесс записи! Спроси про следующий шаг.\n"
-
-                # Ожидание подтверждения
-                if "awaiting_confirmation" in active_contexts:
-                    confirm_ctx = active_contexts["awaiting_confirmation"]["data"]
-                    additional_context += f"\n⏳ ОЖИДАЕТСЯ ПОДТВЕРЖДЕНИЕ:\n"
-                    additional_context += f"   Вопрос: {confirm_ctx.get('question', '?')}\n"
-                    if "booking_details" in confirm_ctx:
-                        details = confirm_ctx["booking_details"]
-                        additional_context += f"   Детали записи: {details}\n"
-                    additional_context += "⚠️ Проверь, является ли сообщение подтверждением (да/нет).\n"
-
-                # Ожидание выбора из опций
-                if "awaiting_choice" in active_contexts:
-                    choice_ctx = active_contexts["awaiting_choice"]["data"]
-                    additional_context += f"\n🎯 ОЖИДАЕТСЯ ВЫБОР:\n"
-                    additional_context += f"   Вопрос: {choice_ctx.get('question', '?')}\n"
-                    additional_context += f"   Опции: {choice_ctx.get('options', [])}\n"
-                    additional_context += "⚠️ Проверь, выбрал ли клиент одну из опций.\n"
-
-        except Exception as e:
-            print(f"ℹ️ ConversationContext skipped: {e}")
-
-        if context_flags:
-            if context_flags.get('has_incomplete_booking'):
-                incomplete = context_flags['incomplete_booking']
-                additional_context += f"\n\n⚠️ У КЛИЕНТА ЕСТЬ НЕЗАВЕРШЁННАЯ ЗАПИСЬ:\n"
-                additional_context += f"Услуга: {incomplete.get('service_name', '?')}\n"
-                additional_context += f"Шаг: {incomplete.get('step', '?')}\n"
-                additional_context += "ПРЕДЛОЖИ ПРОДОЛЖИТЬ ЭТУ ЗАПИСЬ!\n"
-
-            if context_flags.get('is_urgent'):
-                additional_context += "\n\n🚨 СРОЧНОСТЬ! КЛИЕНТ УЕЗЖАЕТ/ВАЖНОЕ СОБЫТИЕ!\n"
-                additional_context += "⚠️ НЕ ЗАДАВАЙ ВОПРОСЫ 'На какой день?' - СРАЗУ ПОКАЖИ ВСЕ ДОСТУПНЫЕ ОКНА!\n"
-                additional_context += "Формат: 'Понял срочность! Завтра есть: 11:00, 14:00, 17:00. Что удобно?'\n"
-
-            if context_flags.get('is_corporate'):
-                additional_context += "\n\n🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа 5+ человек)\n"
-                additional_context += "ПЕРЕКЛЮЧИ НА МЕНЕДЖЕРА: 'Для корпоративных групп есть спецусловия! Передаю менеджеру'\n"
-
-            # ✅ #5 - Проверка "горячего" клиента
-            from db.clients import is_hot_client, get_client_interest_count
-            if is_hot_client(instagram_id):
-                service_interest = None
-                for service in ['Manicure', 'Pedicure', 'Hair', 'Massage']:
-                    count = get_client_interest_count(instagram_id, service)
-                    if count >= 3:
-                        service_interest = service
-                        break
-                    
-                if service_interest:
-                    additional_context += f"\n\n🔥 ГОРЯЧИЙ КЛИЕНТ!\n"
-                    additional_context += f"Спрашивал про {service_interest} {count} раз\n"
-
-            # ✅ #10 - UPSELL: Проверка давно ли делал другие услуги
-            from bot.prompts import get_last_service_date
-            from datetime import datetime
-            now = datetime.now()
-
-            message_lower = user_message.lower()
-
-            for upsell_service in ['Pedicure', 'Manicure']:
-                service_ru = 'педикюр' if upsell_service == 'Pedicure' else 'маникюр'
-
-                if service_ru not in message_lower and upsell_service.lower() not in message_lower:
-                    last_date = get_last_service_date(instagram_id, upsell_service)
-
-                    if last_date:
-                        try:
-                            from datetime import datetime
-                            last_dt = datetime.fromisoformat(last_date)
-                            days_since = (now - last_dt).days
-
-                            if days_since > 21:
-                                additional_context += f"\n\n💡 UPSELL! Клиент не был на {service_ru} {days_since} дней!\n"
-                                additional_context += f"⚠️ ОБЯЗАТЕЛЬНО ПРЕДЛОЖИ: 'Кстати, давно не обновляли {service_ru} - добавить к записи?'\n"
-                                break
-                        except:
-                            pass
-                        
-        # ✅ ТЕПЕРЬ строим промпт с уже готовым additional_context
-        system_prompt = self.prompt_builder.build_full_prompt(
-            instagram_id=instagram_id,
-            history=history,
-            booking_progress=booking_progress,
-            client_language=client_language,
-            additional_context=additional_context  # ✅ ПЕРЕДАЁМ В ПРОМПТ
-        )
-
-        full_prompt = f"{system_prompt}\n\nUser: {user_message}\nAssistant:"
-
-        try:
+            from datetime import datetime, timedelta
+            import re
+            from bot.tools import get_available_time_slots, check_time_slot_available
+            
+            if context_flags is None:
+                context_flags = {}
+            
             print("=" * 50)
-            print("🤖 Generating AI response (Gemini via proxy)...")
-            print(f"📝 User message: {user_message[:100]}")
+            print(f"🤖 Generating AI response (Gemini via proxy)...")
+            print(f"📝 User message: {user_message}")
             print(f"👤 Instagram ID: {instagram_id}")
             print(f"🌐 Language: {client_language}")
-            supported = self.bot_settings.get('languages_supported', 'ru,en,ar')
-            print(f"🗂️ Supported langs from DB: {supported}")
-            print(f"✅ Client lang matches: {client_language in supported.split(',')}")
-            print(f"📊 History length: {len(history) if history else 0}")
-
-            # ✅ ВСЕГДА используем REST API через прокси
+            
+            # Получаем поддерживаемые языки из БД
+            supported_langs = bot_settings.get('languages_supported', 'ru,en,ar')
+            print(f"🗂️ Supported langs from DB: {supported_langs}")
+            
+            # Проверяем соответствие языка клиента поддерживаемым
+            client_lang_matches = client_language in supported_langs.split(',')
+            print(f"✅ Client lang matches: {client_lang_matches}")
+            
+            # Логируем историю для отладки
+            print(f"📊 History length: {len(history)}")
+            
+            # ========================================
+            # ✅ ПРОВЕРКА КОНТЕКСТНЫХ ФЛАГОВ
+            # ========================================
+            
+            additional_context = ""
+            
+            # ✅ #4 - Незавершённая запись
+            if context_flags.get('has_incomplete_booking'):
+                incomplete = context_flags.get('incomplete_booking')
+                if incomplete:
+                    additional_context += f"""
+    🔄 У КЛИЕНТА ЕСТЬ НЕЗАВЕРШЁННАЯ ЗАПИСЬ:
+    - Услуга: {incomplete.get('service_name', 'не указана')}
+    - Дата: {incomplete.get('date', 'не указана')}
+    - Время: {incomplete.get('time', 'не указано')}
+    - Телефон: {incomplete.get('phone', 'не указан')}
+    
+    ⚠️ СПРОСИ: "Вижу вы начали запись. Продолжим?"
+    """
+            
+            # ✅ #18 - Срочная запись
+            if context_flags.get('is_urgent'):
+                additional_context += """
+    ⚡ КЛИЕНТ СРОЧНО НУЖДАЕТСЯ В ЗАПИСИ!
+    Слова вроде "срочно", "уезжаю", "скоро уезжаю" в сообщении.
+    
+    ⚠️ ДЕЙСТВУЙ БЫСТРО:
+    - Предложи БЛИЖАЙШИЕ доступные слоты (сегодня/завтра)
+    - Упрости процесс - сразу предлагай конкретное время
+    - Будь решительным: "Могу записать вас на сегодня в 17:00. Согласны?"
+    """
+            
+            # ✅ #27 - Корпоративная заявка
+            if context_flags.get('is_corporate'):
+                additional_context += """
+    🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа >5 человек)!
+    
+    ⚠️ НЕ ЗАПИСЫВАЙ САМОСТОЯТЕЛЬНО!
+    Скажи: "Для группового визита свяжу вас с менеджером. Он подберёт оптимальное время и условия. Один момент!"
+    
+    Менеджер УЖЕ получил уведомление.
+    """
+            
+            # ========================================
+            # ✅ ПРОВЕРКА ДОСТУПНОСТИ ВРЕМЕНИ В БД
+            # ========================================
+            
+            today = datetime.now().date()
+            tomorrow = today + timedelta(days=1)
+            
+            target_date = None
+            
+            # Определяем дату из сообщения клиента
+            user_msg_lower = user_message.lower()
+            
+            if 'сегодня' in user_msg_lower or 'today' in user_msg_lower:
+                target_date = today.strftime("%Y-%m-%d")
+            elif 'завтра' in user_msg_lower or 'tomorrow' in user_msg_lower:
+                target_date = tomorrow.strftime("%Y-%m-%d")
+            else:
+                # Ищем дату в формате DD.MM, DD/MM, DD-MM
+                date_match = re.search(r'(\d{1,2})[./-](\d{1,2})', user_message)
+                if date_match:
+                    day, month = date_match.groups()
+                    target_date = f"{today.year}-{month.zfill(2)}-{day.zfill(2)}"
+            
+            if target_date:
+                print(f"📅 Target date detected: {target_date}")
+                
+                # Определяем услугу и мастера из прогресса бронирования
+                service_name = booking_progress.get('service_name') if booking_progress else None
+                master_name = booking_progress.get('master') if booking_progress else None
+                
+                print(f"🔍 Looking for slots: service={service_name}, master={master_name}")
+                
+                # Получаем реальные свободные слоты из БД
+                available_slots = get_available_time_slots(
+                    date=target_date,
+                    service_name=service_name,
+                    master_name=master_name,
+                    duration_minutes=60
+                )
+                
+                if available_slots:
+                    print(f"✅ Found {len(available_slots)} available slots")
+                    
+                    # Формируем список слотов для контекста
+                    slots_text = "\n".join([
+                        f"  • {slot['time']} у мастера {slot['master']}"
+                        for slot in available_slots[:5]  # Первые 5 слотов
+                    ])
+                    
+                    additional_context += f"""
+    
+    🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {target_date} (из БД):
+    {slots_text}
+    
+    ⚠️ КРИТИЧНО:
+    - ТЫ ОБЯЗАН ПРЕДЛАГАТЬ ТОЛЬКО ЭТИ ВРЕМЕНА!
+    - НЕ ПРИДУМЫВАЙ ДРУГОЕ ВРЕМЯ!
+    - ЕСЛИ КЛИЕНТ ПРОСИТ ВРЕМЯ КОТОРОГО НЕТ В СПИСКЕ - СКАЖИ ЧТО ЗАНЯТО И ПРЕДЛОЖИ ИЗ СПИСКА!
+    - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!"""
+                else:
+                    print(f"❌ No available slots found for {target_date}")
+                    
+                    additional_context += f"""
+    
+    🔴 НА {target_date} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
+    
+    ⚠️ ЧТО ДЕЛАТЬ:
+    - Предложи клиенту другую дату (завтра или послезавтра)
+    - Скажи: "К сожалению, на {target_date} всё занято. Могу предложить завтра или послезавтра?"
+    - НЕ предлагай время на {target_date} - его НЕТ!"""
+            
+            # Проверка конкретного времени если клиент спрашивает
+            time_match = re.search(r'(\d{1,2}):(\d{2})', user_message)
+            if time_match and target_date:
+                requested_time = f"{time_match.group(1).zfill(2)}:{time_match.group(2)}"
+                print(f"⏰ Checking specific time: {requested_time}")
+                
+                check_result = check_time_slot_available(
+                    date=target_date,
+                    time=requested_time,
+                    master_name=booking_progress.get('master') if booking_progress else None
+                )
+                
+                if not check_result['available']:
+                    print(f"❌ Time {requested_time} is NOT available")
+                    
+                    alternatives = check_result['alternatives']
+                    if alternatives:
+                        alt_text = "\n".join([
+                            f"  • {slot['time']} у {slot['master']}"
+                            for slot in alternatives[:3]
+                        ])
+                        
+                        additional_context += f"""
+    
+    🚫 ВРЕМЯ {requested_time} ЗАНЯТО (проверено в БД)!
+    
+    Доступные альтернативы:
+    {alt_text}
+    
+    ⚠️ СКАЖИ КЛИЕНТУ:
+    "К сожалению, {requested_time} уже занято. Могу предложить: {alternatives[0]['time']} у {alternatives[0]['master']}. Подходит?"
+    
+    НЕ ГОВОРИ ЧТО {requested_time} СВОБОДНО - ЭТО НЕПРАВДА!"""
+                    else:
+                        additional_context += f"""
+    
+    🚫 ВРЕМЯ {requested_time} ЗАНЯТО И НЕТ АЛЬТЕРНАТИВ НА {target_date}!
+    Предложи другую дату!"""
+                else:
+                    print(f"✅ Time {requested_time} is available")
+            
+            # ========================================
+            # Строим промпт
+            # ========================================
+            
+            full_prompt = self.prompt_builder.build_full_prompt(
+                instagram_id=instagram_id,
+                history=history,
+                booking_progress=booking_progress,
+                client_language=client_language,
+                additional_context=additional_context  # ✅ ПЕРЕДАЁМ КОНТЕКСТ С РЕАЛЬНЫМИ СЛОТАМИ
+            )
+            
+            # ========================================
+            # Генерируем ответ через прокси
+            # ========================================
+            
             ai_response = await self._generate_via_proxy(full_prompt)
-
+            
             print(f"✅ AI response generated: {ai_response[:100]}")
             print("=" * 50)
-
+            
             return ai_response
-
+            
         except Exception as e:
-            print("=" * 50)
-            print(f"❌ Gemini API Error: {e}")
-            print(f"📋 Тип ошибки: {type(e).__name__}")
-
+            print(f"❌ Error in generate_response: {e}")
             import traceback
-            print(f"📋 Полный traceback:\n{traceback.format_exc()}")
-            print("=" * 50)
-
-            return self._get_fallback_response(client_language)
+            traceback.print_exc()
+            
+            # Fallback ответ
+            fallback_messages = {
+                'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",
+                'en': "Sorry, I'm overloaded with requests 🤖 Our manager will respond soon! 💎",
+                'ar': "عذرًا، أنا محمل بالطلبات 🤖 سيرد عليك مديرنا قريبًا! 💎"
+            }
+            return fallback_messages.get(client_language, fallback_messages['ru'])
 
     async def _generate_via_proxy(self, prompt: str, max_retries: int = 3) -> str:
         """Генерация через Gemini REST API с прокси и retry механизмом"""

@@ -139,18 +139,19 @@ class PromptBuilder:
         booking_progress: Optional[Dict] = None,
         client_language: str = 'ru',
         additional_context: str = ""  # ✅ ДОБАВЛЕНО
-    ) -> str:
+        ) -> str:
         """Построить полный system prompt
 
-        Args:
-            instagram_id: ID клиента в Instagram
-            history: История диалога
-            booking_progress: Прогресс бронирования
-            client_language: Язык клиента
+    Args:
+        instagram_id: ID клиента в Instagram
+        history: История диалога
+        booking_progress: Прогресс бронирования
+        client_language: Язык клиента
+        additional_context: Дополнительный контекст (свободные слоты из БД)
 
-        Returns:
-            Полный system prompt для бота
-        """
+    Returns:
+        Полный system prompt для бота
+    """
 
         if booking_progress is None:
             booking_progress = {}
@@ -200,7 +201,7 @@ class PromptBuilder:
 
         # ✅ КРИТИЧЕСКОЕ НАПОМИНАНИЕ В КОНЦЕ ПРОМПТА
         final_reminder = """
-=== 🔴 ФИНАЛЬНОЕ НАПОМИНАНИЕ - ОБЯЗАТЕЛЬНО ПРОЧТИ! ===
+==== 🔴 ФИНАЛЬНОЕ НАПОМИНАНИЕ - ОБЯЗАТЕЛЬНО ПРОЧТИ! ===
 
 ⚠️ ПРЕЖДЕ ЧЕМ ЗАПИСЫВАТЬ КЛИЕНТА:
 
@@ -212,6 +213,11 @@ class PromptBuilder:
 2. ПОМНИ ИНФОРМАЦИЮ ИЗ ЧАТА:
    - Если клиент УЖЕ написал номер телефона/WhatsApp ранее → используй его, НЕ ПРОСИ СНОВА!
    - Проверь последние 10 сообщений на наличие номера типа +971... или +7...
+
+3. ИСПОЛЬЗУЙ ТОЛЬКО РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ:
+   - Если выше был список свободных слотов из БД - предлагай ТОЛЬКО их!
+   - НЕ ПРИДУМЫВАЙ время которого нет в списке!
+   - Если клиент просит занятое время - скажи что занято и предложи из списка!
 
 КОГДА КЛИЕНТ ДАЕТ WhatsApp И ТЫ ПОДТВЕРЖДАЕШЬ ЗАПИСЬ:
 

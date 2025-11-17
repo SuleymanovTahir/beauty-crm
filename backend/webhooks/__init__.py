@@ -497,12 +497,22 @@ async def handle_webhook(request: Request):
                     
                     logger.info("🤖 Generating AI response...")
                     try:
+                        # ✅ ПОЛУЧАЕМ НАСТРОЙКИ ПЕРЕД ВЫЗОВОМ
+                        from db import get_bot_settings
+                        
+                        bot_settings = get_bot_settings()
+                        salon = get_salon_settings()
+                        
+                        # ✅ ПРАВИЛЬНЫЙ ВЫЗОВ С ВСЕМИ ПАРАМЕТРАМИ
                         ai_response = await bot.generate_response(
-                            user_message=message_text,
                             instagram_id=sender_id,
+                            user_message=message_text,
                             history=history,
+                            bot_settings=bot_settings,
+                            salon_info=salon,
+                            booking_progress=None,  # Можешь добавить get_booking_progress(sender_id) если нужно
                             client_language=client_language,
-                            context_flags=context_flags  # ✅ ДОБАВЛЕНО
+                            context_flags=context_flags  # ✅ ТВОЙ ФЛАГ ОСТАЁТСЯ
                         )
                         logger.info(f"✅ AI response: {ai_response[:100]}")
                     except Exception as gen_error:
@@ -510,7 +520,7 @@ async def handle_webhook(request: Request):
                         logger.error(f"📋 Error type: {type(gen_error).__name__}")
                         import traceback
                         logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
-
+                    
                         ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
 
                     # ✅ ПАРСИНГ КОМАНДЫ СОЗДАНИЯ ЗАПИСИ
