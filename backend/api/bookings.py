@@ -65,12 +65,13 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
         bookings_with_messengers.append({
             "id": b[0],
             "client_id": client_id,
-            "service": b[2],
-            "datetime": b[3],
-            "phone": b[4],
-            "name": b[5],
-            "status": b[6],
-            "created_at": b[7],
+            "service": b[2] if len(b) > 2 else None,
+            "service_name": b[2] if len(b) > 2 else None,  # ✅ Дублируем для совместимости
+            "datetime": b[3] if len(b) > 3 else None,
+            "phone": b[4] if len(b) > 4 else '',
+            "name": b[5] if len(b) > 5 else '',
+            "status": b[6] if len(b) > 6 else 'pending',
+            "created_at": b[7] if len(b) > 7 else None,
             "revenue": b[8] if len(b) > 8 else 0,
             "master": b[9] if len(b) > 9 else None,
             "messengers": messengers

@@ -1,4 +1,5 @@
 # backend/bot/core.py
+import sqlite3
 import google.generativeai as genai
 import httpx
 import os
@@ -8,7 +9,7 @@ from datetime import datetime, timedelta
 from bot.tools import get_available_time_slots, check_time_slot_available
 
 
-from core.config import GEMINI_API_KEY, GEMINI_MODEL
+from core.config import DATABASE_NAME, GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,
@@ -117,7 +118,7 @@ class SalonBot:
     ) -> str:
         """
         Генерация ответа от AI с проверкой доступных слотов в БД
-        
+
         Args:
             instagram_id: ID клиента
             user_message: Сообщение от клиента
@@ -127,7 +128,7 @@ class SalonBot:
             booking_progress: Прогресс бронирования
             client_language: Язык клиента
             context_flags: Флаги контекста (срочность, незавершённая запись и т.д.)
-            
+
         Returns:
             str: Ответ от AI
         """
@@ -135,33 +136,33 @@ class SalonBot:
             from datetime import datetime, timedelta
             import re
             from bot.tools import get_available_time_slots, check_time_slot_available
-            
+
             if context_flags is None:
                 context_flags = {}
-            
+
             print("=" * 50)
             print(f"🤖 Generating AI response (Gemini via proxy)...")
             print(f"📝 User message: {user_message}")
             print(f"👤 Instagram ID: {instagram_id}")
             print(f"🌐 Language: {client_language}")
-            
+
             # Получаем поддерживаемые языки из БД
             supported_langs = bot_settings.get('languages_supported', 'ru,en,ar')
             print(f"🗂️ Supported langs from DB: {supported_langs}")
-            
+
             # Проверяем соответствие языка клиента поддерживаемым
             client_lang_matches = client_language in supported_langs.split(',')
             print(f"✅ Client lang matches: {client_lang_matches}")
-            
+
             # Логируем историю для отладки
             print(f"📊 History length: {len(history)}")
-            
+
             # ========================================
             # ✅ ПРОВЕРКА КОНТЕКСТНЫХ ФЛАГОВ
             # ========================================
-            
+
             additional_context = ""
-            
+
             # ✅ #4 - Незавершённая запись
             if context_flags.get('has_incomplete_booking'):
                 incomplete = context_flags.get('incomplete_booking')
@@ -172,45 +173,45 @@ class SalonBot:
     - Дата: {incomplete.get('date', 'не указана')}
     - Время: {incomplete.get('time', 'не указано')}
     - Телефон: {incomplete.get('phone', 'не указан')}
-    
+
     ⚠️ СПРОСИ: "Вижу вы начали запись. Продолжим?"
     """
-            
+
             # ✅ #18 - Срочная запись
             if context_flags.get('is_urgent'):
                 additional_context += """
     ⚡ КЛИЕНТ СРОЧНО НУЖДАЕТСЯ В ЗАПИСИ!
     Слова вроде "срочно", "уезжаю", "скоро уезжаю" в сообщении.
-    
+
     ⚠️ ДЕЙСТВУЙ БЫСТРО:
     - Предложи БЛИЖАЙШИЕ доступные слоты (сегодня/завтра)
     - Упрости процесс - сразу предлагай конкретное время
     - Будь решительным: "Могу записать вас на сегодня в 17:00. Согласны?"
     """
-            
+
             # ✅ #27 - Корпоративная заявка
             if context_flags.get('is_corporate'):
                 additional_context += """
     🏢 КОРПОРАТИВНАЯ ЗАЯВКА (группа >5 человек)!
-    
+
     ⚠️ НЕ ЗАПИСЫВАЙ САМОСТОЯТЕЛЬНО!
     Скажи: "Для группового визита свяжу вас с менеджером. Он подберёт оптимальное время и условия. Один момент!"
-    
+
     Менеджер УЖЕ получил уведомление.
     """
-            
+
             # ========================================
             # ✅ ПРОВЕРКА ДОСТУПНОСТИ ВРЕМЕНИ В БД
             # ========================================
-            
+
             today = datetime.now().date()
             tomorrow = today + timedelta(days=1)
-            
+
             target_date = None
-            
+
             # Определяем дату из сообщения клиента
             user_msg_lower = user_message.lower()
-            
+
             if 'сегодня' in user_msg_lower or 'today' in user_msg_lower:
                 target_date = today.strftime("%Y-%m-%d")
             elif 'завтра' in user_msg_lower or 'tomorrow' in user_msg_lower:
@@ -221,16 +222,16 @@ class SalonBot:
                 if date_match:
                     day, month = date_match.groups()
                     target_date = f"{today.year}-{month.zfill(2)}-{day.zfill(2)}"
-            
+
             if target_date:
                 print(f"📅 Target date detected: {target_date}")
-                
+
                 # Определяем услугу и мастера из прогресса бронирования
                 service_name = booking_progress.get('service_name') if booking_progress else None
                 master_name = booking_progress.get('master') if booking_progress else None
-                
+
                 print(f"🔍 Looking for slots: service={service_name}, master={master_name}")
-                
+
                 # Получаем реальные свободные слоты из БД
                 available_slots = get_available_time_slots(
                     date=target_date,
@@ -238,7 +239,8 @@ class SalonBot:
                     master_name=master_name,
                     duration_minutes=60
                 )
-                
+
+                # БЫЛО (строка ~200):
                 if available_slots:
                     print(f"✅ Found {len(available_slots)} available slots")
                     
@@ -247,12 +249,53 @@ class SalonBot:
                         f"  • {slot['time']} у мастера {slot['master']}"
                         for slot in available_slots[:5]  # Первые 5 слотов
                     ])
+
+# СТАЛО:
+                if available_slots:
+                    print(f"✅ Found {len(available_slots)} available slots")
                     
+                    # ⚠️ КРИТИЧНО: Показываем ТОЛЬКО мастеров для выбранной услуги!
+                    from db.employees import get_employees_by_service
+                    
+                    # Получаем ID услуги
+                    conn_temp = sqlite3.connect(DATABASE_NAME)
+                    c_temp = conn_temp.cursor()
+                    c_temp.execute("SELECT id FROM services WHERE name_ru LIKE ? OR name LIKE ? LIMIT 1", 
+                                   (f"%{service_name}%", f"%{service_name}%"))
+                    service_row = c_temp.fetchone()
+                    conn_temp.close()
+                    
+                    if service_row:
+                        service_id = service_row[0]
+                        # Получаем мастеров которые РЕАЛЬНО делают эту услугу
+                        valid_masters = get_employees_by_service(service_id)
+                        valid_master_names = [m[1] for m in valid_masters]  # m[1] = full_name
+                        
+                        # Фильтруем слоты - только мастера для этой услуги!
+                        filtered_slots = [
+                            slot for slot in available_slots 
+                            if slot['master'] in valid_master_names
+                        ]
+                        
+                        if filtered_slots:
+                            slots_text = "\n".join([
+                                f"  • {slot['time']} у мастера {slot['master']}"
+                                for slot in filtered_slots[:5]
+                            ])
+                        else:
+                            # Нет свободных мастеров для этой услуги
+                            slots_text = f"⚠️ НА {target_date} НЕТ СВОБОДНЫХ МАСТЕРОВ ДЛЯ УСЛУГИ {service_name}!"
+                    else:
+                        slots_text = "\n".join([
+                            f"  • {slot['time']} у мастера {slot['master']}"
+                            for slot in available_slots[:5]
+                        ])
+
                     additional_context += f"""
-    
+
     🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {target_date} (из БД):
     {slots_text}
-    
+
     ⚠️ КРИТИЧНО:
     - ТЫ ОБЯЗАН ПРЕДЛАГАТЬ ТОЛЬКО ЭТИ ВРЕМЕНА!
     - НЕ ПРИДУМЫВАЙ ДРУГОЕ ВРЕМЯ!
@@ -260,61 +303,61 @@ class SalonBot:
     - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!"""
                 else:
                     print(f"❌ No available slots found for {target_date}")
-                    
+
                     additional_context += f"""
-    
+
     🔴 НА {target_date} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
-    
+
     ⚠️ ЧТО ДЕЛАТЬ:
     - Предложи клиенту другую дату (завтра или послезавтра)
     - Скажи: "К сожалению, на {target_date} всё занято. Могу предложить завтра или послезавтра?"
     - НЕ предлагай время на {target_date} - его НЕТ!"""
-            
+
             # Проверка конкретного времени если клиент спрашивает
             time_match = re.search(r'(\d{1,2}):(\d{2})', user_message)
             if time_match and target_date:
                 requested_time = f"{time_match.group(1).zfill(2)}:{time_match.group(2)}"
                 print(f"⏰ Checking specific time: {requested_time}")
-                
+
                 check_result = check_time_slot_available(
                     date=target_date,
                     time=requested_time,
                     master_name=booking_progress.get('master') if booking_progress else None
                 )
-                
+
                 if not check_result['available']:
                     print(f"❌ Time {requested_time} is NOT available")
-                    
+
                     alternatives = check_result['alternatives']
                     if alternatives:
                         alt_text = "\n".join([
                             f"  • {slot['time']} у {slot['master']}"
                             for slot in alternatives[:3]
                         ])
-                        
+
                         additional_context += f"""
-    
+
     🚫 ВРЕМЯ {requested_time} ЗАНЯТО (проверено в БД)!
-    
+
     Доступные альтернативы:
     {alt_text}
-    
+
     ⚠️ СКАЖИ КЛИЕНТУ:
     "К сожалению, {requested_time} уже занято. Могу предложить: {alternatives[0]['time']} у {alternatives[0]['master']}. Подходит?"
-    
+
     НЕ ГОВОРИ ЧТО {requested_time} СВОБОДНО - ЭТО НЕПРАВДА!"""
                     else:
                         additional_context += f"""
-    
+
     🚫 ВРЕМЯ {requested_time} ЗАНЯТО И НЕТ АЛЬТЕРНАТИВ НА {target_date}!
     Предложи другую дату!"""
                 else:
                     print(f"✅ Time {requested_time} is available")
-            
+
             # ========================================
             # Строим промпт
             # ========================================
-            
+
             full_prompt = self.prompt_builder.build_full_prompt(
                 instagram_id=instagram_id,
                 history=history,
@@ -322,23 +365,23 @@ class SalonBot:
                 client_language=client_language,
                 additional_context=additional_context  # ✅ ПЕРЕДАЁМ КОНТЕКСТ С РЕАЛЬНЫМИ СЛОТАМИ
             )
-            
+
             # ========================================
             # Генерируем ответ через прокси
             # ========================================
-            
+
             ai_response = await self._generate_via_proxy(full_prompt)
-            
+
             print(f"✅ AI response generated: {ai_response[:100]}")
             print("=" * 50)
-            
+
             return ai_response
-            
+
         except Exception as e:
             print(f"❌ Error in generate_response: {e}")
             import traceback
             traceback.print_exc()
-            
+
             # Fallback ответ
             fallback_messages = {
                 'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",

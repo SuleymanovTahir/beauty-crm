@@ -47,6 +47,8 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
           (instagram_id, service, datetime_str, phone, name, "pending", 
            now, special_package_id, master))
     
+    booking_id = c.lastrowid  # ✅ ПОЛУЧАЕМ ID СОЗДАННОЙ ЗАПИСИ
+    
     c.execute("""UPDATE clients 
                  SET status = 'lead', phone = ?, name = ? 
                  WHERE instagram_id = ?""",
@@ -59,6 +61,8 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     
     conn.commit()
     conn.close()
+    
+    return booking_id
 
 
 def update_booking_status(booking_id: int, status: str) -> bool:
