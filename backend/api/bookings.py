@@ -71,6 +71,7 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
             "status": b[6],
             "created_at": b[7],
             "revenue": b[8] if len(b) > 8 else 0,
+            "master": b[9] if len(b) > 9 else None,
             "messengers": messengers
         })
 
