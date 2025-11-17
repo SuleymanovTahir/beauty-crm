@@ -71,6 +71,7 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
             "status": b[6],
             "created_at": b[7],
             "revenue": b[8] if len(b) > 8 else 0,
+            "master": b[9] if len(b) > 9 else None,
             "messengers": messengers
         })
 
@@ -327,8 +328,16 @@ async def import_bookings(
                                      row_dict.get('Дата/Время') or 
                                      datetime.now().isoformat())
                     status = row_dict.get('status') or row_dict.get('Статус') or 'pending'
-                    revenue = float(row_dict.get('revenue') or row_dict.get('Доход') or 0)
-                    
+
+                    # Safely parse revenue, handle types that cannot be converted to float
+                    try:
+                        revenue_raw = row_dict.get('revenue') or row_dict.get('Доход') or 0
+                        revenue = float(str(revenue_raw).replace(",", "."))
+                    except Exception:
+                        revenue = 0.0
+
+                    instagram_id = str(instagram_id)
+                    name = str(name)
                     get_or_create_client(instagram_id, username=name)
                     
                     if phone or name:
@@ -625,7 +634,7 @@ async def delete_booking_api(
         # Отправляем уведомление мастеру об отмене
         if master:
             try:
-                from notifications import notify_master_about_booking, get_master_info, save_notification_log
+                from backend.notifications import notify_master_about_booking, get_master_info, save_notification_log
 
                 notification_results = await notify_master_about_booking(
                     master_name=master,
