@@ -15,6 +15,7 @@ from core.config import DATABASE_NAME
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
 from services.smart_assistant import SmartAssistant
+from notifications import notify_master_about_booking, get_master_info, save_notification_log
 
 router = APIRouter(tags=["Bookings"])
 
@@ -162,8 +163,6 @@ async def create_booking_api(
         # Отправляем уведомление мастеру
         if master and booking_id:
             try:
-                from notifications import notify_master_about_booking, get_master_info, save_notification_log
-
                 # Отправляем уведомления асинхронно
                 notification_results = await notify_master_about_booking(
                     master_name=master,
@@ -318,17 +317,26 @@ async def import_bookings(
                 try:
                     row_dict = dict(zip(headers, row))
                     
-                    instagram_id = row_dict.get('instagram_id') or row_dict.get('ID') or \
-                                  f"import_{int(time.time())}_{imported_count}"
-                    name = row_dict.get('name') or row_dict.get('Имя') or \
-                          'Импортированный клиент'
-                    phone = str(row_dict.get('phone') or row_dict.get('Телефон') or '')
-                    service = row_dict.get('service') or row_dict.get('Услуга') or 'Неизвестно'
-                    datetime_str = str(row_dict.get('datetime') or 
-                                     row_dict.get('Дата/Время') or 
-                                     datetime.now().isoformat())
-                    status = row_dict.get('status') or row_dict.get('Статус') or 'pending'
-                    revenue = float(row_dict.get('revenue') or row_dict.get('Доход') or 0)
+                    # Извлекаем данные из row_dict с fallback значениями
+                    instagram_id: str = (
+                        row_dict.get('instagram_id') or
+                        row_dict.get('ID') or
+                        f"import_{int(time.time())}_{imported_count}"
+                    )
+                    name: str = (
+                        row_dict.get('name') or
+                        row_dict.get('Имя') or
+                        'Импортированный клиент'
+                    )
+                    phone: str = str(row_dict.get('phone') or row_dict.get('Телефон') or '')
+                    service: str = row_dict.get('service') or row_dict.get('Услуга') or 'Неизвестно'
+                    datetime_str: str = str(
+                        row_dict.get('datetime') or
+                        row_dict.get('Дата/Время') or
+                        datetime.now().isoformat()
+                    )
+                    status: str = row_dict.get('status') or row_dict.get('Статус') or 'pending'
+                    revenue: float = float(row_dict.get('revenue') or row_dict.get('Доход') or 0)
                     
                     get_or_create_client(instagram_id, username=name)
                     
@@ -556,8 +564,6 @@ async def update_booking_api(
         # Отправляем уведомление мастеру об изменении
         if new_master:
             try:
-                from notifications import notify_master_about_booking, get_master_info, save_notification_log
-
                 notification_results = await notify_master_about_booking(
                     master_name=new_master,
                     client_name=new_name,

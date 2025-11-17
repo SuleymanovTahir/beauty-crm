@@ -1089,8 +1089,16 @@ Google Maps: {self.salon.get('google_maps', '')}"""
         if preferred_date:
             target_date = preferred_date
         else:
-            target_date = (datetime.now() + timedelta(days=1)
-                           ).strftime("%Y-%m-%d")
+            # Умная логика выбора даты
+            now = datetime.now()
+            current_hour = now.hour
+
+            # Если еще есть время сегодня (до 18:00) и можно успеть записаться (минимум +2 часа)
+            # то предлагаем сегодня, иначе завтра
+            if current_hour < 18 and (current_hour + 2) < 21:
+                target_date = now.strftime("%Y-%m-%d")
+            else:
+                target_date = (now + timedelta(days=1)).strftime("%Y-%m-%d")
 
         try:
             date_obj = datetime.strptime(target_date, "%Y-%m-%d")

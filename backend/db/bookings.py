@@ -12,16 +12,22 @@ def get_all_bookings():
     """Получить все записи"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
+
     try:
-        c.execute("""SELECT id, instagram_id, service_name, datetime, phone, 
-                     name, status, created_at, revenue 
+        c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                     name, status, created_at, revenue, master
                      FROM bookings ORDER BY created_at DESC""")
     except sqlite3.OperationalError:
-        c.execute("""SELECT id, instagram_id, service_name, datetime, phone, 
-                     name, status, created_at, 0 as revenue 
-                     FROM bookings ORDER BY created_at DESC""")
-    
+        # Fallback для старой схемы без master
+        try:
+            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                         name, status, created_at, revenue, NULL as master
+                         FROM bookings ORDER BY created_at DESC""")
+        except:
+            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                         name, status, created_at, 0 as revenue, NULL as master
+                         FROM bookings ORDER BY created_at DESC""")
+
     bookings = c.fetchall()
     conn.close()
     return bookings
