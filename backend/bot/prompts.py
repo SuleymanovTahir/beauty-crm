@@ -893,6 +893,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
         if preferences.get('favorite_master'):
             availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
 
+        # ✅ ИСПОЛЬЗУЕМ РЕАЛЬНЫЙ КАЛЕНДАРЬ вместо примерных слотов
         for emp in employees[:5]:
             emp_id = emp[0]
             # ✅ emp[1] = full_name из get_employees_by_service()
@@ -902,54 +903,90 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             from utils.transliteration import transliterate_name
             emp_name_display = transliterate_name(str(emp_name), client_language)
 
+            # ✅ ПОЛУЧАЕМ РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ
             try:
+                # Получаем расписание мастера на этот день
                 target_dt = datetime.strptime(target_date, "%Y-%m-%d")
-                day_of_week = target_dt.weekday()  # 0=Пн, 6=Вс
-            except:
-                day_of_week = datetime.now().weekday()
+                day_of_week = target_dt.weekday()
 
-            c.execute("""
-                SELECT start_time, end_time
-                FROM employee_schedule
-                WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
-                LIMIT 1
-            """, (emp_id, day_of_week))
-            schedule = c.fetchone()
+                c.execute("""
+                    SELECT start_time, end_time
+                    FROM employee_schedule
+                    WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
+                """, (emp_id, day_of_week))
 
-            if schedule:
-                start_hour = int(schedule[0].split(':')[0])
-                end_hour = int(schedule[1].split(':')[0])
+                schedule_row = c.fetchone()
+                if not schedule_row:
+                    continue  # Не работает в этот день
 
-                slots = []
+                start_time_str, end_time_str = schedule_row
 
-                if time_preference:
-                    pref_start, pref_end = time_preference
-                    for hour in range(max(start_hour, pref_start), min(end_hour, pref_end) + 1, 2):
-                        if target_date == now.strftime("%Y-%m-%d"):
-                            if hour > current_hour + 2:
-                                slots.append(f"{hour:02d}:00")
-                        else:
-                            slots.append(f"{hour:02d}:00")
+                # Получаем уже занятые слоты (поддерживаем employee_id и master)
+                c.execute("""
+                    SELECT datetime
+                    FROM bookings
+                    WHERE (employee_id = ? OR master = ?)
+                    AND DATE(datetime) = ?
+                    AND status != 'cancelled'
+                """, (emp_id, emp_name, target_date))
 
-                        if len(slots) >= 3:
+                booked_times = set()
+                for booking_row in c.fetchall():
+                    dt_str = booking_row[0]
+                    time_part = dt_str.split(' ')[1] if ' ' in dt_str else dt_str
+                    booked_times.add(time_part[:5])  # HH:MM
+
+                # Генерируем свободные слоты
+                from datetime import time as dt_time
+                start_hour, start_minute = map(int, start_time_str.split(':'))
+                end_hour, end_minute = map(int, end_time_str.split(':'))
+
+                start_dt = datetime.combine(target_dt.date(), dt_time(start_hour, start_minute))
+                end_dt = datetime.combine(target_dt.date(), dt_time(end_hour, end_minute))
+
+                now = datetime.now()
+                current_hour = now.hour
+                is_today = target_date == now.strftime("%Y-%m-%d")
+
+                all_slots = []
+                current_slot = start_dt
+
+                while current_slot < end_dt:
+                    time_str = current_slot.strftime('%H:%M')
+
+                    # Проверяем что слот свободен
+                    if time_str not in booked_times:
+                        hour = int(time_str.split(':')[0])
+
+                        # Если сегодня - пропускаем прошедшие слоты
+                        if is_today and hour <= current_hour + 2:
+                            current_slot += timedelta(hours=1)
+                            continue
+
+                        # Фильтр по предпочтению времени
+                        if time_preference:
+                            pref_start, pref_end = time_preference
+                            if hour < pref_start or hour > pref_end:
+                                current_slot += timedelta(hours=1)
+                                continue
+
+                        all_slots.append(time_str)
+
+                        if len(all_slots) >= 3:
                             break
-                else:
-                    for i in range(6):
-                        hour = start_hour + (i * 2)
-                        if hour >= end_hour:
-                            break
 
-                        if target_date == now.strftime("%Y-%m-%d"):
-                            if hour > current_hour + 2:
-                                slots.append(f"{hour:02d}:00")
-                        else:
-                            slots.append(f"{hour:02d}:00")
+                    current_slot += timedelta(hours=1)
 
-                        if len(slots) >= 3:
-                            break
+                # Показываем только если есть свободные слоты
+                if all_slots:
+                    availability_text += f"• {emp_name_display.upper()}: {', '.join(all_slots)}\n"
 
-                if slots:
-                    availability_text += f"• {emp_name_display.upper()}: {', '.join(slots)}\n"
+            except Exception as e:
+                # Fallback если не удалось получить слоты
+                print(f"⚠️ Error getting slots for {emp_name}: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
 
         # ✅ #14 - Альтернативы если время не подходит
         availability_text += f"\n\n{instructions}"
