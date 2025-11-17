@@ -512,10 +512,66 @@ async def handle_webhook(request: Request):
                         logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
 
                         ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
-                    
+
+                    # ✅ ПАРСИНГ КОМАНДЫ СОЗДАНИЯ ЗАПИСИ
+                    import re
+                    from db.bookings import save_booking
+                    from db import get_client_by_id
+
+                    booking_match = re.search(
+                        r'\[BOOKING_CONFIRMED\](.*?)\[/BOOKING_CONFIRMED\]',
+                        ai_response,
+                        re.DOTALL
+                    )
+
+                    if booking_match:
+                        logger.info("📝 Found booking confirmation command!")
+                        booking_data_raw = booking_match.group(1).strip()
+
+                        # Парсим данные
+                        booking_data = {}
+                        for line in booking_data_raw.split('\n'):
+                            if ':' in line:
+                                key, value = line.split(':', 1)
+                                booking_data[key.strip()] = value.strip()
+
+                        logger.info(f"📊 Booking data parsed: {booking_data}")
+
+                        # Получаем имя клиента
+                        client = get_client_by_id(sender_id)
+                        client_name = client[3] if client and client[3] else client[1] if client and client[1] else "Client"
+
+                        # Создаем запись в БД
+                        try:
+                            # Формируем datetime для записи
+                            booking_datetime = f"{booking_data['date']} {booking_data['time']}:00"
+
+                            save_booking(
+                                instagram_id=sender_id,
+                                service=booking_data['service'],
+                                datetime_str=booking_datetime,
+                                phone=booking_data['phone'],
+                                name=client_name,
+                                master=booking_data.get('master')
+                            )
+                            logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                        except Exception as save_error:
+                            logger.error(f"❌ Failed to save booking: {save_error}")
+                            import traceback
+                            logger.error(traceback.format_exc())
+
+                        # Удаляем команду из ответа перед отправкой клиенту
+                        ai_response = re.sub(
+                            r'\[BOOKING_CONFIRMED\].*?\[/BOOKING_CONFIRMED\]',
+                            '',
+                            ai_response,
+                            flags=re.DOTALL
+                        ).strip()
+                        logger.info(f"📤 Cleaned response: {ai_response[:100]}")
+
                     save_message(
-                        sender_id, 
-                        ai_response, 
+                        sender_id,
+                        ai_response,
                         "bot",
                         message_type="text"
                     )

@@ -463,7 +463,56 @@ class PromptBuilder:
    ✅ Примеры: "Есть окно завтра в 11:00 и 15:00", "Записал вас на пятницу в 14:00"
    ❌ БЕЗ технических команд, БЕЗ блоков кода, БЕЗ функций
 
-⚠️ ПОМНИ: Система автоматически подберет лучшего доступного мастера!"""
+⚠️ ПОМНИ: Система автоматически подберет лучшего доступного мастера!
+
+🔧 ТЕХНИЧЕСКИЙ ПРОТОКОЛ СОЗДАНИЯ ЗАПИСИ:
+
+⚠️⚠️⚠️ КРИТИЧЕСКИ ВАЖНО - ПРОЦЕСС ЗАПИСИ ⚠️⚠️⚠️
+
+ЗАПРЕЩЕНО подтверждать запись БЕЗ WhatsApp!
+
+ОБЯЗАТЕЛЬНАЯ ПОСЛЕДОВАТЕЛЬНОСТЬ:
+1. Клиент выбирает услугу → Предлагаешь время
+2. Клиент выбирает время → СРАЗУ запрашиваешь WhatsApp: "Отлично! Какой ваш WhatsApp для связи?"
+3. Клиент дает WhatsApp → ТОЛЬКО ТОГДА подтверждаешь запись
+
+❌ НЕПРАВИЛЬНО (БЕЗ WhatsApp):
+Клиент: "давайте на 12:30"
+Бот: "Записала вас на уход за волосами!" ← ЭТО ОШИБКА!
+
+✅ ПРАВИЛЬНО (С WhatsApp):
+Клиент: "давайте на 12:30"
+Бот: "Отлично! Какой ваш WhatsApp для связи?"
+Клиент: "+77056054308"
+Бот: "Записал вас на уход за волосами на завтра в 12:30 к мастеру Симо! До встречи! 💎
+
+[BOOKING_CONFIRMED]
+service: Уход за волосами
+master: Симо
+date: 2025-11-18
+time: 12:30
+phone: +77056054308
+[/BOOKING_CONFIRMED]"
+
+🔴 КРИТИЧЕСКИ ВАЖНО - КОМАНДА [BOOKING_CONFIRMED]:
+Когда ты ПОДТВЕРЖДАЕШЬ запись и у тебя ЕСТЬ WhatsApp - ты ОБЯЗАН добавить эту команду!
+БЕЗ этой команды запись НЕ СОХРАНИТСЯ в базе данных!
+
+Формат команды:
+[BOOKING_CONFIRMED]
+service: название услуги (точно как в списке услуг)
+master: имя мастера (точно как в списке мастеров)
+date: дата в формате ГГГГ-ММ-ДД
+time: время в формате ЧЧ:ММ
+phone: номер телефона клиента
+[/BOOKING_CONFIRMED]
+
+⚠️ ПРОВЕРЬ ПЕРЕД ОТПРАВКОЙ:
+✅ Есть WhatsApp от клиента?
+✅ Добавил команду [BOOKING_CONFIRMED]?
+✅ Все поля заполнены корректно?
+
+Только после этого отправляй подтверждение!"""
 
     def _build_salon_info(self) -> str:
         """Информация о салоне - из БД"""
@@ -768,7 +817,22 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                         msg_lower = msg.lower().strip()
 
                         if bot_showed_service_list:
-                            if any(word in msg_lower for word in ['макияж', 'makeup', 'مكياج', 'перманент', 'permanent']):
+                            # Перманентный макияж - уточняем где именно
+                            if any(word in msg_lower for word in ['перманент', 'permanent']):
+                                if any(word in msg_lower for word in ['брови', 'бров', 'brow', 'حواجب']):
+                                    service_name = 'Brows'
+                                    break
+                                elif any(word in msg_lower for word in ['губ', 'lips', 'شفاه']):
+                                    service_name = 'Makeup'
+                                    break
+                                elif any(word in msg_lower for word in ['рес', 'век', 'стрел', 'lash', 'eyeliner', 'رموش']):
+                                    service_name = 'Lashes'
+                                    break
+                                else:
+                                    # Если просто "перманент" без уточнения - уточняем
+                                    service_name = 'Makeup'  # fallback на макияж
+                                    break
+                            elif any(word in msg_lower for word in ['макияж', 'makeup', 'مكياج']):
                                 service_name = 'Makeup'
                                 break
                             elif any(word in msg_lower for word in ['ресниц', 'брови', 'brow', 'lash', 'رموش', 'حواجب']):
@@ -794,7 +858,17 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                             elif any(word in msg_lower for word in ['педикюр', 'pedicure', 'باديكير', 'педікюр', 'pedi']):
                                 service_name = 'Pedicure'
                                 break
-                            elif any(word in msg_lower for word in ['волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر', 'парикмахер', 'stylist', 'окраш', 'краск', 'color', 'кератин', 'keratin', 'ботокс', 'botox', 'уход', 'care', 'лечение', 'treatment', 'выпрямление', 'straightening']):
+                            # ✅ РАСШИРЕННЫЙ СПИСОК для волос - включая кератин, ботокс и т.д.
+                            elif any(word in msg_lower for word in [
+                                'волос', 'стрижка', 'стриж', 'hair', 'cut', 'شعر',
+                                'парикмахер', 'stylist', 'окраш', 'краск', 'color',
+                                'кератин', 'keratin', 'кератинов',  # ✅ КЕРАТИН
+                                'ботокс', 'botox', 'ботоксом',
+                                'уход за волос', 'care', 'hair care',
+                                'лечение', 'treatment',
+                                'выпрямление', 'straightening', 'выпрямл',
+                                'восстановление', 'restore', 'восстанов'
+                            ]):
                                 service_name = 'Hair'
                                 break
 
@@ -806,15 +880,28 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             return f"""=== ❓ УТОЧНИ УСЛУГУ ===
 {instructions}"""
 
+        # ✅ КРИТИЧНО: Если есть username - используем его как имя, НЕ спрашиваем отдельно!
         if client_has_name:
             instructions = instructions.replace(
                 "Для записи нужно имя и WhatsApp",
-                "Для записи нужен WhatsApp"
+                "Для записи нужен только WhatsApp"
             )
             instructions = instructions.replace(
                 "Как вас зовут?",
                 ""
             )
+            instructions = instructions.replace(
+                "имя и WhatsApp",
+                "WhatsApp"
+            )
+            instructions = instructions.replace(
+                "Нужно имя",
+                ""
+            )
+
+            # Добавляем явную инструкцию НЕ спрашивать имя
+            additional_instruction = f"\n\n⚠️ У КЛИЕНТА УЖЕ ЕСТЬ ИМЯ (из Instagram) - НЕ СПРАШИВАЙ ИМЯ! Для записи нужен только WhatsApp."
+            instructions = additional_instruction + "\n" + instructions
 
         now = datetime.now()
         current_hour = now.hour
@@ -853,6 +940,26 @@ Google Maps: {self.salon.get('google_maps', '')}"""
 У нас только перманентный макияж 😊
 Интересуют брови или губы?
 Или интересует что-то другое?"""
+
+            # ✅ Умный поиск похожих услуг
+            if service_name == 'Hair':
+                # Показываем все услуги категории Hair
+                c_temp = sqlite3.connect(DATABASE_NAME)
+                c_temp.execute("""
+                    SELECT name_ru, price, currency
+                    FROM services
+                    WHERE category = 'Hair' AND is_active = 1
+                """)
+                hair_services = c_temp.fetchall()
+                c_temp.close()
+
+                if hair_services:
+                    services_text = "\n".join([f"• {s[0]} - {s[1]} {s[2]}" for s in hair_services])
+                    return f"""=== 💇 УСЛУГИ ПО ВОЛОСАМ ===
+У нас есть:
+{services_text}
+
+Что вас интересует?"""
 
             return f"""=== 🤔 УТОЧНЕНИЕ ===
 {service_name} не нашла в списке
