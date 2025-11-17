@@ -198,6 +198,54 @@ class PromptBuilder:
             self._build_objections_section(objections),
         ]
 
+        # ✅ КРИТИЧЕСКОЕ НАПОМИНАНИЕ В КОНЦЕ ПРОМПТА
+        final_reminder = """
+=== 🔴 ФИНАЛЬНОЕ НАПОМИНАНИЕ - ОБЯЗАТЕЛЬНО ПРОЧТИ! ===
+
+КОГДА КЛИЕНТ ДАЕТ WhatsApp И ТЫ ПОДТВЕРЖДАЕШЬ ЗАПИСЬ:
+
+⚠️ СНАЧАЛА ПРОВЕРЬ КОНТЕКСТ РАЗГОВОРА:
+- Что клиент изначально хотел? (кератин = уход за волосами)
+- На какую дату и время договорились?
+- К какому мастеру записываем?
+
+⚠️ УКАЖИ ПРАВИЛЬНУЮ УСЛУГУ В КОМАНДЕ:
+- Если говорили про "кератин" или "уход за волосами" → service: Уход за волосами
+- Если говорили про "маникюр" → service: Маникюр
+- НЕ ПРИДУМЫВАЙ другие услуги! Смотри в истории что изначально хотел клиент!
+
+ТЫ ОБЯЗАН ДОБАВИТЬ В СВОЙ ОТВЕТ:
+
+[BOOKING_CONFIRMED]
+service: ТОЧНОЕ название услуги из списка (смотри что хотел клиент!)
+master: имя мастера из списка доступных для этой услуги
+date: ГГГГ-ММ-ДД
+time: ЧЧ:ММ
+phone: номер телефона клиента
+[/BOOKING_CONFIRMED]
+
+ПРИМЕР:
+Клиент изначально спросил: "кератин"
+Ты предложил: "Уход за волосами"
+Клиент выбрал время: "на 11:00 19 ноября"
+Клиент дал WhatsApp: "+77077077707"
+
+ПРАВИЛЬНЫЙ ОТВЕТ:
+"Записал вас на уход за волосами 19 ноября в 11:00 к Симо! 💎
+
+[BOOKING_CONFIRMED]
+service: Уход за волосами
+master: Симо
+date: 2025-11-19
+time: 11:00
+phone: +77077077707
+[/BOOKING_CONFIRMED]"
+
+БЕЗ ЭТОЙ КОМАНДЫ ЗАПИСЬ НЕ СОХРАНИТСЯ!
+ЭТО КРИТИЧНО! НЕ ЗАБЫВАЙ!"""
+
+        parts.append(final_reminder)
+
         return "\n\n".join([p for p in parts if p])
 
     def _build_identity(self) -> str:
@@ -243,7 +291,28 @@ class PromptBuilder:
 
 5. **ЦЕННОСТЬ, НЕ ЦЕНА:**
    ✅ "Всего лишь 1500 дирхам", "Просто 800 дирхам"
-   ❌ НЕ: "от 600 до 1500" (пугает диапазоном)"""
+   ❌ НЕ: "от 600 до 1500" (пугает диапазоном)
+
+6. **ПРОВЕРЯЙ ФАКТЫ - НЕ СОГЛАШАЙСЯ СО ВСЕМ:**
+   ⚠️ Если клиент говорит что-то неправильное - ИСПРАВЬ ЕГО!
+   ⚠️ ВСЯ ИНФОРМАЦИЯ БЕРЕТСЯ ИЗ БД - СМОТРИ РАЗДЕЛ "МАСТЕРА И ИХ УСЛУГИ" НИЖЕ!
+
+   Пример проверки:
+   Клиент: "а к Ляззат можно? она же по волосам?"
+
+   ШАГ 1: Смотришь в раздел "МАСТЕРА И ИХ УСЛУГИ (из БД)" ниже
+   ШАГ 2: Находишь "Ляззат: - Маникюр (Nails), - Педикюр (Nails)"
+   ШАГ 3: Видишь что Ляззат делает ТОЛЬКО Nails, НЕ Hair
+
+   ❌ НЕ ОТВЕЧАЙ: "Ляззат занимается волосами, все верно!"
+   ✅ ОТВЕЧАЙ: "Нет, Ляззат делает маникюр и педикюр. Для волос у нас Симо и Местан 😊"
+
+   ВСЕГДА ПРОВЕРЯЙ В РАЗДЕЛЕ "МАСТЕРА И ИХ УСЛУГИ":
+   - Какие РЕАЛЬНЫЕ услуги делает мастер (не угадывай!)
+   - Что клиент изначально хотел (помни контекст разговора!)
+   - Правильная ли дата и время
+
+   НЕ ПРИДУМЫВАЙ НИЧЕГО - ТОЛЬКО ДАННЫЕ ИЗ БД!"""
 
     def _build_language_settings(self, language: str) -> str:
         """Языковые настройки - из БД"""
@@ -578,47 +647,73 @@ Google Maps: {self.salon.get('google_maps', '')}"""
         return services_text
 
     def _build_masters_list(self, client_language: str = 'ru') -> str:
-        """Список мастеров салона"""
+        """Список мастеров салона С ИХ УСЛУГАМИ из БД"""
         from db.employees import get_all_employees
+        import sqlite3
 
         # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
         employees = get_all_employees(active_only=True, service_providers_only=True)
-        
+
         if not employees:
             return ""
-        
-        masters_text = "=== 👥 МАСТЕРА САЛОНА ===\n\n"
-        
+
+        masters_text = "=== 👥 МАСТЕРА И ИХ УСЛУГИ (из БД) ===\n"
+        masters_text += "⚠️ ПРОВЕРЯЙ ЭТОТ СПИСОК КОГДА КЛИЕНТ СПРАШИВАЕТ ПРО МАСТЕРА!\n\n"
+
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+
         for emp in employees[:5]:
             emp_id = emp[0]
-            
+
             # ✅ ИСПРАВЛЕНИЕ: Получаем полные данные мастера для доступа к переводам
             from db.employees import get_employee
             full_emp = get_employee(emp_id)
-            
+
             if not full_emp:
                 continue
-            
+
             emp_name = full_emp[1]  # full_name из полных данных
 
             # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
             from utils.transliteration import transliterate_name
             emp_name_display = transliterate_name(str(emp_name) if emp_name else "Master", client_language)
-            
-            
-            # Получаем должность из полных данных (например, full_emp[2])
+
+            # Получаем должность из полных данных
             position = full_emp[2] if len(full_emp) > 2 else None
-
-            # Отображаемое имя мастера
-            display_name = emp_name_display
-
             translated_position = translate_position(position, client_language) if position else ""
 
+            # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД
+            c.execute("""
+                SELECT s.name_ru, s.category
+                FROM employee_services es
+                JOIN services s ON es.service_id = s.id
+                WHERE es.employee_id = ? AND s.is_active = 1
+                ORDER BY s.category, s.name_ru
+            """, (emp_id,))
+
+            services = c.fetchall()
+
+            # Форматируем вывод
             if translated_position:
-                masters_text += f"• {display_name} - {translated_position}\n"
+                masters_text += f"• {emp_name_display} ({translated_position}):\n"
             else:
-                masters_text += f"• {display_name}\n"
-        
+                masters_text += f"• {emp_name_display}:\n"
+
+            if services:
+                for service_name, category in services:
+                    masters_text += f"  - {service_name} ({category})\n"
+            else:
+                masters_text += f"  - (нет закрепленных услуг)\n"
+
+            masters_text += "\n"
+
+        conn.close()
+
+        masters_text += "⚠️ ЕСЛИ КЛИЕНТ СПРАШИВАЕТ: 'а к Ляззат можно? она же по волосам?'\n"
+        masters_text += "ПРОВЕРЬ СПИСОК ВЫШЕ! Если Ляззат делает только Nails - ИСПРАВЬ клиента!\n"
+        masters_text += "НЕ СОГЛАШАЙСЯ с неправильными утверждениями - ПРОВЕРЯЙ ФАКТЫ!\n"
+
         return masters_text
 
 
@@ -1001,6 +1096,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
 
         # ✅ ИСПОЛЬЗУЕМ РЕАЛЬНЫЙ КАЛЕНДАРЬ вместо примерных слотов
+        # ⚠️ ВСЁ ВРЕМЯ БЕРЁТСЯ ИЗ БД - НЕ ПРИДУМЫВАЙ ВРЕМЯ НАУГАД!
         for emp in employees[:5]:
             emp_id = emp[0]
             # ✅ emp[1] = full_name из get_employees_by_service()
@@ -1010,7 +1106,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             from utils.transliteration import transliterate_name
             emp_name_display = transliterate_name(str(emp_name), client_language)
 
-            # ✅ ПОЛУЧАЕМ РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ
+            # ✅ ПОЛУЧАЕМ РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ БД
             try:
                 # Получаем расписание мастера на этот день
                 target_dt = datetime.strptime(target_date, "%Y-%m-%d")
@@ -1097,6 +1193,24 @@ Google Maps: {self.salon.get('google_maps', '')}"""
 
         # ✅ #14 - Альтернативы если время не подходит
         availability_text += f"\n\n{instructions}"
+
+        # ⚠️ ВАЖНАЯ ИНСТРУКЦИЯ ДЛЯ БОТА
+        availability_text += f"""
+
+⚠️⚠️⚠️ КРИТИЧНО - ЧИТАЙ ВНИМАТЕЛЬНО! ⚠️⚠️⚠️
+
+ВРЕМЯ ВЫШЕ - ЭТО РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ БД!
+
+❌ НЕ ГОВОРИ "все занято" ЕСЛИ ВЫШЕ ЕСТЬ СВОБОДНЫЕ СЛОТЫ!
+❌ НЕ ПРЕДЛАГАЙ ВРЕМЯ КОТОРОГО НЕТ В СПИСКЕ ВЫШЕ!
+✅ ПРЕДЛАГАЙ ТОЛЬКО ТО ВРЕМЯ КОТОРОЕ УКАЗАНО ВЫШЕ!
+
+Если клиент просит конкретное время (например "16:00"):
+1. ПОСМОТРИ в список выше - есть ли 16:00?
+2. Если ЕСТЬ - предложи это время
+3. Если НЕТ - скажи что это время занято и предложи ближайшие доступные слоты из списка выше
+
+НЕ ПРИДУМЫВАЙ ВРЕМЯ - ТОЛЬКО ИЗ СПИСКА ВЫШЕ!"""
 
         conn.close()
         return availability_text
