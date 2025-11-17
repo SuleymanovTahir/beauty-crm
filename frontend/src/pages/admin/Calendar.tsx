@@ -1063,19 +1063,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 />
               </div>
 
-              {selectedBooking.master && (
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-2">
-                    {t('calendar:master')}
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedBooking.master}
-                    readOnly
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
-                  />
-                </div>
-              )}
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-2">
+                  {t('calendar:master')}
+                </label>
+                <input
+                  type="text"
+                  value={selectedBooking.master || '-'}
+                  readOnly
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                />
+              </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">
