@@ -137,23 +137,31 @@ def test_tool_code_prevention():
     with open(prompts_file, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Проверяем наличие инструкций
-    has_tool_code_warning = "НЕ ВЫВОДИ ТЕХНИЧЕСКИЙ КОД" in content
-    has_specific_warning = "tool_code" in content and "НИКОГДА" in content
-
+    # Проверяем что УДАЛЕНЫ опасные примеры
+    has_dangerous_examples = "```tool_code```" in content or "```check_masters" in content
     print_check(
-        "Добавлены инструкции не выводить tool_code",
-        has_tool_code_warning,
-        f"Найдена инструкция 'НЕ ВЫВОДИ ТЕХНИЧЕСКИЙ КОД'"
+        "Удалены опасные примеры кода из промпта",
+        not has_dangerous_examples,
+        f"Промпт {'НЕ содержит' if not has_dangerous_examples else 'СОДЕРЖИТ'} примеры с кодом"
     )
 
+    # Проверяем наличие позитивных инструкций
+    has_human_format = "ТОЛЬКО обычным текстом" in content or "как живой человек" in content
     print_check(
-        "Конкретные примеры запрещенного кода",
-        has_specific_warning,
-        f"Найдены примеры с tool_code"
+        "Добавлены инструкции писать человеческим языком",
+        has_human_format,
+        f"Найдены позитивные инструкции"
     )
 
-    return has_tool_code_warning and has_specific_warning
+    # Проверяем примеры ПРАВИЛЬНЫХ ответов
+    has_good_examples = "На завтра есть окошко" in content or "Есть окно завтра" in content
+    print_check(
+        "Есть примеры ПРАВИЛЬНЫХ ответов с временем",
+        has_good_examples,
+        f"Найдены примеры правильных ответов"
+    )
+
+    return not has_dangerous_examples and has_human_format and has_good_examples
 
 
 def test_decisiveness():
