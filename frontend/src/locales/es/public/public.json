@@ -1,21 +1,19 @@
 {
-  "footer": {
-    "cooperation": "Cooperation",
-    "quick_links": "Quick Links",
-    "weekdays": "Mon-Fri",
-    "weekends": "Sat-Sun",
-    "terms": "Terms of Use",
-    "description": "Premium beauty services in the heart of the city. Professional masters and individual approach.",
-    "contacts": "Contacts",
-    "all_rights": "All rights reserved",
-    "working_hours": "Working Hours",
-    "privacy_policy": "Privacy Policy"
-  },
+  "about": "Sobre nosotros",
+  "contacts": "Contactos",
   "faq": "Preguntas frecuentes",
-  "personal_cabinet": "Personal Cabinet",
-  "about": "About Us",
-  "contacts": "Contacts",
-  "price_list": "Price List",
-  "home": "Home",
-  "login": "Login"
+  "footer.all_rights": "Reservados todos los derechos",
+  "footer.contacts": "Contactos",
+  "footer.cooperation": "Cooperación",
+  "footer.description": "Премиальные услуги красоты в самом сердце города. Профессиональные мастера и индивидуальный подход.",
+  "footer.privacy_policy": "política de privacidad",
+  "footer.quick_links": "Enlaces rápidos",
+  "footer.terms": "Condiciones de uso",
+  "footer.weekdays": "Lunes a viernes",
+  "footer.weekends": "sábado-domingo",
+  "footer.working_hours": "Horario de apertura",
+  "home": "Hogar",
+  "login": "Acceso",
+  "personal_cabinet": "cuenta personal",
+  "price_list": "Lista de precios"
 }

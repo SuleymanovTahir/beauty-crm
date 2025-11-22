@@ -1,16 +1,12 @@
 {
-  "bottomCta": {
-    "title": "Ready to book?",
-    "bookButton": "Book now",
-    "description": "Choose a convenient time and enjoy our premium services"
-  },
-  "noServices": "Services not found",
-  "subtitle": "Premium beauty services at affordable prices",
-  "title": "Our services and prices",
-  "error": "Error loading services",
-  "cta": {
-    "ready": "Ready to transform?",
-    "bookButton": "Book an appointment"
-  },
-  "loading": "Loading services..."
+  "bottomCta.bookButton": "अभी दाखिला लें",
+  "bottomCta.description": "Выберите удобное время и насладитесь нашими премиальными услугами",
+  "bottomCta.title": "साइन अप करने के लिए तैयार हैं?",
+  "cta.bookButton": "प्रक्रिया के लिए साइन अप करें",
+  "cta.ready": "परिवर्तन के लिए तैयार हैं?",
+  "error": "सेवाएँ लोड करने में त्रुटि",
+  "loading": "सेवाएँ लोड हो रही हैं...",
+  "noServices": "सेवाएँ नहीं मिलीं",
+  "subtitle": "Премиальные услуги красоты по доступным ценам",
+  "title": "Наши услуги и цены"
 }

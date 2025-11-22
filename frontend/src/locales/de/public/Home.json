@@ -1,57 +1,35 @@
 {
-  "features": {
-    "items": {
-      "materials": {
-        "description": "We use only quality and safe materials from leading brands",
-        "title": "Premium materials"
-      },
-      "masters": {
-        "title": "Experienced masters",
-        "description": "Our specialists have international certificates and years of experience"
-      },
-      "schedule": {
-        "title": "Convenient schedule",
-        "description": "We work 7 days a week with convenient time slots for booking"
-      }
-    },
-    "subtitle": "We offer the best service in the beauty industry",
-    "title": "Why choose us"
-  },
-  "booking": {
-    "form": {
-      "date": "Date *",
-      "service": "Service *",
-      "time": "Time *",
-      "servicePlaceholder": "Select a service",
-      "submit": "Book",
-      "phonePlaceholder": "+971 50 123 4567",
-      "namePlaceholder": "Anna Ivanova",
-      "phone": "Phone *",
-      "name": "Your name *"
-    },
-    "loading": "Loading services...",
-    "validation": "Please fill in all fields",
-    "description": "Fill out the form and we will contact you for confirmation",
-    "title": "Book an appointment"
-  },
-  "hero": {
-    "bookButton": "Book now",
-    "title": "Discover a new level of beauty",
-    "badge": "Premium beauty services",
-    "description": "Professional masters, individual approach and high-quality materials. Your beauty is our passion.",
-    "servicesButton": "Our services"
-  },
-  "gallery": {
-    "items": {
-      "facial": "Facial care",
-      "makeup": "Permanent makeup",
-      "salon": "Our salon"
-    },
-    "subtitle": "Results we are proud of",
-    "title": "Our works"
-  },
-  "testimonials": {
-    "title": "Customer reviews",
-    "subtitle": "What they say about us"
-  }
+  "booking.description": "Заполните форму и мы свяжемся с вами для подтверждения",
+  "booking.form.date": "Datum *",
+  "booking.form.name": "Ihr Name *",
+  "booking.form.namePlaceholder": "Anna Iwanowa",
+  "booking.form.phone": "Telefon *",
+  "booking.form.phonePlaceholder": "+971 50 123 4567",
+  "booking.form.service": "Service *",
+  "booking.form.servicePlaceholder": "Wählen Sie einen Dienst aus",
+  "booking.form.submit": "Melden Sie sich an",
+  "booking.form.time": "Zeit *",
+  "booking.loading": "Dienste werden geladen...",
+  "booking.title": "Melden Sie sich für das Verfahren an",
+  "booking.validation": "Пожалуйста, заполните все поля",
+  "features.items.masters.description": "Наши специалисты имеют международные сертификаты и многолетний опыт работы",
+  "features.items.masters.title": "Erfahrene Handwerker",
+  "features.items.materials.description": "Используем только качественные и безопасные материалы от ведущих брендов",
+  "features.items.materials.title": "Hochwertige Materialien",
+  "features.items.schedule.description": "Работаем 7 дней в неделю с удобными временными слотами для записи",
+  "features.items.schedule.title": "Bequemer Zeitplan",
+  "features.subtitle": "Мы предлагаем лучший сервис в индустрии красоты",
+  "features.title": "Warum sollten Sie sich für uns entscheiden?",
+  "gallery.items.facial": "Gesichtspflege",
+  "gallery.items.makeup": "Permanentes Make-up",
+  "gallery.items.salon": "Unser Salon",
+  "gallery.subtitle": "Результаты, которыми мы гордимся",
+  "gallery.title": "Unsere Werke",
+  "hero.badge": "Premium-Beauty-Dienstleistungen",
+  "hero.bookButton": "Melden Sie sich jetzt an",
+  "hero.description": "Профессиональные мастера, индивидуальный подход и высококачественные материалы. Ваша красота - наша страсть.",
+  "hero.servicesButton": "Unsere Leistungen",
+  "hero.title": "Откройте для себя новый уровень красоты",
+  "testimonials.subtitle": "Что говорят о нас",
+  "testimonials.title": "Bewertungen unserer Kunden"
 }

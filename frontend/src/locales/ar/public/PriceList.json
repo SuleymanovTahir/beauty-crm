@@ -1,16 +1,12 @@
 {
-  "bottomCta": {
-    "title": "Ready to book?",
-    "bookButton": "Book now",
-    "description": "Choose a convenient time and enjoy our premium services"
-  },
-  "noServices": "Services not found",
-  "subtitle": "Premium beauty services at affordable prices",
-  "title": "Our services and prices",
-  "error": "Error loading services",
-  "cta": {
-    "ready": "Ready to transform?",
-    "bookButton": "Book an appointment"
-  },
-  "loading": "Loading services..."
+  "bottomCta.bookButton": "سجل الآن",
+  "bottomCta.description": "Выберите удобное время и насладитесь нашими премиальными услугами",
+  "bottomCta.title": "هل أنت مستعد للتسجيل؟",
+  "cta.bookButton": "قم بالتسجيل لهذا الإجراء",
+  "cta.ready": "على استعداد للتحول؟",
+  "error": "خطأ في تحميل الخدمات",
+  "loading": "جارٍ تحميل الخدمات...",
+  "noServices": "لم يتم العثور على الخدمات",
+  "subtitle": "Премиальные услуги красоты по доступным ценам",
+  "title": "Наши услуги и цены"
 }
