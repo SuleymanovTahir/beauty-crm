@@ -982,7 +982,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❌ {t('botsettings:anti_patterns')} (что НЕ делать)
+                ❌ {t('botsettings:anti_patterns')} ({t('botsettings:what_not_to_do')})
               </label>
               <textarea
                 value={settings.anti_patterns}
@@ -1026,7 +1026,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤝 Промпт для консультации менеджера
+                🤝 {t('botsettings:manager_consultation_prompt')}
               </label>
               <textarea
                 value={settings.manager_consultation_prompt}
@@ -1044,7 +1044,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Инструкции для AI когда менеджер просит совет через команду "#помоги"
+                {t('botsettings:manager_consultation_prompt_description')}
               </p>
             </div>
 

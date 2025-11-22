@@ -23,7 +23,7 @@ interface Stats {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/Dashboard', 'common']);
+  const { t, i18n } = useTranslation(['admin/Dashboard', 'common']);
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
       setLoading(true);
       setError(null);
 
-      // ✅ Загружаем реальные данные
+      // Load real data
       const [statsData, bookingsData] = await Promise.all([
         api.getStats(),
         api.getBookings(),
@@ -46,14 +46,14 @@ export default function AdminDashboard() {
 
       setStats(statsData);
 
-      // Берём последние 3 записи
+      // Take last 3 bookings
       if (bookingsData.bookings) {
         setRecentBookings(bookingsData.bookings.slice(0, 3));
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка загрузки';
+      const message = err instanceof Error ? err.message : t('dashboard:error_loading');
       setError(message);
-      toast.error(`Ошибка: ${message}`);
+      toast.error(t('dashboard:errors.loading', { message }));
       console.error('Error loading dashboard:', err);
     } finally {
       setLoading(false);
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
     );
   }
 
-  // ✅ Используем реальные данные из stats
+  // Use real data from stats
   const stat_cards = [
     {
       icon: Calendar,
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 sm:gap-0 w-full sm:w-auto mt-2 sm:mt-0 pl-13 sm:pl-0">
                       <p className="text-sm text-gray-900">
-                        {new Date(booking.datetime).toLocaleTimeString('ru-RU', {
+                        {new Date(booking.datetime).toLocaleTimeString(i18n.language, {
                           hour: '2-digit',
                           minute: '2-digit'
                         })}

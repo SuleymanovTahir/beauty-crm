@@ -23,5 +23,6 @@
   "status_updated": "Estado actualizado",
   "update": "Actualizar",
   "update_status": "Actualizar Estado",
-  "write_to_client": "Escribir al Cliente"
+  "write_to_client": "Escribir al Cliente",
+  "currency": "AED"
 }

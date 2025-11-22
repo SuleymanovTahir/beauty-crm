@@ -24,7 +24,7 @@ export default function BookingDetail() {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation(['admin/bookingdetail', 'common']);
+  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common']);
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
 
@@ -38,7 +38,7 @@ export default function BookingDetail() {
       // Попробуем загрузить напрямую из всех букингов
       const response = await apiClient.getBookings();
       const found = response.bookings.find((b: Booking) => b.id === parseInt(id!));
-      
+
       if (found) {
         setBooking(found);
         setNewStatus(found.status);
@@ -96,7 +96,7 @@ export default function BookingDetail() {
 
   const formatDate = (dateStr: string) => {
     try {
-      return new Date(dateStr).toLocaleDateString('ru-RU', {
+      return new Date(dateStr).toLocaleDateString(i18n.language, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -189,7 +189,7 @@ export default function BookingDetail() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">{t('revenue')}</p>
-                    <p className="text-lg text-gray-900 font-medium">{booking.revenue} AED</p>
+                    <p className="text-lg text-gray-900 font-medium">{booking.revenue} {t('currency')}</p>
                   </div>
                 </div>
               )}
@@ -242,24 +242,23 @@ export default function BookingDetail() {
                 <p className="text-xs text-gray-600 mb-2">{t('current_status')}</p>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      booking.status === 'completed'
+                    className={`w-3 h-3 rounded-full ${booking.status === 'completed'
                         ? 'bg-green-500'
                         : booking.status === 'cancelled'
-                        ? 'bg-red-500'
-                        : booking.status === 'confirmed'
-                        ? 'bg-blue-500'
-                        : 'bg-yellow-500'
-                    }`}
+                          ? 'bg-red-500'
+                          : booking.status === 'confirmed'
+                            ? 'bg-blue-500'
+                            : 'bg-yellow-500'
+                      }`}
                   ></div>
                   <span className="text-sm text-gray-900 font-medium capitalize">
                     {booking.status === 'new'
                       ? t('status_new')
                       : booking.status === 'confirmed'
-                      ? t('status_confirmed')
-                      : booking.status === 'completed'
-                      ? t('status_completed')
-                      : t('status_cancelled')}
+                        ? t('status_confirmed')
+                        : booking.status === 'completed'
+                          ? t('status_completed')
+                          : t('status_cancelled')}
                   </span>
                 </div>
               </div>

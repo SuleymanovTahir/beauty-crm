@@ -19,7 +19,7 @@ export default function EditUser() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   const [profileData, setProfileData] = useState({
     username: '',
     full_name: '',
@@ -138,7 +138,7 @@ export default function EditUser() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
-                {t('users:profile')}
+              {t('users:profile')}
             </TabsTrigger>
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
@@ -146,14 +146,14 @@ export default function EditUser() {
             </TabsTrigger>
             <TabsTrigger value="permissions">
               <Shield className="w-4 h-4 mr-2" />
-              Права доступа
+              {t('edituser:permissions_label')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('users:basic_information')}</h2>
-              
+
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
                   <Label htmlFor="username">{t('users:username')} *</Label>
@@ -199,8 +199,8 @@ export default function EditUser() {
                   </p>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={saving}
                   className="w-full bg-pink-600 hover:bg-pink-700"
                 >
@@ -220,10 +220,10 @@ export default function EditUser() {
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('users:change_password')}</h2>
-              
+
               <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>⚠️ {t('users:important')}:</strong> {t('users:admin_can_change_password_without_knowing_current')} 
+                  <strong>⚠️ {t('users:important')}:</strong> {t('users:admin_can_change_password_without_knowing_current')}
                   {t('users:after_changing_user_must_login_with_new_password')}
                 </p>
               </div>
@@ -260,8 +260,8 @@ export default function EditUser() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={saving}
                   className="w-full bg-pink-600 hover:bg-pink-700"
                 >

@@ -27,5 +27,6 @@
   "save_changes": "Guardar cambios",
   "saving": "Ahorro",
   "username": "Acceso",
-  "username_must_be_at_least_3_characters": "Логин должен содержать минимум 3 символа"
+  "username_must_be_at_least_3_characters": "Логин должен содержать минимум 3 символа",
+  "permissions_label": "Permisos de Acceso"
 }

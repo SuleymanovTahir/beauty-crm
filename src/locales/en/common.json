@@ -1,0 +1,21 @@
+{
+  "profile": "Profile",
+  "subscriptions": "Subscriptions",
+  "danger_zone": "Danger zone",
+  "my_profile": "My profile",
+  "click_camera_to_upload": "Click on the camera",
+  "to_upload_photo": "to upload a photo",
+  "max_size": "Max. ",
+  "username": "Login",
+  "full_name": "Full name",
+  "email": "Email",
+  "change_password": "Change password",
+  "current_password": "Current Password",
+  "new_password": "New Password",
+  "confirm_new_password": "Confirm your new password",
+  "new_password_placeholder": "Leave blank if you don't want to change",
+  "repeat_new_password": "Repeat new password",
+  "save_changes": "Save changes",
+  "profile_updated": "Profile updated",
+  "error_update_profile": "Profile update error"
+}

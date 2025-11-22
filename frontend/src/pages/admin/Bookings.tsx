@@ -29,6 +29,58 @@ const api = {
     return res.json();
   },
 
+  async updateBooking(id: number, data: any) {
+    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('update_failed');
+    return res.json();
+  },
+
+  async exportBookings(format: string, dateFrom?: string, dateTo?: string) {
+    let url = `${this.baseURL}/api/export/bookings?format=${format}`;
+    if (dateFrom && dateTo) {
+      url += `&date_from=${dateFrom}&date_to=${dateTo}`;
+    }
+    const res = await fetch(url, { credentials: 'include' });
+    if (!res.ok) throw new Error('export_failed');
+    return res.blob();
+  },
+
+  async importBookings(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch(`${this.baseURL}/api/import/bookings`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('import_failed');
+    return res.json();
+  },
+
+  async downloadImportTemplate(format: 'csv' | 'excel') {
+    const res = await fetch(`${this.baseURL}/api/import/bookings/template?format=${format}`, {
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('template_download_failed');
+    return res.blob();
+  },
+
+  async deleteBooking(id: number) {
+    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('delete_failed');
+    return res.json();
+  },
+
   async getUsers() {
     const res = await fetch(`${this.baseURL}/api/users`, { credentials: 'include' });
     return res.json();
@@ -54,49 +106,6 @@ const api = {
     return res.json();
   },
 
-  async updateBooking(id: number, data: any) {
-    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) throw new Error('Update failed');
-    return res.json();
-  },
-
-  async exportBookings(format: string, dateFrom?: string, dateTo?: string) {
-    let url = `${this.baseURL}/api/export/bookings?format=${format}`;
-    if (dateFrom && dateTo) {
-      url += `&date_from=${dateFrom}&date_to=${dateTo}`;
-    }
-    const res = await fetch(url, { credentials: 'include' });
-    if (!res.ok) throw new Error('Export failed');
-    return res.blob();
-  },
-
-  async importBookings(file: File) {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const res = await fetch(`${this.baseURL}/api/import/bookings`, {
-      method: 'POST',
-      credentials: 'include',
-      body: formData
-    });
-
-    if (!res.ok) throw new Error('Import failed');
-    return res.json();
-  },
-
-  async downloadImportTemplate(format: 'csv' | 'excel') {
-    const res = await fetch(`${this.baseURL}/api/import/bookings/template?format=${format}`, {
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Template download failed');
-    return res.blob();
-  },
-
   async getEmployeesForService(serviceId: number) {
     const res = await fetch(`${this.baseURL}/api/services/${serviceId}/employees`, {
       credentials: 'include'
@@ -111,14 +120,6 @@ const api = {
     return res.json();
   },
 
-  async deleteBooking(id: number) {
-    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Delete failed');
-    return res.json();
-  },
 
   getCurrentUser() {
     const userStr = localStorage.getItem('user');
@@ -236,7 +237,7 @@ export default function Bookings() {
           setFilteredMasters(data.employees || []);
         } catch (err) {
           console.error('Error loading filtered masters:', err);
-          toast.error('Ошибка загрузки мастеров');
+          toast.error(t('bookings:error_loading_masters'));
           setFilteredMasters(masters); // Fallback to all masters
         } finally {
           setLoadingMasters(false);
@@ -311,7 +312,7 @@ export default function Bookings() {
       try {
         console.log('🧑‍💼 [Bookings] Загрузка users (masters)...');
         if (typeof api.getUsers !== 'function') {
-          throw new Error('api.getUsers is not a function! Check api object definition');
+          throw new Error(t('bookings:api_error_users'));
         }
         usersData = await api.getUsers();
         console.log('✅ [Bookings] Users загружены:', usersData);
@@ -396,17 +397,17 @@ export default function Bookings() {
   };
 
   const handleDeleteBooking = async (id: number, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete booking for ${name}?`)) {
+    if (!window.confirm(t('bookings:delete_booking_confirm', { name }))) {
       return;
     }
 
     try {
       await api.deleteBooking(id);
-      toast.success('Booking deleted successfully');
+      toast.success(t('bookings:booking_deleted'));
       loadData(); // Refresh the list
     } catch (err: any) {
       console.error('Delete error:', err);
-      toast.error(err.message || 'Failed to delete booking');
+      toast.error(err.message || t('bookings:delete_booking_error'));
     }
   };
 
@@ -618,7 +619,7 @@ export default function Bookings() {
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:revenue')}</p>
-          <h3 className="text-3xl text-blue-600">{stats.revenue} AED</h3>
+          <h3 className="text-3xl text-blue-600">{stats.revenue} {t('bookings:currency')}</h3>
         </div>
       </div>
 
@@ -867,7 +868,7 @@ export default function Bookings() {
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}
-                          title="Delete"
+                          title={t('bookings:delete')}
                         >
                           <Trash style={{ width: '16px', height: '16px', color: '#ef4444' }} />
                         </button>
@@ -1339,10 +1340,10 @@ export default function Bookings() {
               {/* Price/Revenue - Editable */}
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                  {t('bookings:price')} (AED)
+                  {t('bookings:price')} ({t('bookings:currency')})
                   {selectedService && (
                     <span style={{ marginLeft: '0.5rem', color: '#6b7280', fontWeight: '400' }}>
-                      (базовая: {selectedService.price} AED)
+                      ({t('bookings:base_price')}: {selectedService.price} {t('bookings:currency')})
                     </span>
                   )}
                 </label>
@@ -1358,7 +1359,7 @@ export default function Bookings() {
                   }}
                 />
                 <p style={{ marginTop: '0.25rem', fontSize: '0.75rem', color: '#6b7280' }}>
-                  💡 Можете изменить цену только для этой записи
+                  {t('bookings:can_change_price_hint')}
                 </p>
               </div>
 
@@ -1400,7 +1401,7 @@ export default function Bookings() {
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
                   {t('bookings:master')}
-                  {loadingMasters && <span style={{ marginLeft: '0.5rem', color: '#6b7280' }}>(загрузка...)</span>}
+                  {loadingMasters && <span style={{ marginLeft: '0.5rem', color: '#6b7280' }}>({t('bookings:loading')}...)</span>}
                 </label>
                 <select
                   value={addForm.master}
@@ -1425,7 +1426,7 @@ export default function Bookings() {
                     backgroundColor: '#fef3c7', borderLeft: '3px solid #f59e0b',
                     fontSize: '0.875rem', color: '#92400e'
                   }}>
-                    ⚠️ Нет мастеров для выбранной услуги
+                    {t('bookings:no_masters_for_service')}
                   </div>
                 )}
                 {busySlots.length > 0 && addForm.time && (
@@ -1435,10 +1436,10 @@ export default function Bookings() {
                     borderRadius: '0.375rem', fontSize: '0.875rem'
                   }}>
                     <div style={{ fontWeight: '600', color: '#92400e', marginBottom: '0.25rem' }}>
-                      ⚠️ Мастер занят в это время
+                      {t('bookings:master_busy')}
                     </div>
                     <div style={{ color: '#78350f' }}>
-                      Занятые слоты:
+                      {t('bookings:busy_slots')}:
                       {busySlots.map((slot: any, idx: number) => (
                         <div key={idx} style={{ marginTop: '0.25rem' }}>
                           • {slot.start_time} - {slot.end_time} ({slot.service_name})

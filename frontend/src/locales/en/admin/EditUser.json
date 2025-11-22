@@ -27,5 +27,6 @@
   "after_changing_user_must_login_with_new_password": "After changing, the user must login with the new password.",
   "new_password": "New Password",
   "confirm_password": "Confirm Password",
-  "changing": "Changing"
+  "changing": "Changing",
+  "permissions_label": "Permissions"
 }

@@ -164,7 +164,7 @@ export default function PriceList() {
                         >
                           <div className="flex justify-between items-start mb-2">
                             <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
-                            <p className="text-xl font-bold text-pink-600 ml-4 whitespace-nowrap">{service.price} AED</p>
+                            <p className="text-xl font-bold text-pink-600 ml-4 whitespace-nowrap">{service.price} {t('common:currency')}</p>
                           </div>
                           <p className="text-sm text-gray-600">{service.description}</p>
                         </div>

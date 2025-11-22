@@ -825,7 +825,7 @@ export default function AdminSettings() {
           </TabsTrigger>
           <TabsTrigger key="diagnostics" value="diagnostics" className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">Диагностика</span>
+            <span className="hidden sm:inline">{t('settings:diagnostics')}</span>
           </TabsTrigger>
           <TabsTrigger key="subscriptions" value="subscriptions" className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
@@ -833,11 +833,11 @@ export default function AdminSettings() {
           </TabsTrigger>
           <TabsTrigger key="broadcasts" value="broadcasts" className="flex items-center gap-2">
             <Send className="w-4 h-4" />
-            <span className="hidden sm:inline">Рассылки</span>
+            <span className="hidden sm:inline">{t('settings:broadcasts')}</span>
           </TabsTrigger>
           <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4" />
-            <span className="hidden sm:inline">Мессенджеры</span>
+            <span className="hidden sm:inline">{t('settings:messengers')}</span>
           </TabsTrigger>
           <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
             <Trash2 className="w-4 h-4" />
@@ -1292,7 +1292,7 @@ export default function AdminSettings() {
 
               <div className="border-t border-gray-200 pt-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg text-gray-900">Напоминания о записях</h3>
+                  <h3 className="text-lg text-gray-900">{t('settings:booking_reminders')}</h3>
                   <Button
                     type="button"
                     onClick={() => setShowCreateReminderDialog(true)}
@@ -1300,11 +1300,11 @@ export default function AdminSettings() {
                     size="sm"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Добавить напоминание
+                    {t('settings:add_reminder')}
                   </Button>
                 </div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Настройте автоматические напоминания клиентам о предстоящих записях
+                  {t('settings:configure_auto_reminders')}
                 </p>
 
                 {loadingReminderSettings ? (
@@ -1314,8 +1314,8 @@ export default function AdminSettings() {
                 ) : bookingReminderSettings.length === 0 ? (
                   <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
                     <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p>Нет настроенных напоминаний</p>
-                    <p className="text-sm mt-1">Добавьте напоминание, чтобы автоматически уведомлять клиентов</p>
+                    <p>{t('settings:no_reminders_configured')}</p>
+                    <p className="text-sm mt-1">{t('settings:add_reminder_hint')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1329,9 +1329,9 @@ export default function AdminSettings() {
                           <div>
                             <p className="text-sm font-medium text-gray-900">{setting.name}</p>
                             <p className="text-xs text-gray-600">
-                              {setting.days_before > 0 && `${setting.days_before} дн. `}
-                              {setting.hours_before > 0 && `${setting.hours_before} ч. `}
-                              до записи · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
+                              {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}
+                              {setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
+                              {t('settings:before_booking')} · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
                             </p>
                           </div>
                         </div>
@@ -1359,11 +1359,11 @@ export default function AdminSettings() {
                 {showCreateReminderDialog && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">Новое напоминание</h3>
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">{t('settings:new_reminder')}</h3>
 
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="reminder-name">Название *</Label>
+                          <Label htmlFor="reminder-name">{t('settings:name')} *</Label>
                           <Input
                             id="reminder-name"
                             value={reminderForm.name}
@@ -1374,7 +1374,7 @@ export default function AdminSettings() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="days-before">Дней до записи</Label>
+                            <Label htmlFor="days-before">{t('settings:days_before_booking')}</Label>
                             <Input
                               id="days-before"
                               type="number"
@@ -1384,7 +1384,7 @@ export default function AdminSettings() {
                             />
                           </div>
                           <div>
-                            <Label htmlFor="hours-before">Часов до записи</Label>
+                            <Label htmlFor="hours-before">{t('settings:hours_before_booking')}</Label>
                             <Input
                               id="hours-before"
                               type="number"
@@ -1396,7 +1396,7 @@ export default function AdminSettings() {
                         </div>
 
                         <div>
-                          <Label htmlFor="notification-type">Тип уведомления</Label>
+                          <Label htmlFor="notification-type">{t('settings:notification_type')}</Label>
                           <Select
                             value={reminderForm.notification_type}
                             onValueChange={(value) => setReminderForm({ ...reminderForm, notification_type: value })}
@@ -1422,14 +1422,14 @@ export default function AdminSettings() {
                           }}
                           className="flex-1"
                         >
-                          Отмена
+                          {t('settings:cancel')}
                         </Button>
                         <Button
                           type="button"
                           onClick={handleCreateReminderSetting}
                           className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
                         >
-                          Создать
+                          {t('settings:create')}
                         </Button>
                       </div>
                     </div>
@@ -1596,17 +1596,17 @@ export default function AdminSettings() {
         <TabsContent value="diagnostics">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
-              🔍 Диагностика системы
+              {t('settings:system_diagnostics')}
             </h2>
 
             <div className="space-y-6">
               <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-blue-800 font-medium mb-2">Что проверяется:</p>
+                <p className="text-blue-800 font-medium mb-2">{t('settings:what_is_checked')}:</p>
                 <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
-                  <li>База данных (таблицы, записи)</li>
-                  <li>Настройки бота (промпты, языки)</li>
-                  <li>Мастера и услуги</li>
-                  <li>Связи между таблицами</li>
+                  <li>{t('settings:check_database')}</li>
+                  <li>{t('settings:check_bot_settings')}</li>
+                  <li>{t('settings:check_masters_services')}</li>
+                  <li>{t('settings:check_relations')}</li>
                 </ul>
               </div>
 
@@ -1628,11 +1628,11 @@ export default function AdminSettings() {
 
                     const issues = data.issues || [];
                     if (issues.length === 0) {
-                      toast.success('✅ Диагностика успешна! Все работает отлично.');
+                      toast.success(t('settings:diagnostics_success'));
                     } else {
                       toast.warning(
-                        `⚠️ Найдено проблем: ${issues.length}. 
-                        Откройте консоль браузера (F12) для деталей.`
+                        `${t('settings:issues_found')}: ${issues.length}. 
+                        ${t('settings:check_console')}`
                       );
                     }
 
@@ -1647,11 +1647,11 @@ export default function AdminSettings() {
                   }
                 }}
               >
-                🔍 Запустить полную диагностику
+                {t('settings:run_full_diagnostics')}
               </Button>
 
               <div className="text-sm text-gray-600">
-                💡 Результаты появятся в консоли браузера (нажмите F12)
+                {t('settings:results_in_console')}
               </div>
             </div>
           </div>
@@ -1694,7 +1694,7 @@ export default function AdminSettings() {
                       {/* Channel Toggles - Only shown if subscribed */}
                       {sub.is_subscribed && (
                         <div className="p-4 space-y-3 bg-white border-t border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase">Каналы уведомлений</p>
+                          <p className="text-xs font-medium text-gray-500 uppercase">{t('settings:notification_channels_label')}</p>
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -1749,19 +1749,19 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
               <Send className="w-6 h-6 text-pink-600" />
-              Массовые рассылки
+              {t('settings:mass_broadcasts')}
             </h2>
-            <p className="text-gray-600 mb-6">Отправка уведомлений пользователям по разным каналам</p>
+            <p className="text-gray-600 mb-6">{t('settings:broadcast_description')}</p>
 
             <Tabs defaultValue="compose" className="space-y-6">
               <TabsList>
                 <TabsTrigger value="compose" className="flex items-center gap-2">
                   <Send className="w-4 h-4" />
-                  Создать рассылку
+                  {t('settings:create_broadcast')}
                 </TabsTrigger>
                 <TabsTrigger value="history" className="flex items-center gap-2">
                   <History className="w-4 h-4" />
-                  История
+                  {t('settings:history')}
                 </TabsTrigger>
               </TabsList>
 
@@ -1770,12 +1770,12 @@ export default function AdminSettings() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Form */}
                   <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Параметры рассылки</h2>
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">{t('settings:broadcast_parameters')}</h2>
 
                     <div className="space-y-6">
                       {/* Subscription Type */}
                       <div>
-                        <Label htmlFor="subscription_type">Тип подписки *</Label>
+                        <Label htmlFor="subscription_type">{t('settings:subscription_type')} *</Label>
                         <Select
                           value={broadcastForm.subscription_type}
                           onValueChange={(value) => setBroadcastForm({ ...broadcastForm, subscription_type: value })}
@@ -1795,7 +1795,7 @@ export default function AdminSettings() {
 
                       {/* Channels */}
                       <div>
-                        <Label>Каналы отправки *</Label>
+                        <Label>{t('settings:sending_channels')} *</Label>
                         <div className="flex gap-4 mt-2">
                           <button
                             type="button"
@@ -1837,7 +1837,7 @@ export default function AdminSettings() {
 
                       {/* Target Role (optional) */}
                       <div>
-                        <Label htmlFor="target_role">Целевая роль (опционально)</Label>
+                        <Label htmlFor="target_role">{t('settings:target_role_optional')}</Label>
                         <Select
                           value={broadcastForm.target_role}
                           onValueChange={(value) => setBroadcastForm({ ...broadcastForm, target_role: value })}
@@ -1846,18 +1846,18 @@ export default function AdminSettings() {
                             <SelectValue placeholder={t('settings:placeholder_all_users')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">Все пользователи</SelectItem>
-                            <SelectItem value="admin">Администраторы</SelectItem>
-                            <SelectItem value="manager">Менеджеры</SelectItem>
-                            <SelectItem value="employee">Сотрудники</SelectItem>
-                            <SelectItem value="client">Клиенты</SelectItem>
+                            <SelectItem value="all">{t('settings:all_users')}</SelectItem>
+                            <SelectItem value="admin">{t('settings:admins')}</SelectItem>
+                            <SelectItem value="manager">{t('settings:managers')}</SelectItem>
+                            <SelectItem value="employee">{t('settings:employees')}</SelectItem>
+                            <SelectItem value="client">{t('settings:clients')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
                       {/* Subject */}
                       <div>
-                        <Label htmlFor="subject">Тема (для Email) *</Label>
+                        <Label htmlFor="subject">{t('settings:subject_email')} *</Label>
                         <Input
                           id="subject"
                           value={broadcastForm.subject}
@@ -1868,7 +1868,7 @@ export default function AdminSettings() {
 
                       {/* Message */}
                       <div>
-                        <Label htmlFor="message">Сообщение *</Label>
+                        <Label htmlFor="message">{t('settings:message')} *</Label>
                         <Textarea
                           id="message"
                           value={broadcastForm.message}
@@ -1877,7 +1877,7 @@ export default function AdminSettings() {
                           placeholder={t('settings:placeholder_enter_message')}
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          {broadcastForm.message.length} символов
+                          {broadcastForm.message.length} {t('settings:chars')}
                         </p>
                       </div>
 
@@ -1892,12 +1892,12 @@ export default function AdminSettings() {
                           {loadingBroadcastPreview ? (
                             <>
                               <Loader className="w-4 h-4 mr-2 animate-spin" />
-                              Загрузка...
+                              {t('settings:loading')}...
                             </>
                           ) : (
                             <>
                               <Eye className="w-4 h-4 mr-2" />
-                              Предпросмотр
+                              {t('settings:preview')}
                             </>
                           )}
                         </Button>
@@ -1910,12 +1910,12 @@ export default function AdminSettings() {
                           {sendingBroadcast ? (
                             <>
                               <Loader className="w-4 h-4 mr-2 animate-spin" />
-                              Отправка...
+                              {t('settings:sending')}...
                             </>
                           ) : (
                             <>
                               <Send className="w-4 h-4 mr-2" />
-                              Отправить
+                              {t('settings:send')}
                             </>
                           )}
                         </Button>
@@ -1927,7 +1927,7 @@ export default function AdminSettings() {
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <Users className="w-5 h-5 text-pink-600" />
-                      Получатели
+                      {t('settings:recipients')}
                     </h2>
 
                     {!broadcastPreview ? (
@@ -1941,19 +1941,19 @@ export default function AdminSettings() {
                       <div className="space-y-4">
                         {/* Total */}
                         <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-4">
-                          <p className="text-sm text-gray-600 mb-1">Всего получателей</p>
+                          <p className="text-sm text-gray-600 mb-1">{t('settings:total_recipients')}</p>
                           <p className="text-3xl font-bold text-pink-600">{broadcastPreview.total_users}</p>
                         </div>
 
                         {/* By Channel */}
                         <div className="space-y-2">
-                          <p className="text-sm font-medium text-gray-700">По каналам:</p>
+                          <p className="text-sm font-medium text-gray-700">{t('settings:by_channels')}:</p>
 
                           {broadcastPreview.by_channel.email > 0 && (
                             <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                               <div className="flex items-center gap-2">
                                 <Mail className="w-4 h-4 text-blue-600" />
-                                <span className="text-sm text-gray-700">Email</span>
+                                <span className="text-sm text-gray-700">{t('settings:channel_email')}</span>
                               </div>
                               <span className="font-bold text-blue-600">{broadcastPreview.by_channel.email}</span>
                             </div>
@@ -1963,7 +1963,7 @@ export default function AdminSettings() {
                             <div className="flex items-center justify-between p-2 bg-green-50 rounded">
                               <div className="flex items-center gap-2">
                                 <MessageCircle className="w-4 h-4 text-green-600" />
-                                <span className="text-sm text-gray-700">Telegram</span>
+                                <span className="text-sm text-gray-700">{t('settings:channel_telegram')}</span>
                               </div>
                               <span className="font-bold text-green-600">{broadcastPreview.by_channel.telegram}</span>
                             </div>
@@ -1973,7 +1973,7 @@ export default function AdminSettings() {
                             <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
                               <div className="flex items-center gap-2">
                                 <Instagram className="w-4 h-4 text-purple-600" />
-                                <span className="text-sm text-gray-700">Instagram</span>
+                                <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
                               </div>
                               <span className="font-bold text-purple-600">{broadcastPreview.by_channel.instagram}</span>
                             </div>
@@ -1983,7 +1983,7 @@ export default function AdminSettings() {
                         {/* Sample Users */}
                         {broadcastPreview.users_sample.length > 0 && (
                           <div className="mt-4">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Примеры получателей:</p>
+                            <p className="text-sm font-medium text-gray-700 mb-2">{t('settings:sample_recipients')}:</p>
                             <div className="space-y-2">
                               {broadcastPreview.users_sample.map((user: any, idx: number) => (
                                 <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
@@ -2001,7 +2001,7 @@ export default function AdminSettings() {
                             <div className="flex items-start gap-2">
                               <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                               <p className="text-sm text-yellow-800">
-                                Нет подписанных пользователей для выбранных параметров
+                                {t('settings:no_recipients_found')}
                               </p>
                             </div>
                           </div>
@@ -2015,7 +2015,7 @@ export default function AdminSettings() {
               {/* History Tab */}
               <TabsContent value="history">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">История рассылок</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">{t('settings:broadcast_history')}</h2>
 
                   {loadingBroadcastHistory ? (
                     <div className="flex items-center justify-center py-12">
@@ -2024,7 +2024,7 @@ export default function AdminSettings() {
                   ) : broadcastHistory.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                       <History className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p>Рассылок еще не было</p>
+                      <p>{t('settings:no_broadcasts_yet')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -2045,7 +2045,7 @@ export default function AdminSettings() {
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-2">
                               <Users className="w-4 h-4 text-gray-400" />
-                              <span className="text-gray-600">Отправлено: {item.total_sent}</span>
+                              <span className="text-gray-600">{t('settings:sent')}: {item.total_sent}</span>
                             </div>
 
                             <div className="flex gap-2">
@@ -2074,10 +2074,10 @@ export default function AdminSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
               <MessageCircle className="w-6 h-6 text-pink-600" />
-              Настройки мессенджеров
+              {t('settings:messengers_settings')}
             </h2>
             <p className="text-gray-600 mb-6">
-              Управляйте доступными мессенджерами для общения с клиентами
+              {t('settings:manage_messengers')}
             </p>
 
             {loadingMessengers ? (
@@ -2112,7 +2112,7 @@ export default function AdminSettings() {
                             {messenger.display_name}
                           </h3>
                           <p className="text-xs text-gray-600">
-                            {messenger.has_token ? '✅ Настроен' : '⚠️ Требуется настройка'}
+                            {messenger.has_token ? t('settings:configured') : t('settings:needs_configuration')}
                           </p>
                         </div>
                       </div>
@@ -2131,7 +2131,7 @@ export default function AdminSettings() {
                             {messenger.messenger_type !== 'instagram' && (
                               <div>
                                 <Label htmlFor={`${messenger.messenger_type}-token`}>
-                                  API Token {messenger.messenger_type === 'telegram' ? '(Telegram Bot Token)' : ''}
+                                  API Token {messenger.messenger_type === 'telegram' ? t('settings:telegram_bot_token_hint') : ''}
                                 </Label>
                                 <Input
                                   id={`${messenger.messenger_type}-token`}
@@ -2152,13 +2152,13 @@ export default function AdminSettings() {
                             {messenger.messenger_type === 'telegram' && (
                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                                 <p className="text-sm text-blue-800 mb-2">
-                                  <strong>Как получить Telegram Bot Token:</strong>
+                                  <strong>{t('settings:how_to_get_telegram_token')}:</strong>
                                 </p>
                                 <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-                                  <li>Откройте Telegram и найдите @BotFather</li>
-                                  <li>Отправьте команду /newbot</li>
-                                  <li>Следуйте инструкциям для создания бота</li>
-                                  <li>Скопируйте полученный токен и вставьте выше</li>
+                                  <li>{t('settings:telegram_step_1')}</li>
+                                  <li>{t('settings:telegram_step_2')}</li>
+                                  <li>{t('settings:telegram_step_3')}</li>
+                                  <li>{t('settings:telegram_step_4')}</li>
                                 </ol>
                               </div>
                             )}
@@ -2170,7 +2170,7 @@ export default function AdminSettings() {
                                 className="bg-gradient-to-r from-pink-500 to-purple-600"
                               >
                                 <Save className="w-4 h-4 mr-2" />
-                                Сохранить
+                                {t('settings:save')}
                               </Button>
                               <Button
                                 type="button"
@@ -2180,7 +2180,7 @@ export default function AdminSettings() {
                                   setMessengerForm({ api_token: '', webhook_url: '' });
                                 }}
                               >
-                                Отмена
+                                {t('settings:cancel')}
                               </Button>
                             </div>
                           </div>
@@ -2188,7 +2188,7 @@ export default function AdminSettings() {
                           <div>
                             {messenger.messenger_type === 'instagram' ? (
                               <p className="text-sm text-gray-600">
-                                Instagram использует существующую интеграцию. Настройка не требуется.
+                                {t('settings:instagram_integration_note')}
                               </p>
                             ) : (
                               <Button
@@ -2385,7 +2385,7 @@ export default function AdminSettings() {
                       </tr>
                     ))}
                   </tbody>
-                </table>   {/* ✅ ИСПРАВЛЕНО */}
+                </table>
               </div>
             </div>
 

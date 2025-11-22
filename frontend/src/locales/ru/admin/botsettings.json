@@ -17,6 +17,9 @@
   "strict_limit_warning": "⚠️ Бот будет СТРОГО соблюдать этот лимит!",
   "title": "Настройки бота",
   "unknown_error": "Неизвестная ошибка",
+  "what_not_to_do": "что НЕ делать",
+  "manager_consultation_prompt": "Промпт для консультации менеджера",
+  "manager_consultation_prompt_description": "Инструкции для AI когда менеджер просит совет через команду \"#помоги\"",
   "tabs": {
     "general": "Общее",
     "personality": "Личность",

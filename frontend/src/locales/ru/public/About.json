@@ -37,5 +37,7 @@
     "satisfied_clients": "Довольных клиентов",
     "service_types": "Видов услуг",
     "awards_and_certificates": "Наград и сертификатов"
-  }
+  },
+  "master_role": "Мастер",
+  "our_salon": "Наш салон"
 }

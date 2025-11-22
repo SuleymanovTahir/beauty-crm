@@ -1,0 +1,21 @@
+{
+  "profile": "Profil",
+  "subscriptions": "Abonnements",
+  "danger_zone": "Zone dangereuse",
+  "my_profile": "Mon profil",
+  "click_camera_to_upload": "Cliquez sur la caméra",
+  "to_upload_photo": "pour télécharger une photo",
+  "max_size": "Max. 5 Mo",
+  "username": "Se connecter",
+  "full_name": "Nom et prénom",
+  "email": "E-mail",
+  "change_password": "Changer le mot de passe",
+  "current_password": "Mot de passe actuel",
+  "new_password": "Nouveau mot de passe",
+  "confirm_new_password": "Confirmez votre nouveau mot de passe",
+  "new_password_placeholder": "Laissez vide si vous ne souhaitez pas modifier",
+  "repeat_new_password": "Répéter le nouveau mot de passe",
+  "save_changes": "Enregistrer les modifications",
+  "profile_updated": "Profil mis à jour",
+  "error_update_profile": "Erreur de mise à jour du profil"
+}

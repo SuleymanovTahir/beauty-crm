@@ -17,6 +17,9 @@
   "strict_limit_warning": "⚠️ Bot will STRICTLY follow this limit!",
   "title": "Bot Settings",
   "unknown_error": "Unknown error",
+  "what_not_to_do": "what NOT to do",
+  "manager_consultation_prompt": "Manager consultation prompt",
+  "manager_consultation_prompt_description": "Instructions for AI when manager asks for advice via '#help' command",
   "tabs": {
     "general": "General",
     "personality": "Personality",

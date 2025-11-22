@@ -37,5 +37,7 @@
     "satisfied_clients": "Satisfied clients",
     "service_types": "Types of services",
     "awards_and_certificates": "Awards and certificates"
-  }
+  },
+  "master_role": "Master",
+  "our_salon": "Our Salon"
 }

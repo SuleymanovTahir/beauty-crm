@@ -31,5 +31,33 @@
   "hero.servicesButton": "Nuestros servicios",
   "hero.title": "Descubre un nuevo nivel de belleza",
   "testimonials.subtitle": "Lo que dicen de nosotros",
-  "testimonials.title": "Opiniones de nuestros clientes"
+  "testimonials.title": "Opiniones de nuestros clientes",
+  "testimonials": {
+    "items": [
+      {
+        "name": "María García",
+        "text": "¡Servicio increíble! Los maestros son profesionales. ¡Muy satisfecha con el resultado del maquillaje permanente!"
+      },
+      {
+        "name": "Elena Rodríguez",
+        "text": "¡El mejor salón de la ciudad! Siempre limpio, acogedor y personal atento. Vengo aquí desde hace 2 años."
+      },
+      {
+        "name": "Sofía Martínez",
+        "text": "¡Maravilloso masaje facial! Sensación de relajación y frescura después del procedimiento. ¡Definitivamente lo recomiendo!"
+      }
+    ]
+  },
+  "services": {
+    "items": [
+      "Maquillaje permanente de cejas",
+      "Manicura",
+      "Pedicura",
+      "Masaje facial",
+      "Extensión de pestañas",
+      "Corte y peinado",
+      "Coloración del cabello",
+      "Limpieza facial"
+    ]
+  }
 }

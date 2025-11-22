@@ -52,6 +52,32 @@
   },
   "testimonials": {
     "title": "Customer reviews",
-    "subtitle": "What they say about us"
+    "subtitle": "What they say about us",
+    "items": [
+      {
+        "name": "Sarah Johnson",
+        "text": "Incredible service! The masters are professionals. Very satisfied with the permanent makeup result!"
+      },
+      {
+        "name": "Emily Davis",
+        "text": "Best salon in the city! Always clean, cozy, and attentive staff. I've been coming here for 2 years."
+      },
+      {
+        "name": "Jessica Wilson",
+        "text": "Wonderful facial massage! Feeling of relaxation and freshness after the procedure. Definitely recommend!"
+      }
+    ]
+  },
+  "services": {
+    "items": [
+      "Permanent eyebrow makeup",
+      "Manicure",
+      "Pedicure",
+      "Facial massage",
+      "Eyelash extension",
+      "Haircut and styling",
+      "Hair coloring",
+      "Facial cleaning"
+    ]
   }
 }

@@ -17,6 +17,9 @@
   "strict_limit_warning": "⚠️ ¡El bot seguirá ESTRICTAMENTE este límite!",
   "title": "Configuración del Bot",
   "unknown_error": "Error desconocido",
+  "what_not_to_do": "qué NO hacer",
+  "manager_consultation_prompt": "Prompt para consulta de gerente",
+  "manager_consultation_prompt_description": "Instrucciones para IA cuando el gerente pide consejo mediante el comando '#ayuda'",
   "tabs": {
     "general": "General",
     "personality": "Personalidad",

@@ -69,5 +69,21 @@
   "status_updated": "Status updated",
   "records_count": "bookings",
   "supported_formats": "Supported formats",
-  "file_format": "File Format"
+  "file_format": "File Format",
+  "base_price": "base",
+  "can_change_price_hint": "💡 You can change the price for this booking only",
+  "no_masters_for_service": "⚠️ No masters available for selected service",
+  "master_busy": "⚠️ Master is busy at this time",
+  "busy_slots": "Busy slots",
+  "price": "Price",
+  "view": "View",
+  "edit": "Edit",
+  "chat": "Chat",
+  "create_booking": "Create Booking",
+  "booking_updated": "Booking updated",
+  "api_error_users": "api.getUsers is not a function! Check api object definition",
+  "booking_deleted": "Booking deleted successfully",
+  "delete_booking_confirm": "Are you sure you want to delete booking for {{name}}?",
+  "delete_booking_error": "Failed to delete booking",
+  "delete": "Delete"
 }

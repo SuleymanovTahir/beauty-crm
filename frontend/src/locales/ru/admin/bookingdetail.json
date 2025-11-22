@@ -23,5 +23,6 @@
   "status_updated": "Статус обновлен",
   "update": "Обновить",
   "update_status": "Обновить статус",
-  "write_to_client": "Написать клиенту"
+  "write_to_client": "Написать клиенту",
+  "currency": "AED"
 }

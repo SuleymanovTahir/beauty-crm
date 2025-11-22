@@ -19,5 +19,8 @@
   "how_to_contact": "Как с нами связаться",
   "subtitle": "Мы всегда рады вашим вопросам и предложениям",
   "address": "Адрес",
-  "name_placeholder": "Введите ваше имя"
+  "name_placeholder": "Введите ваше имя",
+  "phone_fallback": "+971 4 123 4567",
+  "email_fallback": "booking@luxurybeauty.ae",
+  "working_hours_fallback": "10:00 - 20:00"
 }

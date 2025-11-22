@@ -41,7 +41,7 @@ export default function About() {
           const teamData = filteredEmployees.map((e: any) => ({
             id: e.id,
             name: e.full_name,
-            role: e.position || 'Мастер',
+            role: e.position || t('about:master_role'),
             experience: e.experience || '',
             avatar: e.photo || e.full_name.charAt(0).toUpperCase()
           }));
@@ -84,7 +84,7 @@ export default function About() {
               <h2 className="text-4xl text-gray-900 mb-6">{t('about:our_story')}</h2>
               <div className="space-y-4 text-gray-600 text-lg">
                 <p>
-                  {salonInfo.name || 'Наш салон'} - {t('about:your_reliable_partner_in_the_world_of_beauty')}
+                  {salonInfo.name || t('about:our_salon')} - {t('about:your_reliable_partner_in_the_world_of_beauty')}
                 </p>
                 <p>
                   {t('about:Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft')}

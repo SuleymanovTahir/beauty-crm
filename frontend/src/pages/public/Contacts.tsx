@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Phone, Mail, Instagram, Clock, Send} from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Clock, Send } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -38,7 +38,7 @@ export default function Contacts() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.message) {
       toast.error(t('contacts:fill_all_fields'));
       return;
@@ -87,7 +87,7 @@ export default function Contacts() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
               <h2 className="text-3xl text-gray-900 mb-8">{t('contacts:how_to_contact')}</h2>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
                   <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -106,7 +106,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">{t('contacts:phone')}</h3>
                     <p className="text-gray-600">{salonInfo.phone}</p>
-                    <p className="text-gray-600">+971 4 123 4567</p>
+                    <p className="text-gray-600">{t('contacts:phone_fallback')}</p>
                   </div>
                 </div>
 
@@ -117,7 +117,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Email</h3>
                     <p className="text-gray-600">{salonInfo.email}</p>
-                    <p className="text-gray-600">booking@luxurybeauty.ae</p>
+                    <p className="text-gray-600">{t('contacts:email_fallback')}</p>
                   </div>
                 </div>
 
@@ -127,9 +127,9 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Instagram</h3>
-                    <a 
-                      href="https://instagram.com/luxurybeauty_dubai" 
-                      target="_blank" 
+                    <a
+                      href="https://instagram.com/luxurybeauty_dubai"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-pink-600 hover:underline"
                     >
@@ -146,7 +146,7 @@ export default function Contacts() {
                     <h3 className="text-lg text-gray-900 mb-2">{t('contacts:working_hours')}</h3>
                     <div className="space-y-1 text-gray-600">
                       <p>{t('contacts:weekdays')}: {salonInfo.working_hours?.weekdays}</p>
-                      <p>{t('contacts:weekends')}: {salonInfo.working_hours?.weekends || '10:00 - 20:00'}</p>
+                      <p>{t('contacts:weekends')}: {salonInfo.working_hours?.weekends || t('contacts:working_hours_fallback')}</p>
                     </div>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export default function Contacts() {
 
             <div>
               <h2 className="text-3xl text-gray-900 mb-8">{t('contacts:write_us')}</h2>
-              
+
               <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
@@ -196,10 +196,10 @@ export default function Contacts() {
                     />
                   </div>
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-pink-500 to-purple-600" 
+                    className="w-full bg-gradient-to-r from-pink-500 to-purple-600"
                     size="lg"
                   >
                     <Send className="w-4 h-4 mr-2" />

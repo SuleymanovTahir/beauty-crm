@@ -18,32 +18,25 @@ interface Testimonial {
   avatar: string;
 }
 
-const defaultTestimonials: Testimonial[] = [
-  {
-    name: 'Анна Иванова',
-    rating: 5,
-    text: 'Невероятный сервис! Мастера профессионалы своего дела. Результатом перманентного макияжа очень довольна!',
-    avatar: 'А'
-  },
-  {
-    name: 'Мария Петрова',
-    rating: 5,
-    text: 'Лучший салон в городе! Всегда чисто, уютно и внимательный персонал. Хожу сюда уже 2 года.',
-    avatar: 'М'
-  },
-  {
-    name: 'Елена Сидорова',
-    rating: 5,
-    text: 'Прекрасный массаж лица! Ощущение релакса и свежести после процедуры. Однозначно рекомендую!',
-    avatar: 'Е'
-  }
-];
+
 
 export default function Home() {
   const navigate = useNavigate();
   const [services, setServices] = useState<string[]>([]);
   const { t } = useTranslation(['public/Home', 'common']);
-  const [testimonials] = useState<Testimonial[]>(defaultTestimonials);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    const loadedTestimonials = t('home:testimonials.items', { returnObjects: true });
+    if (Array.isArray(loadedTestimonials)) {
+      setTestimonials(loadedTestimonials.map((item: any) => ({
+        name: item.name,
+        rating: 5,
+        text: item.text,
+        avatar: item.name.charAt(0).toUpperCase()
+      })));
+    }
+  }, [t]);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({
@@ -62,16 +55,8 @@ export default function Home() {
         setServices(serviceNames);
       } catch (err) {
         console.error('Error fetching services:', err);
-        setServices([
-          'Перманентный макияж бровей',
-          'Маникюр',
-          'Педикюр',
-          'Массаж лица',
-          'Наращивание ресниц',
-          'Стрижка и укладка',
-          'Окрашивание волос',
-          'Чистка лица'
-        ]);
+        const fallbackServices = t('home:services.items', { returnObjects: true });
+        setServices(Array.isArray(fallbackServices) ? fallbackServices : []);
       } finally {
         setLoadingServices(false);
       }
@@ -108,7 +93,7 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-4">
@@ -122,15 +107,15 @@ export default function Home() {
               {t('home:hero.description')}
             </p>
             <div className="flex gap-4">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg"
                 onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 {t('home:hero.bookButton')}
               </Button>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="outline"
                 onClick={() => navigate('/price-list')}
               >

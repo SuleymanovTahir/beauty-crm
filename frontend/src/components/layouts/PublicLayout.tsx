@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function PublicLayout() {
   const location = useLocation();
-  const { t } = useTranslation(['layouts/PublicLayout', 'common']);
+  const { t } = useTranslation(['public', 'common']);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
 
@@ -162,7 +162,7 @@ export default function PublicLayout() {
 
             {/* Contacts */}
             <div>
-            <h3 className="text-lg mb-4">{t('public:footer.contacts')}</h3>
+              <h3 className="text-lg mb-4">{t('public:footer.contacts')}</h3>
               <ul className="space-y-3 text-sm text-gray-400">
                 {salonInfo.phone && (
                   <li className="flex items-center gap-2">
@@ -211,19 +211,19 @@ export default function PublicLayout() {
 
             {/* Working Hours */}
             <div>
-            <h3 className="text-lg mb-4">{t('public:footer.working_hours')}</h3>
+              <h3 className="text-lg mb-4">{t('public:footer.working_hours')}</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-              <li>{t('public:footer.weekdays')}: {salonInfo.hours_weekdays}</li>
-              <li>{t('public:footer.weekends')}: {salonInfo.hours_weekends}</li>
+                <li>{t('public:footer.weekdays')}: {salonInfo.hours_weekdays}</li>
+                <li>{t('public:footer.weekends')}: {salonInfo.hours_weekends}</li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>© 2025 {salonInfo.name}. {t('public:footer.all_rights')}.</p>
+            <p>© 2025 {salonInfo.name}. {t('public:footer.all_rights')}.</p>
             <div className="flex gap-6">
-            <Link to="/privacy-policy" className="hover:text-white">{t('public:footer.privacy_policy')}</Link>
-            <Link to="/terms" className="hover:text-white">{t('public:footer.terms')}</Link>
+              <Link to="/privacy-policy" className="hover:text-white">{t('public:footer.privacy_policy')}</Link>
+              <Link to="/terms" className="hover:text-white">{t('public:footer.terms')}</Link>
             </div>
           </div>
         </div>

@@ -70,7 +70,7 @@ export default function Analytics() {
       } else {
         const periodNum = parseInt(period);
         if (isNaN(periodNum)) {
-          throw new Error('Некорректный период');
+          throw new Error(t('analytics:errors.invalid_period'));
         }
         analyticsData = await api.getAnalytics(periodNum);
       }
@@ -249,7 +249,7 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {analytics?.avg_response_time.toFixed(0) || 0} мин
+              {analytics?.avg_response_time.toFixed(0) || 0} {t('analytics:min')}
             </h3>
             <p className="text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:response_time')}</p>
             <div className="text-xs md:text-sm text-blue-600">
@@ -423,7 +423,7 @@ export default function Analytics() {
           </div>
         </div>
       )}
-      {/* ✅ #20 - АНАЛИЗ ТОЧЕК ОТКАЗА */}
+      {/* Drop-off Analysis */}
       {analytics?.drop_off_points && analytics.drop_off_points.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
           <div className="p-4 md:p-6 border-b border-gray-200">
@@ -467,11 +467,11 @@ export default function Analytics() {
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-900">
                         <div className="flex items-center gap-2">
-                          <div 
+                          <div
                             className="w-2 h-2 rounded-full"
-                            style={{ 
-                              backgroundColor: point.percentage > 50 ? '#ef4444' : 
-                                             point.percentage > 30 ? '#f59e0b' : '#10b981'
+                            style={{
+                              backgroundColor: point.percentage > 50 ? '#ef4444' :
+                                point.percentage > 30 ? '#f59e0b' : '#10b981'
                             }}
                           />
                           {t(`analytics:stages.${point.stage}`)}
@@ -483,12 +483,12 @@ export default function Analytics() {
                       <td className="px-3 md:px-6 py-3 md:py-4">
                         <div className="flex items-center gap-2">
                           <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
-                            <div 
+                            <div
                               className="h-2 rounded-full transition-all"
-                              style={{ 
+                              style={{
                                 width: `${point.percentage}%`,
-                                backgroundColor: point.percentage > 50 ? '#ef4444' : 
-                                               point.percentage > 30 ? '#f59e0b' : '#10b981'
+                                backgroundColor: point.percentage > 50 ? '#ef4444' :
+                                  point.percentage > 30 ? '#f59e0b' : '#10b981'
                               }}
                             />
                           </div>
@@ -506,7 +506,7 @@ export default function Analytics() {
               </tbody>
             </table>
           </div>
-          
+
           <div className="p-4 md:p-6 bg-blue-50 border-t border-blue-100">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">

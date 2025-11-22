@@ -5,7 +5,8 @@
     "loading_error": "Ошибка загрузки",
     "export_failed": "Ошибка при экспорте файла",
     "invalid_date_range": "Дата начала должна быть раньше даты конца",
-    "select_both_dates": "Выберите обе даты"
+    "select_both_dates": "Выберите обе даты",
+    "invalid_period": "Некорректный период"
   },
   "bookings": "Записи",
   "detailed_analysis": "Детальный анализ работы салона",
@@ -44,5 +45,20 @@
   "avg_time": "Среднее время",
   "revenue": "Доход",
   "simplify_contact_collection": "Упростить сбор контактов",
-  "name": "Название"
+  "name": "Название",
+  "min": "мин",
+  "status": {
+    "pending": "Ожидает",
+    "confirmed": "Подтверждена",
+    "completed": "Завершена",
+    "cancelled": "Отменена",
+    "no_show": "Не пришел"
+  },
+  "stages": {
+    "after_price": "После цены",
+    "no_slots": "Нет свободных слотов",
+    "whatsapp_request": "Запрос WhatsApp",
+    "after_greeting": "После приветствия",
+    "service_selection": "Выбор услуги"
+  }
 }

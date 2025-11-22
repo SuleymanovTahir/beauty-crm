@@ -5,7 +5,8 @@
     "loading_error": "Loading error",
     "export_failed": "Error exporting file",
     "invalid_date_range": "Start date must be before end date",
-    "select_both_dates": "Select both dates"
+    "select_both_dates": "Select both dates",
+    "invalid_period": "Invalid period"
   },
   "bookings": "Bookings",
   "detailed_analysis": "Detailed salon performance analysis",
@@ -44,5 +45,20 @@
   "avg_time": "Average time",
   "revenue": "Revenue",
   "simplify_contact_collection": "Simplify contact collection",
-  "name": "Name"
+  "name": "Name",
+  "min": "min",
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "no_show": "No show"
+  },
+  "stages": {
+    "after_price": "After price",
+    "no_slots": "No available slots",
+    "whatsapp_request": "WhatsApp request",
+    "after_greeting": "After greeting",
+    "service_selection": "Service selection"
+  }
 }

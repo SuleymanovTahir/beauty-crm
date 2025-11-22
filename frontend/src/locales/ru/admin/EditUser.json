@@ -27,5 +27,6 @@
   "after_changing_user_must_login_with_new_password": "После изменения пользователь должен войти с новым паролем.",
   "new_password": "Новый пароль",
   "confirm_password": "Подтвердите пароль",
-  "changing": "Изменение"
+  "changing": "Изменение",
+  "permissions_label": "Права доступа"
 }
