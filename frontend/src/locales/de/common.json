@@ -29,7 +29,7 @@
   "last_3_months": "Letzte 3 Monate",
   "last_7_days": "Letzte 7 Tage",
   "last_month": "Letzten Monat",
-  "loading": "Loading...",
+  "loading": "Laden...",
   "loading_error": "Fehler beim Laden",
   "no_messages_yet": "Noch keine Nachrichten",
   "nothing_found": "Nichts gefunden",
@@ -47,7 +47,7 @@
   "quick_reply_no": "NEIN",
   "quick_reply_thanks": "Danke",
   "quick_reply_yes": "Ja",
-  "refresh": "Refresh",
+  "refresh": "Aktualisieren",
   "save_error": "Fehler speichern",
   "save_settings": "Einstellungen speichern",
   "search_in_messages": "In Nachrichten suchen",
@@ -68,6 +68,6 @@
   "status_vip": "VIP",
   "to": "Zu",
   "today": "Heute",
-  "try_again": "Try again",
+  "try_again": "Versuchen Sie es erneut",
   "type_message": "Geben Sie Ihre Nachricht ein..."
 }
