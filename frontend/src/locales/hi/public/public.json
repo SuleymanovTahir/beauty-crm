@@ -1,21 +1,19 @@
 {
-  "footer": {
-    "cooperation": "Cooperation",
-    "quick_links": "Quick Links",
-    "weekdays": "Mon-Fri",
-    "weekends": "Sat-Sun",
-    "terms": "Terms of Use",
-    "description": "Premium beauty services in the heart of the city. Professional masters and individual approach.",
-    "contacts": "Contacts",
-    "all_rights": "All rights reserved",
-    "working_hours": "Working Hours",
-    "privacy_policy": "Privacy Policy"
-  },
+  "about": "हमारे बारे में",
+  "contacts": "संपर्क",
   "faq": "अक्सर पूछे जाने वाले प्रश्न",
-  "personal_cabinet": "Personal Cabinet",
-  "about": "About Us",
-  "contacts": "Contacts",
-  "price_list": "Price List",
-  "home": "Home",
-  "login": "Login"
+  "footer.all_rights": "सर्वाधिकार सुरक्षित",
+  "footer.contacts": "संपर्क",
+  "footer.cooperation": "सहयोग",
+  "footer.description": "Премиальные услуги красоты в самом сердце города. Профессиональные мастера и индивидуальный подход.",
+  "footer.privacy_policy": "गोपनीयता नीति",
+  "footer.quick_links": "त्वरित सम्पक",
+  "footer.terms": "उपयोग की शर्तें",
+  "footer.weekdays": "सोम-शुक्र",
+  "footer.weekends": "शनिवार रविवार",
+  "footer.working_hours": "खुलने का समय",
+  "home": "घर",
+  "login": "लॉग इन करें",
+  "personal_cabinet": "व्यक्तिगत खाता",
+  "price_list": "मूल्य सूची"
 }
