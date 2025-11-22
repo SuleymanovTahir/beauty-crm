@@ -184,7 +184,7 @@ export default function BotSettings() {
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
-      toast.error(t('error_loading') + (err instanceof Error ? err.message : t('unknown_error')));
+      toast.error(t('botsettings:error_loading') + (err instanceof Error ? err.message : t('botsettings:unknown_error')));
     } finally {
       setLoading(false);
     }
@@ -200,9 +200,9 @@ export default function BotSettings() {
         credentials: 'include'
       });
 
-      toast.success(t('settings_saved_and_bot_reloaded'));
+      toast.success(t('botsettings:settings_saved_and_bot_reloaded'));
     } catch (err: any) {
-      toast.error(t('error') + err.message);
+      toast.error(t('botsettings:error') + err.message);
     } finally {
       setSaving(false);
     }
@@ -210,21 +210,21 @@ export default function BotSettings() {
 
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
-    { id: 'general', label: t('tabs.general'), icon: <Bot size={18} /> },
-    { id: 'personality', label: t('tabs.personality'), icon: <Sparkles size={18} /> },
-    { id: 'pricing', label: t('tabs.pricing'), icon: <DollarSign size={18} /> },
-    { id: 'objections', label: t('tabs.objections'), icon: <MessageCircle size={18} /> },
-    { id: 'communication', label: t('tabs.communication'), icon: <MessageSquare size={18} /> },
-    { id: 'advanced', label: t('tabs.advanced'), icon: <BookOpen size={18} /> },
-    { id: 'safety', label: t('tabs.safety'), icon: <Shield size={18} /> },
-    { id: 'examples', label: t('tabs.examples'), icon: <Zap size={18} /> }
+    { id: 'general', label: t('botsettings:tabs.general'), icon: <Bot size={18} /> },
+    { id: 'personality', label: t('botsettings:tabs.personality'), icon: <Sparkles size={18} /> },
+    { id: 'pricing', label: t('botsettings:tabs.pricing'), icon: <DollarSign size={18} /> },
+    { id: 'objections', label: t('botsettings:tabs.objections'), icon: <MessageCircle size={18} /> },
+    { id: 'communication', label: t('botsettings:tabs.communication'), icon: <MessageSquare size={18} /> },
+    { id: 'advanced', label: t('botsettings:tabs.advanced'), icon: <BookOpen size={18} /> },
+    { id: 'safety', label: t('botsettings:tabs.safety'), icon: <Shield size={18} /> },
+    { id: 'examples', label: t('botsettings:tabs.examples'), icon: <Zap size={18} /> }
   ];
 
   if (loading) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
         <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
-        <p style={{ marginTop: '1rem', color: '#6b7280' }}>{t('loading')}</p>
+        <p style={{ marginTop: '1rem', color: '#6b7280' }}>{t('botsettings:loading')}</p>
       </div>
     );
   }
@@ -235,9 +235,9 @@ export default function BotSettings() {
       <div style={{ padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', padding: '3rem', maxWidth: '28rem', textAlign: 'center' }}>
           <Shield style={{ width: '4rem', height: '4rem', color: '#d1d5db', margin: '0 auto 1rem' }} />
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>{t('access_denied')}</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>{t('botsettings:access_denied')}</h2>
           <p style={{ color: '#6b7280' }}>
-            {t('access_denied_message')}
+            {t('botsettings:access_denied_message')}
           </p>
         </div>
       </div>
@@ -249,10 +249,10 @@ export default function BotSettings() {
       {/* Header */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>
-          🤖 {t('title')}
+          🤖 {t('botsettings:title')}
         </h1>
         <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-          {t('full_configuration_of_ai_assistant')}
+          {t('botsettings:full_configuration_of_ai_assistant')}
         </p>
       </div>
 
@@ -303,12 +303,12 @@ export default function BotSettings() {
         {activeTab === 'general' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🏢 {t('main_information')}
+              🏢 {t('botsettings:main_information')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('bot_name')}
+                {t('botsettings:bot_name')}
               </label>
               <input
                 type="text"
@@ -327,7 +327,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('max_message_length')}
+                {t('botsettings:max_message_length')}
               </label>
               <input
                 type="number"
@@ -346,9 +346,9 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('recommended_length')}
+                {t('botsettings:recommended_length')}
                 <br />
-                <strong>{t('strict_limit_warning')}</strong>
+                <strong>{t('botsettings:strict_limit_warning')}</strong>
               </p>
             </div>
           </div>
@@ -358,12 +358,12 @@ export default function BotSettings() {
         {activeTab === 'personality' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              ✨ {t('personality_of_the_bot')}
+              ✨ {t('botsettings:personality_of_the_bot')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('character_traits')}
+                {t('botsettings:character_traits')}
               </label>
               <textarea
                 value={settings.personality_traits}
@@ -383,7 +383,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 {t('greeting')}
+                👋 {t('botsettings:greeting')}
               </label>
               <textarea
                 value={settings.greeting_message}
@@ -403,7 +403,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👋 {t('farewell')}
+                👋 {t('botsettings:farewell')}
               </label>
               <textarea
                 value={settings.farewell_message}
@@ -423,7 +423,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎨 {t('communication_style')}
+                🎨 {t('botsettings:communication_style')}
               </label>
               <textarea
                 value={settings.communication_style}
@@ -443,7 +443,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 {t('emoji')}
+                😊 {t('botsettings:emoji')}
               </label>
               <input
                 type="text"
@@ -466,12 +466,12 @@ export default function BotSettings() {
         {activeTab === 'pricing' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💰 {t('working_with_prices')}
+              💰 {t('botsettings:working_with_prices')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💎 {t('premium_price_explanation')}
+                💎 {t('botsettings:premium_price_explanation')}
               </label>
               <textarea
                 value={settings.price_explanation}
@@ -491,7 +491,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📝 {t('price_response_template')}
+                📝 {t('botsettings:price_response_template')}
               </label>
               <textarea
                 value={settings.price_response_template}
@@ -512,7 +512,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🛡️ {t('high_price_justification')}
+                🛡️ {t('botsettings:high_price_justification')}
               </label>
               <textarea
                 value={settings.premium_justification}
@@ -532,7 +532,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⚡ {t('fomo_messages')} ({t('separate_with_pipe')})
+                ⚡ {t('botsettings:fomo_messages')} ({t('botsettings:separate_with_pipe')})
               </label>
               <textarea
                 value={settings.fomo_messages}
@@ -552,7 +552,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚀 {t('upsell_techniques')} ({t('separate_with_pipe')})
+                🚀 {t('botsettings:upsell_techniques')} ({t('botsettings:separate_with_pipe')})
               </label>
               <textarea
                 value={settings.upsell_techniques}
@@ -572,7 +572,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📱 {t('booking_message')}
+                📱 {t('botsettings:booking_message')}
               </label>
               <textarea
                 value={settings.booking_redirect_message}
@@ -592,7 +592,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('booking_time_logic')}
+                {t('botsettings:booking_time_logic')}
               </label>
               <textarea
                 value={settings.booking_time_logic}
@@ -610,13 +610,13 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('booking_time_logic_description')}
+                {t('botsettings:booking_time_logic_description')}
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('booking_data_collection')}
+                {t('botsettings:booking_data_collection')}
               </label>
               <textarea
                 value={settings.booking_data_collection}
@@ -634,12 +634,12 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('booking_data_collection_description')}
+                {t('botsettings:booking_data_collection_description')}
               </p>
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('booking_availability_instructions')}
+                {t('botsettings:booking_availability_instructions')}
               </label>
               <textarea
                 value={settings.booking_availability_instructions}
@@ -657,7 +657,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('booking_availability_instructions_description')}
+                {t('botsettings:booking_availability_instructions_description')}
               </p>
             </div>
           </div>
@@ -667,12 +667,12 @@ export default function BotSettings() {
         {activeTab === 'objections' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ {t('working_with_objections')}
+              🛡️ {t('botsettings:working_with_objections')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💸 {t('expensive')}
+                💸 {t('botsettings:expensive')}
               </label>
               <textarea
                 value={settings.objection_expensive}
@@ -692,7 +692,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤔 {t('think_about_it')}
+                🤔 {t('botsettings:think_about_it')}
               </label>
               <textarea
                 value={settings.objection_think_about_it}
@@ -712,7 +712,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⏰ {t('no_time')}
+                ⏰ {t('botsettings:no_time')}
               </label>
               <textarea
                 value={settings.objection_no_time}
@@ -732,7 +732,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😰 {t('afraid_of_pain')}
+                😰 {t('botsettings:afraid_of_pain')}
               </label>
               <textarea
                 value={settings.objection_pain}
@@ -752,7 +752,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❓ {t('not_sure_about_the_result')}
+                ❓ {t('botsettings:not_sure_about_the_result')}
               </label>
               <textarea
                 value={settings.objection_result_doubt}
@@ -772,7 +772,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🏪 {t('cheaper_elsewhere')}
+                🏪 {t('botsettings:cheaper_elsewhere')}
               </label>
               <textarea
                 value={settings.objection_cheaper_elsewhere}
@@ -792,7 +792,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚗 {t('too_far')}
+                🚗 {t('botsettings:too_far')}
               </label>
               <textarea
                 value={settings.objection_too_far}
@@ -812,7 +812,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💑 {t('consult_with_husband')}
+                💑 {t('botsettings:consult_with_husband')}
               </label>
               <textarea
                 value={settings.objection_consult_husband}
@@ -832,7 +832,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🆕 {t('first_time')}
+                🆕 {t('botsettings:first_time')}
               </label>
               <textarea
                 value={settings.objection_first_time}
@@ -852,7 +852,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😟 {t('if_not_liked')}
+                😟 {t('botsettings:if_not_liked')}
               </label>
               <textarea
                 value={settings.objection_not_happy}
@@ -876,12 +876,12 @@ export default function BotSettings() {
         {activeTab === 'communication' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💬 {t('communication_and_emotions')}
+              💬 {t('botsettings:communication_and_emotions')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💖 {t('emotional_triggers')}
+                💖 {t('botsettings:emotional_triggers')}
               </label>
               <textarea
                 value={settings.emotional_triggers}
@@ -902,7 +902,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ⭐ {t('social_proof')}
+                ⭐ {t('botsettings:social_proof')}
               </label>
               <textarea
                 value={settings.social_proof_phrases}
@@ -922,7 +922,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                👤 {t('personalization_rules')}
+                👤 {t('botsettings:personalization_rules')}
               </label>
               <textarea
                 value={settings.personalization_rules}
@@ -942,7 +942,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                😊 {t('emotional_responses')}
+                😊 {t('botsettings:emotional_responses')}
               </label>
               <textarea
                 value={settings.emotional_responses}
@@ -962,7 +962,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎙️ {t('voice_message_response')}
+                🎙️ {t('botsettings:voice_message_response')}
               </label>
               <textarea
                 value={settings.voice_message_response}
@@ -982,7 +982,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ❌ {t('anti_patterns')} ({t('what_not_to_do')})
+                ❌ {t('botsettings:anti_patterns')} ({t('botsettings:what_not_to_do')})
               </label>
               <textarea
                 value={settings.anti_patterns}
@@ -1001,7 +1001,7 @@ export default function BotSettings() {
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 {t('pre_booking_data_collection')}
+                📋 {t('botsettings:pre_booking_data_collection')}
               </label>
               <textarea
                 value={settings.pre_booking_data_collection}
@@ -1018,7 +1018,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('pre_booking_data_collection_explanation')}
+                {t('botsettings:pre_booking_data_collection_explanation')}
               </p>
             </div>
 
@@ -1026,7 +1026,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🤝 {t('manager_consultation_prompt')}
+                🤝 {t('botsettings:manager_consultation_prompt')}
               </label>
               <textarea
                 value={settings.manager_consultation_prompt}
@@ -1044,13 +1044,13 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('manager_consultation_prompt_description')}
+                {t('botsettings:manager_consultation_prompt_description')}
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🎯 {t('ad_campaign_detection')}
+                🎯 {t('botsettings:ad_campaign_detection')}
               </label>
               <textarea
                 value={settings.ad_campaign_detection}
@@ -1067,7 +1067,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('ad_campaign_detection_explanation')}
+                {t('botsettings:ad_campaign_detection_explanation')}
               </p>
             </div>
           </div>
@@ -1077,12 +1077,12 @@ export default function BotSettings() {
         {activeTab === 'advanced' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🎓 {t('advanced_settings')}
+              🎓 {t('botsettings:advanced_settings')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 {t('algorithm_actions')}
+                📋 {t('botsettings:algorithm_actions')}
               </label>
               <textarea
                 value={settings.algorithm_actions}
@@ -1102,7 +1102,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📍 {t('location_features')}
+                📍 {t('botsettings:location_features')}
               </label>
               <textarea
                 value={settings.location_features}
@@ -1122,7 +1122,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌡️ {t('seasonality')}
+                🌡️ {t('botsettings:seasonality')}
               </label>
               <textarea
                 value={settings.seasonality}
@@ -1142,7 +1142,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🌍 {t('contextual_rules')}
+                🌍 {t('botsettings:contextual_rules')}
               </label>
               <textarea
                 value={settings.contextual_rules}
@@ -1162,7 +1162,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📊 {t('success_metrics')}
+                📊 {t('botsettings:success_metrics')}
               </label>
               <textarea
                 value={settings.success_metrics}
@@ -1186,7 +1186,7 @@ export default function BotSettings() {
         {activeTab === 'safety' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🛡️ {t('safety_and_ethics')}
+              🛡️ {t('botsettings:safety_and_ethics')}
             </h2>
 
             <div style={{
@@ -1200,17 +1200,17 @@ export default function BotSettings() {
               <Shield size={20} color="#1e40af" style={{ flexShrink: 0, marginTop: '0.125rem' }} />
               <div>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af', fontWeight: '600', marginBottom: '0.25rem' }}>
-                  {t('important_for_safety')}
+                  {t('botsettings:important_for_safety')}
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#1e40af' }}>
-                  {t('these_rules_protect_clients_and_reputation')}
+                  {t('botsettings:these_rules_protect_clients_and_reputation')}
                 </p>
               </div>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🔒 {t('safety_rules')}
+                🔒 {t('botsettings:safety_rules')}
               </label>
               <textarea
                 value={settings.safety_guidelines}
@@ -1230,7 +1230,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🚨 {t('emergency_situations')}
+                🚨 {t('botsettings:emergency_situations')}
               </label>
               <textarea
                 value={settings.emergency_situations}
@@ -1254,12 +1254,12 @@ export default function BotSettings() {
         {activeTab === 'examples' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              💡 {t('examples_and_dialogues')}
+              💡 {t('botsettings:examples_and_dialogues')}
             </h2>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                ✅ {t('good_responses')}
+                ✅ {t('botsettings:good_responses')}
               </label>
               <textarea
                 value={settings.example_good_responses}
@@ -1279,7 +1279,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                💬 {t('dialogues')}
+                💬 {t('botsettings:dialogues')}
               </label>
               <textarea
                 value={settings.example_dialogues}
@@ -1297,7 +1297,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('real_dialogues_for_training')}
+                {t('botsettings:real_dialogues_for_training')}
               </p>
             </div>
           </div>
@@ -1330,7 +1330,7 @@ export default function BotSettings() {
           }}
         >
           <Save size={20} />
-          {saving ? t('saving') : t('save_all')}
+          {saving ? t('botsettings:saving') : t('botsettings:save_all')}
         </button>
       </div>
     </div>
