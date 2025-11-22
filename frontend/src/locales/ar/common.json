@@ -17,7 +17,7 @@
   "error_loading_data": "حدث خطأ أثناء تحميل البيانات",
   "error_sending_message": "حدث خطأ أثناء إرسال الرسالة",
   "error_updating_status": "خطأ في تحديث الحالة",
-  "export": "تصدير",
+  "export": "يصدّر",
   "export_to_csv": "تصدير إلى CSV",
   "export_to_excel": "تصدير إلى إكسل",
   "export_to_pdf": "تصدير إلى PDF",
@@ -29,7 +29,7 @@
   "last_3_months": "آخر 3 أشهر",
   "last_7_days": "آخر 7 أيام",
   "last_month": "الشهر الماضي",
-  "loading": "جار التحميل...",
+  "loading": "تحميل...",
   "loading_error": "خطأ في التحميل",
   "no_messages_yet": "لا توجد رسائل حتى الآن",
   "nothing_found": "لم يتم العثور على شيء",
@@ -68,6 +68,6 @@
   "status_vip": "VIP",
   "to": "ل",
   "today": "اليوم",
-  "try_again": "حاول مرة أخرى",
+  "try_again": "حاول ثانية",
   "type_message": "أدخل رسالتك..."
 }
