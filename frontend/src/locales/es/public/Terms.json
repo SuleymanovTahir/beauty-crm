@@ -1,46 +1,28 @@
 {
-  "sections": {
-    "contact": {
-      "address": "Address",
-      "phone": "Phone",
-      "title": "8. Contacts",
-      "email": "Correo electrónico",
-      "description": "For all questions related to these Terms, you can contact us:"
-    },
-    "medical": {
-      "title": "4. Medical Contraindications",
-      "paragraph2": "The salon is not responsible for the consequences of procedures if the client concealed information about medical contraindications.",
-      "paragraph1": "The client must inform the master about any medical contraindications, allergies or health features before the procedure."
-    },
-    "general": {
-      "content": "These Terms of Use govern the use of {{salonName}} services. By using our services, you agree to these terms.",
-      "title": "1. General Provisions"
-    },
-    "privacy": {
-      "title": "6. Confidentiality",
-      "content": "We respect your privacy and undertake to protect your personal data in accordance with our <link>Privacy Policy</link>."
-    },
-    "payment": {
-      "title": "3. Payment for Services",
-      "paragraph1": "Payment is made in cash or by card after the service is provided. Prices for services are indicated in the price list and may be changed without prior notice.",
-      "paragraph2": "If the client is more than 15 minutes late, the salon reserves the right to cancel the appointment or shorten the procedure time."
-    },
-    "warranty": {
-      "title": "5. Warranties and Liability",
-      "paragraph1": "We guarantee the quality of materials used and the professionalism of our masters. The result of procedures may vary depending on the individual characteristics of the client.",
-      "paragraph2": "In case of dissatisfaction with the result, the client must contact the salon within 7 days to discuss possible solutions."
-    },
-    "changes": {
-      "content": "We reserve the right to change these Terms of Use at any time. Changes take effect from the moment of publication on the site.",
-      "title": "7. Changes to Terms"
-    },
-    "booking": {
-      "cancellationText": "The client can cancel the appointment no later than 24 hours before the scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the service cost may be charged.",
-      "cancellationTitle": "Cancel booking:",
-      "title": "2. Booking and Cancellation",
-      "paragraph1": "To book procedures, you must provide correct contact information. We reserve the right to confirm or decline a booking."
-    }
-  },
-  "title": "Terms of Use",
-  "lastUpdated": "Last updated: {{date}}"
+  "lastUpdated": "Дата последнего обновления: {{date}}",
+  "sections.booking.cancellationText": "Клиент может отменить запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+  "sections.booking.cancellationTitle": "Cancelar una entrada:",
+  "sections.booking.paragraph1": "Для записи на процедуры необходимо предоставить корректную контактную информацию. Мы оставляем за собой право подтвердить или отклонить бронирование.",
+  "sections.booking.title": "2. Бронирование и отмена",
+  "sections.changes.content": "Мы оставляем за собой право изменять данные Условия использования в любое время. Изменения вступают в силу с момента публикации на сайте.",
+  "sections.changes.title": "7. Cambios en términos y condiciones",
+  "sections.contact.address": "DIRECCIÓN",
+  "sections.contact.description": "По всем вопросам, связанным с данными Условиями, вы можете связаться с нами:",
+  "sections.contact.email": "Correo electrónico",
+  "sections.contact.phone": "Teléfono",
+  "sections.contact.title": "8. Contactos",
+  "sections.general.content": "Настоящие Условия использования регулируют использование услуг {{salonName}}. Используя наши услуги, вы соглашаетесь с данными условиями.",
+  "sections.general.title": "1. Disposiciones generales",
+  "sections.medical.paragraph1": "Клиент обязан сообщить мастеру о наличии любых медицинских противопоказаний, аллергий или особенностей здоровья перед проведением процедуры.",
+  "sections.medical.paragraph2": "Салон не несет ответственности за последствия процедур, если клиент скрыл информацию о медицинских противопоказаниях.",
+  "sections.medical.title": "4. Contraindicaciones médicas",
+  "sections.payment.paragraph1": "Оплата производится наличными или картой после оказания услуги. Цены на услуги указаны в прайс-листе и могут быть изменены без предварительного уведомления.",
+  "sections.payment.paragraph2": "В случае опоздания клиента более чем на 15 минут, салон оставляет за собой право отменить запись или сократить время процедуры.",
+  "sections.payment.title": "3. Pago de servicios",
+  "sections.privacy.content": "Мы уважаем вашу конфиденциальность и обязуемся защищать ваши персональные данные в соответствии с нашей <link>Политикой конфиденциальности</link>.",
+  "sections.privacy.title": "6. Privacidad",
+  "sections.warranty.paragraph1": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результат процедур может варьироваться в зависимости от индивидуальных особенностей клиента.",
+  "sections.warranty.paragraph2": "В случае неудовлетворенности результатом, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных вариантов решения.",
+  "sections.warranty.title": "5. Гарантии и ответственность",
+  "title": "Condiciones de uso"
 }

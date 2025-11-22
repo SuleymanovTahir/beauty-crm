@@ -1,9 +1,9 @@
 {
-  "serviceBooked": "Your appointment for <highlight>{{service}}</highlight> has been successfully created.",
-  "thankYou": "Thank you, {{name}}!",
-  "title": "Appointment confirmed!",
-  "viewServices": "View services",
-  "contactMessage": "We will contact you shortly to confirm appointment details.",
-  "dateTime": "{{date}} at {{time}}",
-  "backToHome": "Return to home"
+  "backToHome": "घर पर वापस",
+  "contactMessage": "Мы свяжемся с вами в ближайшее время для подтверждения деталей записи.",
+  "dateTime": "{{तारीख}} {{समय}} पर",
+  "serviceBooked": "Ваша запись на <highlight>{{service}}</highlight> успешно создана.",
+  "thankYou": "धन्यवाद, {{नाम}}!",
+  "title": "पंजीकरण की पुष्टि!",
+  "viewServices": "सेवाएँ देखें"
 }

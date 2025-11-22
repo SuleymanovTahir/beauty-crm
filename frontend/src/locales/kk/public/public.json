@@ -1,21 +1,19 @@
 {
-  "footer": {
-    "cooperation": "Cooperation",
-    "quick_links": "Quick Links",
-    "weekdays": "Mon-Fri",
-    "weekends": "Sat-Sun",
-    "terms": "Terms of Use",
-    "description": "Premium beauty services in the heart of the city. Professional masters and individual approach.",
-    "contacts": "Contacts",
-    "all_rights": "All rights reserved",
-    "working_hours": "Working Hours",
-    "privacy_policy": "Privacy Policy"
-  },
+  "about": "Біз туралы",
+  "contacts": "Байланыстар",
   "faq": "Жиі қойылатын сұрақтар",
-  "personal_cabinet": "Personal Cabinet",
-  "about": "About Us",
-  "contacts": "Contacts",
-  "price_list": "Price List",
-  "home": "Home",
-  "login": "Login"
+  "footer.all_rights": "Барлық құқықтар қорғалған",
+  "footer.contacts": "Байланыстар",
+  "footer.cooperation": "Ынтымақтастық",
+  "footer.description": "Премиальные услуги красоты в самом сердце города. Профессиональные мастера и индивидуальный подход.",
+  "footer.privacy_policy": "Құпиялылық саясаты",
+  "footer.quick_links": "Жылдам сілтемелер",
+  "footer.terms": "Пайдалану шарттары",
+  "footer.weekdays": "Мон-Фри",
+  "footer.weekends": "Sat-Sun",
+  "footer.working_hours": "Ашу сағаттары",
+  "home": "Үй",
+  "login": "Кіру",
+  "personal_cabinet": "Жеке кабинет",
+  "price_list": "Баға тізімі"
 }

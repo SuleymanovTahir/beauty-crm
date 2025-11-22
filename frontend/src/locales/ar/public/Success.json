@@ -1,9 +1,9 @@
 {
-  "serviceBooked": "Your appointment for <highlight>{{service}}</highlight> has been successfully created.",
-  "thankYou": "Thank you, {{name}}!",
-  "title": "Appointment confirmed!",
-  "viewServices": "View services",
-  "contactMessage": "We will contact you shortly to confirm appointment details.",
-  "dateTime": "{{date}} at {{time}}",
-  "backToHome": "Return to home"
+  "backToHome": "العودة إلى المنزل",
+  "contactMessage": "Мы свяжемся с вами в ближайшее время для подтверждения деталей записи.",
+  "dateTime": "{{التاريخ}} في {{الوقت}}",
+  "serviceBooked": "Ваша запись на <highlight>{{service}}</highlight> успешно создана.",
+  "thankYou": "شكرًا لك، {{الاسم}}!",
+  "title": "تم تأكيد التسجيل!",
+  "viewServices": "عرض الخدمات"
 }
