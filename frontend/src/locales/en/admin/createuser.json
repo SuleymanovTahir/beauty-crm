@@ -8,7 +8,7 @@
   "error": "Error",
   "error_creating": "Error creating user",
   "full_name_label": "Full name *",
-  "full_name_placeholder": "Ivanov Ivan Ivanovich",
+  "full_name_placeholder": "Sarah Johnson",
   "full_name_required": "Name required",
   "password_hint": "Minimum 6 characters",
   "password_label": "Password *",
@@ -35,6 +35,6 @@
   "username_hint": "Minimum 3 characters, used for login",
   "username_label": "Login *",
   "username_min_length": "Логин должен быть минимум 3 символа",
-  "username_placeholder": "ivan_ivanov",
+  "username_placeholder": "sarah_johnson",
   "username_required": "Login is required"
 }

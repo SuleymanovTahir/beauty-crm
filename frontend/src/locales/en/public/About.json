@@ -27,5 +27,15 @@
   "Meet_our_talented_masters": "Meet our talented masters",
   "Our_team_of_professionals": "Our team of professionals",
   "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "We are constantly developing, following the latest trends in the beauty industry and using only proven high-quality materials and equipment",
-  "our_story": "Our History"
+  "our_story": "Our History",
+  "cta": {
+    "ready_to_transform": "Ready to transform?",
+    "book_procedure": "Book a procedure"
+  },
+  "stats": {
+    "years_experience": "Years of experience",
+    "satisfied_clients": "Satisfied clients",
+    "service_types": "Types of services",
+    "awards_and_certificates": "Awards and certificates"
+  }
 }

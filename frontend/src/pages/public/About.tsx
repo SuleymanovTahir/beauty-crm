@@ -32,7 +32,13 @@ export default function About() {
         const data = await apiClient.getPublicEmployees();
 
         if (data.employees && data.employees.length > 0) {
-          const teamData = data.employees.map((e: any) => ({
+          // Filter to show only masters (exclude director and admin)
+          const filteredEmployees = data.employees.filter((e: any) => {
+            const position = (e.position || '').toLowerCase();
+            return position !== 'director' && position !== 'admin' && position !== 'директор' && position !== 'администратор';
+          });
+
+          const teamData = filteredEmployees.map((e: any) => ({
             id: e.id,
             name: e.full_name,
             role: e.position || 'Мастер',
@@ -75,7 +81,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-            <h2 className="text-4xl text-gray-900 mb-6">{t('about:our_story')}</h2>
+              <h2 className="text-4xl text-gray-900 mb-6">{t('about:our_story')}</h2>
               <div className="space-y-4 text-gray-600 text-lg">
                 <p>
                   {salonInfo.name || 'Наш салон'} - {t('about:your_reliable_partner_in_the_world_of_beauty')}
@@ -84,7 +90,7 @@ export default function About() {
                   {t('about:Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft')}
                 </p>
                 <p>
-                {t('about:We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment')}
+                  {t('about:We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment')}
                 </p>
               </div>
             </div>
@@ -103,8 +109,8 @@ export default function About() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-          <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_values')}</h2>
-          <p className="text-xl text-gray-600">{t('about:The_principles_we_are_guided_by')}</p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_values')}</h2>
+            <p className="text-xl text-gray-600">{t('about:The_principles_we_are_guided_by')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -115,7 +121,7 @@ export default function About() {
               <h3 className="text-xl text-gray-900 mb-3">{t('about:Love_for_our_craft')}</h3>
 
               <p className="text-gray-600">
-              {t('about:We_love_what_we_do_and_this_is_reflected_in_every_procedure')}              
+                {t('about:We_love_what_we_do_and_this_is_reflected_in_every_procedure')}
               </p>
             </div>
 
@@ -125,7 +131,7 @@ export default function About() {
               </div>
               <h3 className="text-xl text-gray-900 mb-3">{t('about:values.professionalism.title')}</h3>
               <p className="text-gray-600">
-              {t('about:Our_masters_regularly_upgrade_their_qualifications')}              </p>
+                {t('about:Our_masters_regularly_upgrade_their_qualifications')}              </p>
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm text-center">
@@ -134,7 +140,7 @@ export default function About() {
               </div>
               <h3 className="text-xl text-gray-900 mb-3">{t('about:values.client_focus.title')}</h3>
               <p className="text-gray-600">
-              {t('about:Your_comfort_and_satisfaction_-_our_priority')}
+                {t('about:Your_comfort_and_satisfaction_-_our_priority')}
               </p>
             </div>
 
@@ -144,7 +150,7 @@ export default function About() {
               </div>
               <h3 className="text-xl text-gray-900 mb-3">{t('about:values.quality.title')}</h3>
               <p className="text-gray-600">
-              {t('about:We_use_only_premium_materials_and_equipment')}              </p>
+                {t('about:We_use_only_premium_materials_and_equipment')}              </p>
             </div>
           </div>
         </div>
@@ -154,15 +160,15 @@ export default function About() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-          <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_team')}</h2>
-          <p className="text-xl text-gray-600">
-            {t('about:Meet_our_talented_masters')}            </p>
+            <h2 className="text-4xl text-gray-900 mb-4">{t('about:our_team')}</h2>
+            <p className="text-xl text-gray-600">
+              {t('about:Meet_our_talented_masters')}            </p>
           </div>
 
           {loading ? (
             <div className="text-center py-12">
-<p className="text-gray-600">{t('common:loading')}</p>
-</div>
+              <p className="text-gray-600">{t('common:loading')}</p>
+            </div>
           ) : team.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {team.map((member) => (
@@ -183,7 +189,7 @@ export default function About() {
               </div>
               <h3 className="text-2xl text-gray-900 mb-4">{t('about:Our_team_of_professionals')}</h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-              {t('about:In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality')}
+                {t('about:In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality')}
               </p>
             </div>
           )}
@@ -219,7 +225,7 @@ export default function About() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl text-gray-900 mb-6">{t('cta:ready_to_transform')}</h2>
           <p className="text-xl text-gray-600 mb-8">
-          {t('about:Book_a_procedure_right_now_and_feel_the_difference')}
+            {t('about:Book_a_procedure_right_now_and_feel_the_difference')}
           </p>
           <Button
             size="lg"

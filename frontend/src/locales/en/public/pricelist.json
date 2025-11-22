@@ -12,5 +12,14 @@
     "ready": "Ready to transform?",
     "bookButton": "Book an appointment"
   },
-  "loading": "Loading services..."
+  "loading": "Loading services...",
+  "categories": {
+    "permanent-makeup": "Permanent Makeup",
+    "facial-care": "Facial Care",
+    "nails": "Nails",
+    "lashes": "Lashes & Brows",
+    "hair": "Hair Services",
+    "massage": "Massage & Spa",
+    "other": "Other Services"
+  }
 }

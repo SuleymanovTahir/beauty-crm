@@ -1,12 +1,25 @@
 {
-  "bottomCta.bookButton": "Inscríbete ahora",
-  "bottomCta.description": "Выберите удобное время и насладитесь нашими премиальными услугами",
-  "bottomCta.title": "¿Listo para registrarte?",
-  "cta.bookButton": "Regístrate para el trámite",
-  "cta.ready": "¿Listo para transformarte?",
+  "bottomCta": {
+    "bookButton": "Inscríbete ahora",
+    "description": "Elija un horario conveniente y disfrute de nuestros servicios premium",
+    "title": "¿Listo para reservar?"
+  },
+  "categories": {
+    "permanent-makeup": "Maquillaje Permanente",
+    "facial-care": "Cuidado Facial",
+    "nails": "Servicios de Uñas",
+    "lashes": "Pestañas y Cejas",
+    "hair": "Servicios de Cabello",
+    "massage": "Masaje y Spa",
+    "other": "Otros Servicios"
+  },
+  "cta": {
+    "bookButton": "Regístrate para el trámite",
+    "ready": "¿Listo para transformarte?"
+  },
   "error": "Error al cargar servicios",
   "loading": "Cargando servicios...",
   "noServices": "Servicios no encontrados",
-  "subtitle": "Премиальные услуги красоты по доступным ценам",
-  "title": "Наши услуги и цены"
+  "subtitle": "Servicios de belleza premium a precios asequibles",
+  "title": "Nuestros servicios y precios"
 }

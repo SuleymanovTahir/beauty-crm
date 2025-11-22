@@ -27,5 +27,15 @@
   "Meet_our_talented_masters": "Познакомьтесь с нашими талантливыми мастерами",
   "Our_team_of_professionals": "Наша команда профессионалов",
   "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "Мы постоянно развиваемся, следуя последним тенденциям индустрии красоты и используя только проверенные высококачественные материалы и оборудование",
-  "our_story": "Наша история"
+  "our_story": "Наша история",
+  "cta": {
+    "ready_to_transform": "Готовы преобразиться?",
+    "book_procedure": "Записаться на процедуру"
+  },
+  "stats": {
+    "years_experience": "Лет опыта",
+    "satisfied_clients": "Довольных клиентов",
+    "service_types": "Видов услуг",
+    "awards_and_certificates": "Наград и сертификатов"
+  }
 }
