@@ -3,6 +3,7 @@
   "admin_panel": "Panel de administración",
   "crm": "CRM de belleza",
   "logout": "Cerrar sesión",
+  "logout_success": "Has cerrado sesión exitosamente",
   "menu.analytics": "Analítica",
   "menu.bookings": "Reservas",
   "menu.bot_settings": "Configuración de robots",

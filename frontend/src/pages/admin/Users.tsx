@@ -230,19 +230,19 @@ export default function Users() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Всего</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_total')}</p>
           <h3 className="text-3xl text-gray-900">{stats.total}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Директоры</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_directors')}</p>
           <h3 className="text-3xl text-red-600">{stats.directors}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Администраторы</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_admins')}</p>
           <h3 className="text-3xl text-purple-600">{stats.admins}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-gray-600 text-sm mb-2">Менеджеры</p>
+          <p className="text-gray-600 text-sm mb-2">{t('stats_managers')}</p>
           <h3 className="text-3xl text-blue-600">{stats.managers}</h3>
         </div>
       </div>
@@ -360,7 +360,7 @@ export default function Users() {
                               setShowPermissionsDialog(true);
                             }}
                             className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                            title="Управление правами"
+                            title={t('action_manage_permissions_title')}
                           >
                             <Key className="w-4 h-4" />
                           </Button>
@@ -376,7 +376,7 @@ export default function Users() {
                               setShowScheduleDialog(true);
                             }}
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title="Управление графиком"
+                            title={t('action_manage_schedule_title')}
                           >
                             <Calendar className="w-4 h-4" />
                           </Button>
@@ -445,7 +445,7 @@ export default function Users() {
                   {availableRoles.length === 0 ? (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                       <p className="text-sm text-yellow-800">
-                        У вас нет прав для изменения ролей других пользователей.
+                        {t('no_permission_to_change_roles')}
                       </p>
                     </div>
                   ) : (
@@ -453,11 +453,11 @@ export default function Users() {
                       {availableRoles.map((role) => {
                         // Get permissions for this role
                         const rolePermissions = permissions.canCreateUsers ? [
-                          role.key === 'director' && 'Полный доступ ко всем функциям',
-                          role.key === 'admin' && 'Управление пользователями и настройками',
-                          role.key === 'manager' && 'Управление записями и клиентами',
-                          (role.key === 'sales' || role.key === 'marketer') && 'Работа с клиентами',
-                          role.key === 'employee' && 'Базовый доступ к системе'
+                          role.key === 'director' && t('perm_director_full'),
+                          role.key === 'admin' && t('perm_admin_manage'),
+                          role.key === 'manager' && t('perm_manager_bookings'),
+                          (role.key === 'sales' || role.key === 'marketer') && t('perm_sales_clients'),
+                          role.key === 'employee' && t('perm_employee_basic')
                         ].filter(Boolean) : [];
 
                         return (
@@ -486,7 +486,7 @@ export default function Users() {
                             {/* Permissions display */}
                             {rolePermissions.length > 0 && (
                               <div className="ml-3 pl-3 border-l-2 border-gray-200">
-                                <p className="text-xs font-medium text-gray-500 mb-1">Права доступа:</p>
+                                <p className="text-xs font-medium text-gray-500 mb-1">{t('permissions_label')}:</p>
                                 <ul className="space-y-1">
                                   {rolePermissions.map((perm, idx) => (
                                     <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
@@ -504,7 +504,7 @@ export default function Users() {
                   )}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
                     <p className="text-xs text-blue-800">
-                      <strong>ℹ️ Иерархия ролей:</strong> Вы можете назначать только те роли, которые ниже вашей в иерархии. Директор может назначать все роли.
+                      <strong>ℹ️ {t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
                     </p>
                   </div>
                 </>
@@ -520,36 +520,36 @@ export default function Users() {
           <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-bold text-gray-900">
-                Редактирование: {selectedUser.full_name}
+                {t('edit_dialog_title')}: {selectedUser.full_name}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                Изменение данных пользователя
+                {t('edit_dialog_subtitle')}
               </p>
             </div>
 
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Логин
+                  {t('edit_username_label')}
                 </label>
                 <Input
                   type="text"
                   value={editForm.username}
                   onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                  placeholder="Логин пользователя"
+                  placeholder={t('edit_username_placeholder')}
                   disabled={savingEdit}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Полное имя
+                  {t('edit_fullname_label')}
                 </label>
                 <Input
                   type="text"
                   value={editForm.full_name}
                   onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                  placeholder="Полное имя"
+                  placeholder={t('edit_fullname_placeholder')}
                   disabled={savingEdit}
                 />
               </div>
@@ -574,17 +574,17 @@ export default function Users() {
                 <PositionSelector
                   value={editForm.position}
                   onChange={(value) => setEditForm({ ...editForm, position: value })}
-                  placeholder="Выберите должность из справочника"
+                  placeholder={t('edit_position_placeholder')}
                   disabled={savingEdit}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  💡 Начните вводить должность или выберите из списка. Можно создать новую должность прямо здесь.
+                  {t('edit_position_hint')}
                 </p>
               </div>
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                 <p className="text-sm text-yellow-800">
-                  <strong>⚠️ Важно:</strong> Пароли хранятся в зашифрованном виде и не могут быть показаны. Это обеспечивает безопасность системы.
+                  <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
                 </p>
               </div>
             </div>
@@ -599,14 +599,14 @@ export default function Users() {
                 className="flex-1"
                 disabled={savingEdit}
               >
-                Отмена
+                {t('edit_cancel')}
               </Button>
               <Button
                 onClick={handleEditUser}
                 className="flex-1 bg-pink-600 hover:bg-pink-700"
                 disabled={savingEdit}
               >
-                {savingEdit ? 'Сохранение...' : 'Сохранить'}
+                {savingEdit ? t('edit_saving') : t('edit_save')}
               </Button>
             </div>
           </div>
@@ -620,10 +620,10 @@ export default function Users() {
             <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">
-                  Управление правами: {selectedUser.full_name}
+                  {t('permissions_dialog_title')}: {selectedUser.full_name}
                 </h3>
                 <p className="text-xs text-gray-600 mt-1">
-                  Роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                  {t('permissions_dialog_role')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
                 </p>
               </div>
               <Button
@@ -635,7 +635,7 @@ export default function Users() {
                 }}
                 className="ml-4"
               >
-                Закрыть
+                {t('permissions_dialog_close')}
               </Button>
             </div>
 

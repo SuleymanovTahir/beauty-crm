@@ -3,6 +3,7 @@
   "admin_panel": "Админ панель",
   "crm": "Beauty CRM",
   "logout": "Выйти",
+  "logout_success": "Вы успешно вышли из системы",
   "menu.analytics": "Аналитика",
   "menu.bookings": "Записи",
   "menu.bot_settings": "Настройки бота",

@@ -35,7 +35,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
-  const [enabledMessengers, setEnabledMessengers] = useState<Array<{type: string; name: string}>>([]);
+  const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
@@ -88,7 +88,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       localStorage.removeItem('user');
       onLogout();
       navigate('/login', { replace: true });
-      toast.success('Вы успешно вышли из системы');
+      toast.success(t('logout_success'));
     }
   };
 
@@ -116,9 +116,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
     label: messenger.name,
     path: messenger.type === 'instagram' ? '/admin/chat' : `/admin/chat?messenger=${messenger.type}`,
     color: messenger.type === 'instagram' ? 'from-pink-500 to-purple-600' :
-           messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
-           messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
-           'from-gray-900 to-black'
+      messenger.type === 'whatsapp' ? 'from-green-500 to-green-600' :
+        messenger.type === 'telegram' ? 'from-blue-500 to-blue-600' :
+          'from-gray-900 to-black'
   }));
 
   return (

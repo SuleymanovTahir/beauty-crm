@@ -3,6 +3,7 @@
   "admin_panel": "Admin Panel",
   "crm": "Beauty CRM",
   "logout": "Logout",
+  "logout_success": "You have successfully logged out",
   "menu.analytics": "Analytics",
   "menu.bookings": "Bookings",
   "menu.bot_settings": "Bot settings",
