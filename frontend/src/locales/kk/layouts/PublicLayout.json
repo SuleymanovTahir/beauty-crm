@@ -1,21 +1,19 @@
 {
-  "home": "Home",
-  "price_list": "Price List",
-  "about": "About Us",
-  "contacts": "Contacts",
+  "about": "Біз туралы",
+  "contacts": "Байланыстар",
   "faq": "Жиі қойылатын сұрақтар",
-  "login": "Login",
-  "personal_cabinet": "Personal Cabinet",
-  "footer": {
-    "description": "Professional beauty salon in Dubai",
-    "quick_links": "Quick Links",
-    "cooperation": "Cooperation",
-    "contacts": "Contacts",
-    "working_hours": "Working Hours",
-    "weekdays": "Weekdays",
-    "weekends": "Weekends",
-    "all_rights": "All rights reserved",
-    "privacy_policy": "Privacy Policy",
-    "terms": "Terms of Use"
-  }
+  "footer.all_rights": "Барлық құқықтар қорғалған",
+  "footer.contacts": "Байланыстар",
+  "footer.cooperation": "Ынтымақтастық",
+  "footer.description": "Профессиональный салон красоты в Дубае",
+  "footer.privacy_policy": "Құпиялылық саясаты",
+  "footer.quick_links": "Жылдам сілтемелер",
+  "footer.terms": "Пайдалану шарттары",
+  "footer.weekdays": "Жұмыс күндері",
+  "footer.weekends": "Демалыс күндері",
+  "footer.working_hours": "Ашу сағаттары",
+  "home": "Үй",
+  "login": "Кіру",
+  "personal_cabinet": "Жеке кабинет",
+  "price_list": "Баға тізімі"
 }

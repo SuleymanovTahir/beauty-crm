@@ -1,21 +1,19 @@
 {
-  "home": "Home",
-  "price_list": "Price List",
-  "about": "About Us",
-  "contacts": "Contacts",
+  "about": "Sobre nosotros",
+  "contacts": "Contactos",
   "faq": "Preguntas frecuentes",
-  "login": "Login",
-  "personal_cabinet": "Personal Cabinet",
-  "footer": {
-    "description": "Professional beauty salon in Dubai",
-    "quick_links": "Quick Links",
-    "cooperation": "Cooperation",
-    "contacts": "Contacts",
-    "working_hours": "Working Hours",
-    "weekdays": "Weekdays",
-    "weekends": "Weekends",
-    "all_rights": "All rights reserved",
-    "privacy_policy": "Privacy Policy",
-    "terms": "Terms of Use"
-  }
+  "footer.all_rights": "Reservados todos los derechos",
+  "footer.contacts": "Contactos",
+  "footer.cooperation": "Cooperación",
+  "footer.description": "Профессиональный салон красоты в Дубае",
+  "footer.privacy_policy": "política de privacidad",
+  "footer.quick_links": "Enlaces rápidos",
+  "footer.terms": "Condiciones de uso",
+  "footer.weekdays": "Días laborables",
+  "footer.weekends": "Fin de semana",
+  "footer.working_hours": "Horario de apertura",
+  "home": "Hogar",
+  "login": "Acceso",
+  "personal_cabinet": "cuenta personal",
+  "price_list": "Lista de precios"
 }
