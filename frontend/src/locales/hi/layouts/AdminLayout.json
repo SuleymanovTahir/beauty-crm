@@ -1,8 +1,8 @@
 {
-  "admin": "Administrator",
-  "admin_panel": "Admin Panel",
+  "admin": "प्रशासक",
+  "admin_panel": "व्यवस्थापक पैनल",
   "crm": "सौंदर्य सीआरएम",
-  "logout": "Logout",
+  "logout": "लॉग आउट",
   "menu.analytics": "एनालिटिक्स",
   "menu.bookings": "पदों",
   "menu.bot_settings": "बॉट सेटिंग्स",

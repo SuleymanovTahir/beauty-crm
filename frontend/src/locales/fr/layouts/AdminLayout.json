@@ -1,8 +1,8 @@
 {
-  "admin": "Administrator",
-  "admin_panel": "Admin Panel",
+  "admin": "Administrateur",
+  "admin_panel": "Panneau d'administration",
   "crm": "CRM Beauté",
-  "logout": "Logout",
+  "logout": "Se déconnecter",
   "menu.analytics": "Analytique",
   "menu.bookings": "Messages",
   "menu.bot_settings": "Paramètres du robot",

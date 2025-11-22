@@ -1,8 +1,8 @@
 {
-  "admin": "Administrator",
-  "admin_panel": "Admin Panel",
+  "admin": "Ікімші",
+  "admin_panel": "Басшы тақтасы",
   "crm": "Сұлулық крм",
-  "logout": "Logout",
+  "logout": "Шығу",
   "menu.analytics": "Аналитика",
   "menu.bookings": "Жазбалар",
   "menu.bot_settings": "Бот параметрлері",

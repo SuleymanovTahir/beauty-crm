@@ -1,8 +1,8 @@
 {
-  "admin": "Administrator",
-  "admin_panel": "Admin Panel",
+  "admin": "Administrador",
+  "admin_panel": "Painel de administração",
   "crm": "CRM de beleza",
-  "logout": "Logout",
+  "logout": "Sair",
   "menu.analytics": "Análise",
   "menu.bookings": "Postagens",
   "menu.bot_settings": "Configurações do bot",
