@@ -184,7 +184,7 @@ export default function BotSettings() {
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
-      toast.error('Ошибка загрузки: ' + (err instanceof Error ? err.message : 'Неизвестная ошибка'));
+      toast.error(t('botsettings:error_loading') + (err instanceof Error ? err.message : t('botsettings:unknown_error')));
     } finally {
       setLoading(false);
     }
@@ -235,9 +235,9 @@ export default function BotSettings() {
       <div style={{ padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', padding: '3rem', maxWidth: '28rem', textAlign: 'center' }}>
           <Shield style={{ width: '4rem', height: '4rem', color: '#d1d5db', margin: '0 auto 1rem' }} />
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>Доступ запрещен</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.5rem' }}>{t('botsettings:access_denied')}</h2>
           <p style={{ color: '#6b7280' }}>
-            Настройки бота доступны только директору. Обратитесь к администратору для получения доступа.
+            {t('botsettings:access_denied_message')}
           </p>
         </div>
       </div>
@@ -327,7 +327,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📏 Макс. длина сообщения (символов)
+                {t('botsettings:max_message_length')}
               </label>
               <input
                 type="number"
@@ -346,9 +346,9 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Рекомендуется 200-400 символов. Чем меньше - тем короче ответы бота.
+                {t('botsettings:recommended_length')}
                 <br />
-                <strong>⚠️ Бот будет СТРОГО соблюдать этот лимит!</strong>
+                <strong>{t('botsettings:strict_limit_warning')}</strong>
               </p>
             </div>
           </div>
@@ -592,7 +592,7 @@ export default function BotSettings() {
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                🧠 Логика предложения времени
+                {t('botsettings:booking_time_logic')}
               </label>
               <textarea
                 value={settings.booking_time_logic}
@@ -610,13 +610,13 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Умная логика выбора времени записи: учет пожеланий клиента, истории, смекалка при занятости
+                {t('botsettings:booking_time_logic_description')}
               </p>
             </div>
 
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Сбор данных для записи
+                {t('botsettings:booking_data_collection')}
               </label>
               <textarea
                 value={settings.booking_data_collection}
@@ -634,12 +634,12 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Алгоритм сбора имени и WhatsApp перед записью
+                {t('botsettings:booking_data_collection_description')}
               </p>
             </div>
             <div>
               <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                📋 Инструкции по показу мастеров
+                {t('botsettings:booking_availability_instructions')}
               </label>
               <textarea
                 value={settings.booking_availability_instructions}
@@ -657,7 +657,7 @@ export default function BotSettings() {
                 }}
               />
               <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                Инструкции для бота: что делать если услуга не определена, как показывать мастеров, когда собирать данные
+                {t('botsettings:booking_availability_instructions_description')}
               </p>
             </div>
           </div>

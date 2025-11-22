@@ -481,9 +481,9 @@ export default function AdminSettings() {
     try {
       await api.updateBotGloballyEnabled(enabled);
       setBotGloballyEnabled(enabled);
-      toast.success(enabled ? 'Бот включен глобально' : 'Бот отключен глобально');
+      toast.success(enabled ? t('settings:bot_enabled_globally') : t('settings:bot_disabled_globally'));
     } catch (err) {
-      toast.error('Ошибка обновления');
+      toast.error(t('settings:error_updating'));
     }
   };
 
@@ -597,23 +597,23 @@ export default function AdminSettings() {
 
   const handleCreateReminderSetting = async () => {
     if (!reminderForm.name) {
-      toast.error('Введите название напоминания');
+      toast.error(t('settings:enter_reminder_name'));
       return;
     }
     if (reminderForm.days_before === 0 && reminderForm.hours_before === 0) {
-      toast.error('Укажите время напоминания');
+      toast.error(t('settings:specify_reminder_time'));
       return;
     }
 
     try {
       await api.createBookingReminderSetting(reminderForm);
-      toast.success('Настройка напоминания создана');
+      toast.success(t('settings:reminder_setting_created'));
       setShowCreateReminderDialog(false);
       setReminderForm({ name: '', days_before: 0, hours_before: 2, notification_type: 'email' });
       loadBookingReminderSettings();
     } catch (err) {
       console.error('Error creating reminder setting:', err);
-      toast.error('Ошибка при создании настройки');
+      toast.error(t('settings:error_creating_setting'));
     }
   };
 
@@ -623,22 +623,22 @@ export default function AdminSettings() {
       loadBookingReminderSettings();
     } catch (err) {
       console.error('Error toggling reminder setting:', err);
-      toast.error('Ошибка при изменении настройки');
+      toast.error(t('settings:error_changing_setting'));
     }
   };
 
   const handleDeleteReminderSetting = async (id: number) => {
-    if (!confirm('Удалить эту настройку напоминания?')) {
+    if (!confirm(t('settings:delete_reminder_setting'))) {
       return;
     }
 
     try {
       await api.deleteBookingReminderSetting(id);
-      toast.success('Настройка удалена');
+      toast.success(t('settings:setting_deleted'));
       loadBookingReminderSettings();
     } catch (err) {
       console.error('Error deleting reminder setting:', err);
-      toast.error('Ошибка при удалении настройки');
+      toast.error(t('settings:error_deleting_setting'));
     }
   };
 
@@ -658,20 +658,20 @@ export default function AdminSettings() {
   const handleToggleMessenger = async (messengerType: string, currentState: boolean) => {
     try {
       await api.updateMessengerSetting(messengerType, { is_enabled: !currentState });
-      toast.success(`${messengerType} ${!currentState ? 'включен' : 'выключен'}`);
+      toast.success(`${messengerType} ${!currentState ? t('settings:enabled') : t('settings:disabled')}`);
       loadMessengerSettings();
       // Отправляем событие для обновления меню мессенджеров
       window.dispatchEvent(new Event('messengers-updated'));
     } catch (err) {
       console.error('Error toggling messenger:', err);
-      toast.error('Ошибка при изменении настройки');
+      toast.error(t('settings:error_changing_setting'));
     }
   };
 
   const handleSaveMessengerConfig = async (messengerType: string) => {
     try {
       await api.updateMessengerSetting(messengerType, messengerForm);
-      toast.success('Настройки сохранены');
+      toast.success(t('settings:settings_saved'));
       setEditingMessenger(null);
       setMessengerForm({ api_token: '', webhook_url: '' });
       loadMessengerSettings();
@@ -679,7 +679,7 @@ export default function AdminSettings() {
       window.dispatchEvent(new Event('messengers-updated'));
     } catch (err) {
       console.error('Error saving messenger config:', err);
-      toast.error('Ошибка при сохранении настроек');
+      toast.error(t('settings:error_saving_settings'));
     }
   };
 
@@ -704,12 +704,12 @@ export default function AdminSettings() {
 
   const handleBroadcastPreview = async () => {
     if (!broadcastForm.subscription_type) {
-      toast.error('Выберите тип подписки');
+      toast.error(t('settings:select_subscription_type'));
       return;
     }
 
     if (broadcastForm.channels.length === 0) {
-      toast.error('Выберите хотя бы один канал');
+      toast.error(t('settings:select_at_least_one_channel'));
       return;
     }
 
@@ -717,9 +717,9 @@ export default function AdminSettings() {
       setLoadingBroadcastPreview(true);
       const data = await api.previewBroadcast(broadcastForm);
       setBroadcastPreview(data);
-      toast.success(`Найдено ${data.total_users} получателей`);
+      toast.success(`${t('common:found')} ${data.total_users} ${t('common:recipients')}`);
     } catch (err: any) {
-      toast.error(err.message || 'Ошибка предпросмотра');
+      toast.error(err.message || t('settings:preview_error'));
     } finally {
       setLoadingBroadcastPreview(false);
     }
@@ -727,16 +727,16 @@ export default function AdminSettings() {
 
   const handleSendBroadcast = async () => {
     if (!broadcastForm.subscription_type || !broadcastForm.subject || !broadcastForm.message) {
-      toast.error('Заполните все обязательные поля');
+      toast.error(t('settings:fill_all_required_fields'));
       return;
     }
 
     if (broadcastForm.channels.length === 0) {
-      toast.error('Выберите хотя бы один канал');
+      toast.error(t('settings:select_at_least_one_channel'));
       return;
     }
 
-    if (!window.confirm('Вы уверены, что хотите отправить рассылку?')) {
+    if (!window.confirm(t('settings:confirm_send_broadcast'))) {
       return;
     }
 
@@ -758,7 +758,7 @@ export default function AdminSettings() {
       // Reload history
       await loadBroadcastHistory();
     } catch (err: any) {
-      toast.error(err.message || 'Ошибка отправки');
+      toast.error(err.message || t('settings:send_error'));
     } finally {
       setSendingBroadcast(false);
     }
@@ -770,9 +770,9 @@ export default function AdminSettings() {
       <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
           <Shield className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Доступ запрещен</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('settings:access_denied')}</h2>
           <p className="text-gray-600">
-            У вас нет прав для просмотра настроек системы. Обратитесь к администратору.
+            {t('settings:access_denied_message')}
           </p>
         </div>
       </div>
@@ -784,7 +784,7 @@ export default function AdminSettings() {
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
-          Настройки системы
+          {t('settings:system_settings')}
         </h1>
         <p className="text-sm md:text-base text-gray-600">{t('settings:manage_crm_parameters')}</p>
       </div>
@@ -795,9 +795,9 @@ export default function AdminSettings() {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-yellow-800 font-medium">Режим просмотра</p>
+              <p className="text-yellow-800 font-medium">{t('settings:view_mode')}</p>
               <p className="text-yellow-700 text-sm mt-1">
-                У вас есть доступ только для просмотра настроек. Редактирование доступно только директору.
+                {t('settings:view_mode_message')}
               </p>
             </div>
           </div>
@@ -1368,7 +1368,7 @@ export default function AdminSettings() {
                             id="reminder-name"
                             value={reminderForm.name}
                             onChange={(e) => setReminderForm({ ...reminderForm, name: e.target.value })}
-                            placeholder="Например: За 2 часа до записи"
+                            placeholder={t('settings:placeholder_reminder_example')}
                           />
                         </div>
 
@@ -1578,10 +1578,10 @@ export default function AdminSettings() {
                       window.URL.revokeObjectURL(url);
                       document.body.removeChild(a);
 
-                      toast.success('Резервная копия скачана');
+                      toast.success(t('settings:backup_downloaded'));
                     } catch (error) {
                       console.error('Error downloading backup:', error);
-                      toast.error('Ошибка скачивания резервной копии');
+                      toast.error(t('settings:error_downloading_backup'));
                     }
                   }}
                 >
@@ -1614,7 +1614,7 @@ export default function AdminSettings() {
                 size="lg"
                 className="bg-gradient-to-r from-pink-500 to-purple-600"
                 onClick={async () => {
-                  const loadingToast = toast.loading('Запуск диагностики...');
+                  const loadingToast = toast.loading(t('settings:starting_diagnostics'));
 
                   try {
                     const response = await fetch('/api/diagnostics/full', {
@@ -1643,7 +1643,7 @@ export default function AdminSettings() {
                   } catch (error) {
                     toast.dismiss(loadingToast);
                     console.error('Ошибка диагностики:', error);
-                    toast.error('Ошибка запуска диагностики');
+                    toast.error(t('settings:error_starting_diagnostics'));
                   }
                 }}
               >
@@ -1781,7 +1781,7 @@ export default function AdminSettings() {
                           onValueChange={(value) => setBroadcastForm({ ...broadcastForm, subscription_type: value })}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Выберите тип" />
+                            <SelectValue placeholder={t('settings:placeholder_select_type')} />
                           </SelectTrigger>
                           <SelectContent>
                             {Object.entries(availableSubscriptions).map(([key, info]) => (
@@ -1801,8 +1801,8 @@ export default function AdminSettings() {
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('email')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
+                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                               }`}
                           >
                             <Mail className="w-5 h-5" />
@@ -1813,8 +1813,8 @@ export default function AdminSettings() {
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('telegram')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
-                                ? 'border-green-500 bg-green-50 text-green-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                              ? 'border-green-500 bg-green-50 text-green-700'
+                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                               }`}
                           >
                             <MessageCircle className="w-5 h-5" />
@@ -1825,8 +1825,8 @@ export default function AdminSettings() {
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('instagram')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
-                                ? 'border-purple-500 bg-purple-50 text-purple-700'
-                                : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                              ? 'border-purple-500 bg-purple-50 text-purple-700'
+                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                               }`}
                           >
                             <Instagram className="w-5 h-5" />
@@ -1843,7 +1843,7 @@ export default function AdminSettings() {
                           onValueChange={(value) => setBroadcastForm({ ...broadcastForm, target_role: value })}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Все пользователи" />
+                            <SelectValue placeholder={t('settings:placeholder_all_users')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="all">Все пользователи</SelectItem>
@@ -1862,7 +1862,7 @@ export default function AdminSettings() {
                           id="subject"
                           value={broadcastForm.subject}
                           onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
-                          placeholder="Специальное предложение для вас!"
+                          placeholder={t('settings:placeholder_special_offer')}
                         />
                       </div>
 
@@ -1874,7 +1874,7 @@ export default function AdminSettings() {
                           value={broadcastForm.message}
                           onChange={(e) => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
                           rows={8}
-                          placeholder="Введите текст вашего сообщения..."
+                          placeholder={t('settings:placeholder_enter_message')}
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           {broadcastForm.message.length} символов
@@ -1934,7 +1934,7 @@ export default function AdminSettings() {
                       <div className="text-center py-12">
                         <Eye className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500 text-sm">
-                          Нажмите "Предпросмотр" чтобы увидеть получателей
+                          {t('settings:click_preview_to_see_recipients')}
                         </p>
                       </div>
                     ) : (
@@ -2090,16 +2090,16 @@ export default function AdminSettings() {
                   <div
                     key={messenger.messenger_type}
                     className={`border-2 rounded-xl p-6 transition-all ${messenger.is_enabled
-                        ? 'border-pink-300 bg-pink-50'
-                        : 'border-gray-200 bg-white'
+                      ? 'border-pink-300 bg-pink-50'
+                      : 'border-gray-200 bg-white'
                       }`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
-                            messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
-                              messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
-                                'bg-black'
+                          messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
+                            messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
+                              'bg-black'
                           }`}>
                           {messenger.messenger_type === 'instagram' ? (
                             <Instagram className="w-6 h-6 text-white" />
@@ -2143,7 +2143,7 @@ export default function AdminSettings() {
                                   placeholder={
                                     messenger.messenger_type === 'telegram'
                                       ? '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
-                                      : 'Введите API токен'
+                                      : t('settings:placeholder_enter_api_token')
                                   }
                                 />
                               </div>
@@ -2198,7 +2198,7 @@ export default function AdminSettings() {
                                 onClick={() => handleStartEditMessenger(messenger.messenger_type)}
                               >
                                 <Edit className="w-4 h-4 mr-2" />
-                                {messenger.has_token ? 'Изменить настройки' : 'Настроить'}
+                                {messenger.has_token ? t('settings:change_settings') : t('settings:configure')}
                               </Button>
                             )}
                           </div>
