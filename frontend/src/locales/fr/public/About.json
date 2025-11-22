@@ -1,31 +1,23 @@
 {
-  "our_values": "Our Values",
-  "values": {
-    "quality": {
-      "title": "Quality"
-    },
-    "professionalism": {
-      "title": "Professionalism"
-    },
-    "client_focus": {
-      "title": "Customer Focus"
-    }
-  },
-  "Love_for_our_craft": "Love for what we do",
-  "title": "About Us",
-  "our_team": "Our Team",
-  "Book_a_procedure_right_now_and_feel_the_difference": "Book a procedure right now and feel the difference",
-  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "We love what we do, and it is reflected in every procedure",
-  "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "We have been creating beauty and confidence for over 10 years. Our mission is to help every woman feel beautiful and special",
-  "Your_comfort_and_satisfaction_-_our_priority": "Your comfort and satisfaction is our priority",
-  "your_reliable_partner_in_the_world_of_beauty": "your reliable partner in the world of beauty",
-  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "Our salon employs experienced masters with international certificates. Each specialist has extensive experience and regularly improves their qualifications to provide you with the highest quality services",
-  "We_use_only_premium_materials_and_equipment": "We use only premium materials and equipment",
-  "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "Over the years, we have become one of the leading beauty salons in Dubai, serving over 10,000 satisfied clients. Our reputation is built on trust, professionalism and love for what we do",
-  "The_principles_we_are_guided_by": "Principles we are guided by",
-  "Our_masters_regularly_upgrade_their_qualifications": "Our masters regularly improve their qualifications",
-  "Meet_our_talented_masters": "Meet our talented masters",
-  "Our_team_of_professionals": "Our team of professionals",
-  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "We are constantly developing, following the latest trends in the beauty industry and using only proven high-quality materials and equipment",
-  "our_story": "Our History"
+  "Book_a_procedure_right_now_and_feel_the_difference": "Запишитесь на процедуру прямо сейчас и почувствуйте разницу",
+  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "В нашем салоне работают опытные мастера с международными сертификатами. Каждый специалист имеет богатый опыт и регулярно повышает свою квалификацию, чтобы предоставить вам услуги высочайшего качества",
+  "Love_for_our_craft": "Любовь к своему делу",
+  "Meet_our_talented_masters": "Познакомьтесь с нашими талантливыми мастерами",
+  "Our_masters_regularly_upgrade_their_qualifications": "Наши мастера регулярно повышают свою квалификацию",
+  "Our_team_of_professionals": "Notre équipe de professionnels",
+  "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "За эти годы мы стали одним из ведущих салонов красоты в Дубае, обслужив более 10 000 довольных клиентов. Наша репутация построена на доверии, профессионализме и любви к своему делу",
+  "The_principles_we_are_guided_by": "Принципы, которыми мы руководствуемся",
+  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "Мы постоянно развиваемся, следуя последним тенденциям индустрии красоты и используя только проверенные высококачественные материалы и оборудование",
+  "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "Мы создаем красоту и уверенность уже более 10 лет. Наша миссия - помочь каждой женщине почувствовать себя красивой и особенной",
+  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "Мы любим то, что делаем, и это отражается в каждой процедуре",
+  "We_use_only_premium_materials_and_equipment": "Мы используем только премиальные материалы и оборудование",
+  "Your_comfort_and_satisfaction_-_our_priority": "Ваш комфорт и удовлетворенность - наш приоритет",
+  "our_story": "Notre histoire",
+  "our_team": "Notre équipe",
+  "our_values": "Nos valeurs",
+  "title": "À propos de nous",
+  "values.client_focus.title": "Orientation client",
+  "values.professionalism.title": "Professionnalisme",
+  "values.quality.title": "Qualité",
+  "your_reliable_partner_in_the_world_of_beauty": "ваш надежный партнер в мире красоты"
 }
