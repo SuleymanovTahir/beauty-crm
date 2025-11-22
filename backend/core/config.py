@@ -119,6 +119,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash-001")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", 'gemini-2.0-flash-exp')
 INSTAGRAM_BUSINESS_ID = os.getenv("INSTAGRAM_BUSINESS_ID", "17841448618072548")
+
+# Flag to control visibility of scheduler start messages
+SHOW_SCHEDULER_START = False  # Set to True to show the start log
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 

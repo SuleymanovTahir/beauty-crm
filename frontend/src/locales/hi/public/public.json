@@ -1,22 +1,21 @@
 {
-  "home": "Home",
-  "about": "About Us",
-  "contacts": "Contacts",
-  "faq": "अक्सर पूछे जाने वाले प्रश्न",
-  "price_list": "Price List",
-  "book_now": "Book Now",
-  "login": "Login",
-  "personal_cabinet": "Personal Cabinet",
   "footer": {
+    "cooperation": "Cooperation",
     "quick_links": "Quick Links",
-    "contacts": "Contacts",
-    "working_hours": "Working Hours",
     "weekdays": "Mon-Fri",
     "weekends": "Sat-Sun",
-    "all_rights": "All rights reserved",
-    "privacy_policy": "Privacy Policy",
     "terms": "Terms of Use",
-    "cooperation": "Cooperation",
-    "description": "Premium beauty services in the heart of the city. Professional masters and individual approach."
-  }
+    "description": "Premium beauty services in the heart of the city. Professional masters and individual approach.",
+    "contacts": "Contacts",
+    "all_rights": "All rights reserved",
+    "working_hours": "Working Hours",
+    "privacy_policy": "Privacy Policy"
+  },
+  "faq": "अक्सर पूछे जाने वाले प्रश्न",
+  "personal_cabinet": "Personal Cabinet",
+  "about": "About Us",
+  "contacts": "Contacts",
+  "price_list": "Price List",
+  "home": "Home",
+  "login": "Login"
 }

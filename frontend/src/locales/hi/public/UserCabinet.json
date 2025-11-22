@@ -1,27 +1,17 @@
 {
-  "title": "Personal Cabinet",
+  "loginError": "Invalid credentials",
+  "passwordHint": "Entered during registration",
+  "loginButton": "Log in",
+  "loginSuccess": "You have successfully logged in! 🎉",
+  "password": "Password",
   "subtitle": "Log in to the salon management system",
   "username": "Username or email",
   "usernamePlaceholder": "व्यवस्थापक",
+  "title": "Personal Cabinet",
   "usernameHint": "Enter your username",
-  "password": "Password",
-  "passwordPlaceholder": "••••••",
-  "passwordHint": "Entered during registration",
-  "loginButton": "Log in",
   "loggingIn": "Logging in...",
   "fillAllFields": "Please fill in all fields",
-  "loginSuccess": "You have successfully logged in! 🎉",
-  "loginError": "Invalid credentials",
+  "passwordPlaceholder": "••••••",
   "systemError": "Login error",
-  "backToHome": "← Return to home",
-  "credentials": {
-    "title": "Login credentials:",
-    "username": "उपयोगकर्ता नाम:",
-    "password": "पासवर्ड:"
-  },
-  "roles": {
-    "admin": "Administrator",
-    "manager": "Manager",
-    "employee": "Employee"
-  }
+  "backToHome": "← Return to home"
 }

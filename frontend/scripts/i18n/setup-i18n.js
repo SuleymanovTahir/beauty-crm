@@ -112,7 +112,7 @@ const parserConfig = `module.exports = {
 };
 `;
 
-fs.writeFileSync(path.join(__dirname, 'i18next-parser.config.js'), parserConfig, 'utf8');
+fs.writeFileSync(path.join(__dirname, '../../i18next-parser.config.js'), parserConfig, 'utf8');
 console.log('✅ Создан: i18next-parser.config.js');
 
 console.log('\n🎉 Готово! Структура создана.');

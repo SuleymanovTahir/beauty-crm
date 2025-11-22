@@ -1,27 +1,17 @@
 {
-    "title": "Личный кабинет",
-    "subtitle": "Войдите в систему управления салоном",
-    "username": "Имя пользователя или email",
-    "usernamePlaceholder": "admin",
-    "usernameHint": "Введите ваше имя пользователя",
-    "password": "Пароль",
-    "passwordPlaceholder": "••••••",
-    "passwordHint": "Вводится при регистрации",
-    "loginButton": "Войти в систему",
-    "loggingIn": "Вход...",
-    "fillAllFields": "Пожалуйста, заполните все поля",
-    "loginSuccess": "Вы успешно вошли в систему! 🎉",
-    "loginError": "Неверные учетные данные",
-    "systemError": "Ошибка при входе",
-    "backToHome": "← Вернуться на главную",
-    "credentials": {
-      "title": "Учетные данные для входа:",
-      "username": "Username:",
-      "password": "Password:"
-    },
-    "roles": {
-      "admin": "Администратор",
-      "manager": "Менеджер",
-      "employee": "Сотрудник"
-    }
-  }
+  "loginError": "Неверные учетные данные",
+  "passwordHint": "Вводится при регистрации",
+  "loginButton": "Войти в систему",
+  "loginSuccess": "Вы успешно вошли в систему! 🎉",
+  "password": "Пароль",
+  "subtitle": "Войдите в систему управления салоном",
+  "username": "Имя пользователя или email",
+  "usernamePlaceholder": "admin",
+  "title": "Личный кабинет",
+  "usernameHint": "Введите ваше имя пользователя",
+  "loggingIn": "Вход...",
+  "fillAllFields": "Пожалуйста, заполните все поля",
+  "passwordPlaceholder": "••••••",
+  "systemError": "Ошибка при входе",
+  "backToHome": "← Вернуться на главную"
+}

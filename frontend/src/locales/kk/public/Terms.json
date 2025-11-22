@@ -1,46 +1,46 @@
 {
-  "title": "Terms of Use",
-  "lastUpdated": "Last updated: {{date}}",
   "sections": {
-    "general": {
-      "title": "1. General Provisions",
-      "content": "These Terms of Use govern the use of {{salonName}} services. By using our services, you agree to these terms."
+    "contact": {
+      "address": "Address",
+      "phone": "Phone",
+      "title": "8. Contacts",
+      "email": "Электрондық пошта",
+      "description": "For all questions related to these Terms, you can contact us:"
     },
-    "booking": {
-      "title": "2. Booking and Cancellation",
-      "paragraph1": "To book procedures, you must provide correct contact information. We reserve the right to confirm or decline a booking.",
-      "cancellationTitle": "Cancel booking:",
-      "cancellationText": "The client can cancel the appointment no later than 24 hours before the scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the service cost may be charged."
+    "medical": {
+      "title": "4. Medical Contraindications",
+      "paragraph2": "The salon is not responsible for the consequences of procedures if the client concealed information about medical contraindications.",
+      "paragraph1": "The client must inform the master about any medical contraindications, allergies or health features before the procedure."
+    },
+    "general": {
+      "content": "These Terms of Use govern the use of {{salonName}} services. By using our services, you agree to these terms.",
+      "title": "1. General Provisions"
+    },
+    "privacy": {
+      "title": "6. Confidentiality",
+      "content": "We respect your privacy and undertake to protect your personal data in accordance with our <link>Privacy Policy</link>."
     },
     "payment": {
       "title": "3. Payment for Services",
       "paragraph1": "Payment is made in cash or by card after the service is provided. Prices for services are indicated in the price list and may be changed without prior notice.",
       "paragraph2": "If the client is more than 15 minutes late, the salon reserves the right to cancel the appointment or shorten the procedure time."
     },
-    "medical": {
-      "title": "4. Medical Contraindications",
-      "paragraph1": "The client must inform the master about any medical contraindications, allergies or health features before the procedure.",
-      "paragraph2": "The salon is not responsible for the consequences of procedures if the client concealed information about medical contraindications."
-    },
     "warranty": {
       "title": "5. Warranties and Liability",
       "paragraph1": "We guarantee the quality of materials used and the professionalism of our masters. The result of procedures may vary depending on the individual characteristics of the client.",
       "paragraph2": "In case of dissatisfaction with the result, the client must contact the salon within 7 days to discuss possible solutions."
     },
-    "privacy": {
-      "title": "6. Confidentiality",
-      "content": "We respect your privacy and undertake to protect your personal data in accordance with our <link>Privacy Policy</link>."
-    },
     "changes": {
-      "title": "7. Changes to Terms",
-      "content": "We reserve the right to change these Terms of Use at any time. Changes take effect from the moment of publication on the site."
+      "content": "We reserve the right to change these Terms of Use at any time. Changes take effect from the moment of publication on the site.",
+      "title": "7. Changes to Terms"
     },
-    "contact": {
-      "title": "8. Contacts",
-      "description": "For all questions related to these Terms, you can contact us:",
-      "phone": "Phone",
-      "email": "Электрондық пошта",
-      "address": "Address"
+    "booking": {
+      "cancellationText": "The client can cancel the appointment no later than 24 hours before the scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the service cost may be charged.",
+      "cancellationTitle": "Cancel booking:",
+      "title": "2. Booking and Cancellation",
+      "paragraph1": "To book procedures, you must provide correct contact information. We reserve the right to confirm or decline a booking."
     }
-  }
+  },
+  "title": "Terms of Use",
+  "lastUpdated": "Last updated: {{date}}"
 }

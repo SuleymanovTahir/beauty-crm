@@ -21,7 +21,7 @@ export default function CreateUser() {
     position_id: null as number | null
   });
   const [loading, setLoading] = useState(false);
-  const [positions, setPositions] = useState<Array<{id: number; name: string}>>([]);
+  const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
 
   useEffect(() => {
     loadPositions();
@@ -41,27 +41,27 @@ export default function CreateUser() {
 
     // Валидация
     if (!formData.full_name.trim()) {
-      toast.error('Имя обязательно');
+      toast.error(t('full_name_required'));
       return;
     }
 
     if (!formData.username.trim()) {
-      toast.error('Логин обязателен');
+      toast.error(t('username_required'));
       return;
     }
 
     if (formData.username.length < 3) {
-      toast.error('Логин должен быть минимум 3 символа');
+      toast.error(t('username_min_length'));
       return;
     }
 
     if (!formData.password) {
-      toast.error('Пароль обязателен');
+      toast.error(t('password_required'));
       return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Пароль должен быть минимум 6 символов');
+      toast.error(t('password_min_length'));
       return;
     }
 
@@ -83,14 +83,14 @@ export default function CreateUser() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Ошибка создания пользователя');
+        throw new Error(result.error || t('error_creating'));
       }
 
-      toast.success('Пользователь успешно создан');
+      toast.success(t('user_created'));
       navigate('/admin/users');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка создания пользователя';
-      toast.error(`Ошибка: ${message}`);
+      const message = err instanceof Error ? err.message : t('error_creating');
+      toast.error(`${t('error')}: ${message}`);
       console.error('Error creating user:', err);
     } finally {
       setLoading(false);
@@ -106,63 +106,63 @@ export default function CreateUser() {
         disabled={loading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Назад к пользователям
+        {t('back_to_users')}
       </Button>
 
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <UserPlus className="w-8 h-8 text-pink-600" />
-            Создание пользователя
+            {t('title')}
           </h1>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">Полное имя *</Label>
+              <Label htmlFor="full_name">{t('full_name_label')}</Label>
               <Input
                 id="full_name"
                 required
                 disabled={loading}
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                placeholder="Иванов Иван Иванович"
+                placeholder={t('full_name_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="username">Логин *</Label>
+              <Label htmlFor="username">{t('username_label')}</Label>
               <Input
                 id="username"
                 required
                 disabled={loading}
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                placeholder="ivan_ivanov"
+                placeholder={t('username_placeholder')}
               />
               <p className="text-sm text-gray-500 mt-1">
-                Минимум 3 символа. Будет использоваться для входа в систему
+                {t('username_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email_label')}</Label>
               <Input
                 id="email"
                 type="email"
                 disabled={loading}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="user@example.com"
+                placeholder={t('email_placeholder')}
               />
               <p className="text-sm text-gray-500 mt-1">
-                Опционально. Для восстановления пароля
+                {t('email_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="password">Пароль *</Label>
+              <Label htmlFor="password">{t('password_label')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -171,15 +171,15 @@ export default function CreateUser() {
                 minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="••••••"
+                placeholder={t('password_placeholder')}
               />
               <p className="text-sm text-gray-500 mt-1">
-                Минимум 6 символов
+                {t('password_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="role">Роль *</Label>
+              <Label htmlFor="role">{t('role_label')}</Label>
               <Select
                 value={formData.role}
                 onValueChange={(value: string) => setFormData({ ...formData, role: value })}
@@ -189,34 +189,34 @@ export default function CreateUser() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="director">Директор</SelectItem>
-                  <SelectItem value="admin">Администратор</SelectItem>
-                  <SelectItem value="manager">Менеджер</SelectItem>
-                  <SelectItem value="sales">Продажи</SelectItem>
-                  <SelectItem value="marketer">Маркетолог</SelectItem>
-                  <SelectItem value="employee">Сотрудник</SelectItem>
+                  <SelectItem value="director">{t('role_director')}</SelectItem>
+                  <SelectItem value="admin">{t('role_admin')}</SelectItem>
+                  <SelectItem value="manager">{t('role_manager')}</SelectItem>
+                  <SelectItem value="sales">{t('role_sales')}</SelectItem>
+                  <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
+                  <SelectItem value="employee">{t('role_employee')}</SelectItem>
                 </SelectContent>
               </Select>
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
-                <p><strong>Директор:</strong> Полный доступ ко всем функциям</p>
-                <p><strong>Администратор:</strong> Управление пользователями и настройками</p>
-                <p><strong>Менеджер:</strong> Управление записями и клиентами</p>
-                <p><strong>Сотрудник:</strong> Просмотр своего расписания</p>
+                <p><strong>{t('role_director')}:</strong> {t('role_director_desc')}</p>
+                <p><strong>{t('role_admin')}:</strong> {t('role_admin_desc')}</p>
+                <p><strong>{t('role_manager')}:</strong> {t('role_manager_desc')}</p>
+                <p><strong>{t('role_employee')}:</strong> {t('role_employee_desc')}</p>
               </div>
             </div>
 
             <div>
-              <Label htmlFor="position">Должность</Label>
+              <Label htmlFor="position">{t('position_label')}</Label>
               <Select
                 value={formData.position_id?.toString() || ""}
                 onValueChange={(value: string) => setFormData({ ...formData, position_id: value ? parseInt(value) : null })}
                 disabled={loading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Выберите должность" />
+                  <SelectValue placeholder={t('position_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Не указана</SelectItem>
+                  <SelectItem value="">{t('position_none')}</SelectItem>
                   {positions.map((pos) => (
                     <SelectItem key={pos.id} value={pos.id.toString()}>
                       {pos.name}
@@ -225,7 +225,7 @@ export default function CreateUser() {
                 </SelectContent>
               </Select>
               <p className="text-sm text-gray-500 mt-1">
-                Должность для отображения (опционально)
+                {t('position_hint')}
               </p>
             </div>
 
@@ -237,12 +237,12 @@ export default function CreateUser() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Создание...
+                  {t('creating')}
                 </>
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  Создать пользователя
+                  {t('create_user')}
                 </>
               )}
             </Button>

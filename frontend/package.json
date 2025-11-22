@@ -57,7 +57,7 @@
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
     "@vitejs/plugin-react-swc": "*",
-    "i18next-parser": "*",
+    "i18next-parser": "^9.3.0",
     "patch-package": "*",
     "terser": "*",
     "typescript": "*",
@@ -68,10 +68,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "postinstall": "patch-package || true",
-    "i18n:setup": "node setup-i18n.js",
-    "i18n:create": "node create-locale-structure.js",
-    "i18n:extract": "npx i18next-parser",
-    "i18n:sync": "node auto-translate.js"
+    "i18n:setup": "node scripts/i18n/setup-i18n.js",
+    "i18n:extract": "i18next-parser",
+    "i18n:check": "node scripts/i18n/check-translations.js",
+    "i18n:sync": "node scripts/i18n/auto-translate.js"
   },
   "overrides": {
     "glob": "^10.0.0",

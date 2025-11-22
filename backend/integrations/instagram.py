@@ -39,8 +39,12 @@ async def send_message(recipient_id: str, message: str) -> dict:
         
         response.raise_for_status()
         return response.json()
+    except httpx.HTTPStatusError as e:
+        error_msg = f"HTTP {e.response.status_code}: {e.response.text}"
+        log_error(f"❌ Instagram API error: {error_msg}", "instagram")
+        return {"error": error_msg}
     except Exception as e:
-        print(f"❌ Ошибка отправки в Instagram: {e}")
+        log_error(f"❌ Ошибка отправки в Instagram: {e}", "instagram", exc_info=True)
         return {"error": str(e)}
 
 

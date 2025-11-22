@@ -4,7 +4,7 @@ import time
 import asyncio
 from datetime import datetime, timedelta
 from typing import List, Tuple
-from core.config import DATABASE_NAME
+from core.config import DATABASE_NAME, SHOW_SCHEDULER_START
 from api.notifications import create_notification
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
@@ -215,7 +215,8 @@ async def send_birthday_notifications():
 
 async def birthday_checker_loop():
     """Основной цикл проверки дней рождения (async версия)"""
-    log_info("🎂 Запущен планировщик проверки дней рождения", "birthday_checker")
+    if SHOW_SCHEDULER_START:
+        log_info("🎂 Запущен планировщик проверки дней рождения", "birthday_checker")
 
     while True:
         try:
@@ -460,6 +461,32 @@ async def send_booking_reminders():
         log_error(f"Error in send_booking_reminders: {e}", "scheduler")
 
 
+async def send_immediate_booking_reminders():
+    """Send reminders for bookings that are less than or equal to 1 hour away.
+    This function is called every 5 minutes to ensure newly created bookings are not missed.
+    """
+    from db.bookings import get_upcoming_bookings
+    from integrations.instagram import send_message
+    import asyncio
+
+    try:
+        # Get bookings that are within the next hour
+        bookings_1h = get_upcoming_bookings(hours=1)
+        for booking in bookings_1h:
+            booking_id, instagram_id, service, dt, master, name, username = booking
+            try:
+                dt_obj = datetime.fromisoformat(dt)
+                minutes_until = (dt_obj - datetime.now()).total_seconds() / 60
+                if minutes_until < 0:
+                    continue
+                # Build message
+                message = f"🔔 Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')} 💅\n{f'Mастер: {master}' if master else ''}\n\nАдрес: M.Le Diamant Beauty Lounge, JBR\nЖдём вас! 💎"
+                await send_message(instagram_id, message)
+                log_info(f"✅ Immediate reminder (≤1h) sent to {instagram_id}", "scheduler")
+            except Exception as e:
+                log_error(f"Error sending immediate reminder: {e}", "scheduler")
+    except Exception as e:
+        log_error(f"Error in send_immediate_booking_reminders: {e}", "scheduler")
 async def check_rebooking_opportunities():
     """Проверить клиентов для повторной записи (#16)"""
     from db.bookings import get_clients_for_rebooking
@@ -514,20 +541,25 @@ async def booking_scheduler_loop():
         try:
             now = datetime.now()
 
-            # Напоминания - каждый час
+            # 1️⃣ Напоминания – каждый час (как сейчас)
             if now.minute == 0:
                 log_info("Проверка напоминаний о записях...", "scheduler")
                 await send_booking_reminders()
-                await asyncio.sleep(60)
+                await asyncio.sleep(60)   # спим минуту, чтобы не запустить дважды
 
-            # Повторные записи - раз в день в 10:00
+            # 2️⃣ Повторные записи – раз в день в 10:00
             if now.hour == 10 and now.minute == 0:
                 log_info("Проверка возможностей повторной записи...", "scheduler")
                 await check_rebooking_opportunities()
                 await asyncio.sleep(60)
 
-            await asyncio.sleep(30)  # Проверяем каждые 30 секунд
+            # 3️⃣ **Новый быстрый чекер** – каждые 5 минут
+            # (можно уменьшить до 1 минуты, если нужен ещё более быстрый отклик)
+            if now.minute % 5 == 0:   # каждый 5‑й минутный тик
+                await send_immediate_booking_reminders()
+                # Не делаем отдельный sleep – основной цикл всё равно будет ждать 30 сек
 
+            await asyncio.sleep(30)  # проверяем каждые 30 секунд
         except Exception as e:
             log_error(f"Ошибка в booking_scheduler_loop: {e}", "scheduler")
             await asyncio.sleep(60)

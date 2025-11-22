@@ -1,28 +1,5 @@
 {
-    "not_found": "Запись не найдена",
-    "detailed_info": "Подробная информация",
-    "booking_info": "Информация о записи",
-    "client": "Клиент",
-    "client_profile": "Профиль клиента →",
-    "service": "Услуга",
-    "date_time": "Дата и время",
-    "phone": "Телефон",
-    "revenue": "Сумма",
-    "created_at": "Создана",
-    "status": "Статус записи",
-    "status_new": "Новая",
-    "status_confirmed": "Подтверждена",
-    "status_completed": "Завершена",
-    "status_cancelled": "Отменена",
-    "update_status": "Обновить статус",
-    "current_status": "Текущий статус",
-    "write_to_client": "💬 Написать клиенту",
-    "status_updated": "Статус обновлен",
-    "booking_number": "Запись №",
-    "update": "Обновить",
-    "actions": "Действия",
-    "confirmed": "Подтверждено",
-    "completed": "Завершено",
-    "cancelled": "Отменено",
-    "error_updating_status": "Ошибка обновления статуса"
-  }
+  "not_found": "Запись не найдена",
+  "status_updated": "Статус обновлен",
+  "error_updating_status": "Ошибка обновления статуса"
+}

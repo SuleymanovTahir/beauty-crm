@@ -3,19 +3,19 @@
 
 ## 1. ПРОВЕРКА РУССКИХ ФАЙЛОВ
 # Проверяет все русские файлы на пустые значения
-# python3 check_russian_locales.py
+# python3 scripts/i18n/check_russian_locales.py
 
 ## 2. СИНХРОНИЗАЦИЯ ЛОКАЛЕЙ С КОДОМ
 # Удаляет неиспользуемые ключи из всех файлов локализации
 # Запускать ПОСЛЕ изменения кода, когда вы:
 # - Удалили/переименовали ключи переводов в коде
 # - Хотите очистить неиспользуемые переводы
-# python3 sync_locales.py
+# python3 scripts/i18n/sync_locales.py
 
 ## 3. АВТОПЕРЕВОД С РУССКОГО НА ДРУГИЕ ЯЗЫКИ
 # Переводит русские ЗНАЧЕНИЯ на другие языки
 # Запускать ПОСЛЕ синхронизации или добавления новых ключей
-# python3 translate_from_russian.py
+# python3 scripts/i18n/translate_from_russian.py
 
 ## ПОЛНЫЙ WORKFLOW ПРИ ИЗМЕНЕНИИ КОДА:
 ## ====================================
@@ -27,4 +27,4 @@
 
 ## БЫСТРЫЙ ЗАПУСК ВСЕГО:
 ## ======================
-## python3 check_russian_locales.py && python3 sync_locales.py && python3 translate_from_russian.py
+## python3 scripts/i18n/check_russian_locales.py && python3 scripts/i18n/sync_locales.py && python3 scripts/i18n/translate_from_russian.py

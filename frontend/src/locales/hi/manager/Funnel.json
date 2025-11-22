@@ -1,43 +1,43 @@
 {
-  "loading": "Loading funnel data",
-  "title": "Sales Funnel",
-  "subtitle": "Conversion analysis and booking process optimization",
-  "conversion": {
-    "visitor_to_engaged": "Visitors → Engaged",
-    "engaged_to_booking": "Engaged → Started booking",
-    "booking_to_booked": "Started booking → Booked",
-    "booked_to_completed": "Booked → Visited"
-  },
-  "funnel_chart": "Funnel visualization",
-  "losses": "Losses: {{count}}",
-  "key_metrics": "Key Metrics",
-  "total_conversion": "Total Conversion",
-  "total_losses": "Total losses",
-  "successful_visits": "Successful visits",
-  "recommendations_title": "Recommendations",
   "recommendations": {
     "increase_engagement": {
+      "suggestion": "Improve content, add interactive elements",
       "title": "Increase engagement",
-      "description": "{{count}} visitors are lost at the engagement stage",
-      "suggestion": "Improve content, add interactive elements"
+      "description": "{{count}} visitors are lost at the engagement stage"
     },
     "optimize_form": {
-      "title": "Optimize booking form",
       "description": "{{percent}}% of interested do not start booking",
+      "title": "Optimize booking form",
       "suggestion": "Simplify booking form, add autocomplete"
     },
     "reduce_noshow": {
       "title": "Reduce no-show rate",
-      "description": "{{count}} clients ({{percent}}%) did not show up for appointment",
-      "suggestion": "Configure automatic reminders for 24 and 2 hours"
+      "suggestion": "Configure automatic reminders for 24 and 2 hours",
+      "description": "{{count}} clients ({{percent}}%) did not show up for appointment"
     }
   },
-  "all_good": "Everything is great!",
-  "stage_details": "Stage details",
   "table": {
     "stage": "Stage",
     "count": "Quantity",
     "percentage": "% of total",
     "losses": "Losses"
-  }
+  },
+  "title": "Sales Funnel",
+  "conversion": {
+    "booking_to_booked": "Started booking → Booked",
+    "visitor_to_engaged": "Visitors → Engaged",
+    "booked_to_completed": "Booked → Visited",
+    "engaged_to_booking": "Engaged → Started booking"
+  },
+  "key_metrics": "Key Metrics",
+  "total_losses": "Total losses",
+  "all_good": "Everything is great!",
+  "recommendations_title": "Recommendations",
+  "successful_visits": "Successful visits",
+  "losses": "Losses: {{count}}",
+  "loading": "Loading funnel data",
+  "stage_details": "Stage details",
+  "total_conversion": "Total Conversion",
+  "funnel_chart": "Funnel visualization",
+  "subtitle": "Conversion analysis and booking process optimization"
 }
