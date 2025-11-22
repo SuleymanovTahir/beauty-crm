@@ -1,13 +1,13 @@
 {
-  "failed_to_fetch_bookings": "Failed to load bookings",
-  "unknown_error": "Unknown error",
-  "loading_error": "Loading error",
-  "my_bookings": "My Bookings",
-  "today": "Today",
-  "today_bookings": "Bookings today",
-  "confirmed": "Confirmed",
-  "pending": "Pending",
-  "schedule_for_today": "Schedule for today",
-  "no_bookings_today": "No bookings for today",
-  "booking": "Booking"
+  "booking": "Хаттама",
+  "confirmed": "Расталды",
+  "failed_to_fetch_bookings": "Не удалось загрузить записи",
+  "loading_error": "Жүктеу қатесі",
+  "my_bookings": "Менің жазбаларым",
+  "no_bookings_today": "На сегодня записей нет",
+  "pending": "Күту",
+  "schedule_for_today": "Бүгінгі кесте",
+  "today": "Бүгін",
+  "today_bookings": "Хабарламалар Бүгін",
+  "unknown_error": "Белгісіз қате"
 }

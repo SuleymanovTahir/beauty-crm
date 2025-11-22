@@ -1,13 +1,13 @@
 {
-  "failed_to_fetch_bookings": "Failed to load bookings",
-  "unknown_error": "Unknown error",
-  "loading_error": "Loading error",
-  "my_bookings": "My Bookings",
-  "today": "Today",
-  "today_bookings": "Bookings today",
-  "confirmed": "Confirmed",
-  "pending": "Pending",
-  "schedule_for_today": "Schedule for today",
-  "no_bookings_today": "No bookings for today",
-  "booking": "Booking"
+  "booking": "अभिलेख",
+  "confirmed": "की पुष्टि",
+  "failed_to_fetch_bookings": "Не удалось загрузить записи",
+  "loading_error": "लोड करने में त्रुटि",
+  "my_bookings": "मेरी प्रविष्टियाँ",
+  "no_bookings_today": "На сегодня записей нет",
+  "pending": "इंतज़ार में",
+  "schedule_for_today": "आज के लिए कार्यक्रम",
+  "today": "आज",
+  "today_bookings": "आज पोस्ट करें",
+  "unknown_error": "अज्ञात त्रुटि"
 }
