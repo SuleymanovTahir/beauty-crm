@@ -1,0 +1,17 @@
+{
+  "backToHome": "العودة إلى المنزل",
+  "fillAllFields": "املأ جميع الحقول",
+  "loggingIn": "مدخل...",
+  "loginButton": "تسجيل الدخول",
+  "loginError": "خطأ في تسجيل الدخول",
+  "loginSuccess": "تم تسجيل الدخول بنجاح",
+  "password": "كلمة المرور",
+  "passwordHint": "الحد الأدنى 6 أحرف",
+  "passwordPlaceholder": "أدخل كلمة المرور الخاصة بك",
+  "subtitle": "Войдите в свой личный кабинет",
+  "systemError": "خطأ في النظام",
+  "title": "حساب شخصي",
+  "username": "اسم المستخدم",
+  "usernameHint": "تسجيل الدخول الخاص بك",
+  "usernamePlaceholder": "أدخل تسجيل الدخول الخاص بك"
+}

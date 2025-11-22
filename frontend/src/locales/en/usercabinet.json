@@ -1,0 +1,17 @@
+{
+  "backToHome": "Return to home",
+  "fillAllFields": "Fill in all fields",
+  "loggingIn": "Entrance...",
+  "loginButton": "Login",
+  "loginError": "Login error",
+  "loginSuccess": "Login successful",
+  "password": "Password",
+  "passwordHint": "Minimum 6 characters",
+  "passwordPlaceholder": "Enter your password",
+  "subtitle": "Войдите в свой личный кабинет",
+  "systemError": "System error",
+  "title": "Personal account",
+  "username": "Username",
+  "usernameHint": "Your login",
+  "usernamePlaceholder": "Enter your login"
+}

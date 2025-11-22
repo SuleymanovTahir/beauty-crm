@@ -1,5 +1,27 @@
 {
+  "actions": "",
+  "booking_info": "",
+  "booking_number": "",
+  "cancelled": "",
+  "client": "",
+  "client_profile": "",
+  "completed": "",
+  "confirmed": "",
+  "created_at": "",
+  "current_status": "",
+  "date_time": "",
+  "detailed_info": "",
   "not_found": "Booking not found",
+  "phone": "",
+  "revenue": "",
+  "service": "",
+  "status": "",
+  "status_cancelled": "",
+  "status_completed": "",
+  "status_confirmed": "",
+  "status_new": "",
   "status_updated": "Status updated",
-  "error_updating_status": "Error updating status"
+  "update": "",
+  "update_status": "",
+  "write_to_client": ""
 }

@@ -1,26 +1,16 @@
 {
-  "navigation": "Navigation",
-  "admin_panel": "Admin Panel",
-  "manager_panel": "Manager Panel",
-  "employee_panel": "Employee Panel",
-  "crm": "सौंदर्य सीआरएम",
   "admin": "Administrator",
-  "manager": "Manager",
-  "employee": "Employee",
+  "admin_panel": "Admin Panel",
+  "crm": "सौंदर्य सीआरएम",
   "logout": "Logout",
-  "menu": {
-    "dashboard": "Dashboard",
-    "bookings": "Bookings",
-    "clients": "Clients",
-    "chat": "Chat",
-    "analytics": "Analytics",
-    "services": "Services",
-    "users": "Users",
-    "calendar": "Calendar",
-    "settings": "Settings",
-    "bot_settings": "Bot Settings",
-    "my_bookings": "My Bookings",
-    "profile": "Profile",
-    "funnel": "Sales Funnel"
-  }
+  "menu.analytics": "एनालिटिक्स",
+  "menu.bookings": "पदों",
+  "menu.bot_settings": "बॉट सेटिंग्स",
+  "menu.calendar": "कैलेंडर",
+  "menu.chat": "बात करना",
+  "menu.clients": "ग्राहकों",
+  "menu.dashboard": "डैशबोर्ड",
+  "menu.services": "सेवाएं",
+  "menu.settings": "सेटिंग्स",
+  "menu.users": "उपयोगकर्ताओं"
 }

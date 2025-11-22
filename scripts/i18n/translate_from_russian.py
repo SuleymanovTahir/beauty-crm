@@ -43,7 +43,7 @@ def save_json(path, data):
     try:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
         return True
     except Exception as e:
         print(f"❌ Ошибка сохранения {path}: {e}")
@@ -140,6 +140,17 @@ def auto_translate():
     total_skipped = 0
     total_already_translated = 0
     
+    # Подсчет общего количества ключей для прогресса
+    total_keys = 0
+    for file_path in source_files:
+        try:
+            data = load_json(os.path.join(source_dir, file_path))
+            total_keys += len(flatten_dict(data))
+        except: pass
+        
+    print(f"📊 Всего ключей для проверки: {total_keys}\n")
+    current_key_index = 0
+    
     # Обрабатываем каждый файл
     for file_path in sorted(source_files):
         source_file = os.path.join(source_dir, file_path)
@@ -165,8 +176,14 @@ def auto_translate():
             
             # Проверяем каждый ключ
             for key, russian_value in source_flat.items():
-                # Пропускаем, если уже переведено
-                if key in target_flat and target_flat[key] and target_flat[key] != russian_value:
+                current_key_index += 1
+                # progress = (current_key_index / (total_keys * len(TARGET_LANGS))) * 100
+                # if current_key_index % 10 == 0:
+                #     print(f"   ⏳ Прогресс: {progress:.1f}% ({current_key_index}/{total_keys * len(TARGET_LANGS)})", end="\r")
+                
+                # Пропускаем только если это английский язык и уже есть перевод
+                # Для остальных языков (ar, es, de, fr, hi, kk, pt) - переводим заново
+                if target_lang == 'en' and key in target_flat and target_flat[key]:
                     total_already_translated += 1
                     continue
                 
@@ -201,10 +218,9 @@ def auto_translate():
                     })
                     total_skipped += 1
             
-            # Сохраняем обновленный файл
+            # Сохраняем обновленный файл (всегда плоская структура для совместимости с i18next-parser)
             if updated or not os.path.exists(target_file):
-                target_nested = unflatten_dict(target_flat)
-                save_json(target_file, target_nested)
+                save_json(target_file, target_flat)
         
         print()
     

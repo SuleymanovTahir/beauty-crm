@@ -1,4 +1,11 @@
 {
-  "title": "Manager",
-  "funnel": "Sales Funnel"
+  "crm": "Beauty-CRM",
+  "logout": "Abmelden",
+  "manager": "Manager",
+  "menu.analytics": "Analytik",
+  "menu.chat": "Chatten",
+  "menu.clients": "Kunden",
+  "menu.dashboard": "Armaturenbrett",
+  "menu.funnel": "Trichter",
+  "menu.settings": "Einstellungen"
 }

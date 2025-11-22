@@ -1,26 +1,16 @@
 {
-  "navigation": "Навигация",
-  "admin_panel": "Админ панель",
-  "manager_panel": "Панель менеджера",
-  "employee_panel": "Панель сотрудника",
-  "crm": "Beauty CRM",
   "admin": "Администратор",
-  "manager": "Менеджер",
-  "employee": "Сотрудник",
+  "admin_panel": "Админ панель",
+  "crm": "Beauty CRM",
   "logout": "Выйти",
-  "menu": {
-    "dashboard": "Панель управления",
-    "bookings": "Записи",
-    "clients": "Клиенты",
-    "chat": "Чат",
-    "analytics": "Аналитика",
-    "services": "Услуги",
-    "users": "Пользователи",
-    "calendar": "Календарь",
-    "settings": "Настройки",
-    "bot_settings": "Настройки бота",
-    "my_bookings": "Мои записи",
-    "profile": "Профиль",
-    "funnel": "Воронка продаж"
-  }
+  "menu.analytics": "Аналитика",
+  "menu.bookings": "Записи",
+  "menu.bot_settings": "Настройки бота",
+  "menu.calendar": "Календарь",
+  "menu.chat": "Чат",
+  "menu.clients": "Клиенты",
+  "menu.dashboard": "Дашборд",
+  "menu.services": "Услуги",
+  "menu.settings": "Настройки",
+  "menu.users": "Пользователи"
 }

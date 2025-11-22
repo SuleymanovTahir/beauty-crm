@@ -1,7 +1,8 @@
 import { Globe, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { detectCountry, getSortedLanguages } from '../utils/languageDetection';
 
 const languages = [
   { code: 'ru', name: 'Русский', flag: '🇷🇺' },
@@ -18,6 +19,21 @@ const languages = [
 export default function LanguageSwitcher() {
   const { i18n, t } = useTranslation('components/LanguageSwitcher');
   const [open, setOpen] = useState(false);
+  const [sortedLanguages, setSortedLanguages] = useState(languages);
+
+  useEffect(() => {
+    const init = async () => {
+      const country = await detectCountry();
+      const sortedCodes = getSortedLanguages(country);
+
+      const sorted = sortedCodes
+        .map(code => languages.find(l => l.code === code))
+        .filter((l): l is typeof languages[0] => !!l);
+
+      setSortedLanguages(sorted);
+    };
+    init();
+  }, []);
 
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
 
@@ -43,14 +59,14 @@ export default function LanguageSwitcher() {
       {open && createPortal(
         <>
           {/* Затемнённый фон */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 z-[9998] backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          
+
           {/* Modal окно */}
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <div 
+            <div
               className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -70,16 +86,15 @@ export default function LanguageSwitcher() {
 
               {/* Languages list */}
               <div className="overflow-y-auto max-h-[calc(80vh-80px)] p-2">
-                {languages.map(lang => (
+                {sortedLanguages.map(lang => (
                   <button
                     key={lang.code}
                     onClick={() => handleLanguageChange(lang.code)}
                     type="button"
-                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 rounded-lg flex items-center gap-3 transition-all ${
-                      i18n.language === lang.code 
-                        ? 'bg-purple-50 text-purple-700 font-medium border-2 border-purple-200' 
-                        : 'border-2 border-transparent'
-                    }`}
+                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 rounded-lg flex items-center gap-3 transition-all ${i18n.language === lang.code
+                      ? 'bg-purple-50 text-purple-700 font-medium border-2 border-purple-200'
+                      : 'border-2 border-transparent'
+                      }`}
                   >
                     <span className="text-2xl">{lang.flag}</span>
                     <span className="text-base">{lang.name}</span>

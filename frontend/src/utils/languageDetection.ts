@@ -27,10 +27,18 @@ interface CountryDetectionResult {
 }
 
 export async function detectCountry(): Promise<string | null> {
+  // Check cache first
+  const cachedCountry = localStorage.getItem('user_country');
+  if (cachedCountry) return cachedCountry;
+
   try {
     const response = await fetch('https://ipapi.co/json/');
     const data: CountryDetectionResult = await response.json();
-    return data.country_code;
+    if (data.country_code) {
+      localStorage.setItem('user_country', data.country_code);
+      return data.country_code;
+    }
+    return null;
   } catch (error) {
     console.error('Country detection failed:', error);
     return null;
@@ -99,4 +107,39 @@ export async function autoDetectAndSetLanguage(): Promise<string> {
   const finalLang = supportedLanguages.includes(browserLang) ? browserLang : 'ru';
   localStorage.setItem('i18nextLng', finalLang);
   return finalLang;
+}
+
+export function getSortedLanguages(countryCode: string | null): string[] {
+  const defaultOrder = ['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
+
+  if (!countryCode) return defaultOrder;
+
+  const code = countryCode.toUpperCase();
+  let primaryLang = 'ru';
+
+  // Determine primary language
+  if (code === 'AE') primaryLang = 'ar';
+  else if (code === 'KZ') primaryLang = 'kk';
+  else if (CIS_COUNTRIES.includes(code)) primaryLang = 'ru';
+  else if (SPANISH_COUNTRIES.includes(code)) primaryLang = 'es';
+  else if (PORTUGUESE_COUNTRIES.includes(code)) primaryLang = 'pt';
+  else if (ARABIC_COUNTRIES.includes(code)) primaryLang = 'ar';
+  else if (['US', 'GB', 'CA', 'AU', 'NZ', 'IE'].includes(code)) primaryLang = 'en';
+
+  // Create sorted list
+  const sorted = [primaryLang];
+
+  // If primary is not English and country is not English-speaking, add English second
+  if (primaryLang !== 'en') {
+    sorted.push('en');
+  }
+
+  // Add remaining languages
+  defaultOrder.forEach(lang => {
+    if (!sorted.includes(lang)) {
+      sorted.push(lang);
+    }
+  });
+
+  return sorted;
 }

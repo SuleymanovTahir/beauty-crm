@@ -1,0 +1,17 @@
+{
+  "backToHome": "घर पर वापस",
+  "fillAllFields": "सभी फ़ील्ड भरें",
+  "loggingIn": "प्रवेश द्वार...",
+  "loginButton": "लॉग इन करें",
+  "loginError": "लॉगिन त्रुटि",
+  "loginSuccess": "लॉग इन सफल",
+  "password": "पासवर्ड",
+  "passwordHint": "न्यूनतम 6 अक्षर",
+  "passwordPlaceholder": "अपना कूटशब्द भरें",
+  "subtitle": "Войдите в свой личный кабинет",
+  "systemError": "सिस्टम त्रुटि",
+  "title": "व्यक्तिगत खाता",
+  "username": "उपयोगकर्ता नाम",
+  "usernameHint": "अपना लॉगिन",
+  "usernamePlaceholder": "अपना लॉगिन दर्ज करें"
+}

@@ -69,9 +69,9 @@
     "preview": "vite preview",
     "postinstall": "patch-package || true",
     "i18n:setup": "node scripts/i18n/setup-i18n.js",
-    "i18n:extract": "i18next-parser",
+    "i18n:extract": "node node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js",
     "i18n:check": "node scripts/i18n/check-translations.js",
-    "i18n:sync": "node scripts/i18n/auto-translate.js"
+    "i18n:sync": "cd .. && python3 scripts/i18n/translate_from_russian.py"
   },
   "overrides": {
     "glob": "^10.0.0",

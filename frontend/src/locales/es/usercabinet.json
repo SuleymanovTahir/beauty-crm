@@ -1,0 +1,17 @@
+{
+  "backToHome": "volver a casa",
+  "fillAllFields": "Complete todos los campos",
+  "loggingIn": "Entrada...",
+  "loginButton": "Acceso",
+  "loginError": "Error de inicio de sesión",
+  "loginSuccess": "Iniciar sesión exitosamente",
+  "password": "Contraseña",
+  "passwordHint": "Mínimo 6 caracteres",
+  "passwordPlaceholder": "Introduce tu contraseña",
+  "subtitle": "Войдите в свой личный кабинет",
+  "systemError": "error del sistema",
+  "title": "cuenta personal",
+  "username": "Nombre de usuario",
+  "usernameHint": "Su inicio de sesión",
+  "usernamePlaceholder": "Ingrese su inicio de sesión"
+}
