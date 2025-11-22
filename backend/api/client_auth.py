@@ -2,7 +2,7 @@
 API для клиентской авторизации и личного кабинета
 """
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 import sqlite3
 import hashlib
 import secrets
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/client", tags=["Client Auth"])
 # ============================================================================
 
 class ClientRegister(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     name: Optional[str] = None
     phone: Optional[str] = None

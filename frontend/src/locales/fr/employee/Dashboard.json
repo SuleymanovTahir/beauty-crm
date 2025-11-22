@@ -1,13 +1,13 @@
 {
-  "failed_to_fetch_bookings": "Не удалось загрузить записи",
-  "unknown_error": "Неизвестная ошибка",
-  "loading_error": "Ошибка загрузки",
-  "my_bookings": "Мои записи",
-  "today": "Сегодня",
-  "today_bookings": "Записей сегодня",
-  "confirmed": "Подтверждено",
-  "pending": "Ожидает",
-  "schedule_for_today": "Расписание на сегодня",
-  "no_bookings_today": "На сегодня записей нет",
-  "booking": "Запись"
+  "failed_to_fetch_bookings": "Failed to load bookings",
+  "unknown_error": "Unknown error",
+  "loading_error": "Loading error",
+  "my_bookings": "My Bookings",
+  "today": "Today",
+  "today_bookings": "Bookings today",
+  "confirmed": "Confirmed",
+  "pending": "Pending",
+  "schedule_for_today": "Schedule for today",
+  "no_bookings_today": "No bookings for today",
+  "booking": "Booking"
 }

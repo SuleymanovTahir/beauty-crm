@@ -143,14 +143,14 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-      <h1 className="text-3xl text-gray-900 mb-2">{t('dashboard:title')}</h1>
-      <p className="text-gray-600">{t('dashboard:welcome')}</p>
+    <div className="p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl text-gray-900 mb-2">{t('dashboard:title')}</h1>
+        <p className="text-sm md:text-base text-gray-600">{t('dashboard:welcome')}</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         {stat_cards.map((stat, index) => {
           const Icon = stat.icon;
           return (
@@ -175,10 +175,10 @@ export default function AdminDashboard() {
       {/* Content Grid - 1 колонка на мобильных */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 md:mb-8">
         {/* Recent Bookings */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
-            <Button variant="outline" size="sm" onClick={() => navigate('/admin/bookings')}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg md:text-xl text-gray-900">{t('dashboard:recent_bookings')}</h2>
+            <Button variant="outline" size="sm" onClick={() => navigate('/admin/bookings')} className="w-full sm:w-auto">
               {t('dashboard:all_bookings')}
             </Button>
           </div>
@@ -189,19 +189,19 @@ export default function AdminDashboard() {
                 return (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer gap-3"
                     onClick={() => navigate(`/admin/bookings/${booking.id}`)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold">
+                      <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold flex-shrink-0">
                         {booking.name?.charAt(0) || t('dashboard:default_initials')}
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-900">{booking.name || t('dashboard:unknown_name')}</p>
-                        <p className="text-xs text-gray-500">{booking.service || t('dashboard:no_service')}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm text-gray-900 truncate">{booking.name || t('dashboard:unknown_name')}</p>
+                        <p className="text-xs text-gray-500 truncate">{booking.service || t('dashboard:no_service')}</p>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 sm:gap-0 w-full sm:w-auto mt-2 sm:mt-0 pl-13 sm:pl-0">
                       <p className="text-sm text-gray-900">
                         {new Date(booking.datetime).toLocaleTimeString('ru-RU', {
                           hour: '2-digit',
@@ -218,18 +218,18 @@ export default function AdminDashboard() {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>{t('dashboard:no_bookings')}</p>
+                <p>{t('dashboard:no_bookings')}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 mb-6">{t('dashboard:quick_actions')}</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+          <h2 className="text-lg md:text-xl text-gray-900 mb-6">{t('dashboard:quick_actions')}</h2>
           <div className="space-y-3">
             <Button
-              className="w-full justify-start bg-pink-600 hover:bg-pink-700"
+              className="w-full justify-start bg-pink-600 hover:bg-pink-700 h-12 md:h-10"
               onClick={() => navigate('/admin/bookings')}
             >
               <Calendar className="w-4 h-4 mr-2" />
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-12 md:h-10"
               onClick={() => navigate('/admin/clients')}
             >
               <Users className="w-4 h-4 mr-2" />
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-12 md:h-10"
               onClick={() => navigate('/admin/users/create')}
             >
               <Users className="w-4 h-4 mr-2" />
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-12 md:h-10"
               onClick={() => navigate('/admin/analytics')}
             >
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -261,7 +261,7 @@ export default function AdminDashboard() {
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start h-12 md:h-10"
               onClick={() => navigate('/admin/calendar')}
             >
               <Calendar className="w-4 h-4 mr-2" />
@@ -273,33 +273,33 @@ export default function AdminDashboard() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_clients')}</p>
-              <p className="text-3xl text-gray-900 font-bold">{stats.total_clients}</p>
+              <p className="text-2xl md:text-3xl text-gray-900 font-bold">{stats.total_clients}</p>
               <p className="text-xs text-green-600 mt-1">+{stats.new_clients} {t('dashboard:new_clients')}</p>
             </div>
             <Users className="w-8 h-8 text-blue-600" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_bookings')}</p>
-              <p className="text-3xl text-gray-900 font-bold">{stats.total_bookings}</p>
+              <p className="text-2xl md:text-3xl text-gray-900 font-bold">{stats.total_bookings}</p>
               <p className="text-xs text-green-600 mt-1">{stats.completed_bookings} {t('dashboard:completed_bookings')}</p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">{t('dashboard:total_messages')}</p>
-              <p className="text-3xl text-gray-900 font-bold">
+              <p className="text-2xl md:text-3xl text-gray-900 font-bold">
                 {(stats.total_client_messages || 0) + (stats.total_bot_messages || 0)}
               </p>
               <p className="text-xs text-gray-500 mt-1">

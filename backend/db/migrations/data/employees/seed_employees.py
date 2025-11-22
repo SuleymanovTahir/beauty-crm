@@ -69,7 +69,7 @@ def seed_employees():
             "phone": "+971 58 208 1188",
             "email": "rakhmattursinay@gmail.com",
             "sort_order": 6,
-            "role": "admin"
+            "role": "director"
         }
     ]
 

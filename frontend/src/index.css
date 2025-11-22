@@ -4016,3 +4016,10 @@ body.menu-open {
 .shadow-elevation-4 {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
+.max-h-\[85vh\] {
+  max-height: 85vh;
+}
+
+.custom-dialog-scroll {
+  max-height: 85vh;
+}

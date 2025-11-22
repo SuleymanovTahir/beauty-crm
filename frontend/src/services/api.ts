@@ -403,7 +403,7 @@ export class ApiClient {
 
   // После getUsers() (примерно строка 150)
 
-  async getRoles(): Promise<{ roles: Array<{key: string; name: string; level: number}> }> {
+  async getRoles(): Promise<{ roles: Array<{ key: string; name: string; level: number }> }> {
     const response = await fetch('/api/roles', {
       credentials: 'include'
     });
@@ -587,6 +587,14 @@ export class ApiClient {
       method: 'PUT',
       body: JSON.stringify({ permissions }),
     })
+  }
+
+  async getAllRoles() {
+    return this.request<any>('/api/permissions/roles')
+  }
+
+  async getPermissionDescriptions() {
+    return this.request<any>('/api/permissions/descriptions')
   }
 
   // ===== РЕАКЦИИ =====
@@ -791,6 +799,35 @@ export class ApiClient {
     })
   }
 
+  // ===== ГРАФИК РАБОТЫ =====
+  async getUserSchedule(userId: number) {
+    return this.request<any[]>(`/api/schedule/user/${userId}`)
+  }
+
+  async updateUserSchedule(userId: number, schedule: any[]) {
+    return this.request(`/api/schedule/user/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ schedule }),
+    })
+  }
+
+  async getUserTimeOff(userId: number) {
+    return this.request<any[]>(`/api/schedule/user/${userId}/time-off`)
+  }
+
+  async addUserTimeOff(userId: number, data: { start_datetime: string; end_datetime: string; type: string; reason?: string }) {
+    return this.request(`/api/schedule/user/${userId}/time-off`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteTimeOff(id: number) {
+    return this.request(`/api/schedule/time-off/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   async rejectUser(userId: number) {
     return this.request(`/api/users/${userId}/reject`, {
       method: 'POST',
@@ -798,148 +835,64 @@ export class ApiClient {
   }
 
   async grantPermission(userId: number, resource: string) {
-    return this.request(`/api/users/${userId}/permissions/${resource}/grant`, {
+    return this.request(`/api/users/${userId}/permissions/grant`, {
       method: 'POST',
+      body: JSON.stringify({ resource }),
     })
   }
 
   async revokePermission(userId: number, resource: string) {
-    return this.request(`/api/users/${userId}/permissions/${resource}/revoke`, {
+    return this.request(`/api/users/${userId}/permissions/revoke`, {
       method: 'POST',
+      body: JSON.stringify({ resource }),
     })
   }
 
-  // ===== MY PROFILE =====
-  async getMyProfile() {
-    return this.request<any>('/api/my-profile')
+  // ===== РАСПИСАНИЕ (НОВОЕ) =====
+  async getWorkingHours(masterName: string) {
+    return this.request<any>(`/api/schedule/${masterName}/working-hours`)
   }
 
-  async updateMyProfile(data: {
-    username?: string
-    full_name?: string
-    email?: string
-    current_password?: string
-    new_password?: string
-    photo_url?: string
-  }) {
-    return this.request('/api/my-profile', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  // ===== SUBSCRIPTIONS =====
-  async getUserSubscriptions() {
-    return this.request<{
-      subscriptions: Record<string, {
-        is_subscribed: boolean
-        channels: {
-          email: boolean
-          telegram: boolean
-          instagram: boolean
-        }
-      }>
-      available_types: Record<string, { name: string; description: string }>
-    }>('/api/subscriptions')
-  }
-
-  async updateSubscription(
-    subscriptionType: string,
-    isSubscribed: boolean,
-    channels?: { email?: boolean; telegram?: boolean; instagram?: boolean }
-  ) {
-    const payload: any = {
-      subscription_type: subscriptionType,
-      is_subscribed: isSubscribed,
-    }
-
-    if (channels) {
-      if (channels.email !== undefined) payload.email_enabled = channels.email
-      if (channels.telegram !== undefined) payload.telegram_enabled = channels.telegram
-      if (channels.instagram !== undefined) payload.instagram_enabled = channels.instagram
-    }
-
-    return this.request('/api/subscriptions', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    })
-  }
-
-  async updateMultipleSubscriptions(subscriptions: Array<{ subscription_type: string; is_subscribed: boolean }>) {
-    return this.request('/api/subscriptions/bulk', {
-      method: 'POST',
-      body: JSON.stringify(subscriptions),
-    })
-  }
-
-  // ===== ACCOUNT DELETION =====
-  async deleteAccount(password: string, confirm: boolean = true) {
-    return this.request('/api/account/delete', {
+  async setWorkingHours(masterName: string, dayOfWeek: number, startTime: string, endTime: string) {
+    return this.request(`/api/schedule/${masterName}/working-hours`, {
       method: 'POST',
       body: JSON.stringify({
-        password,
-        confirm,
+        day_of_week: dayOfWeek,
+        start_time: startTime,
+        end_time: endTime
       }),
     })
   }
 
-  // ===== BROADCASTS =====
-  async previewBroadcast(data: {
-    subscription_type: string
-    channels: string[]
-    subject: string
-    message: string
-    target_role?: string
-  }) {
-    return this.request<{
-      total_users: number
-      by_channel: Record<string, number>
-      users_sample: Array<{
-        id: number
-        username: string
-        full_name: string
-        role: string
-        contact: string
-        channel: string
-      }>
-    }>('/api/broadcasts/preview', {
+  async addTimeOff(masterName: string, startDate: string, endDate: string, type: string = 'vacation', reason?: string) {
+    return this.request(`/api/schedule/${masterName}/time-off`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        start_date: startDate,
+        end_date: endDate,
+        type: type,
+        reason: reason
+      }),
     })
   }
 
-  async sendBroadcast(data: {
-    subscription_type: string
-    channels: string[]
-    subject: string
-    message: string
-    target_role?: string
-  }) {
-    return this.request<{
-      success: boolean
-      results: Record<string, { sent: number; failed: number }>
-      message: string
-    }>('/api/broadcasts/send', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
+  async getTimeOffs(masterName: string) {
+    return this.request<any>(`/api/schedule/${masterName}/time-off`)
   }
 
-  async getBroadcastHistory() {
+
+
+  // ===== MESSENGERS =====
+  async getEnabledMessengers() {
     return this.request<{
-      history: Array<{
-        id: number
-        subscription_type: string
-        channels: string[]
-        subject: string
-        total_sent: number
-        created_at: string
-        results: string
+      enabled_messengers: Array<{
+        type: string
+        name: string
       }>
-    }>('/api/broadcasts/history')
+    }>('/api/messengers/enabled')
   }
 
-  // ===== ДОЛЖНОСТИ =====
+  // ===== POSITIONS =====
   async getPositions(activeOnly: boolean = true) {
     return this.request<{
       positions: Array<{
@@ -955,261 +908,6 @@ export class ApiClient {
       }>
     }>(`/api/positions?active_only=${activeOnly}`)
   }
-
-  async getPosition(id: number) {
-    return this.request<{
-      id: number
-      name: string
-      name_en?: string
-      name_ar?: string
-      description?: string
-      is_active: number
-      sort_order: number
-      employees_count: number
-      created_at: string
-      updated_at: string
-    }>(`/api/positions/${id}`)
-  }
-
-  async createPosition(data: {
-    name: string
-    name_en?: string
-    name_ar?: string
-    description?: string
-    sort_order?: number
-  }) {
-    return this.request<{
-      success: boolean
-      position_id: number
-      message: string
-    }>('/api/positions', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async updatePosition(id: number, data: {
-    name?: string
-    name_en?: string
-    name_ar?: string
-    description?: string
-    sort_order?: number
-    is_active?: number
-  }) {
-    return this.request<{
-      success: boolean
-      message: string
-    }>(`/api/positions/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deletePosition(id: number, hardDelete: boolean = false) {
-    return this.request<{
-      success: boolean
-      message: string
-      affected_employees: number
-    }>(`/api/positions/${id}?hard_delete=${hardDelete}`, {
-      method: 'DELETE',
-    })
-  }
-
-  async getPositionEmployees(id: number) {
-    return this.request<{
-      position: {
-        id: number
-        name: string
-        description?: string
-      }
-      employees: Array<{
-        id: number
-        full_name: string
-        position: string
-        is_active: number
-      }>
-      count: number
-    }>(`/api/positions/${id}/employees`)
-  }
-
-  // ===== BOOKING REMINDER SETTINGS =====
-  async getBookingReminderSettings() {
-    return this.request<{
-      settings: Array<{
-        id: number
-        name: string
-        days_before: number
-        hours_before: number
-        notification_type: string
-        is_enabled: boolean
-      }>
-    }>('/api/booking-reminder-settings')
-  }
-
-  async createBookingReminderSetting(data: {
-    name: string
-    days_before: number
-    hours_before: number
-    notification_type?: string
-    is_enabled?: boolean
-  }) {
-    return this.request<{
-      success: boolean
-      setting_id: number
-      message: string
-    }>('/api/booking-reminder-settings', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async updateBookingReminderSetting(id: number, data: {
-    name?: string
-    days_before?: number
-    hours_before?: number
-    notification_type?: string
-    is_enabled?: boolean
-  }) {
-    return this.request<{
-      success: boolean
-      message: string
-    }>(`/api/booking-reminder-settings/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async toggleBookingReminderSetting(id: number) {
-    return this.request<{
-      success: boolean
-      is_enabled: boolean
-      message: string
-    }>(`/api/booking-reminder-settings/${id}/toggle`, {
-      method: 'PUT',
-    })
-  }
-
-  async deleteBookingReminderSetting(id: number) {
-    return this.request<{
-      success: boolean
-      message: string
-    }>(`/api/booking-reminder-settings/${id}`, {
-      method: 'DELETE',
-    })
-  }
-
-  // ===== MESSENGERS =====
-  async getMessengerSettings() {
-    return this.request<{
-      settings: Array<{
-        id: number
-        messenger_type: string
-        is_enabled: boolean
-        display_name: string
-        has_token: boolean
-        api_token?: string
-        webhook_url?: string
-        config_json?: string
-        created_at: string
-        updated_at: string
-      }>
-    }>('/api/messengers/settings')
-  }
-
-  async getEnabledMessengers() {
-    return this.request<{
-      enabled_messengers: Array<{
-        type: string
-        name: string
-      }>
-    }>('/api/messengers/enabled')
-  }
-
-  async updateMessengerSetting(messengerType: string, data: {
-    is_enabled?: boolean
-    api_token?: string
-    webhook_url?: string
-    config_json?: any
-  }) {
-    return this.request<{
-      success: boolean
-      message: string
-    }>(`/api/messengers/settings/${messengerType}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async getMessengerMessages(messengerType: string, clientId?: string, limit: number = 100) {
-    const params = new URLSearchParams()
-    if (clientId) params.append('client_id', clientId)
-    params.append('limit', limit.toString())
-
-    return this.request<{
-      messages: Array<any>
-      count: number
-    }>(`/api/messengers/${messengerType}/messages?${params}`)
-  }
-
-  async getMessengerUnreadCount() {
-    return this.request<{
-      total: number
-      by_messenger: Record<string, number>
-    }>('/api/messengers/unread-count')
-  }
-
-  // ===== PERMISSIONS & ROLES =====
-
-  async getAllRoles() {
-    return this.request<{
-      roles: Record<string, {
-        name: string
-        permissions: string[] | '*'
-        can_manage_roles: string[]
-        hierarchy_level: number
-      }>
-      count: number
-    }>('/api/permissions/roles')
-  }
-
-  async getPermissionDescriptions() {
-    return this.request<{
-      permissions: Record<string, string>
-      count: number
-    }>('/api/permissions/descriptions')
-  }
-
-  async checkPermission(permission: string) {
-    return this.request<{
-      user_id: number
-      role: string
-      permission: string
-      has_permission: boolean
-    }>('/api/permissions/check', {
-      method: 'POST',
-      body: JSON.stringify({ permission }),
-    })
-  }
-
-  async getAllUsersWithPermissions() {
-    return this.request<{
-      users: Array<{
-        id: number
-        username: string
-        full_name: string
-        role: string
-        role_name: string
-        email: string
-        is_active: boolean
-        created_at: string
-        hierarchy_level: number
-        can_edit: boolean
-      }>
-      count: number
-    }>('/api/permissions/users')
-  }
-
 }
-
 
 export const api = new ApiClient()

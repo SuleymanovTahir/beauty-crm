@@ -272,12 +272,10 @@ def get_employee_busy_slots(employee_id: int, date: str):
         SELECT b.id, b.datetime, s.duration, s.name
         FROM bookings b
         LEFT JOIN services s ON b.service_name = s.name
-        WHERE b.instagram_id IN (
-            SELECT instagram_id FROM bookings WHERE id = b.id
-        )
+        WHERE b.master = (SELECT full_name FROM employees WHERE id = ?)
         AND b.status NOT IN ('cancelled', 'no-show')
         AND date(b.datetime) = date(?)
-    """, (date,))
+    """, (employee_id, date))
 
     bookings = c.fetchall()
     conn.close()

@@ -309,21 +309,30 @@ def test_master_schedule_detailed():
     """ТЕСТ 3: Детальная проверка Master Schedule"""
     print_header("ТЕСТ 3: ДЕТАЛЬНАЯ ПРОВЕРКА РАСПИСАНИЯ МАСТЕРОВ")
 
+    test_master = "Тест Мастер Детальный"
+    today = datetime.now().strftime('%Y-%m-%d')
+    
     try:
         from services.master_schedule import MasterScheduleService
 
         # Шаг 1: Создание сервиса
         print_step(1, 9, "Инициализация MasterScheduleService")
         try:
+            # Создаем тестового мастера в базе данных
+            from core.config import DATABASE_NAME
+            import sqlite3
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            c.execute("INSERT INTO employees (full_name, position, is_active) VALUES (?, ?, 1)", (test_master, "Stylist"))
+            conn.commit()
+            conn.close()
+
             schedule = MasterScheduleService()
             print_success("MasterScheduleService создан")
         except Exception as e:
             print_error(f"Не удалось создать сервис: {e}")
             traceback.print_exc()
             return False
-
-        test_master = "Тест Мастер Детальный"
-        today = datetime.now().strftime('%Y-%m-%d')
 
         # Шаг 2: Установка рабочих часов (понедельник-пятница)
         print_step(2, 9, "Установка рабочих часов (ПН-ПТ: 09:00-18:00)")
@@ -438,12 +447,40 @@ def test_master_schedule_detailed():
 
         print("\n" + "=" * 100)
         print_success("ТЕСТ 3: ПРОЙДЕН (с возможными предупреждениями)")
-        return True
+        result = True
 
     except Exception as e:
         print_error(f"КРИТИЧЕСКАЯ ОШИБКА: {e}")
         traceback.print_exc()
-        return False
+        result = False
+    
+    finally:
+        # Cleanup: удаляем тестовые данные
+        print(f"\n   🧹 Очистка тестовых данных мастера '{test_master}'...")
+        try:
+            from core.config import DATABASE_NAME
+            import sqlite3
+            
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            
+            # Удаляем расписание тестового мастера
+            c.execute("DELETE FROM master_schedule WHERE master_name = ?", (test_master,))
+            schedule_deleted = c.rowcount
+            
+            # Удаляем time-off записи тестового мастера
+            c.execute("DELETE FROM master_time_off WHERE master_name = ?", (test_master,))
+            timeoff_deleted = c.rowcount
+            
+            conn.commit()
+            conn.close()
+            
+            print_success(f"Тестовые данные удалены (расписание: {schedule_deleted}, отпуска: {timeoff_deleted})")
+            
+        except Exception as cleanup_error:
+            print_warning(f"Ошибка очистки: {cleanup_error}")
+    
+    return result
 
 
 def main():

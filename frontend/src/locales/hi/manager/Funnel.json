@@ -1,43 +1,43 @@
 {
-  "loading": "Загрузка данных воронки",
-  "title": "Воронка продаж",
-  "subtitle": "Анализ конверсии и оптимизация процесса записи",
+  "loading": "Loading funnel data",
+  "title": "Sales Funnel",
+  "subtitle": "Conversion analysis and booking process optimization",
   "conversion": {
-    "visitor_to_engaged": "Посетители → Вовлечённые",
-    "engaged_to_booking": "Вовлечённые → Начали запись",
-    "booking_to_booked": "Начали запись → Записались",
-    "booked_to_completed": "Записались → Посетили"
+    "visitor_to_engaged": "Visitors → Engaged",
+    "engaged_to_booking": "Engaged → Started booking",
+    "booking_to_booked": "Started booking → Booked",
+    "booked_to_completed": "Booked → Visited"
   },
-  "funnel_chart": "Визуализация воронки",
-  "losses": "Потери: {{count}}",
-  "key_metrics": "Ключевые метрики",
-  "total_conversion": "Общая конверсия",
-  "total_losses": "Всего потерь",
-  "successful_visits": "Успешных визитов",
-  "recommendations_title": "Рекомендации",
+  "funnel_chart": "Funnel visualization",
+  "losses": "Losses: {{count}}",
+  "key_metrics": "Key Metrics",
+  "total_conversion": "Total Conversion",
+  "total_losses": "Total losses",
+  "successful_visits": "Successful visits",
+  "recommendations_title": "Recommendations",
   "recommendations": {
     "increase_engagement": {
-      "title": "Повысить вовлечённость",
-      "description": "Теряется {{count}} посетителей на этапе вовлечения",
-      "suggestion": "Улучшите контент, добавьте интерактивные элементы"
+      "title": "Increase engagement",
+      "description": "{{count}} visitors are lost at the engagement stage",
+      "suggestion": "Improve content, add interactive elements"
     },
     "optimize_form": {
-      "title": "Оптимизировать форму записи",
-      "description": "{{percent}}% заинтересованных не начинают запись",
-      "suggestion": "Упростите форму записи, добавьте автозаполнение"
+      "title": "Optimize booking form",
+      "description": "{{percent}}% of interested do not start booking",
+      "suggestion": "Simplify booking form, add autocomplete"
     },
     "reduce_noshow": {
-      "title": "Снизить количество no-show",
-      "description": "{{count}} клиентов ({{percent}}%) не пришли на запись",
-      "suggestion": "Настройте автоматические напоминания за 24 и 2 часа"
+      "title": "Reduce no-show rate",
+      "description": "{{count}} clients ({{percent}}%) did not show up for appointment",
+      "suggestion": "Configure automatic reminders for 24 and 2 hours"
     }
   },
-  "all_good": "Всё отлично!",
-  "stage_details": "Детали по этапам",
+  "all_good": "Everything is great!",
+  "stage_details": "Stage details",
   "table": {
-    "stage": "Этап",
-    "count": "Количество",
-    "percentage": "% от общего",
-    "losses": "Потери"
+    "stage": "Stage",
+    "count": "Quantity",
+    "percentage": "% of total",
+    "losses": "Losses"
   }
 }

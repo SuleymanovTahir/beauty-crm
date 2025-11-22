@@ -45,8 +45,7 @@ export default function Login() {
         login(response.user, response.token);
 
         toast.success(
-          `${t('login:welcome')} ${
-            response.user.full_name || response.user.username
+          `${t('login:welcome')} ${response.user.full_name || response.user.username
           }!`
         );
         navigate("/admin/dashboard");
@@ -111,7 +110,7 @@ export default function Login() {
           <p className="text-gray-600">{t('login:crm_system_management')}</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
           {error && (
             <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-800 text-sm">{error}</p>

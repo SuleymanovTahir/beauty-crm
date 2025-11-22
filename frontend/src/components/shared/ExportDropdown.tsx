@@ -1,5 +1,6 @@
 import { Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { DropdownButton } from './DropdownButton';
+import { useTranslation } from 'react-i18next';
 
 interface ExportDropdownProps {
   onExport: (format: 'csv' | 'excel' | 'pdf') => void;
@@ -8,21 +9,23 @@ interface ExportDropdownProps {
 }
 
 export function ExportDropdown({ onExport, disabled, loading }: ExportDropdownProps) {
+  const { t } = useTranslation('common');
+
   const options = [
     {
-      label: 'Экспорт в CSV',
+      label: t('export_to_csv'),
       value: 'csv',
       icon: <FileText className="w-4 h-4 text-gray-600" />,
       onClick: () => onExport('csv')
     },
     {
-      label: 'Экспорт в Excel',
+      label: t('export_to_excel'),
       value: 'excel',
       icon: <FileSpreadsheet className="w-4 h-4 text-green-600" />,
       onClick: () => onExport('excel')
     },
     {
-      label: 'Экспорт в PDF',
+      label: t('export_to_pdf'),
       value: 'pdf',
       icon: <FileText className="w-4 h-4 text-red-600" />,
       onClick: () => onExport('pdf')
@@ -31,7 +34,7 @@ export function ExportDropdown({ onExport, disabled, loading }: ExportDropdownPr
 
   return (
     <DropdownButton
-      label={loading ? 'Экспорт...' : 'Экспорт'}
+      label={loading ? t('exporting') : t('export')}
       icon={<Download className="w-4 h-4" />}
       options={options}
       disabled={disabled}

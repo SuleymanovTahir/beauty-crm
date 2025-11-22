@@ -263,6 +263,7 @@ async def update_user_role(
     
     # Проверяем что пользователь может управлять ролями
     from core.config import ROLES, can_manage_role
+    from utils.logger import log_info, log_warning
     
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя изменить свою роль"}, status_code=400)
@@ -270,13 +271,21 @@ async def update_user_role(
     data = await request.json()
     new_role = data.get('role')
     
+    # Детальное логирование для отладки
+    log_info(f"🔄 Role change request: user_id={user_id}, new_role={new_role}, by={user['username']}", "api")
+    log_info(f"📋 Available roles: {list(ROLES.keys())}", "api")
+    
     if not new_role or new_role not in ROLES:
-        return JSONResponse({"error": "Неверная роль"}, status_code=400)
+        log_warning(f"❌ Invalid role received: '{new_role}'. Available: {list(ROLES.keys())}", "api")
+        return JSONResponse({
+            "error": f"Неверная роль. Доступные роли: {', '.join(ROLES.keys())}"
+        }, status_code=400)
     
     # Директор может назначить любую роль
     if user["role"] != "director":
         # Проверяем может ли текущий пользователь назначить эту роль
         if not can_manage_role(user["role"], new_role):
+            log_warning(f"⛔ {user['username']} ({user['role']}) cannot assign role '{new_role}'", "api")
             return JSONResponse(
                 {"error": f"У вас нет прав назначать роль '{ROLES[new_role]['name']}'"}, 
                 status_code=403
@@ -292,6 +301,7 @@ async def update_user_role(
         if c.rowcount > 0:
             log_activity(user["id"], "update_user_role", "user", str(user_id), 
                         f"Role changed to: {new_role}")
+            log_info(f"✅ Role changed successfully: user_id={user_id} → {new_role}", "api")
             conn.close()
             return {
                 "success": True, 
@@ -305,6 +315,7 @@ async def update_user_role(
         conn.close()
         log_error(f"Error updating user role: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
 
 
 @router.get("/users/{user_id}/profile")
@@ -421,8 +432,8 @@ async def update_user_profile(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # Проверка прав
-    if user["role"] != "admin" and user["id"] != user_id:
+    # Проверка прав: директор/админ может редактировать всех, остальные только себя
+    if user["role"] not in ["admin", "director"] and user["id"] != user_id:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()

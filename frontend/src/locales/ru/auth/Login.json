@@ -1,7 +1,21 @@
 {
   "login_title": "Вход в систему",
+  "crm_system_management": "Управление CRM системой",
   "username": "Имя пользователя",
   "password": "Пароль",
+  "enter_login": "Введите логин",
+  "enter_password": "Введите пароль",
+  "login": "Войти",
+  "loading": "Загрузка...",
   "remember_me": "Запомнить меня",
-  "forgot_password": "Забыли пароль?"
+  "forgot_password": "Забыли пароль?",
+  "no_account_register": "Нет аккаунта? Зарегистрироваться",
+  "return_to_home": "Вернуться на главную",
+  "fill_both_fields": "Заполните оба поля",
+  "welcome": "Добро пожаловать",
+  "authorization_error": "Ошибка авторизации",
+  "login_error": "Ошибка входа",
+  "unauthorized": "Неавторизован",
+  "401": "401",
+  "invalid_username_or_password": "Неверное имя пользователя или пароль"
 }

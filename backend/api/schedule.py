@@ -1,14 +1,163 @@
 """
 API Endpoints для управления расписанием мастеров
 """
-from fastapi import APIRouter, Request, Cookie, Query
+from fastapi import APIRouter, Request, Cookie, Query, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from typing import Optional
+from typing import Optional, List
+from pydantic import BaseModel
+import sqlite3
+from core.config import DATABASE_NAME
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from services.master_schedule import MasterScheduleService
 
 router = APIRouter(tags=["Schedule"])
+
+# --- Pydantic Models for Admin UI ---
+class WorkScheduleItem(BaseModel):
+    day_of_week: int
+    start_time: str
+    end_time: str
+    is_working: bool
+
+class WorkScheduleUpdate(BaseModel):
+    schedule: List[WorkScheduleItem]
+
+class TimeOffCreate(BaseModel):
+    start_datetime: str
+    end_datetime: str
+    type: str
+    reason: Optional[str] = None
+
+# --- Helper Functions ---
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_employee_id_by_user_id(user_id: int, conn) -> int:
+    cursor = conn.cursor()
+    cursor.execute("SELECT employee_id FROM users WHERE id = ?", (user_id,))
+    row = cursor.fetchone()
+    if not row or not row['employee_id']:
+        raise HTTPException(status_code=404, detail="Employee not found for this user")
+    return row['employee_id']
+
+# --- New Endpoints for Admin UI (User ID based) ---
+
+@router.get("/schedule/user/{user_id}", response_model=List[WorkScheduleItem])
+async def get_user_schedule(user_id: int):
+    conn = get_db_connection()
+    try:
+        employee_id = get_employee_id_by_user_id(user_id, conn)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT day_of_week, start_time, end_time, is_active 
+            FROM employee_schedule 
+            WHERE employee_id = ? 
+            ORDER BY day_of_week
+        """, (employee_id,))
+        
+        rows = cursor.fetchall()
+        schedule = []
+        
+        # Map existing schedule
+        existing_days = {row['day_of_week']: row for row in rows}
+        
+        # Return full week (0-6)
+        for day in range(7):
+            if day in existing_days:
+                row = existing_days[day]
+                schedule.append({
+                    "day_of_week": day,
+                    "start_time": row['start_time'],
+                    "end_time": row['end_time'],
+                    "is_working": bool(row['is_active'])
+                })
+            else:
+                # Default empty/non-working day
+                schedule.append({
+                    "day_of_week": day,
+                    "start_time": "09:00",
+                    "end_time": "18:00",
+                    "is_working": False
+                })
+            
+        return schedule
+    finally:
+        conn.close()
+
+@router.put("/schedule/user/{user_id}")
+async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
+    conn = get_db_connection()
+    try:
+        employee_id = get_employee_id_by_user_id(user_id, conn)
+        cursor = conn.cursor()
+        
+        # Удаляем старое расписание
+        cursor.execute("DELETE FROM employee_schedule WHERE employee_id = ?", (employee_id,))
+        
+        # Добавляем новое
+        for item in data.schedule:
+            cursor.execute("""
+                INSERT INTO employee_schedule (employee_id, day_of_week, start_time, end_time, is_active)
+                VALUES (?, ?, ?, ?, ?)
+            """, (employee_id, item.day_of_week, item.start_time, item.end_time, 1 if item.is_working else 0))
+            
+        conn.commit()
+        return {"status": "success"}
+    finally:
+        conn.close()
+
+@router.get("/schedule/user/{user_id}/time-off")
+async def get_user_time_off(user_id: int):
+    conn = get_db_connection()
+    try:
+        employee_id = get_employee_id_by_user_id(user_id, conn)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, start_datetime, end_datetime, type, reason 
+            FROM employee_unavailability 
+            WHERE employee_id = ? 
+            ORDER BY start_datetime DESC
+        """, (employee_id,))
+        
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+@router.post("/schedule/user/{user_id}/time-off")
+async def add_user_time_off(user_id: int, data: TimeOffCreate):
+    conn = get_db_connection()
+    try:
+        employee_id = get_employee_id_by_user_id(user_id, conn)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO employee_unavailability (employee_id, start_datetime, end_datetime, type, reason)
+            VALUES (?, ?, ?, ?, ?)
+        """, (employee_id, data.start_datetime, data.end_datetime, data.type, data.reason))
+        
+        conn.commit()
+        return {"status": "success", "id": cursor.lastrowid}
+    finally:
+        conn.close()
+
+@router.delete("/schedule/time-off/{id}")
+async def delete_time_off_by_id(id: int):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM employee_unavailability WHERE id = ?", (id,))
+        conn.commit()
+        return {"status": "success"}
+    finally:
+        conn.close()
+
+# --- Existing Endpoints (Master Name based) ---
 
 
 @router.post("/schedule/{master_name}/working-hours")

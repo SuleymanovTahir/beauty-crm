@@ -138,10 +138,13 @@ def test_http_request():
     print("=" * 70)
 
     try:
-        import requests
+        from fastapi.testclient import TestClient
+        from main import app
+
+        client = TestClient(app)
 
         print("\n🔄 Отправка HTTP GET запроса...")
-        response = requests.get("http://localhost:8000/api/notifications/settings", timeout=5)
+        response = client.get("/api/notifications/settings")
 
         print(f"\nСтатус код: {response.status_code}")
         print(f"Headers: {dict(response.headers)}")
@@ -156,10 +159,8 @@ def test_http_request():
             return False
 
     except ImportError:
-        print("\n⚠️  Модуль requests не установлен, устанавливаю...")
-        import subprocess
-        subprocess.run([sys.executable, "-m", "pip", "install", "-q", "requests"])
-        return test_http_request()
+        print("\n⚠️  Модуль fastapi.testclient не установлен")
+        return False
 
     except Exception as e:
         print(f"\n❌ ОШИБКА при HTTP запросе:")

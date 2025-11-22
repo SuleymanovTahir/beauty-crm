@@ -11,6 +11,8 @@ import { PositionSelector } from '../../components/PositionSelector';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions, RoleHierarchy } from '../../utils/permissions';
 import { PermissionsTab } from '../../components/admin/PermissionsTab';
+import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
+import { Calendar } from 'lucide-react';
 
 interface User {
   id: number;
@@ -47,7 +49,8 @@ export default function Users() {
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
-  const [availableRoles, setAvailableRoles] = useState<Array<{key: string; name: string; level: number}>>([]);
+  const [availableRoles, setAvailableRoles] = useState<Array<{ key: string; name: string; level: number }>>([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
   const [savingRole, setSavingRole] = useState(false);
 
   // Edit user dialog states
@@ -56,7 +59,11 @@ export default function Users() {
   const [savingEdit, setSavingEdit] = useState(false);
 
   // Permissions dialog states
+  // Permissions dialog states
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
+
+  // Schedule dialog states
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -65,10 +72,13 @@ export default function Users() {
 
   const loadAvailableRoles = async () => {
     try {
+      setLoadingRoles(true);
       const data = await api.getRoles();
       setAvailableRoles(data.roles || []);
     } catch (err) {
       console.error('Error loading roles:', err);
+    } finally {
+      setLoadingRoles(false);
     }
   };
 
@@ -106,12 +116,12 @@ export default function Users() {
     try {
       setSavingEdit(true);
       await api.updateUserProfile(selectedUser.id, editForm);
-      toast.success('Данные пользователя обновлены');
+      toast.success(t('user_updated'));
       setShowEditDialog(false);
       setSelectedUser(null);
       await loadUsers();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Ошибка обновления пользователя';
+      const message = err instanceof Error ? err.message : t('error_updating_user');
       toast.error(message);
     } finally {
       setSavingEdit(false);
@@ -132,17 +142,17 @@ export default function Users() {
       setLoading(true);
       setError(null);
       const response = await api.getUsers();
-  
+
       console.log('📥 Received response:', response);
-  
+
       // ✅ ПРАВИЛЬНОЕ ИЗВЛЕЧЕНИЕ
-      const usersArray = Array.isArray(response) 
-        ? response 
+      const usersArray = Array.isArray(response)
+        ? response
         : (response?.users || []);
-  
+
       console.log('✅ Users array:', usersArray);
       setUsers(usersArray);
-  
+
       if (usersArray.length === 0) {
         console.warn('⚠️  Массив пользователей пуст');
       }
@@ -237,7 +247,7 @@ export default function Users() {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
+      <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -252,7 +262,7 @@ export default function Users() {
           {/* Кнопка создания только для тех, у кого есть право */}
           {permissions.canCreateUsers && (
             <Button
-              className="bg-pink-600 hover:bg-pink-700"
+              className="bg-pink-600 hover:bg-pink-700 w-full md:w-auto"
               onClick={() => navigate('/admin/users/create')}
             >
               <UserPlus className="w-4 h-4 mr-2" />
@@ -272,7 +282,7 @@ export default function Users() {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_username')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Должность</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                 </tr>
@@ -356,6 +366,22 @@ export default function Users() {
                           </Button>
                         )}
 
+                        {/* Кнопка управления графиком */}
+                        {(currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'manager') && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowScheduleDialog(true);
+                            }}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            title="Управление графиком"
+                          >
+                            <Calendar className="w-4 h-4" />
+                          </Button>
+                        )}
+
                         {/* Кнопка удаления только если есть право */}
                         {permissions.canDeleteUsers && (
                           <Button
@@ -386,70 +412,103 @@ export default function Users() {
       {/* Диалог смены роли */}
       {showRoleDialog && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900">
-                {t('role_dialog_title')}: {selectedUser.full_name}
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
-              </p>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {availableRoles.length === 0 ? (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <p className="text-sm text-yellow-800">
-                    У вас нет прав для изменения ролей других пользователей.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {availableRoles.map((role) => (
-                    <button
-                      key={role.key}
-                      onClick={() => handleChangeRole(selectedUser.id, role.key)}
-                      disabled={savingRole}
-                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                        selectedUser.role === role.key
-                          ? 'border-pink-500 bg-pink-50'
-                          : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-gray-900">{role.name}</p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {getRoleDescription(role.key)}
-                          </p>
-                        </div>
-                        {selectedUser.role === role.key && (
-                          <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <p className="text-xs text-blue-800">
-                      <strong>ℹ️ Иерархия ролей:</strong> Вы можете назначать только те роли, которые ниже вашей в иерархии. Директор может назначать все роли.
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="p-6 border-t border-gray-200">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl custom-dialog-scroll flex flex-col">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  {t('role_dialog_title')}: {selectedUser.full_name}
+                </h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                </p>
+              </div>
               <Button
                 variant="outline"
                 onClick={() => {
                   setShowRoleDialog(false);
                   setSelectedUser(null);
                 }}
-                className="w-full"
+                className="ml-4"
                 disabled={savingRole}
               >
                 {t('role_dialog_close')}
               </Button>
+            </div>
+
+            <div className="p-4 overflow-y-auto flex-1">
+              {loadingRoles ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                </div>
+              ) : (
+                <>
+                  {availableRoles.length === 0 ? (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <p className="text-sm text-yellow-800">
+                        У вас нет прав для изменения ролей других пользователей.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {availableRoles.map((role) => {
+                        // Get permissions for this role
+                        const rolePermissions = permissions.canCreateUsers ? [
+                          role.key === 'director' && 'Полный доступ ко всем функциям',
+                          role.key === 'admin' && 'Управление пользователями и настройками',
+                          role.key === 'manager' && 'Управление записями и клиентами',
+                          (role.key === 'sales' || role.key === 'marketer') && 'Работа с клиентами',
+                          role.key === 'employee' && 'Базовый доступ к системе'
+                        ].filter(Boolean) : [];
+
+                        return (
+                          <div key={role.key} className="space-y-2">
+                            <button
+                              onClick={() => handleChangeRole(selectedUser.id, role.key)}
+                              disabled={savingRole}
+                              className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedUser.role === role.key
+                                ? 'border-pink-500 bg-pink-50'
+                                : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                                }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-900">{role.name}</p>
+                                  <p className="text-sm text-gray-600 mt-1">
+                                    {getRoleDescription(role.key)}
+                                  </p>
+                                </div>
+                                {selectedUser.role === role.key && (
+                                  <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
+                                )}
+                              </div>
+                            </button>
+
+                            {/* Permissions display */}
+                            {rolePermissions.length > 0 && (
+                              <div className="ml-3 pl-3 border-l-2 border-gray-200">
+                                <p className="text-xs font-medium text-gray-500 mb-1">Права доступа:</p>
+                                <ul className="space-y-1">
+                                  {rolePermissions.map((perm, idx) => (
+                                    <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                                      <span className="text-green-600 mt-0.5">✓</span>
+                                      <span>{perm}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                    <p className="text-xs text-blue-800">
+                      <strong>ℹ️ Иерархия ролей:</strong> Вы можете назначать только те роли, которые ниже вашей в иерархии. Директор может назначать все роли.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -458,7 +517,7 @@ export default function Users() {
       {/* Диалог редактирования пользователя */}
       {showEditDialog && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full shadow-2xl">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
             <div className="p-6 border-b border-gray-200">
               <h3 className="text-xl font-bold text-gray-900">
                 Редактирование: {selectedUser.full_name}
@@ -510,7 +569,7 @@ export default function Users() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Должность
+                  {t('position_label')}
                 </label>
                 <PositionSelector
                   value={editForm.position}
@@ -556,37 +615,46 @@ export default function Users() {
 
       {/* Диалог управления правами */}
       {showPermissionsDialog && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl max-w-4xl w-full shadow-2xl my-8">
-            <div className="p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl">
-              <h3 className="text-xl font-bold text-gray-900">
-                Управление правами: {selectedUser.full_name}
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                Роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
-              </p>
-            </div>
-
-            <div className="p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
-              <PermissionsTab userId={selectedUser.id} />
-            </div>
-
-            <div className="p-6 border-t border-gray-200 sticky bottom-0 bg-white rounded-b-xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl custom-dialog-scroll flex flex-col">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Управление правами: {selectedUser.full_name}
+                </h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  Роль: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                </p>
+              </div>
               <Button
                 variant="outline"
                 onClick={() => {
                   setShowPermissionsDialog(false);
                   setSelectedUser(null);
-                  loadUsers(); // Перезагружаем список пользователей
+                  loadUsers();
                 }}
-                className="w-full"
+                className="ml-4"
               >
                 Закрыть
               </Button>
             </div>
+
+            <div className="p-4 overflow-y-auto flex-1">
+              <PermissionsTab userId={selectedUser.id} />
+            </div>
           </div>
         </div>
       )}
+
+      {/* Диалог управления графиком */}
+      <ScheduleDialog
+        isOpen={showScheduleDialog}
+        onClose={() => {
+          setShowScheduleDialog(false);
+          setSelectedUser(null);
+        }}
+        user={selectedUser}
+      />
     </div>
   );
 }

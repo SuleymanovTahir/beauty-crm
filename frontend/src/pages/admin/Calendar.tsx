@@ -1,5 +1,5 @@
 // frontend/src/pages/admin/Calendar.tsx
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -427,12 +427,12 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
         <div className="p-3 md:p-4">
           {/* Top Row */}
-          <div className="flex items-center justify-between gap-2 mb-3 md:mb-4">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 md:mb-4">
+            <div className="flex items-center justify-between w-full sm:w-auto gap-2">
               <Button
                 onClick={goToToday}
                 variant="outline"
-                className="rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm"
+                className="rounded-xl border-2 hover:border-purple-400 hover:bg-purple-50 transition-all px-3 md:px-4 h-9 md:h-10 text-sm flex-1 sm:flex-none"
               >
                 {t('calendar:today')}
               </Button>
@@ -456,11 +456,11 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
               <Button
                 onClick={() => setShowFilters(!showFilters)}
                 variant="outline"
-                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
+                className={`rounded-xl border-2 h-9 md:h-10 px-2 md:px-3 text-sm whitespace-nowrap ${showFilters ? 'bg-purple-100 border-purple-400' : 'hover:border-purple-400'
                   }`}
               >
                 <Filter className="w-4 h-4 md:mr-2" />
@@ -479,7 +479,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
               <Button
                 onClick={() => openCreateModal()}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all"
+                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
               >
                 <Plus className="w-4 h-4 md:mr-2" />
                 <span className="hidden md:inline">{t('calendar:add')}</span>
@@ -489,7 +489,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
           {/* Period Display */}
           <div className="flex items-center justify-center">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl">
+            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-xl w-full sm:w-auto justify-center">
               <CalendarIcon className="w-4 h-4 text-purple-600" />
               <span className="text-sm font-semibold text-purple-900">
                 {getCurrentPeriod()}
@@ -561,7 +561,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
       {/* Calendar Grid */}
       <div className="flex-1 overflow-auto">
-        <div className="min-w-[640px] h-full">
+        <div className="min-w-[800px] h-full">
           {/* Days Header */}
           <div className="sticky top-0 z-10 bg-white border-b-2 border-gray-200 shadow-sm">
             <div className="grid grid-cols-8">

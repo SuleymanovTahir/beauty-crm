@@ -1,15 +1,15 @@
 {
-  "title": "Политика конфиденциальности",
-  "locale": "ru-RU",
-  "lastUpdated": "Дата последнего обновления: {{date}}",
+  "title": "Privacy Policy",
+  "locale": "आरयू-आरयू",
+  "lastUpdated": "Last updated: {{date}}",
   "sections": {
     "introduction": {
-      "title": "1. Введение",
-      "content": "{{salonName}} серьезно относится к защите вашей конфиденциальности. Данная Политика конфиденциальности описывает, какую информацию мы собираем, как мы ее используем и защищаем."
+      "title": "1. Introduction",
+      "content": "{{salonName}} takes your privacy seriously. This Privacy Policy describes what information we collect, how we use it and protect it."
     },
     "collectedInfo": {
-      "title": "2. Собираемая информация",
-      "description": "Мы можем собирать следующую информацию:",
+      "title": "2. Information We Collect",
+      "description": "We may collect the following information:",
       "items": [
         "Имя и контактную информацию (телефон, email)",
         "История посещений и оказанных услуг",
@@ -19,8 +19,8 @@
       ]
     },
     "dataUsage": {
-      "title": "3. Использование информации",
-      "description": "Мы используем собранную информацию для:",
+      "title": "3. Use of Information",
+      "description": "We use the collected information for:",
       "items": [
         "Организации и подтверждения ваших записей",
         "Предоставления качественных услуг с учетом ваших особенностей",
@@ -30,22 +30,22 @@
       ]
     },
     "dataProtection": {
-      "title": "4. Защита данных",
-      "paragraph1": "Мы принимаем все необходимые меры для защиты ваших персональных данных от несанкционированного доступа, изменения, раскрытия или уничтожения.",
-      "paragraph2": "Доступ к вашим данным имеют только уполномоченные сотрудники, которые обязаны соблюдать конфиденциальность."
+      "title": "4. Data Protection",
+      "paragraph1": "We take all necessary measures to protect your personal data from unauthorized access, modification, disclosure or destruction.",
+      "paragraph2": "Only authorized employees who are required to maintain confidentiality have access to your data."
     },
     "thirdParty": {
-      "title": "5. Передача данных третьим лицам",
-      "paragraph1": "Мы не продаем, не обмениваем и не передаем вашу личную информацию третьим лицам без вашего явного согласия, за исключением случаев, предусмотренных законодательством.",
-      "paragraph2": "Мы можем передавать обезличенную статистическую информацию нашим партнерам для улучшения качества услуг."
+      "title": "5. Third Party Data Transfer",
+      "paragraph1": "We do not sell, exchange or transfer your personal information to third parties without your explicit consent, except as required by law.",
+      "paragraph2": "We may share anonymized statistical information with our partners to improve service quality."
     },
     "cookies": {
-      "title": "6. Cookies и технологии отслеживания",
-      "content": "Наш веб-сайт может использовать файлы cookie для улучшения пользовательского опыта. Вы можете отключить cookies в настройках вашего браузера."
+      "title": "6. Cookies and Tracking Technologies",
+      "content": "Our website may use cookies to improve user experience. You can disable cookies in your browser settings."
     },
     "rights": {
-      "title": "7. Ваши права",
-      "description": "Вы имеете право:",
+      "title": "7. Your Rights",
+      "description": "You have the right to:",
       "items": [
         "Запросить доступ к вашим персональным данным",
         "Запросить исправление неточных данных",
@@ -55,19 +55,19 @@
       ]
     },
     "dataStorage": {
-      "title": "8. Хранение данных",
-      "content": "Мы храним ваши персональные данные только в течение времени, необходимого для целей, указанных в данной Политике, или в соответствии с требованиями законодательства."
+      "title": "8. Data Storage",
+      "content": "We store your personal data only for the time necessary for the purposes stated in this Policy, or as required by law."
     },
     "policyChanges": {
-      "title": "9. Изменения в Политике",
-      "content": "Мы оставляем за собой право обновлять данную Политику конфиденциальности. Обновления будут опубликованы на этой странице с указанием даты последнего изменения."
+      "title": "9. Changes to the Policy",
+      "content": "We reserve the right to update this Privacy Policy. Updates will be posted on this page with the date of the last change indicated."
     },
     "contact": {
-      "title": "10. Контакты",
-      "description": "По вопросам, касающимся данной Политики конфиденциальности, вы можете связаться с нами:",
-      "phone": "Телефон",
-      "email": "Email",
-      "address": "Адрес"
+      "title": "10. Contact",
+      "description": "For questions regarding this Privacy Policy, you can contact us:",
+      "phone": "Phone",
+      "email": "ईमेल",
+      "address": "Address"
     }
   }
 }

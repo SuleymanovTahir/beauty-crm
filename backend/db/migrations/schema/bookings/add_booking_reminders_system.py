@@ -9,7 +9,7 @@
 import sqlite3
 from datetime import datetime
 
-DATABASE_NAME = "salon_bot.db"
+from core.config import DATABASE_NAME
 
 def add_booking_reminders_system():
     """Добавить систему напоминаний о записях"""

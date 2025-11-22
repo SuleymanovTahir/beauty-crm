@@ -63,9 +63,9 @@ def seed_employee_services():
                     for service_id, service_name in services_by_category[category]:
                         try:
                             c.execute("""
-                                INSERT INTO employee_services (employee_id, service_id, created_at)
-                                VALUES (?, ?, ?)
-                            """, (emp_id, service_id, now))
+                                INSERT INTO employee_services (employee_id, service_id)
+                                VALUES (?, ?)
+                            """, (emp_id, service_id))
                             total_links += 1
                         except sqlite3.IntegrityError:
                             # Already exists

@@ -557,6 +557,12 @@ def get_all_roles() -> list:
     """Получить все роли (встроенные + кастомные)"""
     builtin_roles = [
         {
+            'role_key': 'director',
+            'role_name': 'Директор',
+            'role_description': 'Полный доступ ко всем функциям, управление всеми ролями',
+            'is_builtin': True
+        },
+        {
             'role_key': 'admin',
             'role_name': 'Администратор',
             'role_description': 'Полный доступ ко всем функциям системы',
@@ -566,6 +572,18 @@ def get_all_roles() -> list:
             'role_key': 'manager',
             'role_name': 'Менеджер',
             'role_description': 'Управление клиентами, записями и аналитикой',
+            'is_builtin': True
+        },
+        {
+            'role_key': 'sales',
+            'role_name': 'Продажник',
+            'role_description': 'Работа с клиентами и продажами',
+            'is_builtin': True
+        },
+        {
+            'role_key': 'marketer',
+            'role_name': 'Таргетолог',
+            'role_description': 'Аналитика и маркетинг',
             'is_builtin': True
         },
         {

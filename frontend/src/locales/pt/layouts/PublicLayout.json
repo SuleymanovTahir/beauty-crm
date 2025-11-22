@@ -1,21 +1,21 @@
 {
-  "home": "Главная",
-  "price_list": "Прайс-лист",
-  "about": "О нас",
-  "contacts": "Контакты",
-  "faq": "FAQ",
-  "login": "Войти",
-  "personal_cabinet": "Личный кабинет",
+  "home": "Home",
+  "price_list": "Price List",
+  "about": "About Us",
+  "contacts": "Contacts",
+  "faq": "Perguntas frequentes",
+  "login": "Login",
+  "personal_cabinet": "Personal Cabinet",
   "footer": {
-    "description": "Профессиональный салон красоты в Дубае",
-    "quick_links": "Быстрые ссылки",
-    "cooperation": "Сотрудничество",
-    "contacts": "Контакты",
-    "working_hours": "Часы работы",
-    "weekdays": "Будни",
-    "weekends": "Выходные",
-    "all_rights": "Все права защищены",
-    "privacy_policy": "Политика конфиденциальности",
-    "terms": "Условия использования"
+    "description": "Professional beauty salon in Dubai",
+    "quick_links": "Quick Links",
+    "cooperation": "Cooperation",
+    "contacts": "Contacts",
+    "working_hours": "Working Hours",
+    "weekdays": "Weekdays",
+    "weekends": "Weekends",
+    "all_rights": "All rights reserved",
+    "privacy_policy": "Privacy Policy",
+    "terms": "Terms of Use"
   }
 }

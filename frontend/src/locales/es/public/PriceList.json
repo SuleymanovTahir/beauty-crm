@@ -1,25 +1,25 @@
 {
-  "title": "Наши услуги и цены",
-  "subtitle": "Премиальные услуги красоты по доступным ценам",
-  "loading": "Загрузка услуг...",
-  "error": "Ошибка загрузки услуг",
-  "noServices": "Услуги не найдены",
+  "title": "Our services and prices",
+  "subtitle": "Premium beauty services at affordable prices",
+  "loading": "Loading services...",
+  "error": "Error loading services",
+  "noServices": "Services not found",
   "categories": {
-    "permanent-makeup": "Перманентный макияж",
-    "facial-care": "Уход за лицом",
-    "nails": "Ногтевой сервис",
-    "lashes": "Ресницы и брови",
-    "hair": "Парикмахерские услуги",
-    "massage": "Массаж",
-    "other": "Другие услуги"
+    "permanent-makeup": "Permanent makeup",
+    "facial-care": "Facial care",
+    "nails": "Nail services",
+    "lashes": "Lashes and brows",
+    "hair": "Hair services",
+    "massage": "Massage",
+    "other": "Other services"
   },
   "cta": {
-    "ready": "Готовы преобразиться?",
-    "bookButton": "Записаться на процедуру"
+    "ready": "Ready to transform?",
+    "bookButton": "Book an appointment"
   },
   "bottomCta": {
-    "title": "Готовы записаться?",
-    "description": "Выберите удобное время и насладитесь нашими премиальными услугами",
-    "bookButton": "Записаться сейчас"
+    "title": "Ready to book?",
+    "description": "Choose a convenient time and enjoy our premium services",
+    "bookButton": "Book now"
   }
 }

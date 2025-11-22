@@ -6,6 +6,7 @@ import { Shield, Check, X, Loader, AlertCircle, Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -33,6 +34,7 @@ interface UserPermissions {
 }
 
 export function PermissionsTab({ userId }: PermissionsTabProps) {
+  const { t } = useTranslation('admin-components');
   const { user: currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -63,7 +65,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
       setCustomPermissions(permsData.custom_permissions || {});
     } catch (err) {
       console.error('Error loading permissions:', err);
-      toast.error('Ошибка загрузки данных о правах');
+      toast.error(t('error_loading_permissions'));
     } finally {
       setLoading(false);
     }
@@ -98,10 +100,10 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
     try {
       setSavingPermissions(true);
       await api.updateUserCustomPermissions(userId, customPermissions);
-      toast.success('Индивидуальные права успешно обновлены');
+      toast.success(t('permissions_updated'));
       await loadData();
     } catch (err: any) {
-      toast.error(err.message || 'Ошибка сохранения прав');
+      toast.error(err.message || t('error_saving_permissions'));
     } finally {
       setSavingPermissions(false);
     }
@@ -252,13 +254,12 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
             return (
               <div
                 key={permKey}
-                className={`p-4 rounded-lg border transition-colors ${
-                  finalPermission
+                className={`p-4 rounded-lg border transition-colors ${finalPermission
                     ? 'bg-green-50 border-green-200'
                     : isCustomized
-                    ? 'bg-red-50 border-red-200'
-                    : 'bg-gray-50 border-gray-200'
-                }`}
+                      ? 'bg-red-50 border-red-200'
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
               >
                 <div className="flex items-start gap-3">
                   {canEdit ? (
@@ -285,9 +286,8 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
                       )}
                     </div>
                     <p
-                      className={`text-sm ${
-                        finalPermission ? 'text-gray-900' : 'text-gray-500'
-                      }`}
+                      className={`text-sm ${finalPermission ? 'text-gray-900' : 'text-gray-500'
+                        }`}
                     >
                       {permDescription}
                     </p>

@@ -780,13 +780,13 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <SettingsIcon className="w-8 h-8 text-pink-600" />
+    <div className="p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
+          <SettingsIcon className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
           Настройки системы
         </h1>
-        <p className="text-gray-600">{t('settings:manage_crm_parameters')}</p>
+        <p className="text-sm md:text-base text-gray-600">{t('settings:manage_crm_parameters')}</p>
       </div>
 
       {/* Информация о правах доступа */}
@@ -1610,22 +1610,22 @@ export default function AdminSettings() {
                 </ul>
               </div>
 
-              <Button 
+              <Button
                 size="lg"
                 className="bg-gradient-to-r from-pink-500 to-purple-600"
                 onClick={async () => {
                   const loadingToast = toast.loading('Запуск диагностики...');
-                  
+
                   try {
                     const response = await fetch('/api/diagnostics/full', {
                       credentials: 'include'
                     });
                     const data = await response.json();
-                    
+
                     console.log('🔍 РЕЗУЛЬТАТЫ ДИАГНОСТИКИ:', data);
-                    
+
                     toast.dismiss(loadingToast);
-                    
+
                     const issues = data.issues || [];
                     if (issues.length === 0) {
                       toast.success('✅ Диагностика успешна! Все работает отлично.');
@@ -1635,7 +1635,7 @@ export default function AdminSettings() {
                         Откройте консоль браузера (F12) для деталей.`
                       );
                     }
-                    
+
                     // Дополнительно выводим проблемы
                     if (issues.length > 0) {
                       console.error('❌ ПРОБЛЕМЫ:', issues);
@@ -1800,11 +1800,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('email')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                              broadcastForm.channels.includes('email')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
                                 ? 'border-blue-500 bg-blue-50 text-blue-700'
                                 : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                            }`}
+                              }`}
                           >
                             <Mail className="w-5 h-5" />
                             Email
@@ -1813,11 +1812,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('telegram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                              broadcastForm.channels.includes('telegram')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
                                 ? 'border-green-500 bg-green-50 text-green-700'
                                 : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                            }`}
+                              }`}
                           >
                             <MessageCircle className="w-5 h-5" />
                             Telegram
@@ -1826,11 +1824,10 @@ export default function AdminSettings() {
                           <button
                             type="button"
                             onClick={() => handleBroadcastChannelToggle('instagram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                              broadcastForm.channels.includes('instagram')
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
                                 ? 'border-purple-500 bg-purple-50 text-purple-700'
                                 : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                            }`}
+                              }`}
                           >
                             <Instagram className="w-5 h-5" />
                             Instagram
@@ -2092,20 +2089,18 @@ export default function AdminSettings() {
                 {messengerSettings.map((messenger) => (
                   <div
                     key={messenger.messenger_type}
-                    className={`border-2 rounded-xl p-6 transition-all ${
-                      messenger.is_enabled
+                    className={`border-2 rounded-xl p-6 transition-all ${messenger.is_enabled
                         ? 'border-pink-300 bg-pink-50'
                         : 'border-gray-200 bg-white'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                          messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
-                          messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
-                          messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
-                          'bg-black'
-                        }`}>
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${messenger.messenger_type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-600' :
+                            messenger.messenger_type === 'whatsapp' ? 'bg-green-500' :
+                              messenger.messenger_type === 'telegram' ? 'bg-blue-500' :
+                                'bg-black'
+                          }`}>
                           {messenger.messenger_type === 'instagram' ? (
                             <Instagram className="w-6 h-6 text-white" />
                           ) : (

@@ -1,28 +1,31 @@
 import { Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface QuickRepliesProps {
   onSelect: (text: string) => void;
 }
 
-const QUICK_REPLIES = [
-  { id: '1', text: 'Спасибо!', icon: '💖' },
-  { id: '2', text: 'Записал вас', icon: '✅' },
-  { id: '3', text: 'Перезвоню позже', icon: '📞' },
-  { id: '4', text: 'Да, конечно', icon: '👍' },
-  { id: '5', text: 'Нет, к сожалению', icon: '🙏' },
-  { id: '6', text: 'Уточню и сообщу', icon: '⏱️' }
-];
-
 export default function QuickReplies({ onSelect }: QuickRepliesProps) {
+  const { t } = useTranslation('common');
+
+  const QUICK_REPLIES = [
+    { id: '1', text: t('quick_reply_thanks'), icon: '💖' },
+    { id: '2', text: t('quick_reply_booked'), icon: '✅' },
+    { id: '3', text: t('quick_reply_call_later'), icon: '📞' },
+    { id: '4', text: t('quick_reply_yes'), icon: '👍' },
+    { id: '5', text: t('quick_reply_no'), icon: '🙏' },
+    { id: '6', text: t('quick_reply_clarify'), icon: '⏱️' }
+  ];
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
           <Zap className="w-4 h-4 text-white" />
         </div>
-        <p className="font-semibold text-gray-700 text-sm">Быстрые ответы</p>
+        <p className="font-semibold text-gray-700 text-sm">{t('quick_replies_title')}</p>
       </div>
-      
+
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {QUICK_REPLIES.map((reply) => (
           <button

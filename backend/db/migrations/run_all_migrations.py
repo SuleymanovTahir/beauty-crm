@@ -165,6 +165,12 @@ def main():
         'Создание таблицы расписания сотрудников'
     )
 
+    results["schema/employees/create_employee_unavailability"] = run_migration_function(
+        'db.migrations.schema.employees.create_employee_unavailability',
+        'create_employee_unavailability_table',
+        'Создание таблицы отсутствий сотрудников'
+    )
+
     results["schema/employees/create_employee_services"] = run_migration_function(
         'db.migrations.schema.employees.create_employee_services',
         'create_employee_services_table',
@@ -181,6 +187,12 @@ def main():
         'db.migrations.schema.employees.add_employee_birthdays',
         'add_employee_birthdays',
         'Добавление дней рождения сотрудников'
+    )
+
+    results["schema/clients/create_conversations_table"] = run_migration_function(
+        'db.migrations.schema.clients.create_conversations_table',
+        'create_conversations_table',
+        'Создание таблицы conversations для диалогов'
     )
 
     results["schema/employees/add_employee_id_to_bookings"] = run_migration_function(
@@ -328,6 +340,11 @@ def main():
         'db.migrations.schema.permissions.enhance_permissions_system',
         'enhance_permissions_system',
         'Расширенные права доступа'
+    )
+
+    results["add_user_permissions_table"] = run_migration_file(
+        'add_user_permissions_table.py',
+        'Индивидуальные права пользователей (таблица user_permissions)'
     )
 
     # Salon
@@ -532,13 +549,6 @@ def main():
         'link_employees_to_services',
         'Связывание сотрудников с услугами'
     )
-
-    # Удаление тестовых данных (опционально, раскомментируйте если нужно)
-    # results["maintenance/delete_test_clients"] = run_migration_function(
-    #     'db.migrations.maintenance.delete_test_clients',
-    #     'delete_test_clients',
-    #     'Удаление тестовых клиентов (@anna_hot, @elena_test, @maria_test)'
-    # )
 
     # ========================================================================
     # ИТОГИ

@@ -1,7 +1,21 @@
 {
-  "login_title": "Вход в систему",
-  "username": "Имя пользователя",
-  "password": "Пароль",
-  "remember_me": "Запомнить меня",
-  "forgot_password": "Забыли пароль?"
+  "login_title": "Login",
+  "username": "Username",
+  "password": "Password",
+  "remember_me": "Remember me",
+  "forgot_password": "Forgot password?",
+  "crm_system_management": "सीआरएम सिस्टम प्रबंधन",
+  "enter_login": "अपना लॉगिन दर्ज करें",
+  "enter_password": "अपना कूटशब्द भरें",
+  "login": "लॉग इन करें",
+  "loading": "लोड हो रहा है...",
+  "no_account_register": "कोई खाता नहीं है? पंजीकरण करवाना",
+  "return_to_home": "घर पर वापस",
+  "fill_both_fields": "दोनों फ़ील्ड भरें",
+  "welcome": "स्वागत",
+  "authorization_error": "प्राधिकरण त्रुटि",
+  "login_error": "लॉगिन त्रुटि",
+  "unauthorized": "अनधिकृत",
+  "401": "401",
+  "invalid_username_or_password": "Неверное имя пользователя или пароль"
 }

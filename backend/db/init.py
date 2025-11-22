@@ -334,8 +334,8 @@ def init_database():
         c.execute("""INSERT INTO users 
                      (username, password_hash, full_name, role, created_at)
                      VALUES (?, ?, ?, ?, ?)""",
-                  ('admin', password_hash, 'Администратор', 'admin', now))
-        print("✅ Создан дефолтный пользователь: admin / admin123")
+                  ('admin', password_hash, 'Tahir', 'director', now))
+        print("✅ Создан дефолтный пользователь: admin / admin123 (director)")
     
     # Создать дефолтные настройки салона
     c.execute("SELECT COUNT(*) FROM salon_settings")

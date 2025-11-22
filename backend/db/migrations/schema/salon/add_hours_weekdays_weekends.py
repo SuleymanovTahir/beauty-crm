@@ -5,7 +5,7 @@ import sqlite3
 import os
 
 # Get database path
-DATABASE_NAME = "salon_bot.db"
+from core.config import DATABASE_NAME
 
 def add_hours_weekdays_weekends():
     """Добавить колонки для часов работы будни/выходные"""

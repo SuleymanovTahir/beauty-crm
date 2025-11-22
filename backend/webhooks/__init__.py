@@ -495,6 +495,10 @@ async def handle_webhook(request: Request):
                         'is_corporate': is_corporate
                     }
                     
+                    # ✅ ПОЛУЧАЕМ ПРОГРЕСС БРОНИРОВАНИЯ
+                    from db.bookings import get_booking_progress, update_booking_progress, clear_booking_progress
+                    booking_progress = get_booking_progress(sender_id)
+                    
                     logger.info("🤖 Generating AI response...")
                     try:
                         # ✅ ПОЛУЧАЕМ НАСТРОЙКИ ПЕРЕД ВЫЗОВОМ
@@ -510,9 +514,9 @@ async def handle_webhook(request: Request):
                             history=history,
                             bot_settings=bot_settings,
                             salon_info=salon,
-                            booking_progress=None,  # Можешь добавить get_booking_progress(sender_id) если нужно
+                            booking_progress=booking_progress,  # ✅ ПЕРЕДАЕМ ПРОГРЕСС
                             client_language=client_language,
-                            context_flags=context_flags  # ✅ ТВОЙ ФЛАГ ОСТАЁТСЯ
+                            context_flags=context_flags
                         )
                         logger.info(f"✅ AI response: {ai_response[:100]}")
                     except Exception as gen_error:
@@ -565,6 +569,10 @@ async def handle_webhook(request: Request):
                                 master=booking_data.get('master')
                             )
                             logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                            
+                            # ✅ ОЧИЩАЕМ ПРОГРЕСС ПОСЛЕ УСПЕШНОЙ ЗАПИСИ
+                            clear_booking_progress(sender_id)
+                            
                         except Exception as save_error:
                             logger.error(f"❌ Failed to save booking: {save_error}")
                             import traceback
@@ -578,6 +586,36 @@ async def handle_webhook(request: Request):
                             flags=re.DOTALL
                         ).strip()
                         logger.info(f"📤 Cleaned response: {ai_response[:100]}")
+                    
+                    # ✅ ПАРСИНГ ОБНОВЛЕНИЯ ПРОГРЕССА (если бот решил обновить контекст)
+                    # Бот может вернуть [UPDATE_PROGRESS]...[/UPDATE_PROGRESS]
+                    progress_match = re.search(
+                        r'\[UPDATE_PROGRESS\](.*?)\[/UPDATE_PROGRESS\]',
+                        ai_response,
+                        re.DOTALL
+                    )
+                    
+                    if progress_match:
+                        try:
+                            progress_raw = progress_match.group(1).strip()
+                            new_progress = {}
+                            for line in progress_raw.split('\n'):
+                                if ':' in line:
+                                    key, value = line.split(':', 1)
+                                    new_progress[key.strip()] = value.strip()
+                            
+                            update_booking_progress(sender_id, new_progress)
+                            logger.info(f"💾 Progress updated: {new_progress}")
+                            
+                            # Удаляем тег из ответа
+                            ai_response = re.sub(
+                                r'\[UPDATE_PROGRESS\].*?\[/UPDATE_PROGRESS\]',
+                                '',
+                                ai_response,
+                                flags=re.DOTALL
+                            ).strip()
+                        except Exception as e:
+                            logger.error(f"❌ Error parsing progress update: {e}")
 
                     save_message(
                         sender_id,

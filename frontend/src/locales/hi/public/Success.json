@@ -1,9 +1,9 @@
 {
-  "title": "Запись подтверждена!",
-  "thankYou": "Спасибо, {{name}}!",
-  "serviceBooked": "Ваша запись на <highlight>{{service}}</highlight> успешно создана.",
-  "dateTime": "{{date}} в {{time}}",
-  "contactMessage": "Мы свяжемся с вами в ближайшее время для подтверждения деталей записи.",
-  "backToHome": "Вернуться на главную",
-  "viewServices": "Посмотреть услуги"
+  "title": "Appointment confirmed!",
+  "thankYou": "Thank you, {{name}}!",
+  "serviceBooked": "Your appointment for <highlight>{{service}}</highlight> has been successfully created.",
+  "dateTime": "{{date}} at {{time}}",
+  "contactMessage": "We will contact you shortly to confirm appointment details.",
+  "backToHome": "Return to home",
+  "viewServices": "View services"
 }

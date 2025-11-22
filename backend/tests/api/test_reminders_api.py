@@ -109,13 +109,14 @@ def test_reminders_http():
     print("=" * 70)
 
     try:
-        import requests
+        from fastapi.testclient import TestClient
+        from main import app
 
-        base_url = "http://localhost:8000/api"
+        client = TestClient(app)
 
         # Нужна авторизация, поэтому проверим только доступность
         print("\n1️⃣ GET /api/booking-reminder-settings (требует авторизации)")
-        response = requests.get(f"{base_url}/booking-reminder-settings", timeout=5)
+        response = client.get("/api/booking-reminder-settings")
 
         print(f"   Статус: {response.status_code}")
 
@@ -133,7 +134,7 @@ def test_reminders_http():
             return False
 
     except ImportError:
-        print("\n⚠️  Модуль requests не установлен, пропускаю HTTP тесты")
+        print("\n⚠️  Модуль fastapi.testclient не установлен, пропускаю HTTP тесты")
         return True
     except Exception as e:
         print(f"\n❌ ОШИБКА при HTTP запросе:")

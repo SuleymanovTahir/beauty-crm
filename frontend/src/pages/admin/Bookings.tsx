@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
@@ -111,6 +111,15 @@ const api = {
     return res.json();
   },
 
+  async deleteBooking(id: number) {
+    const res = await fetch(`${this.baseURL}/api/bookings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Delete failed');
+    return res.json();
+  },
+
   getCurrentUser() {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
@@ -120,7 +129,7 @@ const api = {
 
 export default function Bookings() {
   const navigate = useNavigate();
-  const { statuses: statusConfig}= useBookingStatuses();
+  const { statuses: statusConfig } = useBookingStatuses();
   const [bookings, setBookings] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const { t } = useTranslation(['admin/Bookings', 'common']);
@@ -386,6 +395,21 @@ export default function Bookings() {
     }
   };
 
+  const handleDeleteBooking = async (id: number, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete booking for ${name}?`)) {
+      return;
+    }
+
+    try {
+      await api.deleteBooking(id);
+      toast.success('Booking deleted successfully');
+      loadData(); // Refresh the list
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      toast.error(err.message || 'Failed to delete booking');
+    }
+  };
+
   const handleEditBooking = (booking: any) => {
     // Находим клиента и сервис
     const client = clients.find(c => c.instagram_id === booking.client_id);
@@ -527,7 +551,7 @@ export default function Bookings() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-        toast.success(t('bookings:template_downloaded'));
+      toast.success(t('bookings:template_downloaded'));
     } catch (err) {
       toast.error(t('bookings:error_downloading_template'));
     }
@@ -581,7 +605,7 @@ export default function Bookings() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
-        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:pending')}</p>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>{t('bookings:pending')}</p>
           <h3 className="text-3xl text-gray-900">{stats.pending}</h3>
         </div>
         <div style={{ backgroundColor: '#fff', padding: '1.5rem', borderRadius: '0.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb' }}>
@@ -749,9 +773,9 @@ export default function Bookings() {
                                     justifyContent: 'center',
                                     backgroundColor:
                                       messenger === 'instagram' ? '#E4405F' :
-                                      messenger === 'telegram' ? '#0088cc' :
-                                      messenger === 'whatsapp' ? '#25D366' :
-                                      '#6b7280'
+                                        messenger === 'telegram' ? '#0088cc' :
+                                          messenger === 'whatsapp' ? '#25D366' :
+                                            '#6b7280'
                                   }}
                                   title={messenger}
                                 >
@@ -830,6 +854,22 @@ export default function Bookings() {
                           title={t('bookings:chat')}
                         >
                           <MessageSquare style={{ width: '16px', height: '16px', color: '#10b981' }} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBooking(booking.id, booking.name)}
+                          style={{
+                            padding: '0.375rem 0.75rem',
+                            backgroundColor: '#fff',
+                            border: '1px solid #ef4444',
+                            borderRadius: '0.375rem',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                          title="Delete"
+                        >
+                          <Trash style={{ width: '16px', height: '16px', color: '#ef4444' }} />
                         </button>
                       </div>
                     </td>
@@ -1048,7 +1088,7 @@ export default function Bookings() {
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                    {t('bookings:export_date_to')}
+                  {t('bookings:export_date_to')}
                 </label>
                 <input
                   type="date"
@@ -1155,7 +1195,7 @@ export default function Bookings() {
               {/* Client Search */}
               <div style={{ position: 'relative' }}>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('bookings:client')} *
+                  {t('bookings:client')} *
                 </label>
                 <input
                   type="text"
@@ -1453,7 +1493,7 @@ export default function Bookings() {
                   opacity: addingBooking ? 0.5 : 1
                 }}
               >
-                  {addingBooking ? t('bookings:creating') : t('bookings:create_booking')}
+                {addingBooking ? t('bookings:creating') : t('bookings:create_booking')}
               </button>
             </div>
           </div>

@@ -157,10 +157,20 @@ def test_new_features():
         # 2.2 Master Schedule
         print("\n   [2.2] Расписание мастеров...")
         try:
+            # Создаем тестового мастера
+            from core.config import DATABASE_NAME
+            import sqlite3
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            test_master = "Тест Мастер"
+            c.execute("INSERT INTO employees (full_name, position, is_active) VALUES (?, ?, 1)", (test_master, "Stylist"))
+            conn.commit()
+            conn.close()
+
             schedule = MasterScheduleService()
 
             # Пробуем установить рабочие часы
-            success = schedule.set_working_hours("Тест Мастер", 0, "09:00", "18:00")
+            success = schedule.set_working_hours(test_master, 0, "09:00", "18:00")
 
             if success:
                 print(f"   ✅ Расписание работает")
@@ -171,6 +181,16 @@ def test_new_features():
         except Exception as e:
             print(f"   ❌ Расписание ошибка: {e}")
             results['Schedule'] = False
+        finally:
+            # Cleanup test employee
+            try:
+                conn = sqlite3.connect(DATABASE_NAME)
+                c = conn.cursor()
+                c.execute("DELETE FROM employees WHERE full_name = ?", (test_master,))
+                conn.commit()
+                conn.close()
+            except Exception:
+                pass
 
         # 2.3 Loyalty Program
         print("\n   [2.3] Программа лояльности...")
@@ -221,11 +241,10 @@ def test_smart_assistant():
     """Тест 3: SmartAssistant"""
     print_section("ТЕСТ 3: SmartAssistant (AI)")
 
+    test_client = "test_user_123"
+    
     try:
         from services.smart_assistant import SmartAssistant
-
-        # Простой тест
-        test_client = "test_user_123"
 
         # SmartAssistant требует client_id в __init__
         assistant = SmartAssistant(client_id=test_client)
@@ -241,20 +260,45 @@ def test_smart_assistant():
                 print(f"   ✅ Рекомендации работают")
                 print(f"       - Мастер: {recommendations.get('master', 'N/A')}")
                 print(f"       - Услуга: {recommendations.get('service', 'N/A')}")
-                return True
+                result = True
             else:
                 print(f"   ⚠️  Рекомендации пусты (может быть нормально для нового клиента)")
-                return True
+                result = True
 
         except Exception as e:
             print(f"   ⚠️  Ошибка рекомендаций: {e}")
             print(f"   ℹ️  Может быть нормально если нет данных о клиенте")
-            return True
+            result = True
 
     except Exception as e:
         print(f"   ❌ ОШИБКА: {e}")
         traceback.print_exc()
-        return False
+        result = False
+    
+    finally:
+        # Cleanup: удаляем тестовые данные
+        print(f"\n   🧹 Очистка тестовых данных...")
+        try:
+            from core.config import DATABASE_NAME
+            import sqlite3
+            
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            
+            # Удаляем тестового клиента и связанные данные
+            c.execute("DELETE FROM conversations WHERE client_id = ?", (test_client,))
+            c.execute("DELETE FROM clients WHERE instagram_id = ?", (test_client,))
+            deleted_conversations = c.rowcount
+            
+            conn.commit()
+            conn.close()
+            
+            print(f"   ✅ Тестовые данные удалены (клиент: {test_client})")
+            
+        except Exception as cleanup_error:
+            print(f"   ⚠️  Ошибка очистки: {cleanup_error}")
+    
+    return result
 
 
 def test_api_imports():

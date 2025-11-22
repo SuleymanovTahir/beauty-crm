@@ -55,5 +55,38 @@
   "need_more_masters": "الحاجة لمزيد من الخبراء",
   "simplify_contact_collection": "تبسيط جمع جهات الاتصال",
   "improve_greeting": "تحسين الترحيب",
-  "focus_on_highest_drop_off": "التركيز على المرحلة ذات أعلى معدل انسحاب"
+  "focus_on_highest_drop_off": "التركيز على المرحلة ذات أعلى معدل انسحاب",
+  "refresh": "Refresh",
+  "export": "Export",
+  "exporting": "Exporting...",
+  "from_visitors": "From visitors to clients",
+  "response_time": "Response time",
+  "avg_time": "Average time",
+  "for_period": "For period",
+  "avg_check": "Average check",
+  "per_booking": "Per booking",
+  "bookings_trend": "Bookings trend",
+  "services_distribution": "Services distribution",
+  "booking_statuses": "Booking statuses",
+  "name": "Name",
+  "quantity": "Quantity",
+  "income": "Income",
+  "status": {
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "confirmed": "Confirmed"
+  },
+  "errors": {
+    "select_both_dates": "Select both dates",
+    "invalid_date_range": "Start date must be before end date",
+    "export_failed": "Error exporting file",
+    "loading_error": "Loading error"
+  },
+  "success": {
+    "file_downloaded": "File downloaded successfully"
+  },
+  "clarify_services": "Clarify services",
+  "analyze_further": "Analyze further",
+  "optimization_tip": "Optimization tip"
 }

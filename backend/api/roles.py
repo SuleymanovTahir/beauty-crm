@@ -36,14 +36,26 @@ async def list_roles(session_token: Optional[str] = Cookie(None)):
         # Другие видят только те роли, которыми могут управлять
         manageable_roles = [
             role for role in all_roles
-            if can_manage_role(user["role"], role["key"])
+            if can_manage_role(user["role"], role["role_key"])
         ]
 
+    # Преобразуем формат для frontend (key, name, level)
+    formatted_roles = []
+    for role in manageable_roles:
+        role_key = role["role_key"]
+        # Получаем уровень иерархии из ROLES, если роль там есть
+        hierarchy_level = ROLES.get(role_key, {}).get("hierarchy_level", 0)
+        
+        formatted_roles.append({
+            "key": role_key,
+            "name": role["role_name"],
+            "level": hierarchy_level
+        })
+
     return {
-        "roles": manageable_roles,
-        "all_roles": all_roles,  # Для информации
+        "roles": formatted_roles,
         "current_user_role": user["role"],
-        "count": len(manageable_roles)
+        "count": len(formatted_roles)
     }
 
 

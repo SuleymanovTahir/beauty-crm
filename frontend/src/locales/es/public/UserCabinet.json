@@ -1,27 +1,27 @@
 {
-  "title": "Личный кабинет",
-  "subtitle": "Войдите в систему управления салоном",
-  "username": "Имя пользователя или email",
-  "usernamePlaceholder": "admin",
-  "usernameHint": "Введите ваше имя пользователя",
-  "password": "Пароль",
+  "title": "Personal Cabinet",
+  "subtitle": "Log in to the salon management system",
+  "username": "Username or email",
+  "usernamePlaceholder": "administración",
+  "usernameHint": "Enter your username",
+  "password": "Password",
   "passwordPlaceholder": "••••••",
-  "passwordHint": "Вводится при регистрации",
-  "loginButton": "Войти в систему",
-  "loggingIn": "Вход...",
-  "fillAllFields": "Пожалуйста, заполните все поля",
-  "loginSuccess": "Вы успешно вошли в систему! 🎉",
-  "loginError": "Неверные учетные данные",
-  "systemError": "Ошибка при входе",
-  "backToHome": "← Вернуться на главную",
+  "passwordHint": "Entered during registration",
+  "loginButton": "Log in",
+  "loggingIn": "Logging in...",
+  "fillAllFields": "Please fill in all fields",
+  "loginSuccess": "You have successfully logged in! 🎉",
+  "loginError": "Invalid credentials",
+  "systemError": "Login error",
+  "backToHome": "← Return to home",
   "credentials": {
-    "title": "Учетные данные для входа:",
-    "username": "Username:",
-    "password": "Password:"
+    "title": "Login credentials:",
+    "username": "Nombre de usuario:",
+    "password": "Contraseña:"
   },
   "roles": {
-    "admin": "Администратор",
-    "manager": "Менеджер",
-    "employee": "Сотрудник"
+    "admin": "Administrator",
+    "manager": "Manager",
+    "employee": "Employee"
   }
 }

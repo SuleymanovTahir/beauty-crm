@@ -98,6 +98,8 @@ class IntegrationTester:
                     user_message=user_message,
                     instagram_id=client_id,
                     history=history,
+                    bot_settings=self.bot.bot_settings,
+                    salon_info=self.bot.salon,
                     client_language=client_language
                 )
                 
@@ -115,7 +117,7 @@ class IntegrationTester:
                         self.log_fail(f"✗ Проверка не пройдена")
                 
                 # Задержка между сообщениями (чтобы не перегрузить Gemini)
-                await asyncio.sleep(2)
+                await asyncio.sleep(5)
             
             self.log_success(f"Сценарий '{scenario_name}' завершён")
             
@@ -205,7 +207,7 @@ class IntegrationTester:
         await self.simulate_conversation(client_id, messages_day1, "День 1: Начало записи")
         
         # Ждём немного
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
         
         # Второй день - клиент возвращается
         messages_day2 = [
@@ -378,7 +380,7 @@ class IntegrationTester:
         for name, scenario_func in scenarios:
             try:
                 await scenario_func()
-                await asyncio.sleep(3)  # Задержка между сценариями
+                await asyncio.sleep(10)  # Задержка между сценариями
             except Exception as e:
                 self.log_fail(f"Сценарий '{name}' упал с ошибкой: {e}")
         

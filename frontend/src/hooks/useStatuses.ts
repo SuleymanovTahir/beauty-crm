@@ -1,29 +1,24 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface StatusConfig {
   label: string;
   color: string;
 }
 
-const DEFAULT_CLIENT_STATUSES: Record<string, StatusConfig> = {
-  new: { label: 'Новый', color: 'blue' },
-  active: { label: 'Активный', color: 'green' },
-  inactive: { label: 'Неактивный', color: 'gray' },
-  vip: { label: 'VIP', color: 'purple' },
-  blocked: { label: 'Заблокирован', color: 'red' }
-};
-
-const DEFAULT_BOOKING_STATUSES: Record<string, StatusConfig> = {
-  pending: { label: 'Ожидает', color: 'yellow' },
-  confirmed: { label: 'Подтверждена', color: 'green' },
-  completed: { label: 'Завершена', color: 'blue' },
-  cancelled: { label: 'Отменена', color: 'red' },
-  no_show: { label: 'Не пришел', color: 'orange' }
-};
-
 export function useClientStatuses() {
+  const { t } = useTranslation('common');
+
+  const DEFAULT_CLIENT_STATUSES: Record<string, StatusConfig> = {
+    new: { label: t('status_new'), color: 'blue' },
+    active: { label: t('status_active'), color: 'green' },
+    inactive: { label: t('status_inactive'), color: 'gray' },
+    vip: { label: t('status_vip'), color: 'purple' },
+    blocked: { label: t('status_blocked'), color: 'red' }
+  };
+
   const [statuses, setStatuses] = useState<Record<string, StatusConfig>>(DEFAULT_CLIENT_STATUSES);
   const [loading, setLoading] = useState(true);
 
@@ -57,10 +52,10 @@ export function useClientStatuses() {
         [key]: { label, color }
       });
 
-      toast.success('Статус добавлен');
+      toast.success(t('status_added'));
       return true;
     } catch (err) {
-      toast.error('Ошибка добавления статуса');
+      toast.error(t('error_adding_status'));
       return false;
     }
   };
@@ -73,10 +68,10 @@ export function useClientStatuses() {
       delete newStatuses[key];
       setStatuses(newStatuses);
 
-      toast.success('Статус удален');
+      toast.success(t('status_deleted'));
       return true;
     } catch (err) {
-      toast.error('Ошибка удаления статуса');
+      toast.error(t('error_deleting_status'));
       return false;
     }
   };
@@ -93,10 +88,10 @@ export function useClientStatuses() {
         }
       });
 
-      toast.success('Статус обновлен');
+      toast.success(t('status_updated'));
       return true;
     } catch (err) {
-      toast.error('Ошибка обновления статуса');
+      toast.error(t('error_updating_status'));
       return false;
     }
   };
@@ -105,6 +100,16 @@ export function useClientStatuses() {
 }
 
 export function useBookingStatuses() {
+  const { t } = useTranslation('common');
+
+  const DEFAULT_BOOKING_STATUSES: Record<string, StatusConfig> = {
+    pending: { label: t('status_pending'), color: 'yellow' },
+    confirmed: { label: t('status_confirmed'), color: 'green' },
+    completed: { label: t('status_completed'), color: 'blue' },
+    cancelled: { label: t('status_cancelled'), color: 'red' },
+    no_show: { label: t('status_no_show'), color: 'orange' }
+  };
+
   const [statuses, setStatuses] = useState<Record<string, StatusConfig>>(DEFAULT_BOOKING_STATUSES);
   const [loading, setLoading] = useState(true);
 
@@ -138,10 +143,10 @@ export function useBookingStatuses() {
         [key]: { label, color }
       });
 
-      toast.success('Статус добавлен');
+      toast.success(t('status_added'));
       return true;
     } catch (err) {
-      toast.error('Ошибка добавления статуса');
+      toast.error(t('error_adding_status'));
       return false;
     }
   };
@@ -154,10 +159,10 @@ export function useBookingStatuses() {
       delete newStatuses[key];
       setStatuses(newStatuses);
 
-      toast.success('Статус удален');
+      toast.success(t('status_deleted'));
       return true;
     } catch (err) {
-      toast.error('Ошибка удаления статуса');
+      toast.error(t('error_deleting_status'));
       return false;
     }
   };
@@ -177,10 +182,10 @@ export function useBookingStatuses() {
         }
       });
 
-      toast.success('Статус обновлен');
+      toast.success(t('status_updated'));
       return true;
     } catch (err) {
-      toast.error('Ошибка обновления статуса');
+      toast.error(t('error_updating_status'));
       return false;
     }
   };

@@ -91,7 +91,7 @@ export default defineConfig({
     // Минификация (terser для лучшего результата)
     minify: "terser",
 
-    chunkSizeWarningLimit: 2000, 
+    chunkSizeWarningLimit: 3000,
 
     // Не генерировать исходные карты для продакшена
     sourcemap: false,
@@ -112,9 +112,10 @@ export default defineConfig({
         // Разделить vendor код на отдельные чанки
         manualChunks: {
           "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": ["lucide-react"],
+          "ui-vendor": ["lucide-react", "sonner"],
           "chart-vendor": ["recharts"],
           "form-vendor": ["react-hook-form"],
+          "i18n-vendor": ["react-i18next", "i18next"],
         },
         // Именование файлов
         entryFileNames: "js/[name]-[hash].js",

@@ -206,6 +206,9 @@ class SalonBot:
 
             today = datetime.now().date()
             tomorrow = today + timedelta(days=1)
+            
+            # Явно передаем текущую дату в контекст
+            additional_context += f"\n📅 СЕГОДНЯ: {today.strftime('%Y-%m-%d')} ({today.strftime('%A')})\n"
 
             target_date = None
 
@@ -221,7 +224,15 @@ class SalonBot:
                 date_match = re.search(r'(\d{1,2})[./-](\d{1,2})', user_message)
                 if date_match:
                     day, month = date_match.groups()
-                    target_date = f"{today.year}-{month.zfill(2)}-{day.zfill(2)}"
+                    # Пытаемся угадать год (текущий или следующий)
+                    current_year = today.year
+                    try:
+                        parsed_date = datetime.strptime(f"{current_year}-{month}-{day}", "%Y-%m-%d").date()
+                        if parsed_date < today:
+                            parsed_date = parsed_date.replace(year=current_year + 1)
+                        target_date = parsed_date.strftime("%Y-%m-%d")
+                    except:
+                        pass
 
             if target_date:
                 print(f"📅 Target date detected: {target_date}")
@@ -233,6 +244,7 @@ class SalonBot:
                 print(f"🔍 Looking for slots: service={service_name}, master={master_name}")
 
                 # Получаем реальные свободные слоты из БД
+                # Теперь вся логика фильтрации мастеров внутри этой функции
                 available_slots = get_available_time_slots(
                     date=target_date,
                     service_name=service_name,
@@ -240,56 +252,13 @@ class SalonBot:
                     duration_minutes=60
                 )
 
-                # БЫЛО (строка ~200):
                 if available_slots:
                     print(f"✅ Found {len(available_slots)} available slots")
                     
-                    # Формируем список слотов для контекста
                     slots_text = "\n".join([
                         f"  • {slot['time']} у мастера {slot['master']}"
-                        for slot in available_slots[:5]  # Первые 5 слотов
+                        for slot in available_slots[:5]
                     ])
-
-# СТАЛО:
-                if available_slots:
-                    print(f"✅ Found {len(available_slots)} available slots")
-                    
-                    # ⚠️ КРИТИЧНО: Показываем ТОЛЬКО мастеров для выбранной услуги!
-                    from db.employees import get_employees_by_service
-                    
-                    # Получаем ID услуги
-                    conn_temp = sqlite3.connect(DATABASE_NAME)
-                    c_temp = conn_temp.cursor()
-                    c_temp.execute("SELECT id FROM services WHERE name_ru LIKE ? OR name LIKE ? LIMIT 1", 
-                                   (f"%{service_name}%", f"%{service_name}%"))
-                    service_row = c_temp.fetchone()
-                    conn_temp.close()
-                    
-                    if service_row:
-                        service_id = service_row[0]
-                        # Получаем мастеров которые РЕАЛЬНО делают эту услугу
-                        valid_masters = get_employees_by_service(service_id)
-                        valid_master_names = [m[1] for m in valid_masters]  # m[1] = full_name
-                        
-                        # Фильтруем слоты - только мастера для этой услуги!
-                        filtered_slots = [
-                            slot for slot in available_slots 
-                            if slot['master'] in valid_master_names
-                        ]
-                        
-                        if filtered_slots:
-                            slots_text = "\n".join([
-                                f"  • {slot['time']} у мастера {slot['master']}"
-                                for slot in filtered_slots[:5]
-                            ])
-                        else:
-                            # Нет свободных мастеров для этой услуги
-                            slots_text = f"⚠️ НА {target_date} НЕТ СВОБОДНЫХ МАСТЕРОВ ДЛЯ УСЛУГИ {service_name}!"
-                    else:
-                        slots_text = "\n".join([
-                            f"  • {slot['time']} у мастера {slot['master']}"
-                            for slot in available_slots[:5]
-                        ])
 
                     additional_context += f"""
 
@@ -307,11 +276,12 @@ class SalonBot:
                     additional_context += f"""
 
     🔴 НА {target_date} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
-
-    ⚠️ ЧТО ДЕЛАТЬ:
-    - Предложи клиенту другую дату (завтра или послезавтра)
-    - Скажи: "К сожалению, на {target_date} всё занято. Могу предложить завтра или послезавтра?"
-    - НЕ предлагай время на {target_date} - его НЕТ!"""
+    
+    ⚠️ СТРОГИЙ ЗАПРЕТ:
+    - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date}!
+    - НЕ ГОВОРИ "ЕСТЬ ОКОШКО", ЕСЛИ ЕГО НЕТ!
+    - Скажи: "К сожалению, на {target_date} всё занято. Могу предложить завтра?"
+    """
 
             # Проверка конкретного времени если клиент спрашивает
             time_match = re.search(r'(\d{1,2}):(\d{2})', user_message)

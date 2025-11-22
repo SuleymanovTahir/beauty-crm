@@ -53,6 +53,7 @@ from api.schedule import router as schedule_router
 from api.loyalty import router as loyalty_router
 from api.auto_booking import router as auto_booking_router
 from api.permissions import router as permissions_router
+from api.roles import router as roles_router
 
 
 
@@ -92,6 +93,7 @@ app.include_router(schedule_router, prefix="/api")  # Master Schedule API
 app.include_router(loyalty_router, prefix="/api")  # Loyalty Program API
 app.include_router(auto_booking_router, prefix="/api")  # Auto-Booking API
 app.include_router(permissions_router, prefix="/api")  # Permissions & Roles API
+app.include_router(roles_router, prefix="/api")  # Roles API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 

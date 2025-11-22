@@ -40,6 +40,10 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     c = conn.cursor()
     
     now = datetime.now().isoformat()
+    # Ensure datetime_str is in ISO format (T separator)
+    if ' ' in datetime_str and 'T' not in datetime_str:
+        datetime_str = datetime_str.replace(' ', 'T')
+
     c.execute("""INSERT INTO bookings 
              (instagram_id, service_name, datetime, phone, name, status, 
               created_at, special_package_id, master)
@@ -181,32 +185,59 @@ def search_bookings(query: str, limit: int = 50):
 
 # ===== #4 - ПРОДОЛЖИТЬ ПРЕРВАННУЮ ЗАПИСЬ =====
 
-def get_incomplete_booking(instagram_id: str) -> Optional[Dict]:
-    """Получить незавершённую запись клиента"""
+def get_incomplete_booking(instagram_id: str):
+    """Получить незавершённую запись (старая версия)"""
+    # ... (legacy code)
+    pass
+
+def get_booking_progress(instagram_id: str) -> Optional[Dict]:
+    """Получить текущий прогресс бронирования"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-    
-    # Проверяем незавершённую запись в booking_temp
-    c.execute("""
-        SELECT instagram_id, service_name, date, time, phone, name, step
-        FROM booking_temp
-        WHERE instagram_id = ?
-    """, (instagram_id,))
-    
-    result = c.fetchone()
-    conn.close()
-    
-    if result:
-        return {
-            'instagram_id': result[0],
-            'service_name': result[1],
-            'date': result[2],
-            'time': result[3],
-            'phone': result[4],
-            'name': result[5],
-            'step': result[6]
-        }
-    return None
+    try:
+        c.execute("SELECT data FROM booking_drafts WHERE instagram_id = ?", (instagram_id,))
+        row = c.fetchone()
+        if row:
+            import json
+            return json.loads(row[0])
+        return None
+    except Exception as e:
+        print(f"Error getting booking progress: {e}")
+        return None
+    finally:
+        conn.close()
+
+def update_booking_progress(instagram_id: str, data: Dict):
+    """Обновить прогресс бронирования"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    try:
+        import json
+        # Merge with existing data
+        current = get_booking_progress(instagram_id) or {}
+        current.update(data)
+        
+        c.execute("""
+            INSERT OR REPLACE INTO booking_drafts (instagram_id, data, updated_at)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+        """, (instagram_id, json.dumps(current)))
+        conn.commit()
+    except Exception as e:
+        print(f"Error updating booking progress: {e}")
+    finally:
+        conn.close()
+
+def clear_booking_progress(instagram_id: str):
+    """Очистить прогресс бронирования"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    try:
+        c.execute("DELETE FROM booking_drafts WHERE instagram_id = ?", (instagram_id,))
+        conn.commit()
+    except Exception as e:
+        print(f"Error clearing booking progress: {e}")
+    finally:
+        conn.close()
 
 
 def mark_booking_incomplete(instagram_id: str, progress: Dict):

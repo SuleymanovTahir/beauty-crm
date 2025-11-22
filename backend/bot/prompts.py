@@ -209,6 +209,8 @@ class PromptBuilder:
    - Если в истории чата ты УЖЕ говорил "Записал вас" или "Вы записаны" → НЕ ЗАПИСЫВАЙ ВТОРОЙ РАЗ!
    - НЕ СОЗДАВАЙ ДУБЛИКАТЫ! Если запись уже подтверждена → просто напомни детали
    - Если клиент УЖЕ давал WhatsApp в этом разговоре → НЕ ПРОСИ ЕГО СНОВА!
+   - Если запись УЖЕ подтверждена (есть фраза "Записал вас") → НЕ ПРЕДЛАГАЙ НОВЫЕ СЛОТЫ, если клиент просто задает уточняющий вопрос (например "кто мастер?", "сколько длится?"). Отвечай на вопрос В КОНТЕКСТЕ УЖЕ СОЗДАННОЙ ЗАПИСИ!
+   - Если запись УЖЕ подтверждена (есть фраза "Записал вас") → НЕ ПРЕДЛАГАЙ НОВЫЕ СЛОТЫ, если клиент просто задает уточняющий вопрос (например "кто мастер?", "сколько длится?"). Отвечай на вопрос В КОНТЕКСТЕ УЖЕ СОЗДАННОЙ ЗАПИСИ!
 
 2. ПОМНИ ИНФОРМАЦИЮ ИЗ ЧАТА:
    - Если клиент УЖЕ написал номер телефона/WhatsApp ранее → используй его, НЕ ПРОСИ СНОВА!
@@ -575,7 +577,7 @@ phone: +77077077707
 Клиент: "давайте на 12:30"
 Бот: "Отлично! Какой ваш WhatsApp для связи?"
 Клиент: "+77056054308"
-Бот: "Записал вас на уход за волосами на завтра в 12:30 к мастеру Симо! До встречи! 💎
+Бот: "Записал вас на уход за волосами на завтра в 12:30 к мастеру Симо! Будем ждать вас! 💎
 
 [BOOKING_CONFIRMED]
 service: Уход за волосами
@@ -602,8 +604,32 @@ phone: номер телефона клиента
 ✅ Есть WhatsApp от клиента?
 ✅ Добавил команду [BOOKING_CONFIRMED]?
 ✅ Все поля заполнены корректно?
+❌ НЕ ИСПОЛЬЗУЙ слово "Unknown" или "Неизвестно"! Если мастер не выбран - оставь поле пустым или напишите "Любой мастер".
 
-Только после этого отправляй подтверждение!"""
+Только после этого отправляй подтверждение!
+
+🧠 ПАМЯТЬ И КОНТЕКСТ:
+Чтобы ты не забывал детали разговора, ты МОЖЕШЬ (и должен) сохранять промежуточные данные!
+
+Если клиент назвал услугу, дату или время, но запись еще не завершена - СОХРАНИ ЭТО:
+
+[UPDATE_PROGRESS]
+service: название услуги (если известно)
+master: имя мастера (если известно)
+date: ГГГГ-ММ-ДД (если известно)
+time: ЧЧ:ММ (если известно)
+phone: телефон (если известен)
+[/UPDATE_PROGRESS]
+
+ПРИМЕР:
+Клиент: "Хочу на маникюр завтра"
+Ты: "Отлично! На завтра (2025-11-23) есть время в 10:00. Записать?
+[UPDATE_PROGRESS]
+service: Маникюр
+date: 2025-11-23
+[/UPDATE_PROGRESS]"
+
+ИСПОЛЬЗУЙ ЭТО ЧТОБЫ НЕ ЗАБЫВАТЬ ДЕТАЛИ МЕЖДУ СООБЩЕНИЯМИ!"""
 
     def _build_salon_info(self) -> str:
         """Информация о салоне - из БД"""
@@ -613,7 +639,6 @@ phone: номер телефона клиента
 Часы: {self.salon.get('hours', '')}
 Телефон: {self.salon.get('phone', '')}
 Google Maps: {self.salon.get('google_maps', '')}"""
-
     def _build_services_list(self) -> str:
         """Список услуг из БД"""
         services = get_all_services(active_only=True)
@@ -625,48 +650,25 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                 services_by_category[category] = []
             services_by_category[category].append(service)
 
-        services_text = "=== УСЛУГИ САЛОНА ===\n\n"
+        services_text = "=== УСЛУГИ САЛОНА (ИСПОЛЬЗУЙ ЭТИ НАЗВАНИЯ) ===\n\n"
 
         for category, services_list in services_by_category.items():
             services_text += f"📂 {category}:\n"
             for service in services_list:
                 price_str = format_service_price_for_bot(service)
-                name_ru = service[3] or service[2]
+                # service[3] is name_ru, service[2] is name_en
+                # Force RU name if available, otherwise EN
+                name = service[3] if service[3] else service[2]
                 description = service[11] or ''
 
-                services_text += f"• {name_ru} - {price_str}\n"
+                services_text += f"• {name} - {price_str}\n"
                 if description:
                     services_text += f"  └ {description}\n"
             services_text += "\n"
 
         return services_text
 
-    def _build_services_list(self) -> str:
-        """Список услуг из БД"""
-        services = get_all_services(active_only=True)
 
-        services_by_category = {}
-        for service in services:
-            category = service[9]
-            if category not in services_by_category:
-                services_by_category[category] = []
-            services_by_category[category].append(service)
-
-        services_text = "=== УСЛУГИ САЛОНА ===\n\n"
-
-        for category, services_list in services_by_category.items():
-            services_text += f"📂 {category}:\n"
-            for service in services_list:
-                price_str = format_service_price_for_bot(service)
-                name_ru = service[3] or service[2]
-                description = service[11] or ''
-
-                services_text += f"• {name_ru} - {price_str}\n"
-                if description:
-                    services_text += f"  └ {description}\n"
-            services_text += "\n"
-
-        return services_text
 
     def _build_masters_list(self, client_language: str = 'ru') -> str:
         """Список мастеров салона С ИХ УСЛУГАМИ из БД"""

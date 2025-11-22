@@ -1,60 +1,60 @@
 {
-  "title": "Часто задаваемые вопросы",
-  "subtitle": "Ответы на популярные вопросы о наших услугах",
+  "title": "Frequently Asked Questions",
+  "subtitle": "Answers to popular questions about our services",
   "questions": {
     "booking": {
-      "question": "Как записаться на процедуру?",
-      "answer": "Вы можете записаться на процедуру через форму на нашем сайте{{phone, phone}}, позвонив по телефону {{phone}}{{/phone}}{{instagram, instagram}}, или написав нам в Instagram {{instagram}}{{/instagram}}. Мы свяжемся с вами для подтверждения записи."
+      "question": "How to book an appointment?",
+      "answer": "You can book an appointment through the form on our website{{phone, phone}}, by calling {{phone}}{{/phone}}{{instagram, instagram}}, or by messaging us on Instagram {{instagram}}{{/instagram}}. We will contact you to confirm the appointment."
     },
     "payment": {
-      "question": "Какие способы оплаты вы принимаете?",
-      "answer": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги."
+      "question": "What payment methods do you accept?",
+      "answer": "We accept cash and card payments (Visa, MasterCard, American Express). Payment is made after the service."
     },
     "cancellation": {
-      "question": "Могу ли я отменить или перенести запись?",
-      "answer": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги."
+      "question": "Can I cancel or reschedule my appointment?",
+      "answer": "Yes, you can cancel or reschedule your appointment no later than 24 hours before the scheduled time. Cancellations less than 24 hours in advance may incur a 50% fee of the service cost."
     },
     "materials": {
-      "question": "Какие материалы вы используете?",
-      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья."
+      "question": "What materials do you use?",
+      "answer": "We use only certified premium materials from leading global brands. All pigments are hypoallergenic and safe for health."
     },
     "certificates": {
-      "question": "Есть ли у ваших мастеров сертификаты?",
-      "answer": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации."
+      "question": "Do your masters have certificates?",
+      "answer": "Yes, all our masters have international certificates and regularly attend professional development courses."
     },
     "preparation": {
-      "question": "Нужна ли подготовка перед процедурой?",
-      "answer": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи."
+      "question": "Is preparation required before the procedure?",
+      "answer": "Yes, some procedures require preparation. We provide detailed recommendations when booking."
     },
     "contraindications": {
-      "question": "Есть ли противопоказания к процедурам?",
-      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером."
+      "question": "Are there contraindications for procedures?",
+      "answer": "Yes, each procedure has its contraindications. Main ones: pregnancy, lactation, acute inflammatory processes, blood diseases, oncology. Consultation with a master is mandatory before the procedure."
     },
     "guarantee": {
-      "question": "Предоставляете ли вы гарантию на услуги?",
-      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение."
+      "question": "Do you provide a guarantee for services?",
+      "answer": "Yes, we guarantee the quality of all our services. If you are not satisfied with the result, contact us within 7 days and we will find a solution."
     },
     "loyalty": {
-      "question": "Есть ли у вас программа лояльности?",
-      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов."
+      "question": "Do you have a loyalty program?",
+      "answer": "Yes, we have an accumulative loyalty program. After each visit, you receive bonuses that can be used to pay for future visits."
     },
     "weekends": {
-      "question": "Работаете ли вы в выходные?",
-      "answer": "Да, мы работаем 7 дней в неделю. {{weekdays, weekdays}}В будние дни {{weekdays}}{{/weekdays}}{{weekends, weekends}}, в выходные {{weekends}}{{/weekends}}."
+      "question": "Are you open on weekends?",
+      "answer": "Yes, we work 7 days a week. {{weekdays, weekdays}}On weekdays {{weekdays}}{{/weekdays}}{{weekends, weekends}}, on weekends {{weekends}}{{/weekends}}."
     },
     "gift": {
-      "question": "Можно ли подарить сертификат на услуги?",
-      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата."
+      "question": "Can I gift a service certificate?",
+      "answer": "Yes, we offer gift certificates for any amount or specific services. Contact us to arrange a certificate."
     },
     "location": {
-      "question": "Где находится ваш салон?",
-      "answer": "Мы находимся по адресу: {{address}}. Подробную информацию о том, как добраться, вы можете найти на странице Контакты."
+      "question": "Where is your salon located?",
+      "answer": "We are located at: {{address}}. You can find detailed directions on the Contacts page."
     }
   },
   "cta": {
-    "title": "Не нашли ответ на свой вопрос?",
-    "description": "Свяжитесь с нами, и мы с радостью ответим на все ваши вопросы",
-    "contactButton": "Связаться с нами",
-    "bookButton": "Записаться на процедуру"
+    "title": "Didn't find the answer to your question?",
+    "description": "Contact us and we will gladly answer all your questions",
+    "contactButton": "Contact us",
+    "bookButton": "Book an appointment"
   }
 }

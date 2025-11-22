@@ -1,7 +1,21 @@
 {
-  "login_title": "Вход в систему",
-  "username": "Имя пользователя",
-  "password": "Пароль",
-  "remember_me": "Запомнить меня",
-  "forgot_password": "Забыли пароль?"
+  "login_title": "Login",
+  "username": "Username",
+  "password": "Password",
+  "remember_me": "Remember me",
+  "forgot_password": "Forgot password?",
+  "crm_system_management": "CRM жүйесін басқару",
+  "enter_login": "Кіруді енгізіңіз",
+  "enter_password": "Құпия сөзді енгізіңіз",
+  "login": "Кіру",
+  "loading": "Жүктеу ...",
+  "no_account_register": "Есептік жазба жоқ па? Тіркеу",
+  "return_to_home": "Үйге оралу",
+  "fill_both_fields": "Екі өрісті толтырыңыз",
+  "welcome": "Хош келдіңіз",
+  "authorization_error": "Авторизация қатесі",
+  "login_error": "Кіру қатесі",
+  "unauthorized": "Руқсат етілмеген",
+  "401": "401",
+  "invalid_username_or_password": "Неверное имя пользователя или пароль"
 }

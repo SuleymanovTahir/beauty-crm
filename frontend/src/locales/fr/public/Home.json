@@ -1,57 +1,57 @@
 {
   "hero": {
-    "badge": "Премиум услуги красоты",
-    "title": "Откройте для себя новый уровень красоты",
-    "description": "Профессиональные мастера, индивидуальный подход и высококачественные материалы. Ваша красота - наша страсть.",
-    "bookButton": "Записаться сейчас",
-    "servicesButton": "Наши услуги"
+    "badge": "Premium beauty services",
+    "title": "Discover a new level of beauty",
+    "description": "Professional masters, individual approach and high-quality materials. Your beauty is our passion.",
+    "bookButton": "Book now",
+    "servicesButton": "Our services"
   },
   "features": {
-    "title": "Почему выбирают нас",
-    "subtitle": "Мы предлагаем лучший сервис в индустрии красоты",
+    "title": "Why choose us",
+    "subtitle": "We offer the best service in the beauty industry",
     "items": {
       "masters": {
-        "title": "Опытные мастера",
-        "description": "Наши специалисты имеют международные сертификаты и многолетний опыт работы"
+        "title": "Experienced masters",
+        "description": "Our specialists have international certificates and years of experience"
       },
       "materials": {
-        "title": "Премиум материалы",
-        "description": "Используем только качественные и безопасные материалы от ведущих брендов"
+        "title": "Premium materials",
+        "description": "We use only quality and safe materials from leading brands"
       },
       "schedule": {
-        "title": "Удобное расписание",
-        "description": "Работаем 7 дней в неделю с удобными временными слотами для записи"
+        "title": "Convenient schedule",
+        "description": "We work 7 days a week with convenient time slots for booking"
       }
     }
   },
   "gallery": {
-    "title": "Наши работы",
-    "subtitle": "Результаты, которыми мы гордимся",
+    "title": "Our works",
+    "subtitle": "Results we are proud of",
     "items": {
-      "makeup": "Перманентный макияж",
-      "facial": "Уход за лицом",
-      "salon": "Наш салон"
+      "makeup": "Permanent makeup",
+      "facial": "Facial care",
+      "salon": "Our salon"
     }
   },
   "testimonials": {
-    "title": "Отзывы наших клиентов",
-    "subtitle": "Что говорят о нас"
+    "title": "Customer reviews",
+    "subtitle": "What they say about us"
   },
   "booking": {
-    "title": "Записаться на процедуру",
-    "description": "Заполните форму и мы свяжемся с вами для подтверждения",
-    "loading": "Загрузка услуг...",
-    "validation": "Пожалуйста, заполните все поля",
+    "title": "Book an appointment",
+    "description": "Fill out the form and we will contact you for confirmation",
+    "loading": "Loading services...",
+    "validation": "Please fill in all fields",
     "form": {
-      "name": "Ваше имя *",
-      "namePlaceholder": "Анна Иванова",
-      "phone": "Телефон *",
+      "name": "Your name *",
+      "namePlaceholder": "Anna Ivanova",
+      "phone": "Phone *",
       "phonePlaceholder": "+971 50 123 4567",
-      "service": "Услуга *",
-      "servicePlaceholder": "Выберите услугу",
-      "date": "Дата *",
-      "time": "Время *",
-      "submit": "Записаться"
+      "service": "Service *",
+      "servicePlaceholder": "Select a service",
+      "date": "Date *",
+      "time": "Time *",
+      "submit": "Book"
     }
   }
 }

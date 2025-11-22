@@ -7,6 +7,7 @@ import { useClientStatuses } from '../../hooks/useStatuses';
 import BotModeSelector from './BotModeSelector';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface Client {
   id: string;
@@ -25,6 +26,7 @@ interface InfoPanelProps {
 }
 
 export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps) {
+  const { t } = useTranslation('components');
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editedName, setEditedName] = useState(client.name || '');
@@ -39,12 +41,13 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
     try {
       await api.updateClientBotMode(client.id, mode);
       setBotMode(mode);
-      toast.success(`Режим изменен: ${mode === 'manual' ? 'Менеджер' :
-          mode === 'assistant' ? 'Ассистент' :
-            'Автопилот'
-        }`);
+      toast.success(t('bot_mode_changed', {
+        mode: mode === 'manual' ? t('bot_mode_manual', { ns: 'common' }) :
+          mode === 'assistant' ? t('bot_mode_assistant', { ns: 'common' }) :
+            t('bot_mode_autopilot', { ns: 'common' })
+      }));
     } catch (err) {
-      toast.error('Ошибка изменения режима');
+      toast.error(t('error_changing_mode'));
     }
   };
 
@@ -79,7 +82,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
             <User className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-black text-lg">Информация</h3>
+          <h3 className="font-bold text-black text-lg">{t('info_panel_title')}</h3>
         </div>
         <button
           onClick={onClose}
@@ -128,19 +131,19 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <div className="w-8 h-8 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center">
               <User className="w-4 h-4 text-purple-600" />
             </div>
-            Имя клиента
+            {t('client_name')}
           </label>
           {isEditing ? (
             <Input
               type="text"
               value={editedName}
               onChange={(e) => setEditedName(e.target.value)}
-              placeholder="Введите имя..."
+              placeholder={t('client_name_placeholder')}
               className="border-2 border-blue-300 focus:border-blue-500 rounded-xl"
             />
           ) : (
             <p className="text-gray-900 px-2 py-1">
-              {client.name || <span className="text-gray-400 italic">Не указано</span>}
+              {client.name || <span className="text-gray-400 italic">{t('not_specified')}</span>}
             </p>
           )}
         </div>
@@ -151,19 +154,19 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <div className="w-8 h-8 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
               <Phone className="w-4 h-4 text-green-600" />
             </div>
-            Телефон
+            {t('phone')}
           </label>
           {isEditing ? (
             <Input
               type="text"
               value={editedPhone}
               onChange={(e) => setEditedPhone(e.target.value)}
-              placeholder="+971 XX XXX XXXX"
+              placeholder={t('phone_placeholder')}
               className="border-2 border-blue-300 focus:border-blue-500 rounded-xl"
             />
           ) : (
             <p className="text-gray-900 px-2 py-1">
-              {client.phone || <span className="text-gray-400 italic">Не указан</span>}
+              {client.phone || <span className="text-gray-400 italic">{t('not_specified_phone')}</span>}
             </p>
           )}
         </div>
@@ -174,7 +177,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center">
               <Check className="w-4 h-4 text-purple-600" />
             </div>
-            Статус
+            {t('status')}
           </label>
           {isEditing ? (
             <StatusSelect
@@ -249,12 +252,12 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               {isSaving ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Сохранение...
+                  {t('saving')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Сохранить
+                  {t('save')}
                 </>
               )}
             </Button>
@@ -265,7 +268,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
               className="sm:w-auto px-4 border-2 rounded-xl hover:bg-gray-100"
             >
               <X className="w-4 h-4 sm:mr-2" />
-              <span className="sm:inline hidden">Отмена</span>
+              <span className="sm:inline hidden">{t('cancel')}</span>
             </Button>
           </div>
         ) : (
@@ -274,7 +277,7 @@ export default function InfoPanel({ client, onClose, onUpdate }: InfoPanelProps)
             className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-black rounded-xl shadow-lg"
           >
             <Edit2 className="w-4 h-4 mr-2" />
-            Редактировать
+            {t('edit')}
           </Button>
         )}
       </div>

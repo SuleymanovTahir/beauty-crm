@@ -87,8 +87,17 @@ def test_master_schedule():
     print_section("ТЕСТ 2: Расписание мастеров")
 
     try:
-        schedule = MasterScheduleService()
+        # Создаем тестового мастера
+        from core.config import DATABASE_NAME
+        import sqlite3
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
         test_master = "Анна"
+        c.execute("INSERT INTO employees (full_name, position, is_active) VALUES (?, ?, 1)", (test_master, "Stylist"))
+        conn.commit()
+        conn.close()
+
+        schedule = MasterScheduleService()
         today = datetime.now().strftime('%Y-%m-%d')
         tomorrow = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
 
@@ -160,6 +169,18 @@ def test_master_schedule():
         import traceback
         traceback.print_exc()
         return False
+    finally:
+        # Cleanup test employee
+        try:
+            import sqlite3
+            from core.config import DATABASE_NAME
+            conn = sqlite3.connect(DATABASE_NAME)
+            c = conn.cursor()
+            c.execute("DELETE FROM employees WHERE full_name = ?", (test_master,))
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
 
 
 def test_loyalty_program():

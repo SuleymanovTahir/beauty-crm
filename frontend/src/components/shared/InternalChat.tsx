@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Message {
   id: number;
@@ -25,6 +26,7 @@ interface User {
 }
 
 export default function InternalChat() {
+  const { t } = useTranslation('common');
   const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -56,12 +58,12 @@ export default function InternalChat() {
         fetch('/api/internal-chat/messages', { credentials: 'include' }).then(r => r.json()),
         fetch('/api/internal-chat/users', { credentials: 'include' }).then(r => r.json())
       ]);
-      
+
       setMessages(messagesData.messages || []);
       setUsers(usersData.users || []);
     } catch (err) {
       console.error('Error loading data:', err);
-      toast.error('Ошибка загрузки данных');
+      toast.error(t('error_loading_data'));
     } finally {
       setLoading(false);
     }
@@ -69,8 +71,8 @@ export default function InternalChat() {
 
   const loadMessages = async () => {
     try {
-      const data = await fetch('/api/internal-chat/messages', { 
-        credentials: 'include' 
+      const data = await fetch('/api/internal-chat/messages', {
+        credentials: 'include'
       }).then(r => r.json());
       setMessages(data.messages || []);
     } catch (err) {
@@ -80,12 +82,12 @@ export default function InternalChat() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newMessage.trim()) return;
 
     try {
       setSending(true);
-      
+
       await fetch('/api/internal-chat/send', {
         method: 'POST',
         credentials: 'include',
@@ -101,17 +103,17 @@ export default function InternalChat() {
       await loadMessages();
     } catch (err) {
       console.error('Error sending message:', err);
-      toast.error('Ошибка отправки сообщения');
+      toast.error(t('error_sending_message'));
     } finally {
       setSending(false);
     }
   };
 
   const filteredMessages = selectedUser
-    ? messages.filter(m => 
-        (m.sender_id === currentUser.id && m.recipient_id === selectedUser.id) ||
-        (m.sender_id === selectedUser.id && m.recipient_id === currentUser.id)
-      )
+    ? messages.filter(m =>
+      (m.sender_id === currentUser.id && m.recipient_id === selectedUser.id) ||
+      (m.sender_id === selectedUser.id && m.recipient_id === currentUser.id)
+    )
     : messages.filter(m => m.is_group);
 
   if (loading) {
@@ -129,7 +131,7 @@ export default function InternalChat() {
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <MessageCircle className="w-6 h-6 text-pink-600" />
-            Внутренний чат
+            {t('internal_chat')}
           </h2>
         </div>
 
@@ -137,16 +139,15 @@ export default function InternalChat() {
           {/* Общий чат */}
           <button
             onClick={() => setSelectedUser(null)}
-            className={`w-full p-4 flex items-center gap-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-              !selectedUser ? 'bg-pink-50' : ''
-            }`}
+            className={`w-full p-4 flex items-center gap-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${!selectedUser ? 'bg-pink-50' : ''
+              }`}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
               <Users className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-gray-900">Общий чат</p>
-              <p className="text-xs text-gray-500">Все сотрудники</p>
+              <p className="text-sm font-medium text-gray-900">{t('group_chat')}</p>
+              <p className="text-xs text-gray-500">{t('all_employees')}</p>
             </div>
           </button>
 
@@ -155,9 +156,8 @@ export default function InternalChat() {
             <button
               key={user.id}
               onClick={() => setSelectedUser(user)}
-              className={`w-full p-4 flex items-center gap-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                selectedUser?.id === user.id ? 'bg-pink-50' : ''
-              }`}
+              className={`w-full p-4 flex items-center gap-3 border-b border-gray-100 hover:bg-gray-50 transition-colors ${selectedUser?.id === user.id ? 'bg-pink-50' : ''
+                }`}
             >
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                 {user.full_name.charAt(0)}
@@ -176,10 +176,10 @@ export default function InternalChat() {
         {/* Заголовок */}
         <div className="p-6 bg-white border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">
-            {selectedUser ? selectedUser.full_name : 'Общий чат'}
+            {selectedUser ? selectedUser.full_name : t('group_chat')}
           </h3>
           <p className="text-sm text-gray-500">
-            {selectedUser ? `Личный чат с ${selectedUser.full_name}` : 'Все сотрудники'}
+            {selectedUser ? t('private_chat_with', { name: selectedUser.full_name }) : t('all_employees')}
           </p>
         </div>
 
@@ -188,29 +188,28 @@ export default function InternalChat() {
           {filteredMessages.length === 0 ? (
             <div className="text-center text-gray-500 mt-20">
               <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p>Сообщений пока нет</p>
-              <p className="text-sm">Начните переписку первым!</p>
+              <p>{t('no_messages_yet')}</p>
+              <p className="text-sm">{t('start_conversation')}</p>
             </div>
           ) : (
             filteredMessages.map((msg) => {
               const isOwn = msg.sender_id === currentUser.id;
-              
+
               return (
                 <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-md ${isOwn ? 'order-2' : 'order-1'}`}>
                     {!isOwn && (
                       <p className="text-xs text-gray-500 mb-1 ml-2">{msg.sender_name}</p>
                     )}
-                    <div className={`rounded-2xl px-4 py-2 ${
-                      isOwn 
-                        ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' 
+                    <div className={`rounded-2xl px-4 py-2 ${isOwn
+                        ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
                         : 'bg-gray-100 text-gray-900'
-                    }`}>
+                      }`}>
                       <p className="text-sm">{msg.message}</p>
                       <p className={`text-xs mt-1 ${isOwn ? 'text-pink-100' : 'text-gray-500'}`}>
-                        {new Date(msg.created_at).toLocaleTimeString('ru-RU', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
+                        {new Date(msg.created_at).toLocaleTimeString('ru-RU', {
+                          hour: '2-digit',
+                          minute: '2-digit'
                         })}
                       </p>
                     </div>
@@ -228,12 +227,12 @@ export default function InternalChat() {
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Введите сообщение..."
+              placeholder={t('type_message')}
               disabled={sending}
               className="flex-1"
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={sending || !newMessage.trim()}
               className="bg-gradient-to-r from-pink-500 to-purple-600"
             >

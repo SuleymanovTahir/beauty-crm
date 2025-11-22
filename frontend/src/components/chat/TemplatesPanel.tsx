@@ -5,6 +5,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface Template {
   id: string;
@@ -20,6 +21,7 @@ interface TemplatesPanelProps {
 }
 
 export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProps) {
+  const { t } = useTranslation('components');
   const [searchTerm, setSearchTerm] = useState('');
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
       const data = await api.getMessageTemplates();
       setTemplates(data.templates || []);
     } catch (err) {
-      toast.error('Ошибка загрузки шаблонов');
+      toast.error(t('error_loading_templates'));
       console.error('Load templates error:', err);
     } finally {
       setLoading(false);
@@ -48,7 +50,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
 
   const handleCreate = async () => {
     if (!newTitle.trim() || !newContent.trim()) {
-      toast.error('Заполните название и текст');
+      toast.error(t('fill_name_and_text'));
       return;
     }
 
@@ -59,14 +61,14 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
         category: newCategory || 'general'
       });
 
-      toast.success('Шаблон создан');
+      toast.success(t('template_created'));
       setNewTitle('');
       setNewContent('');
       setNewCategory('');
       setIsCreating(false);
       loadTemplates();
     } catch (err) {
-      toast.error('Ошибка создания шаблона');
+      toast.error(t('error_creating_template'));
       console.error('Create template error:', err);
     }
   };
@@ -74,24 +76,24 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
   const handleUpdate = async (id: string, updateData: { title?: string; content?: string }) => {
     try {
       await api.updateMessageTemplate(parseInt(id), updateData);
-      toast.success('Шаблон обновлен');
+      toast.success(t('template_updated'));
       setEditingId(null);
       loadTemplates();
     } catch (err) {
-      toast.error('Ошибка обновления');
+      toast.error(t('error_updating_template'));
       console.error('Update template error:', err);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Удалить этот шаблон?')) return;
+    if (!confirm(t('delete_template_confirm'))) return;
 
     try {
       await api.deleteMessageTemplate(parseInt(id));
-      toast.success('Шаблон удален');
+      toast.success(t('template_deleted'));
       loadTemplates();
     } catch (err) {
-      toast.error('Ошибка удаления');
+      toast.error(t('error_deleting_template'));
       console.error('Delete template error:', err);
     }
   };
@@ -138,7 +140,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
             <FileText className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-black text-lg">Шаблоны сообщений</h3>
+          <h3 className="font-bold text-black text-lg">{t('templates_panel_title')}</h3>
         </div>
         <button
           onClick={onClose}
@@ -154,7 +156,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="Поиск шаблонов..."
+            placeholder={t('search_templates')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 border-2 border-purple-200 focus:border-purple-400 rounded-xl bg-white"
@@ -178,7 +180,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                   className="w-full p-4 mb-3 rounded-xl border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition-all flex items-center justify-center gap-2 text-purple-700 font-semibold"
                 >
                   <Plus className="w-5 h-5" />
-                  Создать шаблон
+                  {t('create_template')}
                 </button>
               )}
 
@@ -186,20 +188,20 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
               {isCreating && (
                 <div className="mb-3 p-4 bg-white rounded-xl border-2 border-purple-300">
                   <Input
-                    placeholder="Название шаблона"
+                    placeholder={t('template_name')}
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     className="mb-2"
                   />
                   <Textarea
-                    placeholder="Текст шаблона (можно использовать {{date}}, {{time}}, {{service}})"
+                    placeholder={t('template_text')}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     className="mb-2"
                     rows={3}
                   />
                   <Input
-                    placeholder="Категория (опционально)"
+                    placeholder={t('category')}
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
                     className="mb-3"
@@ -207,7 +209,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                   <div className="flex gap-2">
                     <Button onClick={handleCreate} size="sm" className="flex-1">
                       <Save className="w-4 h-4 mr-2" />
-                      Сохранить
+                      {t('save')}
                     </Button>
                     <Button
                       onClick={() => {
@@ -219,7 +221,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                       variant="outline"
                       size="sm"
                     >
-                      Отмена
+                      {t('cancel')}
                     </Button>
                   </div>
                 </div>
@@ -247,7 +249,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                             onClick={() => {
                               const titleInput = document.getElementById(`title-${template.id}`) as HTMLInputElement;
                               const contentInput = document.getElementById(`content-${template.id}`) as HTMLTextAreaElement;
-                              
+
                               const updateData: any = {};
                               if (titleInput && titleInput.value !== template.title) {
                                 updateData.title = titleInput.value;
@@ -255,7 +257,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                               if (contentInput && contentInput.value !== template.content) {
                                 updateData.content = contentInput.value;
                               }
-                              
+
                               if (Object.keys(updateData).length > 0) {
                                 handleUpdate(template.id, updateData);
                               } else {
@@ -266,14 +268,14 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                             className="flex-1"
                           >
                             <Save className="w-4 h-4 mr-2" />
-                            Сохранить
+                            {t('save')}
                           </Button>
                           <Button
                             onClick={() => setEditingId(null)}
                             size="sm"
                             variant="outline"
                           >
-                            Отмена
+                            {t('cancel')}
                           </Button>
                         </div>
                       </div>
@@ -328,7 +330,7 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                             {template.content}
                           </p>
                           <div className="mt-2 pt-2 border-t border-current opacity-30">
-                            <p className="text-xs font-semibold">Нажмите для вставки</p>
+                            <p className="text-xs font-semibold">{t('click_to_insert')}</p>
                           </div>
                         </div>
                       </div>
@@ -340,9 +342,9 @@ export default function TemplatesPanel({ onSelect, onClose }: TemplatesPanelProp
                   <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
                     <FileText className="w-8 h-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-500 font-medium">Шаблоны не найдены</p>
+                  <p className="text-gray-500 font-medium">{t('templates_not_found')}</p>
                   <p className="text-sm text-gray-400 mt-1">
-                    {searchTerm ? 'Попробуйте другой поисковый запрос' : 'Создайте свой первый шаблон'}
+                    {searchTerm ? t('try_another_search') : t('create_first_template')}
                   </p>
                 </div>
               )}

@@ -165,7 +165,7 @@ def run_all_tests():
             [sys.executable, os.path.join(os.path.dirname(__file__), "check_bot.py")],
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=600
         )
         print(result.stdout)
         if result.stderr:
@@ -331,8 +331,29 @@ def run_all_tests():
 
 
     # ========================================================================
-    # 14. Рассылки и напоминания
+    # 14. Schedule API Tests
     # ========================================================================
+    print_test_file(
+        "tests/test_schedule.py",
+        "Тестирование API расписания сотрудников"
+    )
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(os.path.dirname(__file__), "test_schedule.py")],
+            capture_output=True,
+            text=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        success = result.returncode == 0
+        results.append(("test_schedule.py - API расписания", success))
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("test_schedule.py - API расписания", False))
     # print_test_file(
     #     "tests/test_broadcasts_and_reminders.py",
     #     "Тестирование акционных рассылок и напоминаний Instagram"

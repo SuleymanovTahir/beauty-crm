@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Note {
   id: number;
@@ -18,6 +19,7 @@ interface NotesPanelProps {
 }
 
 export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
+  const { t } = useTranslation('components');
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNoteText, setNewNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +37,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
       const data = await api.getClientNotes(clientId);
       setNotes(data.notes || []);
     } catch (err) {
-      toast.error('Ошибка загрузки заметок');
+      toast.error(t('error_loading_notes'));
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +45,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
 
   const handleAddNote = async () => {
     if (!newNoteText.trim()) {
-      toast.error('Введите текст заметки');
+      toast.error(t('enter_note_text'));
       return;
     }
 
@@ -52,9 +54,9 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
       await api.addClientNote(clientId, newNoteText);
       setNewNoteText('');
       await loadNotes();
-      toast.success('Заметка добавлена');
+      toast.success(t('note_added'));
     } catch (err) {
-      toast.error('Ошибка сохранения');
+      toast.error(t('error_saving_note'));
     } finally {
       setIsSaving(false);
     }
@@ -72,7 +74,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
 
   const handleSaveEdit = async (noteId: number) => {
     if (!editingText.trim()) {
-      toast.error('Заметка не может быть пустой');
+      toast.error(t('note_cannot_be_empty'));
       return;
     }
 
@@ -81,21 +83,21 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
       setEditingNoteId(null);
       setEditingText('');
       await loadNotes();
-      toast.success('Заметка обновлена');
+      toast.success(t('note_updated'));
     } catch (err) {
-      toast.error('Ошибка обновления');
+      toast.error(t('error_updating_note'));
     }
   };
 
   const handleDeleteNote = async (noteId: number) => {
-    if (!confirm('Удалить заметку?')) return;
+    if (!confirm(t('delete_note_confirm'))) return;
 
     try {
       await api.deleteClientNote(clientId, noteId);
       await loadNotes();
-      toast.success('Заметка удалена');
+      toast.success(t('note_deleted'));
     } catch (err) {
-      toast.error('Ошибка удаления');
+      toast.error(t('error_deleting_note'));
     }
   };
 
@@ -107,7 +109,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
           <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
             <StickyNote className="w-5 h-5 text-black" />
           </div>
-          <h3 className="font-bold text-black text-lg">Заметки ({notes.length})</h3>
+          <h3 className="font-bold text-black text-lg">{t('notes_panel_title')} ({notes.length})</h3>
         </div>
         <button
           onClick={onClose}
@@ -130,7 +132,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
               <Textarea
                 value={newNoteText}
                 onChange={(e) => setNewNoteText(e.target.value)}
-                placeholder="✍️ Новая заметка..."
+                placeholder={t('new_note_placeholder')}
                 className="min-h-[80px] border-0 resize-none focus-visible:ring-0 bg-transparent mb-2"
                 rows={3}
                 disabled={isSaving}
@@ -142,9 +144,9 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
                 size="sm"
               >
                 {isSaving ? (
-                  <><Loader className="w-4 h-4 mr-2 animate-spin" />Сохранение...</>
+                  <><Loader className="w-4 h-4 mr-2 animate-spin" />{t('saving')}</>
                 ) : (
-                  <><Plus className="w-4 h-4 mr-2" />Добавить</>
+                  <><Plus className="w-4 h-4 mr-2" />{t('add_note')}</>
                 )}
               </Button>
             </div>
@@ -169,14 +171,14 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                         >
                           <Save className="w-3.5 h-3.5 mr-1" />
-                          Сохранить
+                          {t('save')}
                         </Button>
                         <Button
                           onClick={handleCancelEdit}
                           size="sm"
                           variant="outline"
                         >
-                          Отмена
+                          {t('cancel')}
                         </Button>
                       </div>
                     </div>
@@ -203,7 +205,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
 
                       <p className="text-sm text-gray-900 whitespace-pre-wrap mb-2 pr-16">{note.text}</p>
                       <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="font-medium">{note.created_by || 'Неизвестно'}</span>
+                        <span className="font-medium">{note.created_by || t('unknown')}</span>
                         <span>{new Date(note.created_at).toLocaleString('ru-RU', {
                           day: '2-digit',
                           month: 'short',
@@ -221,8 +223,8 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
                 <div className="w-16 h-16 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <StickyNote className="w-8 h-8 text-yellow-600" />
                 </div>
-                <p className="text-gray-500 font-medium text-sm">Нет заметок</p>
-                <p className="text-xs text-gray-400 mt-1">Добавьте первую заметку</p>
+                <p className="text-gray-500 font-medium text-sm">{t('no_notes')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('add_first_note')}</p>
               </div>
             )}
           </>
@@ -235,7 +237,7 @@ export default function NotesPanel({ clientId, onClose }: NotesPanelProps) {
           <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
-          Заметки видны только вам и сотрудникам
+          {t('notes_visible_info')}
         </p>
       </div>
     </div>

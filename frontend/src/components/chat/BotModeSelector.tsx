@@ -1,5 +1,6 @@
 // frontend/src/components/chat/BotModeSelector.tsx
 import { Bot, User, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface BotModeSelectorProps {
   currentMode: 'manual' | 'assistant' | 'autopilot';
@@ -7,26 +8,28 @@ interface BotModeSelectorProps {
 }
 
 export default function BotModeSelector({ currentMode, onChange }: BotModeSelectorProps) {
+  const { t } = useTranslation('common');
+
   const modes = [
     {
       id: 'manual' as const,
       icon: User,
-      label: 'Менеджер',
-      description: 'Вы отвечаете сами',
+      label: t('bot_mode_manual'),
+      description: t('bot_mode_manual_desc'),
       color: 'blue'
     },
     {
       id: 'assistant' as const,
       icon: Sparkles,
-      label: 'Ассистент',
-      description: 'Бот подсказывает',
+      label: t('bot_mode_assistant'),
+      description: t('bot_mode_assistant_desc'),
       color: 'purple'
     },
     {
       id: 'autopilot' as const,
       icon: Bot,
-      label: 'Автопилот',
-      description: 'Бот отвечает сам',
+      label: t('bot_mode_autopilot'),
+      description: t('bot_mode_autopilot_desc'),
       color: 'green'
     }
   ];
@@ -34,21 +37,21 @@ export default function BotModeSelector({ currentMode, onChange }: BotModeSelect
   return (
     <div className="space-y-2">
       <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
-        🤖 Режим бота
+        🤖 {t('bot_mode_title')}
       </p>
       <div className="grid grid-cols-1 gap-2">
         {modes.map((mode) => {
           const Icon = mode.icon;
           const isActive = currentMode === mode.id;
-          
+
           return (
             <button
               key={mode.id}
               onClick={() => onChange(mode.id)}
               className={`
                 relative flex items-start gap-3 p-3 rounded-xl border-2 transition-all text-left
-                ${isActive 
-                  ? `border-${mode.color}-500 bg-${mode.color}-50` 
+                ${isActive
+                  ? `border-${mode.color}-500 bg-${mode.color}-50`
                   : 'border-gray-200 bg-white hover:border-gray-300'
                 }
               `}
@@ -59,7 +62,7 @@ export default function BotModeSelector({ currentMode, onChange }: BotModeSelect
               `}>
                 <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
               </div>
-              
+
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className={`font-semibold text-sm ${isActive ? `text-${mode.color}-900` : 'text-gray-900'}`}>
