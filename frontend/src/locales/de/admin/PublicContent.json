@@ -1,0 +1,19 @@
+{
+  "active": "Aktiv",
+  "add_review": "Fügen Sie eine Bewertung hinzu",
+  "author_name": "Name des Autors",
+  "auto_translate_hint": "Automatisch in alle Sprachen übersetzt",
+  "confirm_delete_review": "Soll ich diese Bewertung löschen?",
+  "create": "Erstellen",
+  "edit_review": "Rezension bearbeiten",
+  "error_saving_review": "Fehler beim Speichern der Bewertung",
+  "hidden": "Versteckt",
+  "new_review": "Neue Rezension",
+  "photo_url": "Foto-URL (optional)",
+  "rating": "Bewertung",
+  "review_text": "Rezensionstext (auf Russisch)",
+  "stars": "Sterne",
+  "subtitle": "Rezensionen, Banner, FAQ und Galerie",
+  "title": "Öffentliches Content-Management",
+  "translations": "Übersetzungen"
+}

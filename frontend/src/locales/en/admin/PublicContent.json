@@ -1,0 +1,19 @@
+{
+  "active": "Active",
+  "add_review": "Add a review",
+  "author_name": "Author's name",
+  "auto_translate_hint": "Automatically translated into all languages",
+  "confirm_delete_review": "Should I delete this review?",
+  "create": "Create",
+  "edit_review": "Edit review",
+  "error_saving_review": "Error saving review",
+  "hidden": "Hidden",
+  "new_review": "New review",
+  "photo_url": "Photo URL (optional)",
+  "rating": "Rating",
+  "review_text": "Review text (in Russian)",
+  "stars": "stars",
+  "subtitle": "Reviews, banners, FAQ and gallery",
+  "title": "Public Content Management",
+  "translations": "Translations"
+}

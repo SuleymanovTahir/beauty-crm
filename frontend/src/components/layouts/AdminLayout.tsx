@@ -106,7 +106,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: Scissors, label: t('menu.services'), path: '/admin/services', requirePermission: () => permissions.canViewServices },
       { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar', requirePermission: () => permissions.canViewAllCalendars },
       { icon: UserCog, label: t('menu.users'), path: '/admin/users', requirePermission: () => permissions.canViewAllUsers },
-      { icon: Globe, label: 'Публичный контент', path: '/admin/public-content', requirePermission: () => permissions.canViewSettings },
+      { icon: Globe, label: t('menu.public_content'), path: '/admin/public-content', requirePermission: () => permissions.canViewSettings },
       { icon: Settings, label: t('menu.settings'), path: '/admin/settings', requirePermission: () => permissions.canViewSettings },
       { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings', requirePermission: () => permissions.canViewBotSettings },
     ];

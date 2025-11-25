@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface DropdownOption {
   label: string;
@@ -28,6 +29,7 @@ export function DropdownButton({
   variant = 'outline',
   className = ''
 }: DropdownButtonProps) {
+  const { t } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -53,12 +55,11 @@ export function DropdownButton({
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled || loading}
-        className={`${baseStyles} ${variantStyles[variant]} ${className} ${
-          disabled || loading ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
+        className={`${baseStyles} ${variantStyles[variant]} ${className} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
       >
         {icon}
-        <span>{loading ? 'Загрузка...' : label}</span>
+        <span>{loading ? t('loading') : label}</span>
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
@@ -71,9 +72,8 @@ export function DropdownButton({
                 option.onClick();
                 setIsOpen(false);
               }}
-              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
-                index < options.length - 1 ? 'border-b border-gray-100' : ''
-              }`}
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${index < options.length - 1 ? 'border-b border-gray-100' : ''
+                }`}
             >
               {option.icon}
               <span className={`text-sm ${option.color || 'text-gray-900'}`}>{option.label}</span>

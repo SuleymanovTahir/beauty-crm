@@ -1,0 +1,19 @@
+{
+  "active": "Actif",
+  "add_review": "Ajouter un avis",
+  "author_name": "Nom de l'auteur",
+  "auto_translate_hint": "Traduit automatiquement dans toutes les langues",
+  "confirm_delete_review": "Dois-je supprimer cet avis ?",
+  "create": "Créer",
+  "edit_review": "Modifier l'avis",
+  "error_saving_review": "Erreur lors de l'enregistrement de l'avis",
+  "hidden": "Caché",
+  "new_review": "Nouvelle revue",
+  "photo_url": "URL de la photo (facultatif)",
+  "rating": "Notation",
+  "review_text": "Texte de révision (en russe)",
+  "stars": "étoiles",
+  "subtitle": "Avis, bannières, FAQ et galerie",
+  "title": "Gestion du contenu public",
+  "translations": "Traductions"
+}
