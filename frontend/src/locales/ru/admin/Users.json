@@ -43,7 +43,7 @@
   "full_name_placeholder": "Заполнитель полного имени",
   "important": "Важный",
   "loading": "Загрузка пользователей...",
-  "name_must_be_at_least_2_characters": "Имя должно содержать не менее 2 символов.",
+  "name_must_be_at_least_2_characters": "Имя должно содержать не менее 2\u00a0символов.",
   "new_password": "Новый пароль",
   "no_permission_to_change_roles": "У вас нет прав для изменения ролей других пользователей.",
   "no_users_found": "Пользователи не найдены",

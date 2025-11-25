@@ -1,14 +1,14 @@
 const path = require('path');
 
 module.exports = {
-  locales: ["ru","en","es","ar","hi","kk","pt","fr","de"],
+  locales: ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"],
   output: path.resolve(__dirname, '../../src/locales/$LOCALE/$NAMESPACE.json'),
   input: [path.resolve(__dirname, '../../src/**/*.{js,jsx,ts,tsx}')],
   defaultNamespace: 'common',
-  keySeparator: false,
+  keySeparator: false,  // ❌ Отключаем разделитель, иначе создаются дубликаты
   namespaceSeparator: ':',
   createOldCatalogs: false,
-  keepRemoved: false,
+  keepRemoved: true,  // ✅ Сохраняем существующие переводы
   sort: true,
   verbose: true,
   useKeysAsDefaultValue: false,
@@ -17,7 +17,7 @@ module.exports = {
     tsx: ['JsxLexer'],
     ts: ['JsxLexer']
   },
-  
+
   // 🎯 Определяем namespace по пути файла
   // 🎯 Определяем namespace по пути файла - DISABLED due to API change
   // transform: function(file, enc, done) {

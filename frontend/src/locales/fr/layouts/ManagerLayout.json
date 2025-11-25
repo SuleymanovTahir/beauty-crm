@@ -2,10 +2,12 @@
   "crm": "CRM Beauté",
   "logout": "Se déconnecter",
   "manager": "Directeur",
-  "menu.analytics": "Analytique",
-  "menu.chat": "Chat",
-  "menu.clients": "Clientèle",
-  "menu.dashboard": "Tableau de bord",
-  "menu.funnel": "Entonnoir",
-  "menu.settings": "Paramètres"
+  "menu": {
+    "analytics": "Analytique",
+    "chat": "Chat",
+    "clients": "Clientèle",
+    "dashboard": "Tableau de bord",
+    "funnel": "Entonnoir",
+    "settings": "Paramètres"
+  }
 }

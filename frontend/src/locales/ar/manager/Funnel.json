@@ -1,7 +1,4 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "استمر!"
-  },
   "all_good": "كل شيء على ما يرام",
   "conversion": {
     "booked_to_completed": "حجزت حتى الانتهاء",
@@ -12,20 +9,20 @@
   "funnel_chart": "مخطط قمع",
   "key_metrics": "المؤشرات الرئيسية",
   "loading": "تحميل",
+  "losses_zero": "خسائر أخرى",
+  "losses_one": "خسائر واحدة",
+  "losses_two": "خسائر أخرى",
   "losses_few": "الخسائر صغيرة",
   "losses_many": "خسائر كثيرة",
-  "losses_one": "خسائر واحدة",
   "losses_other": "خسائر أخرى",
-  "losses_two": "خسائر أخرى",
-  "losses_zero": "خسائر أخرى",
   "recommendations": {
     "increase_engagement": {
+      "description_zero": "وصف أخرى",
+      "description_one": "وصف واحد",
+      "description_two": "وصف أخرى",
       "description_few": "الوصف لا يكفي",
       "description_many": "وصف الكثير",
-      "description_one": "وصف واحد",
       "description_other": "وصف أخرى",
-      "description_two": "وصف أخرى",
-      "description_zero": "وصف أخرى",
       "suggestion": "افتراض",
       "title": "عنوان"
     },
@@ -35,12 +32,12 @@
       "title": "عنوان"
     },
     "reduce_noshow": {
+      "description_zero": "وصف أخرى",
+      "description_one": "وصف واحد",
+      "description_two": "وصف أخرى",
       "description_few": "الوصف لا يكفي",
       "description_many": "وصف الكثير",
-      "description_one": "وصف واحد",
       "description_other": "وصف أخرى",
-      "description_two": "وصف أخرى",
-      "description_zero": "وصف أخرى",
       "suggestion": "افتراض",
       "title": "عنوان"
     }
@@ -57,5 +54,8 @@
   },
   "title": "عنوان",
   "total_conversion": "إجمالي التحويل",
-  "total_losses": "إجمالي الخسائر"
+  "total_losses": "إجمالي الخسائر",
+  "Your funnel shows good results": {
+    " Keep it up!": "استمر!"
+  }
 }

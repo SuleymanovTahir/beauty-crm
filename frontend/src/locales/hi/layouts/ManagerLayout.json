@@ -2,10 +2,12 @@
   "crm": "सौंदर्य सीआरएम",
   "logout": "लॉग आउट",
   "manager": "प्रबंधक",
-  "menu.analytics": "एनालिटिक्स",
-  "menu.chat": "बात करना",
-  "menu.clients": "ग्राहकों",
-  "menu.dashboard": "डैशबोर्ड",
-  "menu.funnel": "फ़नल",
-  "menu.settings": "सेटिंग्स"
+  "menu": {
+    "analytics": "एनालिटिक्स",
+    "chat": "बात करना",
+    "clients": "ग्राहकों",
+    "dashboard": "डैशबोर्ड",
+    "funnel": "फ़नल",
+    "settings": "सेटिंग्स"
+  }
 }

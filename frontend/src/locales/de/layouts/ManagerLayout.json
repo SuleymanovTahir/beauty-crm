@@ -2,10 +2,12 @@
   "crm": "Beauty-CRM",
   "logout": "Abmelden",
   "manager": "Manager",
-  "menu.analytics": "Analytik",
-  "menu.chat": "Chatten",
-  "menu.clients": "Kunden",
-  "menu.dashboard": "Armaturenbrett",
-  "menu.funnel": "Trichter",
-  "menu.settings": "Einstellungen"
+  "menu": {
+    "analytics": "Analytik",
+    "chat": "Chatten",
+    "clients": "Kunden",
+    "dashboard": "Armaturenbrett",
+    "funnel": "Trichter",
+    "settings": "Einstellungen"
+  }
 }
