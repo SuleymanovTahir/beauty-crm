@@ -66,7 +66,7 @@ export default function BotSettings() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { t } = useTranslation(['admin/BotSettings', 'common']);
+  const { t } = useTranslation(['admin/botsettings', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
