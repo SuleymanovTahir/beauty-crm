@@ -1,4 +1,7 @@
 {
+  "Your funnel shows good results": {
+    " Keep it up!": "Mantem!"
+  },
   "all_good": "Está tudo bem",
   "conversion": {
     "booked_to_completed": "Reservado até a conclusão",
@@ -9,15 +12,15 @@
   "funnel_chart": "Gráfico de funil",
   "key_metrics": "Indicadores-chave",
   "loading": "Carregando",
-  "losses_one": "Perde um",
   "losses_few": "As perdas são pequenas",
   "losses_many": "Muitas perdas",
+  "losses_one": "Perde um",
   "losses_other": "Outras perdas",
   "recommendations": {
     "increase_engagement": {
-      "description_one": "Descrição um",
       "description_few": "Descrição não é suficiente",
       "description_many": "Descrição muito",
+      "description_one": "Descrição um",
       "description_other": "Descrição outro",
       "suggestion": "Suposição",
       "title": "Cabeçalho"
@@ -28,9 +31,9 @@
       "title": "Cabeçalho"
     },
     "reduce_noshow": {
-      "description_one": "Descrição um",
       "description_few": "Descrição não é suficiente",
       "description_many": "Descrição muito",
+      "description_one": "Descrição um",
       "description_other": "Descrição outro",
       "suggestion": "Suposição",
       "title": "Cabeçalho"
@@ -48,8 +51,5 @@
   },
   "title": "Cabeçalho",
   "total_conversion": "Conversão total",
-  "total_losses": "Perdas totais",
-  "Your funnel shows good results": {
-    " Keep it up!": "Mantem!"
-  }
+  "total_losses": "Perdas totais"
 }

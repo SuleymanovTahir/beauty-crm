@@ -1,4 +1,7 @@
 {
+  "Your funnel shows good results": {
+    " Keep it up!": "Continuez comme ça!"
+  },
   "all_good": "Tout va bien",
   "conversion": {
     "booked_to_completed": "Réservé jusqu'à la fin",
@@ -9,15 +12,15 @@
   "funnel_chart": "Graphique en entonnoir",
   "key_metrics": "Indicateurs clés",
   "loading": "Chargement",
-  "losses_one": "En perd un",
   "losses_few": "Les pertes sont minimes",
   "losses_many": "De nombreuses pertes",
+  "losses_one": "En perd un",
   "losses_other": "Autres pertes",
   "recommendations": {
     "increase_engagement": {
-      "description_one": "Description un",
       "description_few": "La description ne suffit pas",
       "description_many": "Description beaucoup",
+      "description_one": "Description un",
       "description_other": "Description autre",
       "suggestion": "Hypothèse",
       "title": "Titre"
@@ -28,9 +31,9 @@
       "title": "Titre"
     },
     "reduce_noshow": {
-      "description_one": "Description un",
       "description_few": "La description ne suffit pas",
       "description_many": "Description beaucoup",
+      "description_one": "Description un",
       "description_other": "Description autre",
       "suggestion": "Hypothèse",
       "title": "Titre"
@@ -48,8 +51,5 @@
   },
   "title": "Titre",
   "total_conversion": "Conversion totale",
-  "total_losses": "Pertes totales",
-  "Your funnel shows good results": {
-    " Keep it up!": "Continuez comme ça!"
-  }
+  "total_losses": "Pertes totales"
 }

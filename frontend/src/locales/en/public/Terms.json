@@ -21,9 +21,9 @@
   "salon_liability": "The salon is not responsible for the consequences of procedures if the client conceals information about medical contraindications.",
   "sections": {
     "booking": {
+      "booking_requirements": "To make a booking, you must provide correct contact information. We reserve the right to confirm or refuse a booking.",
       "cancellationText": "The client can cancel the appointment no later than 24 hours before the scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the cost of the service may be charged.",
       "cancellationTitle": "Cancel an entry:",
-      "booking_requirements": "To make a booking, you must provide correct contact information. We reserve the right to confirm or refuse a booking.",
       "title": "2. Booking and cancellation"
     },
     "changes": {

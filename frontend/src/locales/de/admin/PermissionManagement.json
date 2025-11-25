@@ -1,14 +1,14 @@
 {
-  "permissions_title": "Zugriffsrechteverwaltung",
-  "permissions_subtitle": "Richten Sie individuelle Rechte für Benutzer ein",
-  "users_list_title": "Benutzer",
-  "permissions_for_user": "Berechtigungen: {name}",
-  "role_label": "Rolle:",
-  "view_permission": "Sicht",
   "create_permission": "Schaffung",
-  "edit_permission": "Bearbeitung",
   "delete_permission": "Entfernung",
+  "edit_permission": "Bearbeitung",
   "permission_granted": "Recht gewährt",
   "permission_revoked": "Recht widerrufen",
-  "select_user_prompt": "Benutzer auswählen"
+  "permissions_for_user": "Berechtigungen: {name}",
+  "permissions_subtitle": "Richten Sie individuelle Rechte für Benutzer ein",
+  "permissions_title": "Zugriffsrechteverwaltung",
+  "role_label": "Rolle:",
+  "select_user_prompt": "Benutzer auswählen",
+  "users_list_title": "Benutzer",
+  "view_permission": "Sicht"
 }

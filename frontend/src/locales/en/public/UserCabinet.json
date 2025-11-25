@@ -1,17 +1,17 @@
 {
-  "loginError": "Invalid credentials",
-  "passwordHint": "Entered during registration",
+  "backToHome": "← Return to home",
+  "fillAllFields": "Please fill in all fields",
+  "loggingIn": "Logging in...",
   "loginButton": "Log in",
+  "loginError": "Invalid credentials",
   "loginSuccess": "You have successfully logged in! 🎉",
   "password": "Password",
-  "subtitle": "Log in to the salon management system",
-  "username": "Username or email",
-  "usernamePlaceholder": "admin",
-  "title": "Personal Cabinet",
-  "usernameHint": "Enter your username",
-  "loggingIn": "Logging in...",
-  "fillAllFields": "Please fill in all fields",
+  "passwordHint": "Entered during registration",
   "passwordPlaceholder": "••••••",
+  "subtitle": "Log in to the salon management system",
   "systemError": "Login error",
-  "backToHome": "← Return to home"
+  "title": "Personal Cabinet",
+  "username": "Username or email",
+  "usernameHint": "Enter your username",
+  "usernamePlaceholder": "admin"
 }

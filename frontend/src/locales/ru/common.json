@@ -44,11 +44,12 @@
   "no_messages_yet": "Сообщений пока нет",
   "nothing_found": "Ничего не найдено",
   "of": "Из",
-  "period": "Период",
-  "period.2weeks": "2 недели",
-  "period.3months": "3 месяца",
-  "period.month": "Месяц",
-  "period.week": "Неделя",
+  "period": {
+    "2weeks": "2 недели",
+    "3months": "3 месяца",
+    "month": "Месяц",
+    "week": "Неделя"
+  },
   "previous": "Назад",
   "private_chat_with": "Приватный чат с",
   "quick_replies_title": "Название быстрых ответов",

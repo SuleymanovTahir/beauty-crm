@@ -1,14 +1,14 @@
 {
-  "permissions_title": "Gerenciamento de direitos de acesso",
-  "permissions_subtitle": "Configure direitos individuais para usuários",
-  "users_list_title": "Usuários",
-  "permissions_for_user": "Permissões: {nome}",
-  "role_label": "Papel:",
-  "view_permission": "Visualizar",
   "create_permission": "Criação",
-  "edit_permission": "Edição",
   "delete_permission": "Remoção",
+  "edit_permission": "Edição",
   "permission_granted": "Direito concedido",
   "permission_revoked": "Direito revogado",
-  "select_user_prompt": "Selecione o usuário"
+  "permissions_for_user": "Permissões: {nome}",
+  "permissions_subtitle": "Configure direitos individuais para usuários",
+  "permissions_title": "Gerenciamento de direitos de acesso",
+  "role_label": "Papel:",
+  "select_user_prompt": "Selecione o usuário",
+  "users_list_title": "Usuários",
+  "view_permission": "Visualizar"
 }
