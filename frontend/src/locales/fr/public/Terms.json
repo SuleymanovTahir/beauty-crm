@@ -19,30 +19,48 @@
   "privacy_commitment": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre politique de confidentialité.",
   "quality_guarantee": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats des procédures peuvent varier en fonction des caractéristiques individuelles du client.",
   "salon_liability": "Le salon n'est pas responsable des conséquences des interventions si le client dissimule des informations sur des contre-indications médicales.",
-  "sections.booking.booking_requirements": "Pour vous inscrire aux procédures, vous devez fournir des informations de contact correctes. Nous nous réservons le droit de confirmer ou de refuser une réservation.",
-  "sections.booking.cancellationText": "Le client peut annuler le rendez-vous au plus tard 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
-  "sections.booking.cancellationTitle": "Annuler une entrée :",
-  "sections.booking.title": "2. Réservation et annulation",
-  "sections.changes.content": "Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications entrent en vigueur dès leur publication sur le site Internet.",
-  "sections.changes.title": "7. Modifications des termes et conditions",
-  "sections.contact.address": "Adresse",
-  "sections.contact.description": "Pour toute question relative aux présentes Conditions, vous pouvez nous contacter :",
-  "sections.contact.email": "E-mail",
-  "sections.contact.phone": "Téléphone",
-  "sections.contact.title": "8. Contacts",
-  "sections.general.content": "Les présentes conditions d'utilisation régissent l'utilisation des services de {{salonName}}. En utilisant nos services, vous acceptez ces conditions.",
-  "sections.general.title": "1. Dispositions générales",
-  "sections.medical.paragraph1": "Le client est tenu d'informer le spécialiste de la présence de contre-indications médicales, d'allergies ou de problèmes de santé avant l'intervention.",
-  "sections.medical.paragraph2": "Le salon n'est pas responsable des conséquences des interventions si le client dissimule des informations sur des contre-indications médicales.",
-  "sections.medical.title": "4. Contre-indications médicales",
-  "sections.payment.paragraph1": "Le paiement s'effectue en espèces ou par carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
-  "sections.payment.paragraph2": "Si le client est en retard de plus de 15 minutes, le salon se réserve le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
-  "sections.payment.title": "3. Paiement des services",
-  "sections.privacy.content": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre <link>Politique de confidentialité</link>.",
-  "sections.privacy.title": "6. Confidentialité",
-  "sections.warranty.paragraph1": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats des procédures peuvent varier en fonction des caractéristiques individuelles du client.",
-  "sections.warranty.paragraph2": "En cas d'insatisfaction du résultat, le client doit contacter le salon dans les 7 jours pour discuter des solutions possibles.",
-  "sections.warranty.title": "5. Garanties et responsabilité",
+  "sections": {
+    "booking": {
+      "booking_requirements": "Pour vous inscrire aux procédures, vous devez fournir des informations de contact correctes. Nous nous réservons le droit de confirmer ou de refuser une réservation.",
+      "cancellationText": "Le client peut annuler le rendez-vous au plus tard 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
+      "cancellationTitle": "Annuler une entrée :",
+      "title": "2. Réservation et annulation"
+    },
+    "changes": {
+      "content": "Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications entrent en vigueur dès leur publication sur le site Internet.",
+      "title": "7. Modifications des termes et conditions"
+    },
+    "contact": {
+      "address": "Adresse",
+      "description": "Pour toute question relative aux présentes Conditions, vous pouvez nous contacter :",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "title": "8. Contacts"
+    },
+    "general": {
+      "content": "Les présentes conditions d'utilisation régissent l'utilisation des services de {{salonName}}. En utilisant nos services, vous acceptez ces conditions.",
+      "title": "1. Dispositions générales"
+    },
+    "medical": {
+      "paragraph1": "Le client est tenu d'informer le spécialiste de la présence de contre-indications médicales, d'allergies ou de problèmes de santé avant l'intervention.",
+      "paragraph2": "Le salon n'est pas responsable des conséquences des interventions si le client dissimule des informations sur des contre-indications médicales.",
+      "title": "4. Contre-indications médicales"
+    },
+    "payment": {
+      "paragraph1": "Le paiement s'effectue en espèces ou par carte après la prestation de la prestation. Les prix des prestations sont indiqués dans la grille tarifaire et sont sujets à changement sans préavis.",
+      "paragraph2": "Si le client est en retard de plus de 15 minutes, le salon se réserve le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
+      "title": "3. Paiement des services"
+    },
+    "privacy": {
+      "content": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre <link>Politique de confidentialité</link>.",
+      "title": "6. Confidentialité"
+    },
+    "warranty": {
+      "paragraph1": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats des procédures peuvent varier en fonction des caractéristiques individuelles du client.",
+      "paragraph2": "En cas d'insatisfaction du résultat, le client doit contacter le salon dans les 7 jours pour discuter des solutions possibles.",
+      "title": "5. Garanties et responsabilité"
+    }
+  },
   "terms_changes": "Modifications des conditions d'utilisation",
   "terms_changes_text": "Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications entrent en vigueur dès leur publication sur le site Internet.",
   "terms_of_use": "Conditions d'utilisation",

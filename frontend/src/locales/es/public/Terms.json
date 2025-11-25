@@ -19,30 +19,48 @@
   "privacy_commitment": "Respetamos su privacidad y nos comprometemos a proteger su información personal de acuerdo con nuestra Política de Privacidad.",
   "quality_guarantee": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados de los procedimientos pueden variar dependiendo de las características individuales del cliente.",
   "salon_liability": "El salón no se hace responsable de las consecuencias de los procedimientos si el cliente oculta información sobre contraindicaciones médicas.",
-  "sections.booking.booking_requirements": "Para registrarse para los trámites, debe proporcionar información de contacto correcta. Nos reservamos el derecho de confirmar o rechazar una reserva.",
-  "sections.booking.cancellationText": "El cliente podrá cancelar la cita a más tardar 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
-  "sections.booking.cancellationTitle": "Cancelar una entrada:",
-  "sections.booking.title": "2. Reserva y cancelación",
-  "sections.changes.content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su publicación en el sitio web.",
-  "sections.changes.title": "7. Cambios en términos y condiciones",
-  "sections.contact.address": "DIRECCIÓN",
-  "sections.contact.description": "Para cualquier pregunta relacionada con estos Términos, puede contactarnos:",
-  "sections.contact.email": "Correo electrónico",
-  "sections.contact.phone": "Teléfono",
-  "sections.contact.title": "8. Contactos",
-  "sections.general.content": "Estos Términos de uso rigen el uso de los servicios de {{salonName}}. Al utilizar nuestros servicios, usted acepta estos términos.",
-  "sections.general.title": "1. Disposiciones generales",
-  "sections.medical.paragraph1": "El cliente está obligado a informar al especialista sobre la presencia de contraindicaciones médicas, alergias o condiciones de salud antes del procedimiento.",
-  "sections.medical.paragraph2": "El salón no se hace responsable de las consecuencias de los procedimientos si el cliente oculta información sobre contraindicaciones médicas.",
-  "sections.medical.title": "4. Contraindicaciones médicas",
-  "sections.payment.paragraph1": "El pago se realiza en efectivo o con tarjeta una vez prestado el servicio. Los precios de los servicios están indicados en la lista de precios y están sujetos a cambios sin previo aviso.",
-  "sections.payment.paragraph2": "Si el cliente llega más de 15 minutos tarde, el salón se reserva el derecho de cancelar la cita o acortar el tiempo del procedimiento.",
-  "sections.payment.title": "3. Pago de servicios",
-  "sections.privacy.content": "Respetamos su privacidad y nos comprometemos a proteger su información personal de acuerdo con nuestra <link>Política de Privacidad</link>.",
-  "sections.privacy.title": "6. Privacidad",
-  "sections.warranty.paragraph1": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados de los procedimientos pueden variar dependiendo de las características individuales del cliente.",
-  "sections.warranty.paragraph2": "Si no está satisfecho con el resultado, el cliente deberá ponerse en contacto con el salón en un plazo de 7 días para discutir posibles soluciones.",
-  "sections.warranty.title": "5. Garantías y responsabilidad",
+  "sections": {
+    "booking": {
+      "booking_requirements": "Para registrarse para los trámites, debe proporcionar información de contacto correcta. Nos reservamos el derecho de confirmar o rechazar una reserva.",
+      "cancellationText": "El cliente podrá cancelar la cita a más tardar 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
+      "cancellationTitle": "Cancelar una entrada:",
+      "title": "2. Reserva y cancelación"
+    },
+    "changes": {
+      "content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su publicación en el sitio web.",
+      "title": "7. Cambios en términos y condiciones"
+    },
+    "contact": {
+      "address": "DIRECCIÓN",
+      "description": "Para cualquier pregunta relacionada con estos Términos, puede contactarnos:",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "title": "8. Contactos"
+    },
+    "general": {
+      "content": "Estos Términos de uso rigen el uso de los servicios de {{salonName}}. Al utilizar nuestros servicios, usted acepta estos términos.",
+      "title": "1. Disposiciones generales"
+    },
+    "medical": {
+      "paragraph1": "El cliente está obligado a informar al especialista sobre la presencia de contraindicaciones médicas, alergias o condiciones de salud antes del procedimiento.",
+      "paragraph2": "El salón no se hace responsable de las consecuencias de los procedimientos si el cliente oculta información sobre contraindicaciones médicas.",
+      "title": "4. Contraindicaciones médicas"
+    },
+    "payment": {
+      "paragraph1": "El pago se realiza en efectivo o con tarjeta una vez prestado el servicio. Los precios de los servicios están indicados en la lista de precios y están sujetos a cambios sin previo aviso.",
+      "paragraph2": "Si el cliente llega más de 15 minutos tarde, el salón se reserva el derecho de cancelar la cita o acortar el tiempo del procedimiento.",
+      "title": "3. Pago de servicios"
+    },
+    "privacy": {
+      "content": "Respetamos su privacidad y nos comprometemos a proteger su información personal de acuerdo con nuestra <link>Política de Privacidad</link>.",
+      "title": "6. Privacidad"
+    },
+    "warranty": {
+      "paragraph1": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados de los procedimientos pueden variar dependiendo de las características individuales del cliente.",
+      "paragraph2": "Si no está satisfecho con el resultado, el cliente deberá ponerse en contacto con el salón en un plazo de 7 días para discutir posibles soluciones.",
+      "title": "5. Garantías y responsabilidad"
+    }
+  },
   "terms_changes": "Cambios en los términos de uso",
   "terms_changes_text": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su publicación en el sitio web.",
   "terms_of_use": "Condiciones de uso",

@@ -1,4 +1,7 @@
 {
+  "Your funnel shows good results": {
+    " Keep it up!": "¡Avanza!"
+  },
   "all_good": "todo esta bien",
   "conversion": {
     "booked_to_completed": "Reservado hasta su finalización",
@@ -9,15 +12,15 @@
   "funnel_chart": "gráfico de embudo",
   "key_metrics": "Indicadores clave",
   "loading": "Cargando",
-  "losses_one": "Pierde uno",
   "losses_few": "Las pérdidas son pequeñas.",
   "losses_many": "Muchas pérdidas",
+  "losses_one": "Pierde uno",
   "losses_other": "Otras pérdidas",
   "recommendations": {
     "increase_engagement": {
-      "description_one": "Descripción uno",
       "description_few": "La descripción no es suficiente",
       "description_many": "descripción mucho",
+      "description_one": "Descripción uno",
       "description_other": "Descripción otro",
       "suggestion": "Suposición",
       "title": "Título"
@@ -28,9 +31,9 @@
       "title": "Título"
     },
     "reduce_noshow": {
-      "description_one": "Descripción uno",
       "description_few": "La descripción no es suficiente",
       "description_many": "descripción mucho",
+      "description_one": "Descripción uno",
       "description_other": "Descripción otro",
       "suggestion": "Suposición",
       "title": "Título"
@@ -48,8 +51,5 @@
   },
   "title": "Título",
   "total_conversion": "Conversión Total",
-  "total_losses": "Pérdidas totales",
-  "Your funnel shows good results": {
-    " Keep it up!": "¡Avanza!"
-  }
+  "total_losses": "Pérdidas totales"
 }

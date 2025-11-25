@@ -1,43 +1,43 @@
 {
+  "Book_a_procedure_right_now_and_feel_the_difference": "Book a procedure right now and feel the difference",
+  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "Our salon employs experienced masters with international certificates. Each specialist has extensive experience and regularly improves their qualifications to provide you with the highest quality services",
+  "Love_for_our_craft": "Love for what we do",
+  "Meet_our_talented_masters": "Meet our talented masters",
+  "Our_masters_regularly_upgrade_their_qualifications": "Our masters regularly improve their qualifications",
+  "Our_team_of_professionals": "Our team of professionals",
+  "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "Over the years, we have become one of the leading beauty salons in Dubai, serving over 10,000 satisfied clients. Our reputation is built on trust, professionalism and love for what we do",
+  "The_principles_we_are_guided_by": "Principles we are guided by",
+  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "We are constantly developing, following the latest trends in the beauty industry and using only proven high-quality materials and equipment",
+  "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "We have been creating beauty and confidence for over 10 years. Our mission is to help every woman feel beautiful and special",
+  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "We love what we do, and it is reflected in every procedure",
+  "We_use_only_premium_materials_and_equipment": "We use only premium materials and equipment",
+  "Your_comfort_and_satisfaction_-_our_priority": "Your comfort and satisfaction is our priority",
+  "cta": {
+    "book_procedure": "Book a procedure",
+    "ready_to_transform": "Ready to transform?"
+  },
+  "master_role": "Master",
+  "our_salon": "Our Salon",
+  "our_story": "Our History",
+  "our_team": "Our Team",
   "our_values": "Our Values",
+  "stats": {
+    "awards_and_certificates": "Awards and certificates",
+    "satisfied_clients": "Satisfied clients",
+    "service_types": "Types of services",
+    "years_experience": "Years of experience"
+  },
+  "title": "About Us",
   "values": {
-    "quality": {
-      "title": "Quality"
+    "client_focus": {
+      "title": "Customer Focus"
     },
     "professionalism": {
       "title": "Professionalism"
     },
-    "client_focus": {
-      "title": "Customer Focus"
+    "quality": {
+      "title": "Quality"
     }
   },
-  "Love_for_our_craft": "Love for what we do",
-  "title": "About Us",
-  "our_team": "Our Team",
-  "Book_a_procedure_right_now_and_feel_the_difference": "Book a procedure right now and feel the difference",
-  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "We love what we do, and it is reflected in every procedure",
-  "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "We have been creating beauty and confidence for over 10 years. Our mission is to help every woman feel beautiful and special",
-  "Your_comfort_and_satisfaction_-_our_priority": "Your comfort and satisfaction is our priority",
-  "your_reliable_partner_in_the_world_of_beauty": "your reliable partner in the world of beauty",
-  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "Our salon employs experienced masters with international certificates. Each specialist has extensive experience and regularly improves their qualifications to provide you with the highest quality services",
-  "We_use_only_premium_materials_and_equipment": "We use only premium materials and equipment",
-  "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "Over the years, we have become one of the leading beauty salons in Dubai, serving over 10,000 satisfied clients. Our reputation is built on trust, professionalism and love for what we do",
-  "The_principles_we_are_guided_by": "Principles we are guided by",
-  "Our_masters_regularly_upgrade_their_qualifications": "Our masters regularly improve their qualifications",
-  "Meet_our_talented_masters": "Meet our talented masters",
-  "Our_team_of_professionals": "Our team of professionals",
-  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "We are constantly developing, following the latest trends in the beauty industry and using only proven high-quality materials and equipment",
-  "our_story": "Our History",
-  "cta": {
-    "ready_to_transform": "Ready to transform?",
-    "book_procedure": "Book a procedure"
-  },
-  "stats": {
-    "years_experience": "Years of experience",
-    "satisfied_clients": "Satisfied clients",
-    "service_types": "Types of services",
-    "awards_and_certificates": "Awards and certificates"
-  },
-  "master_role": "Master",
-  "our_salon": "Our Salon"
+  "your_reliable_partner_in_the_world_of_beauty": "your reliable partner in the world of beauty"
 }

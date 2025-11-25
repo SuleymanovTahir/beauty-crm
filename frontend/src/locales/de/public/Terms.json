@@ -19,30 +19,48 @@
   "privacy_commitment": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre persönlichen Daten gemäß unserer Datenschutzrichtlinie zu schützen.",
   "quality_guarantee": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse der Verfahren können je nach den individuellen Merkmalen des Kunden variieren.",
   "salon_liability": "Der Salon haftet nicht für die Folgen von Eingriffen, wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht.",
-  "sections.booking.booking_requirements": "Um sich für Verfahren zu registrieren, müssen Sie korrekte Kontaktinformationen angeben. Wir behalten uns das Recht vor, eine Buchung zu bestätigen oder abzulehnen.",
-  "sections.booking.cancellationText": "Der Kunde kann den Termin bis spätestens 24 Stunden vor dem vereinbarten Termin absagen. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
-  "sections.booking.cancellationTitle": "Eintrag stornieren:",
-  "sections.booking.title": "2. Buchung und Stornierung",
-  "sections.changes.content": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.",
-  "sections.changes.title": "7. Änderungen der Allgemeinen Geschäftsbedingungen",
-  "sections.contact.address": "Adresse",
-  "sections.contact.description": "Bei Fragen zu diesen Bedingungen können Sie uns kontaktieren:",
-  "sections.contact.email": "E-Mail",
-  "sections.contact.phone": "Telefon",
-  "sections.contact.title": "8. Kontakte",
-  "sections.general.content": "Diese Nutzungsbedingungen regeln die Nutzung der Dienste von {{salonName}}. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
-  "sections.general.title": "1. Allgemeine Bestimmungen",
-  "sections.medical.paragraph1": "Der Klient ist verpflichtet, den Facharzt vor dem Eingriff über das Vorliegen etwaiger medizinischer Kontraindikationen, Allergien oder Gesundheitszustände zu informieren.",
-  "sections.medical.paragraph2": "Der Salon haftet nicht für die Folgen von Eingriffen, wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht.",
-  "sections.medical.title": "4. Medizinische Kontraindikationen",
-  "sections.payment.paragraph1": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Preise für Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
-  "sections.payment.paragraph2": "Bei einer Verspätung des Kunden von mehr als 15 Minuten behält sich der Salon das Recht vor, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
-  "sections.payment.title": "3. Bezahlung der Dienstleistungen",
-  "sections.privacy.content": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre persönlichen Daten gemäß unserer <link>Datenschutzerklärung</link> zu schützen.",
-  "sections.privacy.title": "6. Datenschutz",
-  "sections.warranty.paragraph1": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse der Verfahren können je nach den individuellen Merkmalen des Kunden variieren.",
-  "sections.warranty.paragraph2": "Wenn der Kunde mit dem Ergebnis unzufrieden ist, muss er sich innerhalb von 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
-  "sections.warranty.title": "5. Garantien und Haftung",
+  "sections": {
+    "booking": {
+      "booking_requirements": "Um sich für Verfahren zu registrieren, müssen Sie korrekte Kontaktinformationen angeben. Wir behalten uns das Recht vor, eine Buchung zu bestätigen oder abzulehnen.",
+      "cancellationText": "Der Kunde kann den Termin bis spätestens 24 Stunden vor dem vereinbarten Termin absagen. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
+      "cancellationTitle": "Eintrag stornieren:",
+      "title": "2. Buchung und Stornierung"
+    },
+    "changes": {
+      "content": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.",
+      "title": "7. Änderungen der Allgemeinen Geschäftsbedingungen"
+    },
+    "contact": {
+      "address": "Adresse",
+      "description": "Bei Fragen zu diesen Bedingungen können Sie uns kontaktieren:",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "title": "8. Kontakte"
+    },
+    "general": {
+      "content": "Diese Nutzungsbedingungen regeln die Nutzung der Dienste von {{salonName}}. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
+      "title": "1. Allgemeine Bestimmungen"
+    },
+    "medical": {
+      "paragraph1": "Der Klient ist verpflichtet, den Facharzt vor dem Eingriff über das Vorliegen etwaiger medizinischer Kontraindikationen, Allergien oder Gesundheitszustände zu informieren.",
+      "paragraph2": "Der Salon haftet nicht für die Folgen von Eingriffen, wenn der Kunde Informationen über medizinische Kontraindikationen verheimlicht.",
+      "title": "4. Medizinische Kontraindikationen"
+    },
+    "payment": {
+      "paragraph1": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Preise für Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
+      "paragraph2": "Bei einer Verspätung des Kunden von mehr als 15 Minuten behält sich der Salon das Recht vor, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
+      "title": "3. Bezahlung der Dienstleistungen"
+    },
+    "privacy": {
+      "content": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre persönlichen Daten gemäß unserer <link>Datenschutzerklärung</link> zu schützen.",
+      "title": "6. Datenschutz"
+    },
+    "warranty": {
+      "paragraph1": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse der Verfahren können je nach den individuellen Merkmalen des Kunden variieren.",
+      "paragraph2": "Wenn der Kunde mit dem Ergebnis unzufrieden ist, muss er sich innerhalb von 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
+      "title": "5. Garantien und Haftung"
+    }
+  },
   "terms_changes": "Änderungen der Nutzungsbedingungen",
   "terms_changes_text": "Wir behalten uns das Recht vor, diese Nutzungsbedingungen jederzeit zu ändern. Änderungen treten mit ihrer Veröffentlichung auf der Website in Kraft.",
   "terms_of_use": "Nutzungsbedingungen",

@@ -15,9 +15,9 @@
   "errors": {
     "export_failed": "Error al exportar archivo",
     "invalid_date_range": "La fecha de inicio debe ser anterior a la fecha de finalización",
+    "invalid_period": "Período inválido",
     "loading_error": "Error de carga",
-    "select_both_dates": "Seleccione ambas fechas",
-    "invalid_period": "Período inválido"
+    "select_both_dates": "Seleccione ambas fechas"
   },
   "export": "Exportar",
   "exporting": "Exportando...",
@@ -26,6 +26,7 @@
   "from_visitors": "De visitantes a clientes",
   "improve_greeting": "Mejorar saludo",
   "income": "Ingresos",
+  "min": "min",
   "name": "Nombre",
   "need_more_masters": "Necesita más maestros",
   "optimization_tip": "Consejo de optimización",
@@ -38,20 +39,19 @@
   "revenue": "Ingresos",
   "services_distribution": "Distribución de servicios",
   "simplify_contact_collection": "Simplificar recolección de contactos",
-  "min": "min",
-  "status": {
-    "pending": "Pendiente",
-    "confirmed": "Confirmada",
-    "completed": "Completada",
-    "cancelled": "Cancelada",
-    "no_show": "No se presentó"
-  },
   "stages": {
+    "after_greeting": "Después del saludo",
     "after_price": "Después del precio",
     "no_slots": "No hay espacios disponibles",
-    "whatsapp_request": "Solicitud de WhatsApp",
-    "after_greeting": "Después del saludo",
-    "service_selection": "Selección de servicio"
+    "service_selection": "Selección de servicio",
+    "whatsapp_request": "Solicitud de WhatsApp"
+  },
+  "status": {
+    "cancelled": "Cancelada",
+    "completed": "Completada",
+    "confirmed": "Confirmada",
+    "no_show": "No se presentó",
+    "pending": "Pendiente"
   },
   "success": {
     "file_downloaded": "Archivo descargado exitosamente"
