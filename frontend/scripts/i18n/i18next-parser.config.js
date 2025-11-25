@@ -5,10 +5,11 @@ module.exports = {
   output: path.resolve(__dirname, '../../src/locales/$LOCALE/$NAMESPACE.json'),
   input: [path.resolve(__dirname, '../../src/**/*.{js,jsx,ts,tsx}')],
   defaultNamespace: 'common',
-  keySeparator: '.',  // ✅ Включаем разделитель для вложенных ключей
+  keySeparator: '.',
   namespaceSeparator: ':',
   createOldCatalogs: false,
   keepRemoved: true,  // ✅ Сохраняем существующие переводы
+  resetDefaultValueLocale: null,
   sort: true,
   verbose: false,  // Отключаем verbose чтобы не засорять консоль
   useKeysAsDefaultValue: false,
