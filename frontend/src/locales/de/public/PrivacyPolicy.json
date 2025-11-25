@@ -1,6 +1,6 @@
 {
   "back": "Zurück",
-  "contact_content": "Telefon: +971 50 123 4567\nE-Mail: info@beauty.com",
+  "contact_content": "Telefon: {{phone}}\nE-Mail: {{email}}",
   "contact_title": "Bei Fragen zum Datenschutz kontaktieren Sie uns",
   "data_booking_info": "Informationen veröffentlichen",
   "data_email": "E-Mail",

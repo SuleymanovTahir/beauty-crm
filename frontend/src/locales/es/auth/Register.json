@@ -11,7 +11,7 @@
   "email_placeholder": "Tu correo electrónico",
   "email_verified": "Correo electrónico confirmado! Espere la aprobación del administrador.",
   "error_accept_privacy": "Debes aceptar la política de privacidad.",
-  "error_fill_all_fields": "Complete todos los campos obligatorios",
+  "error_fill_all_fields": "Complete todos los campos requeridos",
   "error_invalid_code": "Ingrese el código de 6 dígitos",
   "error_invalid_email": "Introduce un correo electrónico correcto",
   "error_password_too_short": "La contraseña debe tener al menos 6 caracteres.",

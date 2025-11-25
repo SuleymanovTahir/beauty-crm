@@ -19,7 +19,7 @@
   "engaged": "Involucrado",
   "error_loading": "Error de carga",
   "errors": {
-    "loading": "Error: {message}",
+    "loading": "Mensaje de error}",
     "loading_title": "Error de carga"
   },
   "failed_to_fetch_bookings": "No se pudieron obtener reservas.",
@@ -29,12 +29,12 @@
   "loading": "Cargando datos...",
   "loading_data": "Cargando datos...",
   "loading_error": "Error de carga",
-  "manager_desc": "Gestión de clientes y mensajes",
+  "manager_desc": "Gestión de clientes y mensajes.",
   "manager_panel": "Panel de administrador",
   "messages": "Mensajes",
   "my_bookings": "Mis entradas",
   "new_clients": "Nuevos clientes",
-  "no_bookings": "No hay reservas para hoy",
+  "no_bookings": "No hay entradas para hoy",
   "no_bookings_today": "No hay pedidos hoy",
   "no_data": "Sin datos",
   "no_service": "Sin servicio",

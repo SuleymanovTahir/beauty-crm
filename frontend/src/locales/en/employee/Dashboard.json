@@ -1,13 +1,13 @@
 {
-  "booking": "Booking",
+  "booking": "Record",
   "confirmed": "Confirmed",
-  "failed_to_fetch_bookings": "Failed to load bookings",
+  "failed_to_fetch_bookings": "Failed to load records",
   "loading_error": "Loading error",
-  "my_bookings": "My Bookings",
-  "no_bookings_today": "No bookings for today",
-  "pending": "Pending",
+  "my_bookings": "My entries",
+  "no_bookings_today": "There are no entries for today",
+  "pending": "Waiting",
   "schedule_for_today": "Schedule for today",
   "today": "Today",
-  "today_bookings": "Bookings today",
+  "today_bookings": "Posts today",
   "unknown_error": "Unknown error"
 }

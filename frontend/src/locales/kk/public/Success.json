@@ -1,9 +1,9 @@
 {
   "backToHome": "Үйге оралу",
   "contactMessage": "Кездесудің егжей-тегжейін растау үшін сізбен көп ұзамай хабарласамыз.",
-  "dateTime": "{{date}} {{time}}",
-  "serviceBooked": "Сіздің <бөлектеу> {{service}} </ бөлектеу> сәтті жасалды.",
-  "thankYou": "Рақмет, {{name}}!",
+  "dateTime": "{{DEAM}} {{TIME}}",
+  "serviceBooked": "Сіздің <бөлектеу> {{SERVICE}} </ бөлектеу> сәтті жасалды.",
+  "thankYou": "Рақмет, {{at}}!",
   "title": "Тіркелу расталды!",
   "viewServices": "Қызметтерді қарау"
 }

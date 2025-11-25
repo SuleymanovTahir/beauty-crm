@@ -44,7 +44,7 @@
       "question": "Fournissez-vous une garantie pour les services ?"
     },
     "location": {
-      "answer": "Nous sommes situés à : {{address}}. Des informations détaillées sur la façon de s'y rendre sont disponibles sur la page Contacts.",
+      "answer": "Nous sommes situés à : {{adresse}}. Des informations détaillées sur la façon de s'y rendre sont disponibles sur la page Contacts.",
       "question": "Où se trouve votre salon ?"
     },
     "loyalty": {
@@ -64,7 +64,7 @@
       "question": "Une préparation est-elle nécessaire avant l’intervention ?"
     },
     "weekends": {
-      "answer": "Oui, nous travaillons 7 jours sur 7. {{weekdays, weekdays}}En semaine {{weekdays}}{{/weekdays}}{{weekends, weekends}}, le week-end {{weekends}}{{/weekends}}.",
+      "answer": "Oui, nous travaillons 7 jours sur 7. {{weekdays, weekdays}}En semaine {{weekdays}}{{/weekends}}{{week-ends, weekends}}, le week-end {{weekends}}{{/weekends}}.",
       "question": "Travaillez-vous le week-end ?"
     }
   },

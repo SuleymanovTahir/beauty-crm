@@ -5,13 +5,13 @@
     "title": "¿Listo para registrarte?"
   },
   "categories": {
-    "facial-care": "Cuidado Facial",
-    "hair": "Servicios de Cabello",
-    "lashes": "Pestañas y Cejas",
-    "massage": "Masaje y Spa",
-    "nails": "Servicios de Uñas",
-    "other": "Otros Servicios",
-    "permanent-makeup": "Maquillaje Permanente"
+    "facial-care": "cuidado facial",
+    "hair": "Servicios de cabello",
+    "lashes": "Pestañas y cejas",
+    "massage": "Masaje y SPA",
+    "nails": "servicio de uñas",
+    "other": "Otros servicios",
+    "permanent-makeup": "Maquillaje permanente"
   },
   "cta": {
     "bookButton": "Regístrate para el trámite",
@@ -23,6 +23,6 @@
   "noServices": "Servicios no encontrados",
   "search": "Servicios de búsqueda...",
   "services": "servicios",
-  "subtitle": "Servicios de belleza premium a precios asequibles",
+  "subtitle": "Servicios de belleza premium a precios asequibles.",
   "title": "Nuestros servicios y precios"
 }

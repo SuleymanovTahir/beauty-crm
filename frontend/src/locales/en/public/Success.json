@@ -1,9 +1,9 @@
 {
   "backToHome": "Return to home",
-  "contactMessage": "We will contact you shortly to confirm appointment details.",
+  "contactMessage": "We will contact you shortly to confirm the details of your appointment.",
   "dateTime": "{{date}} at {{time}}",
-  "serviceBooked": "Your appointment for <highlight>{{service}}</highlight> has been successfully created.",
+  "serviceBooked": "Your entry for <highlight>{{service}}</highlight> has been successfully created.",
   "thankYou": "Thank you, {{name}}!",
-  "title": "Appointment confirmed!",
+  "title": "Registration confirmed!",
   "viewServices": "View services"
 }

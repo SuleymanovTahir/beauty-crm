@@ -2,35 +2,35 @@ const fs = require('fs');
 const path = require('path');
 
 const languages = ['en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
-const localesDir = path.join(__dirname, 'src', 'locales');
+const localesDir = path.join(__dirname, '..', '..', 'src', 'locales');
 
 // Рекурсивно получаем все русские файлы с сохранением структуры
 function getRussianFiles(dir = '', result = []) {
   const ruDir = path.join(localesDir, 'ru', dir);
-  
+
   if (!fs.existsSync(ruDir)) return result;
-  
+
   const items = fs.readdirSync(ruDir);
-  
+
   items.forEach(item => {
     const relativePath = path.join(dir, item);
     const fullPath = path.join(ruDir, item);
     const stat = fs.statSync(fullPath);
-    
+
     if (stat.isDirectory()) {
       getRussianFiles(relativePath, result);
     } else if (item.endsWith('.json')) {
       result.push(relativePath);
     }
   });
-  
+
   return result;
 }
 
 // Рекурсивное слияние объектов
 function mergeKeys(ruObj, targetObj = {}) {
   const result = {};
-  
+
   for (const key in ruObj) {
     if (typeof ruObj[key] === 'object' && ruObj[key] !== null && !Array.isArray(ruObj[key])) {
       result[key] = mergeKeys(ruObj[key], targetObj[key] || {});
@@ -44,7 +44,7 @@ function mergeKeys(ruObj, targetObj = {}) {
       }
     }
   }
-  
+
   return result;
 }
 
@@ -57,17 +57,17 @@ console.log(`📁 Найдено файлов в ru/: ${ruFiles.length}\n`);
 for (const lang of languages) {
   console.log(`📝 Обработка языка: ${lang}`);
   let updatedCount = 0;
-  
+
   for (const file of ruFiles) {
     const ruPath = path.join(localesDir, 'ru', file);
     const targetPath = path.join(localesDir, lang, file);
-    
+
     // Создаем вложенные папки если нужно
     const targetDir = path.dirname(targetPath);
     if (!fs.existsSync(targetDir)) {
       fs.mkdirSync(targetDir, { recursive: true });
     }
-    
+
     // Читаем русский файл
     let ruContent;
     try {
@@ -76,7 +76,7 @@ for (const lang of languages) {
       console.warn(`   ⚠️  Ошибка чтения ${file}, пропускаем`);
       continue;
     }
-    
+
     // Читаем существующий файл целевого языка
     let targetContent = {};
     if (fs.existsSync(targetPath)) {
@@ -86,15 +86,15 @@ for (const lang of languages) {
         console.warn(`   ⚠️  Ошибка чтения ${lang}/${file}, пересоздаем`);
       }
     }
-    
+
     // Сливаем с сохранением существующих переводов
     const merged = mergeKeys(ruContent, targetContent);
-    
+
     // Записываем результат
     fs.writeFileSync(targetPath, JSON.stringify(merged, null, 2) + '\n', 'utf8');
     updatedCount++;
   }
-  
+
   console.log(`   ✅ Обновлено файлов: ${updatedCount}\n`);
 }
 

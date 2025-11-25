@@ -1,12 +1,12 @@
 {
   "admin": "Administrator",
-  "admin_panel": "Admin Panel",
+  "admin_panel": "Admin panel",
   "crm": "Beauty CRM",
-  "logout": "Logout",
+  "logout": "Log out",
   "logout_success": "You have successfully logged out",
   "menu": {
     "analytics": "Analytics",
-    "bookings": "Bookings",
+    "bookings": "Posts",
     "bot_settings": "Bot settings",
     "calendar": "Calendar",
     "chat": "Chat",

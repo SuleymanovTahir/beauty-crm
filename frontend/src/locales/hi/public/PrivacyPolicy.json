@@ -1,6 +1,6 @@
 {
-  "back": "वापस",
-  "contact_content": "टेलीफ़ोन: +971 50 123 4567\nईमेल: info@beauty.com",
+  "back": "पीछे",
+  "contact_content": "फ़ोन: {{फ़ोन}}\nईमेल: {{ईमेल}}",
   "contact_title": "गोपनीयता संबंधी समस्याओं के लिए हमसे संपर्क करें",
   "data_booking_info": "जानकारी पोस्ट करें",
   "data_email": "ईमेल",

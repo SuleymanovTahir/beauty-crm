@@ -1,10 +1,10 @@
 {
   "booking": {
-    "description": "Complete el formulario y nos pondremos en contacto con usted para confirmar",
+    "description": "Rellena el formulario y nos pondremos en contacto contigo para confirmar",
     "form": {
       "date": "Fecha *",
       "name": "Su nombre *",
-      "namePlaceholder": "María García",
+      "namePlaceholder": "Anna Ivánova",
       "phone": "Teléfono *",
       "phonePlaceholder": "+971 50 123 4567",
       "service": "Servicio *",
@@ -14,24 +14,24 @@
     },
     "loading": "Cargando servicios...",
     "title": "Regístrate para el trámite",
-    "validation": "Por favor, complete todos los campos"
+    "validation": "Por favor complete todos los campos"
   },
   "features": {
     "items": {
       "masters": {
-        "description": "Nuestros especialistas tienen certificados internacionales y años de experiencia",
+        "description": "Nuestros especialistas cuentan con certificados internacionales y muchos años de experiencia.",
         "title": "Artesanos experimentados"
       },
       "materials": {
-        "description": "Utilizamos solo materiales de calidad y seguros de marcas líderes",
+        "description": "Utilizamos sólo materiales seguros y de alta calidad de marcas líderes.",
         "title": "Materiales de primera calidad"
       },
       "schedule": {
-        "description": "Trabajamos 7 días a la semana con horarios convenientes para reservas",
+        "description": "Trabajamos los 7 días de la semana con horarios convenientes para la grabación.",
         "title": "Horario conveniente"
       }
     },
-    "subtitle": "Ofrecemos el mejor servicio en la industria de la belleza",
+    "subtitle": "Ofrecemos el mejor servicio en la industria de la belleza.",
     "title": "¿Por qué elegirnos?"
   },
   "gallery": {
@@ -46,7 +46,7 @@
   "hero": {
     "badge": "Servicios de belleza premium",
     "bookButton": "Inscríbete ahora",
-    "description": "Maestros profesionales, enfoque individual y materiales de alta calidad. Tu belleza es nuestra pasión.",
+    "description": "Artesanos profesionales, trato individual y materiales de alta calidad. Tu belleza es nuestra pasión.",
     "servicesButton": "Nuestros servicios",
     "title": "Descubre un nuevo nivel de belleza"
   },
@@ -64,7 +64,7 @@
   },
   "testimonials": {
     "items": [],
-    "subtitle": "Lo que dicen de nosotros",
+    "subtitle": "lo que dicen de nosotros",
     "title": "Opiniones de nuestros clientes"
   }
 }

@@ -1,6 +1,6 @@
 {
-  "back": "Retour",
-  "contact_content": "Téléphone: {{phone}}\nE-mail: {{email}}",
+  "back": "Dos",
+  "contact_content": "Téléphone : {{téléphone}}\nE-mail : {{e-mail}}",
   "contact_title": "Pour des problèmes de confidentialité, contactez-nous",
   "data_booking_info": "Informations sur la publication",
   "data_email": "E-mail",

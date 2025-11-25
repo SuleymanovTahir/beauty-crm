@@ -2,9 +2,9 @@
   "answer_1": "You can sign up through our website, by calling or writing to WhatsApp/Instagram.",
   "answer_2": "We accept payment in cash and bank cards.",
   "answer_3": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time.",
-  "answer_4": "Yes, some procedures have medical contraindications. ",
-  "answer_5": "The procedure time depends on the service chosen. ",
-  "answer_6": "Some procedures require special preparation. ",
+  "answer_4": "Yes, some procedures have medical contraindications. Please consult with our specialist before recording.",
+  "answer_5": "The procedure time depends on the service chosen. Usually from 30 minutes to 3 hours.",
+  "answer_6": "Some procedures require special preparation. The specialist will inform you about this when registering.",
   "cta": {
     "bookButton": "Sign up for the procedure",
     "contactButton": "Contact us",

@@ -1,7 +1,7 @@
 {
   "analyze_further": "आगे विश्लेषण करें",
   "apply": "आवेदन करना",
-  "avg_check": "औसत जांच",
+  "avg_check": "औसत बिल",
   "avg_time": "औसत समय",
   "booking_statuses": "पोस्ट स्थितियाँ",
   "bookings": "पदों",
@@ -23,7 +23,7 @@
   "exporting": "निर्यात करना...",
   "focus_on_highest_drop_off": "उच्चतम क्षीणन वाले मंच पर ध्यान केंद्रित करें",
   "for_period": "अवधि के लिए",
-  "from_visitors": "आगंतुकों से ग्राहकों तक",
+  "from_visitors": "आगंतुकों से लेकर ग्राहकों तक",
   "improve_greeting": "अपने अभिवादन में सुधार करें",
   "income": "आय",
   "min": "मिन",
@@ -47,7 +47,7 @@
     "whatsapp_request": "व्हाट्सएप अनुरोध"
   },
   "status": {
-    "cancelled": "रद्द किया गया",
+    "cancelled": "रद्द कर दिया गया",
     "completed": "पुरा होना।",
     "confirmed": "की पुष्टि",
     "no_show": "नहीं आये",

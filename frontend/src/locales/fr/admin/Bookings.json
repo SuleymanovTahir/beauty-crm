@@ -84,7 +84,7 @@
   "search_client": "À la recherche d'un client...",
   "search_service": "Rechercher un service...",
   "select_file": "Sélectionner un fichier",
-  "select_file_for_import": "Sélectionnez un fichier à importer",
+  "select_file_for_import": "Sélectionnez le fichier à importer",
   "select_master": "Sélectionnez un assistant",
   "selected_file": "Fichier sélectionné",
   "service": "Service",
@@ -101,7 +101,7 @@
   "template_download_failed": "Erreur de chargement du modèle",
   "template_downloaded": "Modèle chargé",
   "time": "Temps",
-  "title": "Réservations",
+  "title": "Messages",
   "total": "Total",
   "update_failed": "Erreur de mise à jour",
   "view": "Voir"

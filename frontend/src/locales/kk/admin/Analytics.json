@@ -1,7 +1,7 @@
 {
   "analyze_further": "Әрі қарай талдау",
   "apply": "Өтініш беру",
-  "avg_check": "Орташа тексеру",
+  "avg_check": "Орташа есепшот",
   "avg_time": "Орташа уақыт",
   "booking_statuses": "Хабарламалар",
   "bookings": "Жазбалар",
@@ -23,7 +23,7 @@
   "exporting": "Экспорт ...",
   "focus_on_highest_drop_off": "Сахнаға назар аударыңыз",
   "for_period": "Кезең ішінде",
-  "from_visitors": "Келушілерден клиенттерге дейін",
+  "from_visitors": "Келушілерден клиенттерге",
   "improve_greeting": "Сәлемдесуді жақсартыңыз",
   "income": "Табыс",
   "min": "мин",
