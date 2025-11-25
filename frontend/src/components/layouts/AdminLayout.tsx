@@ -182,9 +182,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                           size={16}
                           className={`ml-auto transition-transform ${showChatSubmenu ? 'rotate-180' : ''}`}
                         />
-                        {item.badge && item.badge > 0 && (
+                        {item.badge != null && Number(item.badge) > 0 && (
                           <span className="absolute right-10 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
-                            {item.badge > 99 ? '99+' : item.badge}
+                            {Number(item.badge) > 99 ? '99+' : item.badge}
                           </span>
                         )}
                       </button>
@@ -228,9 +228,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
                     >
                       <item.icon size={18} />
                       <span>{item.label}</span>
-                      {item.badge && item.badge > 0 && (
+                      {item.badge != null && Number(item.badge) > 0 && (
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center animate-pulse">
-                          {item.badge > 99 ? '99+' : item.badge}
+                          {Number(item.badge) > 99 ? '99+' : item.badge}
                         </span>
                       )}
                     </button>

@@ -15,7 +15,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 
 export default function AdminSettings() {
-  const { t } = useTranslation(['admin/Settings', 'common']);
+  const { t } = useTranslation(['admin/settings', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
