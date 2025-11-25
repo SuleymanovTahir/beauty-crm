@@ -1901,7 +1901,7 @@ export default function AdminSettings() {
                       const url = window.URL.createObjectURL(blob);
                       const a = document.createElement('a');
                       a.href = url;
-                      a.download = `beauty_crm_backup_${new Date().toISOString().slice(0, 10)}.db`;
+                      a.download = `salon_bot_backup_${new Date().toISOString().slice(0, 10)}.db`;
                       document.body.appendChild(a);
                       a.click();
                       window.URL.revokeObjectURL(url);

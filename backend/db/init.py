@@ -411,7 +411,7 @@ def init_database():
     
     # Ensure client columns exist
     from .clients import ensure_client_columns
-    ensure_client_columns()
+    ensure_client_columns(conn)
     
     conn.commit()
     conn.close()

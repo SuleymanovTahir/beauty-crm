@@ -310,7 +310,7 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         # Создаем временную копию базы данных
         temp_dir = tempfile.gettempdir()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_filename = f"beauty_crm_backup_{timestamp}.db"
+        backup_filename = f"salon_bot_backup_{timestamp}.db"
         backup_path = os.path.join(temp_dir, backup_filename)
         
         # Копируем базу данных

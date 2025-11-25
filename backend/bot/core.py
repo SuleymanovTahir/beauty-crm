@@ -364,13 +364,18 @@ class SalonBot:
         """Генерация через Gemini REST API с прокси и retry механизмом"""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 
-        max_chars = self.bot_settings.get('max_message_chars', 500)
-        max_tokens = int(max_chars / 2.5)
+        max_chars = self.bot_settings.get('max_message_chars', 300)
+    
+        # ✅ Увеличиваем лимит токенов для генерации, чтобы бот мог закончить мысль
+        # Даже если мы просим 300 символов, даем запас до 600, чтобы не обрывать на полуслове
+        safe_max_chars = max(max_chars * 2, 600)
+        max_tokens = int(safe_max_chars / 2.5)
 
         prompt_with_limit = f"""{prompt}
 
-    ⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть СТРОГО не более {max_chars} символов! Если не уложишься - обрежут принудительно.
-    """
+⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть КРАТКИМ и ЛАКОНИЧНЫМ (до {max_chars} символов).
+Пиши ёмко, без воды.
+"""
 
         payload = {
             "contents": [{
@@ -440,11 +445,12 @@ class SalonBot:
                         if len(parts) > 0 and "text" in parts[0]:
                             response_text = parts[0]["text"].strip()
 
-                            if len(response_text) > max_chars:
-                                response_text = response_text[:max_chars-3] + "..."
+                            # ❌ УБРАНО ЖЕСТКОЕ ОБРЕЗАНИЕ
+                        # if len(response_text) > max_chars:
+                        #     response_text = response_text[:max_chars-3] + "..."
 
-                            print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(proxy_urls) + 1 if proxy_urls else 'direct'})")
-                            return response_text
+                        print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(proxy_urls) + 1 if proxy_urls else 'direct'})")
+                        return response_text
 
                 raise Exception(f"Unexpected Gemini response structure")
 

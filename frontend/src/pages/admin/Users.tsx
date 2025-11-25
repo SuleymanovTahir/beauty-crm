@@ -27,7 +27,7 @@ interface User {
 
 export default function Users() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['admin/Users', 'common']);
+  const { t } = useTranslation(['admin/users', 'common']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав

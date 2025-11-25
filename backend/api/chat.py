@@ -479,17 +479,27 @@ async def get_bot_suggestion(
         log_info(f"🤖 Bot suggestion request: {len(unread_messages)} unread messages from {client_id}", "api")
         log_info(f"📝 Combined: {combined_message[:100]}...", "api")
         # Получаем язык клиента
-
         client_language = get_client_language(client_id)
 
         # Генерируем ответ
         from bot import get_bot
+        from db import get_bot_settings, get_salon_settings
+        
         bot = get_bot()
+        bot_settings = get_bot_settings()
+        salon_info = get_salon_settings()
+        
+        # Получаем прогресс бронирования (если есть)
+        from db.bookings import get_booking_progress
+        booking_progress = get_booking_progress(client_id)
         
         ai_response = await bot.generate_response(
-            user_message=combined_message,
             instagram_id=client_id,
+            user_message=combined_message,
             history=history,
+            bot_settings=bot_settings,
+            salon_info=salon_info,
+            booking_progress=booking_progress,
             client_language=client_language
         )
         

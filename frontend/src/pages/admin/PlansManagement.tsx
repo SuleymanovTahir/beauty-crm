@@ -40,7 +40,7 @@ interface UserData {
 }
 
 export default function PlansManagement() {
-    const { t } = useTranslation(['admin/Plans', 'common']);
+    const { t } = useTranslation(['admin/plans', 'common']);
     const { user: currentUser } = useAuth();
     const [activeTab, setActiveTab] = useState<'my_plans' | 'role_plans' | 'individual_plans'>('my_plans');
     const [loading, setLoading] = useState(true);
