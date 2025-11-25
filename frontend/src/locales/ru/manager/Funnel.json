@@ -1,7 +1,4 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "Так держать!"
-  },
   "all_good": "Все хорошо",
   "conversion": {
     "booked_to_completed": "Забронировано до завершения",
@@ -12,15 +9,15 @@
   "funnel_chart": "Воронкообразная диаграмма",
   "key_metrics": "Ключевые показатели",
   "loading": "Загрузка",
+  "losses_one": "Потери один",
   "losses_few": "Потери невелики",
   "losses_many": "Потери многие",
-  "losses_one": "Потери один",
   "losses_other": "Потери прочие",
   "recommendations": {
     "increase_engagement": {
+      "description_one": "Описание одно",
       "description_few": "Описание мало",
       "description_many": "Описание много",
-      "description_one": "Описание одно",
       "description_other": "Описание другое",
       "suggestion": "Предположение",
       "title": "Заголовок"
@@ -31,9 +28,9 @@
       "title": "Заголовок"
     },
     "reduce_noshow": {
+      "description_one": "Описание одно",
       "description_few": "Описание мало",
       "description_many": "Описание много",
-      "description_one": "Описание одно",
       "description_other": "Описание другое",
       "suggestion": "Предположение",
       "title": "Заголовок"
@@ -51,5 +48,8 @@
   },
   "title": "Заголовок",
   "total_conversion": "Общая конверсия",
-  "total_losses": "Общие потери"
+  "total_losses": "Общие потери",
+  "Your funnel shows good results": {
+    " Keep it up!": "Так держать!"
+  }
 }

@@ -1,7 +1,4 @@
 {
-  "Your funnel shows good results": {
-    " Keep it up!": "Оны сақтаңыз!"
-  },
   "all_good": "Бәрі жақсы",
   "conversion": {
     "booked_to_completed": "Аяқтауға тапсырыс берілген",
@@ -12,15 +9,15 @@
   "funnel_chart": "Ванна кестесі",
   "key_metrics": "Негізгі көрсеткіштер",
   "loading": "Тиеу",
+  "losses_one": "Шығындар",
   "losses_few": "Шығындар аз",
   "losses_many": "Көптеген шығындар",
-  "losses_one": "Шығындар",
   "losses_other": "Басқа шығындар",
   "recommendations": {
     "increase_engagement": {
+      "description_one": "Сипаттама",
       "description_few": "Сипаттама жеткіліксіз",
       "description_many": "Сипаттама көп",
-      "description_one": "Сипаттама",
       "description_other": "Сипаттамасы",
       "suggestion": "Болжам",
       "title": "Тақырып"
@@ -31,9 +28,9 @@
       "title": "Тақырып"
     },
     "reduce_noshow": {
+      "description_one": "Сипаттама",
       "description_few": "Сипаттама жеткіліксіз",
       "description_many": "Сипаттама көп",
-      "description_one": "Сипаттама",
       "description_other": "Сипаттамасы",
       "suggestion": "Болжам",
       "title": "Тақырып"
@@ -51,5 +48,8 @@
   },
   "title": "Тақырып",
   "total_conversion": "Жалпы түрлендіру",
-  "total_losses": "Жалпы шығындар"
+  "total_losses": "Жалпы шығындар",
+  "Your funnel shows good results": {
+    " Keep it up!": "Оны сақтаңыз!"
+  }
 }

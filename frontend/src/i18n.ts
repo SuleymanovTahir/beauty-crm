@@ -6,21 +6,21 @@ import { autoDetectAndSetLanguage } from './utils/languageDetection';
 const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
 const namespaces = [
   'common',
-  'admin/Analytics',
-  'admin/BookingDetail',
-  'admin/Bookings',
-  'admin/BotSettings',
+  'admin/analytics',
+  'admin/bookingdetail',
+  'admin/bookings',
+  'admin/botsettings',
   'admin/Calendar',
-  'admin/ClientDetail',
-  'admin/Clients',
-  'admin/CreateUser',
-  'admin/Dashboard',
+  'admin/clientdetail',
+  'admin/clients',
+  'admin/createuser',
+  'admin/dashboard',
   'admin/EditUser',
-  'admin/Services',
-  'admin/Settings',
+  'admin/services',
+  'admin/settings',
   'admin/SpecialPackages',
   'admin/Users',
-  'manager/Chat',
+  'manager/chat',
   'manager/Dashboard',
   'manager/Funnel',
   'manager/Messages',
@@ -31,14 +31,14 @@ const namespaces = [
   'public/Contacts',
   'public/Cooperation',
   'public/DataDeletion',
-  'public/FAQ',
-  'public/Home',
-  'public/PriceList',
-  'public/PrivacyPolicy',
-  'public/Success',
-  'public/Terms',
+  'public/faq',
+  'public/home',
+  'public/pricelist',
+  'public/privacypolicy',
+  'public/success',
+  'public/terms',
   'public/UserCabinet',
-  'public/Public',
+  'public/public',
   'auth/Login',
   'auth/Register',
   'auth/ForgotPassword',
@@ -67,24 +67,24 @@ for (const lang of languages) {
 
   // Add aliases for backward compatibility
   // Admin pages
-  resources[lang]['analytics'] = resources[lang]['admin/Analytics'];
-  resources[lang]['bookingDetail'] = resources[lang]['admin/BookingDetail'];
-  resources[lang]['bookings'] = resources[lang]['admin/Bookings'];
-  resources[lang]['botSettings'] = resources[lang]['admin/BotSettings'];
-  resources[lang]['botsettings'] = resources[lang]['admin/BotSettings'];
+  resources[lang]['analytics'] = resources[lang]['admin/analytics'];
+  resources[lang]['bookingDetail'] = resources[lang]['admin/bookingdetail'];
+  resources[lang]['bookings'] = resources[lang]['admin/bookings'];
+  resources[lang]['botSettings'] = resources[lang]['admin/botsettings'];
+  resources[lang]['botsettings'] = resources[lang]['admin/botsettings'];
   resources[lang]['calendar'] = resources[lang]['admin/Calendar'];
-  resources[lang]['clientDetail'] = resources[lang]['admin/ClientDetail'];
-  resources[lang]['clients'] = resources[lang]['admin/Clients'];
-  resources[lang]['createUser'] = resources[lang]['admin/CreateUser'];
-  resources[lang]['dashboard'] = resources[lang]['admin/Dashboard'];
+  resources[lang]['clientDetail'] = resources[lang]['admin/clientdetail'];
+  resources[lang]['clients'] = resources[lang]['admin/clients'];
+  resources[lang]['createUser'] = resources[lang]['admin/createuser'];
+  resources[lang]['dashboard'] = resources[lang]['admin/dashboard'];
   resources[lang]['editUser'] = resources[lang]['admin/EditUser'];
-  resources[lang]['services'] = resources[lang]['admin/Services'];
-  resources[lang]['settings'] = resources[lang]['admin/Settings'];
+  resources[lang]['services'] = resources[lang]['admin/services'];
+  resources[lang]['settings'] = resources[lang]['admin/settings'];
   resources[lang]['specialPackages'] = resources[lang]['admin/SpecialPackages'];
   resources[lang]['users'] = resources[lang]['admin/Users'];
 
   // Manager pages
-  resources[lang]['chat'] = resources[lang]['manager/Chat'];
+  resources[lang]['chat'] = resources[lang]['manager/chat'];
   resources[lang]['funnel'] = resources[lang]['manager/Funnel'];
   resources[lang]['messages'] = resources[lang]['manager/Messages'];
   resources[lang]['managerSettings'] = resources[lang]['manager/Settings'];
@@ -105,16 +105,16 @@ for (const lang of languages) {
   resources[lang]['cooperation'] = resources[lang]['public/Cooperation'];
   resources[lang]['dataDeletion'] = resources[lang]['public/DataDeletion'];
   resources[lang]['datadeletion'] = resources[lang]['public/DataDeletion'];
-  resources[lang]['faq'] = resources[lang]['public/FAQ'];
-  resources[lang]['home'] = resources[lang]['public/Home'];
-  resources[lang]['priceList'] = resources[lang]['public/PriceList'];
-  resources[lang]['pricelist'] = resources[lang]['public/PriceList'];
-  resources[lang]['privacyPolicy'] = resources[lang]['public/PrivacyPolicy'];
-  resources[lang]['success'] = resources[lang]['public/Success'];
-  resources[lang]['terms'] = resources[lang]['public/Terms'];
+  resources[lang]['faq'] = resources[lang]['public/faq'];
+  resources[lang]['home'] = resources[lang]['public/home'];
+  resources[lang]['priceList'] = resources[lang]['public/pricelist'];
+  resources[lang]['pricelist'] = resources[lang]['public/pricelist'];
+  resources[lang]['privacyPolicy'] = resources[lang]['public/privacypolicy'];
+  resources[lang]['success'] = resources[lang]['public/success'];
+  resources[lang]['terms'] = resources[lang]['public/terms'];
   resources[lang]['userCabinet'] = resources[lang]['public/UserCabinet'];
   resources[lang]['usercabinet'] = resources[lang]['public/UserCabinet'];
-  resources[lang]['public'] = resources[lang]['public/Public'];
+  resources[lang]['public'] = resources[lang]['public/public'];
 
   // Additional namespaces used in public pages
   resources[lang]['stats'] = resources[lang]['public/About']; // Stats are in About page

@@ -128,7 +128,7 @@
   "error_updating_subscription": "Échec de la mise à jour de l'abonnement",
   "error_username_too_short": "Le nom d'utilisateur doit contenir au moins 3 caractères",
   "events": "Événements",
-  "file_too_large": "Le fichier est trop volumineux. Taille maximale : 5 Mo",
+  "file_too_large": "Le fichier est trop volumineux. Taille maximale\u00a0: 5\u00a0Mo",
   "fill_all_required_fields": "Remplissez tous les champs obligatoires",
   "fill_required_fields": "Remplissez les champs obligatoires",
   "full_name": "Nom et prénom",

@@ -11,18 +11,21 @@ import urllib.request
 import time
 import re
 import random
+import concurrent.futures
 
 # Конфигурация
 LOCALES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'frontend/src/locales')
 SOURCE_LANG = 'ru'
-TARGET_LANGS = ['en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+TARGET_LANGS = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 MAX_WORDS = 500  # Увеличили лимит слов
 RETRY_COUNT = 3
-DELAY_MIN = 0.1
-DELAY_MAX = 0.3
+DELAY_MIN = 0.05
+DELAY_MAX = 0.1
+MAX_WORKERS = 20  # Количество параллельных потоков
 
 # Маппинг языковых кодов
 LANG_MAP = {
+    'ru': 'ru',
     'en': 'en',
     'ar': 'ar',
     'es': 'es',
@@ -65,6 +68,12 @@ def translate_google_free(text: str, target_lang: str) -> str:
     """
     Перевод текста через бесплатный Google Translate с повторными попытками
     """
+    return translate_google_free_custom(text, SOURCE_LANG, target_lang)
+
+def translate_google_free_custom(text: str, source_lang: str, target_lang: str) -> str:
+    """
+    Перевод текста через бесплатный Google Translate с указанием исходного языка
+    """
     if not text or not isinstance(text, str):
         return text
 
@@ -75,7 +84,7 @@ def translate_google_free(text: str, target_lang: str) -> str:
     url = "https://translate.googleapis.com/translate_a/single"
     params = {
         'client': 'gtx',
-        'sl': SOURCE_LANG,
+        'sl': LANG_MAP.get(source_lang, source_lang),
         'tl': LANG_MAP.get(target_lang, target_lang),
         'dt': 't',
         'q': text
@@ -135,12 +144,71 @@ def unflatten_dict(d, sep='.'):
         current[parts[-1]] = value
     return result
 
+def process_translation_item(args):
+    """Функция для обработки одного перевода в потоке"""
+    key, source_value, target_lang, current_value, is_russian_empty = args
+    
+    # Если значения совпадают и это не русский язык (где мы заполняем пустые), пропускаем
+    if current_value == source_value and target_lang != 'ru':
+        return None
+        
+    # Если списки разной длины - переводим заново
+    if isinstance(source_value, list) and isinstance(current_value, list) and len(source_value) != len(current_value):
+        pass # needs translation
+    elif current_value: # Если значение есть и оно не совпадает с исходным (и не список), считаем что уже переведено
+        # Но если мы переводим на русский и исходное было пустым (взяли из EN), то нужно проверить, не пустое ли текущее
+        if target_lang == 'ru' and is_russian_empty:
+             if current_value: return None
+        else:
+             return None
+
+    result = None
+    
+    # Обработка списков
+    if isinstance(source_value, list):
+        if all(isinstance(x, str) for x in source_value):
+            new_list = []
+            translated_any = False
+            for item in source_value:
+                tr = translate_google_free_custom(item, 'en' if is_russian_empty else SOURCE_LANG, target_lang)
+                if tr and tr != item:
+                    new_list.append(tr)
+                    translated_any = True
+                else:
+                    new_list.append(item)
+            
+            if translated_any:
+                result = (key, new_list, 'translated')
+            else:
+                result = (key, source_value, 'filled')
+        else:
+            result = (key, source_value, 'filled')
+            
+    # Обработка строк
+    elif isinstance(source_value, str):
+        source_lang_code = 'en' if is_russian_empty else SOURCE_LANG
+        translated = translate_google_free_custom(source_value, source_lang_code, target_lang)
+        
+        if translated and translated != source_value:
+            # Небольшая задержка, чтобы не спамить API слишком быстро даже в потоках
+            time.sleep(random.uniform(DELAY_MIN, DELAY_MAX))
+            result = (key, translated, 'translated')
+        else:
+            result = (key, source_value, 'filled')
+            
+    # Другие типы
+    else:
+        result = (key, source_value, 'filled')
+        
+    return result
+
 def auto_translate():
-    """Основная функция автоперевода"""
-    print("🚀 Начинаем умный перевод локалей...")
+    """Основная функция автоперевода (Многопоточная версия)"""
+    print("🚀 Начинаем умный перевод локалей (Многопоточный)...")
     print(f"📁 Директория: {LOCALES_DIR}")
     print(f"🌍 Исходный язык: {SOURCE_LANG}")
     print(f"🎯 Целевые языки: {', '.join(TARGET_LANGS)}")
+    print(f"⚡️ Потоков: {MAX_WORKERS}")
     print()
     
     if not os.path.exists(LOCALES_DIR):
@@ -171,9 +239,34 @@ def auto_translate():
         if not source_data:
             continue
         
-        # Преобразуем в плоский словарь для удобства сравнения
         source_flat = flatten_dict(source_data)
         
+        # Предварительно загружаем английский файл, если он понадобится для фоллбэка
+        en_flat_cache = None
+        
+        # Подготавливаем эффективные исходные значения (RU или EN fallback)
+        effective_source = {}
+        
+        for key, val in source_flat.items():
+            is_empty = val is None or (isinstance(val, str) and not val)
+            if is_empty:
+                if en_flat_cache is None:
+                    en_file = os.path.join(LOCALES_DIR, 'en', file_path)
+                    if os.path.exists(en_file):
+                        en_data = load_json(en_file)
+                        en_flat_cache = flatten_dict(en_data)
+                    else:
+                        en_flat_cache = {}
+                
+                en_val = en_flat_cache.get(key)
+                if en_val:
+                    effective_source[key] = (en_val, True) # value, is_from_en_fallback
+            else:
+                effective_source[key] = (val, False) # value, is_original_ru
+        
+        if not effective_source:
+            continue
+
         print(f"📝 Обработка: {file_path}")
         
         # Переводим для каждого целевого языка
@@ -184,89 +277,47 @@ def auto_translate():
             target_data = load_json(target_file)
             target_flat = flatten_dict(target_data)
             
+            tasks = []
+            
+            # Формируем задачи для перевода
+            for key, (source_val, is_russian_empty) in effective_source.items():
+                current_val = target_flat.get(key)
+                
+                # Простая проверка: если ключа нет или значение пустое - добавляем задачу
+                # Более сложная проверка внутри process_translation_item
+                if key not in target_flat or not current_val or (target_lang == 'ru' and is_russian_empty and not current_val):
+                     tasks.append((key, source_val, target_lang, current_val, is_russian_empty))
+            
+            if not tasks:
+                continue
+                
             updated = False
             file_translated_count = 0
             
-            # Проверяем каждый ключ
-            for key, russian_value in source_flat.items():
-                # Пропускаем пустые значения (но 0 и False оставляем, если вдруг будут)
-                if russian_value is None or (isinstance(russian_value, str) and not russian_value):
-                    continue
+            # Запускаем параллельный перевод
+            with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+                # map возвращает результаты в том же порядке, но нам порядок не важен, главное результат
+                results = list(executor.map(process_translation_item, tasks))
                 
-                # Проверяем, нужен ли перевод
-                needs_translation = False
-                current_value = target_flat.get(key)
-                
-                if key not in target_flat:
-                    needs_translation = True
-                elif not current_value:
-                    needs_translation = True
-                elif current_value == russian_value and target_lang != 'ru':
-                    needs_translation = True
-                elif isinstance(russian_value, list) and isinstance(current_value, list) and len(russian_value) != len(current_value):
-                    needs_translation = True
-                
-                if needs_translation:
-                    # Обработка списков
-                    if isinstance(russian_value, list):
-                        # Если список строк - переводим каждую
-                        if all(isinstance(x, str) for x in russian_value):
-                            new_list = []
-                            list_translated = False
-                            for item in russian_value:
-                                tr = translate_google_free(item, target_lang)
-                                if tr and tr != item:
-                                    new_list.append(tr)
-                                    list_translated = True
-                                else:
-                                    new_list.append(item)
-                            
-                            target_flat[key] = new_list
-                            if list_translated:
-                                total_translated += 1
-                                file_translated_count += 1
-                            else:
-                                total_filled += 1
-                            updated = True
-                        else:
-                            # Сложные списки (объекты) просто копируем
-                            target_flat[key] = russian_value
-                            updated = True
-                            total_filled += 1
-                    
-                    # Обработка строк
-                    elif isinstance(russian_value, str):
-                        translated = translate_google_free(russian_value, target_lang)
-                        
-                        if translated and translated != russian_value:
-                            target_flat[key] = translated
-                            updated = True
-                            total_translated += 1
-                            file_translated_count += 1
-                            time.sleep(random.uniform(DELAY_MIN, DELAY_MAX))
-                        else:
-                            if key not in target_flat or not target_flat[key]:
-                                target_flat[key] = russian_value
-                                updated = True
-                                total_filled += 1
-                            else:
-                                total_errors += 1
-                    
-                    # Другие типы (числа, булевы) - просто копируем
+            for res in results:
+                if res:
+                    key, val, status = res
+                    target_flat[key] = val
+                    updated = True
+                    if status == 'translated':
+                        total_translated += 1
+                        file_translated_count += 1
                     else:
-                        if key not in target_flat:
-                            target_flat[key] = russian_value
-                            updated = True
+                        total_filled += 1
             
             # Сохраняем обновленный файл, если были изменения
             if updated:
-                # Разворачиваем обратно во вложенную структуру
                 target_nested = unflatten_dict(target_flat)
                 save_json(target_file, target_nested)
                 if file_translated_count > 0:
                     print(f"  💾 {target_lang}: Сохранено ({file_translated_count} новых переводов)")
         
-        print()
+        # print() # Меньше спама в консоль
     
     print("\n" + "="*80)
     print("📊 ИТОГИ")

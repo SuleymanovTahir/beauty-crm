@@ -2,10 +2,12 @@
   "crm": "إدارة علاقات العملاء الخاصة بالجمال",
   "logout": "تسجيل الخروج",
   "manager": "مدير",
-  "menu.analytics": "التحليلات",
-  "menu.chat": "محادثة",
-  "menu.clients": "العملاء",
-  "menu.dashboard": "لوحة القيادة",
-  "menu.funnel": "قمع",
-  "menu.settings": "إعدادات"
+  "menu": {
+    "analytics": "التحليلات",
+    "chat": "محادثة",
+    "clients": "العملاء",
+    "dashboard": "لوحة القيادة",
+    "funnel": "قمع",
+    "settings": "إعدادات"
+  }
 }

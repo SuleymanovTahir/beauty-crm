@@ -79,7 +79,7 @@
   "import_error_message": "خطأ في الاستيراد",
   "import_errors": "أخطاء",
   "import_example_structure": "مثال على الهيكل الأدنى",
-  "import_excel": "Excel (.xlsx, .xls)",
+  "import_excel": "إكسل (.xlsx، .xls)",
   "import_important_info": "معلومات مهمة",
   "import_importing": "جارٍ الاستيراد...",
   "import_not_all_columns": "ليست كل الأعمدة مطلوبة - يملأ فقط المتاحة",

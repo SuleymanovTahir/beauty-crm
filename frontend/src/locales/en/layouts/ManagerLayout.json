@@ -2,10 +2,12 @@
   "crm": "Beauty CRM",
   "logout": "Log out",
   "manager": "Manager",
-  "menu.analytics": "Analytics",
-  "menu.chat": "Chat",
-  "menu.clients": "Clients",
-  "menu.dashboard": "Dashboard",
-  "menu.funnel": "Funnel",
-  "menu.settings": "Settings"
+  "menu": {
+    "analytics": "Analytics",
+    "chat": "Chat",
+    "clients": "Clients",
+    "dashboard": "Dashboard",
+    "funnel": "Funnel",
+    "settings": "Settings"
+  }
 }
