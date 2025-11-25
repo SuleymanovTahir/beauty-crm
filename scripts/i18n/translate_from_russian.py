@@ -144,24 +144,38 @@ def unflatten_dict(d, sep='.'):
         current[parts[-1]] = value
     return result
 
+def key_to_text(key: str) -> str:
+    """
+    Преобразует ключ в человекочитаемый текст для автоматического перевода.
+    Примеры:
+    - "add_note" -> "Add note"
+    - "menu.profile_settings" -> "Profile settings"
+    - "error_loading_data" -> "Error loading data"
+    """
+    # Берем последнюю часть после точки (если есть)
+    parts = key.split('.')
+    last_part = parts[-1]
+    
+    # Заменяем подчеркивания на пробелы
+    text = last_part.replace('_', ' ')
+    
+    # Делаем первую букву заглавной
+    text = text.capitalize()
+    
+    return text
+
 def process_translation_item(args):
     """Функция для обработки одного перевода в потоке"""
-    key, source_value, target_lang, current_value, is_russian_empty = args
+    key, source_value, target_lang, current_value, is_auto_generated = args
     
-    # Если значения совпадают и это не русский язык (где мы заполняем пустые), пропускаем
-    if current_value == source_value and target_lang != 'ru':
+    # Если значение уже есть и не пустое, пропускаем (кроме случая автогенерации)
+    if current_value and not is_auto_generated:
+        return None
+    
+    # Если автогенерация и значение уже есть, тоже пропускаем
+    if is_auto_generated and current_value:
         return None
         
-    # Если списки разной длины - переводим заново
-    if isinstance(source_value, list) and isinstance(current_value, list) and len(source_value) != len(current_value):
-        pass # needs translation
-    elif current_value: # Если значение есть и оно не совпадает с исходным (и не список), считаем что уже переведено
-        # Но если мы переводим на русский и исходное было пустым (взяли из EN), то нужно проверить, не пустое ли текущее
-        if target_lang == 'ru' and is_russian_empty:
-             if current_value: return None
-        else:
-             return None
-
     result = None
     
     # Обработка списков
@@ -170,7 +184,8 @@ def process_translation_item(args):
             new_list = []
             translated_any = False
             for item in source_value:
-                tr = translate_google_free_custom(item, 'en' if is_russian_empty else SOURCE_LANG, target_lang)
+                # Для автогенерированного текста переводим с английского
+                tr = translate_google_free_custom(item, 'en' if is_auto_generated else SOURCE_LANG, target_lang)
                 if tr and tr != item:
                     new_list.append(tr)
                     translated_any = True
@@ -186,7 +201,8 @@ def process_translation_item(args):
             
     # Обработка строк
     elif isinstance(source_value, str):
-        source_lang_code = 'en' if is_russian_empty else SOURCE_LANG
+        # Для автогенерированного текста переводим с английского на все языки (включая русский)
+        source_lang_code = 'en' if is_auto_generated else SOURCE_LANG
         translated = translate_google_free_custom(source_value, source_lang_code, target_lang)
         
         if translated and translated != source_value:
@@ -244,23 +260,15 @@ def auto_translate():
         # Предварительно загружаем английский файл, если он понадобится для фоллбэка
         en_flat_cache = None
         
-        # Подготавливаем эффективные исходные значения (RU или EN fallback)
+        # Подготавливаем эффективные исходные значения (RU или auto-generated from key)
         effective_source = {}
         
         for key, val in source_flat.items():
             is_empty = val is None or (isinstance(val, str) and not val)
             if is_empty:
-                if en_flat_cache is None:
-                    en_file = os.path.join(LOCALES_DIR, 'en', file_path)
-                    if os.path.exists(en_file):
-                        en_data = load_json(en_file)
-                        en_flat_cache = flatten_dict(en_data)
-                    else:
-                        en_flat_cache = {}
-                
-                en_val = en_flat_cache.get(key)
-                if en_val:
-                    effective_source[key] = (en_val, True) # value, is_from_en_fallback
+                # Генерируем текст из ключа
+                auto_text = key_to_text(key)
+                effective_source[key] = (auto_text, True) # value, is_auto_generated
             else:
                 effective_source[key] = (val, False) # value, is_original_ru
         
@@ -280,13 +288,12 @@ def auto_translate():
             tasks = []
             
             # Формируем задачи для перевода
-            for key, (source_val, is_russian_empty) in effective_source.items():
+            for key, (source_val, is_auto_generated) in effective_source.items():
                 current_val = target_flat.get(key)
                 
-                # Простая проверка: если ключа нет или значение пустое - добавляем задачу
-                # Более сложная проверка внутри process_translation_item
-                if key not in target_flat or not current_val or (target_lang == 'ru' and is_russian_empty and not current_val):
-                     tasks.append((key, source_val, target_lang, current_val, is_russian_empty))
+                # Если ключа нет, значение пустое, или это автогенерированный ключ - добавляем задачу
+                if key not in target_flat or not current_val or is_auto_generated:
+                     tasks.append((key, source_val, target_lang, current_val, is_auto_generated))
             
             if not tasks:
                 continue

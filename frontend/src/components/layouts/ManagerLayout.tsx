@@ -27,7 +27,7 @@ interface ManagerLayoutProps {
 export default function ManagerLayout({ user, onLogout }: ManagerLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['managerLayout', 'common']);
+  const { t } = useTranslation(['layouts/managerlayout', 'common']);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
   const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
 

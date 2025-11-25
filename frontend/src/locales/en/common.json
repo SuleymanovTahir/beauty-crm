@@ -45,8 +45,8 @@
   "nothing_found": "Nothing found",
   "of": "From",
   "period": {
-    "2weeks": "2 weeks",
-    "3months": "3 months",
+    "2weeks": "2weeks",
+    "3months": "3months",
     "month": "Month",
     "week": "Week"
   },
@@ -82,6 +82,7 @@
   "status_pending": "Pending",
   "status_updated": "Status updated",
   "status_vip": "VIP",
+  "test_auto_translation": "Test auto translation",
   "to": "To",
   "today": "Today",
   "try_again": "try again",
