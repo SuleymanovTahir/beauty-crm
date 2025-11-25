@@ -1,9 +1,9 @@
 {
   "backToHome": "العودة إلى المنزل",
   "contactMessage": "سوف نتصل بك قريبا لتأكيد تفاصيل موعدك.",
-  "dateTime": "{{date}} في {{time}}",
+  "dateTime": "{{التاريخ}} في {{الوقت}}",
   "serviceBooked": "تم إنشاء الإدخال الخاص بك لـ <highlight>{{service}}</highlight> بنجاح.",
-  "thankYou": "شكرًا لك، {{name}}!",
+  "thankYou": "شكرًا لك، {{الاسم}}!",
   "title": "تم تأكيد التسجيل!",
   "viewServices": "عرض الخدمات"
 }

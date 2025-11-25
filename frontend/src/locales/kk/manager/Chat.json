@@ -6,7 +6,7 @@
   "error_loading_clients": "Клиенттерді жүктеу кезінде қате",
   "file_removed": "Файл жойылды",
   "files": "Файлдар",
-  "files_added": "Қосылған файлдар: {{count}}",
+  "files_added": "Қосылған файлдар: {{CONSE}}",
   "files_added_few": "Бірнеше файл қосылды",
   "files_added_many": "Көптеген файлдар қосылды",
   "files_added_one": "Файлдар біреуін қосады",

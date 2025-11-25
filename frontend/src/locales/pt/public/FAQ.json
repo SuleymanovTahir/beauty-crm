@@ -44,7 +44,7 @@
       "question": "Vocês oferecem garantia de serviços?"
     },
     "location": {
-      "answer": "Estamos localizados em: {{address}}. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos.",
+      "answer": "Estamos localizados em: {{endereço}}. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos.",
       "question": "Onde fica o seu salão?"
     },
     "loyalty": {

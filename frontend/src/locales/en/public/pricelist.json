@@ -5,13 +5,13 @@
     "title": "Ready to sign up?"
   },
   "categories": {
-    "facial-care": "Facial Care",
-    "hair": "Hair Services",
-    "lashes": "Lashes & Brows",
-    "massage": "Massage & Spa",
-    "nails": "Nails",
-    "other": "Other Services",
-    "permanent-makeup": "Permanent Makeup"
+    "facial-care": "Facial care",
+    "hair": "Hair services",
+    "lashes": "Eyelashes and eyebrows",
+    "massage": "Massage and SPA",
+    "nails": "Nail service",
+    "other": "Other services",
+    "permanent-makeup": "Permanent makeup"
   },
   "cta": {
     "bookButton": "Sign up for the procedure",

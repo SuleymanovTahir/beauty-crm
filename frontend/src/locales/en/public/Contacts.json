@@ -8,16 +8,16 @@
   "message_placeholder": "Tell us about your question or suggestion...",
   "message_sent": "Message sent successfully! We will contact you shortly.",
   "name_placeholder": "Enter your name",
-  "phone": "Phone",
+  "phone": "Telephone",
   "send_button": "Send message",
   "send_error": "Error sending message",
   "sending": "Sending...",
-  "subtitle": "We are always glad to your questions and suggestions",
+  "subtitle": "We are always happy to receive your questions and suggestions.",
   "title": "Contacts",
   "try_later": "Try again later or contact us in another way",
   "weekdays": "Weekdays",
-  "weekends": "Weekends",
-  "working_hours": "Working Hours",
+  "weekends": "Weekend",
+  "working_hours": "Opening hours",
   "write_us": "Write to us",
-  "your_name": "Your name"
+  "your_name": "your name"
 }

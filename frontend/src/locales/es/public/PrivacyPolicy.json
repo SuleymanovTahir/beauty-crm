@@ -1,6 +1,6 @@
 {
   "back": "Atrás",
-  "contact_content": "Teléfono: +971 50 123 4567\nCorreo electrónico: info@beauty.com",
+  "contact_content": "Teléfono: {{teléfono}}\nCorreo electrónico: {{correo electrónico}}",
   "contact_title": "Por cuestiones de privacidad contáctenos",
   "data_booking_info": "Información de la publicación",
   "data_email": "Correo electrónico",

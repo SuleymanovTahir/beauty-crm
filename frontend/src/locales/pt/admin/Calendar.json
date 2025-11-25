@@ -39,7 +39,7 @@
   "delete_booking": "Excluir entrada {{name}}?",
   "edit": "Editar",
   "edit_booking": "Editar entrada",
-  "error": "Erro: {{message}}",
+  "error": "Erro: {{mensagem}}",
   "error_changing_status": "Erro de alteração de status",
   "error_deleting_booking": "Erro ao excluir entrada",
   "error_loading_data": "Erro ao carregar dados",

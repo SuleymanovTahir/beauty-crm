@@ -6,7 +6,7 @@
   "error_loading_clients": "क्लाइंट लोड करने में त्रुटि",
   "file_removed": "फ़ाइल हटा दी गई",
   "files": "फ़ाइलें",
-  "files_added": "फ़ाइलें जोड़ी गईं: {{count}}",
+  "files_added": "फ़ाइलें जोड़ी गईं: {{गिनती}}",
   "files_added_few": "कई फ़ाइलें जोड़ी गई हैं",
   "files_added_many": "बहुत सारी फ़ाइलें जोड़ी गईं",
   "files_added_one": "फ़ाइलें एक जोड़ी गईं",
