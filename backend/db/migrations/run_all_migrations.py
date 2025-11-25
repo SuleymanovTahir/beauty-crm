@@ -250,6 +250,12 @@ def main():
         'Универсальные настройки бота'
     )
 
+    results["schema/bot/update_max_message_chars"] = run_migration_function(
+        'db.migrations.schema.bot.update_max_message_chars',
+        'update_max_message_chars',
+        'Обновление лимита символов сообщений (300)'
+    )
+
     # Bookings
     results["schema/bookings/add_booking_reminders_system"] = run_migration_function(
         'db.migrations.schema.bookings.add_booking_reminders_system',
@@ -590,6 +596,12 @@ def main():
         'db.migrations.maintenance.check_translations',
         'check_translations',
         'Проверка переводов'
+    )
+
+    results["maintenance/remove_duplicate_employees"] = run_migration_function(
+        'db.migrations.maintenance.remove_duplicate_employees',
+        'remove_duplicate_employees',
+        'Удаление дубликатов сотрудников'
     )
 
     results["maintenance/link_employees_to_services"] = run_migration_function(

@@ -9,9 +9,13 @@ from utils.logger import log_info,log_error
 from core.config import DATABASE_NAME
 
 # Ensure the clients table has the new columns required for import
-def ensure_client_columns():
+def ensure_client_columns(conn=None):
     """Add missing columns for new import fields if they don't exist."""
-    conn = sqlite3.connect(DATABASE_NAME)
+    should_close = False
+    if conn is None:
+        conn = sqlite3.connect(DATABASE_NAME)
+        should_close = True
+        
     c = conn.cursor()
     try:
         c.execute("PRAGMA table_info(clients)")
@@ -30,9 +34,12 @@ def ensure_client_columns():
         for col, definition in new_cols.items():
             if col not in existing:
                 c.execute(f"ALTER TABLE clients ADD COLUMN {col} {definition}")
-        conn.commit()
+        
+        if should_close:
+            conn.commit()
     finally:
-        conn.close()
+        if should_close:
+            conn.close()
 
 
 def get_all_clients():
@@ -107,7 +114,8 @@ def get_or_create_client(instagram_id: str, username: str = None):
 def update_client_info(instagram_id: str, phone: str = None, name: str = None, notes: str = None,
                        is_pinned: int = None, status: str = None,
                        discount: float = None, card_number: str = None,
-                       gender: str = None, age: int = None, birth_date: str = None):
+                       gender: str = None, age: int = None, birth_date: str = None,
+                       profile_pic: str = None):
     """Обновить информацию о клиенте"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -145,6 +153,9 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
     if birth_date is not None:
         updates.append("birth_date = ?")
         params.append(birth_date)
+    if profile_pic is not None:
+        updates.append("profile_pic = ?")
+        params.append(profile_pic)
         
     try:
         if updates:

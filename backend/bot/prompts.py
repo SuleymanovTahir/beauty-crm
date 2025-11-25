@@ -168,6 +168,9 @@ class PromptBuilder:
         service_name = booking_progress.get('service_name', '')
         master_name = booking_progress.get('master', '')
         preferred_date = booking_progress.get('date', '')
+        preferred_time = booking_progress.get('time', '')
+        phone = booking_progress.get('phone', '')
+        client_name = booking_progress.get('name', '')
 
         # ✅ КРИТИЧЕСКИ ВАЖНО: additional_context ПЕРВЫМ (после IDENTITY)!
         context_part = ""
@@ -177,6 +180,9 @@ class PromptBuilder:
         parts = [
             self._build_identity(),
             context_part,  # ✅ СРАЗУ ПОСЛЕ IDENTITY!
+            self._build_known_information(
+                service_name, master_name, preferred_date, preferred_time, phone, client_name
+            ),
             self._build_personality(),
             self._build_language_settings(client_language),
             self._build_greeting_logic(history),
@@ -282,6 +288,44 @@ phone: +77077077707
 ТВОЯ МИССИЯ:
 Консультировать клиентов по услугам и САМОСТОЯТЕЛЬНО предлагать конкретное время и дату для записи.
 НЕ отправляй клиента на внешние сайты или ссылки - ты сам можешь предложить удобное время."""
+
+    def _build_known_information(
+        self,
+        service_name: str,
+        master_name: str,
+        preferred_date: str,
+        preferred_time: str,
+        phone: str,
+        client_name: str
+    ) -> str:
+        """Секция ИЗВЕСТНОЙ ИНФОРМАЦИИ - чтобы бот не переспрашивал"""
+        known_info = []
+        
+        if service_name:
+            known_info.append(f"- Услуга: {service_name}")
+        if master_name:
+            known_info.append(f"- Мастер: {master_name}")
+        if preferred_date:
+            known_info.append(f"- Дата: {preferred_date}")
+        if preferred_time:
+            known_info.append(f"- Время: {preferred_time}")
+        if phone:
+            known_info.append(f"- WhatsApp/Телефон: {phone}")
+        if client_name:
+            known_info.append(f"- Имя клиента: {client_name}")
+            
+        if not known_info:
+            return ""
+            
+        return f"""=== ✅ ИЗВЕСТНАЯ ИНФОРМАЦИЯ (НЕ СПРАШИВАЙ СНОВА!) ===
+Ты УЖЕ знаешь следующие детали (они сохранены в системе):
+{chr(10).join(known_info)}
+
+⚠️ ИНСТРУКЦИИ:
+1. Если телефон УЖЕ известен - НЕ СПРАШИВАЙ ЕГО СНОВА! Сразу подтверждай запись.
+2. Если время УЖЕ выбрано - НЕ ПРЕДЛАГАЙ ДРУГОЕ, если клиент не просит.
+3. Если услуга известна - не спрашивай "какая услуга?".
+4. Используй эти данные для формирования ответа."""
 
     def _build_personality(self) -> str:
         """Секция PERSONALITY - из БД"""
