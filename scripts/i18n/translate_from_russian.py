@@ -271,9 +271,6 @@ def auto_translate():
         
         # Переводим для каждого целевого языка
         for target_lang in TARGET_LANGS:
-            if 'terms.json' in file_path and target_lang == 'ar':
-                print(f"DEBUG: Inside loop for {target_lang} {file_path}")
-
             target_file = os.path.join(LOCALES_DIR, target_lang, file_path)
             
             # Загружаем существующие переводы
@@ -292,8 +289,7 @@ def auto_translate():
                      tasks.append((key, source_val, target_lang, current_val, is_russian_empty))
             
             if not tasks:
-                # Even if no tasks, we might want to save to fix structure
-                pass
+                continue
                 
             updated = False
             file_translated_count = 0
@@ -315,18 +311,9 @@ def auto_translate():
                         else:
                             total_filled += 1
             
-            # Сохраняем обновленный файл, если были изменения или для исправления структуры
-            if True: # updated or True to force unflattening
-                if 'terms.json' in file_path and target_lang == 'ar':
-                     print(f"DEBUG: Saving {target_file}")
-                     target_nested = unflatten_dict(target_flat)
-                     print(f"DEBUG: Nested keys sample: {list(target_nested.keys())[:5]}")
-                     if 'sections' in target_nested:
-                         print(f"DEBUG: sections type: {type(target_nested['sections'])}")
-                         if isinstance(target_nested['sections'], dict):
-                             print(f"DEBUG: sections keys: {list(target_nested['sections'].keys())}")
-                else:
-                     target_nested = unflatten_dict(target_flat)
+            # Сохраняем обновленный файл, если были изменения
+            if updated:
+                target_nested = unflatten_dict(target_flat)
                 save_json(target_file, target_nested)
                 if file_translated_count > 0:
                     print(f"  💾 {target_lang}: Сохранено ({file_translated_count} новых переводов)")
