@@ -1,4 +1,11 @@
 {
+  "crm": "CRM",
+  "employee": "Сотрудник",
+  "logout": "Выйти",
+  "menu.calendar": "Календарь",
+  "menu.my_bookings": "Мои записи",
+  "menu.profile": "Профиль",
+  "menu.settings": "Настройки",
   "my_bookings": "Мои записи",
   "profile": "Профиль",
   "title": "Личный кабинет"

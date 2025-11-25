@@ -1,4 +1,13 @@
 {
+  "crm": "GRC",
+  "employee": "Employé",
+  "logout": "Se déconnecter",
+  "menu": {
+    "calendar": "Calendrier",
+    "my_bookings": "Mes entrées",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
   "my_bookings": "Mes entrées",
   "profile": "Profil",
   "title": "Compte personnel"

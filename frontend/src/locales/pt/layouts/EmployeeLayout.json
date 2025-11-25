@@ -1,4 +1,13 @@
 {
+  "crm": "CRM",
+  "employee": "Funcionário",
+  "logout": "Sair",
+  "menu": {
+    "calendar": "Calendário",
+    "my_bookings": "Minhas entradas",
+    "profile": "Perfil",
+    "settings": "Configurações"
+  },
   "my_bookings": "Minhas entradas",
   "profile": "Perfil",
   "title": "Conta pessoal"

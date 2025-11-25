@@ -3,13 +3,13 @@
   "and": "Et",
   "back_button": "Dos",
   "back_to_login": "Retour à l'entrée",
-  "code_sent_to_email": "Un code de confirmation a été envoyé à votre email !",
+  "code_sent_to_email": "Un code de confirmation a été envoyé à votre email\u00a0!",
   "confirm_password": "Confirmation du mot de passe",
   "confirm_password_placeholder": "Répéter le mot de passe",
   "email": "E-mail",
   "email_hint": "Un code de vérification sera envoyé à cette adresse",
   "email_placeholder": "Votre email",
-  "email_verified": "E-mail confirmé ! Attendez l'approbation de l'administrateur.",
+  "email_verified": "E-mail confirmé\u00a0! Attendez l'approbation de l'administrateur.",
   "error_accept_privacy": "Vous devez accepter la politique de confidentialité",
   "error_fill_all_fields": "Remplissez tous les champs obligatoires",
   "error_invalid_code": "Entrez le code à 6 chiffres",
@@ -35,7 +35,7 @@
   "subscribe_to_newsletter": "Abonnez-vous aux actualités",
   "success_message": "Votre email a été confirmé. L'administrateur examinera votre candidature et activera votre compte. Vous recevrez une notification par e-mail lorsque vous pourrez vous connecter.",
   "success_subtitle": "Attendez l'approbation de l'administrateur",
-  "success_title": "E-mail confirmé !",
+  "success_title": "E-mail confirmé\u00a0!",
   "terms_of_service": "conditions d'utilisation",
   "username": "Se connecter",
   "username_placeholder": "Créer une connexion",
@@ -45,5 +45,5 @@
   "verification_title": "Confirmation par e-mail",
   "verify_button": "Confirmer",
   "verifying": "Examen...",
-  "your_code": "Votre code :"
+  "your_code": "Votre code\u00a0:"
 }

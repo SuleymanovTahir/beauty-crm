@@ -45,8 +45,8 @@
   "nothing_found": "Ештеңе табылмады",
   "of": "-Ден",
   "period": {
-    "2weeks": "2 апта",
-    "3months": "3 ай",
+    "2weeks": "2ес",
+    "3months": "3 айлық",
     "month": "Ай",
     "week": "Апта"
   },
@@ -82,6 +82,7 @@
   "status_pending": "Күтуде",
   "status_updated": "Мәртебе жаңартылды",
   "status_vip": "Қуу",
+  "test_auto_translation": "Автоматты аударма",
   "to": "Дейін",
   "today": "Бүгін",
   "try_again": "қайтадан байқап көріңіз",

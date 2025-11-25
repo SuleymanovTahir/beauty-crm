@@ -21,7 +21,7 @@ interface EmployeeLayoutProps {
 export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['employeeLayout', 'common']);
+  const { t } = useTranslation(['layouts/employeelayout', 'common']);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
