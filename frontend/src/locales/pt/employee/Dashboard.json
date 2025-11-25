@@ -1,0 +1,13 @@
+{
+  "booking": "Registro",
+  "confirmed": "Confirmado",
+  "failed_to_fetch_bookings": "Falha ao carregar registros",
+  "loading_error": "Erro ao carregar",
+  "my_bookings": "Minhas entradas",
+  "no_bookings_today": "Não há entradas para hoje",
+  "pending": "Esperando",
+  "schedule_for_today": "Agenda para hoje",
+  "today": "Hoje",
+  "today_bookings": "Postagens hoje",
+  "unknown_error": "Erro desconhecido"
+}

@@ -1,0 +1,13 @@
+{
+  "booking": "سِجِلّ",
+  "confirmed": "مؤكد",
+  "failed_to_fetch_bookings": "فشل تحميل السجلات",
+  "loading_error": "خطأ في التحميل",
+  "my_bookings": "مداخلاتي",
+  "no_bookings_today": "لا توجد إدخالات لهذا اليوم",
+  "pending": "منتظر",
+  "schedule_for_today": "الجدول الزمني لهذا اليوم",
+  "today": "اليوم",
+  "today_bookings": "المشاركات اليوم",
+  "unknown_error": "خطأ غير معروف"
+}

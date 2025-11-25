@@ -1,0 +1,20 @@
+{
+  "401": "401",
+  "authorization_error": "Авторизация қатесі",
+  "crm_system_management": "CRM жүйесін басқару",
+  "enter_login": "Кіруді енгізіңіз",
+  "enter_password": "Құпия сөзді енгізіңіз",
+  "fill_both_fields": "Екі өрісті толтырыңыз",
+  "forgot_password": "Парольді ұмыттыңыз ба?",
+  "invalid_username_or_password": "Пайдаланушы аты немесе пароль жарамсыз",
+  "loading": "Жүктеу ...",
+  "login": "Кіру",
+  "login_error": "Кіру қатесі",
+  "login_title": "Кіру",
+  "no_account_register": "Есептік жазба жоқ па? Тіркеу",
+  "password": "Пароль",
+  "return_to_home": "Үйге оралу",
+  "unauthorized": "Руқсат етілмеген",
+  "username": "Пайдаланушы аты",
+  "welcome": "Хош келдіңіз"
+}

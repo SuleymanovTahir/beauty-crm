@@ -1,0 +1,14 @@
+{
+  "permissions_title": "Управление правами доступа",
+  "permissions_subtitle": "Настройте индивидуальные права для пользователей",
+  "users_list_title": "Пользователи",
+  "permissions_for_user": "Права доступа: {name}",
+  "role_label": "Роль:",
+  "view_permission": "Просмотр",
+  "create_permission": "Создание",
+  "edit_permission": "Редактирование",
+  "delete_permission": "Удаление",
+  "permission_granted": "Право предоставлено",
+  "permission_revoked": "Право отозвано",
+  "select_user_prompt": "Выберите пользователя"
+}

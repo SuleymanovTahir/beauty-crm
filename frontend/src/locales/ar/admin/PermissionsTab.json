@@ -1,0 +1,16 @@
+{
+  "role_user_title": "دور المستخدم",
+  "current_role": "الدور الحالي",
+  "hierarchy_level": "مستوى التسلسل الهرمي:",
+  "change_role_to": "تغيير الدور إلى",
+  "change_role_button": "تغيير الدور",
+  "permissions_title": "حقوق الوصول",
+  "save_changes": "حفظ التغييرات",
+  "full_access_message": "الوصول الكامل إلى جميع وظائف النظام (دور المدير)",
+  "individual_permissions_info": "الحقوق الفردية: يمكنك تغيير حقوق المستخدم بغض النظر عن دوره. علامة الاختيار تعني أن الحق قد تم منحه. المربع غير المحدد يعني أنه تم إلغاء الحق.",
+  "can_manage_roles_title": "يمكن إدارة الأدوار",
+  "role_unchanged": "الدور لم يتغير",
+  "permissions_updated": "تم تحديث الحقوق",
+  "error_saving_permissions": "حدث خطأ أثناء حفظ الحقوق",
+  "error_loading_permissions": "فشل تحميل معلومات الاستحقاق"
+}

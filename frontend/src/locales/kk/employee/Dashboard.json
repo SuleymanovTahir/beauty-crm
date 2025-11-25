@@ -1,0 +1,13 @@
+{
+  "booking": "Хаттама",
+  "confirmed": "Расталды",
+  "failed_to_fetch_bookings": "Жазбаларды жүктеу сәтсіз аяқталды",
+  "loading_error": "Жүктеу қатесі",
+  "my_bookings": "Менің жазбаларым",
+  "no_bookings_today": "Бүгінгі жазба жоқ",
+  "pending": "Күту",
+  "schedule_for_today": "Бүгінгі кесте",
+  "today": "Бүгін",
+  "today_bookings": "Хабарламалар Бүгін",
+  "unknown_error": "Белгісіз қате"
+}

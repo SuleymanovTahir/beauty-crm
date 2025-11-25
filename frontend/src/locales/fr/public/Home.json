@@ -1,0 +1,70 @@
+{
+  "booking": {
+    "description": "Remplissez le formulaire et nous vous contacterons pour confirmer",
+    "form": {
+      "date": "Date *",
+      "name": "Votre nom *",
+      "namePlaceholder": "Anna Ivanova",
+      "phone": "Téléphone *",
+      "phonePlaceholder": "+971 50 123 4567",
+      "service": "Service *",
+      "servicePlaceholder": "Sélectionnez une prestation",
+      "submit": "S'inscrire",
+      "time": "Temps *"
+    },
+    "loading": "Chargement des services...",
+    "title": "Inscrivez-vous à la procédure",
+    "validation": "Veuillez remplir tous les champs"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Nos spécialistes possèdent des certificats internationaux et de nombreuses années d'expérience",
+        "title": "Des artisans expérimentés"
+      },
+      "materials": {
+        "description": "Nous utilisons uniquement des matériaux sûrs et de haute qualité provenant de grandes marques",
+        "title": "Matériaux haut de gamme"
+      },
+      "schedule": {
+        "description": "Nous travaillons 7 jours sur 7 avec des plages horaires pratiques pour l'enregistrement",
+        "title": "Horaire pratique"
+      }
+    },
+    "subtitle": "Nous offrons le meilleur service de l'industrie de la beauté",
+    "title": "Pourquoi nous choisir"
+  },
+  "gallery": {
+    "items": {
+      "facial": "Soins du visage",
+      "makeup": "Maquillage permanent",
+      "salon": "Notre salon"
+    },
+    "subtitle": "Des résultats dont nous sommes fiers",
+    "title": "Nos travaux"
+  },
+  "hero": {
+    "badge": "Des services de beauté haut de gamme",
+    "bookButton": "Inscrivez-vous maintenant",
+    "description": "Artisans professionnels, approche individuelle et matériaux de haute qualité. Votre beauté est notre passion.",
+    "servicesButton": "Nos prestations",
+    "title": "Découvrez un nouveau niveau de beauté"
+  },
+  "services": {
+    "items": [
+      "Maquillage permanent des sourcils",
+      "Manucure",
+      "Pédicure",
+      "Massage du visage",
+      "Extensions de cils",
+      "Coupe de cheveux et stylisme",
+      "Coloration des cheveux",
+      "Nettoyage du visage"
+    ]
+  },
+  "testimonials": {
+    "items": [],
+    "subtitle": "Ce qu'ils disent de nous",
+    "title": "Avis de nos clients"
+  }
+}

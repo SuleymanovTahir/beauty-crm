@@ -1,0 +1,17 @@
+{
+  "backToHome": "← Retour à la maison",
+  "fillAllFields": "Veuillez remplir tous les champs",
+  "loggingIn": "Entrée...",
+  "loginButton": "Se connecter",
+  "loginError": "Identifiants invalides",
+  "loginSuccess": "Vous êtes connecté avec succès ! 🎉",
+  "password": "Mot de passe",
+  "passwordHint": "Inscrit lors de l'inscription",
+  "passwordPlaceholder": "••••••",
+  "subtitle": "Connectez-vous au système de gestion du salon",
+  "systemError": "Erreur de connexion",
+  "title": "Compte personnel",
+  "username": "Nom d'utilisateur ou email",
+  "usernameHint": "Entrez votre nom d'utilisateur",
+  "usernamePlaceholder": "administrateur"
+}

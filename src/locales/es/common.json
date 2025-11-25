@@ -1,0 +1,21 @@
+{
+  "profile": "Perfil",
+  "subscriptions": "Suscripciones",
+  "danger_zone": "Zona de peligro",
+  "my_profile": "mi perfil",
+  "click_camera_to_upload": "Haga clic en la cámara",
+  "to_upload_photo": "para subir una foto",
+  "max_size": "Máx. 5MB",
+  "username": "Acceso",
+  "full_name": "nombre completo",
+  "email": "Correo electrónico",
+  "change_password": "Cambiar la contraseña",
+  "current_password": "Contraseña actual",
+  "new_password": "Nueva contraseña",
+  "confirm_new_password": "Confirma tu nueva contraseña",
+  "new_password_placeholder": "Déjalo en blanco si no quieres cambiar",
+  "repeat_new_password": "Repetir nueva contraseña",
+  "save_changes": "Guardar cambios",
+  "profile_updated": "Perfil actualizado",
+  "error_update_profile": "Error de actualización de perfil"
+}

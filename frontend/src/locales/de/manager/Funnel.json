@@ -1,0 +1,55 @@
+{
+  "Your funnel shows good results": {
+    " Keep it up!": "Weiter so!"
+  },
+  "all_good": "Alles ist in Ordnung",
+  "conversion": {
+    "booked_to_completed": "Vollständig ausgebucht",
+    "booking_to_booked": "Reservierung zur Reservierung",
+    "engaged_to_booking": "Ich mache eine Reservierung",
+    "visitor_to_engaged": "Der Besucher ist engagiert"
+  },
+  "funnel_chart": "Trichterdiagramm",
+  "key_metrics": "Schlüsselindikatoren",
+  "loading": "Laden",
+  "losses_few": "Die Verluste sind gering",
+  "losses_many": "Viele Verluste",
+  "losses_one": "Verliert einen",
+  "losses_other": "Andere Verluste",
+  "recommendations": {
+    "increase_engagement": {
+      "description_few": "Beschreibung reicht nicht aus",
+      "description_many": "Beschreibung viel",
+      "description_one": "Beschreibung eins",
+      "description_other": "Beschreibung Sonstiges",
+      "suggestion": "Annahme",
+      "title": "Überschrift"
+    },
+    "optimize_form": {
+      "description": "Beschreibung",
+      "suggestion": "Annahme",
+      "title": "Überschrift"
+    },
+    "reduce_noshow": {
+      "description_few": "Beschreibung reicht nicht aus",
+      "description_many": "Beschreibung viel",
+      "description_one": "Beschreibung eins",
+      "description_other": "Beschreibung Sonstiges",
+      "suggestion": "Annahme",
+      "title": "Überschrift"
+    }
+  },
+  "recommendations_title": "Name der Empfehlungen",
+  "stage_details": "Bühnendetails",
+  "subtitle": "Untertitel",
+  "successful_visits": "Erfolgreiche Besuche",
+  "table": {
+    "count": "Zählen",
+    "losses": "Verluste",
+    "percentage": "Prozent",
+    "stage": "Bühne"
+  },
+  "title": "Überschrift",
+  "total_conversion": "Gesamtumwandlung",
+  "total_losses": "Totalverluste"
+}

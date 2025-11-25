@@ -1,0 +1,70 @@
+{
+  "booking": {
+    "description": "Füllen Sie das Formular aus und wir werden Sie zur Bestätigung kontaktieren",
+    "form": {
+      "date": "Datum *",
+      "name": "Ihr Name *",
+      "namePlaceholder": "Anna Iwanowa",
+      "phone": "Telefon *",
+      "phonePlaceholder": "+971 50 123 4567",
+      "service": "Service *",
+      "servicePlaceholder": "Wählen Sie einen Dienst aus",
+      "submit": "Melden Sie sich an",
+      "time": "Zeit *"
+    },
+    "loading": "Dienste werden geladen...",
+    "title": "Melden Sie sich für das Verfahren an",
+    "validation": "Bitte füllen Sie alle Felder aus"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Unsere Spezialisten verfügen über internationale Zertifikate und langjährige Erfahrung",
+        "title": "Erfahrene Handwerker"
+      },
+      "materials": {
+        "description": "Wir verwenden ausschließlich hochwertige und sichere Materialien führender Marken",
+        "title": "Hochwertige Materialien"
+      },
+      "schedule": {
+        "description": "Wir arbeiten 7 Tage die Woche mit passenden Zeitfenstern für die Aufnahme",
+        "title": "Bequemer Zeitplan"
+      }
+    },
+    "subtitle": "Wir bieten den besten Service in der Beauty-Branche",
+    "title": "Warum sollten Sie sich für uns entscheiden?"
+  },
+  "gallery": {
+    "items": {
+      "facial": "Gesichtspflege",
+      "makeup": "Permanentes Make-up",
+      "salon": "Unser Salon"
+    },
+    "subtitle": "Ergebnisse, auf die wir stolz sind",
+    "title": "Unsere Werke"
+  },
+  "hero": {
+    "badge": "Premium-Beauty-Dienstleistungen",
+    "bookButton": "Melden Sie sich jetzt an",
+    "description": "Professionelle Handwerker, individuelle Herangehensweise und hochwertige Materialien. Ihre Schönheit ist unsere Leidenschaft.",
+    "servicesButton": "Unsere Leistungen",
+    "title": "Entdecken Sie ein neues Maß an Schönheit"
+  },
+  "services": {
+    "items": [
+      "Permanentes Augenbrauen-Make-up",
+      "Maniküre",
+      "Pediküre",
+      "Gesichtsmassage",
+      "Wimpernverlängerungen",
+      "Haarschnitt und Styling",
+      "Haarfärbung",
+      "Gesichtsreinigung"
+    ]
+  },
+  "testimonials": {
+    "items": [],
+    "subtitle": "Was sie über uns sagen",
+    "title": "Bewertungen unserer Kunden"
+  }
+}

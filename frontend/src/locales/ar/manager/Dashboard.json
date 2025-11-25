@@ -1,0 +1,32 @@
+{
+  "active_clients": "العملاء النشطين",
+  "booked": "تم التسجيل",
+  "client_base": "قاعدة العملاء",
+  "client_messages": "رسائل من العملاء",
+  "completed": "تمت زيارتها",
+  "completed_procedures": "الإجراءات المكتملة",
+  "conversion_rate": "تحويل",
+  "engaged": "متضمن",
+  "errors": {
+    "loading": "حدث خطأ أثناء تحميل البيانات",
+    "loading_title": "خطأ في التحميل"
+  },
+  "funnel_details": "المزيد عن القمع",
+  "good": "بخير",
+  "key_metrics": "المقاييس الرئيسية",
+  "loading": "تحميل البيانات",
+  "manager_desc": "إدارة العملاء والتحليلات",
+  "manager_panel": "لوحة المدير",
+  "messages": "رسائل",
+  "normal": "بخير",
+  "open_chat": "افتح الدردشة",
+  "pending": "ينتظر",
+  "quick_actions": "إجراءات سريعة",
+  "retry": "حاول ثانية",
+  "sales_funnel": "قمع المبيعات",
+  "started_booking": "بدأ التسجيل",
+  "total_bookings": "إجمالي السجلات",
+  "total_clients": "إجمالي العملاء",
+  "total_revenue": "إجمالي الإيرادات",
+  "visitors": "الزوار"
+}

@@ -1,0 +1,14 @@
+{
+  "permissions_title": "पहुँच अधिकार प्रबंधन",
+  "permissions_subtitle": "उपयोगकर्ताओं के लिए व्यक्तिगत अधिकार सेट करें",
+  "users_list_title": "उपयोगकर्ताओं",
+  "permissions_for_user": "अनुमतियाँ: {नाम}",
+  "role_label": "भूमिका:",
+  "view_permission": "देखना",
+  "create_permission": "निर्माण",
+  "edit_permission": "संपादन",
+  "delete_permission": "हटाना",
+  "permission_granted": "अधिकार दिया गया",
+  "permission_revoked": "अधिकार निरस्त कर दिया गया",
+  "select_user_prompt": "उपयोगकर्ता का चयन करें"
+}

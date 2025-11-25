@@ -1,0 +1,21 @@
+{
+  "profile": "حساب تعريفي",
+  "subscriptions": "الاشتراكات",
+  "danger_zone": "منطقة الخطر",
+  "my_profile": "ملفي الشخصي",
+  "click_camera_to_upload": "انقر على الكاميرا",
+  "to_upload_photo": "لتحميل الصورة",
+  "max_size": "الأعلى. 5 ميجابايت",
+  "username": "تسجيل الدخول",
+  "full_name": "الاسم الكامل",
+  "email": "بريد إلكتروني",
+  "change_password": "تغيير كلمة المرور",
+  "current_password": "كلمة المرور الحالية",
+  "new_password": "كلمة المرور الجديدة",
+  "confirm_new_password": "قم بتأكيد كلمة المرور الجديدة",
+  "new_password_placeholder": "اتركه فارغًا إذا كنت لا تريد التغيير",
+  "repeat_new_password": "كرر كلمة المرور الجديدة",
+  "save_changes": "حفظ التغييرات",
+  "profile_updated": "تم تحديث الملف الشخصي",
+  "error_update_profile": "خطأ في تحديث الملف الشخصي"
+}

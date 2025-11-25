@@ -1,0 +1,13 @@
+{
+  "failed_to_fetch_bookings": "Не удалось загрузить записи",
+  "unknown_error": "Неизвестная ошибка",
+  "loading_error": "Ошибка загрузки",
+  "my_bookings": "Мои записи",
+  "today": "Сегодня",
+  "today_bookings": "Записей сегодня",
+  "confirmed": "Подтверждено",
+  "pending": "Ожидает",
+  "schedule_for_today": "Расписание на сегодня",
+  "no_bookings_today": "На сегодня записей нет",
+  "booking": "Запись"
+}

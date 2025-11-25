@@ -1,0 +1,20 @@
+{
+  "admin": "Administrador",
+  "admin_panel": "Painel de administração",
+  "crm": "CRM de beleza",
+  "logout": "Sair",
+  "logout_success": "Você saiu com sucesso",
+  "menu": {
+    "analytics": "Análise",
+    "bookings": "Postagens",
+    "bot_settings": "Configurações do bot",
+    "calendar": "Calendário",
+    "chat": "Bater papo",
+    "clients": "Clientes",
+    "dashboard": "Painel",
+    "plans": "Planos",
+    "services": "Serviços",
+    "settings": "Configurações",
+    "users": "Usuários"
+  }
+}

@@ -1,0 +1,50 @@
+__pycache__/
+
+/__pycache__/
+
+__pycache__
+
+*.pyc
+
+*.pyo
+
+*.pyd
+
+.Python
+
+*.so
+
+*.egg
+
+*.egg-info/
+
+dist/
+
+build/
+
+logs/*.log
+
+backend/logs/*.log
+
+*.log
+
+# Database files
+
+*.db
+
+*.db-journal
+
+backend/salon_bot.db
+
+
+
+# .env
+
+# .venv
+
+venv/
+
+# ENV/
+
+#  Node
+node_modules/

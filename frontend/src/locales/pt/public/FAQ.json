@@ -1,0 +1,73 @@
+{
+  "answer_1": "Você pode se inscrever através do nosso site, ligando ou escrevendo para WhatsApp/Instagram.",
+  "answer_2": "Aceitamos pagamento em dinheiro e cartões bancários.",
+  "answer_3": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado.",
+  "answer_4": "Sim, alguns procedimentos têm contraindicações médicas. Consulte nosso especialista antes de gravar.",
+  "answer_5": "O tempo do procedimento depende do serviço escolhido. Geralmente de 30 minutos a 3 horas.",
+  "answer_6": "Alguns procedimentos requerem preparação especial. O especialista irá informá-lo sobre isso no momento do registro.",
+  "cta": {
+    "bookButton": "Inscreva-se para o procedimento",
+    "contactButton": "Contate-nos",
+    "description": "Entre em contato conosco e teremos prazer em responder todas as suas dúvidas",
+    "title": "Não encontrou a resposta para sua pergunta?"
+  },
+  "faq_title": "Perguntas frequentes",
+  "question_1": "Como se inscrever no procedimento?",
+  "question_2": "Quais métodos de pagamento você aceita?",
+  "question_3": "Posso cancelar ou reagendar uma consulta?",
+  "question_4": "Você tem alguma contra-indicação para os procedimentos?",
+  "question_5": "Quanto tempo leva o procedimento?",
+  "question_6": "É necessária preparação preliminar para o procedimento?",
+  "questions": {
+    "booking": {
+      "answer": "Você pode se inscrever para o procedimento através do formulário em nosso site{{phone, phone}}, ligando para {{phone}}{{/phone}}{{instagram, instagram}} ou escrevendo para nós no Instagram {{instagram}}{{/instagram}}. Entraremos em contato para confirmar seu agendamento.",
+      "question": "Como se inscrever no procedimento?"
+    },
+    "cancellation": {
+      "answer": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
+      "question": "Posso cancelar ou remarcar meu agendamento?"
+    },
+    "certificates": {
+      "answer": "Sim, todos os nossos mestres possuem certificados internacionais e realizam regularmente cursos de formação avançada.",
+      "question": "Seus artesãos possuem certificados?"
+    },
+    "contraindications": {
+      "answer": "Sim, cada procedimento tem suas contra-indicações. Principal: gravidez, lactação, processos inflamatórios agudos, doenças do sangue, oncologia. Antes do procedimento, é necessária consulta com um especialista.",
+      "question": "Existem contra-indicações para os procedimentos?"
+    },
+    "gift": {
+      "answer": "Sim, oferecemos vales-presente de qualquer valor ou para serviços específicos. Entre em contato conosco para obter um certificado.",
+      "question": "Posso dar um certificado de serviços?"
+    },
+    "guarantee": {
+      "answer": "Sim, garantimos a qualidade de todos os nossos serviços. Se não ficar satisfeito com o resultado, contacte-nos no prazo de 7 dias e encontraremos uma solução.",
+      "question": "Vocês oferecem garantia de serviços?"
+    },
+    "location": {
+      "answer": "Estamos localizados em: {{address}}. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos.",
+      "question": "Onde fica o seu salão?"
+    },
+    "loyalty": {
+      "answer": "Sim, temos um programa de fidelidade cumulativo. Após cada visita você recebe bônus que podem ser usados ​​para pagar visitas futuras.",
+      "question": "Você tem um programa de fidelidade?"
+    },
+    "materials": {
+      "answer": "Utilizamos apenas materiais premium certificados das marcas líderes mundiais. Todos os pigmentos são hipoalergênicos e seguros para a saúde.",
+      "question": "Que materiais você usa?"
+    },
+    "payment": {
+      "answer": "Aceitamos pagamento em dinheiro e cartões (Visa, MasterCard, American Express). O pagamento é feito após a prestação do serviço.",
+      "question": "Quais métodos de pagamento você aceita?"
+    },
+    "preparation": {
+      "answer": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do registro.",
+      "question": "É necessária preparação antes do procedimento?"
+    },
+    "weekends": {
+      "answer": "Sim, trabalhamos 7 dias por semana. {{weekdays, weekdays}}Nos dias de semana {{weekdays}}{{/weekdays}}{{weekends, weekdays}}, nos finais de semana {{weekends}}{{/weekends}}.",
+      "question": "Você trabalha nos finais de semana?"
+    }
+  },
+  "subtitle": "Respostas a perguntas populares sobre nossos serviços",
+  "title": "Perguntas frequentes"
+}

@@ -1,0 +1,20 @@
+{
+  "admin": "Администратор",
+  "admin_panel": "Админ панель",
+  "crm": "Beauty CRM",
+  "logout": "Выйти",
+  "logout_success": "Вы успешно вышли из системы",
+  "menu": {
+    "analytics": "Аналитика",
+    "bookings": "Записи",
+    "bot_settings": "Настройки бота",
+    "calendar": "Календарь",
+    "chat": "Чат",
+    "clients": "Клиенты",
+    "dashboard": "Дашборд",
+    "plans": "Планы",
+    "services": "Услуги",
+    "settings": "Настройки",
+    "users": "Пользователи"
+  }
+}

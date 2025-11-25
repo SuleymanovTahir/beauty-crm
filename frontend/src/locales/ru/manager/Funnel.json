@@ -1,0 +1,55 @@
+{
+  "Your funnel shows good results": {
+    " Keep it up!": "Так держать!"
+  },
+  "all_good": "Все хорошо",
+  "conversion": {
+    "booked_to_completed": "Забронировано до завершения",
+    "booking_to_booked": "Бронирование для бронирования",
+    "engaged_to_booking": "Занимаюсь бронированием",
+    "visitor_to_engaged": "Посетитель помолвлен"
+  },
+  "funnel_chart": "Воронкообразная диаграмма",
+  "key_metrics": "Ключевые показатели",
+  "loading": "Загрузка",
+  "losses_few": "Потери невелики",
+  "losses_many": "Потери многие",
+  "losses_one": "Потери один",
+  "losses_other": "Потери прочие",
+  "recommendations": {
+    "increase_engagement": {
+      "description_few": "Описание мало",
+      "description_many": "Описание много",
+      "description_one": "Описание одно",
+      "description_other": "Описание другое",
+      "suggestion": "Предположение",
+      "title": "Заголовок"
+    },
+    "optimize_form": {
+      "description": "Описание",
+      "suggestion": "Предположение",
+      "title": "Заголовок"
+    },
+    "reduce_noshow": {
+      "description_few": "Описание мало",
+      "description_many": "Описание много",
+      "description_one": "Описание одно",
+      "description_other": "Описание другое",
+      "suggestion": "Предположение",
+      "title": "Заголовок"
+    }
+  },
+  "recommendations_title": "Название рекомендаций",
+  "stage_details": "Детали этапа",
+  "subtitle": "Субтитры",
+  "successful_visits": "Успешные визиты",
+  "table": {
+    "count": "Считать",
+    "losses": "Потери",
+    "percentage": "Процент",
+    "stage": "Этап"
+  },
+  "title": "Заголовок",
+  "total_conversion": "Общая конверсия",
+  "total_losses": "Общие потери"
+}

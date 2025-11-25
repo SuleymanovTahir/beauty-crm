@@ -1,0 +1,20 @@
+{
+  "admin": "Administrateur",
+  "admin_panel": "Panneau d'administration",
+  "crm": "CRM Beauté",
+  "logout": "Se déconnecter",
+  "logout_success": "Vous vous êtes déconnecté avec succès",
+  "menu": {
+    "analytics": "Analytique",
+    "bookings": "Messages",
+    "bot_settings": "Paramètres du robot",
+    "calendar": "Calendrier",
+    "chat": "Chat",
+    "clients": "Clientèle",
+    "dashboard": "Tableau de bord",
+    "plans": "Forfaits",
+    "services": "Services",
+    "settings": "Paramètres",
+    "users": "Utilisateurs"
+  }
+}

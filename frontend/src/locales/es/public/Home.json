@@ -1,0 +1,70 @@
+{
+  "booking": {
+    "description": "Complete el formulario y nos pondremos en contacto con usted para confirmar",
+    "form": {
+      "date": "Fecha *",
+      "name": "Su nombre *",
+      "namePlaceholder": "María García",
+      "phone": "Teléfono *",
+      "phonePlaceholder": "+971 50 123 4567",
+      "service": "Servicio *",
+      "servicePlaceholder": "Seleccione un servicio",
+      "submit": "Inscribirse",
+      "time": "Tiempo *"
+    },
+    "loading": "Cargando servicios...",
+    "title": "Regístrate para el trámite",
+    "validation": "Por favor, complete todos los campos"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Nuestros especialistas tienen certificados internacionales y años de experiencia",
+        "title": "Artesanos experimentados"
+      },
+      "materials": {
+        "description": "Utilizamos solo materiales de calidad y seguros de marcas líderes",
+        "title": "Materiales de primera calidad"
+      },
+      "schedule": {
+        "description": "Trabajamos 7 días a la semana con horarios convenientes para reservas",
+        "title": "Horario conveniente"
+      }
+    },
+    "subtitle": "Ofrecemos el mejor servicio en la industria de la belleza",
+    "title": "¿Por qué elegirnos?"
+  },
+  "gallery": {
+    "items": {
+      "facial": "cuidado facial",
+      "makeup": "Maquillaje permanente",
+      "salon": "Nuestro salón"
+    },
+    "subtitle": "Resultados de los que estamos orgullosos",
+    "title": "Nuestros trabajos"
+  },
+  "hero": {
+    "badge": "Servicios de belleza premium",
+    "bookButton": "Inscríbete ahora",
+    "description": "Maestros profesionales, enfoque individual y materiales de alta calidad. Tu belleza es nuestra pasión.",
+    "servicesButton": "Nuestros servicios",
+    "title": "Descubre un nuevo nivel de belleza"
+  },
+  "services": {
+    "items": [
+      "Maquillaje permanente de cejas",
+      "Manicura",
+      "Pedicure",
+      "masaje facial",
+      "Extensiones de pestañas",
+      "Corte de pelo y peinado",
+      "coloración del cabello",
+      "limpieza facial"
+    ]
+  },
+  "testimonials": {
+    "items": [],
+    "subtitle": "Lo que dicen de nosotros",
+    "title": "Opiniones de nuestros clientes"
+  }
+}

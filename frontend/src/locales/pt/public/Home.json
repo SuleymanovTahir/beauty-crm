@@ -1,0 +1,70 @@
+{
+  "booking": {
+    "description": "Preencha o formulário e entraremos em contato para confirmar",
+    "form": {
+      "date": "Data *",
+      "name": "Seu nome *",
+      "namePlaceholder": "Anna Ivanova",
+      "phone": "Telefone *",
+      "phonePlaceholder": "+971 50 123 4567",
+      "service": "Serviço *",
+      "servicePlaceholder": "Selecione um serviço",
+      "submit": "Inscrever-se",
+      "time": "Tempo *"
+    },
+    "loading": "Carregando serviços...",
+    "title": "Inscreva-se para o procedimento",
+    "validation": "Por favor preencha todos os campos"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Nossos especialistas possuem certificados internacionais e muitos anos de experiência",
+        "title": "Artesãos experientes"
+      },
+      "materials": {
+        "description": "Usamos apenas materiais seguros e de alta qualidade de marcas líderes",
+        "title": "Materiais premium"
+      },
+      "schedule": {
+        "description": "Trabalhamos 7 dias por semana com horários convenientes para gravação",
+        "title": "Horário conveniente"
+      }
+    },
+    "subtitle": "Oferecemos o melhor serviço na indústria da beleza",
+    "title": "Por que nos escolher"
+  },
+  "gallery": {
+    "items": {
+      "facial": "Cuidados faciais",
+      "makeup": "Maquiagem definitiva",
+      "salon": "Nosso salão"
+    },
+    "subtitle": "Resultados dos quais nos orgulhamos",
+    "title": "Nossos trabalhos"
+  },
+  "hero": {
+    "badge": "Serviços de beleza premium",
+    "bookButton": "Inscreva-se agora",
+    "description": "Artesãos profissionais, abordagem individualizada e materiais de alta qualidade. Sua beleza é nossa paixão.",
+    "servicesButton": "Nossos serviços",
+    "title": "Descubra um novo nível de beleza"
+  },
+  "services": {
+    "items": [
+      "Maquiagem permanente de sobrancelha",
+      "Manicure",
+      "Pedicure",
+      "Massagem facial",
+      "Extensões de cílios",
+      "Corte de cabelo e estilo",
+      "Coloração de cabelo",
+      "Limpeza facial"
+    ]
+  },
+  "testimonials": {
+    "items": [],
+    "subtitle": "O que eles dizem sobre nós",
+    "title": "Comentários de nossos clientes"
+  }
+}

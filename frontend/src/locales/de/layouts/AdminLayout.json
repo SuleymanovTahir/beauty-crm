@@ -1,0 +1,20 @@
+{
+  "admin": "Administrator",
+  "admin_panel": "Admin-Panel",
+  "crm": "Beauty-CRM",
+  "logout": "Abmelden",
+  "logout_success": "Sie haben sich erfolgreich abgemeldet",
+  "menu": {
+    "analytics": "Analytik",
+    "bookings": "Beiträge",
+    "bot_settings": "Bot-Einstellungen",
+    "calendar": "Kalender",
+    "chat": "Chatten",
+    "clients": "Kunden",
+    "dashboard": "Armaturenbrett",
+    "plans": "Pläne",
+    "services": "Dienstleistungen",
+    "settings": "Einstellungen",
+    "users": "Benutzer"
+  }
+}

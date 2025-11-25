@@ -1,0 +1,13 @@
+{
+  "booking": "Aufzeichnen",
+  "confirmed": "Bestätigt",
+  "failed_to_fetch_bookings": "Datensätze konnten nicht geladen werden",
+  "loading_error": "Fehler beim Laden",
+  "my_bookings": "Meine Einträge",
+  "no_bookings_today": "Für heute sind keine Einträge vorhanden",
+  "pending": "Warten",
+  "schedule_for_today": "Zeitplan für heute",
+  "today": "Heute",
+  "today_bookings": "Beiträge heute",
+  "unknown_error": "Unbekannter Fehler"
+}

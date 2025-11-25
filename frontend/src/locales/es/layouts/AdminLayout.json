@@ -1,0 +1,20 @@
+{
+  "admin": "Administrador",
+  "admin_panel": "Panel de administración",
+  "crm": "CRM de belleza",
+  "logout": "Cerrar sesión",
+  "logout_success": "Has cerrado sesión exitosamente",
+  "menu": {
+    "analytics": "Analítica",
+    "bookings": "Reservas",
+    "bot_settings": "Configuración de robots",
+    "calendar": "Calendario",
+    "chat": "Charlar",
+    "clients": "Clientela",
+    "dashboard": "Panel",
+    "plans": "Planes",
+    "services": "Servicios",
+    "settings": "Ajustes",
+    "users": "Usuarios"
+  }
+}

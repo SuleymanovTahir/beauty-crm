@@ -1,0 +1,16 @@
+{
+  "role_user_title": "Rol de usuario",
+  "current_role": "Rol actual",
+  "hierarchy_level": "Nivel de jerarquía:",
+  "change_role_to": "Cambiar rol a",
+  "change_role_button": "Cambiar rol",
+  "permissions_title": "Derechos de acceso",
+  "save_changes": "Guardar cambios",
+  "full_access_message": "Acceso completo a todas las funciones del sistema (rol de Director)",
+  "individual_permissions_info": "Derechos individuales: puede cambiar los derechos de los usuarios independientemente de su función. Una marca de verificación significa que se concede el derecho. Una casilla sin marcar significa que el derecho ha sido revocado.",
+  "can_manage_roles_title": "Puede gestionar roles",
+  "role_unchanged": "El rol no ha cambiado.",
+  "permissions_updated": "Derechos actualizados",
+  "error_saving_permissions": "Error al guardar derechos",
+  "error_loading_permissions": "No se pudo cargar la información de derechos"
+}

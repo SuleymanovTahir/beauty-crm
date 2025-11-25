@@ -1,0 +1,32 @@
+{
+  "active_clients": "Aktive Kunden",
+  "booked": "Angemeldet",
+  "client_base": "Kundenstamm",
+  "client_messages": "Nachrichten von Kunden",
+  "completed": "Besucht",
+  "completed_procedures": "Abgeschlossene Verfahren",
+  "conversion_rate": "Konvertierung",
+  "engaged": "Beteiligt",
+  "errors": {
+    "loading": "Fehler beim Laden der Daten",
+    "loading_title": "Fehler beim Laden"
+  },
+  "funnel_details": "Mehr zum Trichter",
+  "good": "Bußgeld",
+  "key_metrics": "Schlüsselkennzahlen",
+  "loading": "Daten werden geladen",
+  "manager_desc": "Kundenmanagement und -analyse",
+  "manager_panel": "Manager-Panel",
+  "messages": "Nachrichten",
+  "normal": "Bußgeld",
+  "open_chat": "Chat öffnen",
+  "pending": "erwartet",
+  "quick_actions": "Schnelle Aktionen",
+  "retry": "Versuchen Sie es erneut",
+  "sales_funnel": "Verkaufstrichter",
+  "started_booking": "Aufnahme gestartet",
+  "total_bookings": "Gesamtaufzeichnungen",
+  "total_clients": "Gesamtzahl der Kunden",
+  "total_revenue": "Gesamtumsatz",
+  "visitors": "Besucher"
+}

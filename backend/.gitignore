@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+logs/*.log
+*.db-journal
+.env
+.venv
+venv/
+ENV/
+salon_bot.db

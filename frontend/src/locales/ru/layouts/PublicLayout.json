@@ -1,0 +1,21 @@
+{
+  "home": "Главная",
+  "price_list": "Прайс-лист",
+  "about": "О нас",
+  "contacts": "Контакты",
+  "faq": "FAQ",
+  "login": "Войти",
+  "personal_cabinet": "Личный кабинет",
+  "footer": {
+    "description": "Профессиональный салон красоты в Дубае",
+    "quick_links": "Быстрые ссылки",
+    "cooperation": "Сотрудничество",
+    "contacts": "Контакты",
+    "working_hours": "Часы работы",
+    "weekdays": "Будни",
+    "weekends": "Выходные",
+    "all_rights": "Все права защищены",
+    "privacy_policy": "Политика конфиденциальности",
+    "terms": "Условия использования"
+  }
+}

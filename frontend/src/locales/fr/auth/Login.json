@@ -1,0 +1,20 @@
+{
+  "401": "401",
+  "authorization_error": "Erreur d'autorisation",
+  "crm_system_management": "Gestion du système CRM",
+  "enter_login": "Entrez votre identifiant",
+  "enter_password": "Entrez votre mot de passe",
+  "fill_both_fields": "Remplissez les deux champs",
+  "forgot_password": "Vous avez oublié votre mot de passe ?",
+  "invalid_username_or_password": "Nom d'utilisateur ou mot de passe invalide",
+  "loading": "Chargement...",
+  "login": "Se connecter",
+  "login_error": "Erreur de connexion",
+  "login_title": "Se connecter",
+  "no_account_register": "Pas de compte ? S'inscrire",
+  "password": "Mot de passe",
+  "return_to_home": "Retour à la maison",
+  "unauthorized": "Non autorisé",
+  "username": "Nom d'utilisateur",
+  "welcome": "Accueillir"
+}

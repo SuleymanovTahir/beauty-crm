@@ -1,0 +1,14 @@
+{
+  "permissions_title": "Қол жеткізу құқығын басқару",
+  "permissions_subtitle": "Пайдаланушыларға жеке құқықтарды орнатыңыз",
+  "users_list_title": "Пайдаланушылар",
+  "permissions_for_user": "Рұқсаттар: {Атау}",
+  "role_label": "Рөлі:",
+  "view_permission": "Көзқарас",
+  "create_permission": "Жаратылыс",
+  "edit_permission": "Өңдеу",
+  "delete_permission": "Жою",
+  "permission_granted": "Дұрыс берілген",
+  "permission_revoked": "Дұрыс күші жойылды",
+  "select_user_prompt": "Пайдаланушыны таңдаңыз"
+}

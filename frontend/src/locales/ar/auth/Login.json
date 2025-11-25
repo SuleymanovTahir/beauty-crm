@@ -1,0 +1,20 @@
+{
+  "401": "401",
+  "authorization_error": "خطأ في التفويض",
+  "crm_system_management": "إدارة نظام CRM",
+  "enter_login": "أدخل تسجيل الدخول الخاص بك",
+  "enter_password": "أدخل كلمة المرور الخاصة بك",
+  "fill_both_fields": "املأ كلا الحقلين",
+  "forgot_password": "نسيت كلمة السر؟",
+  "invalid_username_or_password": "اسم المستخدم أو كلمة المرور غير صالحة",
+  "loading": "تحميل...",
+  "login": "تسجيل الدخول",
+  "login_error": "خطأ في تسجيل الدخول",
+  "login_title": "تسجيل الدخول",
+  "no_account_register": "ليس لديك حساب؟ تسجيل",
+  "password": "كلمة المرور",
+  "return_to_home": "العودة إلى المنزل",
+  "unauthorized": "غير مصرح به",
+  "username": "اسم المستخدم",
+  "welcome": "مرحباً"
+}

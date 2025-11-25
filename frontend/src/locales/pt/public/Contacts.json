@@ -1,0 +1,23 @@
+{
+  "address": "Endereço",
+  "email_placeholder": "Digite seu e-mail",
+  "fill_all_fields": "Por favor preencha todos os campos",
+  "find_us": "Como nos encontrar",
+  "how_to_contact": "Como entrar em contato conosco",
+  "message": "Mensagem",
+  "message_placeholder": "Conte-nos sobre sua dúvida ou sugestão...",
+  "message_sent": "Mensagem enviada com sucesso! Entraremos em contato com você em breve.",
+  "name_placeholder": "Digite seu nome",
+  "phone": "Telefone",
+  "send_button": "Enviar mensagem",
+  "send_error": "Erro ao enviar mensagem",
+  "sending": "Enviando...",
+  "subtitle": "Estamos sempre felizes em receber suas dúvidas e sugestões.",
+  "title": "Contatos",
+  "try_later": "Tente novamente mais tarde ou entre em contato conosco de outra forma",
+  "weekdays": "Dias da semana",
+  "weekends": "Fim de semana",
+  "working_hours": "Horário de funcionamento",
+  "write_us": "Escreva para nós",
+  "your_name": "seu nome"
+}

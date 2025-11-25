@@ -1,0 +1,20 @@
+{
+  "401": "401",
+  "authorization_error": "प्राधिकरण त्रुटि",
+  "crm_system_management": "सीआरएम सिस्टम प्रबंधन",
+  "enter_login": "अपना लॉगिन दर्ज करें",
+  "enter_password": "अपना कूटशब्द भरें",
+  "fill_both_fields": "दोनों फ़ील्ड भरें",
+  "forgot_password": "अपना कूट शब्द भूल गए?",
+  "invalid_username_or_password": "अमान्य उपयोगकर्ता नाम या पासवर्ड",
+  "loading": "लोड हो रहा है...",
+  "login": "लॉग इन करें",
+  "login_error": "लॉगिन त्रुटि",
+  "login_title": "लॉग इन करें",
+  "no_account_register": "कोई खाता नहीं है? पंजीकरण करवाना",
+  "password": "पासवर्ड",
+  "return_to_home": "घर पर वापस",
+  "unauthorized": "अनधिकृत",
+  "username": "उपयोगकर्ता नाम",
+  "welcome": "स्वागत"
+}

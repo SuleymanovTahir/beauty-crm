@@ -1,0 +1,32 @@
+{
+  "active_clients": "Белсенді клиенттер",
+  "booked": "Қол қойылады",
+  "client_base": "Клиенттік база",
+  "client_messages": "Клиенттерден алынған хабарламалар",
+  "completed": "Келген",
+  "completed_procedures": "Аяқталған процедуралар",
+  "conversion_rate": "Өзгеріс",
+  "engaged": "Қатысады",
+  "errors": {
+    "loading": "Деректерді жүктеу кезінде қате пайда болды",
+    "loading_title": "Жүктеу қатесі"
+  },
+  "funnel_details": "Виннель туралы көбірек",
+  "good": "Айыппұл",
+  "key_metrics": "Негізгі өлшемдер",
+  "loading": "Деректерді жүктеу",
+  "manager_desc": "Тұтынушыларды басқару және талдау",
+  "manager_panel": "Менеджер панелі",
+  "messages": "Хабарлар",
+  "normal": "Айыппұл",
+  "open_chat": "Ашық сөйлесу",
+  "pending": "күтім",
+  "quick_actions": "Жылдам әрекеттер",
+  "retry": "Қайтадан байқап көріңіз",
+  "sales_funnel": "Сатулық",
+  "started_booking": "Жазуды бастады",
+  "total_bookings": "Жалпы жазбалар",
+  "total_clients": "Жалпы клиенттер",
+  "total_revenue": "Жалпы кіріс",
+  "visitors": "Келушілер"
+}

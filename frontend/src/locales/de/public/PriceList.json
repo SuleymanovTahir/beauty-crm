@@ -1,0 +1,28 @@
+{
+  "bottomCta": {
+    "bookButton": "Melden Sie sich jetzt an",
+    "description": "Wählen Sie einen passenden Zeitpunkt und genießen Sie unsere Premium-Services",
+    "title": "Bereit, sich anzumelden?"
+  },
+  "categories": {
+    "facial-care": "Gesichtspflege",
+    "hair": "Haardienstleistungen",
+    "lashes": "Wimpern und Augenbrauen",
+    "massage": "Massage und SPA",
+    "nails": "Nagelservice",
+    "other": "Sonstige Dienstleistungen",
+    "permanent-makeup": "Permanentes Make-up"
+  },
+  "cta": {
+    "bookButton": "Melden Sie sich für das Verfahren an",
+    "ready": "Bereit zur Transformation?"
+  },
+  "error": "Fehler beim Laden der Dienste",
+  "loading": "Dienste werden geladen...",
+  "noResults": "Es wurden keine Dienste gefunden, die Ihrer Suche entsprechen",
+  "noServices": "Dienste nicht gefunden",
+  "search": "Suchdienste...",
+  "services": "Dienstleistungen",
+  "subtitle": "Premium-Beauty-Dienstleistungen zu erschwinglichen Preisen",
+  "title": "Unsere Leistungen und Preise"
+}

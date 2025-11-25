@@ -1,0 +1,21 @@
+{
+  "profile": "प्रोफ़ाइल",
+  "subscriptions": "सदस्यता",
+  "danger_zone": "खतरा क्षेत्र",
+  "my_profile": "मेरी प्रोफाइल",
+  "click_camera_to_upload": "कैमरे पर क्लिक करें",
+  "to_upload_photo": "फोटो अपलोड करने के लिए",
+  "max_size": "अधिकतम. 5एमबी",
+  "username": "लॉग इन करें",
+  "full_name": "पूरा नाम",
+  "email": "ईमेल",
+  "change_password": "पासवर्ड बदलें",
+  "current_password": "वर्तमान पासवर्ड",
+  "new_password": "नया पासवर्ड",
+  "confirm_new_password": "अपने नये पासवर्ड की पुष्टि करें",
+  "new_password_placeholder": "यदि आप बदलना नहीं चाहते तो खाली छोड़ दें",
+  "repeat_new_password": "नया पासवर्ड दोहराएँ",
+  "save_changes": "परिवर्तनों को सुरक्षित करें",
+  "profile_updated": "प्रोफाइल अद्यतन किया गया",
+  "error_update_profile": "प्रोफ़ाइल अद्यतन त्रुटि"
+}

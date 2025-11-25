@@ -1,0 +1,14 @@
+{
+  "permissions_title": "Access rights management",
+  "permissions_subtitle": "Set up individual rights for users",
+  "users_list_title": "Users",
+  "permissions_for_user": "Permissions: {name}",
+  "role_label": "Role:",
+  "view_permission": "View",
+  "create_permission": "Creation",
+  "edit_permission": "Editing",
+  "delete_permission": "Removal",
+  "permission_granted": "Right granted",
+  "permission_revoked": "Right revoked",
+  "select_user_prompt": "Select user"
+}
