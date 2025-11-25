@@ -21,7 +21,7 @@ interface Review {
 }
 
 export default function PublicContent() {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['admin/PublicContent', 'common']);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -65,7 +65,7 @@ export default function PublicContent() {
             loadReviews();
         } catch (error) {
             console.error('Error saving review:', error);
-            alert('Ошибка при сохранении отзыва');
+            alert(t('error_saving_review'));
         }
     };
 
@@ -81,7 +81,7 @@ export default function PublicContent() {
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm('Удалить этот отзыв?')) return;
+        if (!confirm(t('confirm_delete_review'))) return;
 
         try {
             await apiClient.deletePublicReview(id);
@@ -104,8 +104,8 @@ export default function PublicContent() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">Управление публичным контентом</h1>
-                    <p className="text-gray-600">Отзывы, баннеры, FAQ и галерея</p>
+                    <h1 className="text-2xl font-bold">{t('title')}</h1>
+                    <p className="text-gray-600">{t('subtitle')}</p>
                 </div>
                 <Button onClick={() => {
                     setEditingReview(null);
@@ -113,12 +113,12 @@ export default function PublicContent() {
                     setShowModal(true);
                 }}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Добавить отзыв
+                    {t('add_review')}
                 </Button>
             </div>
 
             {loading ? (
-                <div className="text-center py-12">Загрузка...</div>
+                <div className="text-center py-12">{t('common:loading')}</div>
             ) : (
                 <div className="grid gap-4">
                     {reviews.map((review) => (
@@ -136,15 +136,15 @@ export default function PublicContent() {
                                             ))}
                                         </div>
                                         {review.is_active ? (
-                                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Активен</span>
+                                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{t('active')}</span>
                                         ) : (
-                                            <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Скрыт</span>
+                                            <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">{t('hidden')}</span>
                                         )}
                                     </div>
                                     <p className="text-gray-700 mb-2">{review.text_ru}</p>
                                     {review.text_en && (
                                         <details className="text-sm text-gray-500">
-                                            <summary className="cursor-pointer">Переводы</summary>
+                                            <summary className="cursor-pointer">{t('translations')}</summary>
                                             <div className="mt-2 space-y-1">
                                                 <p><strong>EN:</strong> {review.text_en}</p>
                                                 {review.text_ar && <p><strong>AR:</strong> {review.text_ar}</p>}
@@ -185,11 +185,11 @@ export default function PublicContent() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <Card className="p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                         <h2 className="text-xl font-bold mb-4">
-                            {editingReview ? 'Редактировать отзыв' : 'Новый отзыв'}
+                            {editingReview ? t('edit_review') : t('new_review')}
                         </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Имя автора</label>
+                                <label className="block text-sm font-medium mb-1">{t('author_name')}</label>
                                 <Input
                                     value={formData.author_name}
                                     onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
@@ -198,23 +198,23 @@ export default function PublicContent() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Рейтинг</label>
+                                <label className="block text-sm font-medium mb-1">{t('rating')}</label>
                                 <select
                                     className="w-full border rounded px-3 py-2"
                                     value={formData.rating}
                                     onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) })}
                                 >
                                     {[5, 4, 3, 2, 1].map(n => (
-                                        <option key={n} value={n}>{n} звезд</option>
+                                        <option key={n} value={n}>{n} {t('stars')}</option>
                                     ))}
                                 </select>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">
-                                    Текст отзыва (на русском)
+                                    {t('review_text')}
                                     <span className="text-xs text-gray-500 ml-2">
-                                        Автоматически переведется на все языки
+                                        {t('auto_translate_hint')}
                                     </span>
                                 </label>
                                 <Textarea
@@ -227,7 +227,7 @@ export default function PublicContent() {
 
                             <div>
                                 <label className="block text-sm font-medium mb-1">
-                                    URL фото (опционально)
+                                    {t('photo_url')}
                                 </label>
                                 <Input
                                     value={formData.avatar_url}
@@ -245,10 +245,10 @@ export default function PublicContent() {
                                         setEditingReview(null);
                                     }}
                                 >
-                                    Отмена
+                                    {t('common:cancel')}
                                 </Button>
                                 <Button type="submit">
-                                    {editingReview ? 'Сохранить' : 'Создать'}
+                                    {editingReview ? t('common:save') : t('create')}
                                 </Button>
                             </div>
                         </form>

@@ -6,16 +6,23 @@ import { autoDetectAndSetLanguage } from './utils/languageDetection';
 const languages = ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"];
 const namespaces = [
   'common',
+  'admin-components',
+  'components',
   'admin/analytics',
   'admin/bookingdetail',
   'admin/bookings',
   'admin/botsettings',
+  'admin/broadcasts',
   'admin/calendar',
   'admin/clientdetail',
   'admin/clients',
   'admin/createuser',
   'admin/dashboard',
   'admin/edituser',
+  'admin/permissionmanagement',
+  'admin/permissionstab',
+  'admin/plans',
+  'admin/PublicContent',
   'admin/services',
   'admin/settings',
   'admin/specialpackages',
@@ -47,6 +54,7 @@ const namespaces = [
   'layouts/managerlayout',
   'layouts/publiclayout',
   'components/languageswitcher',
+  'components/employeelayout',
   'components/publiclanguageswitcher'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite

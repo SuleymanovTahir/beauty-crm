@@ -1,0 +1,19 @@
+{
+  "active": "Activo",
+  "add_review": "Añadir una reseña",
+  "author_name": "nombre del autor",
+  "auto_translate_hint": "Traducido automáticamente a todos los idiomas.",
+  "confirm_delete_review": "¿Debo eliminar esta reseña?",
+  "create": "Crear",
+  "edit_review": "Editar reseña",
+  "error_saving_review": "Error al guardar la revisión",
+  "hidden": "Oculto",
+  "new_review": "Nueva reseña",
+  "photo_url": "URL de la foto (opcional)",
+  "rating": "Clasificación",
+  "review_text": "Texto de revisión (en ruso)",
+  "stars": "estrellas",
+  "subtitle": "Reseñas, banners, preguntas frecuentes y galería.",
+  "title": "Gestión de contenidos públicos",
+  "translations": "Traducciones"
+}

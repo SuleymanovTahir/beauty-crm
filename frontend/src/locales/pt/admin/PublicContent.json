@@ -1,0 +1,19 @@
+{
+  "active": "Ativo",
+  "add_review": "Adicionar um comentário",
+  "author_name": "Nome do autor",
+  "auto_translate_hint": "Traduzido automaticamente para todos os idiomas",
+  "confirm_delete_review": "Devo excluir este comentário?",
+  "create": "Criar",
+  "edit_review": "Editar avaliação",
+  "error_saving_review": "Erro ao salvar a avaliação",
+  "hidden": "Escondido",
+  "new_review": "Nova revisão",
+  "photo_url": "URL da foto (opcional)",
+  "rating": "Avaliação",
+  "review_text": "Texto de revisão (em russo)",
+  "stars": "estrelas",
+  "subtitle": "Críticas, banners, FAQ e galeria",
+  "title": "Gerenciamento de conteúdo público",
+  "translations": "Traduções"
+}

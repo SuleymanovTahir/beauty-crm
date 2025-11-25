@@ -4,6 +4,7 @@ export interface StatusConfig {
   is_system?: boolean;
 }
 
+// i18next-extract-mark-ns-start common
 export const DEFAULT_CLIENT_STATUSES: Record<string, StatusConfig> = {
   new: { label: "status_new", color: "bg-green-100 text-green-800" },
   contacted: { label: "status_contacted", color: "bg-blue-100 text-blue-800" },
@@ -22,3 +23,4 @@ export const DEFAULT_BOOKING_STATUSES: Record<string, StatusConfig> = {
   cancelled: { label: "status_cancelled", color: "bg-red-100 text-red-800" },
   new: { label: "status_new", color: "bg-purple-100 text-purple-800" },
 };
+// i18next-extract-mark-ns-stop common

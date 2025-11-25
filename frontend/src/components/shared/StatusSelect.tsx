@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface StatusConfig {
   label: string;
@@ -16,18 +17,20 @@ interface StatusSelectProps {
   variant?: 'default' | 'filter' | 'table';
 }
 
-const COLOR_OPTIONS = [
-  { name: 'Зелёный', value: 'bg-green-100 text-green-800' },
-  { name: 'Синий', value: 'bg-blue-100 text-blue-800' },
-  { name: 'Жёлтый', value: 'bg-yellow-100 text-yellow-800' },
-  { name: 'Оранжевый', value: 'bg-orange-100 text-orange-800' },
-  { name: 'Красный', value: 'bg-red-100 text-red-800' },
-  { name: 'Фиолетовый', value: 'bg-purple-100 text-purple-800' },
-  { name: 'Розовый', value: 'bg-pink-100 text-pink-800' },
-  { name: 'Серый', value: 'bg-gray-100 text-gray-800' },
+const getColorOptions = (t: any) => [
+  { name: t('components:color_green'), value: 'bg-green-100 text-green-800' },
+  { name: t('components:color_blue'), value: 'bg-blue-100 text-blue-800' },
+  { name: t('components:color_yellow'), value: 'bg-yellow-100 text-yellow-800' },
+  { name: t('components:color_orange'), value: 'bg-orange-100 text-orange-800' },
+  { name: t('components:color_red'), value: 'bg-red-100 text-red-800' },
+  { name: t('components:color_purple'), value: 'bg-purple-100 text-purple-800' },
+  { name: t('components:color_pink'), value: 'bg-pink-100 text-pink-800' },
+  { name: t('components:color_gray'), value: 'bg-gray-100 text-gray-800' },
 ];
 
 export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption, variant = 'default' }: StatusSelectProps) {
+  const { t } = useTranslation(['components', 'common']);
+  const COLOR_OPTIONS = getColorOptions(t);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newStatusKey, setNewStatusKey] = useState('');
   const [newStatusLabel, setNewStatusLabel] = useState('');
@@ -112,11 +115,11 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
           className={styles.className}
           style={styles.style}
         >
-          {showAllOption && <option value="all">Все статусы</option>}
+          {showAllOption && <option value="all">{t('all_statuses')}</option>}
           {Object.entries(options).map(([key, config]) => (
             <option key={key} value={key}>{config.label}</option>
           ))}
-          {allowAdd && <option value="__add_new__">+ Добавить статус</option>}
+          {allowAdd && <option value="__add_new__">+ {t('add_status')}</option>}
         </select>
 
         {allowAdd && (
@@ -134,7 +137,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
               fontSize: '0.75rem',
               color: '#6b7280'
             }}
-            title="Добавить новый статус"
+            title={t('add_new_status')}
           >
             <Plus style={{ width: '14px', height: '14px' }} />
           </button>
@@ -171,7 +174,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
               alignItems: 'center'
             }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111' }}>
-                Добавить статус
+                {t('add_status')}
               </h3>
               <button
                 onClick={() => setShowAddDialog(false)}
@@ -204,7 +207,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   color: '#374151',
                   marginBottom: '0.5rem'
                 }}>
-                  Ключ (на английском) *
+                  {t('status_key_label')}
                 </label>
                 <input
                   type="text"
@@ -222,7 +225,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   }}
                 />
                 <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
-                  Используется в системе (lowercase, без пробелов)
+                  {t('status_key_hint')}
                 </p>
               </div>
 
@@ -234,13 +237,13 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   color: '#374151',
                   marginBottom: '0.5rem'
                 }}>
-                  Название *
+                  {t('status_name_label')}
                 </label>
                 <input
                   type="text"
                   value={newStatusLabel}
                   onChange={(e) => setNewStatusLabel(e.target.value)}
-                  placeholder="Новый статус"
+                  placeholder={t('new_status_placeholder')}
                   disabled={isAdding}
                   style={{
                     width: '100%',
@@ -261,7 +264,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   color: '#374151',
                   marginBottom: '0.75rem'
                 }}>
-                  Цвет *
+                  {t('status_color_label')}
                 </label>
                 <div style={{
                   display: 'grid',
@@ -302,7 +305,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   border: '1px solid #e5e7eb'
                 }}>
                   <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem', fontWeight: '600' }}>
-                    Предпросмотр:
+                    {t('preview')}:
                   </p>
                   <span
                     className={newStatusColor}
@@ -342,7 +345,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   fontSize: '0.875rem'
                 }}
               >
-                Отмена
+                {t('common:cancel')}
               </button>
               <button
                 onClick={handleAddStatus}
@@ -359,7 +362,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
                   fontSize: '0.875rem'
                 }}
               >
-                {isAdding ? 'Добавление...' : 'Добавить'}
+                {isAdding ? t('adding') : t('add')}
               </button>
             </div>
           </div>
