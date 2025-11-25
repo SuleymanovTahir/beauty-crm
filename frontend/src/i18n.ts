@@ -10,44 +10,44 @@ const namespaces = [
   'admin/bookingdetail',
   'admin/bookings',
   'admin/botsettings',
-  'admin/Calendar',
+  'admin/calendar',
   'admin/clientdetail',
   'admin/clients',
   'admin/createuser',
   'admin/dashboard',
-  'admin/EditUser',
+  'admin/edituser',
   'admin/services',
   'admin/settings',
-  'admin/SpecialPackages',
-  'admin/Users',
+  'admin/specialpackages',
+  'admin/users',
   'manager/chat',
-  'manager/Dashboard',
-  'manager/Funnel',
-  'manager/Messages',
-  'manager/Settings',
-  'employee/Dashboard',
-  'employee/Profile',
-  'public/About',
-  'public/Contacts',
-  'public/Cooperation',
-  'public/DataDeletion',
+  'manager/dashboard',
+  'manager/funnel',
+  'manager/messages',
+  'manager/settings',
+  'employee/dashboard',
+  'employee/profile',
+  'public/about',
+  'public/contacts',
+  'public/cooperation',
+  'public/datadeletion',
   'public/faq',
   'public/home',
   'public/pricelist',
   'public/privacypolicy',
   'public/success',
   'public/terms',
-  'public/UserCabinet',
+  'public/usercabinet',
   'public/public',
-  'auth/Login',
-  'auth/Register',
-  'auth/ForgotPassword',
-  'layouts/AdminLayout',
-  'layouts/EmployeeLayout',
-  'layouts/ManagerLayout',
-  'layouts/PublicLayout',
-  'components/LanguageSwitcher',
-  'components/PublicLanguageSwitcher'
+  'auth/login',
+  'auth/register',
+  'auth/forgotpassword',
+  'layouts/adminlayout',
+  'layouts/employeelayout',
+  'layouts/managerlayout',
+  'layouts/publiclayout',
+  'components/languageswitcher',
+  'components/publiclanguageswitcher'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
 const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
@@ -72,39 +72,39 @@ for (const lang of languages) {
   resources[lang]['bookings'] = resources[lang]['admin/bookings'];
   resources[lang]['botSettings'] = resources[lang]['admin/botsettings'];
   resources[lang]['botsettings'] = resources[lang]['admin/botsettings'];
-  resources[lang]['calendar'] = resources[lang]['admin/Calendar'];
+  resources[lang]['calendar'] = resources[lang]['admin/calendar'];
   resources[lang]['clientDetail'] = resources[lang]['admin/clientdetail'];
   resources[lang]['clients'] = resources[lang]['admin/clients'];
   resources[lang]['createUser'] = resources[lang]['admin/createuser'];
   resources[lang]['dashboard'] = resources[lang]['admin/dashboard'];
-  resources[lang]['editUser'] = resources[lang]['admin/EditUser'];
+  resources[lang]['editUser'] = resources[lang]['admin/edituser'];
   resources[lang]['services'] = resources[lang]['admin/services'];
   resources[lang]['settings'] = resources[lang]['admin/settings'];
-  resources[lang]['specialPackages'] = resources[lang]['admin/SpecialPackages'];
-  resources[lang]['users'] = resources[lang]['admin/Users'];
+  resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
+  resources[lang]['users'] = resources[lang]['admin/users'];
 
   // Manager pages
   resources[lang]['chat'] = resources[lang]['manager/chat'];
-  resources[lang]['funnel'] = resources[lang]['manager/Funnel'];
-  resources[lang]['messages'] = resources[lang]['manager/Messages'];
-  resources[lang]['managerSettings'] = resources[lang]['manager/Settings'];
-  resources[lang]['managerDashboard'] = resources[lang]['manager/Dashboard'];
+  resources[lang]['funnel'] = resources[lang]['manager/funnel'];
+  resources[lang]['messages'] = resources[lang]['manager/messages'];
+  resources[lang]['managerSettings'] = resources[lang]['manager/settings'];
+  resources[lang]['managerDashboard'] = resources[lang]['manager/dashboard'];
 
   // Employee pages
-  resources[lang]['employeeDashboard'] = resources[lang]['employee/Dashboard'];
-  resources[lang]['employeeProfile'] = resources[lang]['employee/Profile'];
+  resources[lang]['employeeDashboard'] = resources[lang]['employee/dashboard'];
+  resources[lang]['employeeProfile'] = resources[lang]['employee/profile'];
 
   // Auth pages
-  resources[lang]['login'] = resources[lang]['auth/Login'];
-  resources[lang]['register'] = resources[lang]['auth/Register'];
-  resources[lang]['forgotPassword'] = resources[lang]['auth/ForgotPassword'];
+  resources[lang]['login'] = resources[lang]['auth/login'];
+  resources[lang]['register'] = resources[lang]['auth/register'];
+  resources[lang]['forgotPassword'] = resources[lang]['auth/forgotpassword'];
 
   // Public pages - add both full path and short aliases
-  resources[lang]['about'] = resources[lang]['public/About'];
-  resources[lang]['contacts'] = resources[lang]['public/Contacts'];
-  resources[lang]['cooperation'] = resources[lang]['public/Cooperation'];
-  resources[lang]['dataDeletion'] = resources[lang]['public/DataDeletion'];
-  resources[lang]['datadeletion'] = resources[lang]['public/DataDeletion'];
+  resources[lang]['about'] = resources[lang]['public/about'];
+  resources[lang]['contacts'] = resources[lang]['public/contacts'];
+  resources[lang]['cooperation'] = resources[lang]['public/cooperation'];
+  resources[lang]['dataDeletion'] = resources[lang]['public/datadeletion'];
+  resources[lang]['datadeletion'] = resources[lang]['public/datadeletion'];
   resources[lang]['faq'] = resources[lang]['public/faq'];
   resources[lang]['home'] = resources[lang]['public/home'];
   resources[lang]['priceList'] = resources[lang]['public/pricelist'];
@@ -112,23 +112,23 @@ for (const lang of languages) {
   resources[lang]['privacyPolicy'] = resources[lang]['public/privacypolicy'];
   resources[lang]['success'] = resources[lang]['public/success'];
   resources[lang]['terms'] = resources[lang]['public/terms'];
-  resources[lang]['userCabinet'] = resources[lang]['public/UserCabinet'];
-  resources[lang]['usercabinet'] = resources[lang]['public/UserCabinet'];
+  resources[lang]['userCabinet'] = resources[lang]['public/usercabinet'];
+  resources[lang]['usercabinet'] = resources[lang]['public/usercabinet'];
   resources[lang]['public'] = resources[lang]['public/public'];
 
   // Additional namespaces used in public pages
-  resources[lang]['stats'] = resources[lang]['public/About']; // Stats are in About page
-  resources[lang]['cta'] = resources[lang]['public/About']; // CTA is in About page
+  resources[lang]['stats'] = resources[lang]['public/about']; // Stats are in About page
+  resources[lang]['cta'] = resources[lang]['public/about']; // CTA is in About page
 
   // Layouts
-  resources[lang]['adminLayout'] = resources[lang]['layouts/AdminLayout'];
-  resources[lang]['employeeLayout'] = resources[lang]['layouts/EmployeeLayout'];
-  resources[lang]['managerLayout'] = resources[lang]['layouts/ManagerLayout'];
-  resources[lang]['publicLayout'] = resources[lang]['layouts/PublicLayout'];
+  resources[lang]['adminLayout'] = resources[lang]['layouts/adminlayout'];
+  resources[lang]['employeeLayout'] = resources[lang]['layouts/employeelayout'];
+  resources[lang]['managerLayout'] = resources[lang]['layouts/managerlayout'];
+  resources[lang]['publicLayout'] = resources[lang]['layouts/publiclayout'];
 
   // Components
-  resources[lang]['languageSwitcher'] = resources[lang]['components/LanguageSwitcher'];
-  resources[lang]['publicLanguageSwitcher'] = resources[lang]['components/PublicLanguageSwitcher'];
+  resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];
+  resources[lang]['publicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
 }
 
 i18n
