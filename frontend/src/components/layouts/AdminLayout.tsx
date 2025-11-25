@@ -33,7 +33,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(['layouts/AdminLayout', 'common']);
+  const { t } = useTranslation(['adminLayout', 'common']);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);

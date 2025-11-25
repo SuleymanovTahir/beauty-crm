@@ -21,7 +21,7 @@ interface EmployeeLayoutProps {
 export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useTranslation(['components/EmployeeLayout', 'common']);
+  const { t } = useTranslation(['employeeLayout', 'common']);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
@@ -78,16 +78,15 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
+
               return (
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      isActive
-                        ? 'bg-pink-50 text-pink-600'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
+                      ? 'bg-pink-50 text-pink-600'
+                      : 'text-gray-700 hover:bg-gray-50'
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.label}</span>
@@ -109,15 +108,15 @@ export default function EmployeeLayout({ user, onLogout }: EmployeeLayoutProps) 
             </div>
           </div>
           <div className="flex items-center gap-2">
-              <LanguageSwitcher />
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <LogOut size={16} />
-                <span>{t('logout')}</span>
-              </button>
-            </div>
+            <LanguageSwitcher />
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <LogOut size={16} />
+              <span>{t('logout')}</span>
+            </button>
+          </div>
         </div>
       </aside>
 
