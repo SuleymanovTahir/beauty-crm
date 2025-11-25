@@ -1,0 +1,70 @@
+{
+  "booking": {
+    "description": "Fill out the form and we will contact you to confirm",
+    "form": {
+      "date": "Date *",
+      "name": "Your name *",
+      "namePlaceholder": "Anna Ivanova",
+      "phone": "Telephone *",
+      "phonePlaceholder": "+971 50 123 4567",
+      "service": "Service *",
+      "servicePlaceholder": "Select a service",
+      "submit": "Sign up",
+      "time": "Time *"
+    },
+    "loading": "Loading services...",
+    "title": "Sign up for the procedure",
+    "validation": "Please fill in all fields"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Our specialists have international certificates and many years of experience",
+        "title": "Experienced craftsmen"
+      },
+      "materials": {
+        "description": "We use only high-quality and safe materials from leading brands",
+        "title": "Premium materials"
+      },
+      "schedule": {
+        "description": "We work 7 days a week with convenient time slots for recording",
+        "title": "Convenient schedule"
+      }
+    },
+    "subtitle": "We offer the best service in the beauty industry",
+    "title": "Why choose us"
+  },
+  "gallery": {
+    "items": {
+      "facial": "Facial care",
+      "makeup": "Permanent makeup",
+      "salon": "Our salon"
+    },
+    "subtitle": "Results we are proud of",
+    "title": "Our works"
+  },
+  "hero": {
+    "badge": "Premium beauty services",
+    "bookButton": "Enroll now",
+    "description": "Professional craftsmen, individual approach and high-quality materials. Your beauty is our passion.",
+    "servicesButton": "Our services",
+    "title": "Discover a new level of beauty"
+  },
+  "services": {
+    "items": [
+      "Permanent eyebrow makeup",
+      "Manicure",
+      "Pedicure",
+      "Facial massage",
+      "Eyelash extensions",
+      "Haircut and styling",
+      "Hair coloring",
+      "Facial cleansing"
+    ]
+  },
+  "testimonials": {
+    "items": [],
+    "subtitle": "What they say about us",
+    "title": "Reviews from our clients"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "after_item1": "Toutes vos données personnelles seront définitivement supprimées",
+  "after_item2": "L’historique des entrées et des visites sera anonymisé",
+  "after_item3": "Vous pouvez créer un nouveau compte à tout moment",
+  "after_title": "Que se passe-t-il après la suppression",
+  "data_item1": "Nom et coordonnées (téléphone, email)",
+  "data_item2": "Historique des visites et rendez-vous pour les procédures",
+  "data_item3": "Photos d'œuvres (avec votre accord)",
+  "data_item4": "Préférences et commentaires sur les services",
+  "delete_text": "Veuillez supprimer toutes mes données personnelles",
+  "email_option": "Vous pouvez également envoyer une demande par email :",
+  "help_desc": "Si vous avez des questions sur le processus de suppression des données, veuillez nous contacter via Instagram",
+  "help_title": "Besoin d'aide ?",
+  "how_to_desc": "Pour supprimer toutes vos données, envoyez-nous un message sur Instagram Direct",
+  "how_to_text": "avec le texte suivant",
+  "how_to_title": "Comment demander la suppression des données",
+  "intro": "Nous respectons votre droit à la vie privée et vous offrons la possibilité de supprimer toutes vos données personnelles de notre système.",
+  "or_email": "ou par email",
+  "processing_desc": "Nous traiterons votre demande dans les 7 jours ouvrables et vous enverrons une confirmation de la suppression des données.",
+  "processing_title": "Délai de traitement de la demande",
+  "title": "Suppression de données",
+  "what_data_title": "Quelles données stockons-nous ?"
+}

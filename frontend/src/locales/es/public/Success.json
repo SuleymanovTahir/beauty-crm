@@ -1,0 +1,9 @@
+{
+  "backToHome": "volver a casa",
+  "contactMessage": "Nos comunicaremos contigo en breve para confirmar los detalles de tu cita.",
+  "dateTime": "{{date}} a las {{time}}",
+  "serviceBooked": "Su entrada para <highlight>{{service}}</highlight> se ha creado correctamente.",
+  "thankYou": "¡Gracias, {{name}}!",
+  "title": "¡Inscripción confirmada!",
+  "viewServices": "Ver servicios"
+}

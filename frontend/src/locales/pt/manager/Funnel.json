@@ -1,0 +1,55 @@
+{
+  "Your funnel shows good results": {
+    " Keep it up!": "Mantem!"
+  },
+  "all_good": "Está tudo bem",
+  "conversion": {
+    "booked_to_completed": "Reservado até a conclusão",
+    "booking_to_booked": "Reserva para reserva",
+    "engaged_to_booking": "Estou fazendo uma reserva",
+    "visitor_to_engaged": "O visitante está engajado"
+  },
+  "funnel_chart": "Gráfico de funil",
+  "key_metrics": "Indicadores-chave",
+  "loading": "Carregando",
+  "losses_few": "As perdas são pequenas",
+  "losses_many": "Muitas perdas",
+  "losses_one": "Perde um",
+  "losses_other": "Outras perdas",
+  "recommendations": {
+    "increase_engagement": {
+      "description_few": "Descrição não é suficiente",
+      "description_many": "Descrição muito",
+      "description_one": "Descrição um",
+      "description_other": "Descrição outro",
+      "suggestion": "Suposição",
+      "title": "Cabeçalho"
+    },
+    "optimize_form": {
+      "description": "Descrição",
+      "suggestion": "Suposição",
+      "title": "Cabeçalho"
+    },
+    "reduce_noshow": {
+      "description_few": "Descrição não é suficiente",
+      "description_many": "Descrição muito",
+      "description_one": "Descrição um",
+      "description_other": "Descrição outro",
+      "suggestion": "Suposição",
+      "title": "Cabeçalho"
+    }
+  },
+  "recommendations_title": "Nome das recomendações",
+  "stage_details": "Detalhes do palco",
+  "subtitle": "Legendas",
+  "successful_visits": "Visitas bem-sucedidas",
+  "table": {
+    "count": "Contar",
+    "losses": "Perdas",
+    "percentage": "Por cento",
+    "stage": "Estágio"
+  },
+  "title": "Cabeçalho",
+  "total_conversion": "Conversão total",
+  "total_losses": "Perdas totais"
+}

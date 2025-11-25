@@ -1,0 +1,427 @@
+"""
+Утилиты для отправки email
+"""
+import smtplib
+import secrets
+import os
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timedelta
+from utils.logger import log_info, log_error
+
+def generate_verification_code():
+    """Генерация 6-значного кода верификации"""
+    return ''.join([str(secrets.randbelow(10)) for _ in range(6)])
+
+def get_code_expiry():
+    """Получить время истечения кода (5 минут)"""
+    return (datetime.now() + timedelta(minutes=5)).isoformat()
+
+def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
+    """
+    Отправить email с кодом верификации
+
+    Args:
+        to_email: Email получателя
+        code: 6-значный код верификации
+        full_name: Имя пользователя
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Код подтверждения регистрации'
+        msg['From'] = smtp_from
+        msg['To'] = to_email
+
+        # HTML версия письма
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            </div>
+            <div style="padding: 30px; background-color: #f7f7f7;">
+              <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
+              <p style="color: #666; font-size: 16px;">Ваш код подтверждения для регистрации:</p>
+              <div style="background-color: white; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+                <h1 style="color: #667eea; font-size: 48px; margin: 0; letter-spacing: 8px;">{code}</h1>
+              </div>
+              <p style="color: #666; font-size: 14px;">Код действителен в течение 5 минут.</p>
+              <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                Если вы не регистрировались в системе, проигнорируйте это письмо.
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+
+        # Текстовая версия письма
+        text = f"""
+        Здравствуйте, {full_name}!
+
+        Ваш код подтверждения для регистрации: {code}
+
+        Код действителен в течение 5 минут.
+
+        Если вы не регистрировались в системе, проигнорируйте это письмо.
+        """
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Verification email sent to {to_email}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send verification email: {e}", "email")
+        return False
+
+def send_verification_link_email(to_email: str, verification_token: str, full_name: str) -> bool:
+    """
+    Отправить email со ссылкой для верификации
+
+    Args:
+        to_email: Email получателя
+        verification_token: Токен для верификации
+        full_name: Имя пользователя
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Формируем ссылку для верификации
+        verification_url = f"http://localhost:5173/verify-email?token={verification_token}"
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Подтверждение регистрации'
+        msg['From'] = smtp_from
+        msg['To'] = to_email
+
+        # HTML версия письма
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            </div>
+            <div style="padding: 30px; background-color: #f7f7f7;">
+              <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
+              <p style="color: #666; font-size: 16px;">Добро пожаловать в Beauty CRM!</p>
+              <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы подтвердить ваш email и активировать аккаунт:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{verification_url}" style="background-color: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+                  Подтвердить Email
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px;">Ссылка действительна в течение 24 часов.</p>
+              <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                Если вы не регистрировались в системе, проигнорируйте это письмо.
+              </p>
+              <p style="color: #999; font-size: 11px; margin-top: 20px;">
+                Если кнопка не работает, скопируйте эту ссылку в браузер:<br>
+                <a href="{verification_url}" style="color: #667eea; word-break: break-all;">{verification_url}</a>
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+
+        # Текстовая версия письма
+        text = f"""
+        Здравствуйте, {full_name}!
+
+        Добро пожаловать в Beauty CRM!
+
+        Перейдите по этой ссылке, чтобы подтвердить ваш email:
+        {verification_url}
+
+        Ссылка действительна в течение 24 часов.
+
+        Если вы не регистрировались в системе, проигнорируйте это письмо.
+        """
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Verification link email sent to {to_email}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send verification link email: {e}", "email")
+        return False
+
+def send_approval_notification(to_email: str, full_name: str, approved: bool) -> bool:
+    """
+    Отправить уведомление об одобрении/отклонении регистрации
+
+    Args:
+        to_email: Email получателя
+        full_name: Имя пользователя
+        approved: True если одобрено, False если отклонено
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        msg = MIMEMultipart('alternative')
+        msg['From'] = smtp_from
+        msg['To'] = to_email
+
+        if approved:
+            msg['Subject'] = 'Ваша регистрация одобрена'
+            html = f"""
+            <html>
+              <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                  <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+                </div>
+                <div style="padding: 30px; background-color: #f7f7f7;">
+                  <h2 style="color: #333;">Поздравляем, {full_name}!</h2>
+                  <p style="color: #666; font-size: 16px;">Ваша регистрация была одобрена администратором.</p>
+                  <p style="color: #666; font-size: 16px;">Теперь вы можете войти в систему используя свои учетные данные.</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="#" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                      Войти в систему
+                    </a>
+                  </div>
+                </div>
+              </body>
+            </html>
+            """
+            text = f"Поздравляем, {full_name}!\n\nВаша регистрация была одобрена администратором.\nТеперь вы можете войти в систему используя свои учетные данные."
+        else:
+            msg['Subject'] = 'Ваша регистрация отклонена'
+            html = f"""
+            <html>
+              <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                  <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+                </div>
+                <div style="padding: 30px; background-color: #f7f7f7;">
+                  <h2 style="color: #333;">{full_name},</h2>
+                  <p style="color: #666; font-size: 16px;">К сожалению, ваша регистрация была отклонена администратором.</p>
+                  <p style="color: #666; font-size: 16px;">Если у вас есть вопросы, пожалуйста, свяжитесь с администрацией.</p>
+                </div>
+              </body>
+            </html>
+            """
+            text = f"{full_name},\n\nК сожалению, ваша регистрация была отклонена администратором.\nЕсли у вас есть вопросы, пожалуйста, свяжитесь с администрацией."
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Approval notification sent to {to_email} (approved={approved})", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send approval notification: {e}", "email")
+        return False
+
+
+def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -> bool:
+    """
+    Отправить email со ссылкой для сброса пароля
+
+    Args:
+        to_email: Email получателя
+        reset_token: Токен для сброса пароля
+        full_name: Имя пользователя
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Формируем ссылку для сброса пароля
+        # В продакшене это должен быть реальный домен
+        reset_url = f"http://localhost:5173/reset-password?token={reset_token}"
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Сброс пароля'
+        msg['From'] = smtp_from
+        msg['To'] = to_email
+
+        # HTML версия письма
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0;">💎 Beauty CRM</h1>
+            </div>
+            <div style="padding: 30px; background-color: #f7f7f7;">
+              <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
+              <p style="color: #666; font-size: 16px;">Вы запросили сброс пароля для вашего аккаунта.</p>
+              <p style="color: #666; font-size: 16px;">Нажмите на кнопку ниже, чтобы создать новый пароль:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{reset_url}" style="background-color: #667eea; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 16px;">
+                  Сбросить пароль
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px;">Ссылка действительна в течение 1 часа.</p>
+              <p style="color: #999; font-size: 12px; margin-top: 30px;">
+                Если вы не запрашивали сброс пароля, проигнорируйте это письмо. Ваш пароль останется без изменений.
+              </p>
+              <p style="color: #999; font-size: 11px; margin-top: 20px;">
+                Если кнопка не работает, скопируйте эту ссылку в браузер:<br>
+                <a href="{reset_url}" style="color: #667eea; word-break: break-all;">{reset_url}</a>
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+
+        # Текстовая версия письма
+        text = f"""
+        Здравствуйте, {full_name}!
+
+        Вы запросили сброс пароля для вашего аккаунта.
+
+        Перейдите по этой ссылке, чтобы создать новый пароль:
+        {reset_url}
+
+        Ссылка действительна в течение 1 часа.
+
+        Если вы не запрашивали сброс пароля, проигнорируйте это письмо.
+        """
+
+        part1 = MIMEText(text, 'plain')
+        part2 = MIMEText(html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Password reset email sent to {to_email}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send password reset email: {e}", "email")
+        return False
+
+
+async def send_email_async(recipients: list, subject: str, message: str, html: str = None) -> bool:
+    """
+    Универсальная асинхронная функция отправки email
+
+    Args:
+        recipients: Список email адресов получателей
+        subject: Тема письма
+        message: Текст письма (plain text)
+        html: HTML версия письма (опционально)
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = smtp_from
+        msg['To'] = ', '.join(recipients)
+
+        # Добавляем текстовую часть
+        part1 = MIMEText(message, 'plain')
+        msg.attach(part1)
+
+        # Добавляем HTML часть (если есть)
+        if html:
+            part2 = MIMEText(html, 'html')
+            msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Email sent to {', '.join(recipients)}: {subject}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send email: {e}", "email")
+        return False

@@ -1,0 +1,20 @@
+{
+  "401": "401",
+  "authorization_error": "Authorization error",
+  "crm_system_management": "CRM system management",
+  "enter_login": "Enter login",
+  "enter_password": "Enter your password",
+  "fill_both_fields": "Fill in both fields",
+  "forgot_password": "Forgot password?",
+  "invalid_username_or_password": "Invalid username or password",
+  "loading": "Loading...",
+  "login": "Login",
+  "login_error": "Login error",
+  "login_title": "Login",
+  "no_account_register": "No account? Register",
+  "password": "Password",
+  "return_to_home": "Return to home",
+  "unauthorized": "Unauthorized",
+  "username": "Username",
+  "welcome": "Welcome"
+}

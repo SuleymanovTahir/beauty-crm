@@ -1,0 +1,28 @@
+{
+  "bottomCta": {
+    "bookButton": "Inscreva-se agora",
+    "description": "Escolha um horário conveniente e aproveite nossos serviços premium",
+    "title": "Pronto para se inscrever?"
+  },
+  "categories": {
+    "facial-care": "Cuidados faciais",
+    "hair": "Serviços de cabelo",
+    "lashes": "Cílios e sobrancelhas",
+    "massage": "Massagem e SPA",
+    "nails": "Serviço de unhas",
+    "other": "Outros serviços",
+    "permanent-makeup": "Maquiagem definitiva"
+  },
+  "cta": {
+    "bookButton": "Inscreva-se para o procedimento",
+    "ready": "Pronto para transformar?"
+  },
+  "error": "Erro ao carregar serviços",
+  "loading": "Carregando serviços...",
+  "noResults": "Nenhum serviço encontrado que corresponda à sua pesquisa",
+  "noServices": "Serviços não encontrados",
+  "search": "Pesquisar serviços...",
+  "services": "serviços",
+  "subtitle": "Serviços de beleza premium a preços acessíveis",
+  "title": "Nossos serviços e preços"
+}

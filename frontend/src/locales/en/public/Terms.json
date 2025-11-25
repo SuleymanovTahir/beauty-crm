@@ -1,0 +1,69 @@
+{
+  "booking_and_cancellation": "Booking and cancellation",
+  "booking_requirements": "To register for procedures, you must provide correct contact information. ",
+  "cancellation_policy": "Cancellation Policy",
+  "cancellation_policy_text": "The client can cancel the appointment no later than 24 hours before the scheduled time. ",
+  "client_obligations": "The client is obliged to inform the specialist about the presence of any medical contraindications, allergies or health conditions before the procedure.",
+  "confidentiality": "Confidentiality",
+  "contact_info": "For any questions related to these Terms, you can contact us",
+  "contacts": "Contacts",
+  "dissatisfaction_policy": "If dissatisfied with the result, the client must contact the salon within 7 days to discuss possible solutions.",
+  "general_provisions": "General provisions",
+  "general_provisions_text": "These Terms of Use govern the use of the M.Le Diamant Beauty Lounge services. ",
+  "lastUpdated": "Last updated: {{date}}",
+  "last_update_date": "Date of last update",
+  "late_arrival": "If the client is more than 15 minutes late, the salon reserves the right to cancel the appointment or shorten the procedure time.",
+  "medical_contraindications": "Medical contraindications",
+  "payment_details": "Payment is made in cash or by card after the service is provided. ",
+  "payment_for_services": "Payment for services",
+  "privacy_commitment": "We respect your privacy and are committed to protecting your personal information in accordance with our Privacy Policy.",
+  "quality_guarantee": "We guarantee the quality of the materials used and the professionalism of our craftsmen. ",
+  "salon_liability": "The salon is not responsible for the consequences of procedures if the client conceals information about medical contraindications.",
+  "sections": {
+    "booking": {
+      "cancellationText": "The client can cancel the appointment no later than 24 hours before the scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the cost of the service may be charged.",
+      "cancellationTitle": "Cancel an entry:",
+      "booking_requirements": "To make a booking, you must provide correct contact information. We reserve the right to confirm or refuse a booking.",
+      "title": "2. Booking and cancellation"
+    },
+    "changes": {
+      "content": "We reserve the right to change these Terms of Use at any time. Changes come into force from the moment they are published on the website.",
+      "title": "7. Changes in terms and conditions"
+    },
+    "contact": {
+      "address": "Address",
+      "description": "For any questions related to these Terms, you can contact us:",
+      "email": "Email",
+      "phone": "Telephone",
+      "title": "8. Contacts"
+    },
+    "general": {
+      "content": "These Terms of Use govern the use of {{salonName}}'s services. By using our services you agree to these terms.",
+      "title": "1. General provisions"
+    },
+    "medical": {
+      "paragraph1": "The client is obliged to inform the specialist about the presence of any medical contraindications, allergies or health conditions before the procedure.",
+      "paragraph2": "The salon is not responsible for the consequences of procedures if the client conceals information about medical contraindications.",
+      "title": "4. Medical contraindications"
+    },
+    "payment": {
+      "paragraph1": "Payment is made in cash or by card after the service is provided. Prices for services are indicated in the price list and are subject to change without prior notice.",
+      "paragraph2": "If the client is more than 15 minutes late, the salon reserves the right to cancel the appointment or shorten the procedure time.",
+      "title": "3. Payment for services"
+    },
+    "privacy": {
+      "content": "We respect your privacy and are committed to protecting your personal information in accordance with our <link>Privacy Policy</link>.",
+      "title": "6. Privacy"
+    },
+    "warranty": {
+      "paragraph1": "We guarantee the quality of the materials used and the professionalism of our craftsmen. The results of the procedures may vary depending on the individual characteristics of the client.",
+      "paragraph2": "If dissatisfied with the result, the client must contact the salon within 7 days to discuss possible solutions.",
+      "title": "5. Guarantees and liability"
+    }
+  },
+  "terms_changes": "Changes to Terms of Use",
+  "terms_changes_text": "We reserve the right to change these Terms of Use at any time. ",
+  "terms_of_use": "Terms of Use",
+  "title": "Terms of Use",
+  "warranties_and_liability": "Guarantees and liability"
+}

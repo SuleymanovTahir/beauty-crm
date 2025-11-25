@@ -1,0 +1,16 @@
+{
+  "role_user_title": "Função do usuário",
+  "current_role": "Função atual",
+  "hierarchy_level": "Nível de hierarquia:",
+  "change_role_to": "Alterar função para",
+  "change_role_button": "Mudar função",
+  "permissions_title": "Direitos de acesso",
+  "save_changes": "Salvar alterações",
+  "full_access_message": "Acesso total a todas as funções do sistema (função de Diretor)",
+  "individual_permissions_info": "Direitos individuais: você pode alterar os direitos do usuário independentemente de sua função. Uma marca de seleção significa que o direito foi concedido. Uma caixa desmarcada significa que o direito foi revogado.",
+  "can_manage_roles_title": "Pode gerenciar funções",
+  "role_unchanged": "O papel não mudou",
+  "permissions_updated": "Direitos atualizados",
+  "error_saving_permissions": "Erro ao salvar direitos",
+  "error_loading_permissions": "Falha ao carregar informações de autorização"
+}

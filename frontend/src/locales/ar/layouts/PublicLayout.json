@@ -1,0 +1,21 @@
+{
+  "about": "معلومات عنا",
+  "contacts": "اتصالات",
+  "faq": "التعليمات",
+  "footer": {
+    "all_rights": "جميع الحقوق محفوظة",
+    "contacts": "اتصالات",
+    "cooperation": "تعاون",
+    "description": "صالون تجميل احترافي في دبي",
+    "privacy_policy": "سياسة الخصوصية",
+    "quick_links": "روابط سريعة",
+    "terms": "شروط الاستخدام",
+    "weekdays": "أيام الأسبوع",
+    "weekends": "عطلة نهاية الأسبوع",
+    "working_hours": "ساعات العمل"
+  },
+  "home": "بيت",
+  "login": "تسجيل الدخول",
+  "personal_cabinet": "حساب شخصي",
+  "price_list": "قائمة الأسعار"
+}

@@ -1,0 +1,55 @@
+{
+  "Your funnel shows good results": {
+    " Keep it up!": "¡Avanza!"
+  },
+  "all_good": "todo esta bien",
+  "conversion": {
+    "booked_to_completed": "Reservado hasta su finalización",
+    "booking_to_booked": "Reserva para reserva",
+    "engaged_to_booking": "estoy haciendo una reserva",
+    "visitor_to_engaged": "El visitante está comprometido."
+  },
+  "funnel_chart": "gráfico de embudo",
+  "key_metrics": "Indicadores clave",
+  "loading": "Cargando",
+  "losses_few": "Las pérdidas son pequeñas.",
+  "losses_many": "Muchas pérdidas",
+  "losses_one": "Pierde uno",
+  "losses_other": "Otras pérdidas",
+  "recommendations": {
+    "increase_engagement": {
+      "description_few": "La descripción no es suficiente",
+      "description_many": "descripción mucho",
+      "description_one": "Descripción uno",
+      "description_other": "Descripción otro",
+      "suggestion": "Suposición",
+      "title": "Título"
+    },
+    "optimize_form": {
+      "description": "Descripción",
+      "suggestion": "Suposición",
+      "title": "Título"
+    },
+    "reduce_noshow": {
+      "description_few": "La descripción no es suficiente",
+      "description_many": "descripción mucho",
+      "description_one": "Descripción uno",
+      "description_other": "Descripción otro",
+      "suggestion": "Suposición",
+      "title": "Título"
+    }
+  },
+  "recommendations_title": "Nombre de las recomendaciones",
+  "stage_details": "Detalles del escenario",
+  "subtitle": "Subtítulos",
+  "successful_visits": "Visitas exitosas",
+  "table": {
+    "count": "Contar",
+    "losses": "Pérdidas",
+    "percentage": "Por ciento",
+    "stage": "Escenario"
+  },
+  "title": "Título",
+  "total_conversion": "Conversión Total",
+  "total_losses": "Pérdidas totales"
+}

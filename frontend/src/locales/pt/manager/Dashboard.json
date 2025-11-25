@@ -1,0 +1,32 @@
+{
+  "active_clients": "Clientes ativos",
+  "booked": "Inscrito",
+  "client_base": "Base de clientes",
+  "client_messages": "Mensagens de clientes",
+  "completed": "Visitado",
+  "completed_procedures": "Procedimentos concluídos",
+  "conversion_rate": "Conversão",
+  "engaged": "Envolvido",
+  "errors": {
+    "loading": "Erro ao carregar dados",
+    "loading_title": "Erro ao carregar"
+  },
+  "funnel_details": "Mais sobre o funil",
+  "good": "Multar",
+  "key_metrics": "Métricas principais",
+  "loading": "Carregando dados",
+  "manager_desc": "Gestão e análise de clientes",
+  "manager_panel": "Painel do gerenciador",
+  "messages": "Mensagens",
+  "normal": "Multar",
+  "open_chat": "Abrir bate-papo",
+  "pending": "espera",
+  "quick_actions": "Ações rápidas",
+  "retry": "Tente novamente",
+  "sales_funnel": "Funil de vendas",
+  "started_booking": "Começou a gravar",
+  "total_bookings": "Registros totais",
+  "total_clients": "Total de clientes",
+  "total_revenue": "Receita total",
+  "visitors": "Visitantes"
+}

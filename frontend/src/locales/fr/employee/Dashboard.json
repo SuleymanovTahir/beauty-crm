@@ -1,0 +1,13 @@
+{
+  "booking": "Enregistrer",
+  "confirmed": "Confirmé",
+  "failed_to_fetch_bookings": "Échec du chargement des enregistrements",
+  "loading_error": "Erreur de chargement",
+  "my_bookings": "Mes entrées",
+  "no_bookings_today": "Il n'y a aucune entrée pour aujourd'hui",
+  "pending": "En attendant",
+  "schedule_for_today": "Programme pour aujourd'hui",
+  "today": "Aujourd'hui",
+  "today_bookings": "Messages aujourd'hui",
+  "unknown_error": "Erreur inconnue"
+}

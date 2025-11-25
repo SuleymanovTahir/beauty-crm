@@ -1,0 +1,13 @@
+{
+  "booking": "अभिलेख",
+  "confirmed": "की पुष्टि",
+  "failed_to_fetch_bookings": "रिकॉर्ड लोड करने में विफल",
+  "loading_error": "लोड करने में त्रुटि",
+  "my_bookings": "मेरी प्रविष्टियाँ",
+  "no_bookings_today": "आज के लिए कोई प्रविष्टियाँ नहीं हैं",
+  "pending": "इंतज़ार में",
+  "schedule_for_today": "आज के लिए कार्यक्रम",
+  "today": "आज",
+  "today_bookings": "आज पोस्ट करें",
+  "unknown_error": "अज्ञात त्रुटि"
+}

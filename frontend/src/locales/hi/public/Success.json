@@ -1,0 +1,9 @@
+{
+  "backToHome": "घर पर वापस",
+  "contactMessage": "आपकी नियुक्ति के विवरण की पुष्टि करने के लिए हम शीघ्र ही आपसे संपर्क करेंगे।",
+  "dateTime": "{{date}} {{time}} पर",
+  "serviceBooked": "<highlight>{{service}}</highlight> के लिए आपकी प्रविष्टि सफलतापूर्वक बना दी गई है।",
+  "thankYou": "धन्यवाद, {{name}}!",
+  "title": "पंजीकरण की पुष्टि!",
+  "viewServices": "सेवाएँ देखें"
+}

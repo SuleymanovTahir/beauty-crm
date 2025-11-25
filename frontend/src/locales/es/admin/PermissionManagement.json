@@ -1,0 +1,14 @@
+{
+  "permissions_title": "Gestión de derechos de acceso",
+  "permissions_subtitle": "Configurar derechos individuales para los usuarios",
+  "users_list_title": "Usuarios",
+  "permissions_for_user": "Permisos: {nombre}",
+  "role_label": "Role:",
+  "view_permission": "Vista",
+  "create_permission": "Creación",
+  "edit_permission": "Edición",
+  "delete_permission": "Eliminación",
+  "permission_granted": "Derecho concedido",
+  "permission_revoked": "Derecho revocado",
+  "select_user_prompt": "Seleccionar usuario"
+}

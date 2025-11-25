@@ -1,0 +1,14 @@
+{
+  "permissions_title": "إدارة حقوق الوصول",
+  "permissions_subtitle": "إعداد الحقوق الفردية للمستخدمين",
+  "users_list_title": "المستخدمين",
+  "permissions_for_user": "الأذونات: {الاسم}",
+  "role_label": "دور:",
+  "view_permission": "منظر",
+  "create_permission": "الخلق",
+  "edit_permission": "التحرير",
+  "delete_permission": "إزالة",
+  "permission_granted": "الحق الممنوح",
+  "permission_revoked": "تم إبطال الحق",
+  "select_user_prompt": "حدد المستخدم"
+}

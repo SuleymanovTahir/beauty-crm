@@ -1,0 +1,11 @@
+{
+  "crm": "GRC",
+  "employee": "Employé",
+  "logout": "Déconnexion",
+  "menu": {
+    "calendar": "Calendrier",
+    "my_bookings": "Mes réservations",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "backToHome": "← Voltar para casa",
+  "fillAllFields": "Por favor preencha todos os campos",
+  "loggingIn": "Entrada...",
+  "loginButton": "Entrar",
+  "loginError": "Credenciais inválidas",
+  "loginSuccess": "Você fez login com sucesso! 🎉",
+  "password": "Senha",
+  "passwordHint": "Inscrito no momento do registro",
+  "passwordPlaceholder": "••••••",
+  "subtitle": "Faça login no sistema de gerenciamento do salão",
+  "systemError": "Erro de login",
+  "title": "Conta pessoal",
+  "username": "Nome de usuário ou e-mail",
+  "usernameHint": "Digite seu nome de usuário",
+  "usernamePlaceholder": "administrador"
+}

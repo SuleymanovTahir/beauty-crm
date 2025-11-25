@@ -1,0 +1,14 @@
+{
+  "permissions_title": "Gestion des droits d'accès",
+  "permissions_subtitle": "Configurer des droits individuels pour les utilisateurs",
+  "users_list_title": "Utilisateurs",
+  "permissions_for_user": "Autorisations : {nom}",
+  "role_label": "Rôle:",
+  "view_permission": "Voir",
+  "create_permission": "Création",
+  "edit_permission": "Édition",
+  "delete_permission": "Suppression",
+  "permission_granted": "Droit accordé",
+  "permission_revoked": "Droit révoqué",
+  "select_user_prompt": "Sélectionner un utilisateur"
+}

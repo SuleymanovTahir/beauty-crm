@@ -1,0 +1,32 @@
+{
+  "active_clients": "Clients actifs",
+  "booked": "Inscrit",
+  "client_base": "Clientèle",
+  "client_messages": "Messages des clients",
+  "completed": "Visité",
+  "completed_procedures": "Procédures terminées",
+  "conversion_rate": "Conversion",
+  "engaged": "Impliqué",
+  "errors": {
+    "loading": "Erreur de chargement des données",
+    "loading_title": "Erreur de chargement"
+  },
+  "funnel_details": "En savoir plus sur l'entonnoir",
+  "good": "Bien",
+  "key_metrics": "Indicateurs clés",
+  "loading": "Chargement des données",
+  "manager_desc": "Gestion et analyse des clients",
+  "manager_panel": "Panneau de gestion",
+  "messages": "Messages",
+  "normal": "Bien",
+  "open_chat": "Ouvrir le chat",
+  "pending": "attend",
+  "quick_actions": "Actions rapides",
+  "retry": "Essayer à nouveau",
+  "sales_funnel": "Entonnoir de vente",
+  "started_booking": "L'enregistrement a commencé",
+  "total_bookings": "Total des enregistrements",
+  "total_clients": "Nombre total de clients",
+  "total_revenue": "Revenu total",
+  "visitors": "Visiteurs"
+}
