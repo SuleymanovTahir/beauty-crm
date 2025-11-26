@@ -8,7 +8,7 @@ from typing import Optional
 from db.employees import (
     get_all_employees, get_employee, create_employee, update_employee,
     delete_employee, get_employee_services, add_employee_service,
-    remove_employee_service, get_employees_by_service,
+    remove_employee_service, get_employees_by_service, update_employee_service,
     get_employee_schedule, set_employee_schedule, get_available_employees,
     get_employee_busy_slots
 )
@@ -200,7 +200,16 @@ async def get_employee_detail(employee_id: int):
         "instagram": employee[8],
         "is_active": bool(employee[9]),
         "services": [
-            {"id": s[0], "name": s[2], "price": s[3]} for s in services
+            {
+                "id": s[0], 
+                "name": s[2], 
+                "price": s[19] if len(s) > 19 and s[19] is not None else s[5], # Use override or default
+                "duration": s[20] if len(s) > 20 and s[20] is not None else 60, # Default 60m if not set
+                "is_online_booking_enabled": bool(s[21]) if len(s) > 21 and s[21] is not None else True,
+                "is_calendar_enabled": bool(s[22]) if len(s) > 22 and s[22] is not None else True,
+                "price_min": s[23] if len(s) > 23 else None,
+                "price_max": s[24] if len(s) > 24 else None
+            } for s in services
         ],
         "schedule": [
             {
@@ -305,7 +314,38 @@ async def remove_service_from_employee(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     remove_employee_service(employee_id, service_id)
+    remove_employee_service(employee_id, service_id)
     return {"success": True}
+
+
+@router.put("/employees/{employee_id}/services/{service_id}")
+async def update_service_settings(
+    employee_id: int,
+    service_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить настройки услуги для сотрудника"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    data = await request.json()
+    
+    success = update_employee_service(
+        employee_id, 
+        service_id,
+        price=data.get('price'),
+        duration=data.get('duration'),
+        is_online_booking_enabled=data.get('is_online_booking_enabled'),
+        is_calendar_enabled=data.get('is_calendar_enabled'),
+        price_min=data.get('price_min'),
+        price_max=data.get('price_max')
+    )
+    
+    if success:
+        return {"success": True}
+    return JSONResponse({"error": "Update failed"}, status_code=400)
 
 
 @router.post("/employees/{employee_id}/schedule")

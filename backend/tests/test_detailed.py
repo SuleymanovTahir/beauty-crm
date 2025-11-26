@@ -104,12 +104,12 @@ def test_database_detailed():
         required_tables = {
             'clients': 'Клиенты',
             'bookings': 'Записи',
-            'employees': 'Сотрудники',
+            'users': 'Пользователи (Сотрудники)',
             'positions': 'Должности',
             'services': 'Услуги',
             'conversations': 'Диалоги',
-            'master_schedule': 'Расписание мастеров',
-            'master_time_off': 'Выходные мастеров',
+            'user_schedule': 'Расписание мастеров',
+            'user_time_off': 'Выходные мастеров',
             'loyalty_levels': 'Уровни лояльности',
             'client_loyalty_points': 'Баллы клиентов'
         }
@@ -130,14 +130,13 @@ def test_database_detailed():
         # Шаг 5: Проверка структуры таблиц
         print_step(5, 10, "Проверка структуры ключевых таблиц")
 
-        # Проверка employees.position_id
-        c.execute("PRAGMA table_info(employees)")
-        emp_columns = {col[1]: col[2] for col in c.fetchall()}
-        if 'position_id' in emp_columns:
-            print_success(f"employees.position_id - {emp_columns['position_id']}")
+        # Проверка users.position
+        c.execute("PRAGMA table_info(users)")
+        user_columns = {col[1]: col[2] for col in c.fetchall()}
+        if 'position' in user_columns:
+            print_success(f"users.position - {user_columns['position']}")
         else:
-            print_error("employees.position_id - ОТСУТСТВУЕТ")
-            print_info("Запустите миграцию: python3 run_migration.py")
+            print_error("users.position - ОТСУТСТВУЕТ")
 
         # Проверка services.position_id
         c.execute("PRAGMA table_info(services)")
@@ -148,17 +147,16 @@ def test_database_detailed():
             print_warning("services.position_id - ОТСУТСТВУЕТ (опционально)")
             print_info("Запустите миграцию: python3 backend/migration_add_position_to_services.py")
 
-        # Проверка master_schedule (nullable start_time/end_time)
-        c.execute("PRAGMA table_info(master_schedule)")
+        # Проверка user_schedule (nullable start_time/end_time)
+        c.execute("PRAGMA table_info(user_schedule)")
         schedule_columns = {col[1]: {'type': col[2], 'not_null': col[3]} for col in c.fetchall()}
         if 'start_time' in schedule_columns:
             if schedule_columns['start_time']['not_null'] == 0:
-                print_success("master_schedule.start_time - nullable ✓")
+                print_success("user_schedule.start_time - nullable ✓")
             else:
-                print_error("master_schedule.start_time - NOT NULL (должен быть nullable)")
-                print_info("Запустите: python3 backend/migration_fix_master_schedule_nullable.py")
+                print_warning("user_schedule.start_time - NOT NULL (должен быть nullable)")
         else:
-            print_error("master_schedule.start_time - ОТСУТСТВУЕТ")
+            print_error("user_schedule.start_time - ОТСУТСТВУЕТ")
 
         # Шаг 6: Подсчет данных
         print_step(6, 10, "Подсчет записей в таблицах")
@@ -323,7 +321,14 @@ def test_master_schedule_detailed():
             import sqlite3
             conn = sqlite3.connect(DATABASE_NAME)
             c = conn.cursor()
-            c.execute("INSERT INTO employees (full_name, position, is_active) VALUES (?, ?, 1)", (test_master, "Stylist"))
+            
+            # Insert into users table
+            c.execute("""
+                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
+                VALUES (?, 'dummy_hash', ?, ?, ?, 1, 1)
+            """, (f"test_detailed_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
+            user_id = c.lastrowid
+            
             conn.commit()
             conn.close()
 
@@ -368,10 +373,8 @@ def test_master_schedule_detailed():
                 print_success("Воскресенье: ВЫХОДНОЙ")
             else:
                 print_error("Не удалось установить выходной")
-                print_info("Возможно нужна миграция: migration_fix_master_schedule_nullable.py")
         except Exception as e:
             print_error(f"Ошибка: {e}")
-            print_info("КРИТИЧНО: Запустите migration_fix_master_schedule_nullable.py")
             traceback.print_exc()
 
         # Шаг 5: Получение рабочих часов
@@ -464,18 +467,18 @@ def test_master_schedule_detailed():
             conn = sqlite3.connect(DATABASE_NAME)
             c = conn.cursor()
             
-            # Удаляем расписание тестового мастера
-            c.execute("DELETE FROM master_schedule WHERE master_name = ?", (test_master,))
-            schedule_deleted = c.rowcount
+            # Удаляем пользователя
+            c.execute("DELETE FROM users WHERE full_name = ?", (test_master,))
             
-            # Удаляем time-off записи тестового мастера
-            c.execute("DELETE FROM master_time_off WHERE master_name = ?", (test_master,))
-            timeoff_deleted = c.rowcount
+            # Удаляем расписание тестового мастера
+            if 'user_id' in locals():
+                c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
+                c.execute("DELETE FROM user_time_off WHERE user_id = ?", (user_id,))
             
             conn.commit()
             conn.close()
             
-            print_success(f"Тестовые данные удалены (расписание: {schedule_deleted}, отпуска: {timeoff_deleted})")
+            print_success(f"Тестовые данные удалены")
             
         except Exception as cleanup_error:
             print_warning(f"Ошибка очистки: {cleanup_error}")

@@ -354,6 +354,58 @@ def run_all_tests():
         import traceback
         traceback.print_exc()
         results.append(("test_schedule.py - API расписания", False))
+
+    # ========================================================================
+    # 15. Employee Management Tests
+    # ========================================================================
+    print_test_file(
+        "tests/test_employee_management.py",
+        "Тестирование Employee Management UI (Services, Schedule, User Detail)"
+    )
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(os.path.dirname(__file__), "test_employee_management.py")],
+            capture_output=True,
+            text=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        success = result.returncode == 0
+        results.append(("test_employee_management.py - Employee Management", success))
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("test_employee_management.py - Employee Management", False))
+    
+    # ========================================================================
+    # ИТОГИ
+    # ========================================================================
+    print_header("ИТОГИ ТЕСТИРОВАНИЯ")
+
+    total = len(results)
+    passed = sum(1 for _, s in results if s)
+    failed = total - passed
+
+    for name, success in results:
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} - {name}")
+
+    print(f"\n  Всего тестов: {total}")
+    print(f"  Пройдено: {passed}")
+    print(f"  Провалено: {failed}")
+
+    if failed == 0:
+        print("\n  🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!")
+    else:
+        print("\n  ⚠️  Некоторые тесты провалены")
+        print("  ℹ️  Проверьте логи выше для деталей")
+
+    print("=" * 80 + "\n")
+
+    return passed == total
     # print_test_file(
     #     "tests/test_broadcasts_and_reminders.py",
     #     "Тестирование акционных рассылок и напоминаний Instagram"

@@ -1,11 +1,30 @@
+"""
+Google Reviews Scraper using Playwright
+"""
 import asyncio
-import logging
-from playwright.async_api import async_playwright
-from bs4 import BeautifulSoup
 import re
 from typing import List, Dict
 
-logger = logging.getLogger(__name__)
+try:
+    from playwright.async_api import async_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+    async_playwright = None
+
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+except ImportError:
+    BS4_AVAILABLE = False
+    BeautifulSoup = None
+
+try:
+    from utils.logger import log_info, log_error
+except ImportError:
+    # Fallback if logger not available
+    def log_info(msg, tag=""): print(f"INFO: {msg}")
+    def log_error(msg, tag=""): print(f"ERROR: {msg}")
 
 class GoogleMapsScraper:
     def __init__(self):

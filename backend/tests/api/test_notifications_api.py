@@ -138,13 +138,22 @@ def test_http_request():
     print("=" * 70)
 
     try:
-        from fastapi.testclient import TestClient
-        from main import app
-
-        client = TestClient(app)
-
-        print("\n🔄 Отправка HTTP GET запроса...")
-        response = client.get("/api/notifications/settings")
+        import requests
+        
+        print("\n🔄 Отправка HTTP GET запроса (через requests)...")
+        try:
+            response = requests.get("http://localhost:8000/api/notifications/settings")
+        except requests.exceptions.ConnectionError:
+            print("\n⚠️  Не удалось подключиться к localhost:8000. Сервер не запущен?")
+            # Если сервер не запущен, попробуем TestClient (если установлен)
+            try:
+                from fastapi.testclient import TestClient
+                from main import app
+                client = TestClient(app)
+                response = client.get("/api/notifications/settings")
+            except ImportError:
+                print("⚠️  Модуль fastapi.testclient не установлен")
+                return False
 
         print(f"\nСтатус код: {response.status_code}")
         print(f"Headers: {dict(response.headers)}")
@@ -157,10 +166,6 @@ def test_http_request():
             print(f"\n❌ ОШИБКА {response.status_code}")
             print(f"Ответ: {response.text}")
             return False
-
-    except ImportError:
-        print("\n⚠️  Модуль fastapi.testclient не установлен")
-        return False
 
     except Exception as e:
         print(f"\n❌ ОШИБКА при HTTP запросе:")
