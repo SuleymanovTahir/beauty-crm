@@ -1,0 +1,240 @@
+"""
+API Endpoints для управления услугами сотрудников
+"""
+from fastapi import APIRouter, Request, Cookie, Depends
+from fastapi.responses import JSONResponse
+from typing import Optional
+import sqlite3
+from core.config import DATABASE_NAME
+from utils.utils import require_auth
+from utils.logger import log_error, log_info
+from core.auth import get_current_user_or_redirect as get_current_user
+
+router = APIRouter(tags=["Employee Services"])
+
+
+@router.get("/users/{user_id}/services")
+async def get_user_services(
+    user_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить все услуги сотрудника с настройками"""
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        
+        # Get assigned services
+        c.execute("""
+            SELECT 
+                s.id, s.name, s.name_ru, s.name_ar, s.category,
+                us.price, us.price_min, us.price_max, us.duration,
+                us.is_online_booking_enabled, us.is_calendar_enabled
+            FROM services s
+            JOIN user_services us ON s.id = us.service_id
+            WHERE us.user_id = ?
+            ORDER BY s.category, s.name
+        """, (user_id,))
+        
+        assigned_services = []
+        for row in c.fetchall():
+            assigned_services.append({
+                "id": row["id"],
+                "name": row["name"],
+                "name_ru": row["name_ru"],
+                "name_ar": row["name_ar"],
+                "category": row["category"],
+                "price": row["price"],
+                "price_min": row["price_min"],
+                "price_max": row["price_max"],
+                "duration": row["duration"],
+                "is_online_booking_enabled": bool(row["is_online_booking_enabled"]),
+                "is_calendar_enabled": bool(row["is_calendar_enabled"])
+            })
+        
+        # Get all available services
+        c.execute("""
+            SELECT id, name, name_ru, name_ar, category, price, duration
+            FROM services
+            WHERE is_active = 1
+            ORDER BY category, name
+        """)
+        
+        all_services = []
+        assigned_ids = {s["id"] for s in assigned_services}
+        
+        for row in c.fetchall():
+            all_services.append({
+                "id": row["id"],
+                "name": row["name"],
+                "name_ru": row["name_ru"],
+                "name_ar": row["name_ar"],
+                "category": row["category"],
+                "default_price": row["price"],
+                "default_duration": row["duration"],
+                "is_assigned": row["id"] in assigned_ids
+            })
+        
+        conn.close()
+        
+        return {
+            "assigned_services": assigned_services,
+            "all_services": all_services
+        }
+        
+    except Exception as e:
+        log_error(f"Error getting user services: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/users/{user_id}/services")
+async def add_user_service(
+    user_id: int,
+    request: Request,
+    current_user: dict = Depends(get_current_user)
+):
+    """Добавить услугу сотруднику"""
+    if current_user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        service_id = data.get("service_id")
+        price = data.get("price")
+        price_min = data.get("price_min")
+        price_max = data.get("price_max")
+        duration = data.get("duration", 60)
+        is_online_booking_enabled = data.get("is_online_booking_enabled", True)
+        is_calendar_enabled = data.get("is_calendar_enabled", True)
+        
+        if not service_id:
+            return JSONResponse({"error": "service_id required"}, status_code=400)
+        
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        # Check if already assigned
+        c.execute("SELECT id FROM user_services WHERE user_id = ? AND service_id = ?",
+                 (user_id, service_id))
+        if c.fetchone():
+            conn.close()
+            return JSONResponse({"error": "Service already assigned"}, status_code=400)
+        
+        # Add service
+        c.execute("""
+            INSERT INTO user_services 
+            (user_id, service_id, price, price_min, price_max, duration, 
+             is_online_booking_enabled, is_calendar_enabled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, service_id, price, price_min, price_max, duration,
+              1 if is_online_booking_enabled else 0,
+              1 if is_calendar_enabled else 0))
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Service {service_id} added to user {user_id}", "api")
+        
+        return {"success": True, "message": "Service added"}
+        
+    except Exception as e:
+        log_error(f"Error adding user service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.put("/users/{user_id}/services/{service_id}")
+async def update_user_service(
+    user_id: int,
+    service_id: int,
+    request: Request,
+    current_user: dict = Depends(get_current_user)
+):
+    """Обновить настройки услуги сотрудника"""
+    if current_user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        data = await request.json()
+        
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        # Build update query
+        updates = []
+        params = []
+        
+        if "price" in data:
+            updates.append("price = ?")
+            params.append(data["price"])
+        
+        if "price_min" in data:
+            updates.append("price_min = ?")
+            params.append(data["price_min"])
+        
+        if "price_max" in data:
+            updates.append("price_max = ?")
+            params.append(data["price_max"])
+        
+        if "duration" in data:
+            updates.append("duration = ?")
+            params.append(data["duration"])
+        
+        if "is_online_booking_enabled" in data:
+            updates.append("is_online_booking_enabled = ?")
+            params.append(1 if data["is_online_booking_enabled"] else 0)
+        
+        if "is_calendar_enabled" in data:
+            updates.append("is_calendar_enabled = ?")
+            params.append(1 if data["is_calendar_enabled"] else 0)
+        
+        if not updates:
+            conn.close()
+            return JSONResponse({"error": "No fields to update"}, status_code=400)
+        
+        params.extend([user_id, service_id])
+        
+        query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = ? AND service_id = ?"
+        c.execute(query, params)
+        
+        conn.commit()
+        conn.close()
+        
+        log_info(f"Service {service_id} updated for user {user_id}", "api")
+        
+        return {"success": True, "message": "Service updated"}
+        
+    except Exception as e:
+        log_error(f"Error updating user service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.delete("/users/{user_id}/services/{service_id}")
+async def delete_user_service(
+    user_id: int,
+    service_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить услугу у сотрудника"""
+    if current_user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        c = conn.cursor()
+        
+        c.execute("DELETE FROM user_services WHERE user_id = ? AND service_id = ?",
+                 (user_id, service_id))
+        
+        conn.commit()
+        affected = c.rowcount
+        conn.close()
+        
+        if affected > 0:
+            log_info(f"Service {service_id} removed from user {user_id}", "api")
+            return {"success": True, "message": "Service removed"}
+        else:
+            return JSONResponse({"error": "Service not found"}, status_code=404)
+        
+    except Exception as e:
+        log_error(f"Error deleting user service: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

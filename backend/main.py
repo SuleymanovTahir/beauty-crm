@@ -58,6 +58,7 @@ from api.permissions import router as permissions_router
 from api.roles import router as roles_router
 from api.plans import router as plans_router
 from api.public_admin import router as public_admin_router
+from api.employee_services import router as employee_services_router
 
 
 
@@ -98,7 +99,8 @@ app.include_router(loyalty_router, prefix="/api")  # Loyalty Program API
 app.include_router(auto_booking_router, prefix="/api")  # Auto-Booking API
 app.include_router(permissions_router, prefix="/api")  # Permissions & Roles API
 app.include_router(roles_router, prefix="/api")  # Roles API
-app.include_router(plans_router, prefix="/api")  # Plans & Goals API
+app.include_router(plans_router, prefix="/api")  # Plans API
+app.include_router(employee_services_router, prefix="/api")  # Employee Services API& Goals API
 app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API
 app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API
