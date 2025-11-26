@@ -222,7 +222,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                         handleUpdateService(service.id, { is_online_booking_enabled: checked });
                                                                     }
                                                                 }}
-                                                                className="data-[state=checked]:bg-yellow-400"
+                                                                className={isAssigned && assigned.is_online_booking_enabled ? "bg-green-500" : "bg-red-400"}
                                                             />
                                                         </div>
                                                     </TableCell>
@@ -238,7 +238,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                         handleUpdateService(service.id, { is_calendar_enabled: checked });
                                                                     }
                                                                 }}
-                                                                className="data-[state=checked]:bg-yellow-400"
+                                                                className={isAssigned && assigned.is_calendar_enabled ? "bg-green-500" : "bg-red-400"}
                                                             />
                                                         </div>
                                                     </TableCell>
