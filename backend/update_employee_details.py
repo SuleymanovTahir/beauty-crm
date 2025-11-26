@@ -1,93 +1,226 @@
+#!/usr/bin/env python3
+"""
+Update employee details with correct information
+Creates all employees if they don't exist
+"""
 import sqlite3
+import sys
+import os
 from datetime import datetime
 
-DATABASE_NAME = "salon_bot.db"
+# Add backend to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
-def update_employee_details():
+from core.config import DATABASE_NAME
+
+def hash_password(password: str) -> str:
+    """Simple password hashing"""
+    import hashlib
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def column_exists(cursor, table, column):
+    """Check if a column exists in a table"""
+    cursor.execute(f"PRAGMA table_info({table})")
+    columns = [row[1] for row in cursor.fetchall()]
+    return column in columns
+
+def update_employees():
+    """Update employee details with correct information"""
+    print("="*60)
+    print("👥 UPDATING EMPLOYEE DETAILS")
+    print("="*60)
+    
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
-
-    current_year = datetime.now().year
-
-    # Helper to calculate birthday
-    def get_birthday(age):
-        return f"{current_year - age}-01-01"
-
-    # Helper to update user
-    def update_user(name, age, phone=None, email=None, position=None):
-        birthday = get_birthday(age) if age else None
-        
-        # Check if user exists
-        c.execute("SELECT id FROM users WHERE full_name LIKE ?", (f"%{name}%",))
-        row = c.fetchone()
-        
-        if row:
-            user_id = row[0]
-            print(f"Updating {name} (ID: {user_id})...")
+    
+    # Check if gender column exists
+    has_gender = column_exists(c, 'users', 'gender')
+    print(f"\n🔍 Gender column exists: {has_gender}")
+    
+    # Employee data with correct information
+    employees = [
+        {
+            'username': 'gulya',
+            'full_name': 'GULYA',
+            'phone': '+971502029268',
+            'email': None,  # No email
+            'position': 'Nail Master/Waxing',
+            'birthday': '1970-01-01',
+            'gender': 'female',
+            'is_service_provider': 1,
+            'role': 'employee'
+        },
+        {
+            'username': 'jennifer',
+            'full_name': 'JENNIFER',
+            'phone': '+971564208308',
+            'email': 'peradillajennifer47@gmail.com',
+            'position': 'Nail Master/Massage Therapist',
+            'birthday': '1970-01-01',
+            'gender': 'female',
+            'is_service_provider': 1,
+            'role': 'employee'
+        },
+        {
+            'username': 'lyazzat',
+            'full_name': 'LYAZZAT',
+            'phone': None,
+            'email': None,
+            'position': 'Nail Master',
+            'birthday': '1970-01-01',
+            'gender': 'female',
+            'is_service_provider': 1,
+            'role': 'employee'
+        },
+        {
+            'username': 'mestan',
+            'full_name': 'MESTAN',
+            'phone': '+971501800346',
+            'email': 'amandurdyyeva80@gmail.com',
+            'position': 'Hair Stylist',
+            'birthday': '1970-01-01',
+            'gender': 'female',
+            'is_service_provider': 1,
+            'role': 'employee'
+        },
+        {
+            'username': 'simo',
+            'full_name': 'SIMO',
+            'phone': None,
+            'email': None,
+            'position': 'Hair Stylist',
+            'birthday': '1970-01-01',
+            'gender': 'male',
+            'is_service_provider': 1,
+            'role': 'employee'
+        },
+        {
+            'username': 'tursunay',
+            'full_name': 'Tursunay',
+            'phone': '+971582081188',
+            'email': 'rakhmattursinay@gmail.com',
+            'position': 'Director',
+            'birthday': '1970-01-01',
+            'gender': 'female',
+            'is_service_provider': 0,  # Director, not a service provider
+            'role': 'director'  # Director role
+        }
+    ]
+    
+    try:
+        for emp in employees:
+            # Check if user exists
+            c.execute("SELECT id FROM users WHERE username = ?", (emp['username'],))
+            existing = c.fetchone()
             
-            updates = ["birthday = ?"]
-            params = [birthday]
-            
-            if phone:
-                updates.append("phone = ?")
-                params.append(phone)
+            if existing:
+                # Update existing user
+                print(f"\n📝 Updating {emp['full_name']}...")
+                if has_gender:
+                    c.execute("""
+                        UPDATE users 
+                        SET full_name = ?, phone = ?, email = ?, position = ?, 
+                            birthday = ?, gender = ?, is_service_provider = ?, role = ?
+                        WHERE username = ?
+                    """, (
+                        emp['full_name'], emp['phone'], emp['email'], emp['position'],
+                        emp['birthday'], emp['gender'], emp['is_service_provider'], 
+                        emp['role'], emp['username']
+                    ))
+                else:
+                    c.execute("""
+                        UPDATE users 
+                        SET full_name = ?, phone = ?, email = ?, position = ?, 
+                            birthday = ?, is_service_provider = ?, role = ?
+                        WHERE username = ?
+                    """, (
+                        emp['full_name'], emp['phone'], emp['email'], emp['position'],
+                        emp['birthday'], emp['is_service_provider'], 
+                        emp['role'], emp['username']
+                    ))
+                print(f"   ✅ Updated {emp['full_name']}")
             else:
-                updates.append("phone = NULL")
+                # Create new user
+                print(f"\n➕ Creating {emp['full_name']}...")
+                password_hash = hash_password('12345678')  # Default password
                 
-            if email:
-                updates.append("email = ?")
-                params.append(email)
-            else:
-                updates.append("email = NULL")
-                
-            if position:
-                updates.append("position = ?")
-                params.append(position)
-                
-            params.append(user_id)
-            
-            query = f"UPDATE users SET {', '.join(updates)} WHERE id = ?"
-            c.execute(query, params)
-            print(f"✅ Updated {name}")
-        else:
-            print(f"⚠️ User {name} not found, creating...")
-            # Create new user
-            username = name.lower().replace(" ", "_")
+                if has_gender:
+                    c.execute("""
+                        INSERT INTO users (
+                            username, password_hash, full_name, phone, email, position,
+                            birthday, gender, is_service_provider, role, is_active, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+                    """, (
+                        emp['username'], password_hash, emp['full_name'], emp['phone'],
+                        emp['email'], emp['position'], emp['birthday'], emp['gender'],
+                        emp['is_service_provider'], emp['role'], datetime.now().isoformat()
+                    ))
+                else:
+                    c.execute("""
+                        INSERT INTO users (
+                            username, password_hash, full_name, phone, email, position,
+                            birthday, is_service_provider, role, is_active, created_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+                    """, (
+                        emp['username'], password_hash, emp['full_name'], emp['phone'],
+                        emp['email'], emp['position'], emp['birthday'],
+                        emp['is_service_provider'], emp['role'], datetime.now().isoformat()
+                    ))
+                print(f"   ✅ Created {emp['full_name']} (password: 12345678)")
+        
+        conn.commit()
+        
+        # Show final list
+        print("\n" + "="*60)
+        print("📋 FINAL EMPLOYEE LIST:")
+        print("="*60)
+        
+        if has_gender:
             c.execute("""
-                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider, phone, email, birthday, created_at)
-                VALUES (?, 'placeholder', ?, 'employee', ?, 1, 1, ?, ?, ?, datetime('now'))
-            """, (username, name, position, phone, email, birthday))
-            print(f"✅ Created {name}")
-
-    # --- SIMO ---
-    # HAIR STYLIST, 19
-    update_user("SIMO", 19, position="HAIR STYLIST")
-
-    # --- MESTAN ---
-    # HAIR STYLIST, 22, +971 50 180 0346, amandurdyyeva80@gmail.com
-    update_user("MESTAN", 22, phone="+971 50 180 0346", email="amandurdyyeva80@gmail.com", position="HAIR STYLIST")
-
-    # --- LYAZZAT ---
-    # NAIL MASTER, 28
-    update_user("LYAZZAT", 28, position="NAIL MASTER")
-
-    # --- GULYA ---
-    # NAIL/WAXING, 40
-    update_user("GULYA", 40, position="NAIL/WAXING")
-
-    # --- JENNIFER ---
-    # NAIL MASTER/MASSAGES, 49, +971 56 420 8308, peradillajennifer47@gmail.com
-    update_user("JENNIFER", 49, phone="+971 56 420 8308", email="peradillajennifer47@gmail.com", position="NAIL MASTER/MASSAGES")
-
-    # --- Tursunay ---
-    # +971 58 208 1188, rakhmattursinay@gmail.com
-    # No age/position specified in the list, but usually "Team member" or similar. 
-    # I'll check if there's a default position or just leave it blank/generic.
-    # Assuming "Team member" based on others or just "Specialist"
-    update_user("Tursunay", None, phone="+971 58 208 1188", email="rakhmattursinay@gmail.com", position="Specialist")
-
-    conn.commit()
-    conn.close()
+                SELECT full_name, username, position, phone, email, gender, is_service_provider
+                FROM users 
+                WHERE role IN ('employee', 'admin')
+                ORDER BY full_name
+            """)
+            
+            for row in c.fetchall():
+                name, username, position, phone, email, gender, is_provider = row
+                gender_icon = "👨" if gender == 'male' else "👩"
+                provider_status = "✅ Service Provider" if is_provider else "❌ Not Provider"
+                print(f"{gender_icon} {name:15} | {username:12} | {position:25} | {provider_status}")
+                if phone:
+                    print(f"   📱 {phone}")
+                if email:
+                    print(f"   📧 {email}")
+        else:
+            c.execute("""
+                SELECT full_name, username, position, phone, email, is_service_provider
+                FROM users 
+                WHERE role IN ('employee', 'admin')
+                ORDER BY full_name
+            """)
+            
+            for row in c.fetchall():
+                name, username, position, phone, email, is_provider = row
+                provider_status = "✅ Service Provider" if is_provider else "❌ Not Provider"
+                print(f"👤 {name:15} | {username:12} | {position:25} | {provider_status}")
+                if phone:
+                    print(f"   📱 {phone}")
+                if email:
+                    print(f"   📧 {email}")
+        
+        print("\n" + "="*60)
+        print("✅ Employee details updated successfully!")
+        print("="*60)
+        
+    except Exception as e:
+        print(f"\n❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
-    update_employee_details()
+    update_employees()

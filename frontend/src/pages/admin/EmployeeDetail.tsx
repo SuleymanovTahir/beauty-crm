@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Trash2, Edit, Search } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -11,6 +12,8 @@ import { EmployeeServices } from '../../components/admin/EmployeeServices';
 import { EmployeeSchedule } from '../../components/admin/EmployeeSchedule';
 import { EmployeeSettings } from '../../components/admin/EmployeeSettings';
 import { EmployeePayroll } from '../../components/admin/EmployeePayroll';
+import { EmployeeOnlineBooking } from '../../components/admin/EmployeeOnlineBooking';
+import { getDynamicAvatar } from '../../utils/avatarUtils';
 
 interface Employee {
     id: number;
@@ -31,9 +34,16 @@ export default function EmployeeDetail() {
     const { t } = useTranslation(['admin/users', 'common']);
 
     const [employee, setEmployee] = useState<Employee | null>(null);
+    const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
+    const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('information');
     const [servicesCount, setServicesCount] = useState(0);
+
+    useEffect(() => {
+        loadAllEmployees();
+    }, []);
 
     useEffect(() => {
         if (id) {
@@ -42,11 +52,31 @@ export default function EmployeeDetail() {
         }
     }, [id]);
 
+    useEffect(() => {
+        const filtered = allEmployees.filter(emp =>
+            emp.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (emp.position && emp.position.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        setFilteredEmployees(filtered);
+    }, [searchTerm, allEmployees]);
+
+    const loadAllEmployees = async () => {
+        try {
+            const response = await api.getUsers();
+            const usersArray = Array.isArray(response) ? response : (response?.users || []);
+            setAllEmployees(usersArray);
+            setFilteredEmployees(usersArray);
+        } catch (error) {
+            console.error('Error loading employees:', error);
+        }
+    };
+
     const loadEmployee = async () => {
         try {
             setLoading(true);
-            const response = await api.get(`/users/${id}`);
-            setEmployee(response.data);
+            const data = await api.get(`/api/users/${id}`);
+            setEmployee(data);
         } catch (error) {
             console.error('Error loading employee:', error);
             toast.error(t('error_loading_employee'));
@@ -57,8 +87,8 @@ export default function EmployeeDetail() {
 
     const loadServicesCount = async () => {
         try {
-            const response = await api.get(`/users/${id}/services`);
-            setServicesCount(response.data.assigned_services?.length || 0);
+            const data = await api.get(`/api/users/${id}/services`);
+            setServicesCount(data?.assigned_services?.length || 0);
         } catch (error) {
             console.error('Error loading services count:', error);
         }
@@ -68,7 +98,7 @@ export default function EmployeeDetail() {
         if (!confirm(t('confirm_delete_employee'))) return;
 
         try {
-            await api.post(`/users/${id}/delete`);
+            await api.post(`/api/users/${id}/delete`);
             toast.success(t('employee_deleted'));
             navigate('/admin/users');
         } catch (error) {
@@ -97,113 +127,176 @@ export default function EmployeeDetail() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+        <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+            {/* Left Sidebar - Employee List */}
+            <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+                {/* Back Button */}
+                <div className="p-4 border-b border-gray-200">
                     <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() => navigate('/admin/users')}
-                        className="gap-2"
+                        className="w-full justify-start text-gray-600 hover:text-gray-900"
                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        {t('go_back')}
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        {t('back_to_list', 'Go back')}
                     </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold">{employee.full_name}</h1>
-                        <p className="text-sm text-gray-500">
-                            {employee.position || employee.role}
-                        </p>
+                </div>
+
+                {/* Search */}
+                <div className="p-4 border-b border-gray-200">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                            type="text"
+                            placeholder={t('search_team_member', 'Search team member')}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-9 text-sm"
+                        />
                     </div>
                 </div>
 
-                <div className="flex gap-2">
+                {/* Employee List */}
+                <div className="flex-1 overflow-y-auto">
+                    {filteredEmployees.map((emp) => (
+                        <button
+                            key={emp.id}
+                            onClick={() => navigate(`/admin/users/${emp.id}`)}
+                            className={`w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${emp.id === employee.id ? 'bg-gray-100' : ''
+                                }`}
+                        >
+                            <img
+                                src={getDynamicAvatar(emp.full_name || emp.username, 'cold')}
+                                alt={emp.full_name}
+                                className="w-10 h-10 rounded-full bg-gray-100"
+                            />
+                            <div className="flex-1 text-left">
+                                <p className="text-sm font-medium text-gray-900">{emp.full_name}</p>
+                                <p className="text-xs text-gray-500 uppercase">{emp.position || emp.role}</p>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Add Team Member Button */}
+                <div className="p-4 border-t border-gray-200">
                     <Button
                         variant="outline"
-                        size="sm"
-                        onClick={handleDelete}
-                        className="gap-2 text-red-600 hover:text-red-700"
+                        onClick={() => navigate('/admin/users/create')}
+                        className="w-full text-sm"
                     >
-                        <Trash2 className="h-4 w-4" />
-                        {t('delete')}
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => navigate('/admin/users')}
-                    >
-                        <X className="h-4 w-4" />
-                        {t('dismiss')}
+                        + {t('add_team_member', 'Add team member')}
                     </Button>
                 </div>
             </div>
 
-            {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-                    <TabsTrigger
-                        value="information"
-                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent"
-                    >
-                        {t('tab_information')}
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="services"
-                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent"
-                    >
-                        {t('tab_services')}
-                        {servicesCount > 0 && (
-                            <span className="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                {servicesCount}
-                            </span>
-                        )}
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="schedule"
-                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent"
-                    >
-                        {t('tab_schedule')}
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="settings"
-                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent"
-                    >
-                        {t('tab_settings')}
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="payroll"
-                        className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent"
-                    >
-                        {t('tab_payroll')}
-                    </TabsTrigger>
-                </TabsList>
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Header with Tabs */}
+                <div className="bg-white border-b border-gray-200">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <div className="flex items-center justify-between px-6 pt-4">
+                            <TabsList className="justify-start border-b-0 rounded-none h-auto p-0 bg-transparent">
+                                <TabsTrigger
+                                    value="information"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_information', 'Information')}
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="services"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_services', 'Services')}
+                                    {servicesCount > 0 && (
+                                        <span className="ml-2 px-2 py-0.5 text-xs bg-gray-200 text-gray-700 rounded-full">
+                                            {servicesCount}
+                                        </span>
+                                    )}
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="online_booking"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_online_booking', 'Online booking')}
+                                </TabsTrigger>
 
-                <div className="mt-6">
-                    <TabsContent value="information">
-                        <EmployeeInformation employee={employee} onUpdate={loadEmployee} />
-                    </TabsContent>
+                                <TabsTrigger
+                                    value="settings"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_settings', 'Settings')}
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="schedule"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_schedule', 'Schedule')}
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="payroll"
+                                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-transparent px-4 py-2 text-sm"
+                                >
+                                    {t('tab_payroll', 'Payroll')}
+                                </TabsTrigger>
+                            </TabsList>
 
-                    <TabsContent value="services">
-                        <EmployeeServices
-                            employeeId={employee.id}
-                            onServicesChange={loadServicesCount}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="schedule">
-                        <EmployeeSchedule employeeId={employee.id} />
-                    </TabsContent>
-
-                    <TabsContent value="settings">
-                        <EmployeeSettings employee={employee} onUpdate={loadEmployee} />
-                    </TabsContent>
-
-                    <TabsContent value="payroll">
-                        <EmployeePayroll employeeId={employee.id} />
-                    </TabsContent>
+                            {/* Action Buttons - Only Edit and Delete */}
+                            <div className="flex items-center gap-2 pb-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                                    title={t('action_edit_title', 'Edit')}
+                                >
+                                    <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={handleDelete}
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    title={t('action_delete_title', 'Delete')}
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </Tabs>
                 </div>
-            </Tabs>
-        </div>
+
+                {/* Tab Content */}
+                <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
+                    <Tabs value={activeTab} onValueChange={setActiveTab}>
+                        <TabsContent value="information" className="mt-0">
+                            <EmployeeInformation employee={employee} onUpdate={loadEmployee} />
+                        </TabsContent>
+
+                        <TabsContent value="services" className="mt-0">
+                            <EmployeeServices
+                                employeeId={employee.id}
+                                onServicesChange={loadServicesCount}
+                            />
+                        </TabsContent>
+
+                        <TabsContent value="online_booking" className="mt-0">
+                            <EmployeeOnlineBooking employee={employee} onUpdate={loadEmployee} />
+                        </TabsContent>
+
+                        <TabsContent value="settings" className="mt-0">
+                            <EmployeeSettings employee={employee} onUpdate={loadEmployee} />
+                        </TabsContent>
+
+                        <TabsContent value="schedule" className="mt-0">
+                            <EmployeeSchedule employeeId={employee.id} employee={employee} />
+                        </TabsContent>
+
+                        <TabsContent value="payroll" className="mt-0">
+                            <EmployeePayroll employeeId={employee.id} />
+                        </TabsContent>
+                    </Tabs>
+                </div>
+            </div>
+        </div >
     );
 }

@@ -768,13 +768,15 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             position = full_emp[2] if len(full_emp) > 2 else None
             translated_position = translate_position(position, client_language) if position else ""
 
-            # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД
+            # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД С ЦЕНАМИ
             c.execute("""
-                SELECT s.name_ru, s.category
+                SELECT COALESCE(s.name_ru, s.name) as service_name, 
+                       s.category, us.price, us.price_min, us.price_max, 
+                       us.duration, us.is_online_booking_enabled
                 FROM user_services us
                 JOIN services s ON us.service_id = s.id
                 WHERE us.user_id = ? AND s.is_active = 1
-                ORDER BY s.category, s.name_ru
+                ORDER BY s.category, service_name
             """, (emp_id,))
 
             services = c.fetchall()
@@ -786,8 +788,22 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                 masters_text += f"• {emp_name_display}:\n"
 
             if services:
-                for service_name, category in services:
-                    masters_text += f"  - {service_name} ({category})\n"
+                for service_name, category, price, price_min, price_max, duration, online_booking in services:
+                    # Format price
+                    if price_min and price_max:
+                        price_display = f"{int(price_min)}-{int(price_max)} AED"
+                    elif price:
+                        price_display = f"{int(price)} AED"
+                    else:
+                        price_display = "цена по запросу"
+                    
+                    # Show duration if custom
+                    duration_display = f", {duration} мин" if duration else ""
+                    
+                    # Mark if online booking is disabled
+                    online_status = "" if online_booking else " (только по телефону)"
+                    
+                    masters_text += f"  - {service_name} ({category}) - {price_display}{duration_display}{online_status}\n"
             else:
                 masters_text += f"  - (нет закрепленных услуг)\n"
 

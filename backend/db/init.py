@@ -347,13 +347,13 @@ def init_database():
     # Создать дефолтного администратора если его нет
     c.execute("SELECT COUNT(*) FROM users WHERE username = 'admin'")
     if c.fetchone()[0] == 0:
+        import hashlib
         password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
-        now = datetime.now().isoformat()
-        c.execute("""INSERT INTO users 
-                     (username, password_hash, full_name, role, created_at)
-                     VALUES (?, ?, ?, ?, ?)""",
-                  ('admin', password_hash, 'Tahir', 'director', now))
-        print("✅ Создан дефолтный пользователь: admin / admin123 (director)")
+        c.execute("""
+            INSERT INTO users (username, password_hash, full_name, role, position, is_active, created_at)
+            VALUES ('admin', ?, 'Tahir', 'director', 'Director', 1, datetime('now'))
+        """, (password_hash,))
+        log_info("✅ Создан администратор (логин: admin, пароль: admin123)", "db")
     
     # Создать дефолтные настройки салона
     c.execute("SELECT COUNT(*) FROM salon_settings")

@@ -23,59 +23,12 @@ def seed_data():
     print("ДОБАВЛЕНИЕ ТЕСТОВЫХ ДАННЫХ")
     print("=" * 70)
 
-    # 1. Добавляем мастеров
-    print("\n1. ДОБАВЛЕНИЕ МАСТЕРОВ:")
+    # 1. Мастера создаются через update_employee_details.py
+    print("\n1. МАСТЕРА:")
     print("-" * 70)
-
-    # Проверяем есть ли уже мастера
-    c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = 1")
-    if c.fetchone()[0] > 0:
-        print("⚠️  Мастера уже существуют, пропускаю...")
-        return
-        # c.execute("DELETE FROM users WHERE is_service_provider = 1")
-        # c.execute("DELETE FROM user_services")
-        # c.execute("DELETE FROM user_schedule")
-
-    masters = [
-        {
-            'full_name': 'Ляззат',
-            'position': 'Nail Master',
-            'phone': '+971501234567',
-            'email': 'lyazzat@mlediamant.com',
-            'bio': 'Мастер маникюра и педикюра с опытом 5+ лет',
-            'experience': '5 years'
-        },
-        {
-            'full_name': 'Симо',
-            'position': 'Hair Stylist',
-            'phone': '+971501234568',
-            'email': 'simo@mlediamant.com',
-            'bio': 'Стилист-парикмахер, специализация на окрашивании и кератине',
-            'experience': '7 years'
-        },
-        {
-            'full_name': 'Местан',
-            'position': 'Hair Stylist',
-            'phone': '+971501234569',
-            'email': 'mestan@mlediamant.com',
-            'bio': 'Парикмахер-стилист, мастер стрижек и укладок',
-            'experience': '6 years'
-        },
-    ]
-
-    master_ids = {}
-    for master in masters:
-        # Generate username
-        username = master['full_name'].lower().replace(" ", "_")
-        
-        c.execute("""
-            INSERT INTO users (username, password_hash, full_name, position, phone, email, bio, experience, 
-                              is_active, is_service_provider, role, created_at)
-            VALUES (?, 'placeholder_hash', ?, ?, ?, ?, ?, ?, 1, 1, 'employee', ?)
-        """, (username, master['full_name'], master['position'], master['phone'], master['email'],
-              master['bio'], master['experience'], now))
-        master_ids[master['full_name']] = c.lastrowid
-        print(f"✅ Добавлен мастер: {master['full_name']} ({master['position']})")
+    print("⏭️  Пропущено - мастера создаются через update_employee_details.py")
+    
+    master_ids = {}  # Empty dict for compatibility
 
     # 2. Добавляем услуги
     print("\n2. ДОБАВЛЕНИЕ УСЛУГ:")
