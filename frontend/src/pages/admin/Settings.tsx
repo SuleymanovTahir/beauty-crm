@@ -29,6 +29,7 @@ export default function AdminSettings() {
     email: '',
     instagram: '',
     language: '',  // ✅ Пусто - заполнится из БД
+    telegram_manager_chat_id: '',
     working_hours: {
       weekdays: '',
       weekends: ''
@@ -177,6 +178,7 @@ export default function AdminSettings() {
         email: data.email || '',
         instagram: data.instagram || '',
         language: data.language || 'ru',
+        telegram_manager_chat_id: data.telegram_manager_chat_id || '',
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
@@ -388,6 +390,7 @@ export default function AdminSettings() {
         email: generalSettings.email,
         instagram: generalSettings.instagram,
         language: generalSettings.language,
+        telegram_manager_chat_id: generalSettings.telegram_manager_chat_id,
         hours_weekdays: generalSettings.working_hours.weekdays,
         hours_weekends: generalSettings.working_hours.weekends
       });
@@ -991,6 +994,19 @@ export default function AdminSettings() {
                       onChange={(e) => setGeneralSettings({ ...generalSettings, instagram: e.target.value })}
                       placeholder="@username"
                     />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id', 'Telegram Manager Chat ID')}</Label>
+                    <Input
+                      id="telegram_chat_id"
+                      value={generalSettings.telegram_manager_chat_id}
+                      onChange={(e) => setGeneralSettings({ ...generalSettings, telegram_manager_chat_id: e.target.value })}
+                      placeholder="-1001234567890"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {t('settings:telegram_chat_id_hint', 'ID чата для получения уведомлений о негативных отзывах')}
+                    </p>
                   </div>
                 </div>
 

@@ -1,0 +1,4 @@
+{
+    "telegram_manager_chat_id": "Telegram Manager Chat ID",
+    "telegram_chat_id_hint": "Chat ID for receiving negative feedback alerts"
+}

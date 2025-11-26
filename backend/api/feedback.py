@@ -71,21 +71,26 @@ async def get_feedback_stats(session_token: Optional[str] = Cookie(None)):
         conn.close()
 
 @router.post("/feedback")
-async def submit_feedback(request: Request):
-    """Отправить отзыв (публичный endpoint)"""
+async def submit_feedback(data: dict):
+    """Отправить отзыв о визите"""
     try:
-        data = await request.json()
         instagram_id = data.get('instagram_id')
         rating = data.get('rating')
-        comment = data.get('comment')
+        comment = data.get('comment', '')
         
         if not instagram_id or not rating:
-            return JSONResponse({"error": "Missing required fields"}, status_code=400)
-            
-        from services.feedback_service import save_rating
-        save_rating(instagram_id, int(rating), comment)
+            return JSONResponse({"error": "instagram_id and rating are required"}, status_code=400)
         
-        return {"success": True}
+        if not (1 <= rating <= 5):
+            return JSONResponse({"error": "rating must be between 1 and 5"}, status_code=400)
+        
+        # Сохраняем рейтинг (теперь async)
+        await save_rating(instagram_id, rating, comment)
+        
+        return {
+            "success": True,
+            "message": "Thank you for your feedback!"
+        }
     except Exception as e:
         log_error(f"Error submitting feedback: {e}", "feedback")
         return JSONResponse({"error": str(e)}, status_code=500)
