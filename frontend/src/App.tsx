@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Bookings from './pages/admin/Bookings';
 import BookingDetail from './pages/admin/BookingDetail';
 import Analytics from './pages/admin/Analytics';
+import Feedback from './pages/admin/Feedback';
 import Services from './pages/admin/Services';
 import Clients from './pages/admin/Clients';
 import ClientDetail from './pages/admin/ClientDetail';
@@ -209,6 +210,7 @@ export default function App() {
               <Route path="bookings" element={<Bookings />} />
               <Route path="bookings/:id" element={<BookingDetail />} />
               <Route path="analytics" element={<Analytics />} />
+              <Route path="feedback" element={<Feedback />} />
               <Route path="funnel" element={<Funnel />} />
               <Route path="services" element={<Services />} />
               <Route path="clients" element={<Clients />} />

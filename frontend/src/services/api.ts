@@ -238,6 +238,18 @@ export class ApiClient {
     return this.request<any>('/api/funnel')
   }
 
+  // ===== FEEDBACK =====
+  async getFeedbackStats() {
+    return this.request<any>('/api/feedback/stats')
+  }
+
+  async submitFeedback(data: any) {
+    return this.request('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   // ===== ПЛАНЫ И ЦЕЛИ =====
   // Role-based plan methods
   async getMyPlans() {

@@ -415,7 +415,7 @@ async def startup_event():
     # Запускаются все миграции при каждом старте (идемпотентны)
     # from db.migrations.run_all_migrations import run_all_migrations
     # log_info("🔧 Запуск миграций...", "startup")
-    # run_all_migrations()
+    # run_all_migrations() 
     
     # ================================
     # СВЯЗЫВАНИЕ ПОЛЬЗОВАТЕЛЕЙ С СОТРУДНИКАМИ
@@ -451,9 +451,9 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
  
 
 
