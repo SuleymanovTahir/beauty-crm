@@ -775,7 +775,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                        us.duration, us.is_online_booking_enabled
                 FROM user_services us
                 JOIN services s ON us.service_id = s.id
-                WHERE us.user_id = ? AND s.is_active = 1
+                WHERE us.user_id = ? AND s.is_active = 1 AND us.is_online_booking_enabled = 1
                 ORDER BY s.category, service_name
             """, (emp_id,))
 

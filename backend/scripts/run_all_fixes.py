@@ -98,6 +98,13 @@ async def main():
     except ImportError:
         print("⚠️  Skipping seed_full_data (module not found)")
 
+    # 3.5.5b Migrate Services (ВОССТАНАВЛИВАЕМ услуги после seed_full_data, который их удаляет)
+    try:
+        from db.migrations.data.services.migrate_services import migrate_services
+        results['migrate_services'] = await run_fix("Migrate Services", migrate_services)
+    except ImportError:
+        print("⚠️  Skipping migrate_services (module not found)")
+
     # 3.5.6 Fix Employee Services (ПОСЛЕ заполнения данных)
     try:
         from scripts.fix_employee_services import fix_employee_services

@@ -129,7 +129,7 @@ export default function EmployeeDetail() {
     return (
         <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
             {/* Left Sidebar - Employee List */}
-            <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-[calc(100vh-4rem)]">
                 {/* Back Button */}
                 <div className="p-4 border-b border-gray-200">
                     <Button

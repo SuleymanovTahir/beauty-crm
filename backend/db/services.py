@@ -156,6 +156,27 @@ def update_service(service_id, **kwargs):
     query = f"UPDATE services SET {', '.join(updates)} WHERE id = ?"
     c.execute(query, params)
     
+    # --- SYNC UPDATES TO EMPLOYEES ---
+    # If price or duration changed, update all assigned employees
+    sync_updates = []
+    sync_params = []
+    
+    if 'price' in kwargs:
+        sync_updates.append("price = ?")
+        sync_params.append(kwargs['price'])
+        
+    if 'duration' in kwargs:
+        sync_updates.append("duration = ?")
+        sync_params.append(kwargs['duration'])
+        
+    if sync_updates:
+        sync_query = f"UPDATE user_services SET {', '.join(sync_updates)} WHERE service_id = ?"
+        sync_params.append(service_id)
+        c.execute(sync_query, sync_params)
+        from utils.logger import log_info
+        log_info(f"🔄 DB: Synced service {service_id} updates to employees: {kwargs}", "database")
+    # ---------------------------------
+    
     conn.commit()
     conn.close()
     return True
