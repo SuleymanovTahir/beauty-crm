@@ -10,6 +10,8 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from utils.datetime_utils import get_current_time, get_salon_timezone
+from zoneinfo import ZoneInfo
 
 router = APIRouter(tags=["Reminders"])
 
@@ -66,7 +68,7 @@ async def get_reminders(
             """, (client_id,))
         elif upcoming:
             # Напоминания на ближайшие 7 дней
-            end_date = (datetime.now() + timedelta(days=7)).isoformat()
+            end_date = (get_current_time() + timedelta(days=7)).isoformat()
             c.execute("""
                 SELECT r.id, r.client_id, c.username, c.name, r.title, r.description,
                        r.reminder_date, r.reminder_type, r.is_completed, r.created_by,
@@ -138,7 +140,12 @@ async def create_reminder(
         # Проверяем, что дата в будущем
         try:
             reminder_dt = datetime.fromisoformat(reminder_date)
-            if reminder_dt <= datetime.now():
+            # Make reminder_dt timezone-aware if it's not
+            if reminder_dt.tzinfo is None:
+                tz = ZoneInfo(get_salon_timezone())
+                reminder_dt = reminder_dt.replace(tzinfo=tz)
+            
+            if reminder_dt <= get_current_time():
                 return JSONResponse({"error": "Reminder date must be in the future"}, 
                                   status_code=400)
         except ValueError:
@@ -190,7 +197,7 @@ async def complete_reminder(
             UPDATE reminders 
             SET is_completed = 1, completed_at = ?
             WHERE id = ?
-        """, (datetime.now().isoformat(), reminder_id))
+        """, (get_current_time().isoformat(), reminder_id))
         
         if c.rowcount == 0:
             conn.close()
@@ -264,7 +271,7 @@ async def get_upcoming_reminders(
     c = conn.cursor()
     
     try:
-        end_date = (datetime.now() + timedelta(days=days)).isoformat()
+        end_date = (get_current_time() + timedelta(days=days)).isoformat()
         c.execute("""
             SELECT r.id, r.client_id, c.username, c.name, r.title, r.description,
                    r.reminder_date, r.reminder_type, r.is_completed

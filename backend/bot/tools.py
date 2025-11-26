@@ -13,7 +13,7 @@ def get_available_time_slots(
     date: str,
     service_name: Optional[str] = None,
     master_name: Optional[str] = None,
-    duration_minutes: int = 60
+    duration_minutes: Optional[int] = None
 ) -> List[Dict[str, str]]:
     """
     Получить реально свободные слоты из БД с учетом графика и услуг
@@ -22,7 +22,7 @@ def get_available_time_slots(
     c = conn.cursor()
     
     try:
-        # 1. Определяем ID услуги если передано название
+        # 1. Определяем ID услуги и длительность если передано название
         service_id = None
         if service_name:
             c.execute("SELECT id, duration FROM services WHERE name_ru LIKE ? OR name LIKE ?", 
@@ -30,7 +30,7 @@ def get_available_time_slots(
             service_row = c.fetchone()
             if service_row:
                 service_id = service_row[0]
-                # Пытаемся распарсить длительность
+                # ✅ Парсим длительность из БД
                 try:
                     dur_str = service_row[1]
                     if dur_str:
@@ -44,9 +44,16 @@ def get_available_time_slots(
                                 minutes = int(min_part.split('h')[1].strip())
                             else:
                                 minutes = int(min_part)
+                        # ✅ ИСПОЛЬЗУЕМ распарсенную длительность
                         duration_minutes = hours * 60 + minutes
-                except:
-                    pass
+                        print(f"📏 Parsed duration for '{service_name}': {duration_minutes} minutes")
+                except Exception as e:
+                    print(f"⚠️ Failed to parse duration '{dur_str}': {e}")
+        
+        # ✅ Если длительность не определена, используем дефолт 60 минут
+        if duration_minutes is None:
+            duration_minutes = 60
+            print(f"📏 Using default duration: {duration_minutes} minutes")
 
         # 2. Получаем мастеров
         # Если услуга известна - берем тех кто её делает И у кого включен онлайн-букинг
@@ -99,17 +106,10 @@ def get_available_time_slots(
         # Сортируем по времени
         all_slots.sort(key=lambda x: x['time'])
         
-        # Убираем дубликаты времени (показываем разные варианты мастеров)
-        # Но для бота лучше показать уникальные времена и одного из мастеров
-        unique_slots = []
-        seen_times = set()
-        
-        for slot in all_slots:
-            if slot['time'] not in seen_times:
-                unique_slots.append(slot)
-                seen_times.add(slot['time'])
-                
-        return unique_slots[:10]
+        # ✅ ВАЖНО: Возвращаем ВСЕ комбинации время+мастер
+        # Это позволяет боту предлагать альтернативных мастеров
+        # Например: "У Jennifer занято в 19:00, но могу предложить к Mestan в 19:00"
+        return all_slots[:20]  # Увеличили лимит до 20 для большего выбора
 
     except Exception as e:
         print(f"Error in get_available_time_slots: {e}")

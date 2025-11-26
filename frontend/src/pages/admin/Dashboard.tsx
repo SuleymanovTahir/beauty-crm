@@ -50,16 +50,25 @@ export default function AdminDashboard() {
       setError(null);
 
       // Load real data
-      const [statsData, bookingsData] = await Promise.all([
+      const [statsData, bookingsData, clientsData] = await Promise.all([
         api.getStats(),
         api.getBookings(),
+        api.getClients(), // Fetch clients for photos
       ]);
 
       setStats(statsData);
 
-      // Take last 3 bookings
+      // Take last 3 bookings and enrich with client data
       if (bookingsData.bookings) {
-        setRecentBookings(bookingsData.bookings.slice(0, 3));
+        const enrichedBookings = bookingsData.bookings.slice(0, 3).map((booking: any) => {
+          const client = clientsData.clients?.find((c: any) => c.instagram_id === booking.instagram_id);
+          return {
+            ...booking,
+            profile_pic: client?.profile_pic,
+            gender: client?.gender
+          };
+        });
+        setRecentBookings(enrichedBookings);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : t('dashboard:error_loading');
@@ -234,9 +243,17 @@ export default function AdminDashboard() {
                     onClick={() => navigate(`/admin/bookings/${booking.id}`)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
-                        {getGenderAvatar(booking.gender)}
-                      </div>
+                      {booking.profile_pic ? (
+                        <img
+                          src={booking.profile_pic}
+                          alt={booking.name || 'Client'}
+                          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+                          {getGenderAvatar(booking.gender)}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm text-gray-900 truncate">{booking.name || t('dashboard:unknown_name')}</p>
                         <p className="text-xs text-gray-500 truncate">{booking.service || t('dashboard:no_service')}</p>

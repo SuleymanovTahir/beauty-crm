@@ -7,6 +7,7 @@ import asyncio
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 from bot.tools import get_available_time_slots, check_time_slot_available
+from utils.datetime_utils import get_current_time
 
 
 from core.config import DATABASE_NAME, GEMINI_API_KEY, GEMINI_MODEL
@@ -227,21 +228,36 @@ class SalonBot:
             # ✅ ПРОВЕРКА ДОСТУПНОСТИ ВРЕМЕНИ В БД
             # ========================================
 
-            today = datetime.now().date()
+            today = get_current_time().date()
             tomorrow = today + timedelta(days=1)
+            current_time = get_current_time()
+            
+            # ✅ Определяем человекочитаемое название даты
+            def get_date_label(date_obj):
+                """Возвращает 'сегодня', 'завтра' или DD.MM"""
+                if date_obj == today:
+                    return "сегодня"
+                elif date_obj == tomorrow:
+                    return "завтра"
+                else:
+                    return date_obj.strftime('%d.%m')
             
             # Явно передаем текущую дату в контекст
-            additional_context += f"\n📅 СЕГОДНЯ: {today.strftime('%Y-%m-%d')} ({today.strftime('%A')})\n"
+            additional_context += f"\n📅 СЕГОДНЯ: {today.strftime('%d.%m.%Y')} ({today.strftime('%A')})\n"
+            additional_context += f"⏰ ТЕКУЩЕЕ ВРЕМЯ: {current_time.strftime('%H:%M')}\n"
 
             target_date = None
+            target_date_label = None
 
             # Определяем дату из сообщения клиента
             user_msg_lower = user_message.lower()
 
             if 'сегодня' in user_msg_lower or 'today' in user_msg_lower:
                 target_date = today.strftime("%Y-%m-%d")
+                target_date_label = "сегодня"
             elif 'завтра' in user_msg_lower or 'tomorrow' in user_msg_lower:
                 target_date = tomorrow.strftime("%Y-%m-%d")
+                target_date_label = "завтра"
             else:
                 # Ищем дату в формате DD.MM, DD/MM, DD-MM
                 date_match = re.search(r'(\d{1,2})[./-](\d{1,2})', user_message)
@@ -254,11 +270,12 @@ class SalonBot:
                         if parsed_date < today:
                             parsed_date = parsed_date.replace(year=current_year + 1)
                         target_date = parsed_date.strftime("%Y-%m-%d")
+                        target_date_label = get_date_label(parsed_date)
                     except:
                         pass
 
             if target_date:
-                print(f"📅 Target date detected: {target_date}")
+                print(f"📅 Target date detected: {target_date} ({target_date_label})")
 
                 # Определяем услугу и мастера из прогресса бронирования
                 service_name = booking_progress.get('service_name') if booking_progress else None
@@ -268,11 +285,11 @@ class SalonBot:
 
                 # Получаем реальные свободные слоты из БД
                 # Теперь вся логика фильтрации мастеров внутри этой функции
+                # ✅ Не передаём duration_minutes - функция сама определит из БД
                 available_slots = get_available_time_slots(
                     date=target_date,
                     service_name=service_name,
-                    master_name=master_name,
-                    duration_minutes=60
+                    master_name=master_name
                 )
 
                 if available_slots:
@@ -280,30 +297,47 @@ class SalonBot:
                     
                     slots_text = "\n".join([
                         f"  • {slot['time']} у мастера {slot['master']}"
-                        for slot in available_slots[:5]
+                        for slot in available_slots[:10]  # Показываем больше слотов
                     ])
 
                     additional_context += f"""
 
-    🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {target_date} (из БД):
+    🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {target_date_label.upper()} (из БД):
     {slots_text}
 
     ⚠️ КРИТИЧНО:
     - ТЫ ОБЯЗАН ПРЕДЛАГАТЬ ТОЛЬКО ЭТИ ВРЕМЕНА!
     - НЕ ПРИДУМЫВАЙ ДРУГОЕ ВРЕМЯ!
-    - ЕСЛИ КЛИЕНТ ПРОСИТ ВРЕМЯ КОТОРОГО НЕТ В СПИСКЕ - СКАЖИ ЧТО ЗАНЯТО И ПРЕДЛОЖИ ИЗ СПИСКА!
-    - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!"""
+    - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!
+    - ВСЕГДА говори "{target_date_label}" вместо полной даты!
+    
+    📝 РУССКИЕ ИМЕНА МАСТЕРОВ (ВСЕГДА используй эти имена):
+    - GULYA / Gulya → Гуля
+    - JENNIFER / Jennifer → Дженнифер  
+    - LYAZZAT / Lyazzat → Ляззат
+    - MESTAN / Mestan → Местан
+    - SIMO / Simo → Симо
+    - TURSUNAY / Tursunay → Турсунай
+    
+    ✅ ЕСЛИ КЛИЕНТ ПРОСИТ КОНКРЕТНОЕ ВРЕМЯ:
+    1. Проверь ВСЕХ мастеров на это время в списке выше
+    2. Если время свободно у НЕСКОЛЬКИХ мастеров - ПРЕДЛОЖИ ВЫБОР!
+       Пример: "На 19:00 свободны Дженнифер и Местан. К кому записать?"
+    3. Если время занято у одного, но свободно у другого - ПРЕДЛОЖИ АЛЬТЕРНАТИВУ!
+       Пример: "У Дженнифер в 19:00 занято, но могу предложить к Местану в 19:00. Подходит?"
+    4. НЕ ГОВОРИ "нет свободных слотов" если есть другие мастера на это время!
+    5. ВСЕГДА используй РУССКИЕ имена мастеров из списка выше!"""
                 else:
                     print(f"❌ No available slots found for {target_date}")
 
                     additional_context += f"""
 
-    🔴 НА {target_date} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
+    🔴 НА {target_date_label.upper()} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
     
     ⚠️ СТРОГИЙ ЗАПРЕТ:
-    - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date}!
+    - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date_label}!
     - НЕ ГОВОРИ "ЕСТЬ ОКОШКО", ЕСЛИ ЕГО НЕТ!
-    - Скажи: "К сожалению, на {target_date} всё занято. Могу предложить завтра?"
+    - Скажи: "К сожалению, на {target_date_label} всё занято. Могу предложить завтра?"
     """
 
             # Проверка конкретного времени если клиент спрашивает
@@ -519,7 +553,7 @@ class SalonBot:
             try:
                 last_msg = history[-1]
                 last_timestamp = datetime.fromisoformat(last_msg[2])
-                now = datetime.now()
+                now = get_current_time()
                 time_diff = now - last_timestamp
 
                 if time_diff > timedelta(hours=6):

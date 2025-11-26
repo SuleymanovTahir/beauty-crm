@@ -730,6 +730,7 @@ export default function Clients() {
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:client')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:contacts')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:messages')}</th>
+                  <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:bookings')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:ltv')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:temperature')}</th>
                   <th className="px-6 py-4 text-left text-sm text-gray-600">{t('clients:last_contact')}</th>
@@ -813,6 +814,7 @@ export default function Clients() {
                       })()}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">{client.total_messages}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{client.total_bookings || 0}</td>
 
                     <td className="px-6 py-4 text-sm text-green-600 font-medium">
                       {client.lifetime_value} AED
