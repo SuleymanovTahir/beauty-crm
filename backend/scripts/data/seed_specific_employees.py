@@ -104,10 +104,10 @@ def seed_specific_employees():
     employees = [
         {
             "name": "SIMO",
-            "position": "HAIR STYLIST",
-            "phone": "19", # Placeholder from user request
-            "email": "simo@example.com",
-            "bio": "Team member",
+            "position": "Hair Stylist",
+            "phone": "19",
+            "email": "simo@mlediamant.com",
+            "bio": "Professional hair stylist",
             "services": [
                 {"name": "Hair wash", "price": 60, "duration": 30, "online": 0},
                 {"name": "Balayage", "price_min": 700, "price_max": 1200, "duration": 60, "online": 0},
@@ -122,10 +122,10 @@ def seed_specific_employees():
         },
         {
             "name": "MESTAN",
-            "position": "HAIR STYLIST",
+            "position": "Hair Stylist",
             "phone": "+971 50 180 0346",
-            "email": "amandurdyyeva80@gmail.com",
-            "bio": "Team member",
+            "email": "mestan@mlediamant.com",
+            "bio": "Professional hair stylist",
             "services": [
                 {"name": "Hair wash", "price": 60, "duration": 30, "online": 0},
                 {"name": "Natural Treatment", "price": 200, "duration": 60, "online": 1},
@@ -138,10 +138,10 @@ def seed_specific_employees():
         },
         {
             "name": "LYAZZAT",
-            "position": "NAIL MASTER",
+            "position": "Nail Master",
             "phone": "28",
-            "email": "lyazzat@example.com",
-            "bio": "Team member",
+            "email": "lyazzat@mlediamant.com",
+            "bio": "Professional nail master",
             "services": [
                 {"name": "Gel extension", "price": 350, "duration": 60, "online": 0},
                 {"name": "Acrylic overlay", "price": 300, "duration": 60, "online": 0},
@@ -155,10 +155,10 @@ def seed_specific_employees():
         },
         {
             "name": "GULYA",
-            "position": "NAIL/WAXING",
+            "position": "Nail/Waxing",
             "phone": "40",
-            "email": "gulya@example.com",
-            "bio": "Team member",
+            "email": "gulya@mlediamant.com",
+            "bio": "Professional nail and waxing specialist",
             "services": [
                 {"name": "Half arms", "price": 50, "duration": 60, "online": 1},
                 {"name": "Full body", "price": 400, "duration": 60, "online": 1},
@@ -174,10 +174,10 @@ def seed_specific_employees():
         },
         {
             "name": "JENNIFER",
-            "position": "NAIL MASTER/MASSAGES",
+            "position": "Nail Master/Massages",
             "phone": "+971 56 420 8308",
-            "email": "peradillajennifer47@gmail.com",
-            "bio": "Team member",
+            "email": "jennifer@mlediamant.com",
+            "bio": "Professional nail master and massage therapist",
             "services": [
                 {"name": "Hair wash", "price": 60, "duration": 30, "online": 0},
                 {"name": "Hair Treatment", "price_min": 600, "price_max": 1500, "duration": 180, "online": 1},
@@ -188,6 +188,18 @@ def seed_specific_employees():
     # Default password hash
     default_password = "password123"
     password_hash = hashlib.sha256(default_password.encode()).hexdigest()
+    
+    # Cleanup old lowercase employees
+    print("\n🧹 Cleaning up old employees...")
+    old_names = ['ляззат', 'симо', 'местан', 'simo', 'mestan', 'lyazzat', 'Ляззат', 'Симо', 'Местан']
+    for old_name in old_names:
+        c.execute("SELECT id FROM users WHERE full_name = ?", (old_name,))
+        old_user = c.fetchone()
+        if old_user:
+            old_id = old_user[0]
+            c.execute("DELETE FROM user_services WHERE user_id = ?", (old_id,))
+            c.execute("DELETE FROM users WHERE id = ?", (old_id,))
+            print(f"   🗑️ Deleted old employee: {old_name}")
     
     print("\n2. Seeding Employees & Services...")
     
