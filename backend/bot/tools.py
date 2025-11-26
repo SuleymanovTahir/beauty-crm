@@ -144,11 +144,38 @@ def check_time_slot_available(
                 "alternatives": []
             }
         else:
-             # Слот занят - ищем альтернативы
+            # Проверяем, это вне рабочего времени или просто занято
+            # Получаем рабочие часы салона
+            from db import get_salon_settings
+            salon = get_salon_settings()
+            salon_hours = salon.get('hours', 'Daily 10:30 - 21:00')
+            
+            # Парсим время работы
+            if '-' in salon_hours:
+                parts = salon_hours.split('-')
+                start_time_str = parts[0].strip().split()[-1]  # "10:30"
+                end_time_str = parts[1].strip()  # "21:00"
+                
+                # Проверяем, попадает ли запрошенное время в рабочие часы
+                from datetime import datetime
+                requested_time = datetime.strptime(time, '%H:%M').time()
+                salon_start = datetime.strptime(start_time_str, '%H:%M').time()
+                salon_end = datetime.strptime(end_time_str, '%H:%M').time()
+                
+                if requested_time < salon_start:
+                    reason = f"Салон ещё не работает (открываемся в {start_time_str})"
+                elif requested_time >= salon_end:
+                    reason = f"Салон уже закрыт (работаем до {end_time_str})"
+                else:
+                    reason = f"Время {time} занято у всех мастеров"
+            else:
+                reason = f"Время {time} занято у всех мастеров"
+            
+            # Слот занят или вне рабочего времени - ищем альтернативы
             alternatives = get_available_time_slots(date)
             return {
                 "available": False,
-                "reason": f"Время {time} занято у всех мастеров",
+                "reason": reason,
                 "alternatives": alternatives[:3]
             }
 
