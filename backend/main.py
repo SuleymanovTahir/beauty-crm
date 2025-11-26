@@ -60,8 +60,10 @@ from api.plans import router as plans_router
 from api.public_admin import router as public_admin_router
 from api.employee_services import router as employee_services_router
 from api.employee_schedule import router as employee_schedule_router
-
-
+from api.client_import import router as client_import_router
+from api.booking_import import router as booking_import_router
+from api.public_admin import router as public_admin_router
+from api.payroll import router as payroll_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -106,6 +108,7 @@ app.include_router(employee_schedule_router, prefix="/api")  # Employee Schedule
 app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API
 app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API
+app.include_router(payroll_router, prefix="/api")  # Payroll API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -437,20 +440,30 @@ async def startup_event():
         log_error(f"⚠️ Ошибка миграций аналитики: {e}", "startup")
 
     # ================================
-    # ПОЛНОЕ ТЕСТИРОВАНИЕ (опционально)
+    # ТЕСТЫ
     # ================================
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
-    from tests.run_all_tests import run_all_tests
-    log_info("🧪 Запуск всех тестов...", "startup")
-    run_all_tests()
+    # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests()
 
 
 
     # ================================
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
-    # Для запуска всех проверок и исправлений используйте скрипт:
+    # ⚠️⚠️⚠️ НЕ РАСКОММЕНТИРОВАТЬ! ⚠️⚠️⚠️
+    # 
+    # ПРИЧИНА: SQLite не поддерживает одновременную запись из нескольких процессов
+    # FastAPI держит соединение → run_all_fixes пытается писать → database is locked
+    # 
+    # ✅ ПРАВИЛЬНЫЙ СПОСОБ:
+    # 1. Остановите сервер (Ctrl+C)
+    # 2. Запустите: python3 scripts/init_fresh_database.py
+    # 3. Запустите сервер снова
+    #
     # from scripts.run_all_fixes import main as run_all_fixes
     # log_info("🔧 Запуск всех исправлений...", "startup")
     # await run_all_fixes()

@@ -270,7 +270,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                 className="w-20"
                                 placeholder="2"
                             />
-                            <span className="text-sm text-gray-500">(days on/off)</span>
+                            <span className="text-sm text-gray-500">{t('days_on_off', '(days on/off)')}</span>
                         </div>
                     </div>
 
@@ -349,7 +349,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                 max="4"
                                 value={weeksAhead}
                                 onChange={(e) => setWeeksAhead(e.target.value)}
-                                className="w-20"
+                                className="w-24"
                             />
                             <span>{t('weeks_ahead', 'weeks ahead')}</span>
                         </div>

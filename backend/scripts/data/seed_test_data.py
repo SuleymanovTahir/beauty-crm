@@ -28,7 +28,16 @@ def seed_data():
     print("-" * 70)
     print("⏭️  Пропущено - мастера создаются через update_employee_details.py")
     
-    master_ids = {}  # Empty dict for compatibility
+    # Load actual master IDs from database
+    master_ids = {}
+    c.execute("SELECT id, full_name FROM users WHERE is_service_provider = 1")
+    for row in c.fetchall():
+        master_ids[row[1]] = row[0]
+    
+    if master_ids:
+        print(f"✅ Найдено мастеров: {', '.join(master_ids.keys())}")
+    else:
+        print("⚠️  Мастера не найдены в БД. Пропускаю привязку к услугам.")
 
     # 2. Добавляем услуги
     print("\n2. ДОБАВЛЕНИЕ УСЛУГ:")
@@ -163,24 +172,33 @@ def seed_data():
     print("\n3. ПРИВЯЗКА МАСТЕРОВ К УСЛУГАМ:")
     print("-" * 70)
 
-    # Ляззат - Ногти
-    lyazzat_id = master_ids['Ляззат']
-    for service_key in ['manicure_basic', 'pedicure_basic']:
-        c.execute("""
-            INSERT INTO user_services (user_id, service_id)
-            VALUES (?, ?)
-        """, (lyazzat_id, service_ids[service_key]))
-        print(f"✅ Ляззат ← {service_key}")
+    if not master_ids:
+        print("⚠️  Ошибка в seed_test_data: Мастера не найдены в БД")
+    else:
+        # LYAZZAT - Ногти (используем латиницу!)
+        if 'LYAZZAT' in master_ids:
+            lyazzat_id = master_ids['LYAZZAT']
+            for service_key in ['manicure_basic', 'pedicure_basic']:
+                c.execute("""
+                    INSERT INTO user_services (user_id, service_id)
+                    VALUES (?, ?)
+                """, (lyazzat_id, service_ids[service_key]))
+                print(f"✅ LYAZZAT ← {service_key}")
+        else:
+            print("⚠️  Ошибка в seed_test_data: 'LYAZZAT' не найдена")
 
-    # Симо и Местан - Волосы
-    for master_name in ['Симо', 'Местан']:
-        master_id = master_ids[master_name]
-        for service_key in ['haircut_women', 'hair_coloring', 'keratin_treatment', 'hair_care']:
-            c.execute("""
-                INSERT INTO user_services (user_id, service_id)
-                VALUES (?, ?)
-            """, (master_id, service_ids[service_key]))
-        print(f"✅ {master_name} ← Hair Services")
+        # SIMO и MESTAN - Волосы
+        for master_name in ['SIMO', 'MESTAN']:
+            if master_name in master_ids:
+                master_id = master_ids[master_name]
+                for service_key in ['haircut_women', 'hair_coloring', 'keratin_treatment', 'hair_care']:
+                    c.execute("""
+                        INSERT INTO user_services (user_id, service_id)
+                        VALUES (?, ?)
+                    """, (master_id, service_ids[service_key]))
+                print(f"✅ {master_name} ← Hair Services")
+            else:
+                print(f"⚠️  Ошибка в seed_test_data: '{master_name}' не найден")
 
     # 4. Добавляем расписание мастеров
     print("\n4. ДОБАВЛЕНИЕ РАСПИСАНИЯ МАСТЕРОВ:")

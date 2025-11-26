@@ -38,7 +38,7 @@ export default function EmployeeDetail() {
     const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('information');
+
     const [servicesCount, setServicesCount] = useState(0);
 
     useEffect(() => {
@@ -192,9 +192,9 @@ export default function EmployeeDetail() {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Header with Tabs */}
-                <div className="bg-white border-b border-gray-200">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <Tabs defaultValue="information" className="flex flex-col h-full">
+                    {/* Header with Tabs */}
+                    <div className="bg-white border-b border-gray-200 shrink-0">
                         <div className="flex items-center justify-between px-6 pt-4">
                             <TabsList className="justify-start border-b-0 rounded-none h-auto p-0 bg-transparent">
                                 <TabsTrigger
@@ -262,12 +262,10 @@ export default function EmployeeDetail() {
                                 </Button>
                             </div>
                         </div>
-                    </Tabs>
-                </div>
+                    </div>
 
-                {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
-                    <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    {/* Tab Content */}
+                    <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
                         <TabsContent value="information" className="mt-0">
                             <EmployeeInformation employee={employee} onUpdate={loadEmployee} />
                         </TabsContent>
@@ -294,8 +292,8 @@ export default function EmployeeDetail() {
                         <TabsContent value="payroll" className="mt-0">
                             <EmployeePayroll employeeId={employee.id} />
                         </TabsContent>
-                    </Tabs>
-                </div>
+                    </div>
+                </Tabs>
             </div>
         </div >
     );
