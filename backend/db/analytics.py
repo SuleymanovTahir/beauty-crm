@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from core.config import DATABASE_NAME
+from utils.datetime_utils import get_current_time
 
 
 def get_stats(comparison_period: str = "7days"):
@@ -32,7 +33,7 @@ def get_stats(comparison_period: str = "7days"):
         context = "за последние 7 дней"
     
     # Текущая дата и дата начала периода
-    current_date = datetime.now()
+    current_date = get_current_time()
     period_start = (current_date - timedelta(days=days)).isoformat()
     previous_period_start = (current_date - timedelta(days=days * 2)).isoformat()
     previous_period_end = period_start
@@ -76,7 +77,7 @@ def get_stats(comparison_period: str = "7days"):
         vip_clients = c.fetchone()[0]
 
         # Active clients: made a booking in the last 30 days
-        active_threshold = (datetime.now() - timedelta(days=30)).isoformat()
+        active_threshold = (get_current_time() - timedelta(days=30)).isoformat()
         c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= ?", (active_threshold,))
         active_clients = c.fetchone()[0]
 
@@ -101,8 +102,8 @@ def get_stats(comparison_period: str = "7days"):
     prev_vip_clients = c.fetchone()[0]
 
     # Prev active clients (bookings in previous window)
-    prev_active_threshold_start = (datetime.now() - timedelta(days=60)).isoformat()
-    prev_active_threshold_end = (datetime.now() - timedelta(days=30)).isoformat()
+    prev_active_threshold_start = (get_current_time() - timedelta(days=60)).isoformat()
+    prev_active_threshold_end = (get_current_time() - timedelta(days=30)).isoformat()
     c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= ? AND created_at < ?", 
               (prev_active_threshold_start, prev_active_threshold_end))
     prev_active_clients = c.fetchone()[0]
@@ -284,8 +285,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         start_date = date_from
         end_date = date_to
     else:
-        start_date = (datetime.now() - timedelta(days=days)).isoformat()
-        end_date = datetime.now().isoformat()
+        start_date = (get_current_time() - timedelta(days=days)).isoformat()
+        end_date = get_current_time().isoformat()
     
     # Записи по дням
     c.execute("""SELECT DATE(created_at) as date, COUNT(*) as count
@@ -296,7 +297,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     bookings_by_day = c.fetchall()
     
     if not bookings_by_day:
-        bookings_by_day = [(datetime.now().strftime('%Y-%m-%d'), 0)]
+        bookings_by_day = [(get_current_time().strftime('%Y-%m-%d'), 0)]
     
     # Статистика по услугам
     c.execute("""SELECT service_name, COUNT(*) as count, SUM(revenue) as revenue
@@ -407,8 +408,8 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
         start_date = date_from
         end_date = date_to
     else:
-        end_date = datetime.now().isoformat()
-        start_date = (datetime.now() - timedelta(days=period)).isoformat()
+        end_date = get_current_time().isoformat()
+        start_date = (get_current_time() - timedelta(days=period)).isoformat()
     
     # Активность клиентов по дням
     c.execute("""
@@ -615,8 +616,8 @@ def get_performance_metrics_data(period=30):
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    end_date = datetime.now().isoformat()
-    start_date = (datetime.now() - timedelta(days=period)).isoformat()
+    end_date = get_current_time().isoformat()
+    start_date = (get_current_time() - timedelta(days=period)).isoformat()
     
     # Общие метрики
     c.execute("SELECT COUNT(*) FROM clients")

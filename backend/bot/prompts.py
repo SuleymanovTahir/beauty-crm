@@ -14,6 +14,7 @@ from db import (
 )
 from db.services import format_service_price_for_bot
 from db.employees import get_all_employees
+from utils.datetime_utils import get_current_time, format_time_for_display, format_date_for_display
 
 
 def transliterate_to_russian(name: str) -> str:
@@ -433,8 +434,19 @@ service: Спа программа
         """Секция IDENTITY - из БД"""
         bot_name = self.bot_settings.get('bot_name', 'AI-ассистент')
         salon_name = self.salon.get('name', 'Салон красоты')
+        
+        # Получаем текущее время и дату с учетом timezone салона
+        current_time = format_time_for_display()
+        current_date = format_date_for_display()
+        
         return f"""=== IDENTITY ===
 Ты — {bot_name}, AI-ассистент салона "{salon_name}" в Dubai.
+
+📅 ТЕКУЩАЯ ДАТА И ВРЕМЯ:
+Сегодня: {current_date}
+Сейчас: {current_time} (Dubai time, UTC+4)
+
+⚠️ ИСПОЛЬЗУЙ ЭТО ВРЕМЯ для ответов на вопросы "сколько времени?" и для фильтрации слотов!
 
 ТВОЯ МИССИЯ:
 Консультировать клиентов по услугам и САМОСТОЯТЕЛЬНО предлагать конкретное время и дату для записи.
@@ -612,10 +624,10 @@ service: Спа программа
 
         if should_greet:
             greeting = self.bot_settings.get('greeting_message', 'Привет!')
-            return f"""=== GREETING ===
-{greeting}
-
-⚠️ НЕ повторяй приветствия в следующих сообщениях!"""
+            return f"""=== ПРИВЕТСТВИЕ ===
+⚠️ ЭТО ПЕРВОЕ СООБЩЕНИЕ ОТ КЛИЕНТА - ПОЗДОРОВАЙСЯ!
+Используй приветствие: "{greeting}"
+НЕ повторяй приветствия в следующих сообщениях!"""
         else:
             return """=== ПРОДОЛЖЕНИЕ ДИАЛОГА ===
 НЕ здоровайся снова - отвечай на вопрос клиента"""
@@ -636,7 +648,7 @@ service: Спа программа
                     return False
 
                 last_timestamp = datetime.fromisoformat(timestamp)
-                now = datetime.now()
+                now = get_current_time()
                 time_diff = now - last_timestamp
 
                 if time_diff.total_seconds() > 21600:
@@ -1074,7 +1086,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             if last_pedicure_date:
                 try:
                     last_date = datetime.fromisoformat(last_pedicure_date)
-                    days_ago = (datetime.now() - last_date).days
+                    days_ago = (get_current_time() - last_date).days
                     if days_ago > 21:
                         text += f"\n💡 UPSELL ВОЗМОЖНОСТЬ: Педикюр был {days_ago} дней назад!\n"
                         text += f"   Если клиент записывается на маникюр - предложи педикюр тоже!\n"
@@ -1287,7 +1299,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             additional_instruction = f"\n\n⚠️ У КЛИЕНТА УЖЕ ЕСТЬ ИМЯ (из Instagram) - НЕ СПРАШИВАЙ ИМЯ! Для записи нужен только WhatsApp."
             instructions = additional_instruction + "\n" + instructions
 
-        now = datetime.now()
+        now = get_current_time()
         current_hour = now.hour
 
         time_phrases = {
@@ -1363,7 +1375,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             target_date = preferred_date
         else:
             # Умная логика выбора даты
-            now = datetime.now()
+            now = get_current_time()
             current_hour = now.hour
 
             # Если еще есть время сегодня (до 18:00) и можно успеть записаться (минимум +2 часа)
@@ -1466,7 +1478,7 @@ Google Maps: {self.salon.get('google_maps', '')}"""
                     start_dt = datetime.combine(target_dt.date(), dt_time(start_hour, start_minute))
                     end_dt = datetime.combine(target_dt.date(), dt_time(end_hour, end_minute))
 
-                    now = datetime.now()
+                    now = get_current_time()
                     current_hour = now.hour
                     is_today = target_date == now.strftime("%Y-%m-%d")
 

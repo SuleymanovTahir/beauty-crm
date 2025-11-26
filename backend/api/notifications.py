@@ -10,6 +10,8 @@ import sqlite3
 from core.config import DATABASE_NAME
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from utils.datetime_utils import get_current_time, get_salon_timezone
+from zoneinfo import ZoneInfo
 
 router = APIRouter(tags=["Notifications"])
 
@@ -112,7 +114,7 @@ async def mark_notification_read(
             UPDATE notifications 
             SET is_read = 1, read_at = ?
             WHERE id = ? AND user_id = ?
-        """, (datetime.now().isoformat(), notification_id, user["id"]))
+        """, (get_current_time().isoformat(), notification_id, user["id"]))
         
         if c.rowcount == 0:
             conn.close()
@@ -147,7 +149,7 @@ async def mark_all_notifications_read(
             UPDATE notifications 
             SET is_read = 1, read_at = ?
             WHERE user_id = ? AND is_read = 0
-        """, (datetime.now().isoformat(), user["id"]))
+        """, (get_current_time().isoformat(), user["id"]))
         
         updated_count = c.rowcount
         conn.commit()
@@ -231,7 +233,12 @@ async def send_rebooking_notification(client_id: str, service_name: str, last_da
         if not client:
             return False
         
-        days_since = (datetime.now() - datetime.fromisoformat(last_date)).days
+        last_dt = datetime.fromisoformat(last_date)
+        if last_dt.tzinfo is None:
+            tz = ZoneInfo(get_salon_timezone())
+            last_dt = last_dt.replace(tzinfo=tz)
+
+        days_since = (get_current_time() - last_dt).days
         
         message = f"""Привет! {service_name} уже {days_since} дней, пора обновить? 💅
         
@@ -535,12 +542,13 @@ async def send_manual_reminder(
             """, (booking_id, client_id))
         else:
             # Берем ближайшую будущую запись
+            current_time_str = get_current_time().strftime('%Y-%m-%d %H:%M')
             c.execute("""
                 SELECT name, service_name, datetime, master
                 FROM bookings
-                WHERE instagram_id = ? AND datetime > datetime('now')
+                WHERE instagram_id = ? AND datetime > ?
                 ORDER BY datetime ASC LIMIT 1
-            """, (client_id,))
+            """, (client_id, current_time_str))
 
         booking = c.fetchone()
         conn.close()
@@ -664,11 +672,12 @@ async def send_broadcast_message(
         # Базовый запрос зависит от фильтра
         if client_filter == 'active':
             # Клиенты, которые были активны в последние 30 дней
+            cutoff_date = (get_current_time() - timedelta(days=30)).strftime('%Y-%m-%d')
             c.execute("""
                 SELECT DISTINCT instagram_id, name
                 FROM bookings
-                WHERE datetime > datetime('now', '-30 days')
-            """)
+                WHERE datetime > ?
+            """, (cutoff_date,))
         elif client_filter == 'vip':
             # VIP клиенты (более 5 записей)
             c.execute("""

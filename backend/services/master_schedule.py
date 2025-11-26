@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, time as dt_time
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
+from utils.datetime_utils import get_current_time
 
 
 class MasterScheduleService:
@@ -396,15 +397,20 @@ class MasterScheduleService:
             current_dt = start_dt
             
             # Get current time for filtering past slots
-            now = datetime.now()
+            now = get_current_time()
             is_today = dt.date() == now.date()
+            
+            # Minimum advance booking time for same-day appointments (2 hours)
+            # This gives clients enough time to prepare and travel to the salon
+            min_advance_hours = 2
+            min_booking_time = now + timedelta(hours=min_advance_hours) if is_today else now
 
             while current_dt < end_dt:
                 time_str = current_dt.strftime('%H:%M')
                 slot_end_dt = current_dt + timedelta(minutes=duration_minutes)
                 
-                # 0. Filter past times for today
-                if is_today and current_dt <= now:
+                # 0. Filter past times and slots too close for same-day booking
+                if is_today and current_dt < min_booking_time:
                     current_dt += timedelta(minutes=30)  # Increment by 30 minutes
                     continue
                 

@@ -2,11 +2,12 @@
 Функции для работы с записями
 """
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Tuple
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
+from utils.datetime_utils import get_current_time
 
 
 def get_all_bookings():
@@ -44,7 +45,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     from db import get_or_create_client
     get_or_create_client(instagram_id)
     
-    now = datetime.now().isoformat()
+    now = get_current_time().isoformat()
     # Ensure datetime_str is in ISO format (T separator)
     if ' ' in datetime_str and 'T' not in datetime_str:
         datetime_str = datetime_str.replace(' ', 'T')
@@ -81,7 +82,7 @@ def update_booking_status(booking_id: int, status: str) -> bool:
     
     try:
         if status == 'completed':
-            completed_at = datetime.now().isoformat()
+            completed_at = get_current_time().isoformat()
             c.execute("""UPDATE bookings 
                         SET status = ?, completed_at = ? 
                         WHERE id = ?""",
@@ -344,8 +345,8 @@ def get_client_course_progress(instagram_id: str, service_name: str) -> Optional
         WHERE instagram_id = ? 
         AND service_name LIKE ?
         AND status = 'completed'
-        AND datetime >= datetime('now', '-90 days')
-    """, (instagram_id, f"%{service_name}%"))
+        AND datetime >= ?
+    """, (instagram_id, f"%{service_name}%", (get_current_time() - timedelta(days=90)).strftime('%Y-%m-%d %H:%M')))
     
     completed_count = c.fetchone()[0]
     conn.close()
@@ -448,20 +449,23 @@ def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    cutoff_date = (get_current_time() - timedelta(days=days_since)).strftime('%Y-%m-%d %H:%M')
+    
     c.execute("""
         SELECT DISTINCT b.instagram_id, c.name, c.username
         FROM bookings b
+        JOIN bookings b2 ON b.instagram_id = b2.instagram_id
         JOIN clients c ON b.instagram_id = c.instagram_id
         WHERE b.service_name LIKE ?
         AND b.status = 'completed'
-        AND b.datetime <= datetime('now', '-' || ? || ' days')
+        AND b.datetime <= ?
         AND b.instagram_id NOT IN (
             SELECT instagram_id 
             FROM bookings 
             WHERE status IN ('pending', 'confirmed')
         )
         ORDER BY b.datetime DESC
-    """, (f"%{service_name}%", days_since))
+    """, (f"%{service_name}%", cutoff_date))
     
     results = c.fetchall()
     conn.close()
@@ -474,15 +478,17 @@ def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    start_time = get_current_time().strftime('%Y-%m-%d %H:%M')
+    end_time = (get_current_time() + timedelta(hours=hours)).strftime('%Y-%m-%d %H:%M')
+    
     c.execute("""
         SELECT b.id, b.instagram_id, b.service_name, b.datetime, 
                b.master, c.name, c.username
         FROM bookings b
         JOIN clients c ON b.instagram_id = c.instagram_id
         WHERE b.status IN ('pending', 'confirmed')
-        AND b.datetime BETWEEN datetime('now') 
-            AND datetime('now', '+' || ? || ' hours')
-    """, (hours,))
+        AND b.datetime BETWEEN ? AND ?
+    """, (start_time, end_time))
     
     results = c.fetchall()
     conn.close()
