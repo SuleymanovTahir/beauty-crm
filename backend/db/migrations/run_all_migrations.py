@@ -466,15 +466,17 @@ def main():
     )
 
     # Standalone миграции
-    results["run_migration_master_schedule"] = run_migration_file(
-        'run_migration_master_schedule.py',
-        'Расписание мастеров (рабочие часы, выходные)'
-    )
+    # DEPRECATED: master_schedule table removed, use employee_schedule instead
+    # results["run_migration_master_schedule"] = run_migration_file(
+    #     'run_migration_master_schedule.py',
+    #     'Расписание мастеров (рабочие часы, выходные)'
+    # )
 
-    results["migration_fix_master_schedule_nullable"] = run_migration_file(
-        'migration_fix_master_schedule_nullable.py',
-        'Исправление расписания (разрешить NULL для выходных)'
-    )
+    # DEPRECATED: master_schedule table removed
+    # results["migration_fix_master_schedule_nullable"] = run_migration_file(
+    #     'migration_fix_master_schedule_nullable.py',
+    #     'Исправление расписания (разрешить NULL для выходных)'
+    # )
 
     results["migration_fix_employee_schedule_nullable"] = run_migration_file(
         'migration_fix_employee_schedule_nullable.py',
@@ -575,6 +577,12 @@ def main():
         'Связывание сотрудников с услугами'
     )
 
+    results["data/schedules/seed_master_schedule"] = run_migration_function(
+        'db.migrations.data.schedules.seed_master_schedule',
+        'seed_master_schedule',
+        'Создание базового расписания мастеров'
+    )
+
     results["data/users/update_existing_users_roles"] = run_migration_function(
         'db.migrations.data.users.update_existing_users_roles',
         'update_existing_users_roles',
@@ -602,6 +610,12 @@ def main():
         'db.migrations.maintenance.remove_duplicate_employees',
         'remove_duplicate_employees',
         'Удаление дубликатов сотрудников'
+    )
+
+    results["maintenance/remove_master_schedule_table"] = run_migration_function(
+        'db.migrations.maintenance.remove_master_schedule_table',
+        'remove_master_schedule_table',
+        'Удаление устаревшей таблицы master_schedule'
     )
 
     results["maintenance/link_employees_to_services"] = run_migration_function(

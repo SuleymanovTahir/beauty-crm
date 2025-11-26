@@ -84,6 +84,19 @@ async def main():
     except ImportError:
         print("⚠️  Skipping seed_full_data (module not found)")
 
+    # 3.6 Bot Settings Updates
+    try:
+        from scripts.update_emoji_rules import force_update_emoji_rules
+        results['update_emoji_rules'] = await run_fix("Update Bot Emoji Rules", force_update_emoji_rules)
+    except ImportError:
+        print("⚠️  Skipping update_emoji_rules (module not found)")
+    
+    try:
+        from scripts.force_update_bot_persona import force_update_bot_persona
+        results['update_bot_persona'] = await run_fix("Update Bot Persona", force_update_bot_persona)
+    except ImportError:
+        print("⚠️  Skipping update_bot_persona (module not found)")
+
     # 4. Tests & Verifications
     # Skip API tests in production to avoid rate limits
     environment = os.getenv("ENVIRONMENT", "development")
