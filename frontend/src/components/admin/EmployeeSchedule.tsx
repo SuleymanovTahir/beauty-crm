@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Save, Copy, Trash2, Plus, X } from 'lucide-react';
+import { Copy, Trash2, Plus, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
@@ -42,8 +42,6 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     const { t } = useTranslation(['admin/users', 'common']);
 
     // State
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState(new Date());
     const [schedule, setSchedule] = useState<ScheduleEntry[]>([]);
     const [timeOffs, setTimeOffs] = useState<TimeOff[]>([]);
     const [bookings, setBookings] = useState<Booking[]>([]);
@@ -52,6 +50,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     // Autofill template state
     const [autofillHours, setAutofillHours] = useState({ start: '09', startMin: '00', end: '18', endMin: '00' });
     const [weeksAhead, setWeeksAhead] = useState('2');
+    const [schedulePattern, setSchedulePattern] = useState('5/2');
+    const [startingDate, setStartingDate] = useState(new Date().toISOString().split('T')[0]);
 
     // Time-off dialog state
     const [showTimeOffDialog, setShowTimeOffDialog] = useState(false);
@@ -64,7 +64,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
     useEffect(() => {
         loadScheduleData();
-    }, [employeeId, selectedDate]);
+    }, [employeeId]);
 
     const loadScheduleData = async () => {
         try {
@@ -196,28 +196,11 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         return new Date(d.setDate(diff));
     };
 
-    const getWeekEnd = (date: Date) => {
-        const start = getWeekStart(date);
-        return new Date(start.getTime() + 6 * 24 * 60 * 60 * 1000);
-    };
-
-    const formatDate = (date: Date) => {
-        return date.toISOString().split('T')[0];
-    };
-
-    const getDaysInMonth = (date: Date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
-
-        return { daysInMonth, startingDayOfWeek, year, month };
-    };
-
     const isSlotBooked = (dayIndex: number, hour: number) => {
-        const weekStart = getWeekStart(selectedDate);
+        // For simplicity, let's assume we're always looking at the current week for bookings
+        // A more robust solution would involve a selectedDate state for the calendar view
+        const today = new Date();
+        const weekStart = getWeekStart(today);
         const slotDate = new Date(weekStart);
         slotDate.setDate(slotDate.getDate() + dayIndex);
 
@@ -239,8 +222,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         return hour >= startHour && hour < endHour;
     };
 
-    const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(currentDate);
-    const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
 
     if (loading) {
         return (
@@ -252,62 +234,57 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
     return (
         <div className="space-y-6">
-            {/* Calendar */}
-            <div className="bg-white rounded-lg border p-4">
-                <div className="flex items-center justify-between mb-4">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
-                    >
-                        <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <h3 className="font-semibold">{monthName}</h3>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
-                    >
-                        <ChevronRight className="w-4 h-4" />
-                    </Button>
-                </div>
-
-                <div className="grid grid-cols-7 gap-1">
-                    {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                        <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
-                            {day}
-                        </div>
-                    ))}
-
-                    {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-                        <div key={`empty-${i}`} className="aspect-square" />
-                    ))}
-
-                    {Array.from({ length: daysInMonth }).map((_, i) => {
-                        const day = i + 1;
-                        const date = new Date(year, month, day);
-                        const isToday = date.toDateString() === new Date().toDateString();
-                        const isSelected = date.toDateString() === selectedDate.toDateString();
-
-                        return (
-                            <button
-                                key={day}
-                                onClick={() => setSelectedDate(date)}
-                                className={`aspect-square rounded-full flex items-center justify-center text-sm transition-colors ${isSelected ? 'bg-blue-500 text-white' :
-                                    isToday ? 'bg-blue-100 text-blue-700' :
-                                        'hover:bg-gray-100'
-                                    }`}
-                            >
-                                {day}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
             {/* Schedule Autofill Template */}
             <div className="bg-white rounded-lg border p-6">
                 <h3 className="font-semibold mb-4">{t('schedule_autofill_template', 'Schedule autofill template')}</h3>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                    {/* Schedule Pattern */}
+                    <div>
+                        <Label>{t('schedule_pattern', 'Schedule')}</Label>
+                        <div className="flex items-center gap-2 mt-2">
+                            <Input
+                                type="number"
+                                min="1"
+                                max="31"
+                                value={schedulePattern.split('/')[0] || '5'}
+                                onChange={(e) => {
+                                    const daysOn = e.target.value;
+                                    const daysOff = schedulePattern.split('/')[1] || '2';
+                                    setSchedulePattern(`${daysOn}/${daysOff}`);
+                                }}
+                                className="w-20"
+                                placeholder="5"
+                            />
+                            <span>/</span>
+                            <Input
+                                type="number"
+                                min="1"
+                                max="31"
+                                value={schedulePattern.split('/')[1] || '2'}
+                                onChange={(e) => {
+                                    const daysOn = schedulePattern.split('/')[0] || '5';
+                                    const daysOff = e.target.value;
+                                    setSchedulePattern(`${daysOn}/${daysOff}`);
+                                }}
+                                className="w-20"
+                                placeholder="2"
+                            />
+                            <span className="text-sm text-gray-500">(days on/off)</span>
+                        </div>
+                    </div>
+
+                    {/* Starting Date */}
+                    <div>
+                        <Label>{t('starting_date', 'Starting')}</Label>
+                        <Input
+                            type="date"
+                            value={startingDate}
+                            onChange={(e) => setStartingDate(e.target.value)}
+                            className="mt-2"
+                        />
+                    </div>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
@@ -421,8 +398,69 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                         const isBooked = isSlotBooked(dayIndex, hour);
                                         const isAvailable = isSlotAvailable(dayIndex, hour);
 
+                                        const handleCellClick = async () => {
+                                            // Toggle working hours for this slot
+                                            const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
+
+                                            if (!daySchedule || !daySchedule.is_working) {
+                                                // Day is not working, make it working with this hour
+                                                const newSchedule = [...schedule];
+                                                const existingIndex = newSchedule.findIndex(s => s.day_of_week === dayIndex);
+
+                                                if (existingIndex >= 0) {
+                                                    newSchedule[existingIndex] = {
+                                                        day_of_week: dayIndex,
+                                                        start_time: `${hour.toString().padStart(2, '0')}:00`,
+                                                        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+                                                        is_working: true
+                                                    };
+                                                } else {
+                                                    newSchedule.push({
+                                                        day_of_week: dayIndex,
+                                                        start_time: `${hour.toString().padStart(2, '0')}:00`,
+                                                        end_time: `${(hour + 1).toString().padStart(2, '0')}:00`,
+                                                        is_working: true
+                                                    });
+                                                }
+
+                                                await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                setSchedule(newSchedule);
+                                                toast.success(t('schedule_updated', 'Schedule updated'));
+                                            } else {
+                                                // Day is working, extend or reduce hours
+                                                const startHour = parseInt(daySchedule.start_time.split(':')[0]);
+                                                const endHour = parseInt(daySchedule.end_time.split(':')[0]);
+
+                                                let newStartHour = startHour;
+                                                let newEndHour = endHour;
+
+                                                if (hour < startHour) {
+                                                    newStartHour = hour;
+                                                } else if (hour >= endHour) {
+                                                    newEndHour = hour + 1;
+                                                } else {
+                                                    // Hour is within range, do nothing or remove
+                                                    return;
+                                                }
+
+                                                const newSchedule = schedule.map(s =>
+                                                    s.day_of_week === dayIndex
+                                                        ? { ...s, start_time: `${newStartHour.toString().padStart(2, '0')}:00`, end_time: `${newEndHour.toString().padStart(2, '0')}:00` }
+                                                        : s
+                                                );
+
+                                                await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                setSchedule(newSchedule);
+                                                toast.success(t('schedule_updated', 'Schedule updated'));
+                                            }
+                                        };
+
                                         return (
-                                            <td key={dayIndex} className="border p-2 text-center">
+                                            <td
+                                                key={dayIndex}
+                                                className="border p-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                                                onClick={handleCellClick}
+                                            >
                                                 {isAvailable && (
                                                     <div className={`w-3 h-3 rounded-full mx-auto ${isBooked ? 'bg-red-500' : 'bg-gray-400'
                                                         }`} />
