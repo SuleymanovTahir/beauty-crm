@@ -17,13 +17,20 @@ def update_max_message_chars():
             print("⚠️ Таблица bot_settings не найдена, пропускаем")
             return True
 
-        # Обновляем значение на 300 (стандарт)
-        c.execute("UPDATE bot_settings SET max_message_chars = 300")
+        # Проверяем наличие колонки
+        c.execute("PRAGMA table_info(bot_settings)")
+        columns = [row[1] for row in c.fetchall()]
         
-        if c.rowcount > 0:
-            print(f"✅ Обновлено {c.rowcount} записей: max_message_chars -> 300")
+        if 'max_message_chars' not in columns:
+            print("   ➕ Добавляем колонку max_message_chars")
+            c.execute("ALTER TABLE bot_settings ADD COLUMN max_message_chars INTEGER DEFAULT 300")
         else:
-            print("ℹ️ Обновление не требуется")
+            # Обновляем значение на 300 (стандарт)
+            c.execute("UPDATE bot_settings SET max_message_chars = 300")
+            if c.rowcount > 0:
+                print(f"✅ Обновлено {c.rowcount} записей: max_message_chars -> 300")
+            else:
+                print("ℹ️ Обновление не требуется")
             
         conn.commit()
         return True

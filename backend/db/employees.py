@@ -1,5 +1,7 @@
 """
 Функции для работы с сотрудниками салона
+DEPRECATED: This module is a compatibility wrapper around users table.
+All employee data is now stored in users table with is_service_provider = 1.
 """
 import sqlite3
 from datetime import datetime
@@ -10,31 +12,34 @@ from db.connection import get_db_connection
 
 def get_all_employees(active_only=True, service_providers_only=False):
     """
-    Получить всех сотрудников
-
+    Получить всех сотрудников (теперь из users таблицы)
+    
     Args:
         active_only: Только активные сотрудники
-        service_providers_only: Только обслуживающий персонал (исключить админов, директоров и т.д.)
+        service_providers_only: Только обслуживающий персонал
     """
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Строим запрос с фильтрами
-    query = "SELECT * FROM employees WHERE 1=1"
-
+    # Check if is_service_provider column exists
+    c.execute("PRAGMA table_info(users)")
+    columns = [row[1] for row in c.fetchall()]
+    
+    if 'is_service_provider' in columns:
+        query = "SELECT * FROM users WHERE is_service_provider = 1"
+    else:
+        # Fallback: filter by role
+        query = "SELECT * FROM users WHERE role IN ('employee', 'master')"
+    
     if active_only:
         query += " AND is_active = 1"
-
-    if service_providers_only:
-        # Проверяем есть ли колонка is_service_provider
-        c.execute("PRAGMA table_info(employees)")
-        columns = [row[1] for row in c.fetchall()]
-
-        if 'is_service_provider' in columns:
-            query += " AND is_service_provider = 1"
-
-    query += " ORDER BY sort_order, full_name"
-
+    
+    # Safely handle sort_order
+    if 'sort_order' in columns:
+        query += " ORDER BY sort_order, full_name"
+    else:
+        query += " ORDER BY full_name"
+    
     c.execute(query)
     employees = c.fetchall()
     conn.close()
@@ -42,11 +47,11 @@ def get_all_employees(active_only=True, service_providers_only=False):
 
 
 def get_employee(employee_id: int):
-    """Получить сотрудника по ID"""
+    """Получить сотрудника по ID (из users)"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM employees WHERE id = ?", (employee_id,))
+    c.execute("SELECT * FROM users WHERE id = ? AND is_service_provider = 1", (employee_id,))
     employee = c.fetchone()
     
     conn.close()
@@ -56,18 +61,26 @@ def get_employee(employee_id: int):
 def create_employee(full_name: str, position: str = None, experience: str = None,
                    photo: str = None, bio: str = None, phone: str = None,
                    email: str = None, instagram: str = None):
-    """Создать сотрудника"""
+    """Создать сотрудника (в users таблице)"""
     conn = get_db_connection()
     c = conn.cursor()
     
     now = datetime.now().isoformat()
     
-    c.execute("""INSERT INTO employees 
-                 (full_name, position, experience, photo, bio, phone, email, 
-                  instagram, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-              (full_name, position, experience, photo, bio, phone, email, 
-               instagram, now, now))
+    # Generate username from full_name
+    username = full_name.lower().replace(" ", "_")
+    
+    # Check if username exists
+    c.execute("SELECT id FROM users WHERE username = ?", (username,))
+    if c.fetchone():
+        username = f"{username}_{int(datetime.now().timestamp())}"
+    
+    c.execute("""INSERT INTO users 
+                 (username, password_hash, full_name, position, experience, photo, bio, 
+                  phone, email, instagram_employee, is_service_provider, role, created_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'employee', ?)""",
+              (username, "placeholder_hash", full_name, position, experience, photo, bio, 
+               phone, email, instagram, now))
     
     employee_id = c.lastrowid
     conn.commit()
@@ -77,22 +90,26 @@ def create_employee(full_name: str, position: str = None, experience: str = None
 
 
 def update_employee(employee_id: int, **kwargs):
-    """Обновить сотрудника"""
+    """Обновить сотрудника (в users)"""
     conn = get_db_connection()
     c = conn.cursor()
     
     updates = []
     params = []
     
+    # Map old field names to new ones
+    field_mapping = {
+        'instagram': 'instagram_employee'
+    }
+    
     for key, value in kwargs.items():
-        updates.append(f"{key} = ?")
+        mapped_key = field_mapping.get(key, key)
+        updates.append(f"{mapped_key} = ?")
         params.append(value)
     
-    updates.append("updated_at = ?")
-    params.append(datetime.now().isoformat())
     params.append(employee_id)
     
-    query = f"UPDATE employees SET {', '.join(updates)} WHERE id = ?"
+    query = f"UPDATE users SET {', '.join(updates)} WHERE id = ? AND is_service_provider = 1"
     c.execute(query, params)
     
     conn.commit()
@@ -101,11 +118,13 @@ def update_employee(employee_id: int, **kwargs):
 
 
 def delete_employee(employee_id: int):
-    """Удалить сотрудника"""
+    """Удалить сотрудника (деактивировать в users)"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
+    # Soft delete - just deactivate
+    c.execute("UPDATE users SET is_active = 0 WHERE id = ? AND is_service_provider = 1", 
+              (employee_id,))
     
     conn.commit()
     affected = c.rowcount
@@ -117,13 +136,13 @@ def delete_employee(employee_id: int):
 # ===== СПЕЦИАЛИЗАЦИИ =====
 
 def get_employee_services(employee_id: int):
-    """Получить услуги сотрудника"""
+    """Получить услуги сотрудника (из user_services)"""
     conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""SELECT s.* FROM services s
-                 JOIN employee_services es ON s.id = es.service_id
-                 WHERE es.employee_id = ?""", (employee_id,))
+                 JOIN user_services us ON s.id = us.service_id
+                 WHERE us.user_id = ?""", (employee_id,))
     
     services = c.fetchall()
     conn.close()
@@ -131,15 +150,13 @@ def get_employee_services(employee_id: int):
 
 
 def add_employee_service(employee_id: int, service_id: int):
-    """Добавить специализацию сотруднику"""
+    """Добавить специализацию сотруднику (в user_services)"""
     conn = get_db_connection()
     c = conn.cursor()
 
-    now = datetime.now().isoformat()
-
     try:
-        c.execute("""INSERT INTO employee_services (employee_id, service_id, created_at)
-                     VALUES (?, ?, ?)""", (employee_id, service_id, now))
+        c.execute("""INSERT INTO user_services (user_id, service_id)
+                     VALUES (?, ?)""", (employee_id, service_id))
         conn.commit()
         conn.close()
         return True
@@ -149,12 +166,12 @@ def add_employee_service(employee_id: int, service_id: int):
 
 
 def remove_employee_service(employee_id: int, service_id: int):
-    """Удалить специализацию у сотрудника"""
+    """Удалить специализацию у сотрудника (из user_services)"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""DELETE FROM employee_services 
-                 WHERE employee_id = ? AND service_id = ?""",
+    c.execute("""DELETE FROM user_services 
+                 WHERE user_id = ? AND service_id = ?""",
               (employee_id, service_id))
     
     conn.commit()
@@ -163,14 +180,33 @@ def remove_employee_service(employee_id: int, service_id: int):
 
 
 def get_employees_by_service(service_id: int):
-    """Получить сотрудников, оказывающих услугу"""
+    """
+    Получить сотрудников, оказывающих услугу (из users + user_services)
+    Returns: List of tuples (user_columns..., price, duration, price_min, price_max)
+    """
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT e.* FROM employees e
-                 JOIN employee_services es ON e.id = es.employee_id
-                 WHERE es.service_id = ? AND e.is_active = 1""",
-              (service_id,))
+    # Check if new columns exist in user_services
+    c.execute("PRAGMA table_info(user_services)")
+    us_columns = [row[1] for row in c.fetchall()]
+    
+    has_settings = 'price' in us_columns
+    
+    if has_settings:
+        c.execute("""SELECT u.*, us.price, us.duration, us.price_min, us.price_max 
+                     FROM users u
+                     JOIN user_services us ON u.id = us.user_id
+                     WHERE us.service_id = ? AND u.is_active = 1 AND u.is_service_provider = 1
+                     AND (us.is_online_booking_enabled = 1 OR us.is_online_booking_enabled IS NULL)""",
+                  (service_id,))
+    else:
+        # Fallback for old schema
+        c.execute("""SELECT u.*, NULL as price, NULL as duration, NULL as price_min, NULL as price_max
+                     FROM users u
+                     JOIN user_services us ON u.id = us.user_id
+                     WHERE us.service_id = ? AND u.is_active = 1 AND u.is_service_provider = 1""",
+                  (service_id,))
     
     employees = c.fetchall()
     conn.close()
@@ -180,12 +216,12 @@ def get_employees_by_service(service_id: int):
 # ===== РАСПИСАНИЕ =====
 
 def get_employee_schedule(employee_id: int):
-    """Получить расписание сотрудника"""
+    """Получить расписание сотрудника (из user_schedule)"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT * FROM employee_schedule 
-                 WHERE employee_id = ? AND is_active = 1
+    c.execute("""SELECT * FROM user_schedule 
+                 WHERE user_id = ? AND is_active = 1
                  ORDER BY day_of_week""", (employee_id,))
     
     schedule = c.fetchall()
@@ -195,18 +231,18 @@ def get_employee_schedule(employee_id: int):
 
 def set_employee_schedule(employee_id: int, day_of_week: int, 
                          start_time: str, end_time: str):
-    """Установить расписание для дня недели (0=ПН, 6=ВС)"""
+    """Установить расписание для дня недели (в user_schedule)"""
     conn = get_db_connection()
     c = conn.cursor()
     
     # Удаляем старое расписание для этого дня
-    c.execute("""DELETE FROM employee_schedule 
-                 WHERE employee_id = ? AND day_of_week = ?""",
+    c.execute("""DELETE FROM user_schedule 
+                 WHERE user_id = ? AND day_of_week = ?""",
               (employee_id, day_of_week))
     
     # Добавляем новое
-    c.execute("""INSERT INTO employee_schedule 
-                 (employee_id, day_of_week, start_time, end_time)
+    c.execute("""INSERT INTO user_schedule 
+                 (user_id, day_of_week, start_time, end_time)
                  VALUES (?, ?, ?, ?)""",
               (employee_id, day_of_week, start_time, end_time))
     
@@ -218,6 +254,7 @@ def set_employee_schedule(employee_id: int, day_of_week: int,
 def get_available_employees(service_id: int, date_time: str):
     """
     Получить доступных сотрудников для услуги в определенное время
+    (из users + user_services + user_schedule)
     """
     from datetime import datetime
     
@@ -229,22 +266,20 @@ def get_available_employees(service_id: int, date_time: str):
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Находим сотрудников:
-    # 1. Которые оказывают эту услугу
-    # 2. Которые работают в этот день недели
-    # 3. У которых нет отпуска в эту дату
+    # Находим сотрудников из users таблицы
     c.execute("""
-        SELECT DISTINCT e.* 
-        FROM employees e
-        JOIN employee_services es ON e.id = es.employee_id
-        JOIN employee_schedule sch ON e.id = sch.employee_id
-        WHERE es.service_id = ?
-        AND e.is_active = 1
+        SELECT DISTINCT u.* 
+        FROM users u
+        JOIN user_services us ON u.id = us.user_id
+        JOIN user_schedule sch ON u.id = sch.user_id
+        WHERE us.service_id = ?
+        AND u.is_active = 1
+        AND u.is_service_provider = 1
         AND sch.day_of_week = ?
         AND sch.start_time <= ?
         AND sch.end_time >= ?
-        AND e.id NOT IN (
-            SELECT employee_id FROM employee_time_off
+        AND u.id NOT IN (
+            SELECT user_id FROM user_time_off
             WHERE date(?) BETWEEN date(date_from) AND date(date_to)
         )
     """, (service_id, day_of_week, time_str, time_str, date_time))
@@ -257,26 +292,28 @@ def get_available_employees(service_id: int, date_time: str):
 def get_employee_busy_slots(employee_id: int, date: str):
     """
     Получить занятые слоты сотрудника на определенную дату
-
-    Args:
-        employee_id: ID сотрудника
-        date: Дата в формате YYYY-MM-DD
-
-    Returns:
-        List of tuples (booking_id, start_time, end_time, service_name)
     """
     conn = get_db_connection()
     c = conn.cursor()
+
+    # Получаем имя пользователя
+    c.execute("SELECT full_name FROM users WHERE id = ?", (employee_id,))
+    user = c.fetchone()
+    if not user:
+        conn.close()
+        return []
+    
+    full_name = user[0]
 
     # Получаем все записи мастера на эту дату
     c.execute("""
         SELECT b.id, b.datetime, s.duration, s.name
         FROM bookings b
         LEFT JOIN services s ON b.service_name = s.name
-        WHERE b.master = (SELECT full_name FROM employees WHERE id = ?)
+        WHERE b.master = ?
         AND b.status NOT IN ('cancelled', 'no-show')
         AND date(b.datetime) = date(?)
-    """, (employee_id, date))
+    """, (full_name, date))
 
     bookings = c.fetchall()
     conn.close()
@@ -291,7 +328,6 @@ def get_employee_busy_slots(employee_id: int, date: str):
 
                 # Если есть длительность, вычисляем конец
                 if duration:
-                    # duration может быть в формате "1h", "30min", "1h 30min"
                     hours = 0
                     minutes = 0
                     if 'h' in duration:

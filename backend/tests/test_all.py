@@ -369,6 +369,17 @@ def main():
         print("  ℹ️  Проверьте логи выше для деталей")
 
     print("=" * 80 + "\n")
+    
+    # Автоматическая очистка тестовых данных после всех тестов
+    if failed == 0:  # Только если все тесты прошли успешно
+        try:
+            from tests.test_cleanup import cleanup_after_test
+            print("\n" + "=" * 80)
+            print("  ОЧИСТКА ТЕСТОВЫХ ДАННЫХ")
+            print("=" * 80)
+            cleanup_after_test(verbose=True)
+        except Exception as e:
+            print(f"   ⚠️  Ошибка очистки: {e}")
 
     return failed == 0
 

@@ -771,9 +771,9 @@ Google Maps: {self.salon.get('google_maps', '')}"""
             # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД
             c.execute("""
                 SELECT s.name_ru, s.category
-                FROM employee_services es
-                JOIN services s ON es.service_id = s.id
-                WHERE es.employee_id = ? AND s.is_active = 1
+                FROM user_services us
+                JOIN services s ON us.service_id = s.id
+                WHERE us.user_id = ? AND s.is_active = 1
                 ORDER BY s.category, s.name_ru
             """, (emp_id,))
 
@@ -1188,101 +1188,123 @@ Google Maps: {self.salon.get('google_maps', '')}"""
         if preferences.get('favorite_master'):
             availability_text += f"⭐ Ваш любимый мастер {preferences['favorite_master']} доступен!\n\n"
 
-        # ✅ ИСПОЛЬЗУЕМ РЕАЛЬНЫЙ КАЛЕНДАРЬ вместо примерных слотов
-        # ⚠️ ВСЁ ВРЕМЯ БЕРЁТСЯ ИЗ БД - НЕ ПРИДУМЫВАЙ ВРЕМЯ НАУГАД!
-        for emp in employees[:5]:
-            emp_id = emp[0]
-            # ✅ emp[1] = full_name из get_employees_by_service()
-            emp_name = emp[1] if len(emp) > 1 else "Мастер"
+            # ✅ ИСПОЛЬЗУЕМ РЕАЛЬНЫЙ КАЛЕНДАРЬ вместо примерных слотов
+            # ⚠️ ВСЁ ВРЕМЯ БЕРЁТСЯ ИЗ БД - НЕ ПРИДУМЫВАЙ ВРЕМЯ НАУГАД!
+            for emp in employees[:5]:
+                # Unpack employee data (users columns + 4 service settings)
+                # users table has ~15 columns. 
+                # We appended: price, duration, price_min, price_max
+                
+                emp_id = emp[0]
+                emp_name = emp[2] # full_name is usually index 2 in users table (id, username, full_name...)
+                
+                # Extract service settings (last 4 columns)
+                try:
+                    price = emp[-4]
+                    duration = emp[-3]
+                    price_min = emp[-2]
+                    price_max = emp[-1]
+                except:
+                    price = None
+                    duration = None
+                    price_min = None
+                    price_max = None
 
-            # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
-            from utils.transliteration import transliterate_name
-            emp_name_display = transliterate_name(str(emp_name), client_language)
+                # Format Price Display
+                price_display = ""
+                if price_min is not None and price_max is not None:
+                    price_display = f" ({int(price_min)} - {int(price_max)} AED)"
+                elif price is not None:
+                    price_display = f" ({int(price)} AED)"
 
-            # ✅ ПОЛУЧАЕМ РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ БД
-            try:
-                # Получаем расписание мастера на этот день
-                target_dt = datetime.strptime(target_date, "%Y-%m-%d")
-                day_of_week = target_dt.weekday()
+                # ✅ УНИВЕРСАЛЬНАЯ ТРАНСЛИТЕРАЦИЯ вместо ручных переводов
+                from utils.transliteration import transliterate_name
+                emp_name_display = transliterate_name(str(emp_name), client_language)
 
-                c.execute("""
-                    SELECT start_time, end_time
-                    FROM employee_schedule
-                    WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
-                """, (emp_id, day_of_week))
+                # ✅ ПОЛУЧАЕМ РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ ИЗ КАЛЕНДАРЯ БД
+                try:
+                    # Получаем расписание мастера на этот день
+                    target_dt = datetime.strptime(target_date, "%Y-%m-%d")
+                    day_of_week = target_dt.weekday()
 
-                schedule_row = c.fetchone()
-                if not schedule_row:
-                    continue  # Не работает в этот день
+                    c.execute("""
+                        SELECT start_time, end_time
+                        FROM user_schedule
+                        WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+                    """, (emp_id, day_of_week))
 
-                start_time_str, end_time_str = schedule_row
+                    schedule_row = c.fetchone()
+                    if not schedule_row:
+                        continue  # Не работает в этот день
 
-                # Получаем уже занятые слоты (поддерживаем employee_id и master)
-                c.execute("""
-                    SELECT datetime
-                    FROM bookings
-                    WHERE (employee_id = ? OR master = ?)
-                    AND DATE(datetime) = ?
-                    AND status != 'cancelled'
-                """, (emp_id, emp_name, target_date))
+                    start_time_str, end_time_str = schedule_row
 
-                booked_times = set()
-                for booking_row in c.fetchall():
-                    dt_str = booking_row[0]
-                    time_part = dt_str.split(' ')[1] if ' ' in dt_str else dt_str
-                    booked_times.add(time_part[:5])  # HH:MM
+                    # Получаем уже занятые слоты (поддерживаем employee_id и master)
+                    c.execute("""
+                        SELECT datetime
+                        FROM bookings
+                        WHERE (employee_id = ? OR master = ?)
+                        AND DATE(datetime) = ?
+                        AND status != 'cancelled'
+                    """, (emp_id, emp_name, target_date))
 
-                # Генерируем свободные слоты
-                from datetime import time as dt_time
-                start_hour, start_minute = map(int, start_time_str.split(':'))
-                end_hour, end_minute = map(int, end_time_str.split(':'))
+                    booked_times = set()
+                    for booking_row in c.fetchall():
+                        dt_str = booking_row[0]
+                        time_part = dt_str.split(' ')[1] if ' ' in dt_str else dt_str
+                        booked_times.add(time_part[:5])  # HH:MM
 
-                start_dt = datetime.combine(target_dt.date(), dt_time(start_hour, start_minute))
-                end_dt = datetime.combine(target_dt.date(), dt_time(end_hour, end_minute))
+                    # Генерируем свободные слоты
+                    from datetime import time as dt_time
+                    start_hour, start_minute = map(int, start_time_str.split(':'))
+                    end_hour, end_minute = map(int, end_time_str.split(':'))
 
-                now = datetime.now()
-                current_hour = now.hour
-                is_today = target_date == now.strftime("%Y-%m-%d")
+                    start_dt = datetime.combine(target_dt.date(), dt_time(start_hour, start_minute))
+                    end_dt = datetime.combine(target_dt.date(), dt_time(end_hour, end_minute))
 
-                all_slots = []
-                current_slot = start_dt
+                    now = datetime.now()
+                    current_hour = now.hour
+                    is_today = target_date == now.strftime("%Y-%m-%d")
 
-                while current_slot < end_dt:
-                    time_str = current_slot.strftime('%H:%M')
+                    all_slots = []
+                    current_slot = start_dt
 
-                    # Проверяем что слот свободен
-                    if time_str not in booked_times:
-                        hour = int(time_str.split(':')[0])
+                    while current_slot < end_dt:
+                        time_str = current_slot.strftime('%H:%M')
 
-                        # Если сегодня - пропускаем прошедшие слоты
-                        if is_today and hour <= current_hour + 2:
-                            current_slot += timedelta(hours=1)
-                            continue
+                        # Проверяем что слот свободен
+                        if time_str not in booked_times:
+                            hour = int(time_str.split(':')[0])
 
-                        # Фильтр по предпочтению времени
-                        if time_preference:
-                            pref_start, pref_end = time_preference
-                            if hour < pref_start or hour > pref_end:
+                            # Если сегодня - пропускаем прошедшие слоты
+                            if is_today and hour <= current_hour + 2:
                                 current_slot += timedelta(hours=1)
                                 continue
 
-                        all_slots.append(time_str)
+                            # Фильтр по предпочтению времени
+                            if time_preference:
+                                pref_start, pref_end = time_preference
+                                if hour < pref_start or hour > pref_end:
+                                    current_slot += timedelta(hours=1)
+                                    continue
 
-                        if len(all_slots) >= 3:
-                            break
+                            all_slots.append(time_str)
 
-                    current_slot += timedelta(hours=1)
+                            if len(all_slots) >= 3:
+                                break
 
-                # Показываем только если есть свободные слоты
-                if all_slots:
-                    availability_text += f"• {emp_name_display.upper()}: {', '.join(all_slots)}\n"
+                        current_slot += timedelta(hours=1)
 
-            except Exception as e:
-                # Fallback если не удалось получить слоты
-                print(f"⚠️ Error getting slots for {emp_name}: {e}")
-                import traceback
-                traceback.print_exc()
-                continue
+                    # Показываем только если есть свободные слоты
+                    if all_slots:
+                        availability_text += f"• {emp_name_display.upper()}{price_display}: {', '.join(all_slots)}\n"
+
+                except Exception as e:
+                    # Fallback если не удалось получить слоты
+                    print(f"⚠️ Error getting slots for {emp_name}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    continue
 
         # ✅ #14 - Альтернативы если время не подходит
         availability_text += f"\n\n{instructions}"
@@ -1339,7 +1361,8 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
             # ✅ ПРОВЕРЯЕМ что мастер существует в БД
             conn2 = sqlite3.connect(DATABASE_NAME)
             c2 = conn2.cursor()
-            c2.execute("SELECT COUNT(*) FROM employees WHERE full_name = ? AND is_active = 1", (master,))
+            # Check if master exists and is active
+            c2.execute("SELECT COUNT(*) FROM users WHERE full_name = ? AND is_active = 1 AND is_service_provider = 1", (master,))
             if c2.fetchone()[0] > 0:
                 masters[master] = masters.get(master, 0) + 1
             conn2.close()

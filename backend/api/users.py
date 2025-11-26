@@ -98,27 +98,26 @@ async def get_users(current_user: dict = Depends(get_current_user)):
         conn.row_factory = sqlite3.Row  # ✅ ВАЖНО для dict
         c = conn.cursor()
 
-        # JOIN users → employees → positions to get position name
+        # Query users directly (employees table is consolidated)
         c.execute("""
             SELECT
                 u.id, u.username, u.full_name, u.email, u.role,
-                u.position as position_text, u.created_at, u.is_active,
+                u.position, u.created_at, u.is_active,
                 u.employee_id,
-                e.position_id,
-                p.name as position_name,
-                p.name_en as position_name_en,
-                p.name_ar as position_name_ar
+                u.position_ru,
+                u.position_ar
             FROM users u
-            LEFT JOIN employees e ON u.employee_id = e.id
-            LEFT JOIN positions p ON e.position_id = p.id
             ORDER BY u.created_at DESC
         """)
 
         users = []
         for row in c.fetchall():
-            # Use position from positions table if available, otherwise use text position
-            position_display = row["position_name"] or row["position_text"] or None
-
+            # Use position from users table
+            position_display = row["position"]
+            
+            # Construct position object if needed or just use text
+            # For now, we'll just use the text position
+            
             user_data = {
                 "id": row["id"],
                 "username": row["username"],
@@ -126,10 +125,12 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "email": row["email"],
                 "role": row["role"],
                 "position": position_display,
-                "position_id": row["position_id"],
+                "position_id": None, # Legacy field
                 "employee_id": row["employee_id"],
                 "created_at": row["created_at"],
-                "is_active": row["is_active"]
+                "is_active": row["is_active"],
+                "position_ru": row["position_ru"],
+                "position_ar": row["position_ar"]
             }
 
             users.append(user_data)

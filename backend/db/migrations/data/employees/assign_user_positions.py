@@ -50,7 +50,8 @@ def assign_user_positions():
                 else:
                     log_info(f"  ⏭️  {username}: должность уже установлена ('{current_position}')", "migration")
             else:
-                log_info(f"  ⚠️  Пользователь '{username}' не найден", "migration")
+                # Пользователь не найден - это нормально, пропускаем
+                pass
 
         conn.commit()
 

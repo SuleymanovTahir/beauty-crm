@@ -351,6 +351,17 @@ def main():
         print("\n  ⚠️  Некоторые тесты завершились с ошибками")
 
     print("="*80 + "\n")
+    
+    # Автоматическая очистка тестовых данных после успешных тестов
+    if total_success == total_tests:
+        try:
+            from tests.test_cleanup import cleanup_after_test
+            print("\n" + "="*80)
+            print("  ОЧИСТКА ТЕСТОВЫХ ДАННЫХ")
+            print("="*80)
+            cleanup_after_test(test_clients=['test_client_123'], verbose=True)
+        except Exception as e:
+            print(f"   ⚠️  Ошибка очистки: {e}")
 
 
 if __name__ == "__main__":
