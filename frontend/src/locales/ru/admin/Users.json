@@ -75,5 +75,11 @@
   "try_again": "Попробовать снова",
   "user_count": "пользователей",
   "user_deleted": "Пользователь удален",
+  "tab_information": "Информация",
+  "tab_services": "Услуги",
+  "tab_online_booking": "Онлайн запись",
+  "tab_settings": "Настройки",
+  "tab_schedule": "Расписание",
+  "tab_payroll": "Зарплата",
   "user_updated": "Данные пользователя обновлены"
 }
