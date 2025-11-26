@@ -438,21 +438,7 @@ SERVICES_DATA = [
         'description_ru': 'Коррекция цвета из темного',
         'benefits': ['Professional process', 'Safe bleaching', 'Expert care']
     },
-    {
-        'key': 'hair_treatment',
-        'name': 'Hair Treatment',
-        'name_ru': 'Уход за волосами',
-        'name_ar': 'علاج الشعر',
-        'price': 1050,
-        'min_price': 600,
-        'max_price': 1500,
-        'duration': '3h',
-        'currency': 'AED',
-        'category': 'Hair',
-        'description': 'Professional hair care',
-        'description_ru': 'Профессиональный уход',
-        'benefits': ['Repairs damage', 'Adds shine', 'Strengthens']
-    },
+
     {
         'key': 'natural_treatment',
         'name': 'Natural Treatment',
@@ -1382,21 +1368,7 @@ SERVICES_DATA = [
         'description_ru': 'Сложное окрашивание волос',
         'benefits': ['Trendy', 'Beautiful']
     },
-    {
-        'key': 'balayage_simple',
-        'name': 'Balayage',
-        'name_ru': 'Балаяж',
-        'name_ar': 'بالاياج',
-        'price': 700,
-        'min_price': 700,
-        'max_price': 1200,
-        'duration': '1h',
-        'currency': 'AED',
-        'category': 'Hair',
-        'description': 'Balayage coloring',
-        'description_ru': 'Окрашивание балаяж',
-        'benefits': ['Natural look', 'Sun-kissed']
-    },
+
     {
         'key': 'roots_bleach_blow_dry',
         'name': 'Roots bleach and blow dry',
@@ -1547,36 +1519,8 @@ SERVICES_DATA = [
         'description_ru': 'Наращивание одной капсулы',
         'benefits': ['Volume', 'Length']
     },
-    {
-        'key': 'hair_cut_kids',
-        'name': 'Hair Cut Kids',
-        'name_ru': 'Детская стрижка',
-        'name_ar': 'قص شعر أطفال',
-        'price': 60,
-        'min_price': 60,
-        'max_price': 80,
-        'duration': '50min',
-        'currency': 'AED',
-        'category': 'Hair',
-        'description': 'Kids haircut',
-        'description_ru': 'Стрижка для детей',
-        'benefits': ['Gentle', 'Quick']
-    },
-    {
-        'key': 'blow_dry_range',
-        'name': 'Blow Dry',
-        'name_ru': 'Укладка',
-        'name_ar': 'تجفيف الشعر',
-        'price': 100,
-        'min_price': 100,
-        'max_price': 250,
-        'duration': '1h',
-        'currency': 'AED',
-        'category': 'Hair',
-        'description': 'Professional blow dry',
-        'description_ru': 'Профессиональная укладка',
-        'benefits': ['Volume', 'Style']
-    },
+
+
     {
         'key': 'hair_cut_simple',
         'name': 'Hair cut',
@@ -1895,6 +1839,28 @@ def migrate_special_packages():
     print(f"\n✅ Специальные пакеты добавлены!")
     return 0
 
+def cleanup_duplicates():
+    """Удалить дубликаты услуг"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    duplicates = [
+        'balayage_simple', 
+        'blow_dry_range', 
+        'hair_cut_kids', 
+        'hair_treatment'  # Removing the old one, keeping hair_treatment_range
+    ]
+    
+    print(f"\n🧹 Очистка дубликатов...")
+    
+    for key in duplicates:
+        c.execute("DELETE FROM services WHERE service_key = ?", (key,))
+        if c.rowcount > 0:
+            print(f"   🗑️  Удален дубликат: {key}")
+            
+    conn.commit()
+    conn.close()
+
 def migrate_services():
     """Главная функция миграции"""
     
@@ -2064,5 +2030,7 @@ def migrate_services():
     print(f"   Ошибок: {error_count}")
     print("=" * 70)
     print()
+    
+    cleanup_duplicates()
     
     return 0

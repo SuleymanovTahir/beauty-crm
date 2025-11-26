@@ -25,6 +25,7 @@ import {
     TableHeader,
     TableRow,
 } from '../ui/table';
+import { parseDurationToMinutes } from '../../utils/duration';
 
 interface Service {
     id: number;
@@ -244,7 +245,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
 
                                                     <TableCell>
                                                         <Select
-                                                            value={String(isAssigned ? (assigned.duration || 60) : (service.default_duration || 60))}
+                                                            value={String(parseDurationToMinutes(isAssigned ? assigned.duration : service.default_duration))}
                                                             onValueChange={(value) => {
                                                                 const val = parseInt(value);
                                                                 if (isAssigned) {
