@@ -10,8 +10,14 @@ dist/
 build/
 logs/*.log
 *.db-journal
-.env
+# Environment variables - CRITICAL: Never commit API keys!
+.env.local
+.env.production
+
+# Virtual environments
 .venv
 venv/
 ENV/
+
+# Database
 salon_bot.db
