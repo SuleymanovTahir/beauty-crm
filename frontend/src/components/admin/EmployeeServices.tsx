@@ -26,6 +26,7 @@ import {
     TableRow,
 } from '../ui/table';
 import { parseDurationToMinutes } from '../../utils/duration';
+import { cn } from '../ui/utils';
 
 interface Service {
     id: number;
@@ -222,7 +223,10 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                         handleUpdateService(service.id, { is_online_booking_enabled: checked });
                                                                     }
                                                                 }}
-                                                                className={isAssigned && assigned.is_online_booking_enabled ? "bg-green-500" : "bg-red-400"}
+                                                                className={cn(
+                                                                    "data-[state=checked]:!bg-green-500 data-[state=unchecked]:!bg-red-400",
+                                                                    isAssigned && assigned.is_online_booking_enabled ? "bg-green-500" : "bg-red-400"
+                                                                )}
                                                             />
                                                         </div>
                                                     </TableCell>
@@ -238,7 +242,10 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                         handleUpdateService(service.id, { is_calendar_enabled: checked });
                                                                     }
                                                                 }}
-                                                                className={isAssigned && assigned.is_calendar_enabled ? "bg-green-500" : "bg-red-400"}
+                                                                className={cn(
+                                                                    "data-[state=checked]:!bg-green-500 data-[state=unchecked]:!bg-red-400",
+                                                                    isAssigned && assigned.is_calendar_enabled ? "bg-green-500" : "bg-red-400"
+                                                                )}
                                                             />
                                                         </div>
                                                     </TableCell>
