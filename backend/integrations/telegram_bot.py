@@ -265,3 +265,39 @@ class TelegramBot:
 
 # Глобальный экземпляр бота
 telegram_bot = TelegramBot()
+
+
+async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Dict[str, Any]:
+    """
+    Отправить алерт менеджеру в Telegram
+    
+    Args:
+        message: Текст сообщения (поддерживает HTML)
+        chat_id: ID чата (если None, берется из настроек салона)
+    
+    Returns:
+        Результат отправки
+    """
+    try:
+        # Если chat_id не указан, берем из настроек
+        if chat_id is None:
+            salon_settings = get_salon_settings()
+            chat_id = salon_settings.get('telegram_manager_chat_id')
+            
+            if not chat_id:
+                log_error("Telegram manager chat_id not configured in salon settings", "telegram")
+                return {"success": False, "error": "Manager chat_id not configured"}
+        
+        # Отправляем сообщение
+        result = telegram_bot.send_message(chat_id, message, parse_mode="HTML")
+        
+        if result.get("ok"):
+            log_info(f"Alert sent to Telegram chat {chat_id}", "telegram")
+            return {"success": True, "result": result}
+        else:
+            log_error(f"Failed to send Telegram alert: {result}", "telegram")
+            return {"success": False, "error": result}
+            
+    except Exception as e:
+        log_error(f"Error sending Telegram alert: {e}", "telegram")
+        return {"success": False, "error": str(e)}

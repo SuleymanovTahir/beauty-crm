@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger('crm')
 
-def save_rating(instagram_id: str, rating: int, comment: str = None):
+async def save_rating(instagram_id: str, rating: int, comment: str = None):
     """Сохранить оценку клиента"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
@@ -34,14 +34,41 @@ def save_rating(instagram_id: str, rating: int, comment: str = None):
         
         # Анализ негатива
         if rating <= 3:
-            alert_manager(instagram_id, rating, comment)
+            await alert_manager(instagram_id, rating, comment)
             
     except Exception as e:
         logger.error(f"❌ Error saving rating: {e}")
     finally:
         conn.close()
 
-def alert_manager(instagram_id: str, rating: int, comment: str):
-    """Уведомить менеджера о плохом отзыве"""
+async def alert_manager(instagram_id: str, rating: int, comment: str):
+    """Уведомить менеджера о плохом отзыве через Telegram"""
     logger.warning(f"⚠️ NEGATIVE FEEDBACK from {instagram_id}: {rating}/5 - {comment}")
-    # TODO: Реализовать отправку в Telegram менеджера
+    
+    try:
+        from integrations.telegram_bot import send_telegram_alert
+        from db.clients import get_client_by_id
+        
+        # Получаем информацию о клиенте
+        client = get_client_by_id(instagram_id)
+        client_name = client.get('name', instagram_id) if client else instagram_id
+        
+        # Формируем сообщение для менеджера
+        alert_message = f"""
+🚨 <b>НЕГАТИВНЫЙ ОТЗЫВ!</b>
+
+👤 Клиент: {client_name}
+⭐ Оценка: {rating}/5
+💬 Комментарий: {comment or 'Без комментария'}
+
+📱 Instagram ID: {instagram_id}
+
+⚠️ Требуется внимание менеджера!
+"""
+        
+        # Отправляем уведомление в Telegram
+        await send_telegram_alert(alert_message)
+        logger.info(f"✅ Telegram alert sent for negative feedback from {instagram_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to send Telegram alert: {e}")

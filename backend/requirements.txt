@@ -16,3 +16,6 @@ xlwt
 playwright
 beautifulsoup4
 lxml
+openpyxl
+Pillow
+APScheduler

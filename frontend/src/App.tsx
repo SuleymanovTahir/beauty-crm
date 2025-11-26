@@ -60,6 +60,7 @@ import UserCabinet from './pages/public/UserCabinet';
 import DataDeletion from './pages/public/DataDeletion';
 import Booking from './pages/public/Booking';
 import ClientCabinet from './pages/public/ClientCabinet';
+import RateUs from './pages/public/RateUs';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -343,6 +344,7 @@ export default function App() {
               <Route path="cooperation" element={<Cooperation />} />
               <Route path="faq" element={<FAQ />} />
               <Route path="data-deletion" element={<DataDeletion />} />
+              <Route path="rate-us" element={<RateUs />} />
               <Route
                 path="cabinet"
                 element={

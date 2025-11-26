@@ -476,14 +476,22 @@ async def startup_event():
         start_client_birthday_checker()
         start_booking_reminder_checker()
         
-        # ✅ Запуск планировщика напоминаний (24ч и 2ч)
-        from apscheduler.schedulers.asyncio import AsyncIOScheduler
+        # ✅ Запуск планировщика напоминаний (Instagram)
         from services.reminder_service import check_and_send_reminders
+        from apscheduler.schedulers.asyncio import AsyncIOScheduler
         
         scheduler = AsyncIOScheduler()
-        scheduler.add_job(check_and_send_reminders, 'interval', minutes=30)
+        
+        # Запускаем проверку каждые 30 минут
+        scheduler.add_job(
+            check_and_send_reminders,
+            'interval',
+            minutes=30,
+            id='instagram_reminders'
+        )
+        
         scheduler.start()
-        log_info("✅ Планировщик напоминаний запущен (каждые 30 мин)", "startup")
+        log_info("✅ Instagram reminders scheduler started (every 30 minutes)", "startup")
         
         log_info("✅ Планировщики запущены с async поддержкой (включая email-напоминания)", "startup")
 

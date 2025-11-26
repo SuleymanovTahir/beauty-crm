@@ -543,6 +543,21 @@ def main():
         'Добавление google_place_id и google_api_key в salon_settings'
     )
 
+    results["add_telegram_chat_id"] = run_migration_file(
+        '../scripts/add_telegram_chat_id.py',
+        'Добавление telegram_manager_chat_id в salon_settings'
+    )
+
+    results["add_ratings_table"] = run_migration_file(
+        '../scripts/add_ratings_table.py',
+        'Создание таблицы ratings для отзывов клиентов'
+    )
+
+    results["add_reminder_logs"] = run_migration_file(
+        '../scripts/add_reminder_logs.py',
+        'Создание таблицы reminder_logs для логов напоминаний'
+    )
+
 
     # ========================================================================
     # DATA МИГРАЦИИ - Заполнение данных

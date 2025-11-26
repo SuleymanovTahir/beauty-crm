@@ -12,7 +12,7 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE_NAME)
     return conn
 
-def check_and_send_reminders():
+async def check_and_send_reminders():
     """Проверяет и отправляет напоминания (24ч и 2ч)"""
     logger.info("🔔 Checking for reminders...")
     
@@ -38,7 +38,7 @@ def check_and_send_reminders():
         bookings_24h = c.fetchall()
         
         for booking in bookings_24h:
-            send_reminder(booking, '24h')
+            await send_reminder(booking, '24h')
             
         # 2. Напоминание за 2 часа
         two_hours_start = now + timedelta(hours=1, minutes=30)
@@ -56,39 +56,64 @@ def check_and_send_reminders():
         bookings_2h = c.fetchall()
         
         for booking in bookings_2h:
-            send_reminder(booking, '2h')
+            await send_reminder(booking, '2h')
             
     except Exception as e:
         logger.error(f"❌ Error checking reminders: {e}")
     finally:
         conn.close()
 
-def send_reminder(booking, reminder_type):
-    """Отправляет напоминание (пока просто логирует)"""
+async def send_reminder(booking, reminder_type):
+    """Отправляет напоминание через Instagram"""
     booking_id, instagram_id, service, dt_str, phone = booking
     
     try:
+        from integrations.instagram import send_message
+        
         dt = datetime.fromisoformat(dt_str.replace('T', ' '))
+        date_str = dt.strftime("%d.%m")
         time_str = dt.strftime("%H:%M")
         
-        message = ""
+        # Формируем сообщение в зависимости от типа
         if reminder_type == '24h':
-            message = f"Напоминаем о записи завтра в {time_str} на {service}!"
+            message = f"💎 Напоминаем о вашей записи завтра ({date_str}) в {time_str} на {service}!\n\nБудем рады вас видеть! ✨"
         elif reminder_type == '2h':
-            message = f"Ждем вас через 2 часа ({time_str}) на {service}!"
+            message = f"⏰ Ждем вас через 2 часа ({time_str}) на {service}!\n\nДо встречи! 💅"
+        else:
+            message = f"💎 Напоминание о записи {date_str} в {time_str} на {service}"
             
-        # TODO: Здесь будет реальная отправка сообщения в Instagram
-        logger.info(f"📤 SENDING REMINDER ({reminder_type}) to {instagram_id}: {message}")
+        # Отправляем реальное сообщение в Instagram
+        result = await send_message(instagram_id, message)
+        
+        status = 'sent' if 'error' not in result else 'failed'
+        error_msg = result.get('error') if 'error' in result else None
+        
+        if status == 'sent':
+            logger.info(f"✅ Reminder sent ({reminder_type}) to {instagram_id}: {message[:50]}...")
+        else:
+            logger.error(f"❌ Failed to send reminder to {instagram_id}: {error_msg}")
         
         # Логируем отправку
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
             INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
-            VALUES (?, ?, ?, ?, 'sent')
-        """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat()))
+            VALUES (?, ?, ?, ?, ?)
+        """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat(), status))
         conn.commit()
         conn.close()
         
     except Exception as e:
         logger.error(f"❌ Failed to send reminder: {e}")
+        # Логируем ошибку
+        try:
+            conn = get_db_connection()
+            c = conn.cursor()
+            c.execute("""
+                INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
+                VALUES (?, ?, ?, ?, 'error')
+            """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat()))
+            conn.commit()
+            conn.close()
+        except:
+            pass
