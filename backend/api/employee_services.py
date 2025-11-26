@@ -54,7 +54,7 @@ async def get_user_services(
                 "is_calendar_enabled": bool(row["is_calendar_enabled"])
             })
         
-        # Get all available services
+        # Get all available services (entire catalog)
         c.execute("""
             SELECT id, name, name_ru, name_ar, category, price, duration
             FROM services
