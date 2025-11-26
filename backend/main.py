@@ -339,7 +339,7 @@ async def get_diagnostics():
         
         # employees
         if 'employees' in tables:
-            c.execute("SELECT full_name, position, is_active FROM employees ORDER BY sort_order")
+            c.execute("SELECT full_name, position, is_active FROM users WHERE is_service_provider = 1 ORDER BY sort_order")
             diagnostics["employees"] = [
                 {"name": row[0], "position": row[1], "active": bool(row[2])}
                 for row in c.fetchall()
@@ -447,9 +447,9 @@ async def startup_event():
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
     # Для запуска всех проверок и исправлений используйте скрипт:
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
  
 
 
@@ -542,12 +542,12 @@ if __name__ == "__main__":
                 log_info("", "diagnostics")
                 log_info("👥 EMPLOYEES ДЕТАЛЬНО:", "diagnostics")
 
-                c.execute("SELECT COUNT(*) FROM employees")
+                c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = 1")
                 count = c.fetchone()[0]
                 log_info(f"   Записей: {count}", "diagnostics")
 
                 if count > 0:
-                    c.execute("SELECT full_name, position FROM employees ORDER BY sort_order")
+                    c.execute("SELECT full_name, position FROM users WHERE is_service_provider = 1 ORDER BY sort_order")
                     for i, row in enumerate(c.fetchall(), 1):
                         log_info(f"   {i}. {row[0]} - {row[1]}", "diagnostics")
                 else:

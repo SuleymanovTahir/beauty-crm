@@ -42,8 +42,21 @@ def add_notes_field():
                 FOREIGN KEY (user_id) REFERENCES users(id)
             )
         """)
+        
+        # Проверяем наличие колонки usage_count (для старых миграций)
+        c.execute("PRAGMA table_info(message_templates)")
+        columns = {col[1]: col[2] for col in c.fetchall()}
+        
+        if 'usage_count' not in columns:
+            log_info("➕ Добавляем колонку usage_count...", "migration")
+            try:
+                c.execute("ALTER TABLE message_templates ADD COLUMN usage_count INTEGER DEFAULT 0")
+                log_info("✅ Колонка usage_count добавлена", "migration")
+            except Exception as e:
+                log_error(f"❌ Ошибка добавления usage_count: {e}", "migration")
+
         conn.commit()
-        log_info("✅ Таблица message_templates создана", "migration")
+        log_info("✅ Таблица message_templates создана/обновлена", "migration")
         
         # 3. Проверяем структуру таблицы
         log_info("🔍 Проверяем структуру таблицы message_templates...", "migration")

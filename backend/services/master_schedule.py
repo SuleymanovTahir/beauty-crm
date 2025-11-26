@@ -14,12 +14,12 @@ class MasterScheduleService:
     def __init__(self):
         pass
 
-    def _get_employee_id(self, master_name: str) -> Optional[int]:
-        """Получить ID сотрудника по имени"""
+    def _get_user_id(self, master_name: str) -> Optional[int]:
+        """Получить ID пользователя по имени"""
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
         try:
-            c.execute("SELECT id FROM employees WHERE full_name = ?", (master_name,))
+            c.execute("SELECT id FROM users WHERE full_name = ? AND is_service_provider = 1", (master_name,))
             row = c.fetchone()
             return row[0] if row else None
         finally:
@@ -35,9 +35,9 @@ class MasterScheduleService:
         """
         Установить рабочие часы мастера на день недели
         """
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
-            log_error(f"Employee not found: {master_name}", "schedule")
+        user_id = self._get_user_id(master_name)
+        if not user_id:
+            log_error(f"User not found: {master_name}", "schedule")
             return False
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -46,26 +46,26 @@ class MasterScheduleService:
         try:
             # Проверяем, есть ли уже запись
             c.execute("""
-                SELECT id FROM employee_schedule
-                WHERE employee_id = ? AND day_of_week = ?
-            """, (employee_id, day_of_week))
+                SELECT id FROM user_schedule
+                WHERE user_id = ? AND day_of_week = ?
+            """, (user_id, day_of_week))
 
             existing = c.fetchone()
 
             if existing:
                 # Обновляем
                 c.execute("""
-                    UPDATE employee_schedule
+                    UPDATE user_schedule
                     SET start_time = ?, end_time = ?, is_active = 1
-                    WHERE employee_id = ? AND day_of_week = ?
-                """, (start_time, end_time, employee_id, day_of_week))
+                    WHERE user_id = ? AND day_of_week = ?
+                """, (start_time, end_time, user_id, day_of_week))
             else:
                 # Создаем новую
                 c.execute("""
-                    INSERT INTO employee_schedule
-                    (employee_id, day_of_week, start_time, end_time, is_active)
+                    INSERT INTO user_schedule
+                    (user_id, day_of_week, start_time, end_time, is_active)
                     VALUES (?, ?, ?, ?, 1)
-                """, (employee_id, day_of_week, start_time, end_time))
+                """, (user_id, day_of_week, start_time, end_time))
 
             conn.commit()
             log_info(f"Working hours set for {master_name} on day {day_of_week}: {start_time}-{end_time}", "schedule")
@@ -80,8 +80,8 @@ class MasterScheduleService:
 
     def get_working_hours(self, master_name: str) -> List[Dict]:
         """Получить рабочие часы мастера на всю неделю"""
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
+        user_id = self._get_user_id(master_name)
+        if not user_id:
             return []
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -90,10 +90,10 @@ class MasterScheduleService:
         try:
             c.execute("""
                 SELECT day_of_week, start_time, end_time, is_active
-                FROM employee_schedule
-                WHERE employee_id = ?
+                FROM user_schedule
+                WHERE user_id = ?
                 ORDER BY day_of_week
-            """, (employee_id,))
+            """, (user_id,))
 
             days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
             
@@ -137,8 +137,8 @@ class MasterScheduleService:
         """
         Добавить выходной/отпуск
         """
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
+        user_id = self._get_user_id(master_name)
+        if not user_id:
             return False
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -151,9 +151,9 @@ class MasterScheduleService:
 
             c.execute("""
                 INSERT INTO employee_unavailability
-                (employee_id, start_datetime, end_datetime, type, reason)
+                (user_id, start_datetime, end_datetime, type, reason)
                 VALUES (?, ?, ?, ?, ?)
-            """, (employee_id, start_dt, end_dt, time_off_type, reason))
+            """, (user_id, start_dt, end_dt, time_off_type, reason))
 
             conn.commit()
             log_info(f"Time off added for {master_name}: {start_date} to {end_date}", "schedule")
@@ -170,8 +170,8 @@ class MasterScheduleService:
         """
         Получить выходные/отпуска мастера
         """
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
+        user_id = self._get_user_id(master_name)
+        if not user_id:
             return []
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -181,9 +181,9 @@ class MasterScheduleService:
             query = """
                 SELECT id, start_datetime, end_datetime, type, reason
                 FROM employee_unavailability
-                WHERE employee_id = ?
+                WHERE user_id = ?
             """
-            params = [employee_id]
+            params = [user_id]
 
             if start_date:
                 query += " AND end_datetime >= ?"
@@ -241,8 +241,8 @@ class MasterScheduleService:
         """
         Проверить, доступен ли мастер в указанное время
         """
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
+        user_id = self._get_user_id(master_name)
+        if not user_id:
             return False
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -256,9 +256,9 @@ class MasterScheduleService:
             # Проверяем рабочие часы
             c.execute("""
                 SELECT start_time, end_time
-                FROM employee_schedule
-                WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
-            """, (employee_id, day_of_week))
+                FROM user_schedule
+                WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+            """, (user_id, day_of_week))
 
             schedule = c.fetchone()
             if not schedule:
@@ -279,9 +279,9 @@ class MasterScheduleService:
             c.execute("""
                 SELECT COUNT(*)
                 FROM employee_unavailability
-                WHERE employee_id = ?
+                WHERE user_id = ?
                 AND ? BETWEEN start_datetime AND end_datetime
-            """, (employee_id, check_dt))
+            """, (user_id, check_dt))
 
             if c.fetchone()[0] > 0:
                 return False  # В отпуске/выходной
@@ -318,8 +318,8 @@ class MasterScheduleService:
         """
         Получить все доступные слоты на день
         """
-        employee_id = self._get_employee_id(master_name)
-        if not employee_id:
+        user_id = self._get_user_id(master_name)
+        if not user_id:
             return []
 
         conn = sqlite3.connect(DATABASE_NAME)
@@ -332,9 +332,9 @@ class MasterScheduleService:
 
             c.execute("""
                 SELECT start_time, end_time
-                FROM employee_schedule
-                WHERE employee_id = ? AND day_of_week = ? AND is_active = 1
-            """, (employee_id, day_of_week))
+                FROM user_schedule
+                WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+            """, (user_id, day_of_week))
 
             schedule = c.fetchone()
             if not schedule:
@@ -353,13 +353,13 @@ class MasterScheduleService:
             c.execute("""
                 SELECT start_datetime, end_datetime
                 FROM employee_unavailability
-                WHERE employee_id = ?
+                WHERE user_id = ?
                 AND (
                     (start_datetime BETWEEN ? AND ?) OR
                     (end_datetime BETWEEN ? AND ?) OR
                     (start_datetime <= ? AND end_datetime >= ?)
                 )
-            """, (employee_id, day_start, day_end, day_start, day_end, day_start, day_end))
+            """, (user_id, day_start, day_end, day_start, day_end, day_start, day_end))
 
             unavailability = c.fetchall()
             
@@ -433,10 +433,10 @@ class MasterScheduleService:
         try:
             # Получаем всех мастеров из расписания
             c.execute("""
-                SELECT DISTINCT e.full_name
-                FROM employee_schedule es
-                JOIN employees e ON es.employee_id = e.id
-                WHERE es.is_active = 1
+                SELECT DISTINCT u.full_name
+                FROM user_schedule us
+                JOIN users u ON us.user_id = u.id
+                WHERE us.is_active = 1 AND u.is_service_provider = 1
             """)
 
             masters = [row[0] for row in c.fetchall()]

@@ -141,11 +141,12 @@ def main():
     print_header("SCHEMA МИГРАЦИИ - Структура БД")
 
     # Employees
-    results["schema/employees/create_employees"] = run_migration_function(
-        'db.migrations.schema.employees.create_employees',
-        'create_employees_table',
-        'Создание таблицы employees'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["schema/employees/create_employees"] = run_migration_function(
+    #     'db.migrations.schema.employees.create_employees',
+    #     'create_employees_table',
+    #     'Создание таблицы employees'
+    # )
 
     results["schema/employees/create_positions_table"] = run_migration_function(
         'db.migrations.schema.employees.create_positions_table',
@@ -153,17 +154,19 @@ def main():
         'Создание таблицы positions'
     )
 
-    results["schema/employees/link_employees_positions"] = run_migration_function(
-        'db.migrations.schema.employees.link_employees_positions',
-        'link_employees_positions',
-        'Связывание employees ← positions (position_id)'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["schema/employees/link_employees_positions"] = run_migration_function(
+    #     'db.migrations.schema.employees.link_employees_positions',
+    #     'link_employees_positions',
+    #     'Связывание employees ← positions (position_id)'
+    # )
 
-    results["schema/employees/create_employee_schedules"] = run_migration_function(
-        'db.migrations.schema.employees.create_employee_schedules',
-        'create_employee_schedules_table',
-        'Создание таблицы расписания сотрудников'
-    )
+    # DEPRECATED: employee_schedule consolidated into user_schedule
+    # results["schema/employees/create_employee_schedules"] = run_migration_function(
+    #     'db.migrations.schema.employees.create_employee_schedules',
+    #     'create_employee_schedules_table',
+    #     'Создание таблицы расписания сотрудников'
+    # )
 
     results["schema/employees/create_employee_unavailability"] = run_migration_function(
         'db.migrations.schema.employees.create_employee_unavailability',
@@ -171,29 +174,33 @@ def main():
         'Создание таблицы отсутствий сотрудников'
     )
 
-    results["schema/employees/create_employee_services"] = run_migration_function(
-        'db.migrations.schema.employees.create_employee_services',
-        'create_employee_services_table',
-        'Создание таблицы услуг сотрудников'
-    )
+    # DEPRECATED: employee_services consolidated into user_services
+    # results["schema/employees/create_employee_services"] = run_migration_function(
+    #     'db.migrations.schema.employees.create_employee_services',
+    #     'create_employee_services_table',
+    #     'Создание таблицы услуг сотрудников'
+    # )
 
-    results["schema/employees/add_employee_translations"] = run_migration_function(
-        'db.migrations.schema.employees.add_employee_translations',
-        'add_employee_translations',
-        'Добавление переводов имен сотрудников (name_en, name_ar)'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["schema/employees/add_employee_translations"] = run_migration_function(
+    #     'db.migrations.schema.employees.add_employee_translations',
+    #     'add_employee_translations',
+    #     'Добавление переводов имен сотрудников (name_en, name_ar)'
+    # )
 
-    results["schema/employees/add_employee_birthdays"] = run_migration_function(
-        'db.migrations.schema.employees.add_employee_birthdays',
-        'add_employee_birthdays',
-        'Добавление дней рождения сотрудников'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["schema/employees/add_employee_birthdays"] = run_migration_function(
+    #     'db.migrations.schema.employees.add_employee_birthdays',
+    #     'add_employee_birthdays',
+    #     'Добавление дней рождения сотрудников'
+    # )
 
-    results["schema/employees/add_profile_fields"] = run_migration_function(
-        'db.migrations.schema.employees.add_profile_fields',
-        'add_employee_profile_fields',
-        'Добавление расширенных полей профиля (телефон, соцсети, сертификаты)'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["schema/employees/add_profile_fields"] = run_migration_function(
+    #     'db.migrations.schema.employees.add_profile_fields',
+    #     'add_employee_profile_fields',
+    #     'Добавление расширенных полей профиля (телефон, соцсети, сертификаты)'
+    # )
 
     results["schema/clients/create_conversations_table"] = run_migration_function(
         'db.migrations.schema.clients.create_conversations_table',
@@ -439,6 +446,12 @@ def main():
         'Должность пользователя'
     )
 
+    results["schema/users/ensure_user_schema"] = run_migration_function(
+        'db.migrations.schema.users.ensure_user_schema',
+        'ensure_user_schema',
+        'Гарантия структуры пользователей (Fix)'
+    )
+
     # Other
     results["schema/other/add_notes_field"] = run_migration_function(
         'db.migrations.schema.other.add_notes_field',
@@ -478,19 +491,26 @@ def main():
     #     'Исправление расписания (разрешить NULL для выходных)'
     # )
 
-    results["migration_fix_employee_schedule_nullable"] = run_migration_file(
-        'migration_fix_employee_schedule_nullable.py',
-        'Исправление расписания сотрудников (разрешить NULL для выходных)'
-    )
+    # DEPRECATED: employee_schedule consolidated into user_schedule
+    # results["migration_fix_employee_schedule_nullable"] = run_migration_file(
+    #     'migration_fix_employee_schedule_nullable.py',
+    #     'Исправление расписания сотрудников (разрешить NULL для выходных)'
+    # )
 
     results["run_migration_loyalty_program"] = run_migration_file(
         'run_migration_loyalty_program.py',
-        'Программа лояльности (баллы, уровни, транзакции)'
+        'Миграция программы лояльности'
     )
 
     results["migration_add_position_to_services"] = run_migration_file(
         'migration_add_position_to_services.py',
         'Добавление position_id в services'
+    )
+
+    results["schema/services/add_user_service_settings"] = run_migration_function(
+        'db.migrations.schema.services.add_user_service_settings',
+        'add_user_service_settings',
+        'Настройки услуг для конкретного мастера (цена, длительность)'
     )
 
     # Plans System
@@ -541,17 +561,19 @@ def main():
         'Настройки салона (название, адрес, часы работы)'
     )
 
-    results["data/employees/seed_employees"] = run_migration_function(
-        'db.migrations.data.employees.seed_employees',
-        'seed_employees',
-        'Создание начальных сотрудников из конфига'
-    )
+    # DEPRECATED: employees table consolidated into users
+    # results["data/employees/seed_employees"] = run_migration_function(
+    #     'db.migrations.data.employees.seed_employees',
+    #     'seed_employees',
+    #     'Создание начальных сотрудников из конфига'
+    # )
 
-    results["data/employees/create_employee_schedules"] = run_migration_function(
-        'db.migrations.schema.employees.create_employee_schedules',
-        'create_employee_schedules',
-        'Создание расписаний для всех мастеров'
-    )
+    # DEPRECATED: employee_schedule consolidated into user_schedule
+    # results["data/employees/create_employee_schedules"] = run_migration_function(
+    #     'db.migrations.schema.employees.create_employee_schedules',
+    #     'create_employee_schedules',
+    #     'Создание расписаний для всех мастеров'
+    # )
 
     results["data/employees/add_missing_positions"] = run_migration_function(
         'db.migrations.data.employees.add_missing_positions',
@@ -571,11 +593,12 @@ def main():
         'Заполнение услуг салона'
     )
 
-    results["data/services/seed_employee_services"] = run_migration_function(
-        'db.migrations.data.services.seed_employee_services',
-        'seed_employee_services',
-        'Связывание сотрудников с услугами'
-    )
+    # DEPRECATED: employee_services consolidated into user_services
+    # results["data/services/seed_employee_services"] = run_migration_function(
+    #     'db.migrations.data.services.seed_employee_services',
+    #     'seed_employee_services',
+    #     'Связывание сотрудников с услугами'
+    # )
 
     results["data/schedules/seed_master_schedule"] = run_migration_function(
         'db.migrations.data.schedules.seed_master_schedule',
@@ -594,23 +617,26 @@ def main():
     # ========================================================================
     print_header("MAINTENANCE МИГРАЦИИ - Обслуживание")
 
-    results["maintenance/check_schedules"] = run_migration_function(
-        'db.migrations.maintenance.check_schedules',
-        'check_schedules',
-        'Проверка корректности расписания'
-    )
+    # DEPRECATED: uses employee_schedule table
+    # results["maintenance/check_schedules"] = run_migration_function(
+    #     'db.migrations.maintenance.check_schedules',
+    #     'check_schedules',
+    #     'Проверка корректности расписания'
+    # )
 
-    results["maintenance/check_translations"] = run_migration_function(
-        'db.migrations.maintenance.check_translations',
-        'check_translations',
-        'Проверка переводов'
-    )
+    # DEPRECATED: uses employees table with name_ru column
+    # results["maintenance/check_translations"] = run_migration_function(
+    #     'db.migrations.maintenance.check_translations',
+    #     'check_translations',
+    #     'Проверка переводов'
+    # )
 
-    results["maintenance/remove_duplicate_employees"] = run_migration_function(
-        'db.migrations.maintenance.remove_duplicate_employees',
-        'remove_duplicate_employees',
-        'Удаление дубликатов сотрудников'
-    )
+    # DEPRECATED: uses employee_services table
+    # results["maintenance/remove_duplicate_employees"] = run_migration_function(
+    #     'db.migrations.maintenance.remove_duplicate_employees',
+    #     'remove_duplicate_employees',
+    #     'Удаление дубликатов сотрудников'
+    # )
 
     results["maintenance/remove_master_schedule_table"] = run_migration_function(
         'db.migrations.maintenance.remove_master_schedule_table',
@@ -618,11 +644,12 @@ def main():
         'Удаление устаревшей таблицы master_schedule'
     )
 
-    results["maintenance/link_employees_to_services"] = run_migration_function(
-        'db.migrations.maintenance.link_employees_to_services',
-        'link_employees_to_services',
-        'Связывание сотрудников с услугами'
-    )
+    # DEPRECATED: uses employee_services table
+    # results["maintenance/link_employees_to_services"] = run_migration_function(
+    #     'db.migrations.maintenance.link_employees_to_services',
+    #     'link_employees_to_services',
+    #     'Связывание сотрудников с услугами'
+    # )
 
     # ========================================================================
     # ИТОГИ

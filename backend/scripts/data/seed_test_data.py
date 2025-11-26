@@ -28,12 +28,13 @@ def seed_data():
     print("-" * 70)
 
     # Проверяем есть ли уже мастера
-    c.execute("SELECT COUNT(*) FROM employees WHERE is_active = 1")
+    c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = 1")
     if c.fetchone()[0] > 0:
-        print("⚠️  Мастера уже существуют, очищаю...")
-        c.execute("DELETE FROM employees")
-        c.execute("DELETE FROM employee_services")
-        c.execute("DELETE FROM employee_schedule")
+        print("⚠️  Мастера уже существуют, пропускаю...")
+        return
+        # c.execute("DELETE FROM users WHERE is_service_provider = 1")
+        # c.execute("DELETE FROM user_services")
+        # c.execute("DELETE FROM user_schedule")
 
     masters = [
         {
@@ -64,11 +65,15 @@ def seed_data():
 
     master_ids = {}
     for master in masters:
+        # Generate username
+        username = master['full_name'].lower().replace(" ", "_")
+        
         c.execute("""
-            INSERT INTO employees (full_name, position, phone, email, bio, experience, is_active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
-        """, (master['full_name'], master['position'], master['phone'], master['email'],
-              master['bio'], master['experience'], now, now))
+            INSERT INTO users (username, password_hash, full_name, position, phone, email, bio, experience, 
+                              is_active, is_service_provider, role, created_at)
+            VALUES (?, 'placeholder_hash', ?, ?, ?, ?, ?, ?, 1, 1, 'employee', ?)
+        """, (username, master['full_name'], master['position'], master['phone'], master['email'],
+              master['bio'], master['experience'], now))
         master_ids[master['full_name']] = c.lastrowid
         print(f"✅ Добавлен мастер: {master['full_name']} ({master['position']})")
 
@@ -209,7 +214,7 @@ def seed_data():
     lyazzat_id = master_ids['Ляззат']
     for service_key in ['manicure_basic', 'pedicure_basic']:
         c.execute("""
-            INSERT INTO employee_services (employee_id, service_id)
+            INSERT INTO user_services (user_id, service_id)
             VALUES (?, ?)
         """, (lyazzat_id, service_ids[service_key]))
         print(f"✅ Ляззат ← {service_key}")
@@ -219,7 +224,7 @@ def seed_data():
         master_id = master_ids[master_name]
         for service_key in ['haircut_women', 'hair_coloring', 'keratin_treatment', 'hair_care']:
             c.execute("""
-                INSERT INTO employee_services (employee_id, service_id)
+                INSERT INTO user_services (user_id, service_id)
                 VALUES (?, ?)
             """, (master_id, service_ids[service_key]))
         print(f"✅ {master_name} ← Hair Services")
@@ -232,7 +237,7 @@ def seed_data():
     for master_name, master_id in master_ids.items():
         for day in range(6):  # 0=Пн, 5=Сб
             c.execute("""
-                INSERT INTO employee_schedule (employee_id, day_of_week, start_time, end_time, is_active)
+                INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
                 VALUES (?, ?, '10:00', '21:00', 1)
             """, (master_id, day))
         print(f"✅ {master_name}: Пн-Сб 10:00-21:00")

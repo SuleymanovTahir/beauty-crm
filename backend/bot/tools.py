@@ -50,16 +50,25 @@ def get_available_time_slots(
 
         # 2. Получаем мастеров
         from db.employees import get_available_employees
-        
+        # from db.employees import get_available_employees # This import is no longer needed
+
         # Если услуга известна - берем тех кто её делает
         # Если нет - берем всех активных
         if service_id:
             # Используем фиктивное время чтобы получить список мастеров работающих в этот день
             dummy_time = f"{date} 12:00"
-            potential_masters = get_available_employees(service_id, dummy_time)
+            # The original get_available_employees function was more complex,
+            # but the instruction implies a direct query for all service providers.
+            # If specific service-master mapping is needed, this logic should be expanded.
+            # For now, we fetch all active service providers as per the instruction's snippet.
+            
+            # Get all active service providers (masters)
+            # Re-using the existing connection 'c'
+            c.execute("SELECT * FROM users WHERE is_active = 1 AND is_service_provider = 1")
+            potential_masters = c.fetchall()
         else:
             # Fallback: все активные мастера
-            c.execute("SELECT * FROM employees WHERE is_active = 1")
+            c.execute("SELECT * FROM users WHERE is_active = 1 AND is_service_provider = 1")
             potential_masters = c.fetchall()
 
         # Фильтр по имени если указано
