@@ -63,53 +63,40 @@ async def get_my_employee_profile(
 
     log_info(f"✅ [Profile] Пользователь авторизован: user_id={user.get('id')}, username={user.get('username')}, role={user.get('role')}", "api")
 
-    # Проверяем, есть ли у пользователя employee_id
-    employee_id = user.get("employee_id")
-    log_info(f"🔍 [Profile] Проверка employee_id: {employee_id}", "api")
-    
-    if not employee_id:
-        log_error(f"❌ [Profile] User {user.get('username')} (id={user.get('id')}) не привязан к сотруднику (employee_id отсутствует)", "api")
-        log_error(f"❌ [Profile] Полные данные пользователя: {user}", "api")
-        return JSONResponse({"error": "User is not linked to an employee"}, status_code=404)
-
     try:
-        log_info(f"🔍 [Profile] Загрузка данных сотрудника с employee_id={employee_id}", "api")
+        log_info(f"🔍 [Profile] Загрузка данных пользователя с id={user.get('id')}", "api")
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
+        # Запрашиваем данные из таблицы users (не employees!)
         c.execute("""
-            SELECT id, full_name, name_ru, name_ar, position, position_ru, position_ar,
-                   experience, photo, bio, phone, email, instagram, is_active
-            FROM employees
+            SELECT id, full_name, position, email, phone, birthday, 
+                   is_service_provider, role, is_active
+            FROM users
             WHERE id = ?
-        """, (employee_id,))
+        """, (user["id"],))
 
         row = c.fetchone()
         conn.close()
 
         if not row:
-            log_error(f"❌ [Profile] Сотрудник с id={employee_id} не найден в таблице employees", "api")
-            return JSONResponse({"error": "Employee not found"}, status_code=404)
+            log_error(f"❌ [Profile] Пользователь с id={user.get('id')} не найден в таблице users", "api")
+            return JSONResponse({"error": "User not found"}, status_code=404)
 
-        log_info(f"✅ [Profile] Профиль сотрудника успешно загружен: {row[1]} ({row[4]})", "api")
+        log_info(f"✅ [Profile] Профиль успешно загружен: {row[1]} ({row[2]})", "api")
         
         # Возвращаем данные в формате, который ожидает фронтенд
         profile_data = {
             "id": row[0],
-            "username": user.get('username'),  # Добавляем username из user
+            "username": user.get('username'),
             "full_name": row[1],
-            "name_ru": row[2],
-            "name_ar": row[3],
-            "position": row[4],
-            "position_ru": row[5],
-            "position_ar": row[6],
-            "experience": row[7],
-            "photo": row[8],
-            "bio": row[9],
-            "phone": row[10],
-            "email": row[11],
-            "instagram": row[12],
-            "is_active": bool(row[13])
+            "position": row[2],
+            "email": row[3],
+            "phone": row[4],
+            "birthday": row[5],
+            "is_service_provider": bool(row[6]),
+            "role": row[7],
+            "is_active": bool(row[8])
         }
         
         return {
@@ -147,8 +134,7 @@ async def update_my_employee_profile(
         update_fields = []
         update_values = []
 
-        allowed_fields = ['full_name', 'name_ru', 'name_ar', 'position', 'position_ru',
-                          'position_ar', 'experience', 'photo', 'bio', 'phone', 'email', 'instagram']
+        allowed_fields = ['full_name', 'position', 'experience', 'photo', 'bio', 'phone', 'email', 'instagram']
 
         for field in allowed_fields:
             if field in data:

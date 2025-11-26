@@ -316,72 +316,15 @@ export default function Users() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {/* Кнопка редактирования только если есть право */}
+                        {/* Кнопка редактирования - открывает детальную страницу */}
                         {permissions.canEditUsers && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setEditForm({
-                                username: user.username,
-                                full_name: user.full_name,
-                                email: user.email || '',
-                                position: user.position || ''
-                              });
-                              setShowEditDialog(true);
-                            }}
+                            onClick={() => navigate(`/admin/users/${user.id}`)}
                             title={t('action_edit_title')}
                           >
                             <Edit className="w-4 h-4" />
-                          </Button>
-                        )}
-
-                        {/* Кнопка изменения роли только если есть право управлять этой ролью */}
-                        {currentUser && RoleHierarchy.canManageRole(currentUser.role, user.role) && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowRoleDialog(true);
-                            }}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title={t('action_change_role_title')}
-                          >
-                            <Shield className="w-4 h-4" />
-                          </Button>
-                        )}
-
-                        {/* Кнопка управления правами только для директора */}
-                        {currentUser?.role === 'director' && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowPermissionsDialog(true);
-                            }}
-                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                            title={t('action_manage_permissions_title')}
-                          >
-                            <Key className="w-4 h-4" />
-                          </Button>
-                        )}
-
-                        {/* Кнопка управления графиком */}
-                        {(currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'manager') && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowScheduleDialog(true);
-                            }}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            title={t('action_manage_schedule_title')}
-                          >
-                            <Calendar className="w-4 h-4" />
                           </Button>
                         )}
 

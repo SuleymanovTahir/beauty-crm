@@ -10,6 +10,27 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 
+def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
+    """
+    Get avatar URL with gender-based fallback
+    
+    Args:
+        profile_pic: Profile picture path from database (can be None)
+        gender: User gender ('male', 'female', or 'other')
+    
+    Returns:
+        Avatar URL (profile_pic or gender-based default)
+    """
+    if profile_pic:
+        return profile_pic
+    
+    # Gender-based fallback
+    if gender == 'male':
+        return '/static/avatars/default_male.png'
+    else:  # female or other or None
+        return '/static/avatars/default_female.png'
+
+
 def get_all_employees(active_only=True, service_providers_only=False):
     """
     Получить всех сотрудников (теперь из users таблицы)
@@ -219,20 +240,35 @@ def update_employee_service(employee_id: int, service_id: int,
     return success
 
 
-def add_employee_service(employee_id: int, service_id: int):
-    """Добавить специализацию сотруднику (в user_services)"""
+def add_employee_service(employee_id: int, service_id: int, 
+                        price: float = None, duration: int = None,
+                        is_online_booking_enabled: bool = True,
+                        is_calendar_enabled: bool = True,
+                        price_min: float = None, price_max: float = None):
+    """Назначить услугу сотруднику"""
     conn = get_db_connection()
     c = conn.cursor()
-
-    try:
-        c.execute("""INSERT INTO user_services (user_id, service_id)
-                     VALUES (?, ?)""", (employee_id, service_id))
-        conn.commit()
-        conn.close()
-        return True
-    except sqlite3.IntegrityError:
-        conn.close()
-        return False
+    
+    # Check if table has new columns
+    c.execute("PRAGMA table_info(user_services)")
+    columns = [info[1] for info in c.fetchall()]
+    
+    if 'price' in columns:
+        c.execute("""
+            INSERT OR IGNORE INTO user_services 
+            (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled, price_min, price_max)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (employee_id, service_id, price, duration, 
+              1 if is_online_booking_enabled else 0, 
+              1 if is_calendar_enabled else 0,
+              price_min, price_max))
+    else:
+        c.execute("INSERT OR IGNORE INTO user_services (user_id, service_id) VALUES (?, ?)", 
+                 (employee_id, service_id))
+        
+    conn.commit()
+    conn.close()
+    return True
 
 
 def remove_employee_service(employee_id: int, service_id: int):

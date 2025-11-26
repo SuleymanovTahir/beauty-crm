@@ -7,6 +7,29 @@ from typing import Optional
 import re
 from utils.logger import log_info,log_error
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
+
+
+def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
+    """
+    Get avatar URL with gender-based fallback
+    
+    Args:
+        profile_pic: Profile picture path from database (can be None)
+        gender: User gender ('male', 'female', or 'other')
+    
+    Returns:
+        Avatar URL (profile_pic or gender-based default)
+    """
+    if profile_pic:
+        return profile_pic
+    
+    # Gender-based fallback
+    if gender == 'male':
+        return '/static/avatars/default_male.png'
+    else:  # female or other or None
+        return '/static/avatars/default_female.png'
+
 
 # Ensure the clients table has the new columns required for import
 def ensure_client_columns(conn=None):

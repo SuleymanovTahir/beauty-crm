@@ -84,6 +84,13 @@ async def main():
     except ImportError:
         print("⚠️  Skipping seed_full_data (module not found)")
 
+    # 3.5.5 Update Employee Details
+    try:
+        from update_employee_details import update_employees
+        results['update_employee_details'] = await run_fix("Update Employee Details", update_employees)
+    except ImportError:
+        print("⚠️  Skipping update_employee_details (module not found)")
+
     # 3.6 Bot Settings Updates
     try:
         from scripts.update_emoji_rules import force_update_emoji_rules

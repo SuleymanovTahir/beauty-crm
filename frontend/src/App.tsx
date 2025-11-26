@@ -24,6 +24,7 @@ import PermissionManagement from './pages/admin/PermissionManagement';
 import PlansManagement from './pages/admin/PlansManagement';
 import PublicContent from './pages/admin/PublicContent';
 import EmployeeDetail from './pages/admin/EmployeeDetail';
+import EmployeeManagement from './pages/admin/EmployeeManagement';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -215,6 +216,8 @@ export default function App() {
               <Route path="chat" element={<Chat />} />
               <Route path="users" element={<Users />} />
               <Route path="users/:id" element={<EmployeeDetail />} />
+              <Route path="employees" element={<EmployeeManagement />} />
+              <Route path="employees/:id" element={<EmployeeManagement />} />
               <Route path="users/create" element={<CreateUser />} />
               <Route path="users/pending" element={<PendingUsers />} />
               <Route path="users/permissions" element={<PermissionManagement />} />
