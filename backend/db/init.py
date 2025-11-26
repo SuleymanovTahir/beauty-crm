@@ -409,6 +409,33 @@ def init_database():
         log_info("✅ Дефолтные настройки бота созданы", "database")
     
     
+    # Таблица отзывов и рейтингов
+    c.execute('''CREATE TABLE IF NOT EXISTS ratings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        booking_id INTEGER,
+        instagram_id TEXT,
+        rating INTEGER,
+        comment TEXT,
+        created_at TEXT,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id)
+    )''')
+    
+    # Таблица логов напоминаний
+    c.execute('''CREATE TABLE IF NOT EXISTS reminder_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        booking_id INTEGER,
+        client_id TEXT,
+        reminder_type TEXT,
+        sent_at TEXT,
+        status TEXT
+    )''')
+    
+    # Миграция: добавить telegram_manager_chat_id в salon_settings
+    c.execute("PRAGMA table_info(salon_settings)")
+    salon_columns = [col[1] for col in c.fetchall()]
+    if 'telegram_manager_chat_id' not in salon_columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN telegram_manager_chat_id TEXT")
+    
     # Ensure client columns exist
     from .clients import ensure_client_columns
     ensure_client_columns(conn)
