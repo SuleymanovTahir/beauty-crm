@@ -48,7 +48,7 @@ def fix_employee_services():
         print("\n2. LOADING SERVICES:")
         print("-" * 70)
         c.execute("""
-            SELECT id, name, name_ru, category, price, min_price, max_price, duration
+            SELECT id, service_key, name, name_ru, category, price, min_price, max_price, duration
             FROM services
             WHERE is_active = 1
             ORDER BY category, name_ru
@@ -57,53 +57,112 @@ def fix_employee_services():
         
         # Build category mapping
         services_by_category = {}
-        for service in services:
-            category = service['category']
+        for s in services:
+            category = s['category']
             if category not in services_by_category:
                 services_by_category[category] = []
-            services_by_category[category].append(service)
+            services_by_category[category].append(s)
         
         for category, svc_list in services_by_category.items():
             print(f"   {category:15s}: {len(svc_list)} services")
 
         # 3. Position to categories mapping
         # 3. Position to categories mapping
-        # Special handling for specific employees by name
-        jennifer_services = [
-            # Hair (2)
-            'Hair wash', 'Hair Treatment',
-            # Facial (4)
-            'Deep Facial Cleaning 60 min', 'Medical Facial Cleaning', 'Facial Massage', 'Peeling',
-            # Nails (17)
-            'Manicure Basic', 'Spa Manicure', 'Manicure Classic', 'Manicure Gel', 'Japanese Manicure', 
-            'Baby Manicure', 'Change Classic Polish', 'Change Gel', 'Pedicure Basic', 'Spa Pedicure', 
-            'Pedicure Classic', 'Pedicure Gel', 'Remove Old Gel', 'Remove Classic Polish', 'Time Of Relax SPA', 
-            'Hard Gel', 'French',
-            # Nail Extension (1)
-            'Remove nail extensions',
-            # Lashes/Brows (1)
-            'Eyebrow Shaping',
-            # Massage (13)
-            'Head Massage 40min', 'Massage (legs/feet/hands) 40min', 'Back Massage 30min', 
-            'Body Massage 40min', 'Sculpture Body Massage', 'Anti-Cellulite Massage 60min', 
-            'Moroccan Bathhouse 60min', 'Moroccan Bath Loofa', 'Hotstone Massage', 
-            'Package of 5 Massages',
-            # Promo (4)
-            'Promotion overlay manicure, pedicure 290 aed', 'Promo mani pedi 250 без укрепления', 
-            'Combo basic 150', 'Promo 390',
-            # Waxing (6)
-            'Full Legs', 'Half Legs', 'Full Arms', 'Half Arms', 'Full Body Waxing', 'Underarms'
+        # 3. Position to categories mapping
+        # 3. Position to categories mapping
+        # Special handling for specific employees by name (using service_key for stability)
+        
+        # JENNIFER
+        jennifer_keys = [
+            # Combo
+            'combo_basic_150', 'promo_390',
+            # Waxing/Sugaring
+            'full_legs', 'half_legs', 'full_arms', 'half_arms', 'full_body', 'underarms',
+            # Massage
+            'back_massage', 'body_massage', 'hotstone_massage', 'anticellulite_massage',
+            'back_massage_5_10', 'classic_general_massage', 'anti_cellulite_massage_extra',
+            'sculpture_massage', 'moroccan_loofa', 'moroccan_bath', 'head_massage',
+            'legs_hands_massage', 'neck_shoulder_30min',
+            # Manicure/Pedicure
+            'manicure_no_polish', 'pedicure_no_polish', 'manicure_normal', 'pedicure_normal',
+            'gelish_manicure', 'pedicure_gelish', 'spa_manicure', 'remove_classic',
+            'remove_gel', 'change_gel', 'spa_pedicure', 'change_classic_polish',
+            'french', 'hard_gel', 'baby_manicure', 'japanese_manicure', 'nail_repair_1',
+            # Promo
+            'promo_overlay_290', 'promo_mani_pedi_250',
+            # Skin Care
+            'face_lift_massage', 'medical_facial', 'peeling', 'deep_facial_cleaning',
+            # Hair / Removal
+            'hair_wash', 'hair_treatment_range', 'remove_lashes', 'remove_nail_extensions'
+        ]
+
+        # SIMO
+        simo_keys = [
+            # Coloring
+            'ombre_shatush_airtouch', 'balayage_simple', 'roots_bleach_blow_dry',
+            'toner_blow_dry', 'bleach_hair', 'roots_color_blow_dry',
+            'full_head_color_blow_dry', 'balayage_cut_style',
+            # Hair Care
+            'hair_treatment_range', 'natural_treatment',
+            # Hair Extension
+            'hair_extension_correction', 'hair_extension_capsule',
+            # Cuts & Styles
+            'hair_cut_kids', 'blow_dry_range', 'hair_wash', 'hair_cut_simple',
+            'trimming_no_wash', 'hair_style', 'hair_cut_blow_dry'
+        ]
+
+        # MESTAN (Same as Simo + Brows + Promo)
+        mestan_keys = simo_keys + [
+            'eyebrows_coloring', 'blow_dry_package_5', 'promo_390'
+        ]
+
+        # LYAZZAT
+        lyazzat_keys = [
+            # Extension/Strengthening
+            'gel_overlay', 'gel_extension', 'acrylic_overlay', 'acrylic_extension',
+            # Manicure/Pedicure (All 19 services - listing explicitly to be safe)
+            'manicure_no_polish', 'pedicure_no_polish', 'manicure_normal', 'pedicure_normal',
+            'gelish_manicure', 'pedicure_gelish', 'spa_manicure', 'remove_classic',
+            'remove_gel', 'change_gel', 'spa_pedicure', 'change_classic_polish',
+            'french', 'hard_gel', 'baby_manicure', 'japanese_manicure', 'nail_repair_1',
+            'time_of_relax_spa', 'remove_nail_extensions', # Kept one instance
+            # Promo
+            'promo_overlay_290', 'promo_mani_pedi_250', 'combo_basic_150', 'promo_390'
+        ]
+
+        # GULYA
+        gulya_keys = [
+            # Waxing/Sugaring
+            'full_legs', 'full_arms', 'half_arms', 'full_body', 'bikini_line',
+            'underarms', 'full_bikini', 'brazilian', 'full_face', 'cheeks',
+            'upper_lips', 'chin', # Fixed upper_lip -> upper_lips
+            # Manicure/Pedicure (All 20 services)
+            'manicure_no_polish', 'pedicure_no_polish', 'manicure_normal', 'pedicure_normal',
+            'gelish_manicure', 'pedicure_gelish', 'spa_manicure', 'remove_classic',
+            'remove_gel', 'change_gel', 'spa_pedicure', 'change_classic_polish',
+            'french', 'hard_gel', 'baby_manicure', 'japanese_manicure', 'nail_repair_1',
+            'time_of_relax_spa', 
+            # Extension
+            'acrylic_overlay', 'acrylic_extension', 'remove_nail_extensions',
+            # Extra
+            'podology',
+            # Promo
+            'promo_overlay_290', 'promo_mani_pedi_250', 'combo_basic_150', 'promo_390'
         ]
 
         employee_specific_services = {
-            'JENNIFER': jennifer_services
+            'JENNIFER': jennifer_keys,
+            'SIMO': simo_keys,
+            'MESTAN': mestan_keys,
+            'LYAZZAT': lyazzat_keys,
+            'GULYA': gulya_keys
         }
         
         employee_specific_categories = {}
         
         position_to_categories = {
             'Hair Stylist': ['Hair'],
-            'Nail Master': ['Nails', 'Nail Extension', 'Promo'], # Updated to include new categories
+            'Nail Master': ['Nails', 'Nail Extension', 'Promo'],
             'Nail Master/Waxing': ['Nails', 'Waxing', 'Nail Extension'],
             'Nail Master/Massage Therapist': ['Nails', 'Massage', 'Nail Extension'],
             'Владелец': []  # Owner - skip (admin role)
@@ -129,18 +188,20 @@ def fix_employee_services():
             
             print(f"\n   👤 {emp_name} ({position})")
             
+            assigned_count = 0
+            
             # Check if this employee has specific SERVICE assignments
             if emp_name in employee_specific_services:
-                specific_services = employee_specific_services[emp_name]
-                print(f"      ℹ️  Using {len(specific_services)} specific services for {emp_name}")
+                specific_keys = employee_specific_services[emp_name]
+                print(f"      ℹ️  Using {len(specific_keys)} specific services for {emp_name}")
                 
-                for svc_name in specific_services:
-                    # Find service by name (fuzzy match or exact)
-                    # We need to search across all categories
+                for key in specific_keys:
+                    # Find service by key
                     found = False
                     for cat, svc_list in services_by_category.items():
                         for s in svc_list:
-                            if s['name'] == svc_name or s['name_ru'] == svc_name:
+                            # Match by service_key (preferred) or name (fallback)
+                            if s['service_key'] == key:
                                 # Assign this service
                                 try:
                                     c.execute("""
@@ -158,7 +219,7 @@ def fix_employee_services():
                         if found: break
                     
                     if not found:
-                        print(f"      ⚠️  Service not found: {svc_name}")
+                        print(f"      ⚠️  Service not found: {key}")
                 
                 print(f"      📊 Total: {assigned_count} services assigned")
                 continue

@@ -172,12 +172,12 @@ def get_employee_services(employee_id: int):
                             us.is_calendar_enabled, us.price_min, us.price_max
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ?""", (employee_id,))
+                     WHERE us.user_id = ? AND s.is_active = 1""", (employee_id,))
     else:
         c.execute("""SELECT s.*, NULL, NULL, 1, 1, NULL, NULL
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ?""", (employee_id,))
+                     WHERE us.user_id = ? AND s.is_active = 1""", (employee_id,))
     
     services = c.fetchall()
     conn.close()

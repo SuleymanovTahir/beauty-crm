@@ -1262,8 +1262,486 @@ SERVICES_DATA = [
         'description_ru': 'Безопасное снятие наращивания',
         'benefits': ['Safe', 'Clean']
     },
-
-    # Promo
+    {
+        'key': 'back_massage_5_10',
+        'name': 'Back massage (5-10)',
+        'name_ru': 'Массаж спины (5-10)',
+        'name_ar': 'تدليك الظهر (5-10)',
+        'price': 540,
+        'min_price': 540,
+        'max_price': 960,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Massage',
+        'description': 'Back massage package',
+        'description_ru': 'Пакет массажа спины',
+        'benefits': ['Relaxing', 'Therapeutic']
+    },
+    {
+        'key': 'classic_general_massage',
+        'name': 'Classic general massage',
+        'name_ru': 'Классический общий массаж',
+        'name_ar': 'تدليك عام كلاسيكي',
+        'price': 1080,
+        'min_price': 1080,
+        'max_price': 1920,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Massage',
+        'description': 'Classic full body massage',
+        'description_ru': 'Классический массаж всего тела',
+        'benefits': ['Relaxing', 'Full body']
+    },
+    {
+        'key': 'anti_cellulite_massage_extra',
+        'name': 'Anti-cellulite massage (доп.)',
+        'name_ru': 'Антицеллюлитный массаж (доп.)',
+        'name_ar': 'تدليك ضد السيلوليت (إضافي)',
+        'price': 1080,
+        'min_price': 1080,
+        'max_price': 1920,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Massage',
+        'description': 'Anti-cellulite massage package',
+        'description_ru': 'Пакет антицеллюлитного массажа',
+        'benefits': ['Slimming', 'Firming']
+    },
+    {
+        'key': 'neck_shoulder_30min',
+        'name': 'Neck & shoulder 30 min',
+        'name_ru': 'Шейно-воротниковая зона 30 мин',
+        'name_ar': 'الرقبة والكتف 30 دقيقة',
+        'price': 165,
+        'min_price': None,
+        'max_price': None,
+        'duration': '30min',
+        'currency': 'AED',
+        'category': 'Massage',
+        'description': 'Neck and shoulder massage',
+        'description_ru': 'Массаж шейно-воротниковой зоны',
+        'benefits': ['Relieves tension', 'Quick']
+    },
+    {
+        'key': 'nail_repair_1',
+        'name': 'Починка 1 ногтя',
+        'name_ru': 'Починка 1 ногтя',
+        'name_ar': 'إصلاح ظفر واحد',
+        'price': 35,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nails',
+        'description': 'Repair of 1 nail',
+        'description_ru': 'Ремонт одного ногтя',
+        'benefits': ['Quick fix']
+    },
+    {
+        'key': 'face_lift_massage',
+        'name': 'Face lift massage',
+        'name_ru': 'Подтягивающий массаж лица',
+        'name_ar': 'تدليك شد الوجه',
+        'price': 250,
+        'min_price': None,
+        'max_price': None,
+        'duration': '30min',
+        'currency': 'AED',
+        'category': 'Facial',
+        'description': 'Face lift massage',
+        'description_ru': 'Подтягивающий массаж лица',
+        'benefits': ['Lifting', 'Anti-aging']
+    },
+    {
+        'key': 'remove_lashes',
+        'name': 'Remove lashes',
+        'name_ru': 'Снятие ресниц',
+        'name_ar': 'إزالة الرموش',
+        'price': 50,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Lashes',
+        'description': 'Safe removal of lashes',
+        'description_ru': 'Безопасное снятие ресниц',
+        'benefits': ['Safe', 'Clean']
+    },
+    {
+        'key': 'ombre_shatush_airtouch',
+        'name': 'Ombre, shatush, air-touch',
+        'name_ru': 'Омбре, шатуш, аиртач',
+        'name_ar': 'أومبير، شاتوش، إير تاتش',
+        'price': 1000,
+        'min_price': 1000,
+        'max_price': 1500,
+        'duration': '2h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Complex hair coloring',
+        'description_ru': 'Сложное окрашивание волос',
+        'benefits': ['Trendy', 'Beautiful']
+    },
+    {
+        'key': 'balayage_simple',
+        'name': 'Balayage',
+        'name_ru': 'Балаяж',
+        'name_ar': 'بالاياج',
+        'price': 700,
+        'min_price': 700,
+        'max_price': 1200,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Balayage coloring',
+        'description_ru': 'Окрашивание балаяж',
+        'benefits': ['Natural look', 'Sun-kissed']
+    },
+    {
+        'key': 'roots_bleach_blow_dry',
+        'name': 'Roots bleach and blow dry',
+        'name_ru': 'Осветление корней и укладка',
+        'name_ar': 'تبييض الجذور وتجفيف الشعر',
+        'price': 350,
+        'min_price': 350,
+        'max_price': 450,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Roots bleach with blow dry',
+        'description_ru': 'Осветление корней с укладкой',
+        'benefits': ['Bright', 'Styled']
+    },
+    {
+        'key': 'toner_blow_dry',
+        'name': 'Toner and blow dry',
+        'name_ru': 'Тонирование и укладка',
+        'name_ar': 'تونر وتجفيف الشعر',
+        'price': 300,
+        'min_price': 300,
+        'max_price': 450,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Hair toning with blow dry',
+        'description_ru': 'Тонирование волос с укладкой',
+        'benefits': ['Refresh color', 'Shiny']
+    },
+    {
+        'key': 'bleach_hair',
+        'name': 'Bleach hair',
+        'name_ru': 'Осветление волос',
+        'name_ar': 'تبييض الشعر',
+        'price': 1300,
+        'min_price': 1300,
+        'max_price': 2300,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Full hair bleaching',
+        'description_ru': 'Полное осветление волос',
+        'benefits': ['Blonde', 'Transformation']
+    },
+    {
+        'key': 'roots_color_blow_dry',
+        'name': 'Roots Color and blow dry',
+        'name_ru': 'Окрашивание корней и укладка',
+        'name_ar': 'صبغ الجذور وتجفيف الشعر',
+        'price': 200,
+        'min_price': 200,
+        'max_price': 350,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Roots coloring with blow dry',
+        'description_ru': 'Окрашивание корней с укладкой',
+        'benefits': ['Cover gray', 'Fresh look']
+    },
+    {
+        'key': 'full_head_color_blow_dry',
+        'name': 'Full Head Color and blow dry',
+        'name_ru': 'Окрашивание всей головы и укладка',
+        'name_ar': 'صبغ كامل الرأس وتجفيف الشعر',
+        'price': 350,
+        'min_price': 350,
+        'max_price': 500,
+        'duration': '2h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Full head coloring with blow dry',
+        'description_ru': 'Окрашивание всей головы с укладкой',
+        'benefits': ['New color', 'Styled']
+    },
+    {
+        'key': 'balayage_cut_style',
+        'name': 'Balayage + Cut + hair style',
+        'name_ru': 'Балаяж + Стрижка + Укладка',
+        'name_ar': 'بالاياج + قص + تصفيف',
+        'price': 400,
+        'min_price': None,
+        'max_price': None,
+        'duration': '2h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Balayage package with cut and style',
+        'description_ru': 'Пакет балаяж со стрижкой и укладкой',
+        'benefits': ['Complete look', 'Value']
+    },
+    {
+        'key': 'hair_treatment_range',
+        'name': 'Hair Treatment',
+        'name_ru': 'Уход за волосами',
+        'name_ar': 'علاج الشعر',
+        'price': 600,
+        'min_price': 600,
+        'max_price': 1500,
+        'duration': '3h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Professional hair treatment',
+        'description_ru': 'Профессиональный уход за волосами',
+        'benefits': ['Restoration', 'Health']
+    },
+    {
+        'key': 'natural_treatment',
+        'name': 'Natural Treatment',
+        'name_ru': 'Натуральный уход',
+        'name_ar': 'علاج طبيعي',
+        'price': 200,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Natural hair treatment',
+        'description_ru': 'Натуральный уход за волосами',
+        'benefits': ['Organic', 'Gentle']
+    },
+    {
+        'key': 'hair_extension_correction',
+        'name': 'Hair extension (коррекция)',
+        'name_ru': 'Коррекция наращивания волос',
+        'name_ar': 'تصحيح وصلات الشعر',
+        'price': 1500,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Hair extension correction',
+        'description_ru': 'Коррекция наращенных волос',
+        'benefits': ['Maintenance', 'Long lasting']
+    },
+    {
+        'key': 'hair_extension_capsule',
+        'name': 'Hair extensions (1 капсула)',
+        'name_ru': 'Наращивание волос (1 капсула)',
+        'name_ar': 'وصلات شعر (كبسولة واحدة)',
+        'price': 10,
+        'min_price': 10,
+        'max_price': 12,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Single capsule hair extension',
+        'description_ru': 'Наращивание одной капсулы',
+        'benefits': ['Volume', 'Length']
+    },
+    {
+        'key': 'hair_cut_kids',
+        'name': 'Hair Cut Kids',
+        'name_ru': 'Детская стрижка',
+        'name_ar': 'قص شعر أطفال',
+        'price': 60,
+        'min_price': 60,
+        'max_price': 80,
+        'duration': '50min',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Kids haircut',
+        'description_ru': 'Стрижка для детей',
+        'benefits': ['Gentle', 'Quick']
+    },
+    {
+        'key': 'blow_dry_range',
+        'name': 'Blow Dry',
+        'name_ru': 'Укладка',
+        'name_ar': 'تجفيف الشعر',
+        'price': 100,
+        'min_price': 100,
+        'max_price': 250,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Professional blow dry',
+        'description_ru': 'Профессиональная укладка',
+        'benefits': ['Volume', 'Style']
+    },
+    {
+        'key': 'hair_cut_simple',
+        'name': 'Hair cut',
+        'name_ru': 'Стрижка',
+        'name_ar': 'قص شعر',
+        'price': 175,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Standard haircut',
+        'description_ru': 'Стандартная стрижка',
+        'benefits': ['Fresh look', 'Style']
+    },
+    {
+        'key': 'trimming_no_wash',
+        'name': 'Trimming without wash',
+        'name_ru': 'Стрижка кончиков без мытья',
+        'name_ar': 'قص الأطراف بدون غسل',
+        'price': 80,
+        'min_price': 80,
+        'max_price': 100,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Quick trim without wash',
+        'description_ru': 'Быстрая стрижка кончиков',
+        'benefits': ['Quick', 'Maintenance']
+    },
+    {
+        'key': 'hair_style',
+        'name': 'Hair style',
+        'name_ru': 'Прическа',
+        'name_ar': 'تصفيف الشعر',
+        'price': 225,
+        'min_price': 225,
+        'max_price': 500,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Event hair styling',
+        'description_ru': 'Вечерняя прическа',
+        'benefits': ['Event ready', 'Beautiful']
+    },
+    {
+        'key': 'hair_cut_blow_dry',
+        'name': 'Hair cut and blow dry',
+        'name_ru': 'Стрижка и укладка',
+        'name_ar': 'قص وتجفيف الشعر',
+        'price': 250,
+        'min_price': 250,
+        'max_price': 300,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Cut and blow dry package',
+        'description_ru': 'Стрижка с укладкой',
+        'benefits': ['Complete look', 'Value']
+    },
+    {
+        'key': 'eyebrows_coloring',
+        'name': 'Eyebrows coloring',
+        'name_ru': 'Окрашивание бровей',
+        'name_ar': 'صبغ الحواجب',
+        'price': 40,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Brows',
+        'description': 'Eyebrow tinting',
+        'description_ru': 'Окрашивание бровей',
+        'benefits': ['Defined brows', 'Natural']
+    },
+    {
+        'key': 'blow_dry_package_5',
+        'name': 'Blow dry packages 5',
+        'name_ru': 'Пакет 5 укладок',
+        'name_ar': 'باقة 5 تجفيف شعر',
+        'price': 500,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Promo',
+        'description': 'Package of 5 blow dry sessions',
+        'description_ru': 'Пакет из 5 сеансов укладки',
+        'benefits': ['Save money', 'Convenient']
+    },
+    {
+        'key': 'podology',
+        'name': 'Podology',
+        'name_ru': 'Подология',
+        'name_ar': 'طب الأقدام',
+        'price': 200,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nails',
+        'description': 'Medical foot care',
+        'description_ru': 'Медицинский педикюр',
+        'benefits': ['Health', 'Professional']
+    },
+    {
+        'key': 'bikini_line',
+        'name': 'Bikini line',
+        'name_ru': 'Линия бикини',
+        'name_ar': 'خط البيكيني',
+        'price': 100,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Waxing',
+        'description': 'Bikini line waxing',
+        'description_ru': 'Эпиляция линии бикини',
+        'benefits': ['Clean', 'Quick']
+    },
+    {
+        'key': 'full_bikini',
+        'name': 'Full bikini',
+        'name_ru': 'Глубокое бикини',
+        'name_ar': 'بيكيني كامل',
+        'price': 150,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Waxing',
+        'description': 'Full bikini waxing',
+        'description_ru': 'Полная эпиляция бикини',
+        'benefits': ['Smooth', 'Long lasting']
+    },
+    {
+        'key': 'brazilian',
+        'name': 'Brazilian',
+        'name_ru': 'Бразильское бикини',
+        'name_ar': 'برازيلي',
+        'price': 120,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Waxing',
+        'description': 'Brazilian waxing',
+        'description_ru': 'Бразильская эпиляция',
+        'benefits': ['Smooth', 'Clean']
+    },
+    {
+        'key': 'cheeks',
+        'name': 'Cheeks',
+        'name_ru': 'Щеки',
+        'name_ar': 'الخدين',
+        'price': 40,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Waxing',
+        'description': 'Cheeks waxing',
+        'description_ru': 'Эпиляция щек',
+        'benefits': ['Smooth face', 'Gentle']
+    },
     {
         'key': 'promo_overlay_290',
         'name': 'Promotion overlay manicure, pedicure 290 aed',
@@ -1438,10 +1916,10 @@ def migrate_services():
         existing_count = c.fetchone()[0]
         
         if existing_count > 0:
-            print(f"⚠️  В БД уже есть {existing_count} услуг!")
-            print("   ⏭️  Пропускаем обновление (данные уже существуют)")
-            conn.close()
-            return True
+            print(f"ℹ️  В БД уже есть {existing_count} услуг. Проверяем обновления...")
+            # print("   ⏭️  Пропускаем обновление (данные уже существуют)")
+            # conn.close()
+            # return True
     
     except sqlite3.OperationalError as e:
         print(f"❌ Таблица services не существует: {e}")
@@ -1462,6 +1940,44 @@ def migrate_services():
     for service in SERVICES_DATA:
         try:
             benefits_str = '|'.join(service.get('benefits', []))
+            
+            # ===== DURATION OVERRIDES =====
+            # Default to 1h for everyone
+            final_duration = '1h'
+            
+            # Exceptions
+            exceptions = {
+                # 3 hours
+                'hair_treatment': '3h',
+                'hair_treatment_range': '3h',
+                
+                # 2 hours
+                'ombre': '2h',
+                'ombre_shatush_airtouch': '2h',
+                'full_head_color_blow_dry': '2h',
+                'full_color': '2h', # Assuming this should also be 2h if similar
+                'balayage_cut_style': '2h',
+                'gelish_manicure': '2h',
+                
+                # 1.5 hours
+                'japanese_manicure': '1h 30min',
+                'promo_overlay_290': '1h 30min',
+                
+                # 30 mins
+                'moroccan_loofa': '30min',
+                'moroccan_bath': '30min',
+                'face_lift_massage': '30min',
+                'hair_wash': '30min',
+                
+                # Other specific ones from user request context if needed, 
+                # but "All others 1h" covers the rest.
+            }
+            
+            if service['key'] in exceptions:
+                final_duration = exceptions[service['key']]
+            
+            # Force update duration in service dict for print/log consistency
+            service['duration'] = final_duration
             
             # Проверяем, существует ли услуга
             c.execute("SELECT id FROM services WHERE service_key = ?", (service['key'],))
@@ -1490,7 +2006,7 @@ def migrate_services():
                           service['price'],
                           service.get('min_price'),
                           service.get('max_price'),
-                          service.get('duration'),
+                          final_duration,
                           service['currency'],
                           service['category'],
                           service.get('description'),
@@ -1517,7 +2033,7 @@ def migrate_services():
                           service['price'],
                           service.get('min_price'),
                           service.get('max_price'),
-                          service.get('duration'),
+                          final_duration,
                           service['currency'],
                           service['category'],
                           service.get('description'),
