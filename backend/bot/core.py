@@ -163,6 +163,29 @@ class SalonBot:
 
             additional_context = ""
 
+            # ========================================
+            # ✅ ИСТОРИЯ И СТАТИСТИКА КЛИЕНТА
+            # ========================================
+            try:
+                from db.client_history import get_client_stats, get_recommended_services
+                client_stats = get_client_stats(instagram_id)
+                recommendations = get_recommended_services(instagram_id)
+                
+                additional_context += f"\n📊 СТАТИСТИКА КЛИЕНТА:\n"
+                if client_stats['is_returning']:
+                    additional_context += f"- Постоянный клиент: {client_stats['total_visits']} визитов\n"
+                    if client_stats['last_visit_date']:
+                        additional_context += f"- Последний визит: {client_stats['last_visit_date']} ({client_stats['last_service']})\n"
+                    if client_stats['is_vip']:
+                        additional_context += "- ⭐ VIP КЛИЕНТ (особое внимание!)\n"
+                else:
+                    additional_context += "- Новый клиент (первый визит)\n"
+                
+                if recommendations:
+                    additional_context += f"- Рекомендуемые услуги: {', '.join(recommendations)}\n"
+            except Exception as e:
+                print(f"⚠️ Error fetching client stats: {e}")
+
             # ✅ #4 - Незавершённая запись
             if context_flags.get('has_incomplete_booking'):
                 incomplete = context_flags.get('incomplete_booking')

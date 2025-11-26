@@ -367,10 +367,11 @@ class MasterScheduleService:
             # Для простоты, если есть любое отсутствие в этот день, нужно проверять слоты детально
             
             # Получаем все занятые слоты из bookings
+            # ✅ Case-insensitive поиск по имени мастера
             c.execute("""
                 SELECT datetime
                 FROM bookings
-                WHERE master = ?
+                WHERE UPPER(master) = UPPER(?)
                 AND DATE(datetime) = ?
                 AND status != 'cancelled'
             """, (master_name, date))
@@ -393,17 +394,30 @@ class MasterScheduleService:
 
             available_slots = []
             current_dt = start_dt
+            
+            # Get current time for filtering past slots
+            now = datetime.now()
+            is_today = dt.date() == now.date()
 
             while current_dt < end_dt:
                 time_str = current_dt.strftime('%H:%M')
                 slot_end_dt = current_dt + timedelta(minutes=duration_minutes)
                 
-                # 1. Проверка на занятость записью
+                # 0. Filter past times for today
+                if is_today and current_dt <= now:
+                    current_dt += timedelta(minutes=30)  # Increment by 30 minutes
+                    continue
+                
+                # 1. Check if procedure can finish before closing time
+                if slot_end_dt > end_dt:
+                    break  # No more slots can fit
+                
+                # 2. Проверка на занятость записью
                 if time_str in booked_times:
-                    current_dt += timedelta(minutes=duration_minutes)
+                    current_dt += timedelta(minutes=30)  # Increment by 30 minutes
                     continue
                     
-                # 2. Проверка на unavailability
+                # 3. Проверка на unavailability
                 is_unavailable = False
                 current_dt_str = current_dt.strftime('%Y-%m-%d %H:%M:%S')
                 
@@ -415,7 +429,7 @@ class MasterScheduleService:
                 if not is_unavailable:
                     available_slots.append(time_str)
 
-                current_dt += timedelta(minutes=duration_minutes)
+                current_dt += timedelta(minutes=30)  # Increment by 30 minutes
 
             return available_slots
 

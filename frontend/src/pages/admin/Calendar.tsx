@@ -205,8 +205,8 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       return (
         bookingDate.toDateString() === date.toDateString() &&
         bookingHour === hour &&
-        (!employeeId || b.master === employeeId) &&  // ✅ ДОБАВЛЕНО
-        (selectedEmployee === 'all' || !selectedEmployee || !b.master || b.master === selectedEmployee) &&
+        (!employeeId || (b.master && b.master.toUpperCase() === employeeId.toUpperCase())) &&  // ✅ Case-insensitive
+        (selectedEmployee === 'all' || !selectedEmployee || !b.master || b.master.toUpperCase() === selectedEmployee.toUpperCase()) &&  // ✅ Case-insensitive
         (selectedService === 'all' || !selectedService || b.service === selectedService)
       );
     });

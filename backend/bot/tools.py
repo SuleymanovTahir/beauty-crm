@@ -54,7 +54,7 @@ def get_available_time_slots(
         if service_id:
             # Get only masters who provide this service AND have online booking enabled
             c.execute("""
-                SELECT DISTINCT u.*
+                SELECT DISTINCT u.id, u.full_name
                 FROM users u
                 JOIN user_services us ON u.id = us.user_id
                 WHERE u.is_active = 1 
@@ -65,7 +65,7 @@ def get_available_time_slots(
             potential_masters = c.fetchall()
         else:
             # Fallback: все активные мастера
-            c.execute("SELECT * FROM users WHERE is_active = 1 AND is_service_provider = 1")
+            c.execute("SELECT id, full_name FROM users WHERE is_active = 1 AND is_service_provider = 1")
             potential_masters = c.fetchall()
 
         # Фильтр по имени если указано

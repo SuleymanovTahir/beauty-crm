@@ -74,6 +74,7 @@ class AnalyticsService:
                 "clients": self._get_client_metrics(date_start, date_end),
                 "masters": self._get_master_metrics(date_start, date_end),
                 "services": self._get_service_metrics(date_start, date_end),
+                "peak_hours": self._get_peak_hours(date_start, date_end),
                 "trends": self._get_trends(date_start, date_end)
             }
         except Exception as e:
@@ -314,6 +315,23 @@ class AnalyticsService:
         return {
             "top_services": top_services
         }
+
+    def _get_peak_hours(self, start_date: str, end_date: str) -> List[Dict]:
+        """Пиковые часы посещаемости"""
+        self.c.execute("""
+            SELECT strftime('%H', datetime) as hour, COUNT(*) as count 
+            FROM bookings 
+            WHERE datetime BETWEEN ? AND ?
+            AND status != 'cancelled'
+            GROUP BY hour 
+            ORDER BY count DESC 
+            LIMIT 5
+        """, (start_date, end_date))
+        
+        return [
+            {"hour": f"{row[0]}:00", "count": row[1]} 
+            for row in self.c.fetchall()
+        ]
 
     def _get_trends(self, start_date: str, end_date: str) -> Dict:
         """Тренды и сравнение с предыдущим периодом"""
