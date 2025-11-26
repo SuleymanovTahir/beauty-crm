@@ -559,16 +559,40 @@ async def handle_webhook(request: Request):
                         try:
                             # Формируем datetime для записи
                             booking_datetime = f"{booking_data['date']} {booking_data['time']}:00"
-
-                            save_booking(
-                                instagram_id=sender_id,
-                                service=booking_data['service'],
-                                datetime_str=booking_datetime,
-                                phone=booking_data['phone'],
-                                name=client_name,
-                                master=booking_data.get('master')
-                            )
-                            logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                            
+                            # ✅ ПРОВЕРКА НА ДУБЛИКАТЫ: Проверяем существует ли уже такая запись
+                            import sqlite3
+                            from datetime import datetime as dt_now, timedelta
+                            
+                            conn_check = sqlite3.connect(DATABASE_NAME)
+                            c_check = conn_check.cursor()
+                            
+                            # Проверяем записи за последние 5 минут с теми же параметрами
+                            five_min_ago = (dt_now.now() - timedelta(minutes=5)).isoformat()
+                            
+                            c_check.execute("""
+                                SELECT id FROM bookings 
+                                WHERE instagram_id = ? 
+                                  AND service_name = ? 
+                                  AND datetime LIKE ?
+                                  AND created_at > ?
+                            """, (sender_id, booking_data['service'], f"{booking_data['date']}%", five_min_ago))
+                            
+                            existing = c_check.fetchone()
+                            conn_check.close()
+                            
+                            if existing:
+                                logger.warning(f"⚠️ Duplicate booking detected! Skipping save. Existing booking ID: {existing[0]}")
+                            else:
+                                save_booking(
+                                    instagram_id=sender_id,
+                                    service=booking_data['service'],
+                                    datetime_str=booking_datetime,
+                                    phone=booking_data['phone'],
+                                    name=client_name,
+                                    master=booking_data.get('master')
+                                )
+                                logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
                             
                             # ✅ ОЧИЩАЕМ ПРОГРЕСС ПОСЛЕ УСПЕШНОЙ ЗАПИСИ
                             clear_booking_progress(sender_id)
@@ -577,6 +601,7 @@ async def handle_webhook(request: Request):
                             logger.error(f"❌ Failed to save booking: {save_error}")
                             import traceback
                             logger.error(traceback.format_exc())
+
 
                         # Удаляем команду из ответа перед отправкой клиенту
                         ai_response = re.sub(

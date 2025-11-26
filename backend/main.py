@@ -64,6 +64,7 @@ from api.client_import import router as client_import_router
 from api.booking_import import router as booking_import_router
 from api.public_admin import router as public_admin_router
 from api.payroll import router as payroll_router
+from api.feedback import router as feedback_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -109,6 +110,7 @@ app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API
 app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API
 app.include_router(payroll_router, prefix="/api")  # Payroll API
+app.include_router(feedback_router, prefix="/api")  # Feedback API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -449,21 +451,6 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
-
-
-    # ================================
-    # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
-    # ================================
-    # ⚠️⚠️⚠️ НЕ РАСКОММЕНТИРОВАТЬ! ⚠️⚠️⚠️
-    # 
-    # ПРИЧИНА: SQLite не поддерживает одновременную запись из нескольких процессов
-    # FastAPI держит соединение → run_all_fixes пытается писать → database is locked
-    # 
-    # ✅ ПРАВИЛЬНЫЙ СПОСОБ:
-    # 1. Остановите сервер (Ctrl+C)
-    # 2. Запустите: python3 scripts/init_fresh_database.py
-    # 3. Запустите сервер снова
-    #
     # from scripts.run_all_fixes import main as run_all_fixes
     # log_info("🔧 Запуск всех исправлений...", "startup")
     # await run_all_fixes()
@@ -488,6 +475,16 @@ async def startup_event():
         start_birthday_checker()
         start_client_birthday_checker()
         start_booking_reminder_checker()
+        
+        # ✅ Запуск планировщика напоминаний (24ч и 2ч)
+        from apscheduler.schedulers.asyncio import AsyncIOScheduler
+        from services.reminder_service import check_and_send_reminders
+        
+        scheduler = AsyncIOScheduler()
+        scheduler.add_job(check_and_send_reminders, 'interval', minutes=30)
+        scheduler.start()
+        log_info("✅ Планировщик напоминаний запущен (каждые 30 мин)", "startup")
+        
         log_info("✅ Планировщики запущены с async поддержкой (включая email-напоминания)", "startup")
 
 

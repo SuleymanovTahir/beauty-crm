@@ -40,6 +40,10 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     conn = get_db_connection()
     c = conn.cursor()
     
+    # ✅ КРИТИЧНО: Убедимся что клиент существует в БД
+    from db import get_or_create_client
+    get_or_create_client(instagram_id)
+    
     now = datetime.now().isoformat()
     # Ensure datetime_str is in ISO format (T separator)
     if ' ' in datetime_str and 'T' not in datetime_str:
