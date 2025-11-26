@@ -23,6 +23,7 @@ import PendingUsers from './pages/admin/PendingUsers';
 import PermissionManagement from './pages/admin/PermissionManagement';
 import PlansManagement from './pages/admin/PlansManagement';
 import PublicContent from './pages/admin/PublicContent';
+import EmployeeDetail from './pages/admin/EmployeeDetail';
 
 // Manager Pages
 import ManagerLayout from './components/layouts/ManagerLayout';
@@ -213,16 +214,17 @@ export default function App() {
               <Route path="clients/:id" element={<ClientDetail />} />
               <Route path="chat" element={<Chat />} />
               <Route path="users" element={<Users />} />
+              <Route path="users/:id" element={<EmployeeDetail />} />
               <Route path="users/create" element={<CreateUser />} />
               <Route path="users/pending" element={<PendingUsers />} />
               <Route path="users/permissions" element={<PermissionManagement />} />
+              <Route path="users/:id/edit" element={<EditUser />} />
               <Route path="plans" element={<PlansManagement />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="settings" element={<Settings />} />
               <Route path="bot-settings" element={<BotSettings />} />
               <Route path="public-content" element={<PublicContent />} />
               <Route path="" element={<Navigate to="dashboard" replace />} />
-              <Route path="users/:id/edit" element={<EditUser />} />
             </Route>
 
             {/* Manager Routes - Protected */}

@@ -59,6 +59,7 @@ from api.roles import router as roles_router
 from api.plans import router as plans_router
 from api.public_admin import router as public_admin_router
 from api.employee_services import router as employee_services_router
+from api.employee_schedule import router as employee_schedule_router
 
 
 
@@ -100,7 +101,8 @@ app.include_router(auto_booking_router, prefix="/api")  # Auto-Booking API
 app.include_router(permissions_router, prefix="/api")  # Permissions & Roles API
 app.include_router(roles_router, prefix="/api")  # Roles API
 app.include_router(plans_router, prefix="/api")  # Plans API
-app.include_router(employee_services_router, prefix="/api")  # Employee Services API& Goals API
+app.include_router(employee_services_router, prefix="/api")  # Employee Services API
+app.include_router(employee_schedule_router, prefix="/api")  # Employee Schedule API& Goals API
 app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API
 app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API
@@ -449,9 +451,9 @@ async def startup_event():
     # ПРОВЕРКА И ИСПРАВЛЕНИЕ ДАННЫХ
     # ================================
     # Для запуска всех проверок и исправлений используйте скрипт:
-    from scripts.run_all_fixes import main as run_all_fixes
-    log_info("🔧 Запуск всех исправлений...", "startup")
-    await run_all_fixes()
+    # from scripts.run_all_fixes import main as run_all_fixes
+    # log_info("🔧 Запуск всех исправлений...", "startup")
+    # await run_all_fixes()
  
 
 
