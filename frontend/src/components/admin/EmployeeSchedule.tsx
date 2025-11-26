@@ -427,31 +427,67 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                                 setSchedule(newSchedule);
                                                 toast.success(t('schedule_updated', 'Schedule updated'));
                                             } else {
-                                                // Day is working, extend or reduce hours
+                                                // Day is working
                                                 const startHour = parseInt(daySchedule.start_time.split(':')[0]);
                                                 const endHour = parseInt(daySchedule.end_time.split(':')[0]);
 
-                                                let newStartHour = startHour;
-                                                let newEndHour = endHour;
-
                                                 if (hour < startHour) {
-                                                    newStartHour = hour;
+                                                    // Extend start time backwards
+                                                    const newSchedule = schedule.map(s =>
+                                                        s.day_of_week === dayIndex
+                                                            ? { ...s, start_time: `${hour.toString().padStart(2, '0')}:00` }
+                                                            : s
+                                                    );
+                                                    await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                    setSchedule(newSchedule);
+                                                    toast.success(t('schedule_updated', 'Schedule updated'));
                                                 } else if (hour >= endHour) {
-                                                    newEndHour = hour + 1;
+                                                    // Extend end time forward
+                                                    const newSchedule = schedule.map(s =>
+                                                        s.day_of_week === dayIndex
+                                                            ? { ...s, end_time: `${(hour + 1).toString().padStart(2, '0')}:00` }
+                                                            : s
+                                                    );
+                                                    await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                    setSchedule(newSchedule);
+                                                    toast.success(t('schedule_updated', 'Schedule updated'));
                                                 } else {
-                                                    // Hour is within range, do nothing or remove
-                                                    return;
+                                                    // Hour is within range - remove it by shrinking the range
+                                                    if (hour === startHour && hour + 1 === endHour) {
+                                                        // Only one hour - remove the day entirely
+                                                        const newSchedule = schedule.map(s =>
+                                                            s.day_of_week === dayIndex
+                                                                ? { ...s, is_working: false }
+                                                                : s
+                                                        );
+                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                        setSchedule(newSchedule);
+                                                        toast.success(t('schedule_updated', 'Schedule updated'));
+                                                    } else if (hour === startHour) {
+                                                        // Remove from start
+                                                        const newSchedule = schedule.map(s =>
+                                                            s.day_of_week === dayIndex
+                                                                ? { ...s, start_time: `${(hour + 1).toString().padStart(2, '0')}:00` }
+                                                                : s
+                                                        );
+                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                        setSchedule(newSchedule);
+                                                        toast.success(t('schedule_updated', 'Schedule updated'));
+                                                    } else if (hour + 1 === endHour) {
+                                                        // Remove from end
+                                                        const newSchedule = schedule.map(s =>
+                                                            s.day_of_week === dayIndex
+                                                                ? { ...s, end_time: `${hour.toString().padStart(2, '0')}:00` }
+                                                                : s
+                                                        );
+                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
+                                                        setSchedule(newSchedule);
+                                                        toast.success(t('schedule_updated', 'Schedule updated'));
+                                                    } else {
+                                                        // Hour is in the middle - can't remove without splitting
+                                                        toast.info(t('cannot_remove_middle_hour', 'Cannot remove hour from middle of shift. Remove from start or end first.'));
+                                                    }
                                                 }
-
-                                                const newSchedule = schedule.map(s =>
-                                                    s.day_of_week === dayIndex
-                                                        ? { ...s, start_time: `${newStartHour.toString().padStart(2, '0')}:00`, end_time: `${newEndHour.toString().padStart(2, '0')}:00` }
-                                                        : s
-                                                );
-
-                                                await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                setSchedule(newSchedule);
-                                                toast.success(t('schedule_updated', 'Schedule updated'));
                                             }
                                         };
 
