@@ -2,7 +2,7 @@
 API для клиентской авторизации и личного кабинета
 """
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 import sqlite3
 import hashlib
 import secrets
@@ -29,12 +29,12 @@ class ClientRegister(BaseModel):
 
 
 class ClientLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
 class PasswordResetRequest(BaseModel):
-    email: EmailStr
+    email: str
 
 
 class PasswordReset(BaseModel):

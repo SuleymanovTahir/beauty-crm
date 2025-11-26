@@ -35,13 +35,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-def get_employee_id_by_user_id(user_id: int, conn) -> int:
-    cursor = conn.cursor()
-    cursor.execute("SELECT employee_id FROM users WHERE id = ?", (user_id,))
-    row = cursor.fetchone()
-    if not row or not row['employee_id']:
-        raise HTTPException(status_code=404, detail="Employee not found for this user")
-    return row['employee_id']
+# Removed - now using user_id directly instead of employee_id
 
 # --- New Endpoints for Admin UI (User ID based) ---
 
@@ -49,15 +43,14 @@ def get_employee_id_by_user_id(user_id: int, conn) -> int:
 async def get_user_schedule(user_id: int):
     conn = get_db_connection()
     try:
-        employee_id = get_employee_id_by_user_id(user_id, conn)
         cursor = conn.cursor()
         
         cursor.execute("""
             SELECT day_of_week, start_time, end_time, is_active 
-            FROM employee_schedule 
-            WHERE employee_id = ? 
+            FROM user_schedule 
+            WHERE user_id = ? 
             ORDER BY day_of_week
-        """, (employee_id,))
+        """, (user_id,))
         
         rows = cursor.fetchall()
         schedule = []
@@ -92,18 +85,17 @@ async def get_user_schedule(user_id: int):
 async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
     conn = get_db_connection()
     try:
-        employee_id = get_employee_id_by_user_id(user_id, conn)
         cursor = conn.cursor()
         
         # Удаляем старое расписание
-        cursor.execute("DELETE FROM employee_schedule WHERE employee_id = ?", (employee_id,))
+        cursor.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
         
         # Добавляем новое
         for item in data.schedule:
             cursor.execute("""
-                INSERT INTO employee_schedule (employee_id, day_of_week, start_time, end_time, is_active)
+                INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
                 VALUES (?, ?, ?, ?, ?)
-            """, (employee_id, item.day_of_week, item.start_time, item.end_time, 1 if item.is_working else 0))
+            """, (user_id, item.day_of_week, item.start_time, item.end_time, 1 if item.is_working else 0))
             
         conn.commit()
         return {"status": "success"}
@@ -114,15 +106,14 @@ async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
 async def get_user_time_off(user_id: int):
     conn = get_db_connection()
     try:
-        employee_id = get_employee_id_by_user_id(user_id, conn)
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT id, start_datetime, end_datetime, type, reason 
-            FROM employee_unavailability 
-            WHERE employee_id = ? 
-            ORDER BY start_datetime DESC
-        """, (employee_id,))
+            SELECT id, date_from as start_datetime, date_to as end_datetime, type, reason 
+            FROM user_time_off 
+            WHERE user_id = ? 
+            ORDER BY date_from DESC
+        """, (user_id,))
         
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
@@ -133,13 +124,12 @@ async def get_user_time_off(user_id: int):
 async def add_user_time_off(user_id: int, data: TimeOffCreate):
     conn = get_db_connection()
     try:
-        employee_id = get_employee_id_by_user_id(user_id, conn)
         cursor = conn.cursor()
         
         cursor.execute("""
-            INSERT INTO employee_unavailability (employee_id, start_datetime, end_datetime, type, reason)
+            INSERT INTO user_time_off (user_id, date_from, date_to, type, reason)
             VALUES (?, ?, ?, ?, ?)
-        """, (employee_id, data.start_datetime, data.end_datetime, data.type, data.reason))
+        """, (user_id, data.start_datetime, data.end_datetime, data.type, data.reason))
         
         conn.commit()
         return {"status": "success", "id": cursor.lastrowid}
@@ -151,7 +141,7 @@ async def delete_time_off_by_id(id: int):
     conn = get_db_connection()
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM employee_unavailability WHERE id = ?", (id,))
+        cursor.execute("DELETE FROM user_time_off WHERE id = ?", (id,))
         conn.commit()
         return {"status": "success"}
     finally:

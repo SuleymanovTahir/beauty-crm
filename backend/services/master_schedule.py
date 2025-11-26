@@ -150,8 +150,8 @@ class MasterScheduleService:
             end_dt = f"{end_date} 23:59:59"
 
             c.execute("""
-                INSERT INTO employee_unavailability
-                (user_id, start_datetime, end_datetime, type, reason)
+                INSERT INTO user_time_off
+                (user_id, date_from, date_to, type, reason)
                 VALUES (?, ?, ?, ?, ?)
             """, (user_id, start_dt, end_dt, time_off_type, reason))
 
@@ -179,21 +179,21 @@ class MasterScheduleService:
 
         try:
             query = """
-                SELECT id, start_datetime, end_datetime, type, reason
-                FROM employee_unavailability
+                SELECT id, date_from, date_to, type, reason
+                FROM user_time_off
                 WHERE user_id = ?
             """
             params = [user_id]
 
             if start_date:
-                query += " AND end_datetime >= ?"
+                query += " AND date_to >= ?"
                 params.append(f"{start_date} 00:00:00")
             
             if end_date:
-                query += " AND start_datetime <= ?"
+                query += " AND date_from <= ?"
                 params.append(f"{end_date} 23:59:59")
 
-            query += " ORDER BY start_datetime"
+            query += " ORDER BY date_from"
 
             c.execute(query, tuple(params))
 
@@ -225,7 +225,7 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
-            c.execute("DELETE FROM employee_unavailability WHERE id = ?", (time_off_id,))
+            c.execute("DELETE FROM user_time_off WHERE id = ?", (time_off_id,))
             conn.commit()
             log_info(f"Time off {time_off_id} removed", "schedule")
             return True
@@ -278,9 +278,9 @@ class MasterScheduleService:
             check_dt = f"{date} {time_str}"
             c.execute("""
                 SELECT COUNT(*)
-                FROM employee_unavailability
+                FROM user_time_off
                 WHERE user_id = ?
-                AND ? BETWEEN start_datetime AND end_datetime
+                AND ? BETWEEN date_from AND date_to
             """, (user_id, check_dt))
 
             if c.fetchone()[0] > 0:
@@ -351,13 +351,13 @@ class MasterScheduleService:
             day_end = f"{date} 23:59:59"
             
             c.execute("""
-                SELECT start_datetime, end_datetime
-                FROM employee_unavailability
+                SELECT date_from, date_to
+                FROM user_time_off
                 WHERE user_id = ?
                 AND (
-                    (start_datetime BETWEEN ? AND ?) OR
-                    (end_datetime BETWEEN ? AND ?) OR
-                    (start_datetime <= ? AND end_datetime >= ?)
+                    (date_from BETWEEN ? AND ?) OR
+                    (date_to BETWEEN ? AND ?) OR
+                    (date_from <= ? AND date_to >= ?)
                 )
             """, (user_id, day_start, day_end, day_start, day_end, day_start, day_end))
 

@@ -136,17 +136,87 @@ def delete_employee(employee_id: int):
 # ===== СПЕЦИАЛИЗАЦИИ =====
 
 def get_employee_services(employee_id: int):
-    """Получить услуги сотрудника (из user_services)"""
+    """Получить услуги сотрудника (из user_services) с индивидуальными настройками"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT s.* FROM services s
-                 JOIN user_services us ON s.id = us.service_id
-                 WHERE us.user_id = ?""", (employee_id,))
+    # Check if new columns exist in user_services
+    c.execute("PRAGMA table_info(user_services)")
+    us_columns = [row[1] for row in c.fetchall()]
+    
+    has_settings = 'price' in us_columns
+    
+    if has_settings:
+        c.execute("""SELECT s.*, us.price, us.duration, us.is_online_booking_enabled, 
+                            us.is_calendar_enabled, us.price_min, us.price_max
+                     FROM services s
+                     JOIN user_services us ON s.id = us.service_id
+                     WHERE us.user_id = ?""", (employee_id,))
+    else:
+        c.execute("""SELECT s.*, NULL, NULL, 1, 1, NULL, NULL
+                     FROM services s
+                     JOIN user_services us ON s.id = us.service_id
+                     WHERE us.user_id = ?""", (employee_id,))
     
     services = c.fetchall()
     conn.close()
     return services
+
+
+def update_employee_service(employee_id: int, service_id: int, 
+                           price: float = None, duration: int = None,
+                           is_online_booking_enabled: bool = None,
+                           is_calendar_enabled: bool = None,
+                           price_min: float = None, price_max: float = None):
+    """Обновить настройки услуги для сотрудника"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    updates = []
+    params = []
+    
+    if price is not None:
+        updates.append("price = ?")
+        params.append(price)
+    
+    if duration is not None:
+        updates.append("duration = ?")
+        params.append(duration)
+        
+    if is_online_booking_enabled is not None:
+        updates.append("is_online_booking_enabled = ?")
+        params.append(1 if is_online_booking_enabled else 0)
+        
+    if is_calendar_enabled is not None:
+        updates.append("is_calendar_enabled = ?")
+        params.append(1 if is_calendar_enabled else 0)
+
+    if price_min is not None:
+        updates.append("price_min = ?")
+        params.append(price_min)
+
+    if price_max is not None:
+        updates.append("price_max = ?")
+        params.append(price_max)
+        
+    if not updates:
+        conn.close()
+        return False
+        
+    params.append(employee_id)
+    params.append(service_id)
+    
+    query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = ? AND service_id = ?"
+    
+    try:
+        c.execute(query, params)
+        conn.commit()
+        success = c.rowcount > 0
+    except Exception:
+        success = False
+        
+    conn.close()
+    return success
 
 
 def add_employee_service(employee_id: int, service_id: int):

@@ -16,27 +16,17 @@ from core.config import DATABASE_NAME
 client = TestClient(app)
 
 def setup_test_data():
-    """Create test user and employee"""
+    """Create test user"""
     conn = sqlite3.connect(DATABASE_NAME)
     cursor = conn.cursor()
     
     try:
-        # Create a test user and employee
-        cursor.execute("INSERT INTO users (username, password_hash, full_name, role, is_active) VALUES ('test_schedule_user', 'hash', 'Test Schedule User', 'employee', 1)")
+        # Create a test user
+        cursor.execute("INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider) VALUES ('test_schedule_user', 'hash', 'Test Schedule User', 'employee', 1, 1)")
         user_id = cursor.lastrowid
         
-        cursor.execute("INSERT INTO employees (full_name, position, is_active) VALUES ('Test Schedule User', 'Master', 1)")
-        employee_id = cursor.lastrowid
-        
-        # Link them
-        # Check if employee_id column exists in users
-        cursor.execute("PRAGMA table_info(users)")
-        columns = [col[1] for col in cursor.fetchall()]
-        if 'employee_id' in columns:
-            cursor.execute("UPDATE users SET employee_id = ? WHERE id = ?", (employee_id, user_id))
-        
         conn.commit()
-        return {'user_id': user_id, 'employee_id': employee_id}, conn
+        return {'user_id': user_id, 'employee_id': None}, conn
     except Exception as e:
         conn.close()
         raise e
@@ -48,9 +38,8 @@ def cleanup_test_data(conn, data):
     employee_id = data['employee_id']
     
     cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    cursor.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
-    cursor.execute("DELETE FROM employee_schedule WHERE employee_id = ?", (employee_id,))
-    cursor.execute("DELETE FROM employee_unavailability WHERE employee_id = ?", (employee_id,))
+    cursor.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
+    cursor.execute("DELETE FROM user_time_off WHERE user_id = ?", (user_id,))
     conn.commit()
     conn.close()
 

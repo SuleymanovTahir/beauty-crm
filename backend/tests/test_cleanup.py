@@ -89,7 +89,7 @@ class TestDataCleaner:
                 for client_id in specific_ids:
                     # Удаляем связанные данные
                     c.execute("DELETE FROM conversations WHERE client_id = ?", (client_id,))
-                    c.execute("DELETE FROM bookings WHERE client_instagram_id = ?", (client_id,))
+                    c.execute("DELETE FROM bookings WHERE instagram_id = ?", (client_id,))
                     c.execute("DELETE FROM client_loyalty_points WHERE client_id = ?", (client_id,))
                     c.execute("DELETE FROM clients WHERE instagram_id = ?", (client_id,))
                     deleted += c.rowcount
@@ -108,7 +108,7 @@ class TestDataCleaner:
                 if test_client_ids:
                     for client_id in test_client_ids:
                         c.execute("DELETE FROM conversations WHERE client_id = ?", (client_id,))
-                        c.execute("DELETE FROM bookings WHERE client_instagram_id = ?", (client_id,))
+                        c.execute("DELETE FROM bookings WHERE instagram_id = ?", (client_id,))
                         c.execute("DELETE FROM client_loyalty_points WHERE client_id = ?", (client_id,))
                         c.execute("DELETE FROM clients WHERE instagram_id = ?", (client_id,))
                         deleted += c.rowcount
@@ -129,7 +129,7 @@ class TestDataCleaner:
             # Удаляем записи с тестовыми клиентами
             c.execute("""
                 DELETE FROM bookings 
-                WHERE client_instagram_id IN (
+                WHERE instagram_id IN (
                     SELECT instagram_id FROM clients 
                     WHERE instagram_id LIKE '%test%' 
                     OR username LIKE '%test%'

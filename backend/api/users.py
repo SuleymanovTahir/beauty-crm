@@ -90,6 +90,60 @@ async def create_user_api(
 
 
 
+@router.get("/users/{user_id}")
+async def get_user_by_id(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get single user by ID"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    try:
+        conn = sqlite3.connect(DATABASE_NAME)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                id, username, full_name, email, role, position, 
+                phone, bio, photo, is_active, is_service_provider,
+                position_ru, position_ar, created_at
+            FROM users
+            WHERE id = ?
+        """, (user_id,))
+
+        row = c.fetchone()
+        conn.close()
+
+        if not row:
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        user_data = {
+            "id": row["id"],
+            "username": row["username"],
+            "full_name": row["full_name"],
+            "email": row["email"],
+            "role": row["role"],
+            "position": row["position"],
+            "phone": row["phone"],
+            "bio": row["bio"],
+            "photo": row["photo"],
+            "is_active": bool(row["is_active"]),
+            "is_service_provider": bool(row["is_service_provider"]),
+            "position_ru": row["position_ru"],
+            "position_ar": row["position_ar"],
+            "created_at": row["created_at"]
+        }
+
+        return user_data
+
+    except Exception as e:
+        log_error(f"Error fetching user: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
 @router.get("/users")
 async def get_users(current_user: dict = Depends(get_current_user)):
     """Получить всех пользователей"""

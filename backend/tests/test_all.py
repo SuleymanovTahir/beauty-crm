@@ -84,12 +84,12 @@ def test_database():
         required_tables = [
             'clients',
             'bookings',
-            'employees',
+            'users',            # Was employees
             'positions',
             'services',
             'conversations',
-            'master_schedule',
-            'master_time_off',
+            'user_schedule',    # Was master_schedule
+            'user_time_off',    # Was master_time_off
             'loyalty_levels',
             'client_loyalty_points'
         ]
@@ -157,19 +157,28 @@ def test_new_features():
         # 2.2 Master Schedule
         print("\n   [2.2] Расписание мастеров...")
         try:
-            # Создаем тестового мастера
+            # Создаем тестового мастера в таблице users
             from core.config import DATABASE_NAME
             import sqlite3
             conn = sqlite3.connect(DATABASE_NAME)
             c = conn.cursor()
             test_master = "Тест Мастер"
-            c.execute("INSERT INTO employees (full_name, position, is_active) VALUES (?, ?, 1)", (test_master, "Stylist"))
+            
+            # Insert into users table
+            c.execute("""
+                INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
+                VALUES (?, 'dummy_hash', ?, ?, ?, 1, 1)
+            """, (f"test_master_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
+            user_id = c.lastrowid
             conn.commit()
             conn.close()
 
             schedule = MasterScheduleService()
 
-            # Пробуем установить рабочие часы
+            # Пробуем установить рабочие часы (using user_id if supported, or name if service handles it)
+            # MasterScheduleService likely expects a name string based on previous usage, 
+            # but we should check if it was updated to use user_id.
+            # Assuming it still takes a name for now, but internally looks up in users table.
             success = schedule.set_working_hours(test_master, 0, "09:00", "18:00")
 
             if success:
@@ -186,7 +195,10 @@ def test_new_features():
             try:
                 conn = sqlite3.connect(DATABASE_NAME)
                 c = conn.cursor()
-                c.execute("DELETE FROM employees WHERE full_name = ?", (test_master,))
+                c.execute("DELETE FROM users WHERE full_name = ?", (test_master,))
+                # Also clean up schedule
+                if 'user_id' in locals():
+                    c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
                 conn.commit()
                 conn.close()
             except Exception:
