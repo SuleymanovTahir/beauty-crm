@@ -224,8 +224,8 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                     }
                                                                 }}
                                                                 className={cn(
-                                                                    "data-[state=checked]:!bg-green-500 data-[state=unchecked]:!bg-red-400",
-                                                                    isAssigned && assigned.is_online_booking_enabled ? "bg-green-500" : "bg-red-400"
+                                                                    "data-[state=checked]:!bg-[#10b981] data-[state=unchecked]:!bg-[#f43f5e]",
+                                                                    isAssigned && assigned.is_online_booking_enabled ? "!bg-[#10b981]" : "!bg-[#f43f5e]"
                                                                 )}
                                                             />
                                                         </div>
@@ -243,8 +243,8 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                                                     }
                                                                 }}
                                                                 className={cn(
-                                                                    "data-[state=checked]:!bg-green-500 data-[state=unchecked]:!bg-red-400",
-                                                                    isAssigned && assigned.is_calendar_enabled ? "bg-green-500" : "bg-red-400"
+                                                                    "data-[state=checked]:!bg-[#10b981] data-[state=unchecked]:!bg-[#f43f5e]",
+                                                                    isAssigned && assigned.is_calendar_enabled ? "!bg-[#10b981]" : "!bg-[#f43f5e]"
                                                                 )}
                                                             />
                                                         </div>

@@ -127,9 +127,9 @@ export default function EmployeeDetail() {
     }
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+        <div className="flex min-h-[calc(100vh-4rem)]">
             {/* Left Sidebar - Employee List */}
-            <div className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-[calc(100vh-4rem)]">
+            <div className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-screen self-start">
                 {/* Back Button */}
                 <div className="p-4 border-b border-gray-200">
                     <Button
@@ -191,7 +191,7 @@ export default function EmployeeDetail() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col">
                 <Tabs defaultValue="information" className="flex flex-col h-full">
                     {/* Header with Tabs */}
                     <div className="bg-white border-b border-gray-200 shrink-0">
@@ -265,7 +265,7 @@ export default function EmployeeDetail() {
                     </div>
 
                     {/* Tab Content */}
-                    <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
+                    <div className="flex-1 bg-gray-50 p-6">
                         <TabsContent value="information" className="mt-0">
                             <EmployeeInformation employee={employee} onUpdate={loadEmployee} />
                         </TabsContent>
