@@ -14,6 +14,10 @@ interface AnalyticsData {
   services_stats: [string, number, number][];
   status_stats: [string, number][];
   avg_response_time: number;
+  peak_hours?: Array<{
+    hour: string;
+    count: number;
+  }>;
   drop_off_points?: Array<{
     stage: string;
     count: number;
@@ -389,6 +393,22 @@ export default function Analytics() {
                 <Tooltip contentStyle={{ fontSize: isMobile ? 12 : 14 }} />
                 {!isMobile && <Legend />}
                 <Bar dataKey={t('analytics:bookings')} fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Peak Hours Chart */}
+        {analytics?.peak_hours && analytics.peak_hours.length > 0 && (
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">{t('analytics:peak_hours')}</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analytics.peak_hours}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" name={t('analytics:bookings')} fill="#f59e0b" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
