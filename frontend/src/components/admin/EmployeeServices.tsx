@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Loader2 } from 'lucide-react';
+import { Loader2, Link as LinkIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
@@ -19,6 +19,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../ui/select';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '../ui/table';
 
 interface Service {
     id: number;
@@ -55,7 +63,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
     const [allServices, setAllServices] = useState<Service[]>([]);
     const [assignedServices, setAssignedServices] = useState<AssignedService[]>([]);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState<number | null>(null); // ID of service being saved
+    const [saving, setSaving] = useState<number | null>(null);
 
     useEffect(() => {
         loadServices();
@@ -108,7 +116,6 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
             ));
 
             await api.put(`/api/users/${employeeId}/services/${serviceId}`, updates);
-            // toast.success(t('service_updated')); // Too noisy for inline edits
         } catch (error) {
             console.error('Error updating service:', error);
             toast.error(t('error_updating_service'));
@@ -135,7 +142,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
 
     return (
         <div className="space-y-6">
-            <Accordion type="multiple" className="w-full space-y-4">
+            <Accordion type="multiple" className="w-full space-y-4" defaultValue={categories}>
                 {categories.map(category => {
                     const categoryServices = servicesByCategory[category];
                     const assignedCount = categoryServices.filter(s =>
@@ -149,113 +156,132 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                 <div className="flex flex-col items-start text-left">
                                     <span className="text-lg font-semibold">{category}</span>
                                     <span className="text-sm text-gray-500 font-normal">
-                                        {t('provides')}: {assignedCount} {t('of')} {totalCount}
+                                        {t('provides', 'Provides')}: {assignedCount} {t('of', 'of')} {totalCount}
                                     </span>
                                 </div>
                             </AccordionTrigger>
                             <AccordionContent className="pt-2 pb-4">
-                                <div className="space-y-6">
-                                    {/* Header Row */}
-                                    <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-500 uppercase px-2">
-                                        <div className="col-span-3">{t('service')}</div>
-                                        <div className="col-span-2">{t('prof_price')}</div>
-                                        <div className="col-span-2 text-center">{t('online_booking')}</div>
-                                        <div className="col-span-2 text-center">{t('appt_calendar')}</div>
-                                        <div className="col-span-2">{t('duration')}</div>
-                                        <div className="col-span-1"></div>
-                                    </div>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="hover:bg-transparent border-b-0">
+                                            <TableHead className="w-[25%]">{t('service', 'Service')}</TableHead>
+                                            <TableHead className="w-[20%]">{t('prof_price', "Professional's price")}</TableHead>
+                                            <TableHead className="w-[15%] text-center">{t('online_booking', 'Online booking')}</TableHead>
+                                            <TableHead className="w-[15%] text-center">{t('appt_calendar', 'Appt. Calendar')}</TableHead>
+                                            <TableHead className="w-[15%]">{t('duration', 'Duration')}</TableHead>
+                                            <TableHead className="w-[10%] text-center">{t('bill_of_materials', 'Bill of materials')}</TableHead>
+                                            <TableHead className="w-[5%]"></TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {categoryServices.map(service => {
+                                            const assigned = assignedServices.find(as => as.id === service.id);
+                                            const isAssigned = !!assigned;
 
-                                    {categoryServices.map(service => {
-                                        const assigned = assignedServices.find(as => as.id === service.id);
-                                        const isAssigned = !!assigned;
+                                            return (
+                                                <TableRow key={service.id} className="hover:bg-gray-50">
+                                                    <TableCell className="font-medium">
+                                                        {service.name_ru || service.name}
+                                                    </TableCell>
 
-                                        return (
-                                            <div key={service.id} className="grid grid-cols-12 gap-4 items-center px-2 py-2 hover:bg-gray-50 rounded-md transition-colors">
-                                                {/* Service Name */}
-                                                <div className="col-span-3 font-medium text-sm">
-                                                    {service.name_ru || service.name}
-                                                </div>
+                                                    <TableCell>
+                                                        {isAssigned ? (
+                                                            <div className="relative">
+                                                                <Input
+                                                                    type="number"
+                                                                    value={assigned.price || ''}
+                                                                    onChange={(e) => handleUpdateService(service.id, { price: parseFloat(e.target.value) })}
+                                                                    className="h-8 w-full pr-8"
+                                                                    placeholder="0"
+                                                                />
+                                                                <span className="absolute right-2 top-2 text-xs text-gray-400">{t('currency', 'AED')}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
+                                                    </TableCell>
 
-                                                {/* Price */}
-                                                <div className="col-span-2">
-                                                    {isAssigned ? (
-                                                        <div className="relative">
-                                                            <Input
-                                                                type="number"
-                                                                value={assigned.price || ''}
-                                                                onChange={(e) => handleUpdateService(service.id, { price: parseFloat(e.target.value) })}
-                                                                className="h-8 w-full pr-8"
-                                                                placeholder="0"
+                                                    <TableCell className="text-center">
+                                                        {isAssigned ? (
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <Switch
+                                                                    checked={assigned.is_online_booking_enabled}
+                                                                    onCheckedChange={(checked) => handleUpdateService(service.id, { is_online_booking_enabled: checked })}
+                                                                    className="data-[state=checked]:bg-yellow-400"
+                                                                />
+                                                                <span className="text-sm text-gray-600">
+                                                                    {assigned.is_online_booking_enabled ? t('on', 'On') : t('off', 'Off')}
+                                                                </span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell className="text-center">
+                                                        {isAssigned ? (
+                                                            <div className="flex items-center justify-center gap-2">
+                                                                <Switch
+                                                                    checked={assigned.is_calendar_enabled}
+                                                                    onCheckedChange={(checked) => handleUpdateService(service.id, { is_calendar_enabled: checked })}
+                                                                    className="data-[state=checked]:bg-yellow-400"
+                                                                />
+                                                                <span className="text-sm text-gray-600">
+                                                                    {assigned.is_calendar_enabled ? t('on', 'On') : t('off', 'Off')}
+                                                                </span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        {isAssigned ? (
+                                                            <Select
+                                                                value={String(assigned.duration || 60)}
+                                                                onValueChange={(value) => handleUpdateService(service.id, { duration: parseInt(value) })}
+                                                            >
+                                                                <SelectTrigger className="h-8 border-none bg-transparent shadow-none hover:bg-gray-100">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="15">00 h 15 m</SelectItem>
+                                                                    <SelectItem value="30">00 h 30 m</SelectItem>
+                                                                    <SelectItem value="45">00 h 45 m</SelectItem>
+                                                                    <SelectItem value="50">00 h 50 m</SelectItem>
+                                                                    <SelectItem value="60">01 h 00 m</SelectItem>
+                                                                    <SelectItem value="90">01 h 30 m</SelectItem>
+                                                                    <SelectItem value="120">02 h 00 m</SelectItem>
+                                                                    <SelectItem value="150">02 h 30 m</SelectItem>
+                                                                    <SelectItem value="180">03 h 00 m</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        ) : (
+                                                            <span className="text-gray-400">-</span>
+                                                        )}
+                                                    </TableCell>
+
+                                                    <TableCell className="text-center text-gray-500 text-sm">
+                                                        {t('not_indicated', 'Not indicated')}
+                                                    </TableCell>
+
+                                                    <TableCell className="text-right">
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <Switch
+                                                                checked={isAssigned}
+                                                                onCheckedChange={() => handleToggleService(service.id, isAssigned)}
+                                                                className="data-[state=checked]:bg-green-500"
                                                             />
-                                                            <span className="absolute right-2 top-2 text-xs text-gray-400">AED</span>
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400">
+                                                                <LinkIcon className="h-4 w-4" />
+                                                            </Button>
                                                         </div>
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm">-</span>
-                                                    )}
-                                                </div>
-
-                                                {/* Online Booking */}
-                                                <div className="col-span-2 flex justify-center">
-                                                    {isAssigned ? (
-                                                        <Switch
-                                                            checked={assigned.is_online_booking_enabled}
-                                                            onCheckedChange={(checked) => handleUpdateService(service.id, { is_online_booking_enabled: checked })}
-                                                        />
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm">-</span>
-                                                    )}
-                                                </div>
-
-                                                {/* Calendar */}
-                                                <div className="col-span-2 flex justify-center">
-                                                    {isAssigned ? (
-                                                        <Switch
-                                                            checked={assigned.is_calendar_enabled}
-                                                            onCheckedChange={(checked) => handleUpdateService(service.id, { is_calendar_enabled: checked })}
-                                                        />
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm">-</span>
-                                                    )}
-                                                </div>
-
-                                                {/* Duration */}
-                                                <div className="col-span-2">
-                                                    {isAssigned ? (
-                                                        <Select
-                                                            value={String(assigned.duration || 60)}
-                                                            onValueChange={(value) => handleUpdateService(service.id, { duration: parseInt(value) })}
-                                                        >
-                                                            <SelectTrigger className="h-8">
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="15">15 {t('min')}</SelectItem>
-                                                                <SelectItem value="30">30 {t('min')}</SelectItem>
-                                                                <SelectItem value="45">45 {t('min')}</SelectItem>
-                                                                <SelectItem value="60">1 {t('hour')}</SelectItem>
-                                                                <SelectItem value="90">1.5 {t('hours')}</SelectItem>
-                                                                <SelectItem value="120">2 {t('hours')}</SelectItem>
-                                                                <SelectItem value="150">2.5 {t('hours')}</SelectItem>
-                                                                <SelectItem value="180">3 {t('hours')}</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    ) : (
-                                                        <span className="text-gray-400 text-sm">-</span>
-                                                    )}
-                                                </div>
-
-                                                {/* Toggle Assignment */}
-                                                <div className="col-span-1 flex justify-end">
-                                                    <Switch
-                                                        checked={isAssigned}
-                                                        onCheckedChange={() => handleToggleService(service.id, isAssigned)}
-                                                        className="data-[state=checked]:bg-green-500"
-                                                    />
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
                             </AccordionContent>
                         </AccordionItem>
                     );

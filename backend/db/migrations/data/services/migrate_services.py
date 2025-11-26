@@ -242,21 +242,6 @@ SERVICES_DATA = [
         'benefits': ['Smooth skin', 'Professional', 'Gentle']
     },
     {
-        'key': 'cheeks',
-        'name': 'Cheeks',
-        'name_ru': 'Щеки',
-        'name_ar': 'الخدين',
-        'price': 40,
-        'min_price': None,
-        'max_price': None,
-        'duration': '1h',
-        'currency': 'AED',
-        'category': 'Waxing',
-        'description': 'Cheek waxing',
-        'description_ru': 'Эпиляция щек',
-        'benefits': ['Clean look', 'Gentle', 'Quick']
-    },
-    {
         'key': 'upper_lips',
         'name': 'Upper Lips',
         'name_ru': 'Верхняя губа',
@@ -1183,6 +1168,162 @@ SERVICES_DATA = [
         'description_ru': 'Пакет из 5 укладок',
         'benefits': ['Best value', 'Convenient', 'Save money']
     },
+    
+    # Hair Extra
+    {
+        'key': 'hair_wash',
+        'name': 'Hair wash',
+        'name_ru': 'Мытье головы',
+        'name_ar': 'غسل الشعر',
+        'price': 60,
+        'min_price': None,
+        'max_price': None,
+        'duration': '30min',
+        'currency': 'AED',
+        'category': 'Hair',
+        'description': 'Hair wash service',
+        'description_ru': 'Мытье головы',
+        'benefits': ['Clean', 'Refreshing']
+    },
+
+    # Nail Extension
+    {
+        'key': 'gel_overlay',
+        'name': 'Gel overlay',
+        'name_ru': 'Гелевое покрытие',
+        'name_ar': 'تغطية جل',
+        'price': 250,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nail Extension',
+        'description': 'Gel overlay on natural nails',
+        'description_ru': 'Покрытие гелем натуральных ногтей',
+        'benefits': ['Strong', 'Natural look']
+    },
+    {
+        'key': 'gel_extension',
+        'name': 'Gel extension',
+        'name_ru': 'Гелевое наращивание',
+        'name_ar': 'تطويل جل',
+        'price': 350,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nail Extension',
+        'description': 'Gel nail extensions',
+        'description_ru': 'Наращивание ногтей гелем',
+        'benefits': ['Long nails', 'Durable']
+    },
+    {
+        'key': 'acrylic_overlay',
+        'name': 'Acrylic overlay',
+        'name_ru': 'Акриловое покрытие',
+        'name_ar': 'تغطية أكريليك',
+        'price': 300,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nail Extension',
+        'description': 'Acrylic overlay',
+        'description_ru': 'Покрытие акрилом',
+        'benefits': ['Very strong', 'Durable']
+    },
+    {
+        'key': 'acrylic_extension',
+        'name': 'Acrylic extension',
+        'name_ru': 'Акриловое наращивание',
+        'name_ar': 'تطويل أكريليك',
+        'price': 380,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nail Extension',
+        'description': 'Acrylic nail extensions',
+        'description_ru': 'Наращивание акрилом',
+        'benefits': ['Extra length', 'Strong']
+    },
+    {
+        'key': 'remove_nail_extensions',
+        'name': 'Remove nail extensions',
+        'name_ru': 'Снятие наращенных ногтей',
+        'name_ar': 'إزالة الأظافر الاصطناعية',
+        'price': 50,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Nail Extension',
+        'description': 'Safe removal of extensions',
+        'description_ru': 'Безопасное снятие наращивания',
+        'benefits': ['Safe', 'Clean']
+    },
+
+    # Promo
+    {
+        'key': 'promo_overlay_290',
+        'name': 'Promotion overlay manicure, pedicure 290 aed',
+        'name_ru': 'Акция: Покрытие + Маникюр + Педикюр (290 AED)',
+        'name_ar': 'عرض: تغطية + مانيكير + باديكير',
+        'price': 145,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h 30min',
+        'currency': 'AED',
+        'category': 'Promo',
+        'description': 'Special promo package',
+        'description_ru': 'Специальное предложение',
+        'benefits': ['Best value', 'Complete care']
+    },
+    {
+        'key': 'promo_mani_pedi_250',
+        'name': 'Promo mani pedi 250 без укрепления',
+        'name_ru': 'Акция: Маникюр + Педикюр (250 AED)',
+        'name_ar': 'عرض: مانيكير + باديكير',
+        'price': 125,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Promo',
+        'description': 'Mani Pedi Promo',
+        'description_ru': 'Акция Маникюр Педикюр',
+        'benefits': ['Great price']
+    },
+    {
+        'key': 'combo_basic_150',
+        'name': 'Combo basic 150',
+        'name_ru': 'Комбо Базовый (150 AED)',
+        'name_ar': 'كومبو أساسي',
+        'price': 75,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Promo',
+        'description': 'Basic combo',
+        'description_ru': 'Базовое комбо',
+        'benefits': ['Essential care']
+    },
+    {
+        'key': 'promo_390',
+        'name': 'Promo 390',
+        'name_ru': 'Акция 390',
+        'name_ar': 'عرض 390',
+        'price': 390,
+        'min_price': None,
+        'max_price': None,
+        'duration': '1h',
+        'currency': 'AED',
+        'category': 'Promo',
+        'description': 'Special Promo 390',
+        'description_ru': 'Специальная акция 390',
+        'benefits': ['Premium service']
+    }
 ]
 
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ (ПРИМЕРЫ) =====

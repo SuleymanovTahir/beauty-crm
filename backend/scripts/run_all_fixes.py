@@ -61,7 +61,14 @@ async def main():
     except ImportError:
         print("⚠️  Skipping link_users_to_employees (module not found)")
 
-    # 3. Data Integrity Checks (fix_data.py)
+    # 3. Bot Settings Population (СНАЧАЛА заполняем!)
+    try:
+        from scripts.populate_bot_settings import populate_bot_settings
+        results['populate_bot_settings'] = await run_fix("Populate Bot Settings", populate_bot_settings)
+    except ImportError:
+        print("⚠️  Skipping populate_bot_settings (module not found)")
+
+    # 3.5 Data Integrity Checks (fix_data.py) (ПОТОМ проверяем!)
     try:
         from scripts.maintenance.fix_data import (
             check_bot_settings, check_users, check_salon_settings, 
@@ -77,19 +84,26 @@ async def main():
     except ImportError:
         print("⚠️  Skipping fix_data checks (module not found)")
 
-    # 3.5 Data Seeding
+    # 3.5 Update Employee Details (СНАЧАЛА создаем сотрудников!)
+    try:
+        from update_employee_details import update_employees
+        results['update_employee_details'] = await run_fix("Update Employee Details", update_employees)
+    except ImportError:
+        print("⚠️  Skipping update_employee_details (module not found)")
+
+    # 3.5.5 Data Seeding (ПОТОМ заполняем данные)
     try:
         from scripts.data.seed_full_data import main as seed_full_data
         results['seed_full_data'] = await run_fix("Seed Full Data", seed_full_data)
     except ImportError:
         print("⚠️  Skipping seed_full_data (module not found)")
 
-    # 3.5.5 Update Employee Details
+    # 3.5.6 Fix Employee Services (ПОСЛЕ заполнения данных)
     try:
-        from update_employee_details import update_employees
-        results['update_employee_details'] = await run_fix("Update Employee Details", update_employees)
+        from scripts.fix_employee_services import fix_employee_services
+        results['fix_employee_services'] = await run_fix("Fix Employee Services", fix_employee_services)
     except ImportError:
-        print("⚠️  Skipping update_employee_details (module not found)")
+        print("⚠️  Skipping fix_employee_services (module not found)")
 
     # 3.6 Bot Settings Updates
     try:
