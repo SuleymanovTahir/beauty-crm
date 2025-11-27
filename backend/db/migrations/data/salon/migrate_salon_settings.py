@@ -20,11 +20,11 @@ DEFAULT_SALON_DATA = {
     "instagram": "www.instagram.com/mlediamant/",
     "bot_name": "M.Le Diamant Assistant",
     "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
-    "hours": "Ежедневно 10:30 - 21:00",
-    "hours_ru": "Ежедневно 10:30 - 21:00",
-    "hours_ar": "يوميًا 10:30 - 21:00",
-    "hours_weekdays": "10:30 - 21:00",
-    "hours_weekends": "10:30 - 21:00",
+    "hours": "Ежедневно 10:30 - 21:30",
+    "hours_ru": "Ежедневно 10:30 - 21:30",
+    "hours_ar": "يوميًا 10:30 - 21:30",
+    "hours_weekdays": "10:30 - 21:30",
+    "hours_weekends": "10:30 - 21:30",
     "city": "Dubai",
     "country": "UAE",
     "timezone": "Asia/Dubai",
@@ -51,8 +51,8 @@ def migrate_salon_settings():
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
-        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
-        hours_weekends TEXT DEFAULT '10:30 - 21:00',
+        hours_weekdays TEXT DEFAULT '10:30 - 21:30',
+        hours_weekends TEXT DEFAULT '10:30 - 21:30',
         booking_url TEXT,
         phone TEXT,
         email TEXT,
@@ -76,11 +76,11 @@ def migrate_salon_settings():
         columns = [row[1] for row in c.fetchall()]
         
         if 'hours_weekdays' not in columns:
-            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
+            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:30'")
             print("✅ Добавлена колонка hours_weekdays")
         
         if 'hours_weekends' not in columns:
-            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
+            c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:30'")
             print("✅ Добавлена колонка hours_weekends")
         
         conn.commit()

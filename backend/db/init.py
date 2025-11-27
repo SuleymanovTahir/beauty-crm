@@ -128,8 +128,8 @@ def init_database():
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
-        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
-        hours_weekends TEXT DEFAULT '10:30 - 21:00',
+        hours_weekdays TEXT DEFAULT '10:30 - 21:30',
+        hours_weekends TEXT DEFAULT '10:30 - 21:30',
         booking_url TEXT,
         phone TEXT,
         email TEXT,
@@ -161,9 +161,9 @@ def init_database():
     if 'birthday_discount' not in columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN birthday_discount TEXT DEFAULT '15%'")
     if 'hours_weekdays' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:30'")
     if 'hours_weekends' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:30'")
 
     # Таблица истории чата
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history
@@ -288,20 +288,21 @@ def init_database():
                   duration TEXT,
                   created_at TEXT,
                   updated_at TEXT)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS employees
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  full_name TEXT NOT NULL,
-                  position TEXT,
-                  experience TEXT,
-                  photo TEXT,
-                  bio TEXT,
-                  phone TEXT,
-                  email TEXT,
-                  instagram TEXT,
-                  is_active INTEGER DEFAULT 1,
-                  sort_order INTEGER DEFAULT 0,
-                  created_at TEXT,
-                  updated_at TEXT)''')
+    # DEPRECATED: employees table consolidated into users with is_service_provider flag
+    # c.execute('''CREATE TABLE IF NOT EXISTS employees
+    #              (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #               full_name TEXT NOT NULL,
+    #               position TEXT,
+    #               experience TEXT,
+    #               photo TEXT,
+    #               bio TEXT,
+    #               phone TEXT,
+    #               email TEXT,
+    #               instagram TEXT,
+    #               is_active INTEGER DEFAULT 1,
+    #               sort_order INTEGER DEFAULT 0,
+    #               created_at TEXT,
+    #               updated_at TEXT)''')
 
     # Таблица уведомлений
     c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (

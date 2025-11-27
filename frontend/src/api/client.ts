@@ -49,6 +49,12 @@ export const apiClient = {
   logout: () =>
     apiCall('/api/logout', { method: 'POST' }),
 
+  deleteAccount: (password: string, confirm: boolean) =>
+    apiCall('/api/delete-account', {
+      method: 'POST',
+      body: { password, confirm }
+    }),
+
   // ===== DASHBOARD =====
   getDashboard: () =>
     apiCall('/api/dashboard'),

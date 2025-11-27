@@ -379,6 +379,13 @@ def main():
         'Часы работы салона (будни/выходные)'
     )
 
+    results["schema/salon/update_working_hours_defaults"] = run_migration_function(
+        'db.migrations.schema.salon.update_working_hours_defaults',
+        'update_working_hours_defaults',
+        'Обновление часов работы на 10:30 - 21:30'
+    )
+
+
     # Users
     results["schema/users/add_birthday_phone_fields"] = run_migration_function(
         'db.migrations.schema.users.add_birthday_phone_fields',
@@ -695,6 +702,13 @@ def main():
         'remove_master_schedule_table',
         'Удаление устаревшей таблицы master_schedule'
     )
+
+    results["maintenance/remove_deprecated_employee_tables"] = run_migration_function(
+        'db.migrations.maintenance.remove_deprecated_employee_tables',
+        'remove_deprecated_employee_tables',
+        'Удаление устаревших таблиц employees и employee_salary_settings'
+    )
+
 
     # DEPRECATED: uses employee_services table
     # results["maintenance/link_employees_to_services"] = run_migration_function(

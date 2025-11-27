@@ -216,6 +216,13 @@ export class ApiClient {
     }
   }
 
+  async deleteAccount(password: string, confirm: boolean) {
+    return this.request('/api/account/delete', {
+      method: 'POST',
+      body: JSON.stringify({ password, confirm }),
+    })
+  }
+
   // ===== DASHBOARD =====
   async getDashboard() {
     return this.request<any>('/api/dashboard')

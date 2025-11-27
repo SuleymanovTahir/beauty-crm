@@ -1,9 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Toaster } from './components/ui/sonner';
 import './i18n';
 import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from '../public_landing/LanguageContext';
 
 // Admin Pages
 import AdminLayout from './components/layouts/AdminLayout';
@@ -336,10 +337,12 @@ export default function App() {
             </Route>
 
             {/* New Public Routes (Standalone) */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/service/:category" element={<ServiceDetail />} />
-            <Route path="/terms" element={<TermsOfUseNew />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+            <Route element={<LanguageProvider><Outlet /></LanguageProvider>}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/service/:category" element={<ServiceDetail />} />
+              <Route path="/terms" element={<TermsOfUseNew />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+            </Route>
 
             {/* Public Routes using PublicLayout */}
             <Route element={<PublicLayout />}>

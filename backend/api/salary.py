@@ -20,56 +20,61 @@ router = APIRouter(tags=["Salary"])
 async def get_salary_settings(current_user: dict = Depends(get_current_user)):
     """Получить настройки зарплаты для всех сотрудников"""
     try:
+@router.get("/salary/settings/{user_id}")
+async def get_user_salary_settings(user_id: int, current_user: dict = Depends(get_current_user)):
+    """Получить настройки зарплаты для конкретного пользователя"""
+    try:
         conn = sqlite3.connect(DATABASE_NAME)
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         c.execute("""
-            SELECT
-                ess.*,
-                e.name as employee_name
-            FROM employee_salary_settings ess
-            JOIN employees e ON ess.employee_id = e.id
-            WHERE ess.is_active = 1
-            ORDER BY e.name
-        """)
-
-        settings = [dict(row) for row in c.fetchall()]
+            SELECT uss.*, u.full_name
+            FROM user_salary_settings uss
+            JOIN users u ON uss.user_id = u.id
+            WHERE uss.user_id = ?
+        """, (user_id,))
+        
+        row = c.fetchone()
+        if not row:
+            return {"success": False, "error": "Настройки зарплаты не найдены"}
+        
+        columns = [description[0] for description in c.description]
+        settings = dict(zip(columns, row))
+        
+        return {"success": True, "settings": settings}
+    except Exception as e:
+        log_error(f"Error getting salary settings: {e}", "salary")
+        return {"success": False, "error": str(e)}
+    finally:
         conn.close()
 
-        return {"settings": settings}
 
-    except Exception as e:
-        log_error(f"Error fetching salary settings: {e}", "salary")
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-
-@router.post("/salary/settings")
-async def update_salary_settings(
-    request: Request,
-    current_user: dict = Depends(get_current_user)
-):
-    """Обновить настройки зарплаты сотрудника"""
+@router.post("/salary/settings/{user_id}")
+async def update_salary_settings(user_id: int, request: Request, current_user: dict = Depends(get_current_user)):
+    """Обновить настройки зарплаты пользователя"""
     if current_user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
-    data = await request.json()
-    employee_id = data.get("employee_id")
-
-    if not employee_id:
-        return JSONResponse({"error": "employee_id required"}, status_code=400)
-
     try:
+        data = await request.json()
+        
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
-
+        
+        # Проверяем существование пользователя
+        c.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+        if not c.fetchone():
+            return {"success": False, "error": "Пользователь не найден"}
+        
+        # Обновляем или создаем настройки
         c.execute("""
-            INSERT OR REPLACE INTO employee_salary_settings
-            (employee_id, salary_type, hourly_rate, monthly_rate, commission_rate,
+            INSERT OR REPLACE INTO user_salary_settings
+            (user_id, salary_type, hourly_rate, monthly_rate, commission_rate,
              bonus_rate, currency, is_active, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
         """, (
-            employee_id,
+            user_id,
             data.get("salary_type", "hourly"),
             data.get("hourly_rate", 0),
             data.get("monthly_rate", 0),
@@ -78,16 +83,15 @@ async def update_salary_settings(
             data.get("currency", "AED"),
             1
         ))
-
+        
         conn.commit()
         conn.close()
-
-        log_info(f"Salary settings updated for employee {employee_id}", "salary")
+        
+        log_info(f"Salary settings updated for user {user_id}", "salary")
         return {"success": True, "message": "Настройки зарплаты обновлены"}
-
     except Exception as e:
         log_error(f"Error updating salary settings: {e}", "salary")
-        return JSONResponse({"error": str(e)}, status_code=500)
+        return {"success": False, "error": str(e)}
 
 
 @router.post("/salary/calculate")
@@ -100,11 +104,11 @@ async def calculate_salary(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
-    employee_id = data.get("employee_id")
+    user_id = data.get("user_id")
     period_start = data.get("period_start")
     period_end = data.get("period_end")
 
-    if not all([employee_id, period_start, period_end]):
+    if not all([user_id, period_start, period_end]):
         return JSONResponse({"error": "Missing required fields"}, status_code=400)
 
     try:
@@ -114,9 +118,9 @@ async def calculate_salary(
 
         # Получить настройки зарплаты
         c.execute("""
-            SELECT * FROM employee_salary_settings
-            WHERE employee_id = ? AND is_active = 1
-        """, (employee_id,))
+            SELECT * FROM user_salary_settings
+            WHERE user_id = ? AND is_active = 1
+        """, (user_id,))
         settings = c.fetchone()
 
         if not settings:
@@ -129,7 +133,7 @@ async def calculate_salary(
             WHERE b.master = (SELECT name FROM employees WHERE id = ?)
             AND b.status = 'completed'
             AND b.datetime BETWEEN ? AND ?
-        """, (employee_id, period_start, period_end))
+        """, (user_id, period_start, period_end))
         services = c.fetchone()
 
         services_completed = services["count"] or 0

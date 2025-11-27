@@ -104,14 +104,14 @@ def update_position(position_id: int, **kwargs):
 def delete_position(position_id: int):
     """
     Удалить должность (мягкое удаление - деактивация)
-    Сотрудники с этой должностью не удаляются, у них просто обнуляется position_id
+    Пользователи с этой должностью не удаляются, у них просто обнуляется position_id
     """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
     try:
-        # Обнуляем position_id у всех сотрудников с этой должностью
-        c.execute("UPDATE employees SET position_id = NULL WHERE position_id = ?", (position_id,))
+        # Обнуляем position_id у всех пользователей с этой должностью
+        c.execute("UPDATE users SET position_id = NULL WHERE position_id = ?", (position_id,))
 
         # Деактивируем должность
         c.execute("UPDATE positions SET is_active = 0, updated_at = ? WHERE id = ?",
@@ -130,14 +130,14 @@ def delete_position(position_id: int):
 def hard_delete_position(position_id: int):
     """
     Полностью удалить должность из БД (использовать с осторожностью!)
-    Сотрудники с этой должностью не удаляются, у них обнуляется position_id
+    Пользователи с этой должностью не удаляются, у них обнуляется position_id
     """
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
     try:
-        # Обнуляем position_id у всех сотрудников с этой должностью
-        c.execute("UPDATE employees SET position_id = NULL WHERE position_id = ?", (position_id,))
+        # Обнуляем position_id у всех пользователей с этой должностью
+        c.execute("UPDATE users SET position_id = NULL WHERE position_id = ?", (position_id,))
 
         # Удаляем должность
         c.execute("DELETE FROM positions WHERE id = ?", (position_id,))
@@ -153,12 +153,12 @@ def hard_delete_position(position_id: int):
 
 
 def get_employees_by_position(position_id: int):
-    """Получить всех сотрудников с определенной должностью"""
+    """Получить всех пользователей с определенной должностью"""
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("SELECT * FROM employees WHERE position_id = ? AND is_active = 1", (position_id,))
+    c.execute("SELECT * FROM users WHERE position_id = ? AND is_active = 1", (position_id,))
     employees = [dict(row) for row in c.fetchall()]
 
     conn.close()
