@@ -60,7 +60,7 @@ def seed_data():
             'price': 120,
             'currency': 'AED',
             'description': 'Классический маникюр',
-            'duration': '60'
+            'duration': '1h'
         },
         {
             'service_key': 'pedicure_basic',
@@ -71,7 +71,7 @@ def seed_data():
             'price': 150,
             'currency': 'AED',
             'description': 'Классический педикюр',
-            'duration': '90'
+            'duration': '1h 30min'
         },
         # Волосы
         {
@@ -83,7 +83,7 @@ def seed_data():
             'price': 200,
             'currency': 'AED',
             'description': 'Женская стрижка',
-            'duration': '60'
+            'duration': '1h'
         },
         {
             'service_key': 'hair_coloring',
@@ -96,7 +96,7 @@ def seed_data():
             'max_price': 800,
             'currency': 'AED',
             'description': 'Окрашивание волос',
-            'duration': '180'
+            'duration': '3h'
         },
         {
             'service_key': 'keratin_treatment',
@@ -107,7 +107,7 @@ def seed_data():
             'price': 1500,
             'currency': 'AED',
             'description': 'Кератиновое выпрямление и уход за волосами',
-            'duration': '240'
+            'duration': '3h'
         },
         {
             'service_key': 'hair_care',
@@ -118,7 +118,7 @@ def seed_data():
             'price': 1500,
             'currency': 'AED',
             'description': 'Комплексный уход за волосами (ботокс, кератин, восстановление)',
-            'duration': '180'
+            'duration': '3h'
         },
         # Перманентный макияж
         {
@@ -130,7 +130,7 @@ def seed_data():
             'price': 1200,
             'currency': 'AED',
             'description': 'Перманентный макияж бровей',
-            'duration': '120'
+            'duration': '2h'
         },
         {
             'service_key': 'permanent_lips',
@@ -141,7 +141,7 @@ def seed_data():
             'price': 1500,
             'currency': 'AED',
             'description': 'Перманентный макияж губ',
-            'duration': '120'
+            'duration': '2h'
         },
         {
             'service_key': 'permanent_eyeliner',
@@ -152,7 +152,7 @@ def seed_data():
             'price': 1000,
             'currency': 'AED',
             'description': 'Перманентный макияж век (стрелки)',
-            'duration': '120'
+            'duration': '2h'
         },
     ]
 

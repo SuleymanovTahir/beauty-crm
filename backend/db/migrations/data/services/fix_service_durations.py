@@ -18,7 +18,8 @@ def fix_service_durations(db_path=None):
     1. Hair Cut Kids: 1h → 30min
     2. Manicure Gel: 2h → 1h
     3. Package of 5 Massages: 1h → 2h
-    4. Удаляет дубликаты "Уход за волосами"
+    4. Keratin Treatment: 240 min → 3h
+    5. Удаляет дубликаты "Уход за волосами"
     """
     if db_path is None:
         db_path = DATABASE_NAME
@@ -67,8 +68,20 @@ def fix_service_durations(db_path=None):
         else:
             print("   ℹ️  Already correct")
         
-        # 4. Удаляем дубликаты "Уход за волосами"
-        print("\n4️⃣ Removing duplicate 'Hair Care' services...")
+        # 4. Кератиновое выпрямление: 240 → 3h
+        print("\n4️⃣ Fixing Keratin Treatment duration...")
+        c.execute("""
+            UPDATE services 
+            SET duration = '3h' 
+            WHERE name = 'Keratin Treatment' AND (duration = '240' OR duration = 240)
+        """)
+        if c.rowcount > 0:
+            print(f"   ✅ Updated {c.rowcount} record(s)")
+        else:
+            print("   ℹ️  Already correct")
+        
+        # 5. Удаляем дубликаты "Уход за волосами"
+        print("\n5️⃣ Removing duplicate 'Hair Care' services...")
         
         # Сначала проверяем есть ли дубликаты
         c.execute("""
@@ -91,7 +104,7 @@ def fix_service_durations(db_path=None):
                 AND name_ru = 'Уход за волосами'
             """)
             print(f"   ✅ Deleted {c.rowcount} duplicate record(s)")
-            print("   ℹ️  Keeping only 'Кератиновое выпрямление' (240 min)")
+            print("   ℹ️  Keeping only 'Hair Treatment' (3h)")
         else:
             print("   ℹ️  No duplicates found")
         
