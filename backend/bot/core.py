@@ -560,8 +560,8 @@ class SalonBot:
             from utils.validators import validate_phone_detailed
             
             # Check if user provided a phone number in this message
-            # Updated regex to catch ANY sequence of digits (including short ones)
-            phone_pattern = r'\b\d{5,15}\b'  # Catch any 5-15 digit sequence
+            # Updated regex to catch numbers with or without + prefix
+            phone_pattern = r'\+?\d{7,15}'  # Catch +7XXXXXXXXXX or 7XXXXXXXXXX or 050XXXXXXX
             phone_match = re.search(phone_pattern, user_message)
             
             if phone_match:
@@ -577,8 +577,6 @@ class SalonBot:
 Пожалуйста, напишите полный номер в одном из форматов:
 • 050XXXXXXX (UAE local)
 • +971XXXXXXXXX (UAE international)
-• +7XXXXXXXXXX (Russia/Kazakhstan)
-• +1XXXXXXXXXX (USA/Canada)
 • или другой международный формат с кодом страны
 
 После этого я смогу подтвердить вашу запись! 😊"""
