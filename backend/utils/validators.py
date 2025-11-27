@@ -4,12 +4,7 @@ import re
 def validate_phone_number(phone: str) -> bool:
     """
     Validate phone number format.
-    Allowed formats:
-    - +971... (UAE)
-    - +7... (CIS)
-    - 050... (UAE local)
-    - 870... (KZ local)
-    - digits only, length 9-15
+    Supports international formats with flexible validation.
     """
     is_valid, _ = validate_phone_detailed(phone)
     return is_valid
@@ -18,7 +13,7 @@ def validate_phone_number(phone: str) -> bool:
 def validate_phone_detailed(phone: str) -> tuple[bool, str]:
     """
     Validate phone number format with detailed error messages.
-    Supports UAE (Dubai) and CIS formats.
+    Supports multiple international formats with smart detection.
     """
     if not phone:
         return False, "номер не указан"
@@ -32,30 +27,30 @@ def validate_phone_detailed(phone: str) -> tuple[bool, str]:
     
     digit_count = len(clean_phone)
     
-    # 1. UAE (Dubai) Validation
-    # Local: 050 123 4567 (10 digits)
-    # Local without 0: 50 123 4567 (9 digits)
+    # 1. UAE/GCC Validation (971 country code)
     # International: 971 50 123 4567 (12 digits)
+    # Local: 050 123 4567 (10 digits)
+    # Short local: 50 123 4567 (9 digits)
     if clean_phone.startswith('971'):
         if digit_count != 12:
-            return False, f"номер UAE должен содержать 12 цифр (971...), у вас {digit_count}"
+            return False, f"номер UAE должен содержать 12 цифр, у вас {digit_count}"
         return True, None
         
     if clean_phone.startswith('05'):
         if digit_count != 10:
-            return False, f"номер UAE (05...) должен содержать 10 цифр, у вас {digit_count}"
+            return False, f"номер UAE должен содержать 10 цифр, у вас {digit_count}"
         return True, None
         
     if clean_phone.startswith('5'):
         if digit_count != 9:
-            return False, f"номер UAE (5...) должен содержать 9 цифр, у вас {digit_count}"
+            return False, f"номер UAE должен содержать 9 цифр, у вас {digit_count}"
         return True, None
 
-    # 2. CIS (Russia/Kazakhstan) Validation
-    # 7 700 123 45 67 (11 digits)
+    # 2. CIS/Russia/Kazakhstan Validation (7 country code)
+    # Format: 7 700 123 45 67 (11 digits total)
     if clean_phone.startswith('7'):
         if digit_count != 11:
-            return False, f"номер (+7...) должен содержать 11 цифр, у вас {digit_count}"
+            return False, f"номер должен содержать 11 цифр, у вас {digit_count}"
         return True, None
         
     # 3. General Fallback

@@ -28,8 +28,11 @@ export default function AdminSettings() {
     phone: '',
     email: '',
     instagram: '',
-    language: '',  // ✅ Пусто - заполнится из БД
+    language: '',
     telegram_manager_chat_id: '',
+    currency: '',
+    timezone_offset: '',
+    birthday_discount: '',
     working_hours: {
       weekdays: '',
       weekends: ''
@@ -179,6 +182,9 @@ export default function AdminSettings() {
         instagram: data.instagram || '',
         language: data.language || 'ru',
         telegram_manager_chat_id: data.telegram_manager_chat_id || '',
+        currency: data.currency || 'AED',
+        timezone_offset: data.timezone_offset || 'UTC+4',
+        birthday_discount: data.birthday_discount || '15%',
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
@@ -391,6 +397,9 @@ export default function AdminSettings() {
         instagram: generalSettings.instagram,
         language: generalSettings.language,
         telegram_manager_chat_id: generalSettings.telegram_manager_chat_id,
+        currency: generalSettings.currency,
+        timezone_offset: generalSettings.timezone_offset,
+        birthday_discount: generalSettings.birthday_discount,
         hours_weekdays: generalSettings.working_hours.weekdays,
         hours_weekends: generalSettings.working_hours.weekends
       });
@@ -1035,6 +1044,81 @@ export default function AdminSettings() {
                       })}
                       placeholder="10:30 - 21:00"
                     />
+                  </div>
+                </div>
+
+                {/* Universal Settings Section */}
+                <div className="space-y-4 border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {t('settings:universal_settings', 'Универсальные настройки')}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="city">{t('settings:city', 'Город')}</Label>
+                      <Input
+                        id="city"
+                        value={generalSettings.city}
+                        onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
+                        placeholder="Dubai"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="currency">{t('settings:currency', 'Валюта')}</Label>
+                      <Select
+                        value={generalSettings.currency}
+                        onValueChange={(value) => setGeneralSettings({ ...generalSettings, currency: value })}
+                      >
+                        <SelectTrigger id="currency">
+                          <SelectValue placeholder={t('settings:select_currency', 'Выберите валюту')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="AED">AED (Dirham)</SelectItem>
+                          <SelectItem value="USD">USD (Dollar)</SelectItem>
+                          <SelectItem value="EUR">EUR (Euro)</SelectItem>
+                          <SelectItem value="RUB">RUB (Ruble)</SelectItem>
+                          <SelectItem value="KZT">KZT (Tenge)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="timezone_offset">{t('settings:timezone_offset', 'Часовой пояс')}</Label>
+                      <Select
+                        value={generalSettings.timezone_offset}
+                        onValueChange={(value) => setGeneralSettings({ ...generalSettings, timezone_offset: value })}
+                      >
+                        <SelectTrigger id="timezone_offset">
+                          <SelectValue placeholder={t('settings:select_timezone', 'Выберите часовой пояс')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="UTC+0">UTC+0 (London)</SelectItem>
+                          <SelectItem value="UTC+1">UTC+1 (Paris)</SelectItem>
+                          <SelectItem value="UTC+2">UTC+2 (Cairo)</SelectItem>
+                          <SelectItem value="UTC+3">UTC+3 (Moscow)</SelectItem>
+                          <SelectItem value="UTC+4">UTC+4 (Dubai)</SelectItem>
+                          <SelectItem value="UTC+5">UTC+5 (Karachi)</SelectItem>
+                          <SelectItem value="UTC+6">UTC+6 (Almaty)</SelectItem>
+                          <SelectItem value="UTC+8">UTC+8 (Singapore)</SelectItem>
+                          <SelectItem value="UTC-5">UTC-5 (New York)</SelectItem>
+                          <SelectItem value="UTC-8">UTC-8 (Los Angeles)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="birthday_discount">{t('settings:birthday_discount', 'Скидка на день рождения')}</Label>
+                      <Input
+                        id="birthday_discount"
+                        value={generalSettings.birthday_discount}
+                        onChange={(e) => setGeneralSettings({ ...generalSettings, birthday_discount: e.target.value })}
+                        placeholder="15%"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        {t('settings:birthday_discount_hint', 'Например: 15%, 20%, 500 AED')}
+                      </p>
+                    </div>
                   </div>
                 </div>
 

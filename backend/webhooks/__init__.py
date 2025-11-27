@@ -625,9 +625,11 @@ async def handle_webhook(request: Request):
                                 ai_response = f"""Номер {phone_to_check} указан неверно: {error_msg}
 
 Пожалуйста, напишите полный номер в одном из форматов:
-• 050XXXXXXX (UAE)
-• +971XXXXXXXXX (UAE)
-• +7XXXXXXXXXX (International)
+• 050XXXXXXX (UAE local)
+• +971XXXXXXXXX (UAE international)
+• +7XXXXXXXXXX (Russia/Kazakhstan)
+• +1XXXXXXXXXX (USA/Canada)
+• или другой международный формат с кодом страны
 
 После этого я смогу подтвердить вашу запись! 😊"""
                                 # Skip saving
