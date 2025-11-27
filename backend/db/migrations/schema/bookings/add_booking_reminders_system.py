@@ -74,7 +74,7 @@ def add_booking_reminders_system():
             try:
                 c.execute("""
                     INSERT INTO booking_reminder_settings (name, days_before, hours_before, is_enabled)
-                    VALUES (?, ?, ?, 0)
+                    VALUES (?, ?, ?, 1)
                 """, (name, days, hours))
                 print(f"  ✅ {name}")
             except sqlite3.IntegrityError:

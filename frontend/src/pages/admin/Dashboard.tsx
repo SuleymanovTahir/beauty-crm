@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { getDynamicAvatar } from '../../utils/avatarUtils';
 
 interface Stats {
   total_clients: number;
@@ -61,7 +62,10 @@ export default function AdminDashboard() {
       // Take last 3 bookings and enrich with client data
       if (bookingsData.bookings) {
         const enrichedBookings = bookingsData.bookings.slice(0, 3).map((booking: any) => {
-          const client = clientsData.clients?.find((c: any) => c.instagram_id === booking.instagram_id);
+          // Try to find client by client_id first, then by instagram_id
+          const client = clientsData.clients?.find((c: any) =>
+            c.id === booking.client_id || c.instagram_id === booking.instagram_id
+          );
           return {
             ...booking,
             profile_pic: client?.profile_pic,
@@ -166,14 +170,6 @@ export default function AdminDashboard() {
     return badges[status] || { text: status, bg: 'bg-gray-100', color: 'text-gray-800' };
   };
 
-  const getGenderAvatar = (gender?: string) => {
-    if (!gender) return '👤';
-    const normalizedGender = gender.toLowerCase();
-    if (normalizedGender === 'male' || normalizedGender === 'м' || normalizedGender === 'мужской') return '👨';
-    if (normalizedGender === 'female' || normalizedGender === 'ж' || normalizedGender === 'женский') return '👩';
-    return '👤';
-  };
-
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8">
@@ -243,17 +239,33 @@ export default function AdminDashboard() {
                     onClick={() => navigate(`/admin/bookings/${booking.id}`)}
                   >
                     <div className="flex items-center gap-3">
-                      {booking.profile_pic ? (
-                        <img
-                          src={booking.profile_pic}
-                          alt={booking.name || 'Client'}
-                          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
-                          {getGenderAvatar(booking.gender)}
-                        </div>
-                      )}
+                      {(() => {
+                        const profilePic = booking.profile_pic;
+                        const clientName = booking.name || 'N';
+
+                        return (
+                          <>
+                            {profilePic && profilePic.trim() !== '' ? (
+                              <img
+                                src={`/api/proxy/image?url=${encodeURIComponent(profilePic)}`}
+                                alt={clientName}
+                                className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-white shadow-sm"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                  if (fallback) fallback.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <img
+                              src={getDynamicAvatar(clientName, 'cold', booking.gender)}
+                              alt={clientName}
+                              className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-gray-100"
+                              style={{ display: profilePic && profilePic.trim() !== '' ? 'none' : 'block' }}
+                            />
+                          </>
+                        );
+                      })()}
                       <div className="min-w-0">
                         <p className="text-sm text-gray-900 truncate">{booking.name || t('dashboard:unknown_name')}</p>
                         <p className="text-xs text-gray-500 truncate">{booking.service || t('dashboard:no_service')}</p>

@@ -452,6 +452,19 @@ def main():
         'Гарантия структуры пользователей (Fix)'
     )
 
+    results["schema/users/add_master_info_fields"] = run_migration_function(
+        'db.migrations.schema.users.add_master_info_fields',
+        'add_master_info_fields',
+        'Добавление опыта и био мастеров'
+    )
+
+    # Salon
+    results["schema/salon/add_salon_amenities"] = run_migration_function(
+        'db.migrations.schema.salon.add_salon_amenities',
+        'add_salon_amenities',
+        'Добавление удобств салона (оплата, парковка, Wi-Fi)'
+    )
+
     # Other
     results["schema/other/add_notes_field"] = run_migration_function(
         'db.migrations.schema.other.add_notes_field',
@@ -608,6 +621,12 @@ def main():
         'Заполнение услуг салона'
     )
 
+    results["data/services/fix_service_durations"] = run_migration_function(
+        'db.migrations.data.services.fix_service_durations',
+        'fix_service_durations',
+        'Исправление длительности услуг и удаление дубликатов'
+    )
+
     # DEPRECATED: employee_services consolidated into user_services
     # results["data/services/seed_employee_services"] = run_migration_function(
     #     'db.migrations.data.services.seed_employee_services',
@@ -625,6 +644,24 @@ def main():
         'db.migrations.data.users.update_existing_users_roles',
         'update_existing_users_roles',
         'Обновление ролей существующих пользователей'
+    )
+
+    results["data/users/seed_master_info"] = run_migration_function(
+        'db.migrations.data.users.seed_master_info',
+        'seed_master_info',
+        'Заполнение информации о мастерах'
+    )
+
+    results["data/salon/seed_salon_amenities"] = run_migration_function(
+        'db.migrations.data.salon.seed_salon_amenities',
+        'seed_salon_amenities',
+        'Заполнение удобств салона'
+    )
+
+    results["data/bookings/enable_reminders_by_default"] = run_migration_function(
+        'db.migrations.data.bookings.enable_reminders_by_default',
+        'enable_booking_reminders_by_default',
+        'Включение напоминаний о записях по умолчанию'
     )
 
     # ========================================================================

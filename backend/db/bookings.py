@@ -54,15 +54,27 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
              (instagram_id, service_name, datetime, phone, name, status, 
               created_at, special_package_id, master)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-          (instagram_id, service, datetime_str, phone, name, "pending", 
+          (instagram_id, service, datetime_str, phone, name, "confirmed", 
            now, special_package_id, master))
     
     booking_id = c.lastrowid  # ✅ ПОЛУЧАЕМ ID СОЗДАННОЙ ЗАПИСИ
     
-    c.execute("""UPDATE clients 
-                 SET status = 'lead', phone = ?, name = ? 
-                 WHERE instagram_id = ?""",
-              (phone, name, instagram_id))
+    # ✅ ЗАЩИТА ОТ ПЕРЕЗАПИСИ ПРОФИЛЯ ("Запись для друга")
+    # Проверяем текущие данные клиента
+    c.execute("SELECT name, phone FROM clients WHERE instagram_id = ?", (instagram_id,))
+    current_client = c.fetchone()
+    
+    # Обновляем профиль ТОЛЬКО если он пустой или неполный
+    # Если у клиента уже есть и имя и телефон - не трогаем профиль (это может быть запись для друга)
+    should_update_profile = True
+    if current_client and current_client[0] and current_client[1]:
+        should_update_profile = False
+        
+    if should_update_profile:
+        c.execute("""UPDATE clients 
+                     SET status = 'lead', phone = ?, name = ? 
+                     WHERE instagram_id = ?""",
+                  (phone, name, instagram_id))
     
     # Увеличиваем счетчик использования пакета если это спец. пакет
     if special_package_id:
@@ -495,3 +507,73 @@ def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
     
     return results
 
+
+# ===== #20 - УПРАВЛЕНИЕ ЗАПИСЯМИ (ОТМЕНА/ИЗМЕНЕНИЕ) =====
+
+def cancel_booking(booking_id: int) -> bool:
+    """Отменить запись (статус cancelled)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("UPDATE bookings SET status = 'cancelled' WHERE id = ?", (booking_id,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        return success
+    except Exception as e:
+        print(f"❌ Ошибка отмены записи: {e}")
+        conn.close()
+        return False
+
+
+def delete_booking(booking_id: int) -> bool:
+    """Удалить запись из БД (полное удаление)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        c.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
+        conn.commit()
+        success = c.rowcount > 0
+        conn.close()
+        return success
+    except Exception as e:
+        print(f"❌ Ошибка удаления записи: {e}")
+        conn.close()
+        return False
+
+
+def find_active_booking(instagram_id: str) -> Optional[Dict]:
+    """
+    Найти активную (предстоящую) запись клиента.
+    Возвращает словарь с данными записи или None.
+    """
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    now = get_current_time().strftime('%Y-%m-%d %H:%M')
+    
+    # Ищем подтвержденную запись в будущем
+    c.execute("""
+        SELECT id, service_name, datetime, master, phone
+        FROM bookings
+        WHERE instagram_id = ? 
+        AND status IN ('confirmed', 'pending')
+        AND datetime >= ?
+        ORDER BY datetime ASC
+        LIMIT 1
+    """, (instagram_id, now))
+    
+    row = c.fetchone()
+    conn.close()
+    
+    if row:
+        return {
+            "id": row[0],
+            "service": row[1],
+            "datetime": row[2],
+            "master": row[3],
+            "phone": row[4]
+        }
+    return None
