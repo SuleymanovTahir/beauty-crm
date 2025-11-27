@@ -128,6 +128,8 @@ def init_database():
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
+        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
+        hours_weekends TEXT DEFAULT '10:30 - 21:00',
         booking_url TEXT,
         phone TEXT,
         email TEXT,
@@ -139,7 +141,9 @@ def init_database():
         city TEXT,
         country TEXT,
         timezone TEXT,
+        timezone_offset TEXT DEFAULT 'UTC+4',
         currency TEXT DEFAULT 'AED',
+        birthday_discount TEXT DEFAULT '15%',
         updated_at TEXT
     )''')
 
@@ -150,6 +154,16 @@ def init_database():
         c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_en TEXT")
     if 'bot_name_ar' not in columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_ar TEXT")
+    
+    # Миграция: добавить универсальные настройки
+    if 'timezone_offset' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN timezone_offset TEXT DEFAULT 'UTC+4'")
+    if 'birthday_discount' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN birthday_discount TEXT DEFAULT '15%'")
+    if 'hours_weekdays' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
+    if 'hours_weekends' not in columns:
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
 
     # Таблица истории чата
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history

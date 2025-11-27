@@ -45,7 +45,9 @@ def get_salon_settings() -> dict:
                 "city": row_dict.get("city", "Dubai"),
                 "country": row_dict.get("country", "UAE"),
                 "timezone": row_dict.get("timezone", "Asia/Dubai"),
+                "timezone_offset": row_dict.get("timezone_offset", "UTC+4"),
                 "currency": row_dict.get("currency", "AED"),
+                "birthday_discount": row_dict.get("birthday_discount", "15%"),
                 "updated_at": row_dict.get("updated_at"),
                 "hours_weekdays": row_dict.get("hours_weekdays", "10:30 - 21:00"),
                 "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00")
@@ -91,7 +93,9 @@ def _get_default_salon_settings() -> dict:
         "city": "Dubai",
         "country": "UAE",
         "timezone": "Asia/Dubai",
+        "timezone_offset": "UTC+4",
         "currency": "AED",
+        "birthday_discount": "15%",
         "updated_at": None
     }
 
@@ -108,7 +112,8 @@ def update_salon_settings(data: dict) -> bool:
                     hours_weekdays = ?, hours_weekends = ?,
                     booking_url = ?, phone = ?, email = ?, instagram = ?,
                     whatsapp = ?, bot_name = ?, bot_name_en = ?, bot_name_ar = ?,
-                    city = ?, country = ?, timezone = ?, currency = ?,
+                    city = ?, country = ?, timezone = ?, timezone_offset = ?, 
+                    currency = ?, birthday_discount = ?,
                     updated_at = CURRENT_TIMESTAMP
                     WHERE id = 1""",
                   (data.get('name'),
@@ -132,7 +137,9 @@ def update_salon_settings(data: dict) -> bool:
                    data.get('city'),
                    data.get('country'),
                    data.get('timezone'),
-                   data.get('currency')))
+                   data.get('timezone_offset'),
+                   data.get('currency'),
+                   data.get('birthday_discount')))
 
         conn.commit()
         log_info("✅ Настройки салона обновлены", "database")

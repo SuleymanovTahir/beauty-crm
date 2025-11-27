@@ -186,7 +186,7 @@ async def send_birthday_notifications():
                     <div style="padding: 30px; background-color: #f7f7f7;">
                       <p style="color: #666; font-size: 16px;">{message}</p>
                       <p style="color: #999; font-size: 14px; margin-top: 20px;">
-                        Это автоматическое напоминание от системы Beauty CRM.
+                        Это автоматическое напоминание от CRM системы.
                       </p>
                     </div>
                   </body>
@@ -330,12 +330,14 @@ async def send_birthday_congratulations():
                 continue
 
             # Формируем поздравление
+            birthday_discount = salon.get('birthday_discount', '15%')  # Configurable discount
+            
             message = f"""🎉🎂 С Днём Рождения, {name}! 🎂🎉
 
 Команда {salon_name} поздравляет вас с этим особенным днём!
 Желаем счастья, здоровья, красоты и исполнения всех желаний! ✨
 
-🎁 Специально для вас - скидка 15% на любую услугу в день рождения!
+🎁 Специально для вас - скидка {birthday_discount} на любую услугу в день рождения!
 
 Будем рады видеть вас! 💖"""
 
@@ -407,7 +409,12 @@ async def send_booking_reminders():
     """Отправить напоминания о записях (#15)"""
     from db.bookings import get_upcoming_bookings
     from integrations.instagram import send_message
+    from db.settings import get_salon_settings
     import asyncio
+    
+    salon_settings = get_salon_settings()
+    salon_name = salon_settings.get('name', 'M.Le Diamant Beauty Lounge')
+    salon_address = salon_settings.get('address', 'JBR, Dubai')
     
     try:
         # За 24 часа
@@ -425,7 +432,7 @@ async def send_booking_reminders():
                     message = f"""Напоминаю: завтра {service} в {dt_obj.strftime('%H:%M')} 💅
 {f'Мастер: {master}' if master else ''}
 
-Адрес: M.Le Diamant Beauty Lounge, JBR
+Адрес: {salon_name}, {salon_address}
 Ждём вас! 💎"""
                     
                     await send_message(instagram_id, message)
@@ -480,7 +487,12 @@ async def send_immediate_booking_reminders():
                 if minutes_until < 0:
                     continue
                 # Build message
-                message = f"🔔 Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')} 💅\n{f'Mастер: {master}' if master else ''}\n\nАдрес: M.Le Diamant Beauty Lounge, JBR\nЖдём вас! 💎"
+                from db.settings import get_salon_settings
+                salon_settings = get_salon_settings()
+                salon_name = salon_settings.get('name', 'M.Le Diamant Beauty Lounge')
+                salon_address = salon_settings.get('address', 'JBR, Dubai')
+                
+                message = f"🔔 Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')} 💅\n{f'Mастер: {master}' if master else ''}\n\nАдрес: {salon_name}, {salon_address}\nЖдём вас! 💎"
                 await send_message(instagram_id, message)
                 log_info(f"✅ Immediate reminder (≤1h) sent to {instagram_id}", "scheduler")
             except Exception as e:

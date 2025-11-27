@@ -560,7 +560,8 @@ class SalonBot:
             from utils.validators import validate_phone_detailed
             
             # Check if user provided a phone number in this message
-            phone_pattern = r'(?:\+|\b)(?:971|7|8|05)\d{1,3}[-\s\(]*\d{2,3}[-\s\)]*\d{2,4}[-\s]*\d{2,4}\b'
+            # Updated regex to catch ANY sequence of digits (including short ones)
+            phone_pattern = r'\b\d{5,15}\b'  # Catch any 5-15 digit sequence
             phone_match = re.search(phone_pattern, user_message)
             
             if phone_match:
@@ -574,8 +575,11 @@ class SalonBot:
                     error_response = f"""Номер {extracted_phone} указан неверно: {error_msg}
 
 Пожалуйста, напишите полный номер в одном из форматов:
-• +971XXXXXXXXX (UAE)
-• +7XXXXXXXXXX (Россия/Казахстан)
+• 050XXXXXXX (UAE local)
+• +971XXXXXXXXX (UAE international)
+• +7XXXXXXXXXX (Russia/Kazakhstan)
+• +1XXXXXXXXXX (USA/Canada)
+• или другой международный формат с кодом страны
 
 После этого я смогу подтвердить вашу запись! 😊"""
                     
