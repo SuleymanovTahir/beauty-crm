@@ -16,10 +16,6 @@ from core.auth import get_current_user_or_redirect as get_current_user
 router = APIRouter(tags=["Salary"])
 
 
-@router.get("/salary/settings")
-async def get_salary_settings(current_user: dict = Depends(get_current_user)):
-    """Получить настройки зарплаты для всех сотрудников"""
-    try:
 @router.get("/salary/settings/{user_id}")
 async def get_user_salary_settings(user_id: int, current_user: dict = Depends(get_current_user)):
     """Получить настройки зарплаты для конкретного пользователя"""

@@ -64,12 +64,12 @@ export function Header({ salonInfo }: HeaderProps) {
             ))}
 
             {/* Language Switcher Dropdown */}
-            <div className="relative group">
+            <div className="language-dropdown-menu relative group">
               <button className="flex items-center gap-2 px-3 py-2 bg-white/50 rounded-full hover:bg-white transition-colors min-w-[80px] justify-center">
                 <Globe className="w-4 h-4 text-[#2d2d2d]" />
                 <span className="text-sm uppercase">{i18n.language}</span>
               </button>
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 z-[110]">
+              <div className="language-dropdown-menu absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 z-[10000]">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}

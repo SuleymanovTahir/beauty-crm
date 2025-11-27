@@ -168,11 +168,12 @@ def main():
     #     'Создание таблицы расписания сотрудников'
     # )
 
-    results["schema/employees/create_employee_unavailability"] = run_migration_function(
-        'db.migrations.schema.employees.create_employee_unavailability',
-        'create_employee_unavailability_table',
-        'Создание таблицы отсутствий сотрудников'
-    )
+    # DEPRECATED: employee_unavailability consolidated into user_time_off
+    # results["schema/employees/create_employee_unavailability"] = run_migration_function(
+    #     'db.migrations.schema.employees.create_employee_unavailability',
+    #     'create_employee_unavailability_table',
+    #     'Создание таблицы отсутствий сотрудников'
+    # )
 
     # DEPRECATED: employee_services consolidated into user_services
     # results["schema/employees/create_employee_services"] = run_migration_function(
