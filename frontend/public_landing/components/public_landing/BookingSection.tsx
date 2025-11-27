@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Calendar, Clock, User, Phone, Mail } from "lucide-react";
-import { useLanguage } from "./LanguageContext";
+import { Calendar, Clock, User, Phone, Mail, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
-export function BookingSection() {
-  const { t, language } = useLanguage();
+interface BookingSectionProps {
+  services?: any[];
+}
+
+export function BookingSection({ services = [] }: BookingSectionProps) {
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -13,19 +20,55 @@ export function BookingSection() {
     time: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(language === 'ru' ? "Спасибо за вашу заявку! Мы свяжемся с вами в ближайшее время." : language === 'ar' ? "شكرا لطلبك! سنتصل بك قريبا." : "Thank you for your request! We will contact you soon.");
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/send-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: `New Booking Request:
+          Phone: ${formData.phone}
+          Service: ${formData.service}
+          Date: ${formData.date}
+          Time: ${formData.time}`
+        })
+      });
+
+      if (response.ok) {
+        toast.success(t('messageSent', { defaultValue: 'Message sent successfully!' }));
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          service: "",
+          date: "",
+          time: ""
+        });
+      } else {
+        toast.error(t('errorMessage', { defaultValue: 'Failed to send message.' }));
+      }
+    } catch (error) {
+      console.error('Error sending booking request:', error);
+      toast.error(t('errorMessage', { defaultValue: 'Failed to send message.' }));
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const services = [
-    t.serviceManicure,
-    t.servicePedicure,
-    t.serviceHaircut,
-    t.serviceColoring,
-    t.serviceStyling,
-    t.serviceMassage,
-    t.serviceSpa
+  // Use services from database or fallback to default list
+  const servicesList = services.length > 0 ? services.map(s => s.name) : [
+    t('serviceManicure', { defaultValue: 'Manicure' }),
+    t('servicePedicure', { defaultValue: 'Pedicure' }),
+    t('serviceHaircut', { defaultValue: 'Haircut' }),
+    t('serviceColoring', { defaultValue: 'Coloring' }),
+    t('serviceStyling', { defaultValue: 'Styling' }),
+    t('serviceMassage', { defaultValue: 'Massage' }),
+    t('serviceSpa', { defaultValue: 'Spa' })
   ];
 
   return (
@@ -33,16 +76,16 @@ export function BookingSection() {
       <div className="container mx-auto max-w-6xl">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="text-[#b8a574] uppercase tracking-wider mb-4">{t.bookingTag}</p>
+            <p className="text-[#b8a574] uppercase tracking-wider mb-4">{t('bookingTag')}</p>
             <h2 className="text-4xl lg:text-5xl text-[#2d2d2d] mb-6">
-              {t.bookingTitle}
+              {t('bookingTitle')}
             </h2>
             <p className="text-[#6b6b6b] mb-8 text-lg">
-              {t.bookingDesc}
+              {t('bookingDesc')}
             </p>
-            
+
             <div className="relative h-[400px] rounded-3xl overflow-hidden">
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1759142235060-3191ee596c81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBiZWF1dHklMjBzYWxvbiUyMGludGVyaW9yfGVufDF8fHx8MTc2NDE2MjcxN3ww&ixlib=rb-4.1.0&q=80&w=1080"
                 alt="Salon"
                 className="w-full h-full object-cover"
@@ -55,60 +98,60 @@ export function BookingSection() {
               <div>
                 <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
                   <User className="w-4 h-4" />
-                  {t.yourName}
+                  {t('yourName')}
                 </label>
-                <input 
+                <input
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t.enterName}
+                  placeholder={t('enterName')}
                 />
               </div>
 
               <div>
                 <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
                   <Phone className="w-4 h-4" />
-                  {t.phone}
+                  {t('phone', { defaultValue: 'Phone' })}
                 </label>
-                <input 
+                <input
                   type="tel"
                   required
                   value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t.enterPhone}
+                  placeholder={t('enterPhone')}
                 />
               </div>
 
               <div>
                 <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
                   <Mail className="w-4 h-4" />
-                  {t.email}
+                  {t('email', { defaultValue: 'Email' })}
                 </label>
-                <input 
+                <input
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t.enterEmail}
+                  placeholder={t('enterEmail')}
                 />
               </div>
 
               <div>
                 <label className="text-sm text-[#6b6b6b] mb-2 block">
-                  {t.selectService}
+                  {t('selectService')}
                 </label>
-                <select 
+                <select
                   required
                   value={formData.service}
-                  onChange={(e) => setFormData({...formData, service: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                   className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
                 >
-                  <option value="">{t.chooseService}</option>
-                  {services.map((service, index) => (
+                  <option value="">{t('chooseService')}</option>
+                  {servicesList.map((service, index) => (
                     <option key={index} value={service}>{service}</option>
                   ))}
                 </select>
@@ -118,13 +161,13 @@ export function BookingSection() {
                 <div>
                   <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
                     <Calendar className="w-4 h-4" />
-                    {t.date}
+                    {t('date', { defaultValue: 'Date' })}
                   </label>
-                  <input 
+                  <input
                     type="date"
                     required
                     value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                     className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
                   />
                 </div>
@@ -132,23 +175,25 @@ export function BookingSection() {
                 <div>
                   <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
                     <Clock className="w-4 h-4" />
-                    {t.time}
+                    {t('time', { defaultValue: 'Time' })}
                   </label>
-                  <input 
+                  <input
                     type="time"
                     required
                     value={formData.time}
-                    onChange={(e) => setFormData({...formData, time: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                     className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
-              <button 
+              <button
                 type="submit"
-                className="w-full py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors"
+                disabled={loading}
+                className="w-full py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors flex items-center justify-center gap-2"
               >
-                {t.submit}
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {t('submit')}
               </button>
             </form>
           </div>

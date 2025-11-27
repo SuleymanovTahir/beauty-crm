@@ -62,6 +62,12 @@ import Booking from './pages/public/Booking';
 import ClientCabinet from './pages/public/ClientCabinet';
 import RateUs from './pages/public/RateUs';
 
+// New Public Landing Pages
+import { LandingPage } from '../public_landing/pages/LandingPage';
+import { PrivacyPolicy as PrivacyPolicyNew } from '../public_landing/pages/public_landing__PrivacyPolicy';
+import { TermsOfUse as TermsOfUseNew } from '../public_landing/pages/public_landing__TermsOfUse';
+import { ServiceDetail } from '../public_landing/pages/ServiceDetail';
+
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -329,16 +335,22 @@ export default function App() {
               <Route path="" element={<Navigate to="dashboard" replace />} />
             </Route>
 
-            {/* Public Routes */}
-            <Route path="/" element={<PublicLayout />}>
-              <Route index element={<Home />} />
+            {/* New Public Routes (Standalone) */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/service/:category" element={<ServiceDetail />} />
+            <Route path="/terms" element={<TermsOfUseNew />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+
+            {/* Public Routes using PublicLayout */}
+            <Route element={<PublicLayout />}>
+              {/* <Route index element={<Home />} /> */}
               <Route path="price-list" element={<PriceList />} />
               <Route path="team" element={<Team />} />
               <Route path="booking" element={<Booking />} />
               <Route path="client/cabinet" element={<ClientCabinet />} />
               <Route path="success" element={<Success />} />
-              <Route path="terms" element={<Terms />} />
-              <Route path="privacy-policy" element={<PrivacyPolicy />} />
+              {/* <Route path="terms" element={<Terms />} /> */}
+              {/* <Route path="privacy-policy" element={<PrivacyPolicy />} /> */}
               <Route path="about" element={<About />} />
               <Route path="contacts" element={<Contacts />} />
               <Route path="cooperation" element={<Cooperation />} />

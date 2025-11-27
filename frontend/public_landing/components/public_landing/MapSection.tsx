@@ -1,16 +1,21 @@
 import { MapPin, Phone, Clock } from "lucide-react";
-import { useLanguage } from "./LanguageContext";
+import { useTranslation } from "react-i18next";
 
-export function MapSection() {
-  const { t } = useLanguage();
-  
+interface MapSectionProps {
+  salonInfo?: any;
+}
+
+export function MapSection({ salonInfo }: MapSectionProps) {
+  const { t } = useTranslation(['public_landing', 'common']);
+
+
   return (
     <section className="py-24 px-6 lg:px-12 bg-[#f5f3f0]">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#b8a574] uppercase tracking-wider mb-4">{t.galleryTag}</p>
+          <p className="text-[#b8a574] uppercase tracking-wider mb-4">{t('galleryTag')}</p>
           <h2 className="text-4xl lg:text-5xl text-[#2d2d2d] mb-6">
-            {t.visitSalon}
+            {t('visitSalon')}
           </h2>
         </div>
 
@@ -51,21 +56,34 @@ export function MapSection() {
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-[#2d2d2d] mb-2">Часы работы</h3>
+                  <h3 className="text-[#2d2d2d] mb-2">{t('workingHours')}</h3>
                   <p className="text-[#6b6b6b]">
-                    Понедельник - Воскресенье<br />
-                    9:00 - 21:00
+                    {salonInfo?.working_hours ? (
+                      salonInfo.working_hours.split('\n').map((line: string, i: number) => {
+                        const translatedLine = line
+                          .replace(/Monday/gi, t('monday', { defaultValue: 'Понедельник' }))
+                          .replace(/Tuesday/gi, t('tuesday', { defaultValue: 'Вторник' }))
+                          .replace(/Wednesday/gi, t('wednesday', { defaultValue: 'Среда' }))
+                          .replace(/Thursday/gi, t('thursday', { defaultValue: 'Четверг' }))
+                          .replace(/Friday/gi, t('friday', { defaultValue: 'Пятница' }))
+                          .replace(/Saturday/gi, t('saturday', { defaultValue: 'Суббота' }))
+                          .replace(/Sunday/gi, t('sunday', { defaultValue: 'Воскресенье' }));
+                        return <span key={i}>{translatedLine}<br /></span>;
+                      })
+                    ) : (
+                      <>{t('monday', { defaultValue: 'Понедельник' })} - {t('sunday', { defaultValue: 'Воскресенье' })}<br />9:00 - 21:00</>
+                    )}
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <button className="flex-1 px-8 py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors">
-                {t.getDirections}
+              <button onClick={() => window.open(salonInfo?.google_maps || 'https://maps.google.com', '_blank')} className="flex-1 px-8 py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors">
+                {t('getDirections')}
               </button>
-              <button className="flex-1 px-8 py-4 border-2 border-[#2d2d2d] text-[#2d2d2d] rounded-full hover:bg-[#2d2d2d] hover:text-white transition-colors">
-                {t.callUs}
+              <button onClick={() => window.location.href = `tel:${salonInfo?.phone || '+971542478604'}`} className="flex-1 px-8 py-4 border-2 border-[#2d2d2d] text-[#2d2d2d] rounded-full hover:bg-[#2d2d2d] hover:text-white transition-colors">
+                {t('callUs')}
               </button>
             </div>
           </div>

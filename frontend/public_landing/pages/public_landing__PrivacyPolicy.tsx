@@ -1,12 +1,24 @@
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import logoImage from "figma:asset/294c370f335689b82fcbd9b38cf01af26370eed7.png";
+import { Header } from "../components/public_landing/Header";
+import "../styles/public_landing_globals.css";
+import "../public_landing.css";
+import { Footer } from "../components/public_landing/Footer";
+import logoImage from "../assets/294c370f335689b82fcbd9b38cf01af26370eed7.png";
+import { useState, useEffect } from "react";
+import { apiClient } from "../../src/api/client";
 
 export function PrivacyPolicy() {
+  const [salonInfo, setSalonInfo] = useState<any>({});
+
+  useEffect(() => {
+    apiClient.getSalonInfo()
+      .then(setSalonInfo)
+      .catch(err => console.error('Error loading salon info:', err));
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f5f3f0]">
-      <Header />
-      
+      <Header salonInfo={salonInfo} />
+
       <main className="pt-32 pb-24 px-6 lg:px-12">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
@@ -113,17 +125,17 @@ export function PrivacyPolicy() {
               </p>
               <div className="bg-[#f5f3f0] rounded-2xl p-6">
                 <p className="text-[#2d2d2d] mb-2">M Le Diamant Beauty Lounge</p>
-                <p className="text-[#6b6b6b]">Business Bay, Dubai Marina, Internet City, DIFC</p>
+                <p className="text-[#6b6b6b]">{salonInfo?.address || 'Business Bay, Dubai Marina, Internet City, DIFC'}</p>
                 <p className="text-[#6b6b6b]">Dubai, UAE</p>
-                <p className="text-[#6b6b6b] mt-4">Телефон: <a href="tel:+971542478604" className="text-[#b8a574] hover:underline">+971 54 247 8604</a></p>
-                <p className="text-[#6b6b6b]">Email: <a href="mailto:privacy@mlediamant.ae" className="text-[#b8a574] hover:underline">privacy@mlediamant.ae</a></p>
+                <p className="text-[#6b6b6b] mt-4">Телефон: <a href={`tel:${salonInfo?.phone || '+971542478604'}`} className="text-[#b8a574] hover:underline">{salonInfo?.phone || '+971 54 247 8604'}</a></p>
+                <p className="text-[#6b6b6b]">Email: <a href={`mailto:${salonInfo?.email || 'privacy@mlediamant.ae'}`} className="text-[#b8a574] hover:underline">{salonInfo?.email || 'privacy@mlediamant.ae'}</a></p>
               </div>
             </section>
           </div>
         </div>
       </main>
 
-      <Footer />
+      <Footer salonInfo={salonInfo} />
     </div>
   );
 }
