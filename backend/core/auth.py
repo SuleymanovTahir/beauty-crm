@@ -5,6 +5,7 @@ API Endpoints для авторизации и админ-панели
 from fastapi import APIRouter, Form, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
+from pydantic import BaseModel
 import sqlite3
 
 
@@ -770,3 +771,39 @@ async def reset_password(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+
+class DeleteAccountRequest(BaseModel):
+    password: str
+    confirm: bool
+
+@router.post("/delete-account")
+async def delete_account(
+    data: DeleteAccountRequest,
+    session_token: Optional[str] = Cookie(None)
+):
+    """API: Удаление собственного аккаунта"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    if not data.confirm:
+        return JSONResponse({"error": "Confirmation required"}, status_code=400)
+
+    # Verify password
+    verified_user = verify_user(user["username"], data.password)
+    if not verified_user:
+        return JSONResponse({"error": "Invalid password"}, status_code=403)
+
+    try:
+        # Delete user
+        success = delete_user(user["id"])
+        if success:
+            log_info(f"User {user['username']} deleted their own account", "auth")
+            response = JSONResponse({"success": True, "message": "Account deleted"})
+            response.delete_cookie("session_token")
+            return response
+        else:
+            return JSONResponse({"error": "Failed to delete account"}, status_code=500)
+    except Exception as e:
+        log_error(f"Error deleting account: {e}", "auth")
+        return JSONResponse({"error": str(e)}, status_code=500)

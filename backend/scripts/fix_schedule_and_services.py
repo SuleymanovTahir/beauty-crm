@@ -56,10 +56,10 @@ def fix_schedule_and_services():
                 c.execute("SELECT 1 FROM user_schedule WHERE user_id = ? AND day_of_week = ?", (master_id, day))
                 if not c.fetchone():
                     print(f"  Setting schedule for day {day}")
-                    c.execute("INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active) VALUES (?, ?, '10:00', '21:00', 1)", (master_id, day))
+                    c.execute("INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active) VALUES (?, ?, '10:30', '21:30', 1)", (master_id, day))
                 else:
                     # Ensure active
-                    c.execute("UPDATE user_schedule SET is_active = 1, start_time = '10:00', end_time = '21:00' WHERE user_id = ? AND day_of_week = ?", (master_id, day))
+                    c.execute("UPDATE user_schedule SET is_active = 1, start_time = '10:30', end_time = '21:30' WHERE user_id = ? AND day_of_week = ?", (master_id, day))
             except Exception as e:
                 print(f"  Error setting schedule for day {day}: {e}")
 

@@ -1,7 +1,7 @@
-import { Header } from "../components/public_landing/Header";
+import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";
-import { Footer } from "../components/public_landing/Footer";
+import { Footer } from "../components/Footer";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
 import { useParams, useNavigate } from "react-router-dom";

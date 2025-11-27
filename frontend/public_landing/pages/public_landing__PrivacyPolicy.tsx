@@ -1,8 +1,8 @@
-import { Header } from "../components/public_landing/Header";
+import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";
-import { Footer } from "../components/public_landing/Footer";
-import logoImage from "../assets/294c370f335689b82fcbd9b38cf01af26370eed7.png";
+import { Footer } from "../components/Footer";
+import logoImage from "../../public_landing/assets/c35944ec2655ccc8750b237ba9f12712e579cbcc.png";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
 

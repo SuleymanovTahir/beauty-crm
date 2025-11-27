@@ -1,17 +1,17 @@
-import { Header } from "../components/public_landing/NewDesign/Header";
+import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";
-import { Hero } from "../components/public_landing/NewDesign/Hero";
-import { FeaturesSection } from "../components/public_landing/FeaturesSection";
-import { Services } from "../components/public_landing/NewDesign/Services";
-import { Portfolio } from "../components/public_landing/NewDesign/Portfolio";
-import { Testimonials } from "../components/public_landing/NewDesign/Testimonials";
-import { MastersSection } from "../components/public_landing/MastersSection";
-import { BookingSection } from "../components/public_landing/BookingSection";
-import { Gallery } from "../components/public_landing/NewDesign/Gallery";
-import { FAQ } from "../components/public_landing/NewDesign/FAQ";
-import { MapSection } from "../components/public_landing/MapSection";
-import { Footer } from "../components/public_landing/Footer";
+import { Hero } from "../components/Hero";
+import { About } from "../components/About";
+import { Services } from "../components/Services";
+import { Portfolio } from "../components/Portfolio";
+import { Testimonials } from "../components/Testimonials";
+import { Gallery } from "../components/Gallery";
+import { FAQ } from "../components/FAQ";
+import { Footer } from "../components/Footer";
+import { MastersSection } from "../MastersSection";
+import { MapSection } from "../MapSection";
+import { BookingSection } from "../BookingSection";
 
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
@@ -34,19 +34,31 @@ export function LandingPage() {
 
     return (
         <div className="min-h-screen bg-[#f5f3f0]">
-            <Header />
+            <Header salonInfo={salonInfo} />
             <main>
                 <Hero />
-                <FeaturesSection />
-                <div id="services-section">
+                <About />
+                <div id="services">
                     <Services />
                 </div>
-                <Portfolio />
-                <MastersSection />
-                <Testimonials />
-                <BookingSection services={services} />
-                <Gallery />
-                <FAQ />
+                <div id="portfolio">
+                    <Portfolio />
+                </div>
+                <div id="team">
+                    <MastersSection />
+                </div>
+                <div id="testimonials">
+                    <Testimonials />
+                </div>
+                <div id="booking">
+                    <BookingSection services={services} />
+                </div>
+                <div id="gallery">
+                    <Gallery />
+                </div>
+                <div id="faq">
+                    <FAQ />
+                </div>
                 <div id="map-section">
                     <MapSection salonInfo={salonInfo} />
                 </div>
