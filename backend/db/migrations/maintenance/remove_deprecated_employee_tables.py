@@ -29,6 +29,9 @@ def remove_deprecated_employee_tables():
         c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_salary_settings'")
         salary_exists = c.fetchone() is not None
         
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_unavailability'")
+        unavailability_exists = c.fetchone() is not None
+        
         if employees_exists:
             # Проверяем, что данные перенесены в users
             c.execute("SELECT COUNT(*) FROM employees")
@@ -59,6 +62,19 @@ def remove_deprecated_employee_tables():
                 print("   ⚠️  Пропускаем удаление")
         else:
             print("   ℹ️  Таблица employee_salary_settings уже удалена")
+        
+        if unavailability_exists:
+            c.execute("SELECT COUNT(*) FROM employee_unavailability")
+            count = c.fetchone()[0]
+            
+            if count == 0:
+                c.execute("DROP TABLE employee_unavailability")
+                print("   ✅ Таблица employee_unavailability удалена (была пустая)")
+            else:
+                print(f"   ⚠️  Таблица employee_unavailability содержит {count} записей")
+                print("   ⚠️  Нужно мигрировать в user_time_off")
+        else:
+            print("   ℹ️  Таблица employee_unavailability уже удалена")
         
         conn.commit()
         return True
