@@ -28,22 +28,21 @@ def validate_phone_detailed(phone: str) -> tuple[bool, str]:
     digit_count = len(clean_phone)
     
     # 1. UAE/GCC Validation (971 country code)
-    # International: 971 50 123 4567 (12 digits)
-    # Local: 050 123 4567 (10 digits)
-    # Short local: 50 123 4567 (9 digits)
-    if clean_phone.startswith('971'):
-        if digit_count != 12:
-            return False, f"номер UAE должен содержать 12 цифр, у вас {digit_count}"
-        return True, None
-        
-    if clean_phone.startswith('05'):
-        if digit_count != 10:
-            return False, f"номер UAE должен содержать 10 цифр, у вас {digit_count}"
-        return True, None
-        
-    if clean_phone.startswith('5'):
-        if digit_count != 9:
-            return False, f"номер UAE должен содержать 9 цифр, у вас {digit_count}"
+    if phone.startswith('+971') or phone.startswith('971'):
+        # International: +971 XX XXX XXXX (12 digits total)
+        # Local: 050 123 4567 (10 digits)
+        if phone.startswith('+'):
+            if digit_count != 12:
+                return False, f"международный номер должен содержать 12 цифр, у вас {digit_count}"
+        else:
+            # Local format without +
+            if digit_count != 10 and digit_count != 9:
+                return False, f"локальный номер должен содержать 9-10 цифр, у вас {digit_count}"
+    
+    elif phone.startswith('05') or phone.startswith('5'):
+        # Local UAE format: 050... or 50...
+        if digit_count != 10 and digit_count != 9:
+            return False, f"локальный номер должен содержать 9-10 цифр, у вас {digit_count}"
         return True, None
 
     # 2. CIS/Russia/Kazakhstan Validation (7 country code)
