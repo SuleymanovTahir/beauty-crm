@@ -205,6 +205,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       return (
         bookingDate.toDateString() === date.toDateString() &&
         bookingHour === hour &&
+        b.status !== 'cancelled' && // ✅ Exclude cancelled bookings
         (!employeeId || (b.master && b.master.toUpperCase() === employeeId.toUpperCase())) &&  // ✅ Case-insensitive
         (selectedEmployee === 'all' || !selectedEmployee || !b.master || b.master.toUpperCase() === selectedEmployee.toUpperCase()) &&  // ✅ Case-insensitive
         (selectedService === 'all' || !selectedService || b.service === selectedService)
@@ -215,7 +216,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const getBookingsForDay = (day: Date) => {
     return bookings.filter(b => {
       const bookingDate = new Date(b.datetime);
-      return bookingDate.toDateString() === day.toDateString();
+      return bookingDate.toDateString() === day.toDateString() && b.status !== 'cancelled'; // ✅ Exclude cancelled bookings
     });
   };
 

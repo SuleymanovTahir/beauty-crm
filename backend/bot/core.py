@@ -330,15 +330,188 @@ class SalonBot:
                 else:
                     print(f"❌ No available slots found for {target_date}")
 
+                    # ✅ Проверяем ПОЧЕМУ нет слотов на сегодня
+                    reason_text = ""
+                    if target_date_label == "сегодня":
+                        # Получаем часы работы салона
+                        salon_hours = self.salon.get('hours', 'Daily 10:30 - 21:00')
+                        
+                        # Парсим время закрытия
+                        if '-' in salon_hours:
+                            try:
+                                end_time_str = salon_hours.split('-')[1].strip()  # "21:00"
+                                from datetime import datetime
+                                salon_close = datetime.strptime(end_time_str, '%H:%M').time()
+                                
+                                # Получаем длительность услуги
+                                service_duration_mins = 60  # default
+                                if service_name:
+                                    from bot.tools import get_available_time_slots
+                                    # Функция уже парсит длительность, используем её логику
+                                    conn = sqlite3.connect(DATABASE_NAME)
+                                    c = conn.cursor()
+                                    c.execute("SELECT duration FROM services WHERE name_ru LIKE ? OR name LIKE ?", 
+                                             (f"%{service_name}%", f"%{service_name}%"))
+                                    dur_row = c.fetchone()
+                                    if dur_row and dur_row[0]:
+                                        dur_str = dur_row[0]
+                                        try:
+                                            hours = 0
+                                            minutes = 0
+                                            if 'h' in dur_str:
+                                                hours = int(dur_str.split('h')[0])
+                                            if 'min' in dur_str:
+                                                min_part = dur_str.split('min')[0]
+                                                if 'h' in min_part:
+                                                    minutes = int(min_part.split('h')[1].strip())
+                                                else:
+                                                    minutes = int(min_part)
+                                            service_duration_mins = hours * 60 + minutes
+                                        except:
+                                            pass
+                                    conn.close()
+                                
+                                # Проверяем достаточно ли времени
+                                current_hour = current_time.hour
+                                current_minute = current_time.minute
+                                close_hour = salon_close.hour
+                                close_minute = salon_close.minute
+                                
+                                remaining_minutes = (close_hour * 60 + close_minute) - (current_hour * 60 + current_minute)
+                                
+                                if remaining_minutes < service_duration_mins:
+                                    reason_text = f"\n💡 Сейчас {current_time.strftime('%H:%M')}, салон работает до {end_time_str}.\n"
+                                    reason_text += f"Для этой услуги нужно {service_duration_mins} минут, а осталось только {remaining_minutes} минут.\n"
+                                    reason_text += "Поэтому на сегодня уже поздно. Предложи завтра!\n"
+                            except Exception as e:
+                                print(f"⚠️ Error parsing salon hours: {e}")
+
                     additional_context += f"""
 
     🔴 НА {target_date_label.upper()} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
-    
+    {reason_text}
     ⚠️ СТРОГИЙ ЗАПРЕТ:
     - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date_label}!
     - НЕ ГОВОРИ "ЕСТЬ ОКОШКО", ЕСЛИ ЕГО НЕТ!
-    - Скажи: "К сожалению, на {target_date_label} всё занято. Могу предложить завтра?"
+    - Скажи: "На {target_date_label} уже полная запись. Предложить ближайшее свободное время на следующие дни?"
     """
+
+            # ========================================
+            # ✅ NEW: CHECK FOR "SAME TIME" INTENT
+            # ========================================
+            same_time_keywords = ['в это же время', 'на это же время', 'same time', 'одновременно', 'в то же время']
+            is_same_time_request = any(k in user_message.lower() for k in same_time_keywords)
+            
+            if is_same_time_request:
+                print(f"🔄 Detected 'same time' intent")
+                
+                # Fetch last booking
+                conn = sqlite3.connect(DATABASE_NAME)
+                c = conn.cursor()
+                try:
+                    c.execute("""
+                        SELECT datetime, master, service_name
+                        FROM bookings 
+                        WHERE instagram_id = ? 
+                        AND status != 'cancelled'
+                        ORDER BY created_at DESC LIMIT 1
+                    """, (instagram_id,))
+                    last_booking = c.fetchone()
+                    
+                    if last_booking:
+                        lb_datetime, lb_master, lb_service = last_booking
+                        print(f"   📅 Last booking found: {lb_datetime} ({lb_master})")
+                        
+                        # Parse date and time
+                        lb_date_str = None
+                        lb_time_str = None
+                        
+                        if ' ' in lb_datetime:
+                            lb_date_str, lb_time_str = lb_datetime.split(' ')
+                            lb_time_str = lb_time_str[:5] # HH:MM
+                        elif 'T' in lb_datetime:
+                            lb_date_str, lb_time_str = lb_datetime.split('T')
+                            lb_time_str = lb_time_str[:5]
+                            
+                        if lb_date_str and lb_time_str:
+                            # Use date from booking if not specified in message
+                            check_date = target_date if target_date else lb_date_str
+                            check_time = lb_time_str
+                            # Use master from progress if set, otherwise from last booking
+                            check_master = booking_progress.get('master') if booking_progress else lb_master
+                            
+                            print(f"   🛡️ Checking availability for {check_date} {check_time} ({check_master})")
+                            
+                            check_result = check_time_slot_available(
+                                date=check_date,
+                                time=check_time,
+                                master_name=check_master
+                            )
+                            
+                            if not check_result['available']:
+                                print(f"   ❌ Slot is BUSY for {check_master}")
+                                
+                                # ✅ NEW: Check if ANY other master is available at this time
+                                # We use get_available_time_slots to also filter by SERVICE and get the master's name
+                                other_slots = get_available_time_slots(
+                                    date=check_date,
+                                    service_name=lb_service, # Filter by the same service!
+                                    master_name=None 
+                                )
+                                
+                                # Find if anyone has the specific time free
+                                found_other_master = None
+                                for slot in other_slots:
+                                    if slot['time'] == check_time:
+                                        found_other_master = slot['master']
+                                        break
+                                
+                                if found_other_master:
+                                    # Someone else is free!
+                                    print(f"   ✅ But master {found_other_master} is FREE!")
+                                    
+                                    additional_context += f"""
+    
+    🚫 ВНИМАНИЕ: КЛИЕНТ ХОЧЕТ "В ЭТО ЖЕ ВРЕМЯ" ({check_time}).
+    Мастер {check_master} ЗАНЯТ (там уже запись клиента).
+    
+    ✅ НО ЕСТЬ ДРУГОЙ СВОБОДНЫЙ МАСТЕР: {found_other_master}!
+    (Он делает ту же услугу: {lb_service})
+    
+    ⚠️ СКАЖИ (ПОЗИТИВНО):
+    "Отлично! На это же время свободен мастер {found_other_master}. Записать друга к нему?"
+    (Не извиняйся, просто предложи альтернативу!)
+    """
+                                else:
+                                    # No one is free
+                                    alternatives = check_result['alternatives']
+                                    alt_text = "\n".join([
+                                        f"  • {slot['time']} у {slot['master']}"
+                                        for slot in alternatives[:3]
+                                    ])
+                                    
+                                    additional_context += f"""
+        
+        🚫 ВНИМАНИЕ: КЛИЕНТ ХОЧЕТ "В ЭТО ЖЕ ВРЕМЯ" ({check_time}), НО ОНО УЖЕ ЗАНЯТО!
+        (Скорее всего, самим клиентом)
+        
+        Мастер {check_master} не может принять второго человека в {check_time}.
+        
+        Доступные альтернативы:
+        {alt_text}
+        
+        ⚠️ СКАЖИ:
+        "У {check_master} в {check_time} уже занято (там ваша запись). 
+        Могу записать друга к другому мастеру или на другое время.
+        Например: {alternatives[0]['time']} к {alternatives[0]['master']}."
+        """
+                            else:
+                                print(f"   ✅ Slot is AVAILABLE")
+                                
+                except Exception as e:
+                    print(f"❌ Error checking last booking: {e}")
+                finally:
+                    conn.close()
 
             # Проверка конкретного времени если клиент спрашивает
             time_match = re.search(r'(\d{1,2}):(\d{2})', user_message)
@@ -370,7 +543,7 @@ class SalonBot:
     {alt_text}
 
     ⚠️ СКАЖИ КЛИЕНТУ:
-    "К сожалению, {requested_time} уже занято. Могу предложить: {alternatives[0]['time']} у {alternatives[0]['master']}. Подходит?"
+    "Время {requested_time} уже занято. Могу предложить: {alternatives[0]['time']} у {alternatives[0]['master']}. Подходит?"
 
     НЕ ГОВОРИ ЧТО {requested_time} СВОБОДНО - ЭТО НЕПРАВДА!"""
                     else:
@@ -380,6 +553,36 @@ class SalonBot:
     Предложи другую дату!"""
                 else:
                     print(f"✅ Time {requested_time} is available")
+
+            # ========================================
+            # ✅ PHONE VALIDATION WITH IMMEDIATE FEEDBACK
+            # ========================================
+            from utils.validators import validate_phone_detailed
+            
+            # Check if user provided a phone number in this message
+            phone_pattern = r'(?:\+|\b)(?:971|7|8|05)\d{1,3}[-\s\(]*\d{2,3}[-\s\)]*\d{2,4}[-\s]*\d{2,4}\b'
+            phone_match = re.search(phone_pattern, user_message)
+            
+            if phone_match:
+                extracted_phone = phone_match.group(0)
+                is_valid, error_msg = validate_phone_detailed(extracted_phone)
+                
+                if not is_valid:
+                    print(f"⚠️ Invalid phone number detected: {extracted_phone} - {error_msg}")
+                    
+                    # Return immediate error message to user
+                    error_response = f"""Номер {extracted_phone} указан неверно: {error_msg}
+
+Пожалуйста, напишите полный номер в одном из форматов:
+• +971XXXXXXXXX (UAE)
+• +7XXXXXXXXXX (Россия/Казахстан)
+
+После этого я смогу подтвердить вашу запись! 😊"""
+                    
+                    print(f"📤 Returning validation error to user")
+                    return error_response
+                else:
+                    print(f"✅ Phone number is valid: {extracted_phone}")
 
             # ========================================
             # Строим промпт

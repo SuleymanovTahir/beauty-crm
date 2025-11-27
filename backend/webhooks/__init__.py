@@ -498,6 +498,33 @@ async def handle_webhook(request: Request):
                     # ✅ ПОЛУЧАЕМ ПРОГРЕСС БРОНИРОВАНИЯ
                     from db.bookings import get_booking_progress, update_booking_progress, clear_booking_progress
                     booking_progress = get_booking_progress(sender_id)
+
+                    # ✅ #NEW - АВТОМАТИЧЕСКОЕ ИЗВЛЕЧЕНИЕ ТЕЛЕФОНА (REGEX)
+                    # Это нужно чтобы бот СРАЗУ знал телефон, даже если AI его "не заметил"
+                    import re
+                    # Ищем номера: +7..., +971..., 050..., 870...
+                    # Допускаем пробелы, тире, скобки
+                    phone_pattern = r'(?:\+|\b)(?:971|7|8|05)\d{1,3}[-\s\(]*\d{2,3}[-\s\)]*\d{2,4}[-\s]*\d{2,4}\b'
+                    phone_match = re.search(phone_pattern, message_text)
+                    
+                    if phone_match:
+                        extracted_phone = phone_match.group(0)
+                        # Очищаем от лишних символов для сохранения
+                        clean_phone = re.sub(r'[^\d+]', '', extracted_phone)
+                        
+                        log_info(f"📱 Extracted phone from message: {clean_phone}", "webhook")
+                        
+                        # Если прогресс есть - обновляем его
+                        if booking_progress:
+                            booking_progress['phone'] = clean_phone
+                            update_booking_progress(sender_id, {'phone': clean_phone})
+                            log_info(f"💾 Phone saved to booking progress", "webhook")
+                        else:
+                            # Если прогресса нет, но телефон дали - создаем черновик
+                            # Это может быть полезно если клиент сразу пишет "Хочу записаться, мой номер ..."
+                            update_booking_progress(sender_id, {'phone': clean_phone})
+                            booking_progress = {'phone': clean_phone} # Чтобы передать боту
+
                     
                     logger.info("🤖 Generating AI response...")
                     try:
@@ -581,21 +608,46 @@ async def handle_webhook(request: Request):
                             existing = c_check.fetchone()
                             conn_check.close()
                             
-                            if existing:
-                                logger.warning(f"⚠️ Duplicate booking detected! Skipping save. Existing booking ID: {existing[0]}")
-                            else:
-                                save_booking(
-                                    instagram_id=sender_id,
-                                    service=booking_data['service'],
-                                    datetime_str=booking_datetime,
-                                    phone=booking_data['phone'],
-                                    name=client_name,
-                                    master=booking_data.get('master')
-                                )
-                                logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                            # ✅ VALIDATE PHONE NUMBER
+                            from utils.validators import validate_phone_detailed
+                            phone_to_check = booking_data.get('phone', '')
                             
-                            # ✅ ОЧИЩАЕМ ПРОГРЕСС ПОСЛЕ УСПЕШНОЙ ЗАПИСИ
-                            clear_booking_progress(sender_id)
+                            is_valid, error_msg = validate_phone_detailed(phone_to_check)
+                            
+                            if not is_valid:
+                                logger.warning(f"❌ Invalid phone: {phone_to_check} - {error_msg}")
+                                
+                                # Clear progress to prevent infinite loop
+                                # clear_booking_progress(sender_id)  <-- REMOVED: Don't clear progress, let user correct phone!
+
+                                
+                                # Send helpful error message to user
+                                ai_response = f"""Номер {phone_to_check} указан неверно: {error_msg}
+
+Пожалуйста, напишите полный номер в одном из форматов:
+• 050XXXXXXX (UAE)
+• +971XXXXXXXXX (UAE)
+• +7XXXXXXXXXX (International)
+
+После этого я смогу подтвердить вашу запись! 😊"""
+                                # Skip saving
+
+                            else:
+                                if existing:
+                                    logger.warning(f"⚠️ Duplicate booking detected! Skipping save. Existing booking ID: {existing[0]}")
+                                else:
+                                    save_booking(
+                                        instagram_id=sender_id,
+                                        service=booking_data['service'],
+                                        datetime_str=booking_datetime,
+                                        phone=booking_data['phone'],
+                                        name=client_name,
+                                        master=booking_data.get('master')
+                                    )
+                                    logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                                
+                                # ✅ ОЧИЩАЕМ ПРОГРЕСС ПОСЛЕ УСПЕШНОЙ ЗАПИСИ
+                                clear_booking_progress(sender_id)
                             
                         except Exception as save_error:
                             logger.error(f"❌ Failed to save booking: {save_error}")
@@ -641,6 +693,85 @@ async def handle_webhook(request: Request):
                             ).strip()
                         except Exception as e:
                             logger.error(f"❌ Error parsing progress update: {e}")
+
+                    # ✅ ПАРСИНГ ОТМЕНЫ ЗАПИСИ
+                    # [CANCEL_BOOKING]reason:client_request[/CANCEL_BOOKING]
+                    cancel_match = re.search(
+                        r'\[CANCEL_BOOKING\](.*?)\[/CANCEL_BOOKING\]',
+                        ai_response,
+                        re.DOTALL
+                    )
+                    
+                    if cancel_match:
+                        try:
+                            logger.info("🚫 Found cancellation command!")
+                            from db.bookings import find_active_booking, cancel_booking
+                            
+                            # Находим активную запись
+                            active_booking = find_active_booking(sender_id)
+                            
+                            if active_booking:
+                                if cancel_booking(active_booking['id']):
+                                    logger.info(f"✅ Booking {active_booking['id']} cancelled successfully")
+                                    # Очищаем прогресс на всякий случай
+                                    clear_booking_progress(sender_id)
+                                else:
+                                    logger.error(f"❌ Failed to cancel booking {active_booking['id']}")
+                            else:
+                                logger.warning("⚠️ No active booking found to cancel")
+                            
+                            # Удаляем тег
+                            ai_response = re.sub(
+                                r'\[CANCEL_BOOKING\].*?\[/CANCEL_BOOKING\]',
+                                '',
+                                ai_response,
+                                flags=re.DOTALL
+                            ).strip()
+                        except Exception as e:
+                            logger.error(f"❌ Error processing cancellation: {e}")
+
+                    # ✅ ПАРСИНГ ИЗМЕНЕНИЯ ЗАПИСИ
+                    # [CHANGE_BOOKING]new_date:YYYY-MM-DD\nnew_time:HH:MM[/CHANGE_BOOKING]
+                    change_match = re.search(
+                        r'\[CHANGE_BOOKING\](.*?)\[/CHANGE_BOOKING\]',
+                        ai_response,
+                        re.DOTALL
+                    )
+                    
+                    if change_match:
+                        try:
+                            logger.info("🔄 Found change booking command!")
+                            from db.bookings import find_active_booking, cancel_booking
+                            
+                            change_data_raw = change_match.group(1).strip()
+                            change_data = {}
+                            for line in change_data_raw.split('\n'):
+                                if ':' in line:
+                                    key, value = line.split(':', 1)
+                                    change_data[key.strip()] = value.strip()
+                            
+                            # 1. Отменяем старую запись
+                            active_booking = find_active_booking(sender_id)
+                            if active_booking:
+                                cancel_booking(active_booking['id'])
+                                logger.info(f"✅ Old booking {active_booking['id']} cancelled for rescheduling")
+                            
+                            # 2. Создаем новую запись (через обновление прогресса)
+                            # Бот должен был уже спросить новое время и дату
+                            # Мы просто обновляем прогресс, чтобы бот знал что мы в процессе
+                            # Но на самом деле бот сам предложит новую запись в следующем сообщении
+                            # Главное - мы освободили старый слот!
+                            
+                            # Удаляем тег
+                            ai_response = re.sub(
+                                r'\[CHANGE_BOOKING\].*?\[/CHANGE_BOOKING\]',
+                                '',
+                                ai_response,
+                                flags=re.DOTALL
+                            ).strip()
+                        except Exception as e:
+                            logger.error(f"❌ Error processing booking change: {e}")
+
 
                     save_message(
                         sender_id,

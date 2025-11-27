@@ -37,6 +37,7 @@ def ensure_user_schema():
             ("name_ar", "TEXT"),
             ("position_ru", "TEXT"),
             ("position_ar", "TEXT"),
+            ("is_active", "INTEGER DEFAULT 1"),
         ]
         
         for col_name, col_type in required_columns:
