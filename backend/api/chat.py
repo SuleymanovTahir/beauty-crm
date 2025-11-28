@@ -15,6 +15,7 @@ from integrations import send_message
 from utils.utils import require_auth, get_total_unread
 from utils.logger import log_error,log_info,log_warning
 from services.conversation_context import ConversationContext
+from core.config import BASE_URL
 
 
 router = APIRouter(tags=["Chat"])
@@ -137,13 +138,13 @@ async def send_chat_file(
         file_type = data.get('file_type', 'image')
 
         # ✅ БЫСТРАЯ ПРОВЕРКА ФАЙЛА (только для локальных файлов)
-        if file_url and file_url.startswith('https://mlediamant.com'):
+        if file_url and file_url.startswith(BASE_URL):
             try:
                 # Быстрая проверка локального файла
                 import os
                 from pathlib import Path
                 
-                url_path = file_url.replace('https://mlediamant.com', '')
+                url_path = file_url.replace(BASE_URL, '')
                 # Убираем дублирование static/ если есть
                 if url_path.startswith('/static/'):
                     url_path = url_path[7:]  # убираем '/static/'
@@ -184,7 +185,7 @@ async def send_chat_file(
         log_info(f"   Type: {file_type}", "api")
         
         # ✅ ДОПОЛНИТЕЛЬНАЯ ДИАГНОСТИКА: Проверяем доступность файла локально
-        if file_url.startswith('https://mlediamant.com'):
+        if file_url.startswith(BASE_URL):
             log_info(f"🔍 Проверяем локальную доступность файла...", "api")
             try:
                 import os
@@ -226,7 +227,7 @@ async def send_chat_file(
         log_info(f"📁 Принимаем файл: {file_url}", "api")
         
         # ✅ БЫСТРАЯ ПРОВЕРКА РАЗМЕРА ФАЙЛА (только для локальных файлов)
-        if file_url.startswith('https://mlediamant.com'):
+        if file_url.startswith(BASE_URL):
             try:
                 url_path = file_url.replace('https://mlediamant.com', '')
                 # Убираем дублирование static/ если есть
@@ -251,12 +252,12 @@ async def send_chat_file(
                 # Не блокируем отправку
         
         # ✅ Отправляем файл через Instagram API
-        # Заменяем mlediamant.com на zrok URL для отправки в Instagram
+        # Заменяем BASE_URL на zrok URL для отправки в Instagram (если используется production URL)
         instagram_file_url = file_url
-        if file_url.startswith('https://mlediamant.com'):
+        if file_url.startswith(BASE_URL) and BASE_URL.startswith('https://'):
             # Получаем zrok URL из переменной окружения или используем текущий
             zrok_url = os.getenv('ZROK_URL', 'https://tukq4gpr4pbf.share.zrok.io')
-            instagram_file_url = file_url.replace('https://mlediamant.com', zrok_url)
+            instagram_file_url = file_url.replace(BASE_URL, zrok_url)
             log_info(f"🔄 Заменяем URL для Instagram: {file_url} -> {instagram_file_url}", "api")
         
         log_info(f"🚀 Начинаем отправку файла через Instagram API...", "api")

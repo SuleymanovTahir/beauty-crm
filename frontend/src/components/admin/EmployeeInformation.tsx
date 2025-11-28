@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface Employee {
     id: number;
@@ -25,6 +26,7 @@ interface Employee {
     specialization?: string;
     about_me?: string;
     photo_url?: string;
+    photo?: string;
 }
 
 interface EmployeeInformationProps {
@@ -96,7 +98,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                     username: employee.username,
                     full_name: employee.full_name,
                     email: employee.email,
-                    photo_url: uploadResponse.url,
+                    photo: uploadResponse.url,
                 } as any);
                 toast.success(t('photo_updated', 'Photo updated'));
                 onUpdate();
@@ -188,17 +190,21 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                     {/* Avatar Section */}
                     <div className="flex flex-col items-center">
                         <div className="relative group">
-                            {employee.photo_url ? (
-                                <img
-                                    src={employee.photo_url}
-                                    alt={employee.full_name}
-                                    className="w-40 h-40 rounded-2xl object-cover border-4 border-white shadow-lg"
-                                />
-                            ) : (
-                                <div className="w-40 h-40 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
-                                    <User className="w-20 h-20 text-white" />
-                                </div>
-                            )}
+                            {(() => {
+                                const fullPhotoUrl = getPhotoUrl(employee.photo || employee.photo_url);
+
+                                return fullPhotoUrl ? (
+                                    <img
+                                        src={fullPhotoUrl}
+                                        alt={employee.full_name}
+                                        className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg"
+                                    />
+                                ) : (
+                                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
+                                        <User className="w-16 h-16 text-white" />
+                                    </div>
+                                );
+                            })()}
 
                             <label
                                 htmlFor="photo-upload"

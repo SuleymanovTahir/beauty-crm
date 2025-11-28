@@ -1027,41 +1027,82 @@ def init_database():
         log_info(f"✅ Создано {len(default_services)} базовых услуг", "db")
     
     # Создать начальных сотрудников с фото
+    
+    # Функция для восстановления фото
+    def ensure_employee_photos():
+        import shutil
+        import os
+        
+        source_dir = "/Users/tahir/Desktop/beauty-crm/frontend/public_landing/styles/M le Diamant  портфолио/Сотрудники"
+        target_dir = "static/uploads/images"
+        
+        if not os.path.exists(target_dir):
+            os.makedirs(target_dir, exist_ok=True)
+            
+        photo_mapping = {
+            "simo": "Симо.jpg",
+            "mestan": "Местан.jpg",
+            "lyazzat": "Ляззат.png",
+            "gulya": "Гуля.png",
+            "jennifer": "Дженнифер.png",
+        }
+        
+        restored_photos = {}
+        
+        for username, source_filename in photo_mapping.items():
+            source_path = os.path.join(source_dir, source_filename)
+            
+            if os.path.exists(source_path):
+                ext = os.path.splitext(source_filename)[1].lower()
+                new_filename = f"{username}{ext}"
+                target_path = os.path.join(target_dir, new_filename)
+                
+                shutil.copy2(source_path, target_path)
+                restored_photos[username] = f"/static/uploads/images/{new_filename}"
+                log_info(f"📸 Фото восстановлено: {username} -> {new_filename}", "db")
+            else:
+                log_info(f"⚠️ Фото не найдено: {source_path}", "db")
+                
+        return restored_photos
+
+    # Восстанавливаем фото перед созданием сотрудников
+    restored_photos = ensure_employee_photos()
+
     employees_data = [
         {
             "username": "simo",
             "full_name": "SIMO",
             "position": "Hair Stylist",
             "role": "employee",
-            "photo": "/static/uploads/images/68da6f2b-69f9-4c02-b382-f3bfe08190a5.jpg"
+            "photo": restored_photos.get("simo", "/static/uploads/images/simo.jpg")
         },
         {
             "username": "mestan",
             "full_name": "MESTAN",
             "position": "Hair Stylist",
             "role": "employee",
-            "photo": "/static/uploads/images/3443e417-512f-4a9d-9c07-03abb97e90f5.jpg"
+            "photo": restored_photos.get("mestan", "/static/uploads/images/mestan.jpg")
         },
         {
             "username": "lyazzat",
             "full_name": "LYAZZAT",
             "position": "Nail Master",
             "role": "employee",
-            "photo": "/static/uploads/images/854ee77e-054e-492e-aed3-787c76f3633e.jpg"
+            "photo": restored_photos.get("lyazzat", "/static/uploads/images/lyazzat.png")
         },
         {
             "username": "gulya",
             "full_name": "GULYA",
             "position": "Nail/Waxing",
             "role": "employee",
-            "photo": "/static/uploads/images/441b6ecd-9a03-4f20-a2de-de1486f40698.png"
+            "photo": restored_photos.get("gulya", "/static/uploads/images/gulya.png")
         },
         {
             "username": "jennifer",
             "full_name": "JENNIFER",
             "position": "Nail Master/Massages",
             "role": "employee",
-            "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.png"
+            "photo": restored_photos.get("jennifer", "/static/uploads/images/jennifer.png")
         },
         {
             "username": "tursunai",

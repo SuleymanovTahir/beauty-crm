@@ -232,6 +232,12 @@ export const apiClient = {
   getPublicReviews: (lang: string = 'en') =>
     apiCall(`/public/reviews?lang=${lang}`),
 
+  getPublicFAQ: (lang: string = 'ru') =>
+    apiCall(`/public/faq?lang=${lang}`),
+
+  getPublicGallery: (category?: string) =>
+    apiCall(`/public/gallery${category ? `?category=${category}` : ''}`),
+
   // ===== USER PROFILE ===== (ДОБАВЛЕНО)
   getUserProfile: (userId: number) =>
     apiCall(`/api/users/${userId}/profile`),
@@ -304,5 +310,48 @@ export const apiClient = {
   togglePublicReview: (id: number) =>
     apiCall(`/api/public-admin/reviews/${id}/toggle`, {
       method: 'PATCH',
+    }),
+
+  // ===== PUBLIC CONTENT ADMIN FAQ =====
+  // Public Content - Banners
+  // Public Content - Banners
+  getPublicBanners: () =>
+    apiCall('/api/public-admin/banners'),
+
+  createPublicBanner: (data: any) =>
+    apiCall('/api/public-admin/banners', {
+      method: 'POST',
+      body: data,
+    }),
+
+  updatePublicBanner: (id: number, data: any) =>
+    apiCall(`/api/public-admin/banners/${id}`, {
+      method: 'PUT',
+      body: data,
+    }),
+
+  deletePublicBanner: (id: number) =>
+    apiCall(`/api/public-admin/banners/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getPublicContentFAQ: () =>
+    apiCall('/api/public-admin/faq'),
+
+  createPublicFAQ: (data: any) =>
+    apiCall('/api/public-admin/faq', {
+      method: 'POST',
+      body: data,
+    }),
+
+  updatePublicFAQ: (id: number, data: any) =>
+    apiCall(`/api/public-admin/faq/${id}`, {
+      method: 'PUT',
+      body: data,
+    }),
+
+  deletePublicFAQ: (id: number) =>
+    apiCall(`/api/public-admin/faq/${id}`, {
+      method: 'DELETE',
     }),
 }

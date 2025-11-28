@@ -6,11 +6,16 @@ from typing import Optional
 
 router = APIRouter(tags=["Upload"])
 
-# ✅ ВАЖНО: Укажите ваш реальный домен или публичный IP
-# Для production:
-PUBLIC_URL = os.getenv("PUBLIC_URL", "https://mlediamant.com")
-# Для разработки с ngrok (если используете):
-# PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-ngrok-url.ngrok-free.app")
+# ✅ Автоматическое определение PUBLIC_URL
+# Приоритет: переменная окружения > автоопределение
+if os.getenv("PUBLIC_URL"):
+    PUBLIC_URL = os.getenv("PUBLIC_URL")
+elif os.getenv("ENVIRONMENT") == "production":
+    # Production окружение
+    PUBLIC_URL = "https://mlediamant.com"
+else:
+    # Development окружение (localhost)
+    PUBLIC_URL = "http://localhost:8000"
 
 UPLOAD_DIR = Path("static/uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -34,7 +39,7 @@ def get_file_category(content_type: str) -> str:
         return 'files'
 
 
-@router.post("/api/upload")
+@router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     """
     Загрузить файл и получить публичный URL
@@ -93,3 +98,62 @@ async def upload_file(file: UploadFile = File(...)):
             status_code=500,
             detail=f"Upload failed: {str(e)}"
         )
+
+
+def delete_upload_file(file_path: str) -> bool:
+    """
+    Удалить файл из папки uploads
+    
+    Args:
+        file_path: Путь к файлу (например, /static/uploads/photos/user_123.jpg)
+    
+    Returns:
+        bool: True если файл успешно удален, False если произошла ошибка
+    """
+    if not file_path:
+        return False
+    
+    try:
+        # Remove leading slash to make it relative
+        rel_path = file_path.lstrip('/')
+        
+        # Construct full path from backend root
+        full_path = os.path.join("backend", rel_path)
+        
+        if os.path.exists(full_path):
+            os.remove(full_path)
+            print(f"✅ Deleted file: {full_path}")
+            return True
+        else:
+            print(f"⚠️ File not found (already deleted?): {full_path}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error deleting file {file_path}: {e}")
+        return False
+
+
+def delete_old_photo_if_exists(old_photo_path: str, new_photo_path: str) -> bool:
+    """
+    Удалить старое фото при замене на новое
+    
+    Args:
+        old_photo_path: Путь к старому фото
+        new_photo_path: Путь к новому фото
+    
+    Returns:
+        bool: True если старое фото удалено или не требовало удаления
+    """
+    # Не удаляем, если пути одинаковые
+    if old_photo_path == new_photo_path:
+        return True
+    
+    # Не удаляем, если старого фото нет
+    if not old_photo_path or old_photo_path == '':
+        return True
+    
+    # Не удаляем дефолтные аватары
+    if 'default' in old_photo_path.lower() or 'placeholder' in old_photo_path.lower():
+        return True
+    
+    return delete_upload_file(old_photo_path)

@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { Layout, Star, HelpCircle, Image as ImageIcon, Megaphone } from 'lucide-react';
+import { Star, MessageSquare, HelpCircle, Image as ImageIcon, Layout } from 'lucide-react';
 
 // Import tab components
 import ReviewsTab from '../../components/admin/publicContent/ReviewsTab';
 import FAQTab from '../../components/admin/publicContent/FAQTab';
 import GalleryTab from '../../components/admin/publicContent/GalleryTab';
-import BannersTab from '../../components/admin/publicContent/BannersTab';
 
 export default function PublicContent() {
+    const { t } = useTranslation(['admin/PublicContent', 'common']);
     const [activeTab, setActiveTab] = useState('reviews');
 
     return (
@@ -20,7 +21,7 @@ export default function PublicContent() {
                     Публичный контент
                 </h1>
                 <p className="text-gray-600 mt-1">
-                    Управление отзывами, FAQ, галереей и баннерами
+                    Управление отзывами, FAQ, галереей и другим публичным контентом
                 </p>
             </div>
 
@@ -39,10 +40,6 @@ export default function PublicContent() {
                         <ImageIcon className="w-4 h-4" />
                         Галерея
                     </TabsTrigger>
-                    <TabsTrigger value="banners" className="flex items-center gap-2">
-                        <Megaphone className="w-4 h-4" />
-                        Баннеры
-                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="reviews">
@@ -55,10 +52,6 @@ export default function PublicContent() {
 
                 <TabsContent value="gallery">
                     <GalleryTab />
-                </TabsContent>
-
-                <TabsContent value="banners">
-                    <BannersTab />
                 </TabsContent>
             </Tabs>
         </div>

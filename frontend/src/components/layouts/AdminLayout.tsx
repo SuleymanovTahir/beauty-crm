@@ -19,8 +19,7 @@ import {
   Instagram,
   ChevronDown,
   Target,
-  Globe,
-  Star
+  Globe
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -103,7 +102,6 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: Users, label: t('menu.clients'), path: '/admin/clients', requirePermission: () => permissions.canViewAllClients },
       { icon: MessageSquare, label: t('menu.chat'), path: '/admin/chat', badge: unreadCount, hasSubmenu: true, requirePermission: () => true },
       { icon: BarChart3, label: t('menu.analytics'), path: '/admin/analytics', requirePermission: () => permissions.canViewAnalytics },
-      { icon: Star, label: t('menu.feedback', 'Feedback'), path: '/admin/feedback', requirePermission: () => permissions.canViewAnalytics },
       { icon: Target, label: t('menu.plans'), path: '/admin/plans', requirePermission: () => permissions.canViewAnalytics },
       { icon: Scissors, label: t('menu.services'), path: '/admin/services', requirePermission: () => permissions.canViewServices },
       { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar', requirePermission: () => permissions.canViewAllCalendars },

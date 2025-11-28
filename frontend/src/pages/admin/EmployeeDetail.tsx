@@ -14,6 +14,7 @@ import { EmployeeSettings } from '../../components/admin/EmployeeSettings';
 import { EmployeePayroll } from '../../components/admin/EmployeePayroll';
 import { EmployeeOnlineBooking } from '../../components/admin/EmployeeOnlineBooking';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface Employee {
     id: number;
@@ -166,9 +167,9 @@ export default function EmployeeDetail() {
                                 }`}
                         >
                             <img
-                                src={getDynamicAvatar(emp.full_name || emp.username, 'cold')}
+                                src={getPhotoUrl(emp.photo) || getDynamicAvatar(emp.full_name || emp.username, 'cold')}
                                 alt={emp.full_name}
-                                className="w-10 h-10 rounded-full bg-gray-100"
+                                className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                             />
                             <div className="flex-1 text-left">
                                 <p className="text-sm font-medium text-gray-900">{emp.full_name}</p>
