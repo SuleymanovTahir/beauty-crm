@@ -10,8 +10,12 @@
 import sqlite3
 from datetime import datetime, timedelta
 import argparse
+import sys
+import os
 
-DATABASE_NAME = "salon_bot.db"
+# Add backend to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from core.config import DATABASE_NAME
 
 
 def setup_test_notifications(email: str, days_ahead: int = 1):

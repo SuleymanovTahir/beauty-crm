@@ -9,7 +9,6 @@ import sqlite3
 from core.config import DATABASE_NAME
 from services.translation_service import translate_to_all_languages
 from utils.logger import log_info, log_error
-import time
 
 # Расширенные отзывы
 REVIEWS = [
@@ -119,7 +118,6 @@ def populate_reviews():
             log_info(f"Переводим отзыв от {review['author_name']}", "populate")
             
             # Переводим текст отзыва
-            time.sleep(1) # Rate limiting
             text_translations = translate_to_all_languages(review['text_ru'], 'ru')
             
             # Вставляем в БД
@@ -174,11 +172,9 @@ def populate_faq():
             log_info(f"Переводим вопрос: {faq['question_ru'][:50]}...", "populate")
             
             # Переводим вопрос
-            time.sleep(1) # Rate limiting
             question_translations = translate_to_all_languages(faq['question_ru'], 'ru')
             
             # Переводим ответ
-            time.sleep(1) # Rate limiting
             answer_translations = translate_to_all_languages(faq['answer_ru'], 'ru')
             
             # Вставляем в БД
@@ -281,9 +277,7 @@ def populate_employees():
                 log_info(f"Обновляем {emp['full_name']}", "populate")
                 
                 # Переводим должность и био
-                time.sleep(1) # Rate limiting
                 position_translations = translate_to_all_languages(emp['position_ru'], 'ru')
-                time.sleep(1) # Rate limiting
                 bio_translations = translate_to_all_languages(emp['bio_ru'], 'ru')
                 
                 # Обновляем сотрудника с фото и переводами

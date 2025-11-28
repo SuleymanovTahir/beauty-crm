@@ -2,8 +2,13 @@ import sqlite3
 import asyncio
 import json
 from db.positions import create_position, get_position
+import sys
+import os
+import asyncio
 
-DATABASE_NAME = "salon_bot.db"
+# Add backend to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from core.config import DATABASE_NAME
 
 async def test_changes():
     print("🧪 Testing changes...")

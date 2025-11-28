@@ -1,7 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import os
-import uuid
 from pathlib import Path
 from typing import Optional
 
@@ -62,26 +61,25 @@ async def upload_file(file: UploadFile = File(...)):
         # Определяем категорию
         category = get_file_category(file.content_type or 'application/octet-stream')
         
-        # Генерируем уникальное имя файла
-        file_extension = os.path.splitext(file.filename)[1] if file.filename else '.jpg'
-        unique_filename = f"{uuid.uuid4()}{file_extension}"
+        # Используем оригинальное имя файла (перезаписываем если существует)
+        filename = file.filename or 'uploaded_file'
         
         # Полный путь для сохранения
-        file_path = UPLOAD_DIR / category / unique_filename
+        file_path = UPLOAD_DIR / category / filename
         
-        # Сохраняем файл
+        # Сохраняем файл (перезаписываем если существует)
         with open(file_path, 'wb') as f:
             f.write(contents)
         
-        # ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Формируем ПУБЛИЧНЫЙ URL
-        public_file_url = f"{PUBLIC_URL}/static/uploads/{category}/{unique_filename}"
+        # Формируем публичный URL
+        public_file_url = f"{PUBLIC_URL}/static/uploads/{category}/{filename}"
         
-        print(f"✅ File uploaded: {unique_filename}")
+        print(f"✅ File uploaded: {filename}")
         print(f"📍 Public URL: {public_file_url}")
         
         return {
             "file_url": public_file_url,
-            "filename": unique_filename,
+            "filename": filename,
             "content_type": file.content_type,
             "size": file_size,
             "category": category
