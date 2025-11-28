@@ -302,20 +302,21 @@ class LoyaltyService:
 
         try:
             c.execute("""
-                SELECT level_name, min_points, discount_percent, points_multiplier, special_perks
+                SELECT level_name, min_points, discount_percent, points_multiplier, benefits
                 FROM loyalty_levels
                 ORDER BY min_points
             """)
 
             levels = []
             for row in c.fetchall():
-                perks = json.loads(row[4]) if row[4] else {}
+                # benefits is text, not json in init.py, but let's handle it safely
+                benefits = row[4]
                 levels.append({
                     "level_name": row[0],
                     "min_points": row[1],
                     "discount_percent": row[2],
                     "points_multiplier": row[3],
-                    "special_perks": perks
+                    "benefits": benefits
                 })
 
             return levels

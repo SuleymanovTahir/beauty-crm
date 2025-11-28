@@ -109,10 +109,10 @@ async def get_user_time_off(user_id: int):
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT id, date_from as start_datetime, date_to as end_datetime, type, reason 
+            SELECT id, start_date as start_datetime, end_date as end_datetime, reason 
             FROM user_time_off 
             WHERE user_id = ? 
-            ORDER BY date_from DESC
+            ORDER BY start_date DESC
         """, (user_id,))
         
         rows = cursor.fetchall()
@@ -127,9 +127,9 @@ async def add_user_time_off(user_id: int, data: TimeOffCreate):
         cursor = conn.cursor()
         
         cursor.execute("""
-            INSERT INTO user_time_off (user_id, date_from, date_to, type, reason)
-            VALUES (?, ?, ?, ?, ?)
-        """, (user_id, data.start_datetime, data.end_datetime, data.type, data.reason))
+            INSERT INTO user_time_off (user_id, start_date, end_date, reason)
+            VALUES (?, ?, ?, ?)
+        """, (user_id, data.start_datetime, data.end_datetime, data.reason))
         
         conn.commit()
         return {"status": "success", "id": cursor.lastrowid}
