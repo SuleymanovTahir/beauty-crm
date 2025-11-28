@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../LanguageContext";
 import logo from "../assets/logo.png";
 
 const navigation = [
@@ -18,8 +18,9 @@ interface HeaderProps {
   salonInfo?: any;
 }
 
-export function Header({ salonInfo }: HeaderProps) {
-  const { i18n } = useTranslation();
+export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
+  const { language, setLanguage: changeLanguage, t } = useLanguage();
+  const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -35,10 +36,17 @@ export function Header({ salonInfo }: HeaderProps) {
     { code: 'pt', name: 'PT', flag: '🇵🇹' }
   ];
 
-  const setLanguage = (lang: string) => {
-    i18n.changeLanguage(lang);
-    localStorage.setItem('i18nextLng', lang);
-  };
+  useEffect(() => {
+    // Fetch salon info if not provided
+    if (!propSalonInfo || Object.keys(propSalonInfo).length === 0) {
+      fetch(`/api/public/salon-info?language=${language}`)
+        .then(res => res.json())
+        .then(setSalonInfo)
+        .catch(err => console.error('Error loading salon info:', err));
+    } else {
+      setSalonInfo(propSalonInfo);
+    }
+  }, [propSalonInfo, language]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,14 +91,14 @@ export function Header({ salonInfo }: HeaderProps) {
             <div className="relative group">
               <button className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors">
                 <Globe className="w-4 h-4" />
-                <span className="text-sm uppercase">{i18n.language}</span>
+                <span className="text-sm uppercase">{language}</span>
               </button>
               <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] py-1">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${i18n.language === lang.code ? 'bg-gray-50 font-medium' : ''
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
                       }`}
                   >
                     <span className="mr-2">{lang.flag}</span>
@@ -140,10 +148,10 @@ export function Header({ salonInfo }: HeaderProps) {
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={`px-2 py-1.5 rounded text-xs flex items-center justify-center gap-1 ${i18n.language === lang.code
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary hover:bg-secondary/80'
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`px-2 py-1.5 rounded text-xs flex items-center justify-center gap-1 ${language === lang.code
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary hover:bg-secondary/80'
                       }`}
                   >
                     <span>{lang.flag}</span>

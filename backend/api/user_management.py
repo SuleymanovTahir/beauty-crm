@@ -42,7 +42,7 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         c.execute("""
-            SELECT id, username, full_name, email, role, photo_url
+            SELECT id, username, full_name, email, role, COALESCE(photo, photo_url) as photo
             FROM users
             WHERE id = ?
         """, (user["id"],))
@@ -61,7 +61,7 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
                 "full_name": result[2],
                 "email": result[3],
                 "role": result[4],
-                "photo_url": result[5]
+                "photo": result[5]
             }
         }
 
@@ -156,7 +156,7 @@ async def update_my_profile(
 
         # Обновление фото
         if data.photo_url is not None:
-            updates.append("photo_url = ?")
+            updates.append("photo = ?")
             params.append(data.photo_url)
 
         if not updates:
@@ -171,7 +171,7 @@ async def update_my_profile(
 
         # Получаем обновленные данные
         c.execute("""
-            SELECT id, username, full_name, email, role, photo_url
+            SELECT id, username, full_name, email, role, photo
             FROM users
             WHERE id = ?
         """, (user["id"],))
@@ -190,7 +190,7 @@ async def update_my_profile(
                 "full_name": result[2],
                 "email": result[3],
                 "role": result[4],
-                "photo_url": result[5]
+                "photo": result[5]
             }
         }
 
@@ -212,7 +212,7 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         c.execute("""
-            SELECT id, username, full_name, email, role, created_at, email_verified
+            SELECT id, username, full_name, email, role, created_at, email_verified, photo
             FROM users
             WHERE approved = 0 AND is_active = 1
             ORDER BY created_at DESC

@@ -302,27 +302,18 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         )
     
     try:
-        import shutil
-        import tempfile
-        from fastapi.responses import FileResponse
-        import os
-        
-        # Создаем временную копию базы данных
-        temp_dir = tempfile.gettempdir()
+        # Create a backup copy
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_filename = f"salon_bot_backup_{timestamp}.db"
-        backup_path = os.path.join(temp_dir, backup_filename)
+        backup_path = f"backend/{backup_filename}"
         
-        # Копируем базу данных
+        # Copy database file
         shutil.copy2(DATABASE_NAME, backup_path)
         
-        log_info(f"Database backup created by {user.get('username')}: {backup_filename}", "settings")
-        
-        # Возвращаем файл для скачивания
         return FileResponse(
             path=backup_path,
             filename=backup_filename,
-            media_type="application/x-sqlite3",
+            media_type='application/x-sqlite3',
             headers={
                 "Content-Disposition": f"attachment; filename={backup_filename}"
             }

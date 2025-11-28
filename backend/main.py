@@ -16,6 +16,8 @@ from db.settings import get_salon_settings
 from bot import get_bot
 from utils.utils import ensure_upload_directories
 
+# Force reload check 3
+
 # ╔════════════════════════════════════════════════════════════════════════════╗
 # ║  КОМПЛЕКСНОЕ ТЕСТИРОВАНИЕ ВСЕЙ СИСТЕМЫ                                     ║
 # ║  Раскомментируйте строку ниже чтобы запускать проверку при старте          ║
@@ -280,9 +282,10 @@ async def run_migration(migration_name: str):
 
         elif migration_name == "employees":
             from db.migrations.schema.employees.create_employees import create_employees_table
+            # Employees are now seeded in db/init.py
+            # from db.migrations.data.employees.seed_employees import seed_employees
             create_employees_table()
-            from db.migrations.data.employees.seed_employees import seed_employees
-            seed_employees()
+            # seed_employees()
             return {"success": True, "migration": migration_name}
 
         elif migration_name == "permissions":
@@ -424,24 +427,21 @@ async def startup_event():
     # ================================
     # СВЯЗЫВАНИЕ ПОЛЬЗОВАТЕЛЕЙ С СОТРУДНИКАМИ
     # ================================
-    # Автоматически создает записи сотрудников для пользователей без employee_id
-    from db.migrations.data.users.link_users_to_employees import link_users_to_employees
-    log_info("🔗 Проверка связей пользователей с сотрудниками...", "startup")
-    link_result = link_users_to_employees()
-    if link_result.get("linked", 0) > 0:
-        log_info(f"✅ Связано {link_result['linked']} пользователей с сотрудниками", "startup")
+    # DEPRECATED: employees table consolidated into users with is_service_provider flag
+    # This migration is no longer needed
+    # from scripts.maintenance.link_users_to_employees import link_users_to_employees
+    # log_info("🔗 Проверка связей пользователей с сотрудниками...", "startup")
+    # link_result = link_users_to_employees()
+    # if link_result.get("linked", 0) > 0:
+    #     log_info(f"✅ Связано {link_result['linked']} пользователей с сотрудниками", "startup")
     
     # ================================
     # МИГРАЦИИ ДЛЯ АНАЛИТИКИ И ПЛАНОВ
     # ================================
     try:
-        from db.migrations.schema.plans.create_plans_table import create_plans_table
-        from db.migrations.schema.analytics.add_analytics_indexes import add_analytics_indexes
-        
-        log_info("📊 Создание таблицы планов и индексов аналитики...", "startup")
-        create_plans_table()
-        add_analytics_indexes()
-        log_info("✅ Миграции аналитики выполнены", "startup")
+        # Plans table is now handled by schema_other.py
+        # Analytics indexes are now handled by schema_clients.py and schema_bookings.py
+        pass
     except Exception as e:
         log_error(f"⚠️ Ошибка миграций аналитики: {e}", "startup")
 
@@ -455,9 +455,9 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
  
 
 

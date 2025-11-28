@@ -36,7 +36,7 @@ def startup_test_notifications():
         # Проверяем booking_reminder_settings
         c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
         if c.fetchone():
-            c.execute("SELECT COUNT(*) FROM booking_reminder_settings WHERE is_enabled = 1")
+            c.execute("SELECT COUNT(*) FROM booking_reminder_settings WHERE reminder_24h_enabled = 1")
             enabled = c.fetchone()[0]
             c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
             total = c.fetchone()[0]
@@ -85,31 +85,20 @@ def startup_test_notifications_api():
         conn = sqlite3.connect(DATABASE_NAME)
         c = conn.cursor()
 
-        # Создаем таблицу если её нет (как в API)
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS notification_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                email_notifications INTEGER DEFAULT 1,
-                sms_notifications INTEGER DEFAULT 0,
-                booking_notifications INTEGER DEFAULT 1,
-                chat_notifications INTEGER DEFAULT 1,
-                daily_report INTEGER DEFAULT 1,
-                report_time TEXT DEFAULT '09:00',
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_id)
-            )
-        """)
-        conn.commit()
+        # ✅ ТОЛЬКО ПРОВЕРКА - таблица должна быть создана в db/init.py
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='notification_settings'")
+        if not c.fetchone():
+            log_error("  ❌ Таблица notification_settings не существует! Запустите db/init.py", "startup_test")
+            conn.close()
+            return False
 
         # Проверяем схему
         c.execute("PRAGMA table_info(notification_settings)")
         columns = c.fetchall()
         column_names = [col[1] for col in columns]
 
-        required = ['email_notifications', 'sms_notifications', 'booking_notifications',
-                    'chat_notifications', 'daily_report', 'report_time']
+        required = ['user_id', 'email_notifications', 'sms_notifications', 
+                    'booking_notifications', 'birthday_reminders']
 
         missing = [col for col in required if col not in column_names]
 
@@ -119,7 +108,7 @@ def startup_test_notifications_api():
             return False
 
         conn.close()
-        log_info("  ✅ Таблица notification_settings готова", "startup_test")
+        log_info("  ✅ Таблица notification_settings существует и имеет правильную схему", "startup_test")
         return True
 
     except Exception as e:

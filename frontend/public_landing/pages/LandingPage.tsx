@@ -15,14 +15,17 @@ import { BookingSection } from "../BookingSection";
 
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
+import { useLanguage } from "../LanguageContext";
 
 export function LandingPage() {
+    const { language } = useLanguage();
     const [salonInfo, setSalonInfo] = useState<any>({});
     const [services, setServices] = useState<any[]>([]);
 
     useEffect(() => {
-        // Load salon info
-        apiClient.getSalonInfo()
+        // Load salon info with language support
+        fetch(`/api/public/salon-info?language=${language}`)
+            .then(res => res.json())
             .then(setSalonInfo)
             .catch(err => console.error('Error loading salon info:', err));
 
@@ -30,7 +33,7 @@ export function LandingPage() {
         apiClient.getPublicServices()
             .then(setServices)
             .catch(err => console.error('Error loading services:', err));
-    }, []);
+    }, [language]);
 
     return (
         <div className="min-h-screen bg-[#f5f3f0]">

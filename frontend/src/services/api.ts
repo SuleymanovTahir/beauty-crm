@@ -363,7 +363,7 @@ export class ApiClient {
     return this.request<any>(`/api/users/${userId}/profile`)
   }
 
-  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string }) {
+  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string; photo?: string }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -545,7 +545,7 @@ export class ApiClient {
 
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers() {
-    return this.request<any>('/api/users')
+    return this.request<any>(`/api/users?_t=${Date.now()}`)
   }
 
   // После getUsers() (примерно строка 150)

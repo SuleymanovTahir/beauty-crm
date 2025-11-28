@@ -9,6 +9,7 @@ import sqlite3
 from core.config import DATABASE_NAME
 from services.translation_service import translate_to_all_languages
 from utils.logger import log_info, log_error
+import time
 
 # Расширенные отзывы
 REVIEWS = [
@@ -118,6 +119,7 @@ def populate_reviews():
             log_info(f"Переводим отзыв от {review['author_name']}", "populate")
             
             # Переводим текст отзыва
+            time.sleep(1) # Rate limiting
             text_translations = translate_to_all_languages(review['text_ru'], 'ru')
             
             # Вставляем в БД
@@ -172,9 +174,11 @@ def populate_faq():
             log_info(f"Переводим вопрос: {faq['question_ru'][:50]}...", "populate")
             
             # Переводим вопрос
+            time.sleep(1) # Rate limiting
             question_translations = translate_to_all_languages(faq['question_ru'], 'ru')
             
             # Переводим ответ
+            time.sleep(1) # Rate limiting
             answer_translations = translate_to_all_languages(faq['answer_ru'], 'ru')
             
             # Вставляем в БД
@@ -222,6 +226,176 @@ def populate_faq():
         conn.close()
 
 
+def populate_employees():
+    """Заполнить базу сотрудниками с фото и переводами"""
+    log_info("👥 Заполнение сотрудников с фото...", "populate")
+    
+    employees = [
+        {
+            "username": "gulya",
+            "full_name": "GULYA",
+            "position_ru": "Мастер маникюра и ваксинга",
+            "bio_ru": "Профессиональный мастер с многолетним опытом",
+            "photo": "/static/uploads/images/441b6ecd-9a03-4f20-a2de-de1486f40698.png"
+        },
+        {
+            "username": "jennifer",
+            "full_name": "JENNIFER",
+            "position_ru": "Мастер маникюра и массажист",
+            "bio_ru": "Специалист по nail-дизайну и массажным техникам",
+            "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.png"
+        },
+        {
+            "username": "lyazzat",
+            "full_name": "LYAZZAT",
+            "position_ru": "Мастер маникюра",
+            "bio_ru": "Эксперт по уходу за ногтями",
+            "photo": "/static/uploads/images/854ee77e-054e-492e-aed3-787c76f3633e.jpg"
+        },
+        {
+            "username": "mestan",
+            "full_name": "MESTAN",
+            "position_ru": "Парикмахер",
+            "bio_ru": "Стилист-парикмахер с креативным подходом",
+            "photo": "/static/uploads/images/3443e417-512f-4a9d-9c07-03abb97e90f5.jpg"
+        },
+        {
+            "username": "simo",
+            "full_name": "SIMO",
+            "position_ru": "Парикмахер",
+            "bio_ru": "Мастер стрижек и окрашивания",
+            "photo": "/static/uploads/images/68da6f2b-69f9-4c02-b382-f3bfe08190a5.jpg"
+        }
+    ]
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+    
+    try:
+        for emp in employees:
+            # Проверяем существует ли сотрудник
+            cursor.execute("SELECT id FROM users WHERE username = ?", (emp['username'],))
+            existing = cursor.fetchone()
+            
+            if existing:
+                log_info(f"Обновляем {emp['full_name']}", "populate")
+                
+                # Переводим должность и био
+                time.sleep(1) # Rate limiting
+                position_translations = translate_to_all_languages(emp['position_ru'], 'ru')
+                time.sleep(1) # Rate limiting
+                bio_translations = translate_to_all_languages(emp['bio_ru'], 'ru')
+                
+                # Обновляем сотрудника с фото и переводами
+                cursor.execute("""
+                    UPDATE users SET
+                        photo = ?,
+                        position_ru = ?,
+                        position_en = ?,
+                        position_ar = ?,
+                        position_de = ?,
+                        position_es = ?,
+                        position_fr = ?,
+                        position_hi = ?,
+                        position_kk = ?,
+                        position_pt = ?,
+                        bio = ?,
+                        bio_en = ?,
+                        bio_ar = ?,
+                        bio_de = ?,
+                        bio_es = ?,
+                        bio_fr = ?,
+                        bio_hi = ?,
+                        bio_kk = ?,
+                        bio_pt = ?,
+                        is_service_provider = 1
+                    WHERE username = ?
+                """, (
+                    emp['photo'],
+                    emp['position_ru'],
+                    position_translations.get('en', emp['position_ru']),
+                    position_translations.get('ar', emp['position_ru']),
+                    position_translations.get('de', emp['position_ru']),
+                    position_translations.get('es', emp['position_ru']),
+                    position_translations.get('fr', emp['position_ru']),
+                    position_translations.get('hi', emp['position_ru']),
+                    position_translations.get('kk', emp['position_ru']),
+                    position_translations.get('pt', emp['position_ru']),
+                    emp['bio_ru'],
+                    bio_translations.get('en', emp['bio_ru']),
+                    bio_translations.get('ar', emp['bio_ru']),
+                    bio_translations.get('de', emp['bio_ru']),
+                    bio_translations.get('es', emp['bio_ru']),
+                    bio_translations.get('fr', emp['bio_ru']),
+                    bio_translations.get('hi', emp['bio_ru']),
+                    bio_translations.get('kk', emp['bio_ru']),
+                    bio_translations.get('pt', emp['bio_ru']),
+                    emp['username']
+                ))
+            else:
+                log_info(f"➕ Создаем {emp['full_name']}", "populate")
+                
+                # Переводим должность и био
+                position_translations = translate_to_all_languages(emp['position_ru'], 'ru')
+                bio_translations = translate_to_all_languages(emp['bio_ru'], 'ru')
+                
+                # Создаем нового сотрудника
+                cursor.execute("""
+                    INSERT INTO users (
+                        username, full_name, role, phone, 
+                        photo, position_ru, position_en, position_ar,
+                        position_de, position_es, position_fr, position_hi,
+                        position_kk, position_pt,
+                        bio, bio_en, bio_ar, bio_de, bio_es,
+                        bio_fr, bio_hi, bio_kk, bio_pt,
+                        is_service_provider, created_at
+                    ) VALUES (?, ?, 'master', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)
+                """, (
+                    emp['username'],
+                    emp['full_name'],
+                    f"+97100000{len(emp['username'])}", # Fake phone
+                    emp['photo'],
+                    emp['position_ru'],
+                    position_translations.get('en', emp['position_ru']),
+                    position_translations.get('ar', emp['position_ru']),
+                    position_translations.get('de', emp['position_ru']),
+                    position_translations.get('es', emp['position_ru']),
+                    position_translations.get('fr', emp['position_ru']),
+                    position_translations.get('hi', emp['position_ru']),
+                    position_translations.get('kk', emp['position_ru']),
+                    position_translations.get('pt', emp['position_ru']),
+                    emp['bio_ru'],
+                    bio_translations.get('en', emp['bio_ru']),
+                    bio_translations.get('ar', emp['bio_ru']),
+                    bio_translations.get('de', emp['bio_ru']),
+                    bio_translations.get('es', emp['bio_ru']),
+                    bio_translations.get('fr', emp['bio_ru']),
+                    bio_translations.get('hi', emp['bio_ru']),
+                    bio_translations.get('kk', emp['bio_ru']),
+                    bio_translations.get('pt', emp['bio_ru'])
+                ))
+                
+                user_id = cursor.lastrowid
+                
+                # Создаем настройки уведомлений
+                cursor.execute("""
+                    INSERT OR IGNORE INTO notification_settings (
+                        user_id, email_notifications, sms_notifications, 
+                        booking_notifications, birthday_reminders, birthday_days_advance,
+                        chat_notifications, daily_report, report_time
+                    ) VALUES (?, 1, 0, 1, 1, 7, 1, 1, '09:00')
+                """, (user_id,))
+                
+        conn.commit()
+        log_info("✅ Сотрудники обновлены/созданы с фото и переводами", "populate")
+        
+    except Exception as e:
+        log_error(f"Ошибка при заполнении сотрудников: {e}", "populate")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
 def update_employee_schema():
     """Обновить схему сотрудников для переводов"""
     log_info("👥 Обновление схемы сотрудников...", "populate")
@@ -236,6 +410,7 @@ def update_employee_schema():
         
         # Добавляем колонки для переводов если их нет
         needed_columns = {
+            'position_ru': 'TEXT',
             'position_en': 'TEXT',
             'position_ar': 'TEXT',
             'position_de': 'TEXT',
@@ -253,6 +428,7 @@ def update_employee_schema():
             'bio_kk': 'TEXT',
             'bio_pt': 'TEXT',
         }
+        }
         
         for col_name, col_type in needed_columns.items():
             if col_name not in columns:
@@ -269,27 +445,21 @@ def update_employee_schema():
         conn.close()
 
 
-if __name__ == "__main__":
-    log_info("=" * 70, "populate")
-    log_info("🚀 Заполнение базы данных публичным контентом", "populate")
-    log_info("=" * 70, "populate")
-    
+
+async def populate_all():
+    """Run all population tasks"""
+    log_info("🚀 Запуск полного заполнения публичного контента...", "populate")
     try:
-        # Обновляем схему сотрудников
         update_employee_schema()
-        
-        # Заполняем FAQ
+        populate_employees()
         populate_faq()
-        
-        # Заполняем отзывы
         populate_reviews()
-        
-        log_info("=" * 70, "populate")
-        log_info("✅ Заполнение завершено!", "populate")
-        log_info("=" * 70, "populate")
-        
+        log_info("✅ Полное заполнение завершено!", "populate")
     except Exception as e:
-        log_error(f"Критическая ошибка: {e}", "populate")
-        import traceback
-        log_error(traceback.format_exc(), "populate")
+        log_error(f"Ошибка при полном заполнении: {e}", "populate")
+        raise
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(populate_all())
 

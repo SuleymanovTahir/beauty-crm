@@ -23,6 +23,7 @@ interface User {
   role: string;
   position?: string;
   created_at: string;
+  photo?: string;
 }
 
 export default function Users() {
@@ -152,6 +153,7 @@ export default function Users() {
         : (response?.users || []);
 
       console.log('✅ Users array:', usersArray);
+      console.log('🔍 First user photo:', usersArray[0]?.photo);
       setUsers(usersArray);
 
       if (usersArray.length === 0) {
@@ -294,12 +296,14 @@ export default function Users() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img
-                          src={getDynamicAvatar(user.full_name || user.username, 'cold')}
+                          src={user.photo || getDynamicAvatar(user.full_name || user.username, 'cold')}
                           alt={user.full_name}
-                          className="w-10 h-10 rounded-full bg-gray-100"
+                          className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                         />
                         <div>
                           <p className="text-sm text-gray-900 font-medium">{user.full_name}</p>
+                          {/* DEBUG: Show photo URL */}
+                          <p className="text-xs text-gray-400">{user.photo ? 'Has Photo' : 'No Photo'}</p>
                         </div>
                       </div>
                     </td>

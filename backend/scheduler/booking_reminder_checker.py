@@ -26,7 +26,7 @@ def get_active_reminder_settings() -> List[Dict]:
 
     try:
         c.execute("""
-            SELECT id, name, days_before, hours_before, notification_type
+            SELECT id, days_before, hours_before, notification_type
             FROM booking_reminder_settings
             WHERE is_enabled = 1
             ORDER BY days_before DESC, hours_before DESC
@@ -34,12 +34,23 @@ def get_active_reminder_settings() -> List[Dict]:
 
         settings = []
         for row in c.fetchall():
+            # Generate a descriptive name based on timing
+            days = row[1] if row[1] else 0
+            hours = row[2] if row[2] else 0
+            
+            if days > 0:
+                name = f"{days} day(s) before"
+            elif hours > 0:
+                name = f"{hours} hour(s) before"
+            else:
+                name = "At booking time"
+            
             settings.append({
                 'id': row[0],
-                'name': row[1],
-                'days_before': row[2],
-                'hours_before': row[3],
-                'notification_type': row[4]
+                'name': name,
+                'days_before': row[1],
+                'hours_before': row[2],
+                'notification_type': row[3]
             })
 
         return settings

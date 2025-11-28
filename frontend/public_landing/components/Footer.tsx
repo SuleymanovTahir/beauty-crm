@@ -1,14 +1,28 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import { useLanguage } from "../LanguageContext";
+import { useState, useEffect } from "react";
 
 interface FooterProps {
   salonInfo?: any;
 }
 
-export function Footer({ salonInfo }: FooterProps) {
-  const { t } = useLanguage();
+export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
+  const { t, language } = useLanguage();
+  const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    // If salonInfo not provided via props, fetch it
+    if (!propSalonInfo || Object.keys(propSalonInfo).length === 0) {
+      fetch(`/api/public/salon-info?language=${language}`)
+        .then(res => res.json())
+        .then(setSalonInfo)
+        .catch(err => console.error('Error loading salon info:', err));
+    } else {
+      setSalonInfo(propSalonInfo);
+    }
+  }, [propSalonInfo, language]);
 
   return (
     <footer className="bg-primary text-primary-foreground">

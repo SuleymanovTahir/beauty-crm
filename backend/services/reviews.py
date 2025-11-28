@@ -2,7 +2,7 @@ import logging
 import httpx
 from typing import List, Dict, Optional
 from datetime import datetime, timedelta
-from services.google_scraper import google_scraper
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +32,9 @@ class GoogleReviewsService:
             logger.warning("No Google Maps URL configured")
             return []
         
-        # Скрапим отзывы
-        logger.info(f"Scraping reviews from {google_maps_url}")
-        reviews = await google_scraper.scrape_reviews(google_maps_url)
+        # Скрапинг отключен в пользу ручного добавления или API
+        logger.info("Scraping is disabled. Returning empty list.")
+        reviews = []
         
         # Обновляем кэш
         if reviews:

@@ -23,7 +23,8 @@ export default function EditUser() {
   const [profileData, setProfileData] = useState({
     username: '',
     full_name: '',
-    email: ''
+    email: '',
+    photo: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -42,7 +43,8 @@ export default function EditUser() {
       setProfileData({
         username: data.username,
         full_name: data.full_name,
-        email: data.email || ''
+        email: data.email || '',
+        photo: data.photo || ''
       });
     } catch (err) {
       toast.error(t('users:error_loading_profile'));
@@ -197,6 +199,52 @@ export default function EditUser() {
                   <p className="text-sm text-gray-500 mt-1">
                     {t('users:email_for_password_recovery')}
                   </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="photo">{t('users:photo')}</Label>
+                  <div className="flex items-center gap-4 mt-2">
+                    {profileData.photo && (
+                      <img
+                        src={profileData.photo}
+                        alt="Profile"
+                        className="w-16 h-16 rounded-full object-cover border border-gray-200"
+                      />
+                    )}
+                    <Input
+                      id="photo"
+                      type="file"
+                      accept="image/*"
+                      disabled={saving}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        try {
+                          setSaving(true);
+                          const formData = new FormData();
+                          formData.append('file', file);
+
+                          // Direct fetch since api.uploadFile might not exist yet
+                          const response = await fetch('/api/upload', {
+                            method: 'POST',
+                            body: formData,
+                          });
+
+                          if (!response.ok) throw new Error('Upload failed');
+
+                          const data = await response.json();
+                          setProfileData(prev => ({ ...prev, photo: data.file_url }));
+                          toast.success(t('users:photo_uploaded'));
+                        } catch (err) {
+                          console.error(err);
+                          toast.error(t('users:error_uploading_photo'));
+                        } finally {
+                          setSaving(false);
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <Button
