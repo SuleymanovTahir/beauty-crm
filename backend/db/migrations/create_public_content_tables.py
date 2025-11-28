@@ -59,9 +59,21 @@ def create_public_content_tables():
                 question_ru TEXT NOT NULL,
                 question_en TEXT,
                 question_ar TEXT,
+                question_de TEXT,
+                question_es TEXT,
+                question_fr TEXT,
+                question_hi TEXT,
+                question_kk TEXT,
+                question_pt TEXT,
                 answer_ru TEXT NOT NULL,
                 answer_en TEXT,
                 answer_ar TEXT,
+                answer_de TEXT,
+                answer_es TEXT,
+                answer_fr TEXT,
+                answer_hi TEXT,
+                answer_kk TEXT,
+                answer_pt TEXT,
                 category TEXT DEFAULT 'general',
                 is_active INTEGER DEFAULT 1,
                 display_order INTEGER DEFAULT 0,
@@ -77,9 +89,21 @@ def create_public_content_tables():
                 title_ru TEXT,
                 title_en TEXT,
                 title_ar TEXT,
+                title_de TEXT,
+                title_es TEXT,
+                title_fr TEXT,
+                title_hi TEXT,
+                title_kk TEXT,
+                title_pt TEXT,
                 description_ru TEXT,
                 description_en TEXT,
                 description_ar TEXT,
+                description_de TEXT,
+                description_es TEXT,
+                description_fr TEXT,
+                description_hi TEXT,
+                description_kk TEXT,
+                description_pt TEXT,
                 image_url TEXT NOT NULL,
                 category TEXT DEFAULT 'works',
                 is_active INTEGER DEFAULT 1,
@@ -88,6 +112,37 @@ def create_public_content_tables():
             )
         """)
         print("✅ Created public_gallery table")
+
+        # Таблица баннеров
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS public_banners (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title_ru TEXT NOT NULL,
+                title_en TEXT,
+                title_ar TEXT,
+                title_de TEXT,
+                title_es TEXT,
+                title_fr TEXT,
+                title_hi TEXT,
+                title_kk TEXT,
+                title_pt TEXT,
+                subtitle_ru TEXT,
+                subtitle_en TEXT,
+                subtitle_ar TEXT,
+                subtitle_de TEXT,
+                subtitle_es TEXT,
+                subtitle_fr TEXT,
+                subtitle_hi TEXT,
+                subtitle_kk TEXT,
+                subtitle_pt TEXT,
+                image_url TEXT,
+                link_url TEXT,
+                is_active INTEGER DEFAULT 1,
+                display_order INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        print("✅ Created public_banners table")
 
         conn.commit()
         print("✅ All public content tables created successfully")

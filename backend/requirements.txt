@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+h11
 httpx
 google-generativeai
 python-multipart
@@ -19,3 +20,7 @@ lxml
 openpyxl
 Pillow
 APScheduler
+idna
+charset-normalizer
+certifi
+urllib3

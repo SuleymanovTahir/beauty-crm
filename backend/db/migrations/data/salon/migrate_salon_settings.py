@@ -14,7 +14,7 @@ from core.config import DATABASE_NAME
 DEFAULT_SALON_DATA = {
     "name": "M Le Diamant Beauty Lounge",
     "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
-    "phone": "971526961100",
+    "phone": "+971526961100",
     "booking_url": "/public/booking",
     "email": "mladiamontuae@gmail.com",
     "instagram": "www.instagram.com/mlediamant/",
