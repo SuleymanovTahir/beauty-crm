@@ -234,6 +234,15 @@ def init_database():
                   timestamp TEXT,
                   metadata TEXT)''')
 
+    # Таблица истории переписки
+    c.execute('''CREATE TABLE IF NOT EXISTS conversations
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  client_id TEXT,
+                  role TEXT,
+                  content TEXT,
+                  timestamp TEXT,
+                  FOREIGN KEY (client_id) REFERENCES clients(instagram_id))''')
+
     # Таблица должностей (Positions)
     c.execute('''CREATE TABLE IF NOT EXISTS positions
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -362,6 +371,24 @@ def init_database():
                   duration TEXT,
                   created_at TEXT,
                   updated_at TEXT)''')
+    
+    # Таблица связи пользователей с услугами
+    c.execute('''CREATE TABLE IF NOT EXISTS user_services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        service_id INTEGER NOT NULL,
+        price REAL,
+        price_min REAL,
+        price_max REAL,
+        duration TEXT,
+        is_online_booking_enabled INTEGER DEFAULT 1,
+        is_calendar_enabled INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, service_id),
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (service_id) REFERENCES services(id)
+    )''')
+    
     # DEPRECATED: employees table consolidated into users with is_service_provider flag
     # c.execute('''CREATE TABLE IF NOT EXISTS employees
     #              (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -435,19 +462,36 @@ def init_database():
         level_name TEXT NOT NULL,
         min_points INTEGER NOT NULL,
         discount_percent REAL DEFAULT 0,
+        points_multiplier REAL DEFAULT 1.0,
         benefits TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )''')
     
+    # Заполняем уровни лояльности если пусто
+    c.execute("SELECT COUNT(*) FROM loyalty_levels")
+    if c.fetchone()[0] == 0:
+        loyalty_levels = [
+            ("bronze", 0, 0, 1.0, "Базовый уровень"),
+            ("silver", 1000, 5, 1.1, "Скидка 5% на услуги"),
+            ("gold", 5000, 10, 1.2, "Скидка 10% на услуги, приоритетная запись"),
+            ("platinum", 10000, 15, 1.5, "Скидка 15%, личный менеджер, такси")
+        ]
+        c.executemany("""
+            INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits)
+            VALUES (?, ?, ?, ?, ?)
+        """, loyalty_levels)
+        log_info(f"✅ Создано {len(loyalty_levels)} уровней лояльности", "db")
+    
     # Таблица баллов лояльности клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS client_loyalty_points (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        client_id INTEGER NOT NULL,
-        points INTEGER DEFAULT 0,
-        level_id INTEGER,
-        last_updated TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (client_id) REFERENCES clients(id),
-        FOREIGN KEY (level_id) REFERENCES loyalty_levels(id),
+        client_id TEXT NOT NULL,
+        total_points INTEGER DEFAULT 0,
+        available_points INTEGER DEFAULT 0,
+        spent_points INTEGER DEFAULT 0,
+        loyalty_level TEXT DEFAULT 'bronze',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(client_id)
     )''')
 
@@ -850,6 +894,40 @@ def init_database():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )''')
 
+    # Таблица предпочтений клиентов
+    c.execute('''CREATE TABLE IF NOT EXISTS client_preferences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id INTEGER NOT NULL,
+        preferred_master INTEGER,
+        preferred_service INTEGER,
+        preferred_day_of_week INTEGER,
+        preferred_time_of_day TEXT,
+        allergies TEXT,
+        special_notes TEXT,
+        auto_book_enabled INTEGER DEFAULT 1,
+        auto_book_interval_weeks INTEGER DEFAULT 3,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (preferred_master) REFERENCES users(id),
+        FOREIGN KEY (preferred_service) REFERENCES services(id),
+        UNIQUE(client_id)
+    )''')
+
+    # Таблица настроек мессенджеров
+    c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        messenger_type TEXT NOT NULL UNIQUE,
+        is_enabled INTEGER DEFAULT 0,
+        settings_json TEXT,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )''')
+    
+    # Инициализация дефолтных настроек мессенджеров
+    default_messengers = ['whatsapp', 'telegram', 'instagram']
+    for messenger in default_messengers:
+        c.execute("INSERT OR IGNORE INTO messenger_settings (messenger_type, is_enabled) VALUES (?, 0)", (messenger,))
+
     # Миграция: добавить position_ru в users если нет
     c.execute("PRAGMA table_info(users)")
     user_columns = [col[1] for col in c.fetchall()]
@@ -862,9 +940,47 @@ def init_database():
     if 'telegram_manager_chat_id' not in salon_columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN telegram_manager_chat_id TEXT")
     
+    # Миграция: добавить недостающие колонки в loyalty_levels
+    c.execute("PRAGMA table_info(loyalty_levels)")
+    loyalty_columns = [col[1] for col in c.fetchall()]
+    if 'points_multiplier' not in loyalty_columns:
+        c.execute("ALTER TABLE loyalty_levels ADD COLUMN points_multiplier REAL DEFAULT 1.0")
+    
+    # Миграция: добавить недостающие колонки в client_loyalty_points
+    c.execute("PRAGMA table_info(client_loyalty_points)")
+    client_loyalty_columns = [col[1] for col in c.fetchall()]
+    if 'total_points' not in client_loyalty_columns:
+        c.execute("ALTER TABLE client_loyalty_points ADD COLUMN total_points INTEGER DEFAULT 0")
+    
+    # Миграция: добавить name в booking_reminder_settings если есть таблица
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+    if c.fetchone():
+        c.execute("PRAGMA table_info(booking_reminder_settings)")
+        reminder_columns = [col[1] for col in c.fetchall()]
+        if 'name' not in reminder_columns:
+            c.execute("ALTER TABLE booking_reminder_settings ADD COLUMN name TEXT DEFAULT 'Default Reminder'")
+    
     # Ensure client columns exist
     from .clients import ensure_client_columns
     ensure_client_columns(conn)
+    
+    # Создать базовые услуги если их нет
+    c.execute("SELECT COUNT(*) FROM services")
+    if c.fetchone()[0] == 0:
+        default_services = [
+            ("haircut_woman", "Women's Haircut", "Женская стрижка", "Hair", 250.0, "60"),
+            ("haircut_man", "Men's Haircut", "Мужская стрижка", "Hair", 150.0, "45"),
+            ("manicure_classic", "Classic Manicure", "Классический маникюр", "Nails", 120.0, "60"),
+            ("pedicure_classic", "Classic Pedicure", "Классический педикюр", "Nails", 150.0, "60"),
+            ("massage_relax", "Relax Massage", "Релакс массаж", "Massage", 300.0, "60"),
+            ("facial_basic", "Basic Facial", "Базовый уход за лицом", "Face", 250.0, "60")
+        ]
+        
+        c.executemany("""
+            INSERT INTO services (service_key, name, name_ru, category, price, duration, is_active, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'))
+        """, default_services)
+        log_info(f"✅ Создано {len(default_services)} базовых услуг", "db")
     
     # Создать начальных сотрудников с фото
     employees_data = [
@@ -913,7 +1029,30 @@ def init_database():
                 INSERT INTO users (username, password_hash, full_name, role, position, photo, is_active, is_service_provider, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, 1, 1, datetime('now'))
             """, (emp["username"], password_hash, emp["full_name"], emp["role"], emp["position"], emp["photo"]))
+            
+            user_id = c.lastrowid
             log_info(f"✅ Создан сотрудник: {emp['full_name']} (логин: {emp['username']}, пароль: {emp['username'][:4]}123)", "db")
+            
+            # Назначаем все услуги сотруднику
+            c.execute("SELECT id, price, duration FROM services")
+            services = c.fetchall()
+            for svc in services:
+                c.execute("""
+                    INSERT OR IGNORE INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
+                    VALUES (?, ?, ?, ?, 1, 1)
+                """, (user_id, svc[0], svc[1], svc[2]))
+        else:
+            # Если сотрудник уже есть, тоже проверим и добавим услуги если их нет
+            c.execute("SELECT id FROM users WHERE username = ?", (emp["username"],))
+            user_id = c.fetchone()[0]
+            
+            c.execute("SELECT id, price, duration FROM services")
+            services = c.fetchall()
+            for svc in services:
+                c.execute("""
+                    INSERT OR IGNORE INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
+                    VALUES (?, ?, ?, ?, 1, 1)
+                """, (user_id, svc[0], svc[1], svc[2]))
     
     conn.commit()
     conn.close()

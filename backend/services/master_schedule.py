@@ -152,9 +152,9 @@ class MasterScheduleService:
 
             c.execute("""
                 INSERT INTO user_time_off
-                (user_id, date_from, date_to, type, reason)
-                VALUES (?, ?, ?, ?, ?)
-            """, (user_id, start_dt, end_dt, time_off_type, reason))
+                (user_id, start_date, end_date, reason)
+                VALUES (?, ?, ?, ?)
+            """, (user_id, start_dt, end_dt, reason))
 
             conn.commit()
             log_info(f"Time off added for {master_name}: {start_date} to {end_date}", "schedule")
@@ -180,36 +180,35 @@ class MasterScheduleService:
 
         try:
             query = """
-                SELECT id, date_from, date_to, type, reason
+                SELECT id, start_date, end_date, reason
                 FROM user_time_off
                 WHERE user_id = ?
             """
             params = [user_id]
 
             if start_date:
-                query += " AND date_to >= ?"
+                query += " AND end_date >= ?"
                 params.append(f"{start_date} 00:00:00")
             
             if end_date:
-                query += " AND date_from <= ?"
+                query += " AND start_date <= ?"
                 params.append(f"{end_date} 23:59:59")
 
-            query += " ORDER BY date_from"
+            query += " ORDER BY start_date"
 
             c.execute(query, tuple(params))
 
             time_offs = []
             for row in c.fetchall():
                 # Извлекаем даты из datetime
-                start_dt = row[1].split(' ')[0]
-                end_dt = row[2].split(' ')[0]
+                start_dt = row[1].split(' ')[0] if row[1] else ''
+                end_dt = row[2].split(' ')[0] if row[2] else ''
                 
                 time_offs.append({
                     "id": row[0],
                     "start_date": start_dt,
                     "end_date": end_dt,
-                    "type": row[3],
-                    "reason": row[4]
+                    "reason": row[3] if len(row) > 3 else None
                 })
 
             return time_offs
@@ -281,7 +280,7 @@ class MasterScheduleService:
                 SELECT COUNT(*)
                 FROM user_time_off
                 WHERE user_id = ?
-                AND ? BETWEEN date_from AND date_to
+                AND ? BETWEEN start_date AND end_date
             """, (user_id, check_dt))
 
             if c.fetchone()[0] > 0:
@@ -352,13 +351,13 @@ class MasterScheduleService:
             day_end = f"{date} 23:59:59"
             
             c.execute("""
-                SELECT date_from, date_to
+                SELECT start_date, end_date
                 FROM user_time_off
                 WHERE user_id = ?
                 AND (
-                    (date_from BETWEEN ? AND ?) OR
-                    (date_to BETWEEN ? AND ?) OR
-                    (date_from <= ? AND date_to >= ?)
+                    (start_date BETWEEN ? AND ?) OR
+                    (end_date BETWEEN ? AND ?) OR
+                    (start_date <= ? AND end_date >= ?)
                 )
             """, (user_id, day_start, day_end, day_start, day_end, day_start, day_end))
 

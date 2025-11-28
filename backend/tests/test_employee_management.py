@@ -162,7 +162,7 @@ def test_update_user_service(data, conn):
                   (user_id, service_id))
     row = cursor.fetchone()
     
-    if not row or row[0] != 200 or row[1] != 90 or row[2] != 0:
+    if not row or row[0] != 200 or str(row[1]) != '90' or row[2] != 0:
         print(f"FAILED (Update not applied: {row})")
         return False
     
