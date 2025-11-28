@@ -81,7 +81,10 @@ salon = get_salon_settings()
 app = FastAPI(title=f"💎 {salon['name']} CRM")
 
 # Подключение статики и шаблонов
-app.mount("/static", StaticFiles(directory="static"), name="static/dist")
+# Подключение статики и шаблонов
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static/dist")
 
 # Подключение роутеров
 # API роутеры (все через /api)

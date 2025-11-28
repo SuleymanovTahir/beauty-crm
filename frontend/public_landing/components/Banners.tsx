@@ -41,9 +41,13 @@ export function Banners() {
     useEffect(() => {
         if (banners.length <= 1) return;
 
+        // Get rotation interval from localStorage (default 5 seconds)
+        const savedInterval = localStorage.getItem('bannerRotationInterval');
+        const intervalMs = (savedInterval ? parseInt(savedInterval) : 5) * 1000;
+
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % banners.length);
-        }, 5000); // Auto-rotate every 5 seconds
+        }, intervalMs);
 
         return () => clearInterval(interval);
     }, [banners.length]);

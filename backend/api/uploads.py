@@ -17,7 +17,8 @@ else:
     # Development окружение (localhost)
     PUBLIC_URL = "http://localhost:8000"
 
-UPLOAD_DIR = Path("static/uploads")
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = BASE_DIR / "static" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Создаем подпапки

@@ -62,6 +62,12 @@
       "limpieza facial"
     ]
   },
+  "team": {
+    "description": "Profesionales en su campo que te ayudarán a revelar tu belleza natural.",
+    "noTeamAvailable": "Actualmente se está actualizando la lista de especialistas.",
+    "tag": "EQUIPO",
+    "title": "Nuestros especialistas"
+  },
   "testimonials": {
     "items": [],
     "subtitle": "lo que dicen de nosotros",

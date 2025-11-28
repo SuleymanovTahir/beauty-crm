@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../LanguageContext";
 import { apiClient } from "../../src/api/client";
 
 interface Testimonial {
@@ -10,14 +10,14 @@ interface Testimonial {
 }
 
 export function Testimonials() {
-  const { i18n } = useTranslation();
+  const { t, language } = useLanguage();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const data = await apiClient.getPublicReviews(i18n.language);
+        const data = await apiClient.getPublicReviews(language);
         if (data.reviews && data.reviews.length > 0) {
           setTestimonials(data.reviews);
         }
@@ -30,14 +30,14 @@ export function Testimonials() {
     };
 
     fetchTestimonials();
-  }, [i18n.language]);
+  }, [language]);
 
   if (loading) {
     return (
       <section id="testimonials" className="py-24 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-muted-foreground">Загрузка отзывов...</p>
+            <p className="text-muted-foreground">{t('loading') || 'Загрузка отзывов...'}</p>
           </div>
         </div>
       </section>
@@ -49,13 +49,13 @@ export function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-            Отзывы клиентов
+            {t('testimonialsTag') || 'Отзывы клиентов'}
           </p>
           <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
-            Что говорят о нас
+            {t('testimonialsTitle') || 'Что говорят о нас'}
           </h2>
           <p className="text-lg text-foreground/70">
-            Мы ценим доверие каждого клиента и гордимся положительными отзывами
+            {t('testimonialsDesc') || 'Мы ценим доверие каждого клиента и гордимся положительными отзывами'}
           </p>
         </div>
 
@@ -66,8 +66,12 @@ export function Testimonials() {
               className="bg-card rounded-2xl p-8 border border-border/50 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5" viewBox="0 0 24 24" fill="#EAB308">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300 fill-gray-300'}`}
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                 ))}

@@ -9,22 +9,48 @@ export function PromoTimer() {
         minutes: 0,
         seconds: 0,
     });
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // Set deadline to the end of the current month
-        const now = new Date();
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+        // Fetch promo end date from API
+        const fetchSettings = async () => {
+            try {
+                const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+                const res = await fetch(`${API_URL}/api/salon-settings`);
+                if (res.ok) {
+                    const settings = await res.json();
+                    if (settings.promo_end_date) {
+                        startTimer(new Date(settings.promo_end_date));
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching settings:", error);
+            }
 
+            // Fallback: End of current month
+            const now = new Date();
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+            startTimer(endOfMonth);
+        };
+
+        fetchSettings();
+    }, []);
+
+    const startTimer = (deadline: Date) => {
         const calculateTimeLeft = () => {
-            const difference = +endOfMonth - +new Date();
+            const difference = +deadline - +new Date();
 
             if (difference > 0) {
+                setIsVisible(true);
                 setTimeLeft({
                     days: Math.floor(difference / (1000 * 60 * 60 * 24)),
                     hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
                     minutes: Math.floor((difference / 1000 / 60) % 60),
                     seconds: Math.floor((difference / 1000) % 60),
                 });
+            } else {
+                setIsVisible(false);
             }
         };
 
@@ -32,10 +58,12 @@ export function PromoTimer() {
         const timer = setInterval(calculateTimeLeft, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    };
+
+    if (!isVisible) return null;
 
     return (
-        <div className="mt-12">
+        <div className="mt-12 animate-fade-in">
             <div className="flex flex-col gap-6">
                 <p className="text-white/80 text-sm uppercase tracking-[0.2em] mb-2">
                     {t('promoEnds')}

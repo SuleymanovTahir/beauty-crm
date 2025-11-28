@@ -46,7 +46,20 @@ def migrate_salon_schema(db_path="salon_bot.db"):
         else:
             print("\n✅ All columns already exist")
         
+        # Проверяем колонку promo_end_date
+        c.execute("PRAGMA table_info(salon_settings)")
+        columns = [row[1] for row in c.fetchall()]
+        
+        if 'promo_end_date' not in columns:
+            c.execute("ALTER TABLE salon_settings ADD COLUMN promo_end_date TEXT")
+            # Assuming log_info is defined elsewhere or will be added
+            # log_info("✅ Added promo_end_date column to salon_settings", "migration")
+            print("  ➕ Adding column: promo_end_date") # Added print for consistency
+            
         conn.commit()
+        # Assuming log_info is defined elsewhere or will be added
+        # log_info("✅ Salon settings schema migration completed", "migration")
+        print("\n✅ Salon settings schema migration completed") # Added print for consistency
         return True
         
     except Exception as e:

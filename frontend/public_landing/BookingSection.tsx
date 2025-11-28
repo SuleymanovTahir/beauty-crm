@@ -48,7 +48,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
 
     // Validation
     if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
-      toast.error("Пожалуйста, заполните все обязательные поля");
+      toast.error(t('fillRequiredFields', { defaultValue: 'Пожалуйста, заполните все обязательные поля' }));
       return;
     }
 
@@ -71,7 +71,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
       });
 
       if (response.ok) {
-        toast.success("Ваша заявка принята! Мы свяжемся с вами в ближайшее время.");
+        toast.success(t('bookingSuccess', { defaultValue: 'Ваша заявка принята! Мы свяжемся с вами в ближайшее время.' }));
         // Reset form
         setFormData({
           name: "",
@@ -83,11 +83,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
           comment: "",
         });
       } else {
-        toast.error("Не удалось отправить заявку. Попробуйте позже.");
+        toast.error(t('bookingError', { defaultValue: 'Не удалось отправить заявку. Попробуйте позже.' }));
       }
     } catch (error) {
       console.error('Error sending booking request:', error);
-      toast.error("Произошла ошибка при отправке.");
+      toast.error(t('sendError', { defaultValue: 'Произошла ошибка при отправке.' }));
     } finally {
       setLoading(false);
     }
@@ -111,11 +111,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
         <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 border border-border/50 shadow-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Ваше имя *</Label>
+              <Label htmlFor="name">{t('yourName', { defaultValue: 'Ваше имя' })} *</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Введите ваше имя"
+                placeholder={t('enterName', { defaultValue: 'Введите ваше имя' })}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="bg-input-background border-border/50"
@@ -124,11 +124,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Телефон *</Label>
+              <Label htmlFor="phone">{t('phone', { defaultValue: 'Телефон' })} *</Label>
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+7 (999) 123-45-67"
+                placeholder={t('enterPhone', { defaultValue: '+7 (999) 123-45-67' })}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="bg-input-background border-border/50"
@@ -149,14 +149,14 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service">Услуга *</Label>
+              <Label htmlFor="service">{t('service', { defaultValue: 'Услуга' })} *</Label>
               <Select
                 value={formData.service}
                 onValueChange={(value) => setFormData({ ...formData, service: value })}
                 required
               >
                 <SelectTrigger id="service" className="bg-input-background border-border/50">
-                  <SelectValue placeholder="Выберите услугу" />
+                  <SelectValue placeholder={t('selectService', { defaultValue: 'Выберите услугу' })} />
                 </SelectTrigger>
                 <SelectContent>
                   {servicesList.map((service) => (
@@ -169,7 +169,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="date">Желаемая дата *</Label>
+              <Label htmlFor="date">{t('desiredDate', { defaultValue: 'Желаемая дата' })} *</Label>
               <Input
                 id="date"
                 type="date"
@@ -182,7 +182,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="time">Желаемое время *</Label>
+              <Label htmlFor="time">{t('desiredTime', { defaultValue: 'Желаемое время' })} *</Label>
               <Input
                 id="time"
                 type="time"
@@ -195,10 +195,10 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
           </div>
 
           <div className="space-y-2 mb-6">
-            <Label htmlFor="comment">Комментарий</Label>
+            <Label htmlFor="comment">{t('comment', { defaultValue: 'Комментарий' })}</Label>
             <Textarea
               id="comment"
-              placeholder="Дополнительные пожелания или вопросы"
+              placeholder={t('additionalComments', { defaultValue: 'Дополнительные пожелания или вопросы' })}
               value={formData.comment}
               onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
               className="bg-input-background border-border/50 min-h-[100px]"
@@ -210,11 +210,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             disabled={loading}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6"
           >
-            {loading ? "Отправка..." : "Отправить заявку"}
+            {loading ? t('sending', { defaultValue: 'Отправка...' }) : t('submitBooking', { defaultValue: 'Отправить заявку' })}
           </Button>
 
           <p className="text-sm text-muted-foreground text-center mt-4">
-            * Обязательные поля
+            * {t('requiredFields', { defaultValue: 'Обязательные поля' })}
           </p>
         </form>
       </div>

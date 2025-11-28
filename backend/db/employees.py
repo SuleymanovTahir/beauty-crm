@@ -47,7 +47,7 @@ def get_all_employees(active_only=True, service_providers_only=False):
     columns = [row[1] for row in c.fetchall()]
     
     if 'is_service_provider' in columns:
-        query = "SELECT * FROM users WHERE is_service_provider = 1"
+        query = "SELECT * FROM users WHERE is_service_provider = 1 AND role NOT IN ('director', 'admin')"
     else:
         # Fallback: filter by role
         query = "SELECT * FROM users WHERE role IN ('employee', 'master')"

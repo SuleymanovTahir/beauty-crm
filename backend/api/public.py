@@ -522,14 +522,16 @@ async def get_public_banners():
     
     try:
         c.execute("""
-            SELECT * FROM banners 
+            SELECT * FROM public_banners 
             WHERE is_active = 1 
-            ORDER BY created_at DESC
+            ORDER BY display_order ASC
         """)
         
         banners = [dict(row) for row in c.fetchall()]
         return {"banners": banners}
     except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error fetching banners: {e}", "api")
         return {"banners": []}
     finally:
         conn.close()

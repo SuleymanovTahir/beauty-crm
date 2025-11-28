@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, Instagram, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "../LanguageContext";
 import logo from "../assets/logo.png";
@@ -23,6 +23,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
   const languages = [
     { code: 'ru', name: 'RU', flag: '🇷🇺' },
@@ -57,6 +58,21 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close language menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.language-switcher')) {
+        setIsLangMenuOpen(false);
+      }
+    };
+
+    if (isLangMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isLangMenuOpen]);
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
@@ -88,24 +104,56 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             ))}
 
             {/* Language Switcher Dropdown */}
-            <div className="relative group">
-              <button className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors">
+            <div className="relative language-switcher">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors"
+              >
                 <Globe className="w-4 h-4" />
                 <span className="text-sm uppercase">{language}</span>
               </button>
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] py-1">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => changeLanguage(lang.code)}
-                    className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
-                      }`}
-                  >
-                    <span className="mr-2">{lang.flag}</span>
-                    {lang.name}
-                  </button>
-                ))}
-              </div>
+              {isLangMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[120px] py-1 z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        changeLanguage(lang.code as any);
+                        setIsLangMenuOpen(false);
+                      }}
+                      className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
+                        }`}
+                    >
+                      <span className="mr-2">{lang.flag}</span>
+                      {lang.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-4">
+              {salonInfo?.instagram && (
+                <a
+                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+              )}
+              {salonInfo?.whatsapp && (
+                <a
+                  href={`https://wa.me/${salonInfo.whatsapp.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </a>
+              )}
             </div>
 
             <Button
@@ -148,7 +196,9 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => changeLanguage(lang.code)}
+                    onClick={() => {
+                      changeLanguage(lang.code as any);
+                    }}
                     className={`px-2 py-1.5 rounded text-xs flex items-center justify-center gap-1 ${language === lang.code
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-secondary hover:bg-secondary/80'
@@ -159,6 +209,30 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Mobile Social Icons */}
+            <div className="flex justify-center gap-6 py-4 border-t border-border/50">
+              {salonInfo?.instagram && (
+                <a
+                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <Instagram className="w-6 h-6" />
+                </a>
+              )}
+              {salonInfo?.whatsapp && (
+                <a
+                  href={`https://wa.me/${salonInfo.whatsapp.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/80 hover:text-foreground transition-colors"
+                >
+                  <MessageCircle className="w-6 h-6" />
+                </a>
+              )}
             </div>
 
             <Button
