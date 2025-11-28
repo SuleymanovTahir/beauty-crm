@@ -7,7 +7,13 @@ import google.generativeai as genai
 from utils.logger import log_info, log_error
 
 # Настройка API
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+api_key = os.getenv('GEMINI_API_KEY')
+if api_key:
+    genai.configure(api_key=api_key)
+    HAS_API_KEY = True
+else:
+    HAS_API_KEY = False
+    log_info("GEMINI_API_KEY not found. Translation service disabled (will return source text).", "translation")
 
 # Маппинг языковых кодов на полные названия
 LANGUAGE_NAMES = {
@@ -39,6 +45,9 @@ def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 'en') 
     
     if not text or text.strip() == '':
         return text
+
+    if not HAS_API_KEY:
+        return text
     
     try:
         source_name = LANGUAGE_NAMES.get(source_lang, source_lang)
@@ -61,7 +70,7 @@ Text to translate:
         
     except Exception as e:
         log_error(f"Translation error ({source_lang} -> {target_lang}): {e}", "translation")
-        return None
+        return text # Fallback to source text on error
 
 
 def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, str]:
@@ -77,6 +86,13 @@ def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, 
     """
     translations = {source_lang: text}
     
+    if not HAS_API_KEY:
+        # Если ключа нет, возвращаем исходный текст для всех языков
+        for lang_code in LANGUAGE_NAMES.keys():
+            if lang_code != source_lang:
+                translations[lang_code] = text
+        return translations
+
     for lang_code in LANGUAGE_NAMES.keys():
         if lang_code != source_lang:
             translated = translate_text(text, source_lang, lang_code)
@@ -103,6 +119,9 @@ def batch_translate(texts: List[str], source_lang: str = 'ru', target_lang: str 
         Список переведенных текстов
     """
     if source_lang == target_lang:
+        return texts
+
+    if not HAS_API_KEY:
         return texts
     
     try:

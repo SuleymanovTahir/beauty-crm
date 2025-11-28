@@ -428,7 +428,7 @@ def update_employee_schema():
             'bio_kk': 'TEXT',
             'bio_pt': 'TEXT',
         }
-        }
+
         
         for col_name, col_type in needed_columns.items():
             if col_name not in columns:
