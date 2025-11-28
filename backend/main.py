@@ -453,7 +453,7 @@ async def startup_event():
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
     from tests.run_all_tests import run_all_tests
     log_info("🧪 Запуск всех тестов...", "startup")
-    run_all_tests()
+    run_all_tests() 
 
     # from scripts.run_all_fixes import main as run_all_fixes
     # log_info("🔧 Запуск всех исправлений...", "startup")

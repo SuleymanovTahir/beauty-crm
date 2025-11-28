@@ -395,8 +395,8 @@ class MasterScheduleService:
             available_slots = []
             current_dt = start_dt
             
-            # Get current time for filtering past slots
-            now = get_current_time()
+            # Get current time for filtering past slots (convert to naive for comparison)
+            now = get_current_time().replace(tzinfo=None)
             is_today = dt.date() == now.date()
             
             # Minimum advance booking time for same-day appointments (2 hours)

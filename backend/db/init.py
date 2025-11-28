@@ -16,6 +16,9 @@ def init_database():
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
+    # Включаем поддержку foreign keys
+    c.execute("PRAGMA foreign_keys = ON")
+    
     # Таблица клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS clients
              (instagram_id TEXT PRIMARY KEY,
@@ -35,6 +38,7 @@ def init_database():
               gender TEXT,
               card_number TEXT,
               discount REAL DEFAULT 0,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
               total_visits INTEGER DEFAULT 0,
               additional_phone TEXT,
               newsletter_agreed INTEGER DEFAULT 0,
@@ -210,6 +214,17 @@ def init_database():
                   notes TEXT,
                   special_package_id INTEGER)''')
 
+    # Таблица настроек напоминаний о записях
+    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        booking_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        reminder_time TEXT NOT NULL,
+        is_enabled INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id)
+    )''')
+
     # Миграция: добавить master в bookings
     c.execute("PRAGMA table_info(bookings)")
     booking_columns = [col[1] for col in c.fetchall()]
@@ -311,6 +326,9 @@ def init_database():
     # Список колонок которые могут отсутствовать в старой схеме
     user_migrations = {
         'position': 'TEXT',
+        'position_ru': 'TEXT',
+        'position_ar': 'TEXT',
+        'position_en': 'TEXT',
         'employee_id': 'INTEGER',
         'birthday': 'TEXT',
         'phone': 'TEXT',
@@ -436,8 +454,8 @@ def init_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         day_of_week INTEGER NOT NULL,
-        start_time TEXT NOT NULL,
-        end_time TEXT NOT NULL,
+        start_time TEXT,
+        end_time TEXT,
         is_active INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -493,6 +511,20 @@ def init_database():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(client_id)
+    )''')
+
+    # Таблица транзакций баллов лояльности
+    c.execute('''CREATE TABLE IF NOT EXISTS loyalty_transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id TEXT NOT NULL,
+        transaction_type TEXT NOT NULL,
+        points INTEGER NOT NULL,
+        reason TEXT,
+        booking_id INTEGER,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        expires_at TEXT,
+        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
+        FOREIGN KEY (booking_id) REFERENCES bookings(id)
     )''')
 
     # Таблица специальных пакетов
@@ -918,15 +950,27 @@ def init_database():
     c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         messenger_type TEXT NOT NULL UNIQUE,
+        display_name TEXT NOT NULL,
         is_enabled INTEGER DEFAULT 0,
-        settings_json TEXT,
+        api_token TEXT,
+        webhook_url TEXT,
+        config_json TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )''')
     
     # Инициализация дефолтных настроек мессенджеров
-    default_messengers = ['whatsapp', 'telegram', 'instagram']
-    for messenger in default_messengers:
-        c.execute("INSERT OR IGNORE INTO messenger_settings (messenger_type, is_enabled) VALUES (?, 0)", (messenger,))
+    default_messengers = [
+        ('instagram', 'Instagram', 1),
+        ('whatsapp', 'WhatsApp', 0),
+        ('telegram', 'Telegram', 0),
+        ('tiktok', 'TikTok', 0)
+    ]
+    for messenger_type, display_name, is_enabled in default_messengers:
+        c.execute("""
+            INSERT OR IGNORE INTO messenger_settings (messenger_type, display_name, is_enabled)
+            VALUES (?, ?, ?)
+        """, (messenger_type, display_name, is_enabled))
 
     # Миграция: добавить position_ru в users если нет
     c.execute("PRAGMA table_info(users)")
@@ -1018,6 +1062,13 @@ def init_database():
             "position": "Nail Master/Massages",
             "role": "employee",
             "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.png"
+        },
+        {
+            "username": "tursunai",
+            "full_name": "Турсунай",
+            "position": "Director",
+            "role": "director",
+            "photo": None
         }
     ]
     
