@@ -131,6 +131,10 @@ async def update_gallery_image(
         if 'is_visible' in data:
             updates.append("is_visible = ?")
             params.append(1 if data['is_visible'] else 0)
+
+        if 'image_path' in data:
+            updates.append("image_path = ?")
+            params.append(data['image_path'])
         
         if updates:
             updates.append("updated_at = CURRENT_TIMESTAMP")
@@ -203,7 +207,8 @@ async def upload_gallery_image(
     
     try:
         # Создаём папку если не существует
-        upload_dir = Path(f"backend/static/uploads/{category}")
+        BASE_DIR = Path(__file__).resolve().parent.parent
+        upload_dir = BASE_DIR / "static" / "uploads" / category
         upload_dir.mkdir(parents=True, exist_ok=True)
         
         # Сохраняем файл
@@ -213,6 +218,7 @@ async def upload_gallery_image(
             f.write(content)
         
         # Добавляем в БД
+        # URL должен начинаться с /static, так как мы маунтим static папку
         image_path = f"/static/uploads/{category}/{file.filename}"
         
         conn = sqlite3.connect(DATABASE_NAME)

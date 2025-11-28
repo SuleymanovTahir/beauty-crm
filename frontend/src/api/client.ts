@@ -229,11 +229,11 @@ export const apiClient = {
   getPublicEmployees: () =>
     apiCall('/api/employees?active_only=true'),
 
-  getPublicReviews: (lang: string = 'en') =>
-    apiCall(`/public/reviews?lang=${lang}`),
+  getPublicReviews: (lang: string) =>
+    apiCall(`/public/reviews?language=${lang}`),
 
-  getPublicFAQ: (lang: string = 'ru') =>
-    apiCall(`/public/faq?lang=${lang}`),
+  getPublicFAQ: (lang: string) =>
+    apiCall(`/public/faq?language=${lang}`),
 
   getPublicGallery: (category?: string) =>
     apiCall(`/public/gallery${category ? `?category=${category}` : ''}`),
@@ -354,4 +354,14 @@ export const apiClient = {
     apiCall(`/api/public-admin/faq/${id}`, {
       method: 'DELETE',
     }),
+
+  // ===== UPLOADS =====
+  uploadFile: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return fetch(`${BASE_URL}/api/upload`, {
+      method: 'POST',
+      body: formData,
+    }).then(r => r.json());
+  },
 }

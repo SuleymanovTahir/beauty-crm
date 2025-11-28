@@ -50,7 +50,8 @@ def get_salon_settings() -> dict:
                 "birthday_discount": row_dict.get("birthday_discount", "15%"),
                 "updated_at": row_dict.get("updated_at"),
                 "hours_weekdays": row_dict.get("hours_weekdays", "10:30 - 21:00"),
-                "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00")
+                "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00"),
+                "promo_end_date": row_dict.get("promo_end_date")
             }
         else:
             log_warning(
@@ -96,7 +97,9 @@ def _get_default_salon_settings() -> dict:
         "timezone_offset": "UTC+4",
         "currency": "AED",
         "birthday_discount": "15%",
-        "updated_at": None
+        "birthday_discount": "15%",
+        "updated_at": None,
+        "promo_end_date": None
     }
 
 
@@ -114,6 +117,7 @@ def update_salon_settings(data: dict) -> bool:
                     whatsapp = ?, bot_name = ?, bot_name_en = ?, bot_name_ar = ?,
                     city = ?, country = ?, timezone = ?, timezone_offset = ?, 
                     currency = ?, birthday_discount = ?,
+                    currency = ?, birthday_discount = ?, promo_end_date = ?,
                     updated_at = CURRENT_TIMESTAMP
                     WHERE id = 1""",
                   (data.get('name'),
@@ -139,7 +143,9 @@ def update_salon_settings(data: dict) -> bool:
                    data.get('timezone'),
                    data.get('timezone_offset'),
                    data.get('currency'),
-                   data.get('birthday_discount')))
+                   data.get('currency'),
+                   data.get('birthday_discount'),
+                   data.get('promo_end_date')))
 
         conn.commit()
         log_info("✅ Настройки салона обновлены", "database")

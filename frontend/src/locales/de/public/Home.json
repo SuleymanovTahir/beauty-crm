@@ -62,6 +62,12 @@
       "Gesichtsreinigung"
     ]
   },
+  "team": {
+    "description": "Profis auf ihrem Gebiet, die Ihnen helfen, Ihre natürliche Schönheit zum Vorschein zu bringen",
+    "noTeamAvailable": "Die Liste der Spezialisten wird derzeit aktualisiert",
+    "tag": "TEAM",
+    "title": "Unsere Spezialisten"
+  },
   "testimonials": {
     "items": [],
     "subtitle": "Was sie über uns sagen",

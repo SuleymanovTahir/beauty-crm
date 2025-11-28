@@ -43,12 +43,6 @@
     "subtitle": "Results we are proud of",
     "title": "Our works"
   },
-  "team": {
-    "tag": "TEAM",
-    "title": "Our Specialists",
-    "description": "Professionals who will help you reveal your natural beauty",
-    "noTeamAvailable": "The list of specialists is currently being updated"
-  },
   "hero": {
     "badge": "Premium beauty services",
     "bookButton": "Enroll now",
@@ -67,6 +61,12 @@
       "Hair coloring",
       "Facial cleansing"
     ]
+  },
+  "team": {
+    "description": "Professionals who will help you reveal your natural beauty",
+    "noTeamAvailable": "The list of specialists is currently being updated",
+    "tag": "TEAM",
+    "title": "Our Specialists"
   },
   "testimonials": {
     "items": [],

@@ -21,7 +21,7 @@ LANGUAGE_NAMES = {
 # Логируем один раз при импорте
 log_info("Translation service: returning source text (no API translation)", "translation")
 
-def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 'en') -> Optional[str]:
+async def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 'en') -> Optional[str]:
     """
     Возвращает исходный текст без перевода
     
@@ -36,7 +36,7 @@ def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 'en') 
     return text
 
 
-def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, str]:
+async def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, str]:
     """
     Возвращает исходный текст для всех языков
     
@@ -53,7 +53,7 @@ def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, 
     return translations
 
 
-def batch_translate(texts: List[str], source_lang: str = 'ru', target_lang: str = 'en') -> List[str]:
+async def batch_translate(texts: List[str], source_lang: str = 'ru', target_lang: str = 'en') -> List[str]:
     """
     Возвращает исходные тексты без перевода
     

@@ -62,6 +62,12 @@
       "Nettoyage du visage"
     ]
   },
+  "team": {
+    "description": "Des professionnels dans leur domaine qui vous aideront à révéler votre beauté naturelle",
+    "noTeamAvailable": "La liste des spécialistes est en cours de mise à jour",
+    "tag": "ÉQUIPE",
+    "title": "Nos spécialistes"
+  },
   "testimonials": {
     "items": [],
     "subtitle": "Ce qu'ils disent de nous",
