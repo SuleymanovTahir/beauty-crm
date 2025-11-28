@@ -1,0 +1,288 @@
+"""
+Модуль для работы с публичным контентом (отзывы, FAQ, галерея)
+"""
+import sqlite3
+from typing import List, Dict, Optional
+from datetime import datetime
+from core.config import DATABASE_NAME
+from utils.logger import log_info, log_error
+
+
+def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> List[Dict]:
+    """
+    Получить активные отзывы на указанном языке
+    
+    Args:
+        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
+        limit: Максимальное количество отзывов (None = все)
+    
+    Returns:
+        List[Dict]: Список отзывов
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    try:
+        text_field = f'text_{language}' if language != 'ru' else 'text_ru'
+        
+        query = f"""
+            SELECT 
+                id,
+                author_name as name,
+                rating,
+                COALESCE({text_field}, text_ru) as text,
+                avatar_url,
+                display_order
+            FROM public_reviews
+            WHERE is_active = 1
+            ORDER BY display_order DESC, created_at DESC
+        """
+        
+        if limit:
+            query += f" LIMIT {limit}"
+        
+        cursor.execute(query)
+        reviews = [dict(row) for row in cursor.fetchall()]
+        
+        log_info(f"Получено {len(reviews)} отзывов на языке {language}", "db")
+        return reviews
+        
+    except Exception as e:
+        log_error(f"Ошибка получения отзывов: {e}", "db")
+        return []
+    finally:
+        conn.close()
+
+
+def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List[Dict]:
+    """
+    Получить активные FAQ на указанном языке
+    
+    Args:
+        language: Код языка
+        category: Категория (опционально)
+    
+    Returns:
+        List[Dict]: Список вопросов и ответов
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    try:
+        question_field = f'question_{language}' if language != 'ru' else 'question_ru'
+        answer_field = f'answer_{language}' if language != 'ru' else 'answer_ru'
+        
+        query = f"""
+            SELECT 
+                id,
+                COALESCE({question_field}, question_ru) as question,
+                COALESCE({answer_field}, answer_ru) as answer,
+                category,
+                display_order
+            FROM public_faq
+            WHERE is_active = 1
+        """
+        
+        if category:
+            query += f" AND category = '{category}'"
+        
+        query += " ORDER BY display_order DESC, created_at DESC"
+        
+        cursor.execute(query)
+        faq = [dict(row) for row in cursor.fetchall()]
+        
+        log_info(f"Получено {len(faq)} FAQ на языке {language}", "db")
+        return faq
+        
+    except Exception as e:
+        log_error(f"Ошибка получения FAQ: {e}", "db")
+        return []
+    finally:
+        conn.close()
+
+
+def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
+    """
+    Получить активные элементы галереи
+    
+    Args:
+        category: Категория (опционально)
+        limit: Максимальное количество
+    
+    Returns:
+        List[Dict]: Список элементов галереи
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    try:
+        query = """
+            SELECT 
+                id,
+                title_ru,
+                description_ru,
+                image_url,
+                category,
+                display_order
+            FROM public_gallery
+            WHERE is_active = 1
+            ORDER BY display_order DESC, created_at DESC
+        """
+        
+        if limit:
+            query += f" LIMIT {limit}"
+        
+        cursor.execute(query)
+        gallery = [dict(row) for row in cursor.fetchall()]
+        
+        log_info(f"Получено {len(gallery)} элементов галереи", "db")
+        return gallery
+        
+    except Exception as e:
+        log_error(f"Ошибка получения галереи: {e}", "db")
+        return []
+    finally:
+        conn.close()
+
+
+def add_review(data: Dict) -> Optional[int]:
+    """
+    Добавить новый отзыв
+    
+    Args:
+        data: Данные отзыва (author_name, rating, text_ru, text_en, etc.)
+    
+    Returns:
+        int: ID созданного отзыва или None при ошибке
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT INTO public_reviews (
+                author_name, rating, text_ru, text_en, text_ar, text_de, text_es, 
+                text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data.get('author_name'),
+            data.get('rating', 5),
+            data.get('text_ru'),
+            data.get('text_en'),
+            data.get('text_ar'),
+            data.get('text_de'),
+            data.get('text_es'),
+            data.get('text_fr'),
+            data.get('text_hi'),
+            data.get('text_kk'),
+            data.get('text_pt'),
+            data.get('avatar_url'),
+            data.get('is_active', 1),
+            data.get('display_order', 0)
+        ))
+        
+        conn.commit()
+        review_id = cursor.lastrowid
+        log_info(f"Добавлен отзыв ID {review_id} от {data.get('author_name')}", "db")
+        return review_id
+        
+    except Exception as e:
+        log_error(f"Ошибка добавления отзыва: {e}", "db")
+        conn.rollback()
+        return None
+    finally:
+        conn.close()
+
+
+def add_faq(data: Dict) -> Optional[int]:
+    """
+    Добавить новый FAQ
+    
+    Args:
+        data: Данные FAQ (question_ru, answer_ru, question_en, answer_en, etc.)
+    
+    Returns:
+        int: ID созданного FAQ или None при ошибке
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT INTO public_faq (
+                question_ru, question_en, question_ar,
+                answer_ru, answer_en, answer_ar,
+                category, is_active, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data.get('question_ru'),
+            data.get('question_en'),
+            data.get('question_ar'),
+            data.get('answer_ru'),
+            data.get('answer_en'),
+            data.get('answer_ar'),
+            data.get('category', 'general'),
+            data.get('is_active', 1),
+            data.get('display_order', 0)
+        ))
+        
+        conn.commit()
+        faq_id = cursor.lastrowid
+        log_info(f"Добавлен FAQ ID {faq_id}", "db")
+        return faq_id
+        
+    except Exception as e:
+        log_error(f"Ошибка добавления FAQ: {e}", "db")
+        conn.rollback()
+        return None
+    finally:
+        conn.close()
+
+
+def add_gallery_item(data: Dict) -> Optional[int]:
+    """
+    Добавить элемент в галерею
+    
+    Args:
+        data: Данные элемента (image_url, title_ru, description_ru, etc.)
+    
+    Returns:
+        int: ID созданного элемента или None при ошибке
+    """
+    conn = sqlite3.connect(DATABASE_NAME)
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT INTO public_gallery (
+                title_ru, title_en, title_ar,
+                description_ru, description_en, description_ar,
+                image_url, category, is_active, display_order
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data.get('title_ru'),
+            data.get('title_en'),
+            data.get('title_ar'),
+            data.get('description_ru'),
+            data.get('description_en'),
+            data.get('description_ar'),
+            data.get('image_url'),
+            data.get('category', 'works'),
+            data.get('is_active', 1),
+            data.get('display_order', 0)
+        ))
+        
+        conn.commit()
+        item_id = cursor.lastrowid
+        log_info(f"Добавлен элемент галереи ID {item_id}", "db")
+        return item_id
+        
+    except Exception as e:
+        log_error(f"Ошибка добавления элемента галереи: {e}", "db")
+        conn.rollback()
+        return None
+    finally:
+        conn.close()

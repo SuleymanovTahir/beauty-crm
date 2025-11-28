@@ -38,6 +38,8 @@ from api.automation import router as automation_router
 from api.reports import router as reports_router
 from api.settings import router as settings_router 
 from api.public import router as public_router
+from api.public_content import router as public_content_router
+from api.public_employees import router as public_employees_router
 from api.notes import router as notes_router
 from api.client_auth import router as client_auth_router
 from api.user_management import router as user_management_router
@@ -118,6 +120,8 @@ app.include_router(notes_router, prefix="/api")
 from modules import is_module_enabled
 if is_module_enabled('public'):
     app.include_router(public_router, prefix="/public")
+    app.include_router(public_content_router, prefix="/api")  # Public content API
+    app.include_router(public_employees_router, prefix="/api")  # Public employees API
     app.include_router(client_auth_router, prefix="/public")  # API для клиентов
     log_info("✅ Модуль 'public' подключен: /public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
@@ -413,9 +417,9 @@ async def startup_event():
     # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
     # ================================
     # Запускаются все миграции при каждом старте (идемпотентны)
-    from db.migrations.run_all_migrations import run_all_migrations
-    log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()
+    # from db.migrations.run_all_migrations import run_all_migrations
+    # log_info("🔧 Запуск миграций...", "startup")
+    # run_all_migrations()
     
     # ================================
     # СВЯЗЫВАНИЕ ПОЛЬЗОВАТЕЛЕЙ С СОТРУДНИКАМИ

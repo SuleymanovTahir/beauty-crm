@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Globe } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import logo from "../assets/logo.png";
 
 const navigation = [
   { name: "О нас", href: "#about" },
@@ -19,6 +20,7 @@ interface HeaderProps {
 
 export function Header({ salonInfo }: HeaderProps) {
   const { i18n } = useTranslation();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const languages = [
@@ -38,17 +40,30 @@ export function Header({ salonInfo }: HeaderProps) {
     localStorage.setItem('i18nextLng', lang);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-[9999] bg-background/95 backdrop-blur-sm shadow-sm transition-all duration-300"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0">
-            <span className="text-2xl tracking-tight font-serif text-primary transition-colors duration-300">
-              {salonInfo?.name || "M. Le Diamant"}
-            </span>
+            <a href="/" className="block">
+              <img
+                src={logo}
+                alt={salonInfo?.name || "Logo"}
+                className="h-12 w-auto object-contain"
+              />
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -56,28 +71,30 @@ export function Header({ salonInfo }: HeaderProps) {
             {navigation.map((item) => (
               <a
                 key={item.name}
-                href={item.href.startsWith('#') ? `/${item.href}` : item.href}
-                className="text-sm text-foreground/80 hover:text-foreground transition-colors duration-200"
+                href={item.href}
+                className={`text-sm transition-colors duration-200 ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
+                  }`}
               >
                 {item.name}
               </a>
             ))}
 
             {/* Language Switcher Dropdown */}
-            <div className="language-dropdown-menu relative group">
-              <button className="flex items-center gap-2 px-3 py-2 bg-white/50 rounded-full hover:bg-white transition-colors min-w-[80px] justify-center">
-                <Globe className="w-4 h-4 text-[#2d2d2d]" />
+            <div className="relative group">
+              <button className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors">
+                <Globe className="w-4 h-4" />
                 <span className="text-sm uppercase">{i18n.language}</span>
               </button>
-              <div className="language-dropdown-menu absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 z-[10000]">
+              <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all min-w-[120px] py-1">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => setLanguage(lang.code)}
-                    className={`block w-full px-6 py-3 text-left hover:bg-[#f5f3f0] text-sm whitespace-nowrap ${i18n.language === lang.code ? 'bg-[#f5f3f0] font-semibold' : ''
+                    className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${i18n.language === lang.code ? 'bg-gray-50 font-medium' : ''
                       }`}
                   >
-                    {lang.flag} {lang.name}
+                    <span className="mr-2">{lang.flag}</span>
+                    {lang.name}
                   </button>
                 ))}
               </div>
@@ -104,12 +121,12 @@ export function Header({ salonInfo }: HeaderProps) {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden pb-6 space-y-4">
+          <nav className="lg:hidden pb-6 space-y-4 bg-background px-4 rounded-b-2xl shadow-lg absolute left-0 right-0 top-20 border-t">
             {navigation.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="block text-sm text-foreground/80 hover:text-foreground transition-colors duration-200"
+                className="block text-sm text-foreground/80 hover:text-foreground transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
@@ -117,19 +134,20 @@ export function Header({ salonInfo }: HeaderProps) {
             ))}
 
             {/* Mobile Language Switcher */}
-            <div className="space-y-2">
-              <p className="text-xs text-foreground/60 uppercase tracking-wider">Язык / Language</p>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="py-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Язык / Language</p>
+              <div className="grid grid-cols-4 gap-2">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => setLanguage(lang.code)}
-                    className={`px-3 py-2 rounded-lg text-sm ${i18n.language === lang.code
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-white/50 hover:bg-white'
+                    className={`px-2 py-1.5 rounded text-xs flex items-center justify-center gap-1 ${i18n.language === lang.code
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary hover:bg-secondary/80'
                       }`}
                   >
-                    {lang.flag} {lang.name}
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
                   </button>
                 ))}
               </div>

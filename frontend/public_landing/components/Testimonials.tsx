@@ -1,45 +1,48 @@
-import { Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-const testimonials = [
-  {
-    name: "Екатерина Смирнова",
-    text: "M. Le Diamant - это место, куда хочется возвращаться снова и снова. Атмосфера роскоши, профессионализм мастеров и безупречный результат каждый раз!",
-    rating: 5,
-    service: "Окрашивание волос",
-  },
-  {
-    name: "Анастасия Белова",
-    text: "Делала здесь свадебный макияж и прическу. Результат превзошел все ожидания! Профессионалы высочайшего уровня. Спасибо огромное!",
-    rating: 5,
-    service: "Свадебный образ",
-  },
-  {
-    name: "Виктория Морозова",
-    text: "Уже несколько лет делаю маникюр только здесь. Качество работы и материалов на высоте. Мастера - настоящие художники!",
-    rating: 5,
-    service: "Маникюр",
-  },
-  {
-    name: "Дарья Новикова",
-    text: "Потрясающее место! Стильный интерьер, приятная атмосфера и внимательное отношение. После процедур чувствуешь себя королевой.",
-    rating: 5,
-    service: "Комплексный уход",
-  },
-  {
-    name: "Ольга Соловьева",
-    text: "Впервые попробовала здесь кератиновое выпрямление. Результат держится уже 4 месяца! Очень довольна качеством услуг.",
-    rating: 5,
-    service: "Уход за волосами",
-  },
-  {
-    name: "Мария Павлова",
-    text: "M. Le Diamant - это не просто салон, это целый мир красоты и стиля. Рекомендую всем своим подругам!",
-    rating: 5,
-    service: "Парикмахерские услуги",
-  },
-];
+interface Testimonial {
+  id: number;
+  name: string;
+  text: string;
+  rating: number;
+}
 
 export function Testimonials() {
+  const { i18n } = useTranslation();
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch(`/api/public/testimonials?language=${i18n.language}&limit=6`);
+        const data = await response.json();
+        setTestimonials(data);
+      } catch (error) {
+        console.error('Error loading testimonials:', error);
+        // Fallback to empty array if API fails
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, [i18n.language]);
+
+  if (loading) {
+    return (
+      <section id="testimonials" className="py-24 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-muted-foreground">Загрузка отзывов...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="testimonials" className="py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,14 +59,16 @@ export function Testimonials() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
-              key={index}
+              key={testimonial.id}
               className="bg-card rounded-2xl p-8 border border-border/50 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
+                  <svg key={i} className="w-5 h-5" viewBox="0 0 24 24" fill="#EAB308">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
                 ))}
               </div>
               <p className="text-foreground/80 mb-6 leading-relaxed">
@@ -71,7 +76,6 @@ export function Testimonials() {
               </p>
               <div className="border-t border-border/50 pt-4">
                 <p className="text-primary mb-1">{testimonial.name}</p>
-                <p className="text-sm text-muted-foreground">{testimonial.service}</p>
               </div>
             </div>
           ))}

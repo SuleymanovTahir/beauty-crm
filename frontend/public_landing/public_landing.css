@@ -2403,9 +2403,3 @@ html {
     height: 0;
   }
 }
-
-/* Custom high z-index for language dropdown to appear above all images */
-.language-dropdown-menu {
-  z-index: 99999 !important;
-  position: relative;
-}

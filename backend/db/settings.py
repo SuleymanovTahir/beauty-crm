@@ -83,7 +83,7 @@ def _get_default_salon_settings() -> dict:
         "hours_weekdays": "10:30 - 21:30",
         "hours_weekends": "10:30 - 21:30",
         "booking_url": "https://n1314037.alteg.io",
-        "phone": "971526961100",
+        "phone": "+971526961100",
         "email": "mladiamontuae@gmail.com",
         "instagram": "https://www.instagram.com/mlediamant/",
         "whatsapp": None,

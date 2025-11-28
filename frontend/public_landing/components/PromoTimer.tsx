@@ -36,7 +36,7 @@ export function PromoTimer() {
 
     return (
         <div className="mt-12">
-            <div className="flex flex-col items-center justify-center gap-6">
+            <div className="flex flex-col gap-6">
                 <p className="text-white/80 text-sm uppercase tracking-[0.2em] mb-2">
                     {t('promoEnds')}
                 </p>

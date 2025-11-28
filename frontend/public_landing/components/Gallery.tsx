@@ -54,28 +54,6 @@ export function Gallery() {
             </div>
           ))}
         </div>
-
-        <div className="mt-12 bg-accent/10 border border-accent/20 rounded-2xl p-8 text-center">
-          <h3 className="mb-4 text-primary">Посетите нас</h3>
-          <p className="text-foreground/70 mb-6 max-w-2xl mx-auto">
-            Мы находимся в самом центре города. Приглашаем вас посетить наш салон
-            и убедиться в высоком качестве наших услуг. Наши мастера с радостью
-            проконсультируют вас и подберут идеальные процедуры.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm text-muted-foreground">
-            <div>
-              <p>Адрес: ул. Примерная, д. 10</p>
-            </div>
-            <div className="hidden sm:block">•</div>
-            <div>
-              <p>Часы работы: Пн-Вс 10:30 - 21:30</p>
-            </div>
-            <div className="hidden sm:block">•</div>
-            <div>
-              <p>Телефон: +7 (999) 123-45-67</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

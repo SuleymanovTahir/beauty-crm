@@ -1,15 +1,34 @@
 import { useState } from "react";
-import { Calendar, Clock, User, Phone, Mail, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+
+const defaultServices = [
+  "Маникюр",
+  "Педикюр",
+  "Окрашивание волос",
+  "Стрижка",
+  "Макияж",
+  "Уход за лицом",
+  "Другое",
+];
 
 interface BookingSectionProps {
   services?: any[];
 }
 
 export function BookingSection({ services = [] }: BookingSectionProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const language = i18n.language;
+  const { t } = useTranslation(['public_landing', 'common']);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,11 +36,22 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
     email: "",
     service: "",
     date: "",
-    time: ""
+    time: "",
+    comment: "",
   });
+
+  // Use services from database or fallback to default list
+  const servicesList = services.length > 0 ? services.map(s => s.name) : defaultServices;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation
+    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
+      toast.error("Пожалуйста, заполните все обязательные поля");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -35,163 +65,158 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
           Phone: ${formData.phone}
           Service: ${formData.service}
           Date: ${formData.date}
-          Time: ${formData.time}`
+          Time: ${formData.time}
+          Comment: ${formData.comment}`
         })
       });
 
       if (response.ok) {
-        toast.success(t('messageSent', { defaultValue: 'Message sent successfully!' }));
+        toast.success("Ваша заявка принята! Мы свяжемся с вами в ближайшее время.");
+        // Reset form
         setFormData({
           name: "",
           phone: "",
           email: "",
           service: "",
           date: "",
-          time: ""
+          time: "",
+          comment: "",
         });
       } else {
-        toast.error(t('errorMessage', { defaultValue: 'Failed to send message.' }));
+        toast.error("Не удалось отправить заявку. Попробуйте позже.");
       }
     } catch (error) {
       console.error('Error sending booking request:', error);
-      toast.error(t('errorMessage', { defaultValue: 'Failed to send message.' }));
+      toast.error("Произошла ошибка при отправке.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Use services from database or fallback to default list
-  const servicesList = services.length > 0 ? services.map(s => s.name) : [
-    t('serviceManicure', { defaultValue: 'Manicure' }),
-    t('servicePedicure', { defaultValue: 'Pedicure' }),
-    t('serviceHaircut', { defaultValue: 'Haircut' }),
-    t('serviceColoring', { defaultValue: 'Coloring' }),
-    t('serviceStyling', { defaultValue: 'Styling' }),
-    t('serviceMassage', { defaultValue: 'Massage' }),
-    t('serviceSpa', { defaultValue: 'Spa' })
-  ];
-
   return (
-    <section id="booking-section" className="py-24 px-6 lg:px-12 bg-[#e8e5df]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="container mx-auto max-w-4xl">
-        <div className="text-center mb-12">
-          <p className="text-[#b8a574] uppercase tracking-wider mb-4">{t('bookingTag')}</p>
-          <h2 className="text-4xl lg:text-5xl text-[#2d2d2d] mb-6">
-            {t('bookingTitle')}
+    <section id="booking" className="py-24 bg-background">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
+            {t('bookingTag', { defaultValue: 'Запись онлайн' })}
+          </p>
+          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+            {t('bookingTitle', { defaultValue: 'Запишитесь на прием' })}
           </h2>
-          <p className="text-[#6b6b6b] text-lg max-w-2xl mx-auto">
-            {t('bookingDesc')}
+          <p className="text-lg text-foreground/70">
+            {t('bookingDesc', { defaultValue: 'Заполните форму, и мы свяжемся с вами для подтверждения записи' })}
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
-                  <User className="w-4 h-4" />
-                  {t('yourName')}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t('enterName')}
-                />
-              </div>
-
-              <div>
-                <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
-                  <Phone className="w-4 h-4" />
-                  {t('phone', { defaultValue: 'Phone' })}
-                </label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t('enterPhone')}
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 border border-border/50 shadow-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Ваше имя *</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Введите ваше имя"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-input-background border-border/50"
+                required
+              />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
-                  <Mail className="w-4 h-4" />
-                  {t('email', { defaultValue: 'Email' })}
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                  placeholder={t('enterEmail')}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Телефон *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+7 (999) 123-45-67"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-input-background border-border/50"
+                required
+              />
+            </div>
 
-              <div>
-                <label className="text-sm text-[#6b6b6b] mb-2 block">
-                  {t('selectService')}
-                </label>
-                <select
-                  required
-                  value={formData.service}
-                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                >
-                  <option value="">{t('chooseService')}</option>
-                  {servicesList.map((service, index) => (
-                    <option key={index} value={service}>{service}</option>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-input-background border-border/50"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service">Услуга *</Label>
+              <Select
+                value={formData.service}
+                onValueChange={(value) => setFormData({ ...formData, service: value })}
+                required
+              >
+                <SelectTrigger id="service" className="bg-input-background border-border/50">
+                  <SelectValue placeholder="Выберите услугу" />
+                </SelectTrigger>
+                <SelectContent>
+                  {servicesList.map((service) => (
+                    <SelectItem key={service} value={service}>
+                      {service}
+                    </SelectItem>
                   ))}
-                </select>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
-                  <Calendar className="w-4 h-4" />
-                  {t('date', { defaultValue: 'Date' })}
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-2">
-                  <Clock className="w-4 h-4" />
-                  {t('time', { defaultValue: 'Time' })}
-                </label>
-                <input
-                  type="time"
-                  required
-                  value={formData.time}
-                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#f5f3f0] rounded-lg border-2 border-transparent focus:border-[#b8a574] focus:outline-none transition-colors"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="date">Желаемая дата *</Label>
+              <Input
+                id="date"
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                className="bg-input-background border-border/50"
+                min={new Date().toISOString().split('T')[0]}
+                required
+              />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors flex items-center justify-center gap-2 text-lg tracking-wide"
-            >
-              {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-              {t('submit') || "Book Appointment"}
-            </button>
-          </form>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="time">Желаемое время *</Label>
+              <Input
+                id="time"
+                type="time"
+                value={formData.time}
+                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                className="bg-input-background border-border/50"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2 mb-6">
+            <Label htmlFor="comment">Комментарий</Label>
+            <Textarea
+              id="comment"
+              placeholder="Дополнительные пожелания или вопросы"
+              value={formData.comment}
+              onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+              className="bg-input-background border-border/50 min-h-[100px]"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6"
+          >
+            {loading ? "Отправка..." : "Отправить заявку"}
+          </Button>
+
+          <p className="text-sm text-muted-foreground text-center mt-4">
+            * Обязательные поля
+          </p>
+        </form>
       </div>
     </section>
   );

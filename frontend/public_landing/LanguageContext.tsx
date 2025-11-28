@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 
 type Language = "ru" | "en" | "ar";
 
@@ -168,7 +168,7 @@ export const translations = {
 
     // Footer
     aboutSalon: "Премиум салон красоты в самом сердце Дубая. Ваша красота - наша миссия.",
-    servicesTitle: "Услуги",
+    footerServicesTitle: "Услуги",
     infoTitle: "Информация",
     contactTitle: "Контакты",
     aboutUs: "О нас",
@@ -349,7 +349,7 @@ export const translations = {
 
     // Footer
     aboutSalon: "Premium beauty salon in the heart of Dubai. Your beauty is our mission.",
-    servicesTitle: "Services",
+    footerServicesTitle: "Services",
     infoTitle: "Information",
     contactTitle: "Contacts",
     aboutUs: "About us",
@@ -530,7 +530,7 @@ export const translations = {
 
     // Footer
     aboutSalon: "صالون تجميل فاخر في قلب دبي. جمالك هو مهمتنا.",
-    servicesTitle: "الخدمات",
+    footerServicesTitle: "الخدمات",
     infoTitle: "معلومات",
     contactTitle: "جهات الاتصال",
     aboutUs: "معلومات عنا",

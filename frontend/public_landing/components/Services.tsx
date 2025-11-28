@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Button } from "./ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/ui/tabs";
+import { Button } from "../../src/components/ui/button";
 import { apiClient } from "../../src/api/client";
 import { useLanguage } from "../LanguageContext";
 

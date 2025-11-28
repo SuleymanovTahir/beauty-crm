@@ -53,7 +53,7 @@ export function Footer({ salonInfo }: FooterProps) {
             <div className="flex gap-4">
               {salonInfo?.instagram && (
                 <a
-                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"

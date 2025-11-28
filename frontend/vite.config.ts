@@ -108,6 +108,11 @@ export default defineConfig({
 
     // Оптимизация чанков
     rollupOptions: {
+      // Несколько точек входа (multi-page app)
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        landing: path.resolve(__dirname, "public_landing.html"),
+      },
       output: {
         // Разделить vendor код на отдельные чанки
         manualChunks: {

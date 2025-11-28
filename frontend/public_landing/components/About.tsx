@@ -34,26 +34,25 @@ export function About() {
           <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
             Искусство красоты в каждой детали
           </h2>
-          <div className="space-y-6">
-            <p className="text-lg text-foreground/80 leading-relaxed">
-              M. Le Diamant – это пространство, где традиции мастерства встречаются с современными трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.
-            </p>
-          </div>
+          <p className="text-lg text-foreground/70">
+            Colour Studio – это пространство, где традиции мастерства встречаются с современными 
+            трендами. Мы создаем не просто прически и макияж, мы создаем ваш уникальный стиль.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="group relative bg-card p-8 rounded-2xl transition-all duration-300 hover:shadow-lg"
-              >
-                <div className="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/20 text-accent-foreground">
-                  <feature.icon className="w-6 h-6" />
-                </div>
-                <h3 className="mb-3 text-primary">{feature.title}</h3>
-                <p className="text-sm text-foreground/70">{feature.description}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="group relative bg-card p-8 rounded-2xl transition-all duration-300 hover:shadow-lg"
+            >
+              <div className="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/20 text-accent-foreground">
+                <feature.icon className="w-6 h-6" />
               </div>
-            ))}
-          </div>
+              <h3 className="mb-3 text-primary">{feature.title}</h3>
+              <p className="text-sm text-foreground/70">{feature.description}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
