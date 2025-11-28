@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Скрипт для проверки базы данных после миграций
+Проверка структуры базы данных
 """
 import sqlite3
-import os
 import sys
+import os
 
-DATABASE_NAME = "salon_bot.db"
+# Add backend to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from core.config import DATABASE_NAME
 
 
 def check_database():
