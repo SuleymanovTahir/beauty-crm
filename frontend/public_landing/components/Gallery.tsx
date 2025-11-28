@@ -1,48 +1,61 @@
-import salonImage from "../assets/c35944ec2655ccc8750b237ba9f12712e579cbcc.png";
+import { useState, useEffect } from "react";
+import { apiClient } from "../../src/api/client";
+import { useLanguage } from "../LanguageContext";
 
-const galleryImages = [
-  {
-    url: salonImage,
-    title: "Главный зал",
-  },
-  {
-    url: salonImage,
-    title: "Маникюрная зона",
-  },
-  {
-    url: salonImage,
-    title: "VIP кабинет",
-  },
-  {
-    url: salonImage,
-    title: "Зона окрашивания",
-  },
-];
+interface GalleryImage {
+  id: number;
+  image_path: string;
+  title: string;
+}
 
 export function Gallery() {
+  const { t } = useLanguage();
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const data = await apiClient.getPublicGallery('salon');
+        if (data.images && data.images.length > 0) {
+          setImages(data.images);
+        }
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  if (loading) return null;
+  if (images.length === 0) return null;
+
   return (
     <section id="gallery" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-            Наш салон
+            {t('galleryTag') || 'Наш салон'}
           </p>
           <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
-            Атмосфера роскоши и комфорта
+            {t('galleryTitle') || 'Атмосфера роскоши и комфорта'}
           </h2>
           <p className="text-lg text-foreground/70">
-            Современный интерьер в светлых тонах создает атмосферу спокойствия и элегантности
+            {t('galleryDesc') || 'Современный интерьер в светлых тонах создает атмосферу спокойствия и элегантности'}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {galleryImages.map((item, index) => (
+          {images.map((item, index) => (
             <div
-              key={index}
+              key={item.id || index}
               className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted"
             >
               <img
-                src={item.url}
+                src={item.image_path}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />

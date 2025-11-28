@@ -54,12 +54,17 @@ def get_all_employees(active_only=True, service_providers_only=False):
     
     if active_only:
         query += " AND is_active = 1"
+        # Для публичных страниц показываем только тех, у кого show_on_public_page = 1
+        if 'show_on_public_page' in columns:
+            query += " AND show_on_public_page = 1"
     
-    # Safely handle sort_order
-    if 'sort_order' in columns:
-        query += " ORDER BY sort_order, full_name"
+    # Сортировка: сначала по public_page_order (DESC), потом по имени
+    if 'public_page_order' in columns:
+        query += " ORDER BY public_page_order DESC, full_name ASC"
+    elif 'sort_order' in columns:
+        query += " ORDER BY sort_order DESC, full_name ASC"
     else:
-        query += " ORDER BY full_name"
+        query += " ORDER BY full_name ASC"
     
     c.execute(query)
     employees = c.fetchall()

@@ -12,7 +12,6 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Bookings from './pages/admin/Bookings';
 import BookingDetail from './pages/admin/BookingDetail';
 import Analytics from './pages/admin/Analytics';
-import Feedback from './pages/admin/Feedback';
 import Services from './pages/admin/Services';
 import Clients from './pages/admin/Clients';
 import ClientDetail from './pages/admin/ClientDetail';
@@ -46,16 +45,12 @@ import EmployeeProfile from './pages/employee/Profile';
 
 // Public Pages
 import PublicLayout from './components/layouts/PublicLayout';
-import Home from './pages/public/Home';
 import PriceList from './pages/public/PriceList';
 import Success from './pages/public/Success';
-import Terms from './pages/public/Terms';
-import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import About from './pages/public/About';
 import Contacts from './pages/public/Contacts';
 import Cooperation from './pages/public/Cooperation';
 import FAQ from './pages/public/FAQ';
-import Team from './pages/public/Team';
 import EditUser from './pages/admin/EditUser';
 import UserCabinet from './pages/public/UserCabinet';
 import DataDeletion from './pages/public/DataDeletion';
@@ -75,21 +70,6 @@ import Register from './pages/auth/Register';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-
-interface User {
-  id: number;
-  username: string;
-  full_name: string;
-  email: string;
-  role: string;
-}
-
-interface CurrentUser {
-  id: number;
-  username: string;
-  full_name: string;
-  role: string;
-}
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
@@ -218,7 +198,6 @@ export default function App() {
               <Route path="bookings" element={<Bookings />} />
               <Route path="bookings/:id" element={<BookingDetail />} />
               <Route path="analytics" element={<Analytics />} />
-              <Route path="feedback" element={<Feedback />} />
               <Route path="funnel" element={<Funnel />} />
               <Route path="services" element={<Services />} />
               <Route path="clients" element={<Clients />} />
@@ -231,7 +210,7 @@ export default function App() {
               <Route path="users/create" element={<CreateUser />} />
               <Route path="users/pending" element={<PendingUsers />} />
               <Route path="users/permissions" element={<PermissionManagement />} />
-              <Route path="users/:id/edit" element={<EditUser />} />
+              <Route path="users/:identifier/edit" element={<EditUser />} />
               <Route path="plans" element={<PlansManagement />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="settings" element={<Settings />} />
@@ -348,7 +327,6 @@ export default function App() {
             <Route element={<PublicLayout />}>
               {/* <Route index element={<Home />} /> */}
               <Route path="price-list" element={<PriceList />} />
-              <Route path="team" element={<Team />} />
               <Route path="booking" element={<Booking />} />
               <Route path="client/cabinet" element={<ClientCabinet />} />
               <Route path="success" element={<Success />} />

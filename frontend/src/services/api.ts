@@ -363,6 +363,10 @@ export class ApiClient {
     return this.request<any>(`/api/users/${userId}/profile`)
   }
 
+  async getUserProfileByUsername(username: string) {
+    return this.request<any>(`/api/users/by-username/${username}/profile`)
+  }
+
   async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string; photo?: string }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',

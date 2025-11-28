@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, ArrowLeft, Filter, X, Check } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -14,6 +14,8 @@ import { PermissionsTab } from '../../components/admin/PermissionsTab';
 import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
 import { Calendar } from 'lucide-react';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
+
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface User {
   id: number;
@@ -162,7 +164,7 @@ export default function Users() {
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_loading_users');
       setError(message);
-      toast.error(`${t('error')}: ${message}`);
+      toast.error(`${t('error')}: ${message} `);
       console.error('❌ Error loading users:', err);
     } finally {
       setLoading(false);
@@ -178,7 +180,7 @@ export default function Users() {
       toast.success(t('user_deleted'));
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_deleting_user');
-      toast.error(`${t('error')}: ${message}`);
+      toast.error(`${t('error')}: ${message} `);
       console.error('Error deleting user:', err);
     }
   };
@@ -296,7 +298,7 @@ export default function Users() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img
-                          src={user.photo || getDynamicAvatar(user.full_name || user.username, 'cold')}
+                          src={getPhotoUrl(user.photo) || getDynamicAvatar(user.full_name || user.username, 'cold')}
                           alt={user.full_name}
                           className="w-10 h-10 rounded-full bg-gray-100 object-cover"
                         />
@@ -323,278 +325,287 @@ export default function Users() {
                         {/* Кнопка редактирования - открывает детальную страницу */}
                         {permissions.canEditUsers && (
                           <Button
-                            size="sm"
-                            variant="outline"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => navigate(`/admin/users/${user.id}`)}
+                            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                             title={t('action_edit_title')}
                           >
                             <Edit className="w-4 h-4" />
-                          </Button>
+                          </Button >
                         )}
 
                         {/* Кнопка удаления только если есть право */}
-                        {permissions.canDeleteUsers && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => handleDeleteUser(user.id)}
-                            title={t('action_delete_title')}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
+                        {
+                          permissions.canDeleteUsers && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleDeleteUser(user.id)}
+                              title={t('action_delete_title')}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )
+                        }
+                      </div >
+                    </td >
+                  </tr >
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tbody >
+            </table >
+          </div >
         ) : (
           <div className="py-20 text-center text-gray-500">
             <UsersIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p>{t('no_users_found')}</p>
           </div>
         )}
-      </div>
+      </div >
 
       {/* Диалог смены роли */}
-      {showRoleDialog && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl custom-dialog-scroll flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  {t('role_dialog_title')}: {selectedUser.full_name}
-                </h3>
-                <p className="text-xs text-gray-600 mt-1">
-                  {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowRoleDialog(false);
-                  setSelectedUser(null);
-                }}
-                className="ml-4"
-                disabled={savingRole}
-              >
-                {t('role_dialog_close')}
-              </Button>
-            </div>
-
-            <div className="p-4 overflow-y-auto flex-1">
-              {loadingRoles ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+      {
+        showRoleDialog && selectedUser && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-md w-full shadow-2xl custom-dialog-scroll flex flex-col">
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {t('role_dialog_title')}: {selectedUser.full_name}
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {t('role_dialog_current')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                  </p>
                 </div>
-              ) : (
-                <>
-                  {availableRoles.length === 0 ? (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <p className="text-sm text-yellow-800">
-                        {t('no_permission_to_change_roles')}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowRoleDialog(false);
+                    setSelectedUser(null);
+                  }}
+                  className="ml-4"
+                  disabled={savingRole}
+                >
+                  {t('role_dialog_close')}
+                </Button>
+              </div>
+
+              <div className="p-4 overflow-y-auto flex-1">
+                {loadingRoles ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                  </div>
+                ) : (
+                  <>
+                    {availableRoles.length === 0 ? (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p className="text-sm text-yellow-800">
+                          {t('no_permission_to_change_roles')}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {availableRoles.map((role) => {
+                          // Get permissions for this role
+                          const rolePermissions = permissions.canCreateUsers ? [
+                            role.key === 'director' && t('perm_director_full'),
+                            role.key === 'admin' && t('perm_admin_manage'),
+                            role.key === 'manager' && t('perm_manager_bookings'),
+                            (role.key === 'sales' || role.key === 'marketer') && t('perm_sales_clients'),
+                            role.key === 'employee' && t('perm_employee_basic')
+                          ].filter(Boolean) : [];
+
+                          return (
+                            <div key={role.key} className="space-y-2">
+                              <button
+                                onClick={() => handleChangeRole(selectedUser.id, role.key)}
+                                disabled={savingRole}
+                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedUser.role === role.key
+                                  ? 'border-pink-500 bg-pink-50'
+                                  : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                                  }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <p className="font-medium text-gray-900">{role.name}</p>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                      {getRoleDescription(role.key)}
+                                    </p>
+                                  </div>
+                                  {selectedUser.role === role.key && (
+                                    <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
+                                  )}
+                                </div>
+                              </button>
+
+                              {/* Permissions display */}
+                              {rolePermissions.length > 0 && (
+                                <div className="ml-3 pl-3 border-l-2 border-gray-200">
+                                  <p className="text-xs font-medium text-gray-500 mb-1">{t('permissions_label')}:</p>
+                                  <ul className="space-y-1">
+                                    {rolePermissions.map((perm, idx) => (
+                                      <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                                        <span className="text-green-600 mt-0.5">✓</span>
+                                        <span>{perm}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                      <p className="text-xs text-blue-800">
+                        <strong>ℹ️ {t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
                       </p>
                     </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {availableRoles.map((role) => {
-                        // Get permissions for this role
-                        const rolePermissions = permissions.canCreateUsers ? [
-                          role.key === 'director' && t('perm_director_full'),
-                          role.key === 'admin' && t('perm_admin_manage'),
-                          role.key === 'manager' && t('perm_manager_bookings'),
-                          (role.key === 'sales' || role.key === 'marketer') && t('perm_sales_clients'),
-                          role.key === 'employee' && t('perm_employee_basic')
-                        ].filter(Boolean) : [];
-
-                        return (
-                          <div key={role.key} className="space-y-2">
-                            <button
-                              onClick={() => handleChangeRole(selectedUser.id, role.key)}
-                              disabled={savingRole}
-                              className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedUser.role === role.key
-                                ? 'border-pink-500 bg-pink-50'
-                                : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
-                                }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <p className="font-medium text-gray-900">{role.name}</p>
-                                  <p className="text-sm text-gray-600 mt-1">
-                                    {getRoleDescription(role.key)}
-                                  </p>
-                                </div>
-                                {selectedUser.role === role.key && (
-                                  <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
-                                )}
-                              </div>
-                            </button>
-
-                            {/* Permissions display */}
-                            {rolePermissions.length > 0 && (
-                              <div className="ml-3 pl-3 border-l-2 border-gray-200">
-                                <p className="text-xs font-medium text-gray-500 mb-1">{t('permissions_label')}:</p>
-                                <ul className="space-y-1">
-                                  {rolePermissions.map((perm, idx) => (
-                                    <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
-                                      <span className="text-green-600 mt-0.5">✓</span>
-                                      <span>{perm}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-                    <p className="text-xs text-blue-800">
-                      <strong>ℹ️ {t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
-                    </p>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Диалог редактирования пользователя */}
-      {showEditDialog && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900">
-                {t('edit_dialog_title')}: {selectedUser.full_name}
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {t('edit_dialog_subtitle')}
-              </p>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('edit_username_label')}
-                </label>
-                <Input
-                  type="text"
-                  value={editForm.username}
-                  onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                  placeholder={t('edit_username_placeholder')}
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('edit_fullname_label')}
-                </label>
-                <Input
-                  type="text"
-                  value={editForm.full_name}
-                  onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
-                  placeholder={t('edit_fullname_placeholder')}
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  value={editForm.email}
-                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                  placeholder="email@example.com"
-                  disabled={savingEdit}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('position_label')}
-                </label>
-                <PositionSelector
-                  value={editForm.position}
-                  onChange={(value) => setEditForm({ ...editForm, position: value })}
-                  placeholder={t('edit_position_placeholder')}
-                  disabled={savingEdit}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('edit_position_hint')}
+      {
+        showEditDialog && selectedUser && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-xl font-bold text-gray-900">
+                  {t('edit_dialog_title')}: {selectedUser.full_name}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {t('edit_dialog_subtitle')}
                 </p>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-sm text-yellow-800">
-                  <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
-                </p>
-              </div>
-            </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('edit_username_label')}
+                  </label>
+                  <Input
+                    type="text"
+                    value={editForm.username}
+                    onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                    placeholder={t('edit_username_placeholder')}
+                    disabled={savingEdit}
+                  />
+                </div>
 
-            <div className="p-6 border-t border-gray-200 flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowEditDialog(false);
-                  setSelectedUser(null);
-                }}
-                className="flex-1"
-                disabled={savingEdit}
-              >
-                {t('edit_cancel')}
-              </Button>
-              <Button
-                onClick={handleEditUser}
-                className="flex-1 bg-pink-600 hover:bg-pink-700"
-                disabled={savingEdit}
-              >
-                {savingEdit ? t('edit_saving') : t('edit_save')}
-              </Button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('edit_fullname_label')}
+                  </label>
+                  <Input
+                    type="text"
+                    value={editForm.full_name}
+                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                    placeholder={t('edit_fullname_placeholder')}
+                    disabled={savingEdit}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    placeholder="email@example.com"
+                    disabled={savingEdit}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('position_label')}
+                  </label>
+                  <PositionSelector
+                    value={editForm.position}
+                    onChange={(value) => setEditForm({ ...editForm, position: value })}
+                    placeholder={t('edit_position_placeholder')}
+                    disabled={savingEdit}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('edit_position_hint')}
+                  </p>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-sm text-yellow-800">
+                    <strong>⚠️ {t('edit_password_warning_title')}:</strong> {t('edit_password_warning_text')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-200 flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowEditDialog(false);
+                    setSelectedUser(null);
+                  }}
+                  className="flex-1"
+                  disabled={savingEdit}
+                >
+                  {t('edit_cancel')}
+                </Button>
+                <Button
+                  onClick={handleEditUser}
+                  className="flex-1 bg-pink-600 hover:bg-pink-700"
+                  disabled={savingEdit}
+                >
+                  {savingEdit ? t('edit_saving') : t('edit_save')}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Диалог управления правами */}
-      {showPermissionsDialog && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl custom-dialog-scroll flex flex-col">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  {t('permissions_dialog_title')}: {selectedUser.full_name}
-                </h3>
-                <p className="text-xs text-gray-600 mt-1">
-                  {t('permissions_dialog_role')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
-                </p>
+      {
+        showPermissionsDialog && selectedUser && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl custom-dialog-scroll flex flex-col">
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    {t('permissions_dialog_title')}: {selectedUser.full_name}
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {t('permissions_dialog_role')}: {roleConfig[selectedUser.role]?.label || selectedUser.role}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowPermissionsDialog(false);
+                    setSelectedUser(null);
+                    loadUsers();
+                  }}
+                  className="ml-4"
+                >
+                  {t('permissions_dialog_close')}
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowPermissionsDialog(false);
-                  setSelectedUser(null);
-                  loadUsers();
-                }}
-                className="ml-4"
-              >
-                {t('permissions_dialog_close')}
-              </Button>
-            </div>
 
-            <div className="p-4 overflow-y-auto flex-1">
-              <PermissionsTab userId={selectedUser.id} />
+              <div className="p-4 overflow-y-auto flex-1">
+                <PermissionsTab userId={selectedUser.id} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Диалог управления графиком */}
       <ScheduleDialog
@@ -605,6 +616,6 @@ export default function Users() {
         }}
         user={selectedUser}
       />
-    </div>
+    </div >
   );
 }

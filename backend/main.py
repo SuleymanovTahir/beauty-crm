@@ -42,6 +42,7 @@ from api.settings import router as settings_router
 from api.public import router as public_router
 from api.public_content import router as public_content_router
 from api.public_employees import router as public_employees_router
+from api.gallery import router as gallery_router
 from api.notes import router as notes_router
 from api.client_auth import router as client_auth_router
 from api.user_management import router as user_management_router
@@ -66,7 +67,7 @@ from api.employee_services import router as employee_services_router
 from api.employee_schedule import router as employee_schedule_router
 from api.client_import import router as client_import_router
 from api.booking_import import router as booking_import_router
-from api.public_admin import router as public_admin_router
+
 from api.payroll import router as payroll_router
 from api.feedback import router as feedback_router
 
@@ -112,7 +113,7 @@ app.include_router(employee_services_router, prefix="/api")  # Employee Services
 app.include_router(employee_schedule_router, prefix="/api")  # Employee Schedule API& Goals API
 app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API
-app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API
+app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API (/api/public-admin)
 app.include_router(payroll_router, prefix="/api")  # Payroll API
 app.include_router(feedback_router, prefix="/api")  # Feedback API
 # Публичные роутеры (БЕЗ авторизации через /public)
@@ -124,6 +125,7 @@ if is_module_enabled('public'):
     app.include_router(public_router, prefix="/public")
     app.include_router(public_content_router, prefix="/api")  # Public content API
     app.include_router(public_employees_router, prefix="/api")  # Public employees API
+    app.include_router(gallery_router, prefix="/api")  # Gallery API
     app.include_router(client_auth_router, prefix="/public")  # API для клиентов
     log_info("✅ Модуль 'public' подключен: /public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
@@ -451,13 +453,16 @@ async def startup_event():
     # Раскомментируйте для запуска ВСЕХ тестов при старте
     # Рекомендуется только для development окружения
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
-    # from tests.run_all_tests import run_all_tests
-    # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests() 
 
     # from scripts.run_all_fixes import main as run_all_fixes
     # log_info("🔧 Запуск всех исправлений...", "startup")
     # await run_all_fixes()
+
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests() 
+
+
  
 
 

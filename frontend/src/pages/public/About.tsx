@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 interface TeamMember {
   id: number;
@@ -38,13 +39,18 @@ export default function About() {
             return position !== 'director' && position !== 'admin' && position !== 'директор' && position !== 'администратор';
           });
 
-          const teamData = filteredEmployees.map((e: any) => ({
-            id: e.id,
-            name: e.full_name,
-            role: e.position || t('about:master_role'),
-            experience: e.experience || '',
-            avatar: e.photo || e.full_name.charAt(0).toUpperCase()
-          }));
+          const teamData = filteredEmployees.map((e: any) => {
+            // Fix photo URL using shared utility
+            const photoUrl = getPhotoUrl(e.photo);
+
+            return {
+              id: e.id,
+              name: e.full_name,
+              role: e.position || t('about:master_role'),
+              experience: e.experience || '',
+              avatar: photoUrl || e.full_name.charAt(0).toUpperCase()
+            };
+          });
           setTeam(teamData);
         } else {
           // Если команды нет - оставляем пустой массив

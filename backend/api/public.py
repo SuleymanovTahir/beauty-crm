@@ -422,3 +422,114 @@ async def get_salon_news(limit: int = 10, lang: str = "ru"):
 
     conn.close()
     return {"news": news}
+
+
+@router.get("/faq")
+async def get_public_faq(lang: str = "ru"):
+    """Получить список FAQ"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute("SELECT * FROM public_faq ORDER BY category, display_order ASC")
+        
+        faq_list = []
+        for row in c.fetchall():
+            row_dict = dict(row)
+            
+            # Выбираем текст на нужном языке
+            q_key = f"question_{lang}"
+            a_key = f"answer_{lang}"
+            
+            question = row_dict.get(q_key) or row_dict.get('question_ru', '')
+            answer = row_dict.get(a_key) or row_dict.get('answer_ru', '')
+            
+            faq_list.append({
+                "id": row_dict.get("id"),
+                "question": question,
+                "answer": answer,
+                "category": row_dict.get("category")
+            })
+            
+        return {"faq": faq_list}
+    except Exception as e:
+        return {"faq": []}
+    finally:
+        conn.close()
+
+
+@router.get("/gallery")
+async def get_public_gallery(category: Optional[str] = None):
+    """Получить публичную галерею"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        # Get display limits from settings
+        c.execute("SELECT gallery_display_count, portfolio_display_count FROM salon_settings LIMIT 1")
+        settings = c.fetchone()
+        limit = 6 # Default
+        
+        if settings:
+            if category == 'salon':
+                limit = settings['gallery_display_count'] or 6
+            elif category == 'portfolio':
+                limit = settings['portfolio_display_count'] or 6
+        
+        query = "SELECT * FROM gallery_images WHERE is_visible = 1"
+        params = []
+        
+        if category:
+            query += " AND category = ?"
+            params.append(category)
+            
+        query += " ORDER BY sort_order ASC, created_at DESC LIMIT ?"
+        params.append(limit)
+        
+        c.execute(query, params)
+        
+        images = []
+        for row in c.fetchall():
+            images.append(dict(row))
+            
+        return {"images": images}
+    except Exception as e:
+        # If columns don't exist yet, fallback to no limit or default
+        try:
+            query = "SELECT * FROM gallery_images WHERE is_visible = 1"
+            params = []
+            if category:
+                query += " AND category = ?"
+                params.append(category)
+            query += " ORDER BY sort_order ASC, created_at DESC LIMIT 6"
+            c.execute(query, params)
+            images = [dict(row) for row in c.fetchall()]
+            return {"images": images}
+        except:
+            return {"images": []}
+    finally:
+        conn.close()
+
+
+@router.get("/banners")
+async def get_public_banners():
+    """Получить активные баннеры для главной страницы"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute("""
+            SELECT * FROM banners 
+            WHERE is_active = 1 
+            ORDER BY created_at DESC
+        """)
+        
+        banners = [dict(row) for row in c.fetchall()]
+        return {"banners": banners}
+    except Exception as e:
+        return {"banners": []}
+    finally:
+        conn.close()

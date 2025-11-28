@@ -18,7 +18,77 @@ interface Testimonial {
   avatar: string;
 }
 
+const GallerySection = () => {
+  const { t } = useTranslation(['public/Home', 'common']);
+  const [images, setImages] = useState<any[]>([]);
 
+  useEffect(() => {
+    apiClient.getPublicGallery('salon')
+      .then(data => {
+        if (data.images && data.images.length > 0) {
+          setImages(data.images.slice(0, 3));
+        }
+      })
+      .catch(err => console.error('Error loading gallery:', err));
+  }, []);
+
+  if (images.length === 0) {
+    // Fallback to hardcoded images if API fails or empty
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="relative h-80 rounded-2xl overflow-hidden group">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1600637070413-0798fafbb6c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWtldXAlMjBhcnRpc3QlMjBjb3NtZXRpY3N8ZW58MXx8fHwxNzYwODUwNTM2fDA&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Makeup"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+            <p className="text-white text-lg">{t('home:gallery.items.makeup')}</p>
+          </div>
+        </div>
+
+        <div className="relative h-80 rounded-2xl overflow-hidden group">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjA3NzczOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Spa"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+            <p className="text-white text-lg">{t('home:gallery.items.facial')}</p>
+          </div>
+        </div>
+
+        <div className="relative h-80 rounded-2xl overflow-hidden group">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1695527081827-fdbc4e77be9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWF1dHklMjBzYWxvbiUyMHNwYSUyMGludGVyaW9yfGVufDF8fHx8MTc2MDg1MDUzNXww&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Salon Interior"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+            <p className="text-white text-lg">{t('home:gallery.items.salon')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {images.map((item, index) => (
+        <div key={item.id || index} className="relative h-80 rounded-2xl overflow-hidden group">
+          <ImageWithFallback
+            src={item.image_path}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+            <p className="text-white text-lg">{item.title}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default function Home() {
   const navigate = useNavigate();
@@ -202,40 +272,7 @@ export default function Home() {
             <p className="text-xl text-gray-600">{t('home:gallery.subtitle')}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="relative h-80 rounded-2xl overflow-hidden group">
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1600637070413-0798fafbb6c7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWtldXAlMjBhcnRpc3QlMjBjb3NtZXRpY3N8ZW58MXx8fHwxNzYwODUwNTM2fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Makeup"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">{t('home:gallery.items.makeup')}</p>
-              </div>
-            </div>
-
-            <div className="relative h-80 rounded-2xl overflow-hidden group">
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjA3NzczOTJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Spa"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">{t('home:gallery.items.facial')}</p>
-              </div>
-            </div>
-
-            <div className="relative h-80 rounded-2xl overflow-hidden group">
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1695527081827-fdbc4e77be9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiZWF1dHklMjBzYWxvbiUyMHNwYSUyMGludGVyaW9yfGVufDF8fHx8MTc2MDg1MDUzNXww&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Salon Interior"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
-                <p className="text-white text-lg">{t('home:gallery.items.salon')}</p>
-              </div>
-            </div>
-          </div>
+          <GallerySection />
         </div>
       </section>
 

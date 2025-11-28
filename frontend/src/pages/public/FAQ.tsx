@@ -8,71 +8,21 @@ import { useTranslation } from 'react-i18next';
 
 export default function FAQ() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['public/Faq', 'common']);
+  const { t, i18n } = useTranslation(['public/Faq', 'common']);
   const [salonInfo, setSalonInfo] = React.useState<any>({});
+  const [faqs, setFaqs] = React.useState<any[]>([]);
 
   React.useEffect(() => {
+    // Load salon info
     apiClient.getSalonInfo()
       .then(setSalonInfo)
       .catch(err => console.error('Error loading salon info:', err));
-  }, []);
 
-  const faqs = [
-    {
-      question: t('faq:questions.booking.question'),
-      answer: t('faq:questions.booking.answer', { 
-        phone: salonInfo.phone || '', 
-        instagram: salonInfo.instagram || '' 
-      })
-    },
-    {
-      question: t('faq:questions.payment.question'),
-      answer: t('faq:questions.payment.answer')
-    },
-    {
-      question: t('faq:questions.cancellation.question'),
-      answer: t('faq:questions.cancellation.answer')
-    },
-    {
-      question: t('faq:questions.materials.question'),
-      answer: t('faq:questions.materials.answer')
-    },
-    {
-      question: t('faq:questions.certificates.question'),
-      answer: t('faq:questions.certificates.answer')
-    },
-    {
-      question: t('faq:questions.preparation.question'),
-      answer: t('faq:questions.preparation.answer')
-    },
-    {
-      question: t('faq:questions.contraindications.question'),
-      answer: t('faq:questions.contraindications.answer')
-    },
-    {
-      question: t('faq:questions.guarantee.question'),
-      answer: t('faq:questions.guarantee.answer')
-    },
-    {
-      question: t('faq:questions.loyalty.question'),
-      answer: t('faq:questions.loyalty.answer')
-    },
-    ...(salonInfo.working_hours ? [{
-      question: t('faq:questions.weekends.question'),
-      answer: t('faq:questions.weekends.answer', {
-        weekdays: salonInfo.working_hours.weekdays || '',
-        weekends: salonInfo.working_hours.weekends || ''
-      })
-    }] : []),
-    {
-      question: t('faq:questions.gift.question'),
-      answer: t('faq:questions.gift.answer')
-    },
-    ...(salonInfo.address ? [{
-      question: t('faq:questions.location.question'),
-      answer: t('faq:questions.location.answer', { address: salonInfo.address })
-    }] : [])
-  ];
+    // Load FAQs
+    apiClient.getPublicFAQ(i18n.language)
+      .then(data => setFaqs(data.faq || []))
+      .catch(err => console.error('Error loading FAQs:', err));
+  }, [i18n.language]);
 
   return (
     <div>
@@ -95,8 +45,8 @@ export default function FAQ() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <Accordion type="single" collapsible className="space-y-4">
               {faqs.map((faq, index) => (
-                <AccordionItem 
-                  key={index} 
+                <AccordionItem
+                  key={index}
                   value={`item-${index}`}
                   className="border border-gray-200 rounded-lg px-6"
                 >

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "./LanguageContext";
+import { getPhotoUrl } from "../src/utils/photoUtils";
 
 interface TeamMember {
   id: number;
@@ -17,9 +18,22 @@ export function MastersSection() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch(`/api/public/employees?language=${language}`);
+        // Use the same API endpoint as other pages
+        const response = await fetch('/api/employees?active_only=true');
         const data = await response.json();
-        setTeam(Array.isArray(data) ? data : []);
+
+        // Map employees to team members with fixed photo URLs
+        const employees = data.employees || [];
+
+        const teamMembers = employees.map((emp: any) => ({
+          id: emp.id,
+          name: emp.full_name,
+          role: emp.position || '',
+          specialty: emp.specialization || '',
+          image: getPhotoUrl(emp.photo) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.full_name)}&background=ec4899&color=fff&size=400`
+        }));
+
+        setTeam(teamMembers);
       } catch (error) {
         console.error('Error loading employees:', error);
       } finally {
@@ -74,7 +88,7 @@ export function MastersSection() {
                 <div className="p-6 bg-gradient-to-t from-card to-transparent">
                   <h3 className="mb-2 text-primary">{member.name}</h3>
                   <p className="text-sm text-muted-foreground mb-1">{member.role}</p>
-                  <p className="text-sm text-foreground/70">{member.specialty}</p>
+                  {/* <p className="text-sm text-foreground/70">{member.specialty}</p> */}
                 </div>
               </div>
             ))}

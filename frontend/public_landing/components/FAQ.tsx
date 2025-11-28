@@ -24,9 +24,9 @@ export function FAQ() {
     const fetchData = async () => {
       try {
         // Fetch FAQ
-        const faqResponse = await fetch(`/api/public/faq?language=${language}`);
+        const faqResponse = await fetch(`/api/public/faq?lang=${language}`);
         const faqData = await faqResponse.json();
-        setFaqs(Array.isArray(faqData) ? faqData : []);
+        setFaqs(faqData.faq || []);
 
         // Fetch salon info for phone
         const salonResponse = await fetch(`/api/public/salon-info?language=${language}`);

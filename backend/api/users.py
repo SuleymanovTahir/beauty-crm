@@ -413,6 +413,44 @@ async def get_user_profile(
     }
 
 
+@router.get("/users/by-username/{username}/profile")
+async def get_user_profile_by_username(
+    username: str,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить профиль пользователя по username"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
+                 FROM users WHERE username = ?""", (username,))
+    
+    result = c.fetchone()
+    conn.close()
+    
+    if not result:
+        return JSONResponse({"error": "User not found"}, status_code=404)
+    
+    # Админ может смотреть всех, остальные только себя
+    if user["role"] != "admin" and user["id"] != result[0]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    return {
+        "id": result[0],
+        "username": result[1],
+        "full_name": result[2],
+        "email": result[3],
+        "role": result[4],
+        "created_at": result[5],
+        "last_login": result[6],
+        "photo": result[7]
+    }
+
+
 @router.post("/users/{user_id}/change-password")
 async def change_user_password(
     user_id: int,

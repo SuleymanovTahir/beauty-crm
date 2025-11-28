@@ -31,16 +31,16 @@ async def list_employees(
     return {
         "employees": [
             {
-                "id": e[0],
-                "full_name": e[1],
-                "position": e[2],
-                "experience": e[3],
-                "photo": e[4],
-                "bio": e[5],
-                "phone": e[6],
-                "email": e[7],
-                "instagram": e[8],
-                "is_active": bool(e[9])
+                "id": e[0],           # id
+                "full_name": e[3],    # full_name
+                "position": e[9],     # position
+                "experience": e[13],  # experience
+                "photo": e[10],       # photo
+                "bio": e[12],         # bio
+                "phone": e[4] if len(e) > 4 else None,  # email used as phone fallback
+                "email": e[4],        # email
+                "instagram": None,    # instagram not in users table
+                "is_active": bool(e[8])  # is_active
             } for e in employees
         ]
     }

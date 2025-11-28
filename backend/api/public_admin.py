@@ -266,6 +266,82 @@ async def create_banner(banner: BannerCreate):
     finally:
         conn.close()
 
+class BannerUpdate(BaseModel):
+    title_ru: Optional[str] = None
+    subtitle_ru: Optional[str] = None
+    image_url: Optional[str] = None
+    link_url: Optional[str] = None
+    display_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+@router.put("/banners/{banner_id}")
+async def update_banner(banner_id: int, banner: BannerUpdate):
+    """Обновить баннер"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        updates = []
+        params = []
+        
+        if banner.title_ru is not None:
+            translations = await translate_to_all_languages(banner.title_ru)
+            updates.extend(["title_ru = ?", "title_en = ?", "title_ar = ?"])
+            params.extend([banner.title_ru, translations.get('en', ''), translations.get('ar', '')])
+            
+        if banner.subtitle_ru is not None:
+            translations = await translate_to_all_languages(banner.subtitle_ru)
+            updates.extend(["subtitle_ru = ?", "subtitle_en = ?", "subtitle_ar = ?"])
+            params.extend([banner.subtitle_ru, translations.get('en', ''), translations.get('ar', '')])
+            
+        if banner.image_url is not None:
+            updates.append("image_url = ?")
+            params.append(banner.image_url)
+            
+        if banner.link_url is not None:
+            updates.append("link_url = ?")
+            params.append(banner.link_url)
+            
+        if banner.display_order is not None:
+            updates.append("display_order = ?")
+            params.append(banner.display_order)
+            
+        if banner.is_active is not None:
+            updates.append("is_active = ?")
+            params.append(1 if banner.is_active else 0)
+            
+        if not updates:
+            return {"success": True, "message": "Нечего обновлять"}
+            
+        query = f"UPDATE public_banners SET {', '.join(updates)} WHERE id = ?"
+        params.append(banner_id)
+        
+        c.execute(query, params)
+        conn.commit()
+        
+        return {"success": True, "message": "Баннер обновлен"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/banners/{banner_id}")
+async def delete_banner(banner_id: int):
+    """Удалить баннер"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("DELETE FROM public_banners WHERE id = ?", (banner_id,))
+        conn.commit()
+        return {"success": True, "message": "Баннер удален"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
 # ============================================================================
 # FAQ ENDPOINTS
 # ============================================================================
@@ -311,6 +387,72 @@ async def create_faq(faq: FAQCreate):
         conn.commit()
         
         return {"success": True, "id": faq_id}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+class FAQUpdate(BaseModel):
+    question_ru: Optional[str] = None
+    answer_ru: Optional[str] = None
+    category: Optional[str] = None
+    display_order: Optional[int] = None
+
+@router.put("/faq/{faq_id}")
+async def update_faq(faq_id: int, faq: FAQUpdate):
+    """Обновить FAQ"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        updates = []
+        params = []
+        
+        if faq.question_ru is not None:
+            translations = await translate_to_all_languages(faq.question_ru)
+            updates.extend(["question_ru = ?", "question_en = ?", "question_ar = ?"])
+            params.extend([faq.question_ru, translations.get('en', ''), translations.get('ar', '')])
+            
+        if faq.answer_ru is not None:
+            translations = await translate_to_all_languages(faq.answer_ru)
+            updates.extend(["answer_ru = ?", "answer_en = ?", "answer_ar = ?"])
+            params.extend([faq.answer_ru, translations.get('en', ''), translations.get('ar', '')])
+            
+        if faq.category is not None:
+            updates.append("category = ?")
+            params.append(faq.category)
+            
+        if faq.display_order is not None:
+            updates.append("display_order = ?")
+            params.append(faq.display_order)
+            
+        if not updates:
+            return {"success": True, "message": "Нечего обновлять"}
+            
+        query = f"UPDATE public_faq SET {', '.join(updates)} WHERE id = ?"
+        params.append(faq_id)
+        
+        c.execute(query, params)
+        conn.commit()
+        
+        return {"success": True, "message": "FAQ обновлен"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/faq/{faq_id}")
+async def delete_faq(faq_id: int):
+    """Удалить FAQ"""
+    conn = sqlite3.connect(DATABASE_NAME)
+    c = conn.cursor()
+    
+    try:
+        c.execute("DELETE FROM public_faq WHERE id = ?", (faq_id,))
+        conn.commit()
+        return {"success": True, "message": "FAQ удален"}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))

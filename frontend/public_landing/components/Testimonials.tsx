@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { apiClient } from "../../src/api/client";
 
 interface Testimonial {
   id: number;
@@ -16,12 +17,12 @@ export function Testimonials() {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await fetch(`/api/public/testimonials?language=${i18n.language}&limit=6`);
-        const data = await response.json();
-        setTestimonials(data);
+        const data = await apiClient.getPublicReviews(i18n.language);
+        if (data.reviews && data.reviews.length > 0) {
+          setTestimonials(data.reviews);
+        }
       } catch (error) {
         console.error('Error loading testimonials:', error);
-        // Fallback to empty array if API fails
         setTestimonials([]);
       } finally {
         setLoading(false);

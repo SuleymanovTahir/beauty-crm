@@ -10,12 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { PermissionsTab } from '../../components/admin/PermissionsTab';
+import { getPhotoUrl } from '../../utils/photoUtils';
 
 export default function EditUser() {
   const navigate = useNavigate();
   const { t } = useTranslation(['admin/EditUser', 'common']);
-  const { id } = useParams<{ id: string }>();
-  const userId = parseInt(id || '0');
+  const { identifier } = useParams<{ identifier: string }>();
+  const [userId, setUserId] = useState<number>(0);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,18 +34,35 @@ export default function EditUser() {
   });
 
   useEffect(() => {
-    loadUserProfile();
-  }, [userId]);
+    if (identifier) {
+      loadUserProfile();
+    }
+  }, [identifier]);
 
   const loadUserProfile = async () => {
     try {
       setLoading(true);
-      const data = await api.getUserProfile(userId);
+      let data;
+
+      // Check if identifier is numeric
+      const isNumeric = /^\d+$/.test(identifier || '');
+
+      if (isNumeric) {
+        data = await api.getUserProfile(parseInt(identifier!));
+      } else {
+        data = await api.getUserProfileByUsername(identifier!);
+      }
+
+      setUserId(data.id);
+
+      // Fix photo URL - add API URL if it's a relative path
+      const photoUrl = getPhotoUrl(data.photo);
+
       setProfileData({
         username: data.username,
         full_name: data.full_name,
         email: data.email || '',
-        photo: data.photo || ''
+        photo: photoUrl || ''
       });
     } catch (err) {
       toast.error(t('users:error_loading_profile'));
@@ -225,7 +243,7 @@ export default function EditUser() {
                           const formData = new FormData();
                           formData.append('file', file);
 
-                          // Direct fetch since api.uploadFile might not exist yet
+                          // Upload file
                           const response = await fetch('/api/upload', {
                             method: 'POST',
                             body: formData,
@@ -234,7 +252,19 @@ export default function EditUser() {
                           if (!response.ok) throw new Error('Upload failed');
 
                           const data = await response.json();
-                          setProfileData(prev => ({ ...prev, photo: data.file_url }));
+
+                          // Extract path from full URL (remove http://localhost:8000 part)
+                          const photoPath = data.file_url.replace(/^https?:\/\/[^\/]+/, '');
+
+                          // Update local state
+                          setProfileData(prev => ({ ...prev, photo: photoPath }));
+
+                          // Auto-save to database
+                          await api.updateUserProfile(userId, {
+                            ...profileData,
+                            photo: photoPath
+                          });
+
                           toast.success(t('users:photo_uploaded'));
                         } catch (err) {
                           console.error(err);

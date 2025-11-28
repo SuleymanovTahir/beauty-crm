@@ -133,7 +133,14 @@ DATABASE_NAME = os.path.join(BASE_DIR, "salon_bot.db")
 
 
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
-BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+
+# ✅ Универсальный BASE_URL с автоопределением окружения
+if os.getenv("BASE_URL"):
+    BASE_URL = os.getenv("BASE_URL")
+elif os.getenv("ENVIRONMENT") == "production":
+    BASE_URL = "https://mlediamant.com"
+else:
+    BASE_URL = "http://localhost:8000"
 
 # ===== СТАТУСЫ КЛИЕНТОВ =====
 CLIENT_STATUSES = {
