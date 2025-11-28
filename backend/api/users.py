@@ -159,7 +159,8 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 u.position, u.created_at, u.is_active,
                 u.employee_id,
                 u.position_ru,
-                u.position_ar
+                u.position_ar,
+                COALESCE(u.photo, u.photo_url) as photo
             FROM users u
             ORDER BY u.created_at DESC
         """)
@@ -184,7 +185,8 @@ async def get_users(current_user: dict = Depends(get_current_user)):
                 "created_at": row["created_at"],
                 "is_active": row["is_active"],
                 "position_ru": row["position_ru"],
-                "position_ar": row["position_ar"]
+                "position_ar": row["position_ar"],
+                "photo": row["photo"]
             }
 
             users.append(user_data)
@@ -390,7 +392,7 @@ async def get_user_profile(
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login
+    c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
                  FROM users WHERE id = ?""", (user_id,))
     
     result = c.fetchone()
@@ -406,7 +408,8 @@ async def get_user_profile(
         "email": result[3],
         "role": result[4],
         "created_at": result[5],
-        "last_login": result[6]
+        "last_login": result[6],
+        "photo": result[7]
     }
 
 
@@ -524,10 +527,18 @@ async def update_user_profile(
             )
 
         # Обновляем профиль
-        c.execute("""UPDATE users
-                    SET username = ?, full_name = ?, email = ?, position = ?
+        photo = data.get('photo')
+        
+        if photo is not None:
+             c.execute("""UPDATE users
+                    SET username = ?, full_name = ?, email = ?, position = ?, photo = ?
                     WHERE id = ?""",
-                 (username, full_name, email, position, user_id))
+                 (username, full_name, email, position, photo, user_id))
+        else:
+            c.execute("""UPDATE users
+                        SET username = ?, full_name = ?, email = ?, position = ?
+                        WHERE id = ?""",
+                    (username, full_name, email, position, user_id))
         conn.commit()
         
         log_activity(user["id"], "update_profile", "user", str(user_id), 

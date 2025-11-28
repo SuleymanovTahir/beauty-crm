@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 import sqlite3
 from core.config import DATABASE_NAME
-from services.auto_translate import translate_to_all_languages
+from services.translation_service import translate_to_all_languages
 
 router = APIRouter(tags=["Public Admin"], prefix="/public-admin")
 

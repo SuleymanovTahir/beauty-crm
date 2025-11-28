@@ -14,7 +14,7 @@ if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
     print(f"Added {backend_dir} to sys.path")
 
-from utils.logger import log_info, log_error
+from utils.logger import log_info, log_error, log_warning
 
 async def run_fix(name, func, *args, **kwargs):
     """Helper to run a fix function with logging"""
@@ -41,89 +41,69 @@ async def main():
     
     results = {}
 
-    # 1. Database Schema Fixes
+    # 1. Database Initialization & Schema (Source of Truth: db/init.py)
     try:
-        from scripts.maintenance.fix_db_notifications import fix_database
-        results['fix_db_notifications'] = await run_fix("Fix DB Notifications", fix_database)
+        from db.init import init_database
+        log_info("🏗️ Инициализация базы данных (db/init.py)...", "fix")
+        # init_database is synchronous
+        init_database()
+        print("✅ SUCCESS: Database Initialization")
     except ImportError:
-        print("⚠️  Skipping fix_db_notifications (module not found)")
+        log_error("⚠️  Skipping init_database (module not found)", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при инициализации БД: {e}", "fix")
 
-    try:
-        from scripts.maintenance.fix_db_positions import fix_positions_table
-        results['fix_positions_table'] = await run_fix("Fix Positions Table", fix_positions_table)
-    except ImportError:
-        print("⚠️  Skipping fix_positions_table (module not found)")
 
-    # 2. Data Linking
-    try:
-        from db.migrations.data.users.link_users_to_employees import link_users_to_employees
-        results['link_users_to_employees'] = await run_fix("Link Users to Employees", link_users_to_employees)
-    except ImportError:
-        print("⚠️  Skipping link_users_to_employees (module not found)")
-
-    # 3. Bot Settings Population (СНАЧАЛА заполняем!)
-    try:
-        from scripts.populate_bot_settings import populate_bot_settings
-        results['populate_bot_settings'] = await run_fix("Populate Bot Settings", populate_bot_settings)
-    except ImportError:
-        print("⚠️  Skipping populate_bot_settings (module not found)")
-
-    # 3.5 Data Integrity Checks (fix_data.py) (ПОТОМ проверяем!)
+    # 2. Data Integrity Checks (fix_data.py) - FIXED IMPORT PATH
     try:
         from scripts.maintenance.fix_data import (
             check_bot_settings, check_users, check_salon_settings, 
             fix_manager_consultation_prompt, fix_booking_data_collection, 
             fix_missing_bot_fields
         )
-        results['check_bot_settings'] = await run_fix("Check Bot Settings", check_bot_settings)
-        results['check_users'] = await run_fix("Check Users", check_users)
-        results['check_salon_settings'] = await run_fix("Check Salon Settings", check_salon_settings)
+        # 1. FIXES FIRST
         results['fix_manager_consultation_prompt'] = await run_fix("Fix Manager Consultation Prompt", fix_manager_consultation_prompt)
         results['fix_booking_data_collection'] = await run_fix("Fix Booking Data Collection", fix_booking_data_collection)
         results['fix_missing_bot_fields'] = await run_fix("Fix Missing Bot Fields", fix_missing_bot_fields)
-    except ImportError:
-        print("⚠️  Skipping fix_data checks (module not found)")
+        
+        # 2. CHECKS AFTER FIXES
+        results['check_bot_settings'] = await run_fix("Check Bot Settings", check_bot_settings)
+        results['check_users'] = await run_fix("Check Users", check_users)
+        results['check_salon_settings'] = await run_fix("Check Salon Settings", check_salon_settings)
+    except ImportError as e:
+        print(f"❌ ERROR importing fix_data: {e}")
+        import traceback
+        traceback.print_exc()
 
-    # 3.5 Update Employee Details (СНАЧАЛА создаем сотрудников!)
+    # 3.5.4 Import employee photos
     try:
-        from update_employee_details import update_employees
-        results['update_employee_details'] = await run_fix("Update Employee Details", update_employees)
+        from scripts.import_employee_photos import import_photos
+        # Use run_fix to handle synchronous function correctly
+        await run_fix("Import Employee Photos", import_photos)
     except ImportError:
-        print("⚠️  Skipping update_employee_details (module not found)")
+        log_warning("⚠️ Скрипт import_employee_photos не найден", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при импорте фото: {e}", "fix")
 
-    # 3.5.5 Data Seeding (ПОТОМ заполняем данные)
+    # 3.5.5 Seed test data (includes services and assignments)
     try:
-        from scripts.data.seed_full_data import main as seed_full_data
-        results['seed_full_data'] = await run_fix("Seed Full Data", seed_full_data)
-    except ImportError:
-        print("⚠️  Skipping seed_full_data (module not found)")
+        from scripts.testing.data.seed_test_data import seed_data
+        log_info("🌱 Заполнение тестовыми данными (услуги и привязки)...", "fix")
+        seed_data()
+    except ImportError as e:
+        log_warning(f"⚠️ Скрипт seed_test_data не найден: {e}", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при заполнении данными: {e}", "fix")
 
-    # 3.5.5b Migrate Services (ВОССТАНАВЛИВАЕМ услуги после seed_full_data, который их удаляет)
+    # 3.5.6 Populate public content (FAQ, Salon Info)
     try:
-        from db.migrations.data.services.migrate_services import migrate_services
-        results['migrate_services'] = await run_fix("Migrate Services", migrate_services)
+        from scripts.populate_public_content import populate_all
+        log_info("🌐 Заполнение публичного контента...", "fix")
+        await populate_all()
     except ImportError:
-        print("⚠️  Skipping migrate_services (module not found)")
-
-    # 3.5.6 Fix Employee Services (ПОСЛЕ заполнения данных)
-    try:
-        from scripts.fix_employee_services import fix_employee_services
-        results['fix_employee_services'] = await run_fix("Fix Employee Services", fix_employee_services)
-    except ImportError:
-        print("⚠️  Skipping fix_employee_services (module not found)")
-
-    # 3.6 Bot Settings Updates
-    try:
-        from scripts.update_emoji_rules import force_update_emoji_rules
-        results['update_emoji_rules'] = await run_fix("Update Bot Emoji Rules", force_update_emoji_rules)
-    except ImportError:
-        print("⚠️  Skipping update_emoji_rules (module not found)")
-    
-    try:
-        from scripts.force_update_bot_persona import force_update_bot_persona
-        results['update_bot_persona'] = await run_fix("Update Bot Persona", force_update_bot_persona)
-    except ImportError:
-        print("⚠️  Skipping update_bot_persona (module not found)")
+        log_warning("⚠️ Скрипт populate_public_content не найден", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при заполнении публичного контента: {e}", "fix")
 
     # 4. Tests & Verifications
     # Skip API tests in production to avoid rate limits

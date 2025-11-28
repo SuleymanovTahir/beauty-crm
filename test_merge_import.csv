@@ -1,6 +1,0 @@
-Name,Phone,Email,Instagram,Notes
-Anna Test,+971501111111,anna@test.com,@anna_test,First import
-Anna Test,+971502222222,anna@test.com,,Second phone for Anna
-Elena New,+971503333333,elena@test.com,@elena_new,New client Elena
-Anna Test,+971501111111,anna@test.com,@anna_test,Should be unchanged - all fields filled
-Maria,+971504444444,,,Minimal data
