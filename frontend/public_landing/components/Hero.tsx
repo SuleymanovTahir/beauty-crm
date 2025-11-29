@@ -21,7 +21,7 @@ export function Hero() {
   const [heroBanner, setHeroBanner] = useState<Banner | null>(null);
 
   // Default fallback image
-  const defaultImage = "https://images.unsplash.com/photo-1648065460033-5c59f2ef1d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwd29tYW4lMjBiZWF1dHl8ZW58MXx8fHwxNzY0MjIzNDE5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+  const defaultImage = "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjQzOTc3MDd8MA&ixlib=rb-4.1.0&q=80&w=1920";
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || window.location.origin;

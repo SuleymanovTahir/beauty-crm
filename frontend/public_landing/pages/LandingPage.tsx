@@ -41,7 +41,6 @@ export function LandingPage() {
             <Header salonInfo={salonInfo} />
             <main>
                 <Hero />
-                <Banners />
                 <About />
                 <div id="services">
                     <Services />
