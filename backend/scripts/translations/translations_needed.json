@@ -5,6 +5,7 @@
       "fields": {
         "full_name": {
           "ru": "Симо",
+          "key": "users.2.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -16,6 +17,19 @@
         },
         "position": {
           "ru": "Стилист",
+          "key": "users.2.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Мастер стрижек и окрашивания",
+          "key": "users.2.bio",
           "en": null,
           "ar": null,
           "es": null,
@@ -32,6 +46,7 @@
       "fields": {
         "full_name": {
           "ru": "Местан",
+          "key": "users.3.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -43,6 +58,19 @@
         },
         "position": {
           "ru": "Стилист",
+          "key": "users.3.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Стилист-парикмахер с креативным подходом",
+          "key": "users.3.bio",
           "en": null,
           "ar": null,
           "es": null,
@@ -59,6 +87,7 @@
       "fields": {
         "full_name": {
           "ru": "Ляззат",
+          "key": "users.4.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -70,6 +99,19 @@
         },
         "position": {
           "ru": "Мастер маникюра",
+          "key": "users.4.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Эксперт по уходу за ногтями",
+          "key": "users.4.bio",
           "en": null,
           "ar": null,
           "es": null,
@@ -86,6 +128,7 @@
       "fields": {
         "full_name": {
           "ru": "Гуля",
+          "key": "users.5.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -97,6 +140,19 @@
         },
         "position": {
           "ru": "Мастер маникюра / Депиляция",
+          "key": "users.5.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Профессиональный мастер с многолетним опытом",
+          "key": "users.5.bio",
           "en": null,
           "ar": null,
           "es": null,
@@ -113,6 +169,7 @@
       "fields": {
         "full_name": {
           "ru": "Дженнифер",
+          "key": "users.6.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -124,6 +181,19 @@
         },
         "position": {
           "ru": "Мастер маникюра / Массаж",
+          "key": "users.6.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "bio": {
+          "ru": "Специалист по nail-дизайну и массажным техникам",
+          "key": "users.6.bio",
           "en": null,
           "ar": null,
           "es": null,
@@ -140,6 +210,7 @@
       "fields": {
         "full_name": {
           "ru": "Турсунай",
+          "key": "users.7.full_name",
           "en": null,
           "ar": null,
           "es": null,
@@ -151,6 +222,1664 @@
         },
         "position": {
           "ru": "Директор",
+          "key": "users.7.position",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "public_reviews": [
+    {
+      "id": 1,
+      "fields": {
+        "author_name": {
+          "ru": "Анна Петрова",
+          "key": "public_reviews.1.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "author_name": {
+          "ru": "Мария Соколова",
+          "key": "public_reviews.2.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "author_name": {
+          "ru": "Елена Волкова",
+          "key": "public_reviews.3.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "author_name": {
+          "ru": "Ольга Иванова",
+          "key": "public_reviews.4.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "author_name": {
+          "ru": "Наталья Смирнова",
+          "key": "public_reviews.5.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "author_name": {
+          "ru": "Дарья Козлова",
+          "key": "public_reviews.6.author_name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": 7,
+      "fields": {
+        "name": {
+          "ru": "Permanent Lips",
+          "key": "services.7.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Long-lasting lip color",
+          "key": "services.7.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "name": {
+          "ru": "Permanent Brows",
+          "key": "services.8.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Microblading or powder brows",
+          "key": "services.8.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "name": {
+          "ru": "Lashliner",
+          "key": "services.9.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Lash line enhancement",
+          "key": "services.9.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "name": {
+          "ru": "Eyeliner",
+          "key": "services.10.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Permanent eyeliner",
+          "key": "services.10.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "name": {
+          "ru": "Permanent Makeup Correction",
+          "key": "services.11.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Touch-up for existing permanent makeup",
+          "key": "services.11.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "name": {
+          "ru": "Full Bikini",
+          "key": "services.12.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Complete bikini area hair removal",
+          "key": "services.12.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 13,
+      "fields": {
+        "name": {
+          "ru": "Bikini Line",
+          "key": "services.13.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Bikini line waxing",
+          "key": "services.13.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "name": {
+          "ru": "Brazilian Bikini",
+          "key": "services.14.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Brazilian bikini waxing",
+          "key": "services.14.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "name": {
+          "ru": "Full Legs",
+          "key": "services.15.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Complete leg waxing",
+          "key": "services.15.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "name": {
+          "ru": "Half Legs",
+          "key": "services.16.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Lower leg waxing",
+          "key": "services.16.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "name": {
+          "ru": "Full Arms",
+          "key": "services.17.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Complete arm waxing",
+          "key": "services.17.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "name": {
+          "ru": "Half Arms",
+          "key": "services.18.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Lower arm waxing",
+          "key": "services.18.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "name": {
+          "ru": "Full Body Waxing",
+          "key": "services.19.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Complete body hair removal",
+          "key": "services.19.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "name": {
+          "ru": "Underarms",
+          "key": "services.20.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Underarm waxing",
+          "key": "services.20.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 21,
+      "fields": {
+        "name": {
+          "ru": "Full Face",
+          "key": "services.21.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Complete facial hair removal",
+          "key": "services.21.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "name": {
+          "ru": "Upper Lips",
+          "key": "services.22.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Upper lip waxing",
+          "key": "services.22.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "name": {
+          "ru": "Chin",
+          "key": "services.23.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Chin waxing",
+          "key": "services.23.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 24,
+      "fields": {
+        "name": {
+          "ru": "Hair Trim (by machine)",
+          "key": "services.24.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Simple trim without wash",
+          "key": "services.24.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 25,
+      "fields": {
+        "name": {
+          "ru": "Hair Cut and Blow Dry",
+          "key": "services.25.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Professional haircut with styling",
+          "key": "services.25.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 26,
+      "fields": {
+        "name": {
+          "ru": "Blow Dry",
+          "key": "services.26.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Professional hair styling",
+          "key": "services.26.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 27,
+      "fields": {
+        "name": {
+          "ru": "Hair Cut Kids",
+          "key": "services.27.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Kids haircut",
+          "key": "services.27.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 28,
+      "fields": {
+        "name": {
+          "ru": "Roots Color and Blow Dry",
+          "key": "services.28.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Root coloring with styling",
+          "key": "services.28.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 29,
+      "fields": {
+        "name": {
+          "ru": "Roots Bleach and Blow Dry",
+          "key": "services.29.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Root bleaching with styling",
+          "key": "services.29.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 30,
+      "fields": {
+        "name": {
+          "ru": "Toner and Blow Dry",
+          "key": "services.30.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Hair toning with styling",
+          "key": "services.30.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 31,
+      "fields": {
+        "name": {
+          "ru": "Full Head Color",
+          "key": "services.31.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Full hair coloring with styling",
+          "key": "services.31.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 32,
+      "fields": {
+        "name": {
+          "ru": "Balayage",
+          "key": "services.32.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Hand-painted highlights",
+          "key": "services.32.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 33,
+      "fields": {
+        "name": {
+          "ru": "Ombre/Shatush/Air-Touch",
+          "key": "services.33.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Gradient coloring techniques",
+          "key": "services.33.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 34,
+      "fields": {
+        "name": {
+          "ru": "Bleach Hair",
+          "key": "services.34.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Color correction from dark",
+          "key": "services.34.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 35,
+      "fields": {
+        "name": {
+          "ru": "Natural Treatment",
+          "key": "services.35.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Natural hair treatment",
+          "key": "services.35.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "name": {
+          "ru": "Hair Keratin Capsule Extension",
+          "key": "services.36.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Per capsule hair extension",
+          "key": "services.36.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 37,
+      "fields": {
+        "name": {
+          "ru": "Classic Volume Lashes",
+          "key": "services.37.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Natural lash extensions",
+          "key": "services.37.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 38,
+      "fields": {
+        "name": {
+          "ru": "2D Volume Lashes",
+          "key": "services.38.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "2D lash extensions",
+          "key": "services.38.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 39,
+      "fields": {
+        "name": {
+          "ru": "3D Volume Lashes",
+          "key": "services.39.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "3D lash extensions",
+          "key": "services.39.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "name": {
+          "ru": "4-5D Volume (Mega Volume)",
+          "key": "services.40.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Mega volume lashes",
+          "key": "services.40.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 41,
+      "fields": {
+        "name": {
+          "ru": "ML Curl / Kim Style",
+          "key": "services.41.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Special curl style",
+          "key": "services.41.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "name": {
+          "ru": "Remove Lashes",
+          "key": "services.42.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Safe lash removal",
+          "key": "services.42.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "name": {
+          "ru": "Eyebrows Lamination",
+          "key": "services.43.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Brow lamination treatment",
+          "key": "services.43.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "name": {
+          "ru": "Eyelashes Lamination",
+          "key": "services.44.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Lash lift treatment",
+          "key": "services.44.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "name": {
+          "ru": "Eyebrow and Eyelash Lamination",
+          "key": "services.45.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Combo lamination package",
+          "key": "services.45.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "name": {
+          "ru": "Eyebrow Coloring",
+          "key": "services.46.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Professional brow tinting",
+          "key": "services.46.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "name": {
+          "ru": "Eyebrow Shaping",
+          "key": "services.47.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Professional brow shaping",
+          "key": "services.47.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "name": {
+          "ru": "Deep Facial Cleaning 60 min",
+          "key": "services.48.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Professional deep cleansing",
+          "key": "services.48.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 49,
+      "fields": {
+        "name": {
+          "ru": "Medical Facial Cleaning",
+          "key": "services.49.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Medical-grade facial treatment",
+          "key": "services.49.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 50,
+      "fields": {
+        "name": {
+          "ru": "Facial Massage",
+          "key": "services.50.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Lifting facial massage",
+          "key": "services.50.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 51,
+      "fields": {
+        "name": {
+          "ru": "Peeling",
+          "key": "services.51.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Chemical peeling",
+          "key": "services.51.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "name": {
+          "ru": "Manicure Basic",
+          "key": "services.52.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Basic manicure",
+          "key": "services.52.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 53,
+      "fields": {
+        "name": {
+          "ru": "Spa Manicure",
+          "key": "services.53.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Spa manicure treatment",
+          "key": "services.53.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 54,
+      "fields": {
+        "name": {
+          "ru": "Manicure Classic",
+          "key": "services.54.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Manicure with regular polish",
+          "key": "services.54.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 55,
+      "fields": {
+        "name": {
+          "ru": "Manicure Gel",
+          "key": "services.55.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Gel polish manicure",
+          "key": "services.55.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 56,
+      "fields": {
+        "name": {
+          "ru": "Japanese Manicure",
+          "key": "services.56.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Japanese nail treatment",
+          "key": "services.56.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 57,
+      "fields": {
+        "name": {
+          "ru": "Baby Manicure",
+          "key": "services.57.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Kids manicure",
+          "key": "services.57.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "name": {
+          "ru": "Change Classic Polish",
+          "key": "services.58.name",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description": {
+          "ru": "Change of regular polish",
+          "key": "services.58.description",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "salon_settings": [
+    {
+      "id": 1,
+      "fields": {
+        "address": {
+          "ru": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+          "key": "salon_settings.1.address",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "city": {
+          "ru": "Dubai",
+          "key": "salon_settings.1.city",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "country": {
+          "ru": "UAE",
+          "key": "salon_settings.1.country",
           "en": null,
           "ar": null,
           "es": null,

@@ -1,104 +1,99 @@
 #!/usr/bin/env python3
 """
-Sync translated content back to database
-Reads translations_completed.json and updates database
+Sync translated content to JSON files
+Updates frontend/src/locales/{lang}/dynamic.json with new translations
 """
 
-import sqlite3
 import json
 import sys
+import os
 from pathlib import Path
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import (
-    TRANSLATION_CONFIG,
+    TRANSLATE_OUTPUT,
     LANGUAGES,
-    SOURCE_LANGUAGE,
-    DATABASE_PATH,
-    TRANSLATE_OUTPUT
+    SOURCE_LANGUAGE
 )
 
+FRONTEND_LOCALES_DIR = Path(__file__).parent.parent.parent.parent / "frontend" / "src" / "locales"
 
 def sync_translations():
     """
-    Sync translated content back to database
+    Update dynamic.json files with completed translations
     """
-    print("💾 Syncing translations to database...")
+    print("💾 Syncing translations to JSON files...")
     
-    # Check if translate file exists
-    translate_path = Path(TRANSLATE_OUTPUT)
-    if not translate_path.exists():
-        print(f"❌ Error: {TRANSLATE_OUTPUT} not found")
-        print(f"💡 Run translation first: npm run db:i18n:translate")
+    # Load completed translations
+    input_path = Path(TRANSLATE_OUTPUT)
+    if not input_path.exists():
+        print(f"❌ Error: {TRANSLATE_OUTPUT} not found.")
+        print("   Run 'npm run db:i18n:translate' first.")
         return
     
-    # Load translated data
-    with open(translate_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    with open(input_path, 'r', encoding='utf-8') as f:
+        completed_translations = json.load(f)
     
-    if not data:
-        print("✨ No translations to sync!")
+    if not completed_translations:
+        print("✨ No new translations to sync.")
         return
-    
-    # Connect to database
-    conn = sqlite3.connect(DATABASE_PATH)
-    cursor = conn.cursor()
-    
-    total_updated = 0
-    
-    for table_name, records in data.items():
-        print(f"\n📋 Syncing {table_name}...")
-        
-        config = TRANSLATION_CONFIG.get(table_name)
-        if not config:
-            print(f"  ⚠️  Table not in config, skipping")
-            continue
-        
-        id_field = config["id_field"]
-        
-        for record in records:
-            record_id = record["id"]
-            fields_to_update = {}
-            
-            # Collect all fields to update
-            for field_name, field_data in record["fields"].items():
-                for lang in LANGUAGES:
-                    if lang == SOURCE_LANGUAGE:
-                        continue
-                    
-                    lang_value = field_data.get(lang)
-                    if lang_value:
-                        lang_field = f"{field_name}_{lang}"
-                        fields_to_update[lang_field] = lang_value
-            
-            if not fields_to_update:
-                continue
-            
-            # Build UPDATE query
-            set_clause = ", ".join([f"{field} = ?" for field in fields_to_update.keys()])
-            values = list(fields_to_update.values())
-            values.append(record_id)
-            
-            query = f"UPDATE {table_name} SET {set_clause} WHERE {id_field} = ?"
-            
-            try:
-                cursor.execute(query, values)
-                total_updated += len(fields_to_update)
-                print(f"  ✅ Updated record {record_id} ({len(fields_to_update)} fields)")
-            except sqlite3.Error as e:
-                print(f"  ❌ Error updating record {record_id}: {e}")
-    
-    # Commit changes
-    conn.commit()
-    conn.close()
-    
-    print(f"\n✅ Sync complete!")
-    print(f"   Total fields updated: {total_updated}")
-    print(f"\n🎉 Translation workflow finished!")
-    print(f"   Check your application to see the translations.")
 
+    # Organize translations by language
+    # Structure: { lang: { key: value } }
+    updates_by_lang = {lang: {} for lang in LANGUAGES if lang != SOURCE_LANGUAGE}
+    
+    total_updates = 0
+    
+    for table_name, records in completed_translations.items():
+        for record in records:
+            record_id = record['id']
+            fields = record['fields']
+            
+            for field_name, translations in fields.items():
+                key = translations.get('key')
+                if not key:
+                    # Fallback if key missing in older extract
+                    key = f"{table_name}.{record_id}.{field_name}"
+                
+                for lang, value in translations.items():
+                    if lang == SOURCE_LANGUAGE or lang == 'key':
+                        continue
+                        
+                    if value:
+                        updates_by_lang[lang][key] = value
+                        total_updates += 1
+
+    # Update JSON files
+    for lang, updates in updates_by_lang.items():
+        if not updates:
+            continue
+            
+        file_path = FRONTEND_LOCALES_DIR / lang / "dynamic.json"
+        
+        # Load existing
+        current_data = {}
+        if file_path.exists():
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    current_data = json.load(f)
+            except json.JSONDecodeError:
+                print(f"⚠️  Warning: Could not parse {file_path}, starting fresh")
+        
+        # Merge updates
+        current_data.update(updates)
+        
+        # Ensure directory exists
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Save
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(current_data, f, ensure_ascii=False, indent=2)
+            
+        print(f"  ✅ Updated {lang}/dynamic.json with {len(updates)} translations")
+
+    print(f"\n✨ Sync complete! {total_updates} translations saved.")
 
 if __name__ == "__main__":
     sync_translations()

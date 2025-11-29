@@ -1,6 +1,4 @@
 {
-  "happyClients": "عملاء سعداء",
-  "qualityGuarantee": "ضمان الجودة",
   "aboutDesc": "حولdesc",
   "aboutFeature1Desc": "حول الميزة 1desc",
   "aboutFeature1Title": "حول الميزة 1 العنوان",
@@ -87,7 +85,7 @@
   "group_chat": "دردشة جماعية",
   "hair": "شعر",
   "hairColoring": "Окрашивание волос",
-  "happyClients": "",
+  "happyClients": "عملاء سعداء",
   "heroDescription": "اكتشف عالماً من الجمال الرائع في جو من الفخامة والراحة. رعاية احترافية وخدمة لا تشوبها شائبة.",
   "heroSubtitle": "شغفنا",
   "heroTag": "صالون تجميل متميز",
@@ -193,7 +191,7 @@
   "privacyTitle": "عنوان الخصوصية",
   "private_chat_with": "دردشة خاصة مع",
   "promoEnds": "يروج",
-  "qualityGuarantee": "",
+  "qualityGuarantee": "ضمان الجودة",
   "quick_replies_title": "اسماء الاجابات السريعة",
   "quick_reply_booked": "الرد السريع محفوظة",
   "quick_reply_call_later": "استجابة سريعة، اتصل لاحقا",
@@ -304,6 +302,6 @@
   "viewCertificates": "عرض الشهادات",
   "visitSalon": "قم بزيارة صالة العرض لدينا",
   "workingHours": "ساعات العمل",
-  "yearsExperience": "",
+  "yearsExperience": "سنوات من الخبرة",
   "yourName": "اسمك"
 }

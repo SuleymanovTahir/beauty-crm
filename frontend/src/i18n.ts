@@ -56,7 +56,8 @@ const namespaces = [
   'components/languageswitcher',
   'components/employeelayout',
   'components/publiclanguageswitcher',
-  'public_landing'
+  'public_landing',
+  'dynamic'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
 const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
