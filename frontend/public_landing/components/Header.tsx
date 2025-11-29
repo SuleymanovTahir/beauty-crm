@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Globe, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../LanguageContext";
 import logo from "../assets/logo.webp";
 
 const navigation = [
@@ -20,9 +20,7 @@ interface HeaderProps {
 }
 
 export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const language = i18n.language;
-  const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
+  const { language, setLanguage: changeLanguage, t } = useLanguage();
   const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

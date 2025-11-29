@@ -66,28 +66,35 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id || index}
-              className="bg-card rounded-2xl p-8 border border-border/50 hover:shadow-lg transition-all duration-300"
+              className="group bg-card border border-border/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 flex flex-col h-full"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300 fill-gray-300'}`}
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${i < testimonial.rating ? 'text-primary fill-primary' : 'text-muted/30 fill-muted/30'}`}
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                 ))}
               </div>
-              <p className="text-foreground/80 mb-6 leading-relaxed">
-                "{testimonial.text}"
-              </p>
-              <div className="border-t border-border/50 pt-4">
-                <p className="text-primary mb-1">{testimonial.name}</p>
+
+              <div className="flex-1">
+                <p className="text-sm sm:text-base text-foreground/80 mb-6 leading-relaxed line-clamp-4 italic">
+                  "{testimonial.text}"
+                </p>
+              </div>
+
+              <div className="border-t border-border/50 pt-4 mt-auto flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                  {testimonial.name.charAt(0).toUpperCase()}
+                </div>
+                <p className="font-semibold text-foreground text-sm sm:text-base">{testimonial.name}</p>
               </div>
             </div>
           ))}

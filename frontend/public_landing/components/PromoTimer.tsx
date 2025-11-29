@@ -70,39 +70,39 @@ export function PromoTimer() {
                     {t('promoEnds', { defaultValue: 'Акция действует ещё' })}
                 </p>
 
-                <div className="flex items-center justify-center gap-4 sm:gap-8 md:gap-12">
+                <div className="flex items-center justify-center gap-2 sm:gap-8 md:gap-12">
                     <div className="flex flex-col items-center">
-                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
+                        <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
                             {String(timeLeft.days).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">
+                        <div className="text-[9px] sm:text-xs text-muted-foreground uppercase tracking-normal sm:tracking-[0.2em] mt-1 sm:mt-2">
                             {t('days', { defaultValue: 'дней' })}
                         </div>
                     </div>
-                    <div className="text-2xl sm:text-3xl md:text-4xl text-primary/20 font-light pb-4">:</div>
+                    <div className="text-lg sm:text-3xl md:text-4xl text-primary/20 font-light pb-2 sm:pb-4">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
+                        <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
                             {String(timeLeft.hours).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">
+                        <div className="text-[9px] sm:text-xs text-muted-foreground uppercase tracking-normal sm:tracking-[0.2em] mt-1 sm:mt-2">
                             {t('hours', { defaultValue: 'часов' })}
                         </div>
                     </div>
-                    <div className="text-2xl sm:text-3xl md:text-4xl text-primary/20 font-light pb-4">:</div>
+                    <div className="text-lg sm:text-3xl md:text-4xl text-primary/20 font-light pb-2 sm:pb-4">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
+                        <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
                             {String(timeLeft.minutes).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">
+                        <div className="text-[9px] sm:text-xs text-muted-foreground uppercase tracking-normal sm:tracking-[0.2em] mt-1 sm:mt-2">
                             {t('minutes', { defaultValue: 'минут' })}
                         </div>
                     </div>
-                    <div className="text-2xl sm:text-3xl md:text-4xl text-primary/20 font-light pb-4">:</div>
+                    <div className="text-lg sm:text-3xl md:text-4xl text-primary/20 font-light pb-2 sm:pb-4">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
+                        <div className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-primary tabular-nums font-light tracking-wide">
                             {String(timeLeft.seconds).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] mt-2">
+                        <div className="text-[9px] sm:text-xs text-muted-foreground uppercase tracking-normal sm:tracking-[0.2em] mt-1 sm:mt-2">
                             {t('seconds', { defaultValue: 'секунд' })}
                         </div>
                     </div>

@@ -68,7 +68,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/40" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 w-full">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-48 pb-20 sm:pt-64 sm:pb-32 w-full">
         <div className="max-w-3xl">
           <div className="space-y-6 sm:space-y-8">
             <div className="space-y-4">
@@ -84,30 +84,30 @@ export function Hero() {
               </h1>
             </div>
 
-            <p className="text-base sm:text-lg text-foreground/70 max-w-xl animate-fade-in-up">
+            <p className="hidden sm:block text-base sm:text-lg text-foreground/70 max-w-xl animate-fade-in-up">
               {t('heroDescription') || "Откройте для себя мир изысканной красоты в атмосфере роскоши и комфорта. Профессиональный уход и безупречный сервис."}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 animate-fade-in-up">
+            <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 sm:gap-4 animate-fade-in-up">
               <Button
                 onClick={() => {
                   document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
                 size="lg"
               >
-                <Calendar className="w-5 h-5" />
-                {t('bookNow') || "Записаться на прием"}
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-base">{t('bookNow') || "Записаться"}</span>
               </Button>
               <Button
                 onClick={() => {
                   document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
                 }}
                 variant="outline"
-                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-6 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all"
+                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
                 size="lg"
               >
-                {t('ourServices') || "Наши услуги"}
+                <span className="text-xs sm:text-base">{t('ourServices') || "Услуги"}</span>
               </Button>
             </div>
 

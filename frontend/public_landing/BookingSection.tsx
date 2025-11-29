@@ -93,7 +93,7 @@ export function BookingSection({ services }: BookingSectionProps) {
   };
 
   return (
-    <section id="booking" className="py-24 bg-background">
+    <section id="booking" className="pt-24 pb-6 bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">

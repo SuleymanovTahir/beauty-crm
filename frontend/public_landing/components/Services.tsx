@@ -98,7 +98,7 @@ export function Services() {
 
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
             <TabsContent key={category} value={category} className="mt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {categoryServices.map((service, index) => {
                   // Get localized fields
                   const localizedName = service[`name_${language}`] || service.name_ru || service.name;
@@ -107,38 +107,34 @@ export function Services() {
                   return (
                     <div
                       key={index}
-                      className="group bg-card border border-border/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+                      className="group bg-card border border-border/50 rounded-2xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300"
                     >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex-1">
-                          <h3 className="mb-2 text-primary group-hover:text-accent-foreground transition-colors">
-                            {localizedName}
-                          </h3>
-                          {localizedDescription && (
-                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{localizedDescription}</p>
-                          )}
-                          {service.duration && (
-                            <p className="text-sm text-muted-foreground">
-                              {(() => {
-                                const duration = String(service.duration);
-                                // Check if duration already has time units (h, min, м, ч)
-                                if (/[a-zа-я]/i.test(duration)) {
-                                  return duration;
-                                }
-                                // If it's just a number, add 'min'
-                                return `${duration} min`;
-                              })()}
-                            </p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <p className="text-primary whitespace-nowrap">
-                            {service.price} {service.currency || 'AED'}
-                          </p>
-                        </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2">
+                        {localizedName}
+                      </h3>
+
+                      {localizedDescription && (
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{localizedDescription}</p>
+                      )}
+
+                      <div className="flex items-center justify-between mt-auto pt-2">
+                        {service.duration && (
+                          <span className="text-xs sm:text-sm text-muted-foreground">
+                            {(() => {
+                              const duration = String(service.duration);
+                              if (/[a-zа-я]/i.test(duration)) {
+                                return duration;
+                              }
+                              return `${duration} min`;
+                            })()}
+                          </span>
+                        )}
+                        <span className="text-base sm:text-lg font-bold text-primary ml-auto">
+                          {service.price} {service.currency || 'AED'}
+                        </span>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
 

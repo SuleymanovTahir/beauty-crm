@@ -68,7 +68,7 @@ export function LandingPage() {
                     <BookingSection services={services} />
                 </div>
             </main>
-            <Footer salonInfo={salonInfo} />
+            {/* <Footer salonInfo={salonInfo} /> */}
         </div>
     );
 }
