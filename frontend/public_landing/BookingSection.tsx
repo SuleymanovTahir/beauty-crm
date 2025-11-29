@@ -24,11 +24,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
-    service: "",
-    date: "",
-    time: "",
-    comment: "",
+    // email: "",
+    // service: "",
+    // date: "",
+    // time: "",
+    // comment: "",
   });
 
   // Default categories with translations
@@ -49,7 +49,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
     e.preventDefault();
 
     // Validation
-    if (!formData.name || !formData.phone || !formData.service || !formData.date || !formData.time) {
+    if (!formData.name || !formData.phone) {
       toast.error(t('fillRequiredFields', { defaultValue: 'Пожалуйста, заполните все обязательные поля' }));
       return;
     }
@@ -57,18 +57,13 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/send-message', {
+      const response = await fetch('/api/public/send-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
-          email: formData.email,
-          message: `New Booking Request:
-          Phone: ${formData.phone}
-          Service: ${formData.service}
-          Date: ${formData.date}
-          Time: ${formData.time}
-          Comment: ${formData.comment}`
+          message: `New Booking Request:\n          Phone: ${formData.phone}`
+          // Service: ${formData.service}
         })
       });
 
@@ -78,11 +73,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
         setFormData({
           name: "",
           phone: "",
-          email: "",
-          service: "",
-          date: "",
-          time: "",
-          comment: "",
+          // email: "",
+          // service: "",
+          // date: "",
+          // time: "",
+          // comment: "",
         });
       } else {
         toast.error(t('bookingError', { defaultValue: 'Не удалось отправить заявку. Попробуйте позже.' }));
@@ -138,19 +133,8 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('email', { defaultValue: 'Email' })}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('enterEmail', { defaultValue: 'your@email.com' })}
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="bg-input-background border-border/50"
-              />
-            </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="service">{t('service', { defaultValue: 'Услуга' })} *</Label>
               <Select
                 value={formData.service}
@@ -168,9 +152,42 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
-            <div className="space-y-2">
+
+            {/* <div className="space-y-2">
+              <Label htmlFor="email">{t('email', { defaultValue: 'Email' })}</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder={t('enterEmail', { defaultValue: 'your@email.com' })}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-input-background border-border/50"
+              />
+            </div> */}
+
+            {/* <div className="space-y-2">
+              <Label htmlFor="service">{t('service', { defaultValue: 'Услуга' })} *</Label>
+              <Select
+                value={formData.service}
+                onValueChange={(value) => setFormData({ ...formData, service: value })}
+                required
+              >
+                <SelectTrigger id="service" className="bg-input-background border-border/50">
+                  <SelectValue placeholder={t('selectService', { defaultValue: 'Выберите услугу' })} />
+                </SelectTrigger>
+                <SelectContent>
+                  {servicesList.map((service) => (
+                    <SelectItem key={service} value={service}>
+                      {service}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div> */}
+
+            {/* <div className="space-y-2">
               <Label htmlFor="date">{t('desiredDate', { defaultValue: 'Желаемая дата' })} *</Label>
               <Input
                 id="date"
@@ -181,9 +198,9 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
                 min={new Date().toISOString().split('T')[0]}
                 required
               />
-            </div>
+            </div> */}
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="time">{t('desiredTime', { defaultValue: 'Желаемое время' })} *</Label>
               <Input
                 id="time"
@@ -193,10 +210,10 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
                 className="bg-input-background border-border/50"
                 required
               />
-            </div>
+            </div> */}
           </div>
 
-          <div className="space-y-2 mb-6">
+          {/* <div className="space-y-2 mb-6">
             <Label htmlFor="comment">{t('comment', { defaultValue: 'Комментарий' })}</Label>
             <Textarea
               id="comment"
@@ -205,7 +222,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
               onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
               className="bg-input-background border-border/50 min-h-[100px]"
             />
-          </div>
+          </div> */}
 
           <Button
             type="submit"

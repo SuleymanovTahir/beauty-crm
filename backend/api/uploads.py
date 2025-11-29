@@ -6,16 +6,22 @@ from typing import Optional
 
 router = APIRouter(tags=["Upload"])
 
-# ✅ Автоматическое определение PUBLIC_URL
-# Приоритет: переменная окружения > автоопределение
+# ✅ Универсальное определение PUBLIC_URL
+# Приоритет: переменная окружения > автоопределение по localhost
 if os.getenv("PUBLIC_URL"):
     PUBLIC_URL = os.getenv("PUBLIC_URL")
-elif os.getenv("ENVIRONMENT") == "production":
-    # Production окружение
-    PUBLIC_URL = "https://mlediamant.com"
 else:
-    # Development окружение (localhost)
-    PUBLIC_URL = "http://localhost:8000"
+    # Импортируем функцию определения localhost из config
+    from core.config import is_localhost
+    
+    if is_localhost():
+        # Development окружение (localhost)
+        PUBLIC_URL = "http://localhost:8000"
+    else:
+        # Production окружение (сервер)
+        PUBLIC_URL = "https://mlediamant.com"
+
+print(f"📸 PUBLIC_URL: {PUBLIC_URL}")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 UPLOAD_DIR = BASE_DIR / "static" / "uploads"

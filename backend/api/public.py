@@ -30,6 +30,78 @@ class BookingCreate(BaseModel):
     notes: Optional[str] = None
 
 
+class ContactForm(BaseModel):
+    name: str
+    email: Optional[str] = None
+    message: str
+
+
+@router.post("/send-message")
+async def send_contact_message(form: ContactForm):
+    """Отправка сообщения с контактной формы"""
+    try:
+        from utils.logger import log_info, log_error
+        from bot import get_bot
+        from utils.email import send_email_async
+        from integrations.telegram_bot import send_telegram_alert
+        
+        # Логируем
+        log_info(f"📩 New message from {form.name}: {form.message}", "public_api")
+        
+        # 1. Получаем email администратора из переменных окружения
+        import os
+        admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
+        
+        # 2. Отправляем уведомление администратору по Email
+        if admin_email:
+            subject = f"📩 Новая заявка с сайта: {form.name}"
+            message_text = (
+                f"Имя: {form.name}\n"
+                f"Email: {form.email or 'Не указан'}\n"
+                f"Сообщение:\n{form.message}"
+            )
+            
+            await send_email_async([admin_email], subject, message_text)
+            log_info(f"Admin notification sent to {admin_email}", "public_api")
+        else:
+            log_info("No admin emails found to send notification", "public_api")
+
+        # 3. Отправляем подтверждение пользователю (если есть email)
+        if form.email:
+            user_subject = "Ваша заявка принята | M.Le Diamant"
+            user_message = (
+                f"Здравствуйте, {form.name}!\n\n"
+                f"Спасибо за ваше обращение. Мы получили вашу заявку и свяжемся с вами в ближайшее время.\n\n"
+                f"С уважением,\nКоманда M.Le Diamant"
+            )
+            await send_email_async([form.email], user_subject, user_message)
+
+        # 4. Отправляем уведомление в Telegram
+        try:
+            telegram_message = (
+                f"📩 <b>Новая заявка с сайта!</b>\n\n"
+                f"👤 <b>Имя:</b> {form.name}\n"
+                f"📧 <b>Email:</b> {form.email or 'Не указан'}\n\n"
+                f"📝 <b>Сообщение:</b>\n{form.message}"
+            )
+            
+            # Отправляем в Telegram (chat_id берется из salon_settings)
+            telegram_result = await send_telegram_alert(telegram_message)
+            
+            if telegram_result.get("success"):
+                log_info("Telegram notification sent successfully", "public_api")
+            else:
+                log_error(f"Failed to send Telegram notification: {telegram_result.get('error')}", "public_api")
+        except Exception as e:
+            log_error(f"Error sending Telegram notification: {e}", "public_api")
+            
+        return {"success": True, "message": "Message sent successfully"}
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error sending message: {e}", "public_api")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/salon-info")
 async def get_salon_info():
     """Публичная информация о салоне (из БД)"""
