@@ -27,9 +27,9 @@ async def get_public_employees(
     
     try:
         # Определяем поля для перевода
-        name_field = f'full_name_{language}' if language != 'ru' else 'full_name'
-        position_field = f'position_{language}' if language != 'ru' else 'position'
-        bio_field = f'bio_{language}' if language != 'ru' else 'bio'
+        name_field = f'full_name_{language}'
+        position_field = f'position_{language}'
+        bio_field = f'bio_{language}'
         
         query = f"""
             SELECT 

@@ -11,6 +11,8 @@ interface TeamMember {
   image: string;
 }
 
+import { apiClient } from "../src/api/client";
+
 export function MastersSection() {
   const { language, t } = useLanguage();
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -19,22 +21,25 @@ export function MastersSection() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        // Use the same API endpoint as other pages
-        const response = await fetch('/api/employees?active_only=true');
-        const data = await response.json();
+        // Use the public API endpoint which handles translations
+        const data = await apiClient.getPublicEmployees(language);
 
-        // Map employees to team members with fixed photo URLs
-        const employees = data.employees || [];
+        // The API returns a list of employees with translated fields
+        // data is List[Dict] -> Array<Employee>
 
-        const teamMembers = employees.map((emp: any) => ({
-          id: emp.id,
-          name: emp.full_name,
-          role: emp[`position_${language}`] || emp.position_ru || emp.position || '',
-          specialty: emp[`bio_${language}`] || emp.bio_ru || emp.specialization || '',
-          image: getPhotoUrl(emp.photo) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.full_name)}&background=ec4899&color=fff&size=400`
-        }));
+        if (Array.isArray(data)) {
+          const teamMembers = data.map((emp: any) => ({
+            id: emp.id,
+            name: emp.name, // Already translated by backend
+            role: emp.role, // Already translated by backend
+            specialty: emp.specialty, // Already translated by backend
+            image: getPhotoUrl(emp.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
+          }));
+          setTeam(teamMembers); // API returns sorted list
+        } else {
+          setTeam([]);
+        }
 
-        setTeam(teamMembers.reverse());
       } catch (error) {
         console.error('Error loading employees:', error);
       } finally {

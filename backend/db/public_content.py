@@ -33,13 +33,13 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         query = f"""
             SELECT 
                 id,
-                author_name as name,
+                COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name) as name,
                 rating,
                 COALESCE({text_field}, text_ru, text_en) as text,
                 avatar_url,
                 display_order,
-                COALESCE(employee_name_{language}, employee_name) as employee_name,
-                COALESCE(employee_position_{language}, employee_position) as employee_position
+                COALESCE(employee_name_{language}, employee_name_en, employee_name_ru, employee_name) as employee_name,
+                COALESCE(employee_position_{language}, employee_position_en, employee_position_ru, employee_position) as employee_position
             FROM public_reviews
             WHERE is_active = 1
             ORDER BY display_order DESC, created_at DESC

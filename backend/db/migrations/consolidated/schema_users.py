@@ -47,7 +47,18 @@ def migrate_users_schema(db_path="salon_bot.db"):
             'certificates': 'TEXT',
             'is_service_provider': 'INTEGER DEFAULT 0',
             'gender': 'TEXT',
-        }
+            # Translations
+            'position_ru': 'TEXT', 'position_en': 'TEXT', 'position_ar': 'TEXT',
+            'position_es': 'TEXT', 'position_de': 'TEXT', 'position_fr': 'TEXT',
+            'position_hi': 'TEXT', 'position_kk': 'TEXT', 'position_pt': 'TEXT',
+            
+            'bio_ru': 'TEXT', 'bio_en': 'TEXT', 'bio_ar': 'TEXT',
+            'bio_es': 'TEXT', 'bio_de': 'TEXT', 'bio_fr': 'TEXT',
+            'bio_hi': 'TEXT', 'bio_kk': 'TEXT', 'bio_pt': 'TEXT',
+            
+            'full_name_ru': 'TEXT', 'full_name_en': 'TEXT', 'full_name_ar': 'TEXT',
+            'full_name_es': 'TEXT', 'full_name_de': 'TEXT', 'full_name_fr': 'TEXT',
+            'full_name_hi': 'TEXT', 'full_name_kk': 'TEXT', 'full_name_pt': 'TEXT',
         
         # Add missing columns
         added_count = 0
