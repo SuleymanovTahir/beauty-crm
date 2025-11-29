@@ -24,7 +24,6 @@ export function MapSection({ salonInfo }: MapSectionProps) {
     <section className="py-24 px-6 lg:px-12 bg-[#f5f3ef]">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <p className="text-[#b8a574] uppercase tracking-[0.2em] mb-4">{t('galleryTag') || "LOCATION"}</p>
           <h2 className="text-[#2d2d2d] mb-6">
             {t('visitSalon') || "Visit Our Salon"}
           </h2>

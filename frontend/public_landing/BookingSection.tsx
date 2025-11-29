@@ -13,22 +13,12 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from "./LanguageContext";
 
-const defaultServices = [
-  "Маникюр",
-  "Педикюр",
-  "Окрашивание волос",
-  "Стрижка",
-  "Макияж",
-  "Уход за лицом",
-  "Другое",
-];
-
 interface BookingSectionProps {
   services?: any[];
 }
 
 export function BookingSection({ services = [] }: BookingSectionProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -40,10 +30,19 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
     comment: "",
   });
 
-  // Use services from database or fallback to default list
-  const servicesList = services.length > 0 ? services.map(s => {
-    return s[`name_${language}`] || s.name_ru || s.name;
-  }) : defaultServices;
+  // Default categories with translations
+  const getDefaultCategories = () => [
+    t('nails', { defaultValue: 'Ногти' }),
+    t('hair', { defaultValue: 'Волосы' }),
+    t('brows', { defaultValue: 'Брови и ресницы' }),
+    t('cosmetology', { defaultValue: 'Косметология' }),
+    t('otherServices', { defaultValue: 'Другое' }),
+  ];
+
+  // Extract unique categories from services
+  const servicesList = services.length > 0
+    ? Array.from(new Set(services.map(s => s.category).filter(Boolean)))
+    : getDefaultCategories();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +129,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
               <Input
                 id="phone"
                 type="tel"
-                placeholder={t('enterPhone', { defaultValue: '+7 (999) 123-45-67' })}
+                placeholder={t('enterPhone', { defaultValue: '+971 (50) 123-45-67' })}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="bg-input-background border-border/50"

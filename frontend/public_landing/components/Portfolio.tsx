@@ -38,9 +38,6 @@ export function Portfolio() {
     <section id="portfolio" className="py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-            {t('portfolioTag') || 'Портфолио'}
-          </p>
           <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
             {t('portfolioTitle') || 'Наши работы'}
           </h2>

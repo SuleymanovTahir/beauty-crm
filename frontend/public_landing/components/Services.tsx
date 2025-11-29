@@ -87,7 +87,7 @@ export function Services() {
               <TabsTrigger
                 key={category}
                 value={category}
-                className="py-4 rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm whitespace-normal min-h-[60px]"
+                className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg"
               >
                 {getTabLabel(category)}
               </TabsTrigger>
