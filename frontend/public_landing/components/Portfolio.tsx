@@ -10,7 +10,7 @@ interface PortfolioImage {
 }
 
 export function Portfolio() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [images, setImages] = useState<PortfolioImage[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,23 +50,28 @@ export function Portfolio() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {images.map((item, index) => (
-            <div
-              key={item.id || index}
-              className="group relative aspect-square overflow-hidden rounded-2xl bg-muted"
-            >
-              <img
-                src={item.image_path}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="text-primary-foreground">{item.title}</p>
+          {images.map((item: any, index) => {
+            // Get localized title
+            const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
+
+            return (
+              <div
+                key={item.id || index}
+                className="group relative aspect-square overflow-hidden rounded-2xl bg-muted"
+              >
+                <img
+                  src={item.image_path}
+                  alt={localizedTitle}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <p className="text-primary-foreground">{localizedTitle}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

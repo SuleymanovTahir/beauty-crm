@@ -21,9 +21,9 @@ export function Banners() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const loadBanners = () => {
         const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        fetch(`${API_URL}/public/banners`)
+        fetch(`${API_URL}/api/public/banners`)
             .then(res => {
                 if (!res.ok) throw new Error('Failed to fetch banners');
                 return res.json();
@@ -36,6 +36,21 @@ export function Banners() {
                 console.error('Error loading banners:', err);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        loadBanners();
+
+        // Listen for banner updates (e.g., from admin panel)
+        const handleBannerUpdate = () => {
+            loadBanners();
+        };
+
+        window.addEventListener('bannerUpdated', handleBannerUpdate);
+
+        return () => {
+            window.removeEventListener('bannerUpdated', handleBannerUpdate);
+        };
     }, []);
 
     useEffect(() => {

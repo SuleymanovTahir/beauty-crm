@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "./LanguageContext";
 
 const defaultServices = [
   "Маникюр",
@@ -28,7 +28,7 @@ interface BookingSectionProps {
 }
 
 export function BookingSection({ services = [] }: BookingSectionProps) {
-  const { t } = useTranslation(['public_landing', 'common']);
+  const { t, language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +41,9 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
   });
 
   // Use services from database or fallback to default list
-  const servicesList = services.length > 0 ? services.map(s => s.name) : defaultServices;
+  const servicesList = services.length > 0 ? services.map(s => {
+    return s[`name_${language}`] || s.name_ru || s.name;
+  }) : defaultServices;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,11 +139,11 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email', { defaultValue: 'Email' })}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder={t('enterEmail', { defaultValue: 'your@email.com' })}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="bg-input-background border-border/50"

@@ -70,7 +70,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <h3 className="text-[#2d2d2d] mb-3 tracking-wider">{t('workingHours') || "Working Hours"}</h3>
                   <p className="text-[#6b6b6b] leading-relaxed">
                     {t('monSun') || "Monday - Sunday"}<br />
-                    {salonInfo?.working_hours || "9:00 - 21:00"}
+                    {salonInfo?.hours_weekdays}
                   </p>
                 </div>
               </div>

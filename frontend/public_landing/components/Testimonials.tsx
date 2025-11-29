@@ -19,7 +19,12 @@ export function Testimonials() {
       try {
         const data = await apiClient.getPublicReviews(language);
         if (data.reviews && data.reviews.length > 0) {
-          setTestimonials(data.reviews);
+          // Map the text field based on language if available, otherwise fallback to text
+          const mappedReviews = data.reviews.map((review: any) => ({
+            ...review,
+            text: review[`text_${language}`] || review.text_ru || review.text || ""
+          }));
+          setTestimonials(mappedReviews);
         }
       } catch (error) {
         console.error('Error loading testimonials:', error);
@@ -60,9 +65,9 @@ export function Testimonials() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial) => (
+          {testimonials.map((testimonial, index) => (
             <div
-              key={testimonial.id}
+              key={testimonial.id || index}
               className="bg-card rounded-2xl p-8 border border-border/50 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex gap-1 mb-4">

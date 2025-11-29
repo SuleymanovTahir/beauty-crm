@@ -26,7 +26,10 @@ export function FAQ() {
         // Fetch FAQ
         const faqResponse = await fetch(`/api/public/faq?language=${language}`);
         const faqData = await faqResponse.json();
-        setFaqs(faqData.faq || []);
+
+        // Handle both array and object response formats
+        const faqArray = Array.isArray(faqData) ? faqData : (faqData.faq || []);
+        setFaqs(faqArray);
 
         // Fetch salon info for phone
         const salonResponse = await fetch(`/api/public/salon-info?language=${language}`);

@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode } from "react";
 
-type Language = "ru" | "en" | "ar";
+type Language = "ru" | "en" | "ar" | "de" | "es" | "fr" | "hi" | "kk" | "pt";
 
 export const translations = {
   ru: {
@@ -565,7 +565,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const currentLang = (i18n.language?.split('-')[0] || 'ru') as Language;
 
   // Ensure we have a valid language, fallback to 'ru'
-  const validLang = ['ru', 'en', 'ar'].includes(currentLang) ? currentLang : 'ru';
+  const validLang = ['ru', 'en', 'ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt'].includes(currentLang) ? currentLang : 'ru';
 
   const setLanguage = (lang: Language) => {
     i18n.changeLanguage(lang);

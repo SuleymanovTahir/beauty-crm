@@ -24,14 +24,18 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
     cursor = conn.cursor()
     
     try:
-        text_field = f'text_{language}' if language != 'ru' else 'text_ru'
+        # Determine text column based on language
+        text_field = f'text_{language}'
+        
+        # Check if column exists (safe fallback)
+        # Actually, we know we added them. But let's be safe and use COALESCE with ru/en
         
         query = f"""
             SELECT 
                 id,
                 author_name as name,
                 rating,
-                COALESCE({text_field}, text_ru) as text,
+                COALESCE({text_field}, text_ru, text_en) as text,
                 avatar_url,
                 display_order
             FROM public_reviews
@@ -71,14 +75,14 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
     cursor = conn.cursor()
     
     try:
-        question_field = f'question_{language}' if language != 'ru' else 'question_ru'
-        answer_field = f'answer_{language}' if language != 'ru' else 'answer_ru'
+        question_field = f'question_{language}'
+        answer_field = f'answer_{language}'
         
         query = f"""
             SELECT 
                 id,
-                COALESCE({question_field}, question_ru) as question,
-                COALESCE({answer_field}, answer_ru) as answer,
+                COALESCE({question_field}, question_ru, question_en) as question,
+                COALESCE({answer_field}, answer_ru, answer_en) as answer,
                 category,
                 display_order
             FROM public_faq
@@ -119,23 +123,40 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
     cursor = conn.cursor()
     
     try:
+        # Note: Gallery usually returns ALL fields because frontend might need them?
+        # But here we are returning specific fields.
+        # Wait, the previous implementation returned title_ru, description_ru hardcoded!
+        # We should return ALL localized fields or at least the requested language?
+        # The API signature doesn't take language.
+        # Let's look at how it's used.
+        # Frontend `Portfolio.tsx` calls `getPublicGallery`.
+        # It expects `title`.
+        # If we don't pass language, we should probably return ALL fields so frontend can choose?
+        # OR we should update the API to take language.
+        # `backend/api/public_content.py` -> `get_gallery` DOES NOT take language.
+        # But `backend/api/public.py` -> `get_public_gallery` DOES NOT take language.
+        
+        # Let's return ALL language columns so frontend can pick.
+        # Or better, let's just select * because we added columns to the table.
+        
         query = """
-            SELECT 
-                id,
-                title_ru,
-                description_ru,
-                image_url,
-                category,
-                display_order
-            FROM public_gallery
-            WHERE is_active = 1
-            ORDER BY display_order DESC, created_at DESC
+            SELECT *
+            FROM gallery_images
+            WHERE is_visible = 1
         """
+        
+        if category:
+            query += " AND category = ?"
+            params = [category]
+        else:
+            params = []
+            
+        query += " ORDER BY sort_order ASC, created_at DESC"
         
         if limit:
             query += f" LIMIT {limit}"
         
-        cursor.execute(query)
+        cursor.execute(query, params)
         gallery = [dict(row) for row in cursor.fetchall()]
         
         log_info(f"Получено {len(gallery)} элементов галереи", "db")

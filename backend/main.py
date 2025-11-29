@@ -125,12 +125,12 @@ app.include_router(notes_router, prefix="/api")
 # Модуль публичных страниц (опциональный)
 from modules import is_module_enabled
 if is_module_enabled('public'):
-    app.include_router(public_router, prefix="/public")
+    app.include_router(public_router, prefix="/api/public")
     app.include_router(public_content_router, prefix="/api")  # Public content API
     app.include_router(public_employees_router, prefix="/api")  # Public employees API
     app.include_router(gallery_router, prefix="/api")  # Gallery API
     app.include_router(client_auth_router, prefix="/public")  # API для клиентов
-    log_info("✅ Модуль 'public' подключен: /public/* endpoints", "startup")
+    log_info("✅ Модуль 'public' подключен: /api/public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook (/webhook)
 app.include_router(telegram_webhook_router)  # для Telegram webhook (/webhooks/telegram)

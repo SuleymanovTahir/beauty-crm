@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Layout, Star, HelpCircle, Image as ImageIcon, Megaphone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Import tab components
 import ReviewsTab from '../../components/admin/publicContent/ReviewsTab';
@@ -9,6 +10,7 @@ import GalleryTab from '../../components/admin/publicContent/GalleryTab';
 import BannersTab from '../../components/admin/publicContent/BannersTab';
 
 export default function PublicContent() {
+    const { t } = useTranslation('admin/PublicContent');
     const [activeTab, setActiveTab] = useState('reviews');
 
     return (
@@ -17,10 +19,10 @@ export default function PublicContent() {
             <div className="mb-6">
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <Layout className="w-6 h-6" />
-                    Публичный контент
+                    {t('title', 'Публичный контент')}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                    Управление отзывами, FAQ, галереей и баннерами
+                    {t('description', 'Управление отзывами, FAQ, галереей и баннерами')}
                 </p>
             </div>
 
@@ -29,19 +31,19 @@ export default function PublicContent() {
                 <TabsList className="mb-6">
                     <TabsTrigger value="reviews" className="flex items-center gap-2">
                         <Star className="w-4 h-4" />
-                        Отзывы
+                        {t('tabs.reviews', 'Отзывы')}
                     </TabsTrigger>
                     <TabsTrigger value="faq" className="flex items-center gap-2">
                         <HelpCircle className="w-4 h-4" />
-                        FAQ
+                        {t('tabs.faq', 'FAQ')}
                     </TabsTrigger>
                     <TabsTrigger value="gallery" className="flex items-center gap-2">
                         <ImageIcon className="w-4 h-4" />
-                        Галерея
+                        {t('tabs.gallery', 'Галерея')}
                     </TabsTrigger>
                     <TabsTrigger value="banners" className="flex items-center gap-2">
                         <Megaphone className="w-4 h-4" />
-                        Баннеры
+                        {t('tabs.banners', 'Баннеры')}
                     </TabsTrigger>
                 </TabsList>
 

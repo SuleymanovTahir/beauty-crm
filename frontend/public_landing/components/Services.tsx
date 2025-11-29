@@ -11,10 +11,14 @@ interface Service {
   duration: number;
   category: string;
   description?: string;
+  currency?: string;
+  name_ru?: string;
+  description_ru?: string;
+  [key: string]: any;
 }
 
 export function Services() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,8 +32,8 @@ export function Services() {
   }, []);
 
   // Helper to categorize services
-  const getCategory = (serviceCategory: string) => {
-    const cat = serviceCategory?.toLowerCase() || '';
+  const getCategory = (serviceCategory: string | null | undefined) => {
+    const cat = (serviceCategory || '')?.toLowerCase();
     if (cat.includes('маникюр') || cat.includes('педикюр') || cat.includes('manicure') || cat.includes('pedicure') || cat.includes('nails') || cat.includes('nail')) return 'nails';
     if (cat.includes('волос') || cat.includes('hair') || cat.includes('стриж') || cat.includes('cut') || cat.includes('color') || cat.includes('окрашивание')) return 'hair';
     if (cat.includes('макияж') || cat.includes('makeup') || cat.includes('бров') || cat.includes('brow') || cat.includes('ресниц') || cat.includes('lash')) return 'makeup';
@@ -91,26 +95,32 @@ export function Services() {
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
             <TabsContent key={category} value={category} className="mt-0">
               <div className="grid md:grid-cols-2 gap-x-12 gap-y-8 max-w-4xl mx-auto">
-                {categoryServices.map((service, index) => (
-                  <div key={index} className="group flex justify-between items-baseline border-b border-primary/10 pb-4 hover:border-primary/30 transition-colors">
-                    <div className="flex-1 pr-8">
-                      <h3 className="text-xl text-foreground group-hover:text-primary transition-colors">
-                        {service.name}
-                      </h3>
-                      {service.description && (
-                        <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
-                      )}
+                {categoryServices.map((service, index) => {
+                  // Get localized fields
+                  const localizedName = service[`name_${language}`] || service.name_ru || service.name;
+                  const localizedDescription = service[`description_${language}`] || service.description_ru || service.description;
+
+                  return (
+                    <div key={index} className="group flex justify-between items-baseline border-b border-primary/10 pb-4 hover:border-primary/30 transition-colors">
+                      <div className="flex-1 pr-8">
+                        <h3 className="text-xl text-foreground group-hover:text-primary transition-colors">
+                          {localizedName}
+                        </h3>
+                        {localizedDescription && (
+                          <p className="text-sm text-muted-foreground mt-1">{localizedDescription}</p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-xl font-light whitespace-nowrap">
+                          {service.price} {service.currency || 'AED'}
+                        </span>
+                        <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                          {service.duration} min
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-xl font-light whitespace-nowrap">
-                        {service.price} AED
-                      </span>
-                      <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                        {service.duration} min
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               <div className="text-center mt-12">

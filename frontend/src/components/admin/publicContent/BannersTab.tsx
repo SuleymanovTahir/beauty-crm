@@ -138,6 +138,8 @@ export default function BannersTab() {
         try {
             await apiClient.updatePublicBanner(banner.id, { is_active: nextIsActive });
             toast.success(nextIsActive ? 'Баннер активирован' : 'Баннер скрыт');
+            // Dispatch event to notify public page
+            window.dispatchEvent(new CustomEvent('bannerUpdated'));
         } catch (error) {
             toast.error('Ошибка обновления');
             loadBanners();
@@ -328,7 +330,7 @@ export default function BannersTab() {
                     {banners.map((banner) => (
                         <div
                             key={banner.id}
-                            className="group relative aspect-video rounded-xl overflow-hidden border shadow-sm bg-gray-100"
+                            className="group relative bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-44"
                         >
                             {/* Background Image */}
                             {banner.image_url ? (

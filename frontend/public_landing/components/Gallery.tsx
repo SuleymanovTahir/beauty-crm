@@ -9,7 +9,7 @@ interface GalleryImage {
 }
 
 export function Gallery() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,23 +49,28 @@ export function Gallery() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {images.map((item, index) => (
-            <div
-              key={item.id || index}
-              className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted"
-            >
-              <img
-                src={item.image_path}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="text-lg text-primary-foreground">{item.title}</p>
+          {images.map((item: any, index) => {
+            // Get localized title
+            const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
+
+            return (
+              <div
+                key={item.id || index}
+                className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted"
+              >
+                <img
+                  src={item.image_path}
+                  alt={localizedTitle}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <p className="text-lg text-primary-foreground">{localizedTitle}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

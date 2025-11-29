@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Globe, Instagram, MessageCircle } from "lucide-react";
+import { Menu, X, Globe, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "../LanguageContext";
 import logo from "../assets/logo.png";
@@ -26,15 +26,15 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
   const languages = [
-    { code: 'ru', name: 'RU', flag: '🇷🇺' },
-    { code: 'en', name: 'EN', flag: '🇬🇧' },
-    { code: 'ar', name: 'AR', flag: '🇦🇪' },
-    { code: 'es', name: 'ES', flag: '🇪🇸' },
-    { code: 'de', name: 'DE', flag: '🇩🇪' },
-    { code: 'fr', name: 'FR', flag: '🇫🇷' },
-    { code: 'hi', name: 'HI', flag: '🇮🇳' },
-    { code: 'kk', name: 'KK', flag: '🇰🇿' },
-    { code: 'pt', name: 'PT', flag: '🇵🇹' }
+    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'ar', name: 'العربية', flag: '🇦🇪' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
+    { code: 'kk', name: 'Қазақша', flag: '🇰🇿' },
+    { code: 'pt', name: 'Português', flag: '🇵🇹' }
   ];
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className={`text-sm transition-colors duration-200 ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
                   }`}
               >
-                {item.name}
+                {t(item.href.replace('#', '') + 'Tag') || item.name}
               </a>
             ))}
 
@@ -113,7 +113,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 <span className="text-sm uppercase">{language}</span>
               </button>
               {isLangMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[120px] py-1 z-50">
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[160px] py-1 z-50">
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
@@ -121,10 +121,10 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                         changeLanguage(lang.code as any);
                         setIsLangMenuOpen(false);
                       }}
-                      className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
+                      className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
                         }`}
                     >
-                      <span className="mr-2">{lang.flag}</span>
+                      <span className="text-lg">{lang.flag}</span>
                       {lang.name}
                     </button>
                   ))}
@@ -136,7 +136,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex items-center gap-4">
               {salonInfo?.instagram && (
                 <a
-                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-foreground/80 hover:text-foreground transition-colors"
@@ -151,7 +151,20 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   rel="noopener noreferrer"
                   className="text-foreground/80 hover:text-foreground transition-colors"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-5 h-5"
+                  >
+                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
+                  </svg>
                 </a>
               )}
             </div>
@@ -162,7 +175,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               }}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Записаться
+              {t('bookingTag') || 'Записаться'}
             </Button>
           </nav>
 
@@ -185,14 +198,14 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className="block text-sm text-foreground/80 hover:text-foreground transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {item.name}
+                {t(item.href.replace('#', '') + 'Tag') || item.name}
               </a>
             ))}
 
             {/* Mobile Language Switcher */}
             <div className="py-2">
               <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Язык / Language</p>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
@@ -215,7 +228,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex justify-center gap-6 py-4 border-t border-border/50">
               {salonInfo?.instagram && (
                 <a
-                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-foreground/80 hover:text-foreground transition-colors"
@@ -230,7 +243,20 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   rel="noopener noreferrer"
                   className="text-foreground/80 hover:text-foreground transition-colors"
                 >
-                  <MessageCircle className="w-6 h-6" />
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-6 h-6"
+                  >
+                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
+                  </svg>
                 </a>
               )}
             </div>
@@ -242,7 +268,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               }}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              Записаться
+              {t('bookingTag') || 'Записаться'}
             </Button>
           </nav>
         )}

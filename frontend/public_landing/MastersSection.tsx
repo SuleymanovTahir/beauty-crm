@@ -28,8 +28,8 @@ export function MastersSection() {
         const teamMembers = employees.map((emp: any) => ({
           id: emp.id,
           name: emp.full_name,
-          role: emp.position || '',
-          specialty: emp.specialization || '',
+          role: emp[`position_${language}`] || emp.position_ru || emp.position || '',
+          specialty: emp[`bio_${language}`] || emp.bio_ru || emp.specialization || '',
           image: getPhotoUrl(emp.photo) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.full_name)}&background=ec4899&color=fff&size=400`
         }));
 

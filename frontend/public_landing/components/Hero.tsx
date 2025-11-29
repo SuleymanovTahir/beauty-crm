@@ -25,7 +25,7 @@ export function Hero() {
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-    fetch(`${API_URL}/public/banners`)
+    fetch(`${API_URL}/api/public/banners`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch banners');
         return res.json();
