@@ -179,6 +179,68 @@ def translate_faq(conn):
             cursor.execute(sql, params)
             conn.commit()
 
+def translate_services(conn):
+    """Перевод услуг (названия и описания)"""
+    print("\n🛠️ Перевод услуг...")
+    cursor = conn.cursor()
+    
+    # Получаем все услуги
+    cursor.execute("SELECT id, name_ru, description_ru FROM services WHERE name_ru IS NOT NULL")
+    services = cursor.fetchall()
+    
+    total = len(services)
+    print(f"Найдено {total} услуг")
+    
+    for i, (service_id, name_ru, desc_ru) in enumerate(services):
+        if not name_ru:
+            continue
+            
+        print(f"[{i+1}/{total}] Обработка услуги: {name_ru[:40]}...")
+        
+        updates = []
+        params = []
+        
+        for lang in TARGET_LANGS:
+            # Переводим название
+            name_col = f"name_{lang}"
+            cursor.execute(f"SELECT {name_col} FROM services WHERE id = ?", (service_id,))
+            current_name = cursor.fetchone()[0]
+            
+            if not current_name and name_ru:
+                translated_name = translate_google_free_custom(name_ru, SOURCE_LANG, lang)
+                if translated_name:
+                    updates.append(f"{name_col} = ?")
+                    params.append(translated_name)
+                    print(f"  ✅ {lang} (название): {translated_name[:35]}...")
+                    time.sleep(random.uniform(DELAY_MIN, DELAY_MAX))
+                else:
+                    print(f"  ❌ {lang} (название): Ошибка")
+            else:
+                if current_name:
+                    print(f"  ⏭️ {lang} (название): Уже есть")
+            
+            # Переводим описание
+            if desc_ru:
+                desc_col = f"description_{lang}"
+                cursor.execute(f"SELECT {desc_col} FROM services WHERE id = ?", (service_id,))
+                current_desc = cursor.fetchone()[0]
+                
+                if not current_desc:
+                    translated_desc = translate_google_free_custom(desc_ru, SOURCE_LANG, lang)
+                    if translated_desc:
+                        updates.append(f"{desc_col} = ?")
+                        params.append(translated_desc)
+                        print(f"  ✅ {lang} (описание): Переведено")
+                        time.sleep(random.uniform(DELAY_MIN, DELAY_MAX))
+                    else:
+                        print(f"  ❌ {lang} (описание): Ошибка")
+                        
+        if updates:
+            params.append(service_id)
+            sql = f"UPDATE services SET {', '.join(updates)} WHERE id = ?"
+            cursor.execute(sql, params)
+            conn.commit()
+
 def main():
     if not os.path.exists(DB_PATH):
         print(f"❌ База данных не найдена: {DB_PATH}")
@@ -190,7 +252,8 @@ def main():
     try:
         translate_reviews(conn)
         translate_faq(conn)
-        print("\n✨ Готово! Все переводы обновлены.")
+        translate_services(conn)
+        print("\n✨ Готово! Все переводы обновлены (отзывы, FAQ, услуги).")
     except Exception as e:
         print(f"\n❌ Ошибка: {e}")
     finally:

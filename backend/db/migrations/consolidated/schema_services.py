@@ -25,6 +25,22 @@ def migrate_services_schema(db_path="salon_bot.db"):
         columns_to_add = {
             'position_id': 'INTEGER',
             'notes': 'TEXT',
+            # Translation columns for name
+            'name_en': 'TEXT',
+            'name_de': 'TEXT',
+            'name_es': 'TEXT',
+            'name_fr': 'TEXT',
+            'name_hi': 'TEXT',
+            'name_kk': 'TEXT',
+            'name_pt': 'TEXT',
+            # Translation columns for description
+            'description_en': 'TEXT',
+            'description_de': 'TEXT',
+            'description_es': 'TEXT',
+            'description_fr': 'TEXT',
+            'description_hi': 'TEXT',
+            'description_kk': 'TEXT',
+            'description_pt': 'TEXT',
         }
         
         # Add missing columns
