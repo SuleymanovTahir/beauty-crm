@@ -1,3 +1,4 @@
+// /frontend/src/components/layouts/AdminLayout.tsx
 import { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';

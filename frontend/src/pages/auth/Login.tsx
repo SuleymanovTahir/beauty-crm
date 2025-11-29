@@ -1,3 +1,4 @@
+// /frontend/src/pages/auth/Login.tsx
 // frontend/src/pages/auth/Login.tsx
 // Замените весь файл на этот код:
 

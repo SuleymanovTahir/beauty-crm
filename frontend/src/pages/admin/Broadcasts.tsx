@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
 import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';

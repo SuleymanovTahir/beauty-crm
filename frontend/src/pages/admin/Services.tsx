@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Services.tsx
 // frontend/src/pages/admin/Services.tsx - С ВКЛАДКАМИ ДЛЯ СПЕЦПАКЕТОВ И НОВЫМИ ПОЛЯМИ
 import { useState, useEffect } from 'react';
 import { Scissors, Search, Plus, Edit, Trash2, Loader, AlertCircle, Gift, Tag, Calendar, Clock } from 'lucide-react';

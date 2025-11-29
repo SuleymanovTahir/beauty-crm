@@ -1,3 +1,4 @@
+// /frontend/src/components/layouts/SalesLayout.tsx
 import { useState, useMemo, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';

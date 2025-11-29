@@ -1,3 +1,4 @@
+// /frontend/src/pages/employee/Profile.tsx
 // frontend/src/pages/employee/Profile.tsx
 // ✅ ПОЛНАЯ ВЕРСИЯ С ВСЕМИ УЛУЧШЕНИЯМИ
 

@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/EditUser.tsx
 // frontend/src/pages/admin/EditUser.tsx
 import React, { useState, useEffect } from 'react';
 import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield } from 'lucide-react';

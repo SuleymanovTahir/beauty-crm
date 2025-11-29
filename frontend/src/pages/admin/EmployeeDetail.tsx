@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/EmployeeDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, Edit, Search } from 'lucide-react';

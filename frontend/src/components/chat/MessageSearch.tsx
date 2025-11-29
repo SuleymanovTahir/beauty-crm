@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/MessageSearch.tsx
 import { useState, useEffect } from 'react';
 import { Search, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { Input } from '../ui/input';

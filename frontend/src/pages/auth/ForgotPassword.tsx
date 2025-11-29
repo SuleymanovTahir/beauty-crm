@@ -1,3 +1,4 @@
+// /frontend/src/pages/auth/ForgotPassword.tsx
 import React, { useState } from "react";
 import { Mail, ArrowLeft, Loader, CheckCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";

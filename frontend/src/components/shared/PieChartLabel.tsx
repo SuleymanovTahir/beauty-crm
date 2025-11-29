@@ -1,3 +1,4 @@
+// /frontend/src/components/shared/PieChartLabel.tsx
 import { smartTruncate } from '../../utils/text';
 
 export const customPieLegend = (props: any) => {

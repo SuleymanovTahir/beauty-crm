@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/PublicContent.tsx
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Layout, Star, HelpCircle, Image as ImageIcon, Megaphone } from 'lucide-react';

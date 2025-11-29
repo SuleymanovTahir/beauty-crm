@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/EmployeePayroll.tsx
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';

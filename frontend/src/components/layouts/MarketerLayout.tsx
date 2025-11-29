@@ -1,3 +1,4 @@
+// /frontend/src/components/layouts/MarketerLayout.tsx
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useTranslation } from 'react-i18next';

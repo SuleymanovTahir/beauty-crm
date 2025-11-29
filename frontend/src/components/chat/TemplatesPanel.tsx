@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/TemplatesPanel.tsx
 import { useState, useEffect } from 'react';
 import { FileText, X, Search, Clock, Plus, Trash2, Edit2, Save, Loader } from 'lucide-react';
 import { Button } from '../ui/button';

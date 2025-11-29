@@ -1,3 +1,4 @@
+// /frontend/src/pages/auth/ResetPassword.tsx
 import React, { useState, useEffect } from "react";
 import { Lock, Loader, CheckCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";

@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Settings.tsx
 import React, { useState, useEffect } from 'react';
 
 import { Settings as SettingsIcon, Globe, Bell, Shield, Mail, Smartphone, Bot, Plus, Edit, Trash2, Loader, AlertCircle, User, Lock, Camera, Save, Send, MessageCircle, Instagram, Users, Eye, History, Phone, Calendar, Briefcase, Award, Star, FileText, Upload } from 'lucide-react';

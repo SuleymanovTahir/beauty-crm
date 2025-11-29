@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/EmployeeSchedule.tsx
 import { useState, useEffect } from 'react';
 import { Copy, Trash2, Plus, X } from 'lucide-react';
 import { Button } from '../ui/button';

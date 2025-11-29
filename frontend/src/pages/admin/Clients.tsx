@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Clients.tsx
 // frontend/src/pages/admin/Clients.tsx - ИСПРАВЛЕННАЯ ВЕРСИЯ
 import { useState, useEffect, useRef, useCallback } from "react";
 import {

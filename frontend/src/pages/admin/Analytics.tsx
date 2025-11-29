@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Analytics.tsx
 //src/pages/admin/Analytics.tsx
 import { useState, useEffect } from 'react';
 import { BarChart3, Download, RefreshCw, AlertCircle, Loader } from 'lucide-react';

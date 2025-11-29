@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/NotesPanel.tsx
 import { useState, useEffect } from 'react';
 import { StickyNote, X, Plus, Trash2, Loader, Edit2, Save } from 'lucide-react';
 import { Button } from '../ui/button';

@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/WorkScheduleTab.tsx
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Clock, Save, AlertCircle } from 'lucide-react';

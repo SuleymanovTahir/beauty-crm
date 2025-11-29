@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/Dashboard.tsx
 //src/pages/Dashboard.tsx
 import { useEffect, useState } from 'react';
 import { Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, TrendingUp, Calendar, CheckCircle } from 'lucide-react';

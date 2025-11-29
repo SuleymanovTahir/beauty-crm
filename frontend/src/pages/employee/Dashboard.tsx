@@ -1,3 +1,4 @@
+// /frontend/src/pages/employee/Dashboard.tsx
 import { useEffect, useState } from 'react';
 import {  Clock, AlertCircle } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';

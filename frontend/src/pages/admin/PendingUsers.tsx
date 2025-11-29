@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/PendingUsers.tsx
 import React, { useState, useEffect } from "react";
 import { CheckCircle, XCircle, Mail, User, Calendar, Loader, Shield } from "lucide-react";
 import { Button } from "../../components/ui/button";

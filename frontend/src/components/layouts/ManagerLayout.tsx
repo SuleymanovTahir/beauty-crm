@@ -1,3 +1,4 @@
+// /frontend/src/components/layouts/ManagerLayout.tsx
 //src/components/ManagerLayout.tsx
 import { useState, useMemo, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';

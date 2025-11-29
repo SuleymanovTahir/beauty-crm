@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/ServiceSelector.tsx
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Checkbox } from '../ui/checkbox';

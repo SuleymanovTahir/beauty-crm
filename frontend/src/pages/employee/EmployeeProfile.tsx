@@ -1,3 +1,4 @@
+// /frontend/src/pages/employee/EmployeeProfile.tsx
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Save, AlertCircle, Upload, Camera, Loader, Instagram, Phone } from 'lucide-react';
 import { Button } from '../../components/ui/button';

@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/EmployeeSettings.tsx
 import { useTranslation } from 'react-i18next';
 
 interface Employee {

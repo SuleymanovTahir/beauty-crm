@@ -1,3 +1,4 @@
+// /frontend/src/components/ui/skeleton.tsx
 import { cn } from "./utils";
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {

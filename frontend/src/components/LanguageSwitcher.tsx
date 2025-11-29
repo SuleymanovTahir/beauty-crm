@@ -1,3 +1,4 @@
+// /frontend/src/components/LanguageSwitcher.tsx
 import { Globe, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
