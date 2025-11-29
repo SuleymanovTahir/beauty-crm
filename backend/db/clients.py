@@ -26,9 +26,9 @@ def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female')
     
     # Gender-based fallback
     if gender == 'male':
-        return '/static/avatars/default_male.png'
+        return '/static/avatars/default_male.webp'
     else:  # female or other or None
-        return '/static/avatars/default_female.png'
+        return '/static/avatars/default_female.webp'
 
 
 # Ensure the clients table has the new columns required for import

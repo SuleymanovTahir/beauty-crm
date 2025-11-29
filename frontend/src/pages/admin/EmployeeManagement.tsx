@@ -62,9 +62,9 @@ export default function EmployeeManagement() {
         if (employee.photo) return employee.photo;
         // Use gender-based default avatar
         if (employee.gender === 'male') {
-            return '/static/avatars/default_male.png';
+            return '/static/avatars/default_male.webp';
         }
-        return '/static/avatars/default_female.png';
+        return '/static/avatars/default_female.webp';
     };
 
     return (
@@ -111,8 +111,8 @@ export default function EmployeeManagement() {
                                     key={employee.id}
                                     to={`/admin/employees/${employee.id}`}
                                     className={`flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors ${id === String(employee.id)
-                                            ? 'bg-blue-50 hover:bg-blue-100'
-                                            : ''
+                                        ? 'bg-blue-50 hover:bg-blue-100'
+                                        : ''
                                         }`}
                                 >
                                     <img
@@ -122,8 +122,8 @@ export default function EmployeeManagement() {
                                     />
                                     <div className="flex-1 min-w-0">
                                         <p className={`text-sm font-medium truncate ${id === String(employee.id)
-                                                ? 'text-blue-900'
-                                                : 'text-gray-900'
+                                            ? 'text-blue-900'
+                                            : 'text-gray-900'
                                             }`}>
                                             {employee.full_name}
                                         </p>

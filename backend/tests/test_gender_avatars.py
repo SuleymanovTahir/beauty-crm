@@ -22,16 +22,15 @@ def test_avatar_helper():
     assert get_employee_avatar('/uploads/profile.jpg', 'female') == '/uploads/profile.jpg'
     print("✅ Profile pic takes precedence")
     
-    # Test male fallback
-    assert get_employee_avatar(None, 'male') == '/static/avatars/default_male.png'
-    print("✅ Male fallback works")
+    #def test_get_employee_avatar_defaults():
+    assert get_employee_avatar(None, 'male') == '/static/avatars/default_male.webp'
     
-    # Test female fallback
-    assert get_employee_avatar(None, 'female') == '/static/avatars/default_female.png'
-    print("✅ Female fallback works")
+    # Female default
+    assert get_employee_avatar(None, 'female') == '/static/avatars/default_female.webp'
     
-    # Test default (None gender)
-    assert get_employee_avatar(None, None) == '/static/avatars/default_female.png'
+    # Unknown/None default (female)
+    assert get_employee_avatar(None, 'unknown') == '/static/avatars/default_female.webp'
+    assert get_employee_avatar(None, None) == '/static/avatars/default_female.webp'
     print("✅ Default fallback (None) works")
     
     print()
@@ -83,8 +82,10 @@ def test_avatar_files_exist():
     
     import os
     
-    female_avatar = 'static/avatars/default_female.png'
-    male_avatar = 'static/avatars/default_male.png'
+    # Проверяем наличие дефолтных аватарок
+    # Assuming running from project root
+    female_avatar = 'backend/static/avatars/default_female.webp'
+    male_avatar = 'backend/static/avatars/default_male.webp'
     
     if os.path.exists(female_avatar):
         size = os.path.getsize(female_avatar)

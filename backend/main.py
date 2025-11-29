@@ -5,7 +5,18 @@ import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.responses import Response
+
+class CacheControlStaticFiles(StaticFiles):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def file_response(self, *args, **kwargs) -> Response:
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "public, max-age=31536000" # 1 year
+        return response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 import time
 import os
 
@@ -84,7 +95,7 @@ app = FastAPI(title=f"💎 {salon['name']} CRM")
 # Подключение статики и шаблонов
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static/dist")
+app.mount("/static", CacheControlStaticFiles(directory=str(BASE_DIR / "static")), name="static/dist")
 
 # Подключение роутеров
 # API роутеры (все через /api)
@@ -187,6 +198,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# GZip Compression
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
 # ===== ГЛОБАЛЬНЫЙ ОБРАБОТЧИК ОШИБОК =====
