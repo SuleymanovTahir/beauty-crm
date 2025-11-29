@@ -39,12 +39,12 @@ async def get_public_employees(
                 COALESCE({bio_field}, bio) as bio,
                 photo,
                 experience,
-                instagram_employee as instagram,
-                sort_order
+                NULL as instagram,
+                public_page_order as sort_order
             FROM users
             WHERE is_service_provider = 1 
             AND is_active = 1
-            ORDER BY sort_order DESC, full_name ASC
+            ORDER BY public_page_order DESC, full_name ASC
         """
         
         cursor.execute(query)
@@ -80,8 +80,6 @@ async def get_salon_info(
     
     - **language**: Код языка
     """
-    log_info(f"API: Запрос информации о салоне на языке {language}", "api")
-    
     conn = sqlite3.connect(DATABASE_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
