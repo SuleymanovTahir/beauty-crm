@@ -561,7 +561,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 import { useTranslation } from "react-i18next";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('public_landing');
   const currentLang = (i18n.language?.split('-')[0] || 'ru') as Language;
 
   // Ensure we have a valid language, fallback to 'ru'
