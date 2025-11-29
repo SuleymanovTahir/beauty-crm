@@ -2,15 +2,16 @@
 Миграция для таблицы галереи (портфолио и фото салона)
 """
 import sqlite3
+from pathlib import Path
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
 
-def migrate_gallery_schema():
+def migrate_gallery_schema(db_path=DATABASE_NAME):
     """Создать/обновить таблицу gallery_images"""
     log_info("🔧 Миграция схемы gallery_images...", "migration")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     
     try:
@@ -118,6 +119,80 @@ def add_show_on_public_page_to_users():
         conn.close()
 
 
+def import_gallery_images(db_path=DATABASE_NAME):
+    """Импортировать изображения из папок в базу данных"""
+    log_info("📸 Импорт изображений галереи...", "migration")
+    
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    
+    try:
+        # Проверяем, есть ли уже изображения
+        c.execute("SELECT COUNT(*) FROM gallery_images")
+        existing_count = c.fetchone()[0]
+        
+        if existing_count > 0:
+            log_info(f"✅ В базе уже есть {existing_count} изображений, пропускаем импорт", "migration")
+            return
+        
+        log_info("📦 Импортируем изображения из папок...", "migration")
+        
+        # Импортируем portfolio
+        portfolio_dir = Path('static/uploads/portfolio')
+        if portfolio_dir.exists():
+            portfolio_images = sorted(portfolio_dir.glob('*.webp'))
+            for idx, img_file in enumerate(portfolio_images, 1):
+                image_path = f'/static/uploads/portfolio/{img_file.name}'
+                title = img_file.stem
+                c.execute('''
+                    INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
+                    VALUES (?, ?, ?, ?, 1)
+                ''', ('portfolio', image_path, title, idx))
+            log_info(f"✅ Импортировано {len(portfolio_images)} portfolio изображений", "migration")
+        
+        # Импортируем salon
+        salon_dir = Path('static/uploads/salon')
+        if salon_dir.exists():
+            salon_images = sorted(salon_dir.glob('*.webp'))
+            for idx, img_file in enumerate(salon_images, 1):
+                image_path = f'/static/uploads/salon/{img_file.name}'
+                title = img_file.stem
+                c.execute('''
+                    INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
+                    VALUES (?, ?, ?, ?, 1)
+                ''', ('salon', image_path, title, idx))
+            log_info(f"✅ Импортировано {len(salon_images)} salon изображений", "migration")
+        
+        # Импортируем services
+        services_dir = Path('static/uploads/services')
+        if services_dir.exists():
+            services_images = sorted(services_dir.glob('*.webp'))
+            for idx, img_file in enumerate(services_images, 1):
+                image_path = f'/static/uploads/services/{img_file.name}'
+                title = img_file.stem
+                c.execute('''
+                    INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
+                    VALUES (?, ?, ?, ?, 1)
+                ''', ('services', image_path, title, idx))
+            log_info(f"✅ Импортировано {len(services_images)} services изображений", "migration")
+        
+        conn.commit()
+        
+        # Показываем итоги
+        c.execute('SELECT category, COUNT(*) FROM gallery_images GROUP BY category')
+        log_info("📊 Итого импортировано:", "migration")
+        for row in c.fetchall():
+            log_info(f"  {row[0]}: {row[1]} изображений", "migration")
+        
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Ошибка импорта изображений: {e}", "migration")
+        raise
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     migrate_gallery_schema()
     add_show_on_public_page_to_users()
+    import_gallery_images()

@@ -232,35 +232,35 @@ async def populate_employees():
             "full_name": "GULYA",
             "position_ru": "Мастер маникюра и ваксинга",
             "bio_ru": "Профессиональный мастер с многолетним опытом",
-            "photo": "/static/uploads/images/441b6ecd-9a03-4f20-a2de-de1486f40698.webp"
+            "photo": "/static/uploads/images/gulya.webp"
         },
         {
             "username": "jennifer",
             "full_name": "JENNIFER",
             "position_ru": "Мастер маникюра и массажист",
             "bio_ru": "Специалист по nail-дизайну и массажным техникам",
-            "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.webp"
+            "photo": "/static/uploads/images/jennifer.webp"
         },
         {
             "username": "lyazzat",
             "full_name": "LYAZZAT",
             "position_ru": "Мастер маникюра",
             "bio_ru": "Эксперт по уходу за ногтями",
-            "photo": "/static/uploads/images/854ee77e-054e-492e-aed3-787c76f3633e.webp"
+            "photo": "/static/uploads/images/lyazzat.webp"
         },
         {
             "username": "mestan",
             "full_name": "MESTAN",
             "position_ru": "Парикмахер",
             "bio_ru": "Стилист-парикмахер с креативным подходом",
-            "photo": "/static/uploads/images/3443e417-512f-4a9d-9c07-03abb97e90f5.webp"
+            "photo": "/static/uploads/images/mestan.webp"
         },
         {
             "username": "simo",
             "full_name": "SIMO",
             "position_ru": "Парикмахер",
             "bio_ru": "Мастер стрижек и окрашивания",
-            "photo": "/static/uploads/images/68da6f2b-69f9-4c02-b382-f3bfe08190a5.webp"
+            "photo": "/static/uploads/images/simo.webp"
         }
     ]
     

@@ -68,6 +68,9 @@ def run_all_migrations():
         migrate_bot_schema,
         migrate_salon_schema,
         migrate_other_schema,
+        migrate_gallery_schema,
+        add_show_on_public_page_to_users,
+        import_gallery_images,
     )
     
     results["consolidated/users"] = run_migration_function(
@@ -104,6 +107,23 @@ def run_all_migrations():
         migrate_other_schema,
         "Все остальные таблицы"
     )
+    
+    results["consolidated/gallery"] = run_migration_function(
+        migrate_gallery_schema,
+        "Все изменения таблицы gallery_images"
+    )
+    
+    # Add show_on_public_page to users (part of gallery feature)
+    try:
+        add_show_on_public_page_to_users()
+    except Exception as e:
+        print(f"⚠️  Предупреждение при добавлении show_on_public_page: {e}")
+    
+    # Import gallery images from disk
+    try:
+        import_gallery_images()
+    except Exception as e:
+        print(f"⚠️  Предупреждение при импорте изображений галереи: {e}")
 
     # ========================================================================
     # ИТОГИ
