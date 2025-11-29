@@ -7,57 +7,54 @@ import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from '../public_landing/LanguageContext';
 
-// Admin Pages
-import AdminLayout from './components/layouts/AdminLayout';
-import AdminDashboard from './pages/admin/Dashboard';
-import Bookings from './pages/admin/Bookings';
-import BookingDetail from './pages/admin/BookingDetail';
-import Analytics from './pages/admin/Analytics';
-import Services from './pages/admin/Services';
-import Clients from './pages/admin/Clients';
-import ClientDetail from './pages/admin/ClientDetail';
-import CreateUser from './pages/admin/CreateUser';
-import Users from './pages/admin/Users';
-import Calendar from './pages/admin/Calendar';
-import Settings from './pages/admin/Settings';
-import BotSettings from './pages/admin/BotSettings';
-import PendingUsers from './pages/admin/PendingUsers';
-import PermissionManagement from './pages/admin/PermissionManagement';
-import PlansManagement from './pages/admin/PlansManagement';
-import PublicContent from './pages/admin/PublicContent';
-import EmployeeDetail from './pages/admin/EmployeeDetail';
-import EmployeeManagement from './pages/admin/EmployeeManagement';
+// Lazy load pages
+const AdminLayout = React.lazy(() => import('./components/layouts/AdminLayout'));
+const AdminDashboard = React.lazy(() => import('./pages/admin/Dashboard'));
+const Bookings = React.lazy(() => import('./pages/admin/Bookings'));
+const BookingDetail = React.lazy(() => import('./pages/admin/BookingDetail'));
+const Analytics = React.lazy(() => import('./pages/admin/Analytics'));
+const Services = React.lazy(() => import('./pages/admin/Services'));
+const Clients = React.lazy(() => import('./pages/admin/Clients'));
+const ClientDetail = React.lazy(() => import('./pages/admin/ClientDetail'));
+const CreateUser = React.lazy(() => import('./pages/admin/CreateUser'));
+const Users = React.lazy(() => import('./pages/admin/Users'));
+const Calendar = React.lazy(() => import('./pages/admin/Calendar'));
+const Settings = React.lazy(() => import('./pages/admin/Settings'));
+const BotSettings = React.lazy(() => import('./pages/admin/BotSettings'));
+const PendingUsers = React.lazy(() => import('./pages/admin/PendingUsers'));
+const PermissionManagement = React.lazy(() => import('./pages/admin/PermissionManagement'));
+const PlansManagement = React.lazy(() => import('./pages/admin/PlansManagement'));
+const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
+const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
+const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 
-// Manager Pages
-import ManagerLayout from './components/layouts/ManagerLayout';
-import ManagerDashboard from './pages/manager/Dashboard';
-import Chat from './pages/manager/Chat';
-import Funnel from './pages/manager/Funnel';
-import ManagerSettings from './pages/manager/Settings';
+const ManagerLayout = React.lazy(() => import('./components/layouts/ManagerLayout'));
+const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
+const Chat = React.lazy(() => import('./pages/manager/Chat'));
+const Funnel = React.lazy(() => import('./pages/manager/Funnel'));
+const ManagerSettings = React.lazy(() => import('./pages/manager/Settings'));
 
-import SalesLayout from './components/layouts/SalesLayout';
-import MarketerLayout from './components/layouts/MarketerLayout';
-import InternalChat from './components/shared/InternalChat';
+const SalesLayout = React.lazy(() => import('./components/layouts/SalesLayout'));
+const MarketerLayout = React.lazy(() => import('./components/layouts/MarketerLayout'));
+const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 
-// Employee Pages
-import EmployeeLayout from './components/layouts/EmployeeLayout';
-import EmployeeDashboard from './pages/employee/Dashboard';
-import EmployeeProfile from './pages/employee/Profile';
+const EmployeeLayout = React.lazy(() => import('./components/layouts/EmployeeLayout'));
+const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
+const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
 
-// Public Pages
-import PublicLayout from './components/layouts/PublicLayout';
-import PriceList from './pages/public/PriceList';
-import Success from './pages/public/Success';
-import About from './pages/public/About';
-import Contacts from './pages/public/Contacts';
-import Cooperation from './pages/public/Cooperation';
-import FAQ from './pages/public/FAQ';
-import EditUser from './pages/admin/EditUser';
-import UserCabinet from './pages/public/UserCabinet';
-import DataDeletion from './pages/public/DataDeletion';
-import Booking from './pages/public/Booking';
-import ClientCabinet from './pages/public/ClientCabinet';
-import RateUs from './pages/public/RateUs';
+const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
+const PriceList = React.lazy(() => import('./pages/public/PriceList'));
+const Success = React.lazy(() => import('./pages/public/Success'));
+const About = React.lazy(() => import('./pages/public/About'));
+const Contacts = React.lazy(() => import('./pages/public/Contacts'));
+const Cooperation = React.lazy(() => import('./pages/public/Cooperation'));
+const FAQ = React.lazy(() => import('./pages/public/FAQ'));
+const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
+const UserCabinet = React.lazy(() => import('./pages/public/UserCabinet'));
+const DataDeletion = React.lazy(() => import('./pages/public/DataDeletion'));
+const Booking = React.lazy(() => import('./pages/public/Booking'));
+const ClientCabinet = React.lazy(() => import('./pages/public/ClientCabinet'));
+const RateUs = React.lazy(() => import('./pages/public/RateUs'));
 
 // New Public Landing Pages
 import { LandingPage } from '../public_landing/pages/LandingPage';
@@ -65,12 +62,11 @@ import { PrivacyPolicy as PrivacyPolicyNew } from '../public_landing/pages/publi
 import { TermsOfUse as TermsOfUseNew } from '../public_landing/pages/public_landing__TermsOfUse';
 import { ServiceDetail } from '../public_landing/pages/ServiceDetail';
 
-// Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import VerifyEmail from './pages/auth/VerifyEmail';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
+const Login = React.lazy(() => import('./pages/auth/Login'));
+const Register = React.lazy(() => import('./pages/auth/Register'));
+const VerifyEmail = React.lazy(() => import('./pages/auth/VerifyEmail'));
+const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/auth/ResetPassword'));
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
@@ -132,231 +128,242 @@ export default function App() {
     <ThemeProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
-          <Routes>
-            {/* Auth Routes */}
-            <Route
-              path="/login"
-              element={
-                currentUser ? (
-                  // ✅ ОБНОВИ РЕДИРЕКТ
-                  currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
-                    currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
-                      currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                        currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
-                          currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
-                            currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
-                              <Navigate to="/" replace />
-                ) : (
-                  <Login />
-                )
-              }
-            />
-
-            <Route
-              path="/register"
-              element={
-                currentUser ? (
-                  <Navigate to="/admin/dashboard" replace />
-                ) : (
-                  <Register />
-                )
-              }
-            />
-
-            <Route
-              path="/verify-email"
-              element={<VerifyEmail />}
-            />
-
-            <Route
-              path="/forgot-password"
-              element={<ForgotPassword />}
-            />
-
-            <Route
-              path="/reset-password"
-              element={<ResetPassword />}
-            />
-
-            {/* Admin Routes - Protected */}
-            <Route
-              path="/admin/*"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={!!currentUser}
-                  requiredRole="admin"
-                  currentRole={currentUser?.role}
-                  element={
-                    <AdminLayout
-                      user={currentUser}
-                      onLogout={handleLogout}
-                    />
-                  }
-                />
-              }
-            >
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="bookings" element={<Bookings />} />
-              <Route path="bookings/:id" element={<BookingDetail />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="funnel" element={<Funnel />} />
-              <Route path="services" element={<Services />} />
-              <Route path="clients" element={<Clients />} />
-              <Route path="clients/:id" element={<ClientDetail />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="users" element={<Users />} />
-              <Route path="users/:id" element={<EmployeeDetail />} />
-              <Route path="employees" element={<EmployeeManagement />} />
-              <Route path="employees/:id" element={<EmployeeManagement />} />
-              <Route path="users/create" element={<CreateUser />} />
-              <Route path="users/pending" element={<PendingUsers />} />
-              <Route path="users/permissions" element={<PermissionManagement />} />
-              <Route path="users/:identifier/edit" element={<EditUser />} />
-              <Route path="plans" element={<PlansManagement />} />
-              <Route path="calendar" element={<Calendar />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="bot-settings" element={<BotSettings />} />
-              <Route path="public-content" element={<PublicContent />} />
-              <Route path="" element={<Navigate to="dashboard" replace />} />
-            </Route>
-
-            {/* Manager Routes - Protected */}
-            <Route
-              path="/manager/*"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={!!currentUser}
-                  requiredRole="manager"
-                  currentRole={currentUser?.role}
-                  element={
-                    <ManagerLayout
-                      user={currentUser}
-                      onLogout={handleLogout}
-                    />
-                  }
-                />
-              }
-            >
-              <Route path="dashboard" element={<ManagerDashboard />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="funnel" element={<Funnel />} />
-              <Route path="clients" element={<Clients />} />
-              <Route path="settings" element={<ManagerSettings />} />
-              <Route path="bot-settings" element={<BotSettings />} />
-              <Route path="" element={<Navigate to="dashboard" replace />} />
-            </Route>
-
-            {/* Sales Routes - Protected */}
-            <Route
-              path="/sales/*"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={!!currentUser}
-                  requiredRole="sales"
-                  currentRole={currentUser?.role}
-                  element={
-                    <SalesLayout
-                      user={currentUser}
-                      onLogout={handleLogout}
-                    />
-                  }
-                />
-              }
-            >
-              <Route path="clients" element={<Clients />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="internal-chat" element={<InternalChat />} />
-              <Route path="" element={<Navigate to="clients" replace />} />
-            </Route>
-
-            {/* Marketer Routes - Protected */}
-            <Route
-              path="/marketer/*"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={!!currentUser}
-                  requiredRole="marketer"
-                  currentRole={currentUser?.role}
-                  element={
-                    <MarketerLayout
-                      user={currentUser}
-                      onLogout={handleLogout}
-                    />
-                  }
-                />
-              }
-            >
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="internal-chat" element={<InternalChat />} />
-              <Route path="" element={<Navigate to="analytics" replace />} />
-            </Route>
-
-            {/* Employee Routes - Protected */}
-            <Route
-              path="/employee/*"
-              element={
-                <ProtectedRoute
-                  isAuthenticated={!!currentUser}
-                  requiredRole="employee"
-                  currentRole={currentUser?.role}
-                  element={
-                    <EmployeeLayout
-                      user={currentUser}
-                      onLogout={handleLogout}
-                    />
-                  }
-                />
-              }
-            >
-              <Route path="dashboard" element={<EmployeeDashboard />} />
-              <Route path="profile" element={<EmployeeProfile />} />
-              <Route path="calendar" element={<Calendar employeeFilter={true} />} />
-              <Route path="" element={<Navigate to="dashboard" replace />} />
-            </Route>
-
-            {/* New Public Routes (Standalone) */}
-            <Route element={<LanguageProvider><Outlet /></LanguageProvider>}>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/service/:category" element={<ServiceDetail />} />
-              <Route path="/terms" element={<TermsOfUseNew />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
-            </Route>
-
-            {/* Public Routes using PublicLayout */}
-            <Route element={<PublicLayout />}>
-              {/* <Route index element={<Home />} /> */}
-              <Route path="price-list" element={<PriceList />} />
-              <Route path="booking" element={<Booking />} />
-              <Route path="client/cabinet" element={<ClientCabinet />} />
-              <Route path="success" element={<Success />} />
-              {/* <Route path="terms" element={<Terms />} /> */}
-              {/* <Route path="privacy-policy" element={<PrivacyPolicy />} /> */}
-              <Route path="about" element={<About />} />
-              <Route path="contacts" element={<Contacts />} />
-              <Route path="cooperation" element={<Cooperation />} />
-              <Route path="faq" element={<FAQ />} />
-              <Route path="data-deletion" element={<DataDeletion />} />
-              <Route path="rate-us" element={<RateUs />} />
+          <React.Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <div className="inline-block animate-spin">
+                  <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
+                </div>
+                <p className="mt-4 text-gray-600">Загрузка...</p>
+              </div>
+            </div>
+          }>
+            <Routes>
+              {/* Auth Routes */}
               <Route
-                path="cabinet"
+                path="/login"
                 element={
                   currentUser ? (
-                    currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
-                      currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                        currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
-                          <Navigate to="/" replace />
+                    // ✅ ОБНОВИ РЕДИРЕКТ
+                    currentUser.role === 'director' ? <Navigate to="/admin/dashboard" replace /> :
+                      currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                        currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
+                          currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
+                            currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
+                              currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
+                                <Navigate to="/" replace />
                   ) : (
-                    <UserCabinet />
+                    <Login />
                   )
                 }
               />
-            </Route>
 
-            {/* Redirect to home by default */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+              <Route
+                path="/register"
+                element={
+                  currentUser ? (
+                    <Navigate to="/admin/dashboard" replace />
+                  ) : (
+                    <Register />
+                  )
+                }
+              />
+
+              <Route
+                path="/verify-email"
+                element={<VerifyEmail />}
+              />
+
+              <Route
+                path="/forgot-password"
+                element={<ForgotPassword />}
+              />
+
+              <Route
+                path="/reset-password"
+                element={<ResetPassword />}
+              />
+
+              {/* Admin Routes - Protected */}
+              <Route
+                path="/admin/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="admin"
+                    currentRole={currentUser?.role}
+                    element={
+                      <AdminLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="bookings" element={<Bookings />} />
+                <Route path="bookings/:id" element={<BookingDetail />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="funnel" element={<Funnel />} />
+                <Route path="services" element={<Services />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="clients/:id" element={<ClientDetail />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="users" element={<Users />} />
+                <Route path="users/:id" element={<EmployeeDetail />} />
+                <Route path="employees" element={<EmployeeManagement />} />
+                <Route path="employees/:id" element={<EmployeeManagement />} />
+                <Route path="users/create" element={<CreateUser />} />
+                <Route path="users/pending" element={<PendingUsers />} />
+                <Route path="users/permissions" element={<PermissionManagement />} />
+                <Route path="users/:identifier/edit" element={<EditUser />} />
+                <Route path="plans" element={<PlansManagement />} />
+                <Route path="calendar" element={<Calendar />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="bot-settings" element={<BotSettings />} />
+                <Route path="public-content" element={<PublicContent />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
+
+              {/* Manager Routes - Protected */}
+              <Route
+                path="/manager/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="manager"
+                    currentRole={currentUser?.role}
+                    element={
+                      <ManagerLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="dashboard" element={<ManagerDashboard />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="funnel" element={<Funnel />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="settings" element={<ManagerSettings />} />
+                <Route path="bot-settings" element={<BotSettings />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
+
+              {/* Sales Routes - Protected */}
+              <Route
+                path="/sales/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="sales"
+                    currentRole={currentUser?.role}
+                    element={
+                      <SalesLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="clients" element={<Clients />} />
+                <Route path="chat" element={<Chat />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="" element={<Navigate to="clients" replace />} />
+              </Route>
+
+              {/* Marketer Routes - Protected */}
+              <Route
+                path="/marketer/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="marketer"
+                    currentRole={currentUser?.role}
+                    element={
+                      <MarketerLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="" element={<Navigate to="analytics" replace />} />
+              </Route>
+
+              {/* Employee Routes - Protected */}
+              <Route
+                path="/employee/*"
+                element={
+                  <ProtectedRoute
+                    isAuthenticated={!!currentUser}
+                    requiredRole="employee"
+                    currentRole={currentUser?.role}
+                    element={
+                      <EmployeeLayout
+                        user={currentUser}
+                        onLogout={handleLogout}
+                      />
+                    }
+                  />
+                }
+              >
+                <Route path="dashboard" element={<EmployeeDashboard />} />
+                <Route path="profile" element={<EmployeeProfile />} />
+                <Route path="calendar" element={<Calendar employeeFilter={true} />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
+              </Route>
+
+              {/* New Public Routes (Standalone) */}
+              <Route element={<LanguageProvider><Outlet /></LanguageProvider>}>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/service/:category" element={<ServiceDetail />} />
+                <Route path="/terms" element={<TermsOfUseNew />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+              </Route>
+
+              {/* Public Routes using PublicLayout */}
+              <Route element={<PublicLayout />}>
+                {/* <Route index element={<Home />} /> */}
+                <Route path="price-list" element={<PriceList />} />
+                <Route path="booking" element={<Booking />} />
+                <Route path="client/cabinet" element={<ClientCabinet />} />
+                <Route path="success" element={<Success />} />
+                {/* <Route path="terms" element={<Terms />} /> */}
+                {/* <Route path="privacy-policy" element={<PrivacyPolicy />} /> */}
+                <Route path="about" element={<About />} />
+                <Route path="contacts" element={<Contacts />} />
+                <Route path="cooperation" element={<Cooperation />} />
+                <Route path="faq" element={<FAQ />} />
+                <Route path="data-deletion" element={<DataDeletion />} />
+                <Route path="rate-us" element={<RateUs />} />
+                <Route
+                  path="cabinet"
+                  element={
+                    currentUser ? (
+                      currentUser.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+                        currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
+                          currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
+                            <Navigate to="/" replace />
+                    ) : (
+                      <UserCabinet />
+                    )
+                  }
+                />
+              </Route>
+
+              {/* Redirect to home by default */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </React.Suspense>
           <Toaster />
         </div>
       </Router>

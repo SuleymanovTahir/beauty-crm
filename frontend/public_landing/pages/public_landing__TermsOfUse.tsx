@@ -3,7 +3,7 @@ import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";
 import { Footer } from "../components/Footer";
-import logoImage from "../../public_landing/assets/c35944ec2655ccc8750b237ba9f12712e579cbcc.png";
+// import logoImage from "../assets/main_banner.webp";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
 import { useLanguage } from "../LanguageContext";
@@ -25,7 +25,7 @@ export function TermsOfUse() {
       <main className="pt-32 pb-24 px-6 lg:px-12">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
-            <img src={logoImage} alt="M Le Diamant" className="h-20 mx-auto mb-8" />
+            {/* <img src={logoImage} alt="M Le Diamant" className="h-20 mx-auto mb-8" /> */}
             <h1 className="text-4xl lg:text-5xl text-[#2d2d2d] mb-4">
               {t('termsTitle') || "УСЛОВИЯ ИСПОЛЬЗОВАНИЯ"}
             </h1>
@@ -165,8 +165,8 @@ export function TermsOfUse() {
                 <p className="text-[#2d2d2d] mb-2">{salonInfo?.name || 'M Le Diamant Beauty Lounge'}</p>
                 <p className="text-[#6b6b6b]">{salonInfo?.address || 'Business Bay, Dubai Marina, Internet City, DIFC'}</p>
                 <p className="text-[#6b6b6b]">{salonInfo?.city || 'Dubai'}, {salonInfo?.country || 'UAE'}</p>
-                <p className="text-[#6b6b6b] mt-4">{t('phone') || "Телефон"}: <a href={`tel:${salonInfo?.phone || '+971542478604'}`} className="text-[#b8a574] hover:underline">{salonInfo?.phone || '+971 54 247 8604'}</a></p>
-                <p className="text-[#6b6b6b]">Email: <a href={`mailto:${salonInfo?.email || 'info@mlediamant.ae'}`} className="text-[#b8a574] hover:underline">{salonInfo?.email || 'info@mlediamant.ae'}</a></p>
+                <p className="text-[#6b6b6b] mt-4">{t('phone') || "Телефон"}: <a href={`tel:${salonInfo?.phone || '+971542478604'} `} className="text-[#b8a574] hover:underline">{salonInfo?.phone || '+971 54 247 8604'}</a></p>
+                <p className="text-[#6b6b6b]">Email: <a href={`mailto:${salonInfo?.email || 'info@mlediamant.ae'} `} className="text-[#b8a574] hover:underline">{salonInfo?.email || 'info@mlediamant.ae'}</a></p>
               </div>
             </section>
           </div>
