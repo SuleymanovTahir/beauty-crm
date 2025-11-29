@@ -1,0 +1,166 @@
+{
+  "users": [
+    {
+      "id": 2,
+      "fields": {
+        "full_name": {
+          "ru": "Симо",
+          "en": "Simo",
+          "ar": "سيمو",
+          "es": "Simón",
+          "de": "Simo",
+          "fr": "Simon",
+          "hi": "सिमो",
+          "kk": "Симо",
+          "pt": "Simo"
+        },
+        "position": {
+          "ru": "Стилист",
+          "en": "Stylist",
+          "ar": "حلاق",
+          "es": "Estilista",
+          "de": "Stylist",
+          "fr": "Styliste",
+          "hi": "स्टाइलिस्ट",
+          "kk": "Стилли",
+          "pt": "Estilista"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "full_name": {
+          "ru": "Местан",
+          "en": "Mestan",
+          "ar": "ميستان",
+          "es": "Mestán",
+          "de": "Mestan",
+          "fr": "Mestan",
+          "hi": "मेस्तान",
+          "kk": "Мешан",
+          "pt": "Mestan"
+        },
+        "position": {
+          "ru": "Стилист",
+          "en": "Stylist",
+          "ar": "حلاق",
+          "es": "Estilista",
+          "de": "Stylist",
+          "fr": "Styliste",
+          "hi": "स्टाइलिस्ट",
+          "kk": "Стилли",
+          "pt": "Estilista"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "full_name": {
+          "ru": "Ляззат",
+          "en": "Lyazzat",
+          "ar": "ليازات",
+          "es": "liazzat",
+          "de": "Lyazzat",
+          "fr": "Lyazzat",
+          "hi": "लयज़त",
+          "kk": "Ляззат",
+          "pt": "Lyazzat"
+        },
+        "position": {
+          "ru": "Мастер маникюра",
+          "en": "Manicurist",
+          "ar": "مانيكير",
+          "es": "Manicuro",
+          "de": "Maniküre",
+          "fr": "Manucure",
+          "hi": "manicurist",
+          "kk": "Маникурист",
+          "pt": "Manicuro"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "full_name": {
+          "ru": "Гуля",
+          "en": "Gulya",
+          "ar": "غوليا",
+          "es": "Gulia",
+          "de": "Gulya",
+          "fr": "Gulia",
+          "hi": "गुल्या",
+          "kk": "Гуля",
+          "pt": "Gulya"
+        },
+        "position": {
+          "ru": "Мастер маникюра / Депиляция",
+          "en": "Manicurist / Depilation",
+          "ar": "مانيكير / إزالة الشعر",
+          "es": "Manicurista / Depilación",
+          "de": "Maniküristin / Enthaarung",
+          "fr": "Manucure / Epilation",
+          "hi": "मैनीक्योरिस्ट/डिपिलेशन",
+          "kk": "Маникурист / депиляция",
+          "pt": "Manicure / Depilação"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "full_name": {
+          "ru": "Дженнифер",
+          "en": "Jennifer",
+          "ar": "جنيفر",
+          "es": "jennifer",
+          "de": "Jennifer",
+          "fr": "Jennifer",
+          "hi": "जेनिफर",
+          "kk": "Дженнифер",
+          "pt": "Jennifer"
+        },
+        "position": {
+          "ru": "Мастер маникюра / Массаж",
+          "en": "Manicurist / Massage",
+          "ar": "مانيكير / تدليك",
+          "es": "Manicurista / Masaje",
+          "de": "Maniküre / Massage",
+          "fr": "Manucure / Massage",
+          "hi": "मैनीक्योरिस्ट/मालिशकर्ता",
+          "kk": "Маникурист / массаж",
+          "pt": "Manicure / Massagem"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "full_name": {
+          "ru": "Турсунай",
+          "en": "Tursunay",
+          "ar": "تورسوناي",
+          "es": "Tursunay",
+          "de": "Tursunay",
+          "fr": "Tursunay",
+          "hi": "तुरसुने",
+          "kk": "Турсунай",
+          "pt": "Tursunay"
+        },
+        "position": {
+          "ru": "Директор",
+          "en": "Director",
+          "ar": "مخرج",
+          "es": "Director",
+          "de": "Direktor",
+          "fr": "Directeur",
+          "hi": "निदेशक",
+          "kk": "Директор",
+          "pt": "Diretor"
+        }
+      }
+    }
+  ]
+}

@@ -106,12 +106,57 @@ function sortObjectKeys(obj) {
     }, {});
 }
 
+// 🌍 GOOGLE TRANSLATE - Бесплатный перевод через HTTP
+async function translateText(text, targetLang) {
+    const https = require('https');
+
+    // Если текст пустой или это не строка, возвращаем как есть
+    if (!text || typeof text !== 'string') {
+        return text;
+    }
+
+    // Кодируем текст для URL
+    const encodedText = encodeURIComponent(text);
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ru&tl=${targetLang}&dt=t&q=${encodedText}`;
+
+    return new Promise((resolve) => {
+        https.get(url, (res) => {
+            let data = '';
+
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                try {
+                    const parsed = JSON.parse(data);
+                    // Google Translate возвращает массив переводов
+                    if (parsed && parsed[0] && parsed[0][0] && parsed[0][0][0]) {
+                        resolve(parsed[0][0][0]);
+                    } else {
+                        resolve(text); // Fallback к оригиналу
+                    }
+                } catch (e) {
+                    resolve(text); // Fallback к оригиналу
+                }
+            });
+        }).on('error', () => {
+            resolve(text); // Fallback к оригиналу при ошибке
+        });
+    });
+}
+
+// Задержка для избежания rate limiting
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Основная функция синхронизации
-function syncTranslations() {
-    log('\n🔄 СИНХРОНИЗАЦИЯ ПЕРЕВОДОВ\n', 'bold');
+async function syncTranslations() {
+    log('\n🔄 СИНХРОНИЗАЦИЯ ПЕРЕВОДОВ С АВТОПЕРЕВОДОМ\n', 'bold');
 
     let totalAdded = 0;
-    let totalUpdated = 0;
+    let totalTranslated = 0;
 
     // Получаем список всех JSON файлов из эталонной локали
     const refDir = path.join(LOCALES_DIR, REFERENCE_LANG);
@@ -161,12 +206,16 @@ function syncTranslations() {
                 const langValue = getValueByKey(langContent, key);
 
                 if (langValue === undefined) {
-                    // Ключ отсутствует - добавляем
-                    // В будущем здесь можно подключить Google Translate API
-                    // Пока просто копируем оригинал или ставим пометку
-                    setValueByKey(langContent, key, refValue);
+                    // Ключ отсутствует - переводим!
+                    log(`   🌍 Перевод: "${refValue}" → ${lang}`, 'dim');
+                    const translated = await translateText(refValue, lang);
+                    setValueByKey(langContent, key, translated);
                     fileChanges++;
                     totalAdded++;
+                    totalTranslated++;
+
+                    // Небольшая задержка чтобы не забанили
+                    await delay(100);
                 }
             }
 
@@ -177,7 +226,7 @@ function syncTranslations() {
 
                 fs.writeFileSync(filePath, JSON.stringify(sortedContent, null, 2) + '\n');
                 if (!isNewFile) {
-                    log(`✏️  Обновлен ${lang}/${file}: добавлено ${fileChanges} ключей`, 'yellow');
+                    log(`✏️  Обновлен ${lang}/${file}: переведено ${fileChanges} ключей`, 'yellow');
                 }
             }
         }
@@ -185,6 +234,7 @@ function syncTranslations() {
 
     log(`\n✅ Синхронизация завершена!`, 'bold');
     log(`   Всего добавлено ключей: ${totalAdded}`, 'green');
+    log(`   Переведено через Google Translate: ${totalTranslated}`, 'cyan');
 }
 
 syncTranslations();

@@ -77,7 +77,11 @@
     "i18n:extract": "node node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js && node scripts/i18n/cleanup-duplicates.js > /dev/null 2>&1 && node scripts/i18n/fix-nested-keys.js > /dev/null 2>&1 && echo '✅ Extraction complete' && npm run i18n:check-only",
     "i18n:check": "node scripts/check-translations.js",
     "i18n:check-only": "node scripts/check-translations.js",
-    "i18n:sync": "node scripts/i18n-sync.js"
+    "i18n:sync": "node scripts/i18n-sync.js",
+    "db:i18n:extract": "cd ../backend && python3 scripts/translations/db_extract.py",
+    "db:i18n:translate": "cd ../backend && python3 scripts/translations/db_translate.py",
+    "db:i18n:sync": "cd ../backend && python3 scripts/translations/db_sync.py",
+    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync"
   },
   "overrides": {
     "glob": "^10.0.0",
