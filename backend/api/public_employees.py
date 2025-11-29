@@ -55,7 +55,7 @@ async def get_public_employees(
                 "name": row["full_name"],
                 "role": row["position"] or "Специалист",
                 "specialty": row["bio"] or "",
-                "image": row["photo"] or "/static/avatars/default_female.png",
+                "image": row["photo"] or "/static/avatars/default_female.webp",
                 "experience": row["experience"] or "",
                 "instagram": row["instagram"] or ""
             })

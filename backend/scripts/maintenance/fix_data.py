@@ -15,7 +15,17 @@ try:
 except ImportError:
     # Если запускается как standalone скрипт
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    DB_NAME = os.path.join(BASE_DIR, "salon_bot.db")
+    # Go up 2 levels to backend root (scripts/maintenance -> backend)
+    BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR)))
+    DB_NAME = os.path.join(BACKEND_DIR, "backend", "salon_bot.db")
+    
+    if not os.path.exists(DB_NAME):
+         # Try relative to script if above fails
+         DB_NAME = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(BASE_DIR))), "salon_bot.db")
+         
+    if not os.path.exists(DB_NAME):
+        # Hardcode for this environment if needed, or just try to find it
+        DB_NAME = "/Users/tahir/Desktop/beauty-crm/backend/salon_bot.db"
 
 def table_exists(cursor, table_name):
     """Проверить существование таблицы"""
@@ -525,6 +535,45 @@ Manicure Gel от 150 AED 💅
     conn.close()
 
 
+def fix_employee_genders():
+    """Исправить пол сотрудников"""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    if not table_exists(c, 'users'):
+        conn.close()
+        return
+
+    # Карта имен и пола
+    gender_map = {
+        'Simo': 'male',
+        'Gulya': 'female',
+        'Jennifer': 'female',
+        'Lyazzat': 'female',
+        'Mestan': 'female',
+        'Турсунай': 'female'
+    }
+
+    print("📝 Исправляем пол сотрудников...")
+    
+    for name, gender in gender_map.items():
+        # Используем LIKE для поиска по части имени
+        c.execute("SELECT id, full_name, gender FROM users WHERE full_name LIKE ?", (f"%{name}%",))
+        rows = c.fetchall()
+        
+        for row in rows:
+            user_id, full_name, current_gender = row
+            if current_gender != gender:
+                c.execute("UPDATE users SET gender = ? WHERE id = ?", (gender, user_id))
+                print(f"   ✅ {full_name}: {current_gender} -> {gender}")
+            else:
+                # print(f"   ✓ {full_name} уже {gender}")
+                pass
+
+    conn.commit()
+    conn.close()
+
+
 if __name__ == "__main__":
     print("=== Проверка данных в БД ===\n")
 
@@ -540,6 +589,7 @@ if __name__ == "__main__":
         fix_manager_consultation_prompt()
         fix_booking_data_collection()
         fix_missing_bot_fields()
+        fix_employee_genders()
 
         print("\n✅ Проверка завершена!")
 
