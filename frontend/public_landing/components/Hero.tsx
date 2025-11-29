@@ -103,7 +103,7 @@ export function Hero() {
                 document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
               }}
               variant="outline"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
+              className="text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
               size="lg"
             >
               <span className="text-xs sm:text-base">{t('ourServices') || "Услуги"}</span>

@@ -29,15 +29,15 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
   const languages = [
-    { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'ar', name: 'العربية', flag: '🇦🇪' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
-    { code: 'kk', name: 'Қазақша', flag: '🇰🇿' },
-    { code: 'pt', name: 'Português', flag: '🇵🇹' }
+    { code: 'ru', name: 'Русский', flag: '🇷🇺', short: 'RU' },
+    { code: 'en', name: 'English', flag: '🇬🇧', short: 'EN' },
+    { code: 'ar', name: 'العربية', flag: '🇦🇪', short: 'AR' },
+    { code: 'es', name: 'Español', flag: '🇪🇸', short: 'ES' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪', short: 'DE' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷', short: 'FR' },
+    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', short: 'HI' },
+    { code: 'kk', name: 'Қазақша', flag: '🇰🇿', short: 'KZ' },
+    { code: 'pt', name: 'Português', flag: '🇵🇹', short: 'PT' }
   ];
 
   useEffect(() => {
@@ -221,7 +221,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                       }`}
                   >
                     <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
+                    <span>{lang.short}</span>
                   </button>
                 ))}
               </div>
