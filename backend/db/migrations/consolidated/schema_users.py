@@ -59,6 +59,7 @@ def migrate_users_schema(db_path="salon_bot.db"):
             'full_name_ru': 'TEXT', 'full_name_en': 'TEXT', 'full_name_ar': 'TEXT',
             'full_name_es': 'TEXT', 'full_name_de': 'TEXT', 'full_name_fr': 'TEXT',
             'full_name_hi': 'TEXT', 'full_name_kk': 'TEXT', 'full_name_pt': 'TEXT',
+        }
         
         # Add missing columns
         added_count = 0

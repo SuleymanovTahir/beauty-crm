@@ -31,6 +31,16 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             'wifi_available': 'INTEGER DEFAULT 1',
             'google_place_id': 'TEXT',  # ✅ From add_google_fields.py
             'google_api_key': 'TEXT',   # ✅ From add_google_fields.py
+            # Translation columns for main_location (all 9 languages)
+            'main_location_ru': 'TEXT',
+            'main_location_en': 'TEXT',
+            'main_location_ar': 'TEXT',
+            'main_location_es': 'TEXT',
+            'main_location_de': 'TEXT',
+            'main_location_fr': 'TEXT',
+            'main_location_hi': 'TEXT',
+            'main_location_kk': 'TEXT',
+            'main_location_pt': 'TEXT',
         }
         
         # Add missing columns
