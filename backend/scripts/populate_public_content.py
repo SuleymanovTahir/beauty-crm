@@ -103,7 +103,7 @@ FAQ_ITEMS = [
 ]
 
 
-def populate_reviews():
+async def populate_reviews():
     """Заполнить базу отзывами с переводами"""
     log_info("⭐ Заполнение отзывов с переводами...", "populate")
     
@@ -118,7 +118,7 @@ def populate_reviews():
             log_info(f"Переводим отзыв от {review['author_name']}", "populate")
             
             # Переводим текст отзыва
-            text_translations = translate_to_all_languages(review['text_ru'], 'ru')
+            text_translations = await translate_to_all_languages(review['text_ru'], 'ru')
             
             # Вставляем в БД
             cursor.execute("""
@@ -157,7 +157,7 @@ def populate_reviews():
         conn.close()
 
 
-def populate_faq():
+async def populate_faq():
     """Заполнить базу FAQ с переводами"""
     log_info("📝 Заполнение FAQ с переводами...", "populate")
     
@@ -172,10 +172,10 @@ def populate_faq():
             log_info(f"Переводим вопрос: {faq['question_ru'][:50]}...", "populate")
             
             # Переводим вопрос
-            question_translations = translate_to_all_languages(faq['question_ru'], 'ru')
+            question_translations = await translate_to_all_languages(faq['question_ru'], 'ru')
             
             # Переводим ответ
-            answer_translations = translate_to_all_languages(faq['answer_ru'], 'ru')
+            answer_translations = await translate_to_all_languages(faq['answer_ru'], 'ru')
             
             # Вставляем в БД
             cursor.execute("""
@@ -222,7 +222,7 @@ def populate_faq():
         conn.close()
 
 
-def populate_employees():
+async def populate_employees():
     """Заполнить базу сотрудниками с фото и переводами"""
     log_info("👥 Заполнение сотрудников с фото...", "populate")
     
@@ -232,35 +232,35 @@ def populate_employees():
             "full_name": "GULYA",
             "position_ru": "Мастер маникюра и ваксинга",
             "bio_ru": "Профессиональный мастер с многолетним опытом",
-            "photo": "/static/uploads/images/441b6ecd-9a03-4f20-a2de-de1486f40698.png"
+            "photo": "/static/uploads/images/441b6ecd-9a03-4f20-a2de-de1486f40698.webp"
         },
         {
             "username": "jennifer",
             "full_name": "JENNIFER",
             "position_ru": "Мастер маникюра и массажист",
             "bio_ru": "Специалист по nail-дизайну и массажным техникам",
-            "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.png"
+            "photo": "/static/uploads/images/3fe50da8-46bc-413b-80af-39b1eae4cc06.webp"
         },
         {
             "username": "lyazzat",
             "full_name": "LYAZZAT",
             "position_ru": "Мастер маникюра",
             "bio_ru": "Эксперт по уходу за ногтями",
-            "photo": "/static/uploads/images/854ee77e-054e-492e-aed3-787c76f3633e.jpg"
+            "photo": "/static/uploads/images/854ee77e-054e-492e-aed3-787c76f3633e.webp"
         },
         {
             "username": "mestan",
             "full_name": "MESTAN",
             "position_ru": "Парикмахер",
             "bio_ru": "Стилист-парикмахер с креативным подходом",
-            "photo": "/static/uploads/images/3443e417-512f-4a9d-9c07-03abb97e90f5.jpg"
+            "photo": "/static/uploads/images/3443e417-512f-4a9d-9c07-03abb97e90f5.webp"
         },
         {
             "username": "simo",
             "full_name": "SIMO",
             "position_ru": "Парикмахер",
             "bio_ru": "Мастер стрижек и окрашивания",
-            "photo": "/static/uploads/images/68da6f2b-69f9-4c02-b382-f3bfe08190a5.jpg"
+            "photo": "/static/uploads/images/68da6f2b-69f9-4c02-b382-f3bfe08190a5.webp"
         }
     ]
     
@@ -277,8 +277,8 @@ def populate_employees():
                 log_info(f"Обновляем {emp['full_name']}", "populate")
                 
                 # Переводим должность и био
-                position_translations = translate_to_all_languages(emp['position_ru'], 'ru')
-                bio_translations = translate_to_all_languages(emp['bio_ru'], 'ru')
+                position_translations = await translate_to_all_languages(emp['position_ru'], 'ru')
+                bio_translations = await translate_to_all_languages(emp['bio_ru'], 'ru')
                 
                 # Обновляем сотрудника с фото и переводами
                 cursor.execute("""
@@ -330,8 +330,8 @@ def populate_employees():
                 log_info(f"➕ Создаем {emp['full_name']}", "populate")
                 
                 # Переводим должность и био
-                position_translations = translate_to_all_languages(emp['position_ru'], 'ru')
-                bio_translations = translate_to_all_languages(emp['bio_ru'], 'ru')
+                position_translations = await translate_to_all_languages(emp['position_ru'], 'ru')
+                bio_translations = await translate_to_all_languages(emp['bio_ru'], 'ru')
                 
                 # Создаем нового сотрудника
                 cursor.execute("""
@@ -445,9 +445,9 @@ async def populate_all():
     log_info("🚀 Запуск полного заполнения публичного контента...", "populate")
     try:
         update_employee_schema()
-        populate_employees()
-        populate_faq()
-        populate_reviews()
+        await populate_employees()
+        await populate_faq()
+        await populate_reviews()
         log_info("✅ Полное заполнение завершено!", "populate")
     except Exception as e:
         log_error(f"Ошибка при полном заполнении: {e}", "populate")

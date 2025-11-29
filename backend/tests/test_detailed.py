@@ -310,6 +310,16 @@ def test_master_schedule_detailed():
     test_master = "Тест Мастер Детальный"
     today = datetime.now().strftime('%Y-%m-%d')
     
+    # Вычисляем следующий понедельник для гарантированной проверки рабочего времени
+    today_dt = datetime.now()
+    days_until_monday = (7 - today_dt.weekday()) % 7
+    if days_until_monday == 0:
+        days_until_monday = 7
+    next_monday = (today_dt + timedelta(days=days_until_monday)).strftime('%Y-%m-%d')
+    
+    test_date = next_monday
+    print_info(f"Тестирование на дату: {test_date} (Следующий понедельник)")
+    
     try:
         from services.master_schedule import MasterScheduleService
 
@@ -413,9 +423,9 @@ def test_master_schedule_detailed():
             traceback.print_exc()
 
         # Шаг 7: Получение доступных слотов
-        print_step(7, 9, "Получение доступных слотов на сегодня")
+        print_step(7, 9, f"Получение доступных слотов на {test_date}")
         try:
-            slots = schedule.get_available_slots(test_master, today, duration_minutes=60)
+            slots = schedule.get_available_slots(test_master, test_date, duration_minutes=60)
             print_success(f"Доступно слотов: {len(slots)}")
             if slots:
                 print_data("Первые 5 слотов", slots[:5])
@@ -426,21 +436,21 @@ def test_master_schedule_detailed():
             traceback.print_exc()
 
         # Шаг 8: Проверка доступности
-        print_step(8, 9, "Проверка доступности в конкретное время")
+        print_step(8, 9, "Проверка доступности в конкретное время (10:00)")
         try:
-            is_available = schedule.is_master_available(test_master, today, "14:00")
+            is_available = schedule.is_master_available(test_master, test_date, "10:00")
             if is_available:
-                print_success(f"{test_master} доступен сегодня в 14:00")
+                print_success(f"{test_master} доступен {test_date} в 10:00")
             else:
-                print_warning(f"{test_master} НЕ доступен сегодня в 14:00")
+                print_warning(f"{test_master} НЕ доступен {test_date} в 10:00")
         except Exception as e:
             print_error(f"Ошибка проверки доступности: {e}")
             traceback.print_exc()
 
         # Шаг 9: Доступность всех мастеров
-        print_step(9, 9, "Получение доступности всех мастеров")
+        print_step(9, 9, f"Получение доступности всех мастеров на {test_date}")
         try:
-            all_availability = schedule.get_all_masters_availability(today)
+            all_availability = schedule.get_all_masters_availability(test_date)
             print_success(f"Получена доступность для {len(all_availability)} мастеров")
             for master_name, master_slots in list(all_availability.items())[:3]:
                 print_info(f"{master_name}: {len(master_slots)} слотов")
