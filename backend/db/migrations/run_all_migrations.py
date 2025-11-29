@@ -69,6 +69,7 @@ def run_all_migrations():
         migrate_salon_schema,
         migrate_other_schema,
         migrate_gallery_schema,
+        migrate_public_schema,
         add_show_on_public_page_to_users,
         import_gallery_images,
     )
@@ -111,6 +112,11 @@ def run_all_migrations():
     results["consolidated/gallery"] = run_migration_function(
         migrate_gallery_schema,
         "Все изменения таблицы gallery_images"
+    )
+    
+    results["consolidated/public"] = run_migration_function(
+        migrate_public_schema,
+        "Все изменения публичных таблиц (banners, reviews, faq, gallery)"
     )
     
     # Add show_on_public_page to users (part of gallery feature)

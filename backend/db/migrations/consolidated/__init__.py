@@ -13,6 +13,7 @@ from .schema_gallery import (
     add_show_on_public_page_to_users,
     import_gallery_images,
 )
+from .schema_public import migrate_public_schema
 
 __all__ = [
     # Users
@@ -33,4 +34,6 @@ __all__ = [
     'migrate_gallery_schema',
     'add_show_on_public_page_to_users',
     'import_gallery_images',
+    # Public Content
+    'migrate_public_schema',
 ]

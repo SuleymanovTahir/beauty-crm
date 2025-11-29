@@ -53,6 +53,18 @@ async def main():
     except Exception as e:
         log_error(f"❌ Ошибка при инициализации БД: {e}", "fix")
 
+    # 1.5 Public Content Schema Migration
+    try:
+        from db.migrations.consolidated.schema_public import migrate_public_schema
+        from core.config import DATABASE_NAME
+        log_info("🌐 Миграция публичного контента (banners, reviews, faq, gallery)...", "fix")
+        migrate_public_schema(DATABASE_NAME)
+        print("✅ SUCCESS: Public Content Schema Migration")
+    except ImportError:
+        log_error("⚠️  Skipping migrate_public_schema (module not found)", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при миграции публичного контента: {e}", "fix")
+
 
     # 2. Data Integrity Checks (fix_data.py) - FIXED IMPORT PATH
     try:
