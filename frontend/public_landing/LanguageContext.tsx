@@ -563,10 +563,10 @@ import { useTranslation } from "react-i18next";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const { t, i18n } = useTranslation('public_landing');
-  const currentLang = (i18n.language?.split('-')[0] || 'ru') as Language;
+  const currentLang = (i18n.language?.split('-')[0] || 'en') as Language;
 
-  // Ensure we have a valid language, fallback to 'ru'
-  const validLang = ['ru', 'en', 'ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt'].includes(currentLang) ? currentLang : 'ru';
+  // Ensure we have a valid language, fallback to 'en'
+  const validLang = ['ru', 'en', 'ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt'].includes(currentLang) ? currentLang : 'en';
 
   const setLanguage = (lang: Language) => {
     i18n.changeLanguage(lang);

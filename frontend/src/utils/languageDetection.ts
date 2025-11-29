@@ -82,8 +82,8 @@ export function getLanguageForCountry(countryCode: string): string {
     return browserLang;
   }
 
-  // Final fallback → Russian
-  return 'ru';
+  // Final fallback → English
+  return 'en';
 }
 
 export async function autoDetectAndSetLanguage(): Promise<string> {
@@ -93,7 +93,17 @@ export async function autoDetectAndSetLanguage(): Promise<string> {
     return savedLanguage;
   }
 
-  // Detect country and set language
+  // First, try to detect browser language
+  const browserLang = navigator.language.split('-')[0];
+  const supportedLanguages = ['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
+
+  // If browser language is supported, use it
+  if (supportedLanguages.includes(browserLang)) {
+    localStorage.setItem('i18nextLng', browserLang);
+    return browserLang;
+  }
+
+  // If browser language is not supported, try country-based detection
   const countryCode = await detectCountry();
   if (countryCode) {
     const language = getLanguageForCountry(countryCode);
@@ -101,10 +111,8 @@ export async function autoDetectAndSetLanguage(): Promise<string> {
     return language;
   }
 
-  // Fallback to browser language or Russian
-  const browserLang = navigator.language.split('-')[0];
-  const supportedLanguages = ['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
-  const finalLang = supportedLanguages.includes(browserLang) ? browserLang : 'ru';
+  // Final fallback to English
+  const finalLang = 'en';
   localStorage.setItem('i18nextLng', finalLang);
   return finalLang;
 }

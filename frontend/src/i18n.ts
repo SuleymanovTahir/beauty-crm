@@ -145,7 +145,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'ru',
+    fallbackLng: 'en',
     defaultNS: 'common',
     ns: namespaces,
     interpolation: {
