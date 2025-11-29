@@ -97,7 +97,7 @@ export function Services() {
 
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
             <TabsContent key={category} value={category} className="mt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {categoryServices.map((service, index) => {
                   // Get localized fields
                   const localizedName = service[`name_${language}`] || service.name_ru || service.name;

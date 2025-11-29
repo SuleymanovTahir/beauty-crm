@@ -47,7 +47,7 @@ export function Portfolio() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-6xl mx-auto">
           {images.map((item: any, index) => {
             // Get localized title
             const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
@@ -63,8 +63,8 @@ export function Portfolio() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <p className="text-primary-foreground">{localizedTitle}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-6">
+                    <p className="text-xs sm:text-base text-primary-foreground">{localizedTitle}</p>
                   </div>
                 </div>
               </div>

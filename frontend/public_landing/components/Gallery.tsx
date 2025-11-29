@@ -49,7 +49,7 @@ export function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto">
           {images.map((item: any, index) => {
             // Get localized title
             const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
@@ -65,8 +65,8 @@ export function Gallery() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <p className="text-lg text-primary-foreground">{localizedTitle}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-6">
+                    <p className="text-xs sm:text-lg text-primary-foreground">{localizedTitle}</p>
                   </div>
                 </div>
               </div>

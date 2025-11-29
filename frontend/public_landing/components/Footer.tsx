@@ -28,7 +28,7 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
     <footer id="contacts" className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* CTA Banner */}
-        <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-6 sm:p-8 mb-12 text-center">
+        <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-4 sm:p-8 mb-8 sm:mb-12 text-center">
           <h3 className="text-xl sm:text-2xl lg:text-3xl mb-4">
             {t('footerCTATitle', { defaultValue: 'Готовы к преображению?' })}
           </h3>
@@ -46,7 +46,7 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 mb-8 sm:mb-12">
           {/* About */}
           <div>
             <h3 className="text-lg sm:text-xl mb-4">{salonInfo?.name || "Beauty Salon"}</h3>
@@ -60,20 +60,20 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
             <h4 className="text-base sm:text-lg mb-4">{t('contacts') || "Контакты"}</h4>
             <div className="space-y-3 text-xs sm:text-sm text-primary-foreground/70">
               <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
+                <MapPin className="h-3 w-3 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
                 <div>
                   <p>{salonInfo?.address || "ул. Примерная, д. 10"}</p>
                   <p>{salonInfo?.city || "Москва"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
+                <Phone className="h-3 w-3 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
                 <a href={`tel:${salonInfo?.phone}`} className="hover:text-primary-foreground transition-colors">
                   {salonInfo?.phone || "+7 (999) 123-45-67"}
                 </a>
               </div>
               <div className="flex items-start gap-3">
-                <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
+                <Mail className="h-3 w-3 sm:h-5 sm:w-5 text-primary-foreground/80 mt-0.5 flex-shrink-0" />
                 <a href={`mailto:${salonInfo?.email}`} className="hover:text-primary-foreground transition-colors break-all">
                   {salonInfo?.email || "info@beautysalon.com"}
                 </a>

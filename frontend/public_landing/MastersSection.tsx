@@ -34,7 +34,7 @@ export function MastersSection() {
           image: getPhotoUrl(emp.photo) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.full_name)}&background=ec4899&color=fff&size=400`
         }));
 
-        setTeam(teamMembers);
+        setTeam(teamMembers.reverse());
       } catch (error) {
         console.error('Error loading employees:', error);
       } finally {
@@ -73,22 +73,22 @@ export function MastersSection() {
         </div>
 
         {team.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 max-w-5xl mx-auto">
             {team.map((member) => (
               <div
                 key={member.id}
                 className="group relative overflow-hidden rounded-2xl bg-card"
               >
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-square overflow-hidden">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
-                <div className="p-6 bg-gradient-to-t from-card to-transparent">
-                  <h3 className="mb-2 text-primary">{member.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-1">{member.role}</p>
+                <div className="p-3 sm:p-6 bg-gradient-to-t from-card to-transparent">
+                  <h3 className="mb-1 sm:mb-2 text-sm sm:text-base text-primary">{member.name}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-1">{member.role}</p>
                   {/* <p className="text-sm text-foreground/70">{member.specialty}</p> */}
                 </div>
               </div>
