@@ -101,23 +101,23 @@ export function FAQ() {
                     <p className="text-sm sm:text-base text-foreground/70">
                         {t('faqContactPrompt', { defaultValue: 'Не нашли ответ на свой вопрос?' })}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center flex-wrap">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
                         <Button
                             variant="outline"
                             onClick={() => window.location.href = `tel:${salonPhone}`}
-                            className="gap-2 w-full sm:w-auto sm:flex-shrink-0 sm:max-w-xs"
+                            className="w-full overflow-hidden px-4"
                         >
-                            <Phone className="w-4 h-4 flex-shrink-0" />
+                            <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
                             <span className="truncate">{t('callUs', { defaultValue: 'Позвонить' })}: {salonPhone}</span>
                         </Button>
                         <Button
                             onClick={() => {
                                 document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                             }}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 w-full sm:w-auto sm:flex-shrink-0 sm:max-w-[200px]"
+                            className="w-full overflow-hidden px-4 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
-                            <Calendar className="w-4 h-4 flex-shrink-0" />
-                            {t('bookNow', { defaultValue: "Записаться онлайн" })}
+                            <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">{t('bookNow', { defaultValue: "Записаться онлайн" })}</span>
                         </Button>
                     </div>
                 </div>
