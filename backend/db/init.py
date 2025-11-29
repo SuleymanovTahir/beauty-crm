@@ -5,6 +5,10 @@ import sqlite3
 from datetime import datetime
 import hashlib
 
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_warning
 
@@ -1040,11 +1044,11 @@ def init_database():
             os.makedirs(target_dir, exist_ok=True)
             
         photo_mapping = {
-            "simo": "Симо.jpg",
-            "mestan": "Местан.jpg",
-            "lyazzat": "Ляззат.png",
-            "gulya": "Гуля.png",
-            "jennifer": "Дженнифер.png",
+            "simo": "Симо.webp",
+            "mestan": "Местан.webp",
+            "lyazzat": "Ляззат.webp",
+            "gulya": "Гуля.webp",
+            "jennifer": "Дженнифер.webp",
         }
         
         restored_photos = {}
@@ -1074,35 +1078,35 @@ def init_database():
             "full_name": "SIMO",
             "position": "Hair Stylist",
             "role": "employee",
-            "photo": restored_photos.get("simo", "/static/uploads/images/simo.jpg")
+            "photo": restored_photos.get("simo", "/static/uploads/images/simo.webp")
         },
         {
             "username": "mestan",
             "full_name": "MESTAN",
             "position": "Hair Stylist",
             "role": "employee",
-            "photo": restored_photos.get("mestan", "/static/uploads/images/mestan.jpg")
+            "photo": restored_photos.get("mestan", "/static/uploads/images/mestan.webp")
         },
         {
             "username": "lyazzat",
             "full_name": "LYAZZAT",
             "position": "Nail Master",
             "role": "employee",
-            "photo": restored_photos.get("lyazzat", "/static/uploads/images/lyazzat.png")
+            "photo": restored_photos.get("lyazzat", "/static/uploads/images/lyazzat.webp")
         },
         {
             "username": "gulya",
             "full_name": "GULYA",
             "position": "Nail/Waxing",
             "role": "employee",
-            "photo": restored_photos.get("gulya", "/static/uploads/images/gulya.png")
+            "photo": restored_photos.get("gulya", "/static/uploads/images/gulya.webp")
         },
         {
             "username": "jennifer",
             "full_name": "JENNIFER",
             "position": "Nail Master/Massages",
             "role": "employee",
-            "photo": restored_photos.get("jennifer", "/static/uploads/images/jennifer.png")
+            "photo": restored_photos.get("jennifer", "/static/uploads/images/jennifer.webp")
         },
         {
             "username": "tursunai",

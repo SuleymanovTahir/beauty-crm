@@ -42,7 +42,7 @@ def import_photos():
     employees = get_employees(cursor)
     print(f"Found {len(employees)} employees in database.")
 
-    files = [f for f in os.listdir(SOURCE_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+    files = [f for f in os.listdir(SOURCE_DIR) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
     print(f"Found {len(files)} images in source directory.")
 
     updated_count = 0
