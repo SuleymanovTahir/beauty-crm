@@ -58,7 +58,7 @@ export function Hero() {
   const backgroundImage = heroBanner?.image_url || defaultImage;
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
       <div className="absolute inset-0">
         <img
           src={backgroundImage}
@@ -68,65 +68,65 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/40" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-48 pb-20 sm:pt-64 sm:pb-32 w-full">
-        <div className="max-w-3xl">
-          <div className="space-y-6 sm:space-y-8">
-            <div className="space-y-4">
-              {/* <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground animate-fade-in">
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 py-24 sm:py-32 w-full flex-grow flex flex-col justify-center">
+        <div className="max-w-3xl pt-16 sm:pt-32 mb-8">
+          <div className="space-y-6">
+            {/* <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground animate-fade-in">
                 {t('heroTag') || "Премиальный салон красоты"}
               </p> */}
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl tracking-tight text-primary animate-fade-in-up font-sans font-medium">
-                {heroBanner ? getTranslatedText(heroBanner.title_ru, heroBanner.title_en, heroBanner.title_ar) : (t('heroTitle') || "Ваша красота —")}
-                <br />
-                <span className="text-accent-foreground">
-                  {heroBanner ? getTranslatedText(heroBanner.subtitle_ru, heroBanner.subtitle_en, heroBanner.subtitle_ar) : (t('heroSubtitle') || "наша страсть")}
-                </span>
-              </h1>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl text-primary animate-fade-in-up leading-tight">
+              {heroBanner ? getTranslatedText(heroBanner.title_ru, heroBanner.title_en, heroBanner.title_ar) : (t('heroTitle') || "Ваша красота —")}
+              <br />
+              <span className="text-accent-foreground">
+                {heroBanner ? getTranslatedText(heroBanner.subtitle_ru, heroBanner.subtitle_en, heroBanner.subtitle_ar) : (t('heroSubtitle') || "наша страсть")}
+              </span>
+            </h1>
+          </div>
+
+          <p className="text-lg text-foreground/80 max-w-xl animate-fade-in-up mt-6 leading-relaxed">
+            {t('heroDescription') || "Откройте для себя мир изысканной красоты в атмосфере роскоши и комфорта. Профессиональный уход и безупречный сервис."}
+          </p>
+        </div>
+
+        <div className="max-w-3xl space-y-8">
+          <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 sm:gap-4 animate-fade-in-up">
+            <Button
+              onClick={() => {
+                document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
+              size="lg"
+            >
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-base">{t('bookNow') || "Записаться"}</span>
+            </Button>
+            <Button
+              onClick={() => {
+                document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              variant="outline"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
+              size="lg"
+            >
+              <span className="text-xs sm:text-base">{t('ourServices') || "Услуги"}</span>
+            </Button>
+          </div>
+
+          <PromoTimer />
+
+          {/* Trust Indicators */}
+          <div className="flex justify-between sm:justify-start sm:gap-12 pt-6 border-t border-border/30 animate-fade-in">
+            <div className="flex flex-col items-center sm:items-start">
+              <span className="text-3xl sm:text-4xl text-primary mb-1">10+</span>
+              <span className="text-sm text-muted-foreground text-center sm:text-left">{t('common:yearsExperience') || 'лет опыта'}</span>
             </div>
-
-            <p className="hidden sm:block text-base sm:text-lg text-foreground/70 max-w-xl animate-fade-in-up">
-              {t('heroDescription') || "Откройте для себя мир изысканной красоты в атмосфере роскоши и комфорта. Профессиональный уход и безупречный сервис."}
-            </p>
-
-            <div className="grid grid-cols-2 sm:flex sm:flex-row gap-3 sm:gap-4 animate-fade-in-up">
-              <Button
-                onClick={() => {
-                  document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
-                size="lg"
-              >
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-xs sm:text-base">{t('bookNow') || "Записаться"}</span>
-              </Button>
-              <Button
-                onClick={() => {
-                  document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                variant="outline"
-                className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-8 py-5 sm:py-6 shadow-md hover:shadow-lg transition-all w-full sm:w-auto"
-                size="lg"
-              >
-                <span className="text-xs sm:text-base">{t('ourServices') || "Услуги"}</span>
-              </Button>
+            <div className="flex flex-col items-center sm:items-start">
+              <span className="text-3xl sm:text-4xl text-primary mb-1">5000+</span>
+              <span className="text-sm text-muted-foreground text-center sm:text-left">{t('common:happyClients') || 'довольных клиентов'}</span>
             </div>
-
-            <PromoTimer />
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap gap-6 sm:gap-8 pt-4 sm:pt-8 border-t border-border/50 animate-fade-in">
-              <div className="flex flex-col">
-                <span className="text-2xl sm:text-3xl text-primary">10+</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience') || 'лет опыта'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl sm:text-3xl text-primary">5000+</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients') || 'довольных клиентов'}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl sm:text-3xl text-primary">100%</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee') || 'гарантия качества'}</span>
-              </div>
+            <div className="flex flex-col items-center sm:items-start">
+              <span className="text-3xl sm:text-4xl text-primary mb-1">100%</span>
+              <span className="text-sm text-muted-foreground text-center sm:text-left">{t('common:qualityGuarantee') || 'гарантия качества'}</span>
             </div>
           </div>
         </div>

@@ -1196,4 +1196,12 @@ def init_database():
     conn.commit()
     conn.close()
     
+    # Run public content schema migration
+    try:
+        from db.migrations.consolidated.schema_public import migrate_public_schema
+        migrate_public_schema(DATABASE_NAME)
+        log_info("✅ Public content tables migrated", "db")
+    except Exception as e:
+        log_warning(f"⚠️ Public content migration warning: {e}", "db")
+    
     log_info("✅ База данных инициализирована", "db")

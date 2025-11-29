@@ -443,20 +443,7 @@ async def startup_event():
     # log_info("🔧 Запуск миграций...", "startup")
     # run_all_migrations()
     
-    # ================================
-    # СВЯЗЫВАНИЕ ПОЛЬЗОВАТЕЛЕЙ С СОТРУДНИКАМИ
-    # ================================
-    # DEPRECATED: employees table consolidated into users with is_service_provider flag
-    # This migration is no longer needed
-    # from scripts.maintenance.link_users_to_employees import link_users_to_employees
-    # log_info("🔗 Проверка связей пользователей с сотрудниками...", "startup")
-    # link_result = link_users_to_employees()
-    # if link_result.get("linked", 0) > 0:
-    #     log_info(f"✅ Связано {link_result['linked']} пользователей с сотрудниками", "startup")
-    
-    # ================================
-    # МИГРАЦИИ ДЛЯ АНАЛИТИКИ И ПЛАНОВ
-    # ================================
+ 
     try:
         # Plans table is now handled by schema_other.py
         # Analytics indexes are now handled by schema_clients.py and schema_bookings.py
