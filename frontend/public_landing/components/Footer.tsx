@@ -1,5 +1,5 @@
 // /frontend/public_landing/components/Footer.tsx
-import { Instagram, Facebook, Phone, Mail, MapPin } from "lucide-react";
+import { Instagram, Facebook, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -105,6 +105,17 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
                   aria-label="Instagram"
                 >
                   <Instagram className="w-5 h-5" />
+                </a>
+              )}
+              {salonInfo?.whatsapp && (
+                <a
+                  href={`https://wa.me/${salonInfo.whatsapp.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary-foreground/10 backdrop-blur-sm flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
+                  aria-label="WhatsApp"
+                >
+                  <MessageCircle className="w-5 h-5" />
                 </a>
               )}
               {salonInfo?.facebook && (

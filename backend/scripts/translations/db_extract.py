@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 Extract translatable content from database
-Identifies all text fields that need translation
+Identifies all text fields that need translation and checks against JSON files
 """
 
 import sqlite3
 import json
 import sys
+import os
 from pathlib import Path
 
 # Add parent directory to path
@@ -20,6 +21,26 @@ from config import (
     EXTRACT_OUTPUT
 )
 
+FRONTEND_LOCALES_DIR = Path(__file__).parent.parent.parent.parent / "frontend" / "src" / "locales"
+
+def load_existing_translations():
+    """Load existing dynamic.json files for all languages"""
+    translations = {}
+    for lang in LANGUAGES:
+        if lang == SOURCE_LANGUAGE:
+            continue
+            
+        file_path = FRONTEND_LOCALES_DIR / lang / "dynamic.json"
+        if file_path.exists():
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    translations[lang] = json.load(f)
+            except json.JSONDecodeError:
+                print(f"⚠️  Warning: Could not parse {file_path}, treating as empty")
+                translations[lang] = {}
+        else:
+            translations[lang] = {}
+    return translations
 
 def extract_translatable_content():
     """
@@ -32,6 +53,7 @@ def extract_translatable_content():
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
+    existing_translations = load_existing_translations()
     results = {}
     total_missing = 0
     
@@ -43,16 +65,7 @@ def extract_translatable_content():
         where_clause = config.get("where", None)
         
         # Build SELECT query
-        select_fields = [id_field]
-        for field in fields:
-            # Add source language field
-            select_fields.append(field)
-            # Add all translation fields
-            for lang in LANGUAGES:
-                if lang != SOURCE_LANGUAGE:
-                    select_fields.append(f"{field}_{lang}")
-        
-        query = f"SELECT {', '.join(select_fields)} FROM {table_name}"
+        query = f"SELECT {id_field}, {', '.join(fields)} FROM {table_name}"
         if where_clause:
             query += f" WHERE {where_clause}"
         
@@ -77,25 +90,29 @@ def extract_translatable_content():
                     source_value = row_dict.get(field)
                     
                     # Skip if source is empty
-                    if not source_value or not source_value.strip():
+                    if not source_value or not str(source_value).strip():
                         continue
                     
+                    # Generate key: table.id.field
+                    key = f"{table_name}.{record_id}.{field}"
+                    
                     field_data = {
-                        SOURCE_LANGUAGE: source_value
+                        SOURCE_LANGUAGE: source_value,
+                        "key": key
                     }
                     
                     field_has_missing = False
                     
-                    # Check translations
+                    # Check translations in JSON files
                     for lang in LANGUAGES:
                         if lang == SOURCE_LANGUAGE:
                             continue
                         
-                        lang_field = f"{field}_{lang}"
-                        lang_value = row_dict.get(lang_field)
+                        # Check if key exists in existing translations
+                        existing_val = existing_translations.get(lang, {}).get(key)
                         
-                        if lang_value and lang_value.strip():
-                            field_data[lang] = lang_value
+                        if existing_val:
+                            field_data[lang] = existing_val
                         else:
                             field_data[lang] = None
                             field_has_missing = True
@@ -118,7 +135,7 @@ def extract_translatable_content():
         
         except sqlite3.OperationalError as e:
             print(f"  ⚠️  Error: {e}")
-            print(f"  💡 Hint: Table might be missing translation columns")
+            print(f"  💡 Hint: Check table/column names in config")
     
     conn.close()
     

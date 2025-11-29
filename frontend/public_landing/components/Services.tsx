@@ -119,9 +119,15 @@ export function Services() {
                           )}
                           {service.duration && (
                             <p className="text-sm text-muted-foreground">
-                              {String(service.duration).toLowerCase().includes('min')
-                                ? service.duration
-                                : `${service.duration} min`}
+                              {(() => {
+                                const duration = String(service.duration);
+                                // Check if duration already has time units (h, min, м, ч)
+                                if (/[a-zа-я]/i.test(duration)) {
+                                  return duration;
+                                }
+                                // If it's just a number, add 'min'
+                                return `${duration} min`;
+                              })()}
                             </p>
                           )}
                         </div>

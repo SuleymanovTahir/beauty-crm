@@ -26,8 +26,13 @@ TRANSLATION_CONFIG = {
     },
     "salon_settings": {
         "id_field": "id",
-        "fields": ["main_location"],
-        "where": None  # No filter needed
+        "fields": ["main_location", "address", "city", "country"], 
+        "where": None
+    },
+    "banners": {
+        "id_field": "id",
+        "fields": ["title", "subtitle"],
+        "where": "is_active = 1"
     }
 }
 

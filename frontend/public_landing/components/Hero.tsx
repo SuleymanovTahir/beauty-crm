@@ -117,15 +117,15 @@ export function Hero() {
             <div className="flex flex-wrap gap-6 sm:gap-8 pt-4 sm:pt-8 border-t border-border/50 animate-fade-in">
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl text-primary">10+</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('yearsExperience') || 'лет опыта'}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience') || 'лет опыта'}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl text-primary">5000+</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('happyClients') || 'довольных клиентов'}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients') || 'довольных клиентов'}</span>
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl text-primary">100%</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{t('qualityGuarantee') || 'гарантия качества'}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee') || 'гарантия качества'}</span>
               </div>
             </div>
           </div>
