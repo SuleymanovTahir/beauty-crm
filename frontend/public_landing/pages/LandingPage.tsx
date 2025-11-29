@@ -54,9 +54,6 @@ export function LandingPage() {
                 <div id="testimonials">
                     <Testimonials />
                 </div>
-                <div id="booking">
-                    <BookingSection services={services} />
-                </div>
                 <div id="gallery">
                     <Gallery />
                 </div>
@@ -65,6 +62,9 @@ export function LandingPage() {
                 </div>
                 <div id="map-section">
                     <MapSection salonInfo={salonInfo} />
+                </div>
+                <div id="booking">
+                    <BookingSection services={services} />
                 </div>
             </main>
             <Footer salonInfo={salonInfo} />
