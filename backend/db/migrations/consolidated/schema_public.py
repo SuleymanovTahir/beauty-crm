@@ -53,9 +53,50 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 avatar_url TEXT,
                 display_order INTEGER DEFAULT 0,
                 is_active INTEGER DEFAULT 1,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                
+                -- Translations for author name
+                author_name_ru TEXT, author_name_en TEXT, author_name_ar TEXT,
+                author_name_es TEXT, author_name_de TEXT, author_name_fr TEXT,
+                author_name_hi TEXT, author_name_kk TEXT, author_name_pt TEXT,
+                
+                -- Employee info (snapshot)
+                employee_name TEXT,
+                employee_name_ru TEXT, employee_name_en TEXT, employee_name_ar TEXT,
+                employee_name_es TEXT, employee_name_de TEXT, employee_name_fr TEXT,
+                employee_name_hi TEXT, employee_name_kk TEXT, employee_name_pt TEXT,
+                
+                employee_position TEXT,
+                employee_position_ru TEXT, employee_position_en TEXT, employee_position_ar TEXT,
+                employee_position_es TEXT, employee_position_de TEXT, employee_position_fr TEXT,
+                employee_position_hi TEXT, employee_position_kk TEXT, employee_position_pt TEXT
             )
         """)
+        
+        # Check and add columns if they don't exist (for existing tables)
+        c.execute("PRAGMA table_info(public_reviews)")
+        existing_columns = {col[1] for col in c.fetchall()}
+        
+        columns_to_add = {
+            'author_name_ru': 'TEXT', 'author_name_en': 'TEXT', 'author_name_ar': 'TEXT',
+            'author_name_es': 'TEXT', 'author_name_de': 'TEXT', 'author_name_fr': 'TEXT',
+            'author_name_hi': 'TEXT', 'author_name_kk': 'TEXT', 'author_name_pt': 'TEXT',
+            
+            'employee_name': 'TEXT',
+            'employee_name_ru': 'TEXT', 'employee_name_en': 'TEXT', 'employee_name_ar': 'TEXT',
+            'employee_name_es': 'TEXT', 'employee_name_de': 'TEXT', 'employee_name_fr': 'TEXT',
+            'employee_name_hi': 'TEXT', 'employee_name_kk': 'TEXT', 'employee_name_pt': 'TEXT',
+            
+            'employee_position': 'TEXT',
+            'employee_position_ru': 'TEXT', 'employee_position_en': 'TEXT', 'employee_position_ar': 'TEXT',
+            'employee_position_es': 'TEXT', 'employee_position_de': 'TEXT', 'employee_position_fr': 'TEXT',
+            'employee_position_hi': 'TEXT', 'employee_position_kk': 'TEXT', 'employee_position_pt': 'TEXT'
+        }
+        
+        for col, dtype in columns_to_add.items():
+            if col not in existing_columns:
+                print(f"  ➕ Adding column to public_reviews: {col}")
+                c.execute(f"ALTER TABLE public_reviews ADD COLUMN {col} {dtype}")
         print("  ✅ public_reviews table ensured")
         
         # 3. Create public_faq table
