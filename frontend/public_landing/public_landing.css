@@ -2087,7 +2087,7 @@
   .\[\&\[data-state\=open\]\>svg\]\:rotate-180[data-state="open"] > svg {
     rotate: 180deg;
   }
-}
+
 
 :root {
   --font-size: 16px;
