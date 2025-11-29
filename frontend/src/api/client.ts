@@ -224,19 +224,19 @@ export const apiClient = {
     apiCall('/public/salon-info'),
 
   getPublicServices: () =>
-    apiCall('/public/services'),
+    apiCall('/api/public/services'),
 
   getPublicEmployees: () =>
     apiCall('/api/employees?active_only=true'),
 
   getPublicReviews: (lang: string) =>
-    apiCall(`/public/reviews?language=${lang}`),
+    apiCall(`/api/public/reviews?language=${lang}`),
 
   getPublicFAQ: (lang: string) =>
-    apiCall(`/public/faq?language=${lang}`),
+    apiCall(`/api/public/faq?language=${lang}`),
 
   getPublicGallery: (category?: string) =>
-    apiCall(`/public/gallery${category ? `?category=${category}` : ''}`),
+    apiCall(`/api/public/gallery${category ? `?category=${category}` : ''}`),
 
   // ===== USER PROFILE ===== (ДОБАВЛЕНО)
   getUserProfile: (userId: number) =>
