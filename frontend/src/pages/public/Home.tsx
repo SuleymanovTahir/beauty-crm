@@ -94,13 +94,12 @@ const GallerySection = () => {
 export default function Home() {
   const navigate = useNavigate();
   const [services, setServices] = useState<string[]>([]);
-  const { t } = useTranslation(['public/Home', 'common']);
+  const { t, i18n } = useTranslation(['public/Home', 'common']);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const { i18n } = useTranslation();
         const currentLang = i18n.language;
         const data = await apiClient.getPublicReviews(currentLang);
         if (data && data.reviews && data.reviews.length > 0) {
@@ -133,7 +132,7 @@ export default function Home() {
     };
 
     fetchReviews();
-  }, [t]);
+  }, [i18n.language, t]);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [loadingServices, setLoadingServices] = useState(true);
   const [formData, setFormData] = useState({
