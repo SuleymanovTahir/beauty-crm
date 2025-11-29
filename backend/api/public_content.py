@@ -17,7 +17,7 @@ router = APIRouter()
 async def get_reviews(
     language: str = Query('ru', description="Language code (ru, en, ar, es, de, fr, hi, kk, pt)"),
     limit: Optional[int] = Query(None, description="Maximum number of reviews")
-) -> List[Dict]:
+) -> Dict:
     """
     Получить активные отзывы на указанном языке
     
@@ -25,25 +25,27 @@ async def get_reviews(
     - **limit**: Максимальное количество отзывов
     """
     log_info(f"API: Запрос отзывов на языке {language}", "api")
-    return get_active_reviews(language=language, limit=limit)
+    reviews = get_active_reviews(language=language, limit=limit)
+    return {"reviews": reviews}
 
 
 @router.get("/public/testimonials")
 async def get_testimonials(
     language: str = Query('ru', description="Language code"),
     limit: Optional[int] = Query(6, description="Maximum number of testimonials")
-) -> List[Dict]:
+) -> Dict:
     """
     Алиас для /public/reviews (для совместимости)
     """
-    return get_active_reviews(language=language, limit=limit)
+    reviews = get_active_reviews(language=language, limit=limit)
+    return {"reviews": reviews}
 
 
 @router.get("/public/faq")
 async def get_faq(
     language: str = Query('ru', description="Language code"),
     category: Optional[str] = Query(None, description="FAQ category")
-) -> List[Dict]:
+) -> Dict:
     """
     Получить FAQ на указанном языке
     
@@ -51,14 +53,15 @@ async def get_faq(
     - **category**: Категория (опционально)
     """
     log_info(f"API: Запрос FAQ на языке {language}", "api")
-    return get_active_faq(language=language, category=category)
+    faq = get_active_faq(language=language, category=category)
+    return {"faq": faq}
 
 
 @router.get("/public/gallery")
 async def get_gallery(
     category: Optional[str] = Query(None, description="Gallery category"),
     limit: Optional[int] = Query(None, description="Maximum number of items")
-) -> List[Dict]:
+) -> Dict:
     """
     Получить элементы галереи
     
@@ -66,4 +69,5 @@ async def get_gallery(
     - **limit**: Максимальное количество элементов
     """
     log_info(f"API: Запрос галереи", "api")
-    return get_active_gallery(category=category, limit=limit)
+    gallery = get_active_gallery(category=category, limit=limit)
+    return {"images": gallery}

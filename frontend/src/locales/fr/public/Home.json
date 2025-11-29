@@ -70,6 +70,7 @@
   },
   "testimonials": {
     "items": [],
+    "master": "Мастер",
     "subtitle": "Ce qu'ils disent de nous",
     "title": "Avis de nos clients"
   }

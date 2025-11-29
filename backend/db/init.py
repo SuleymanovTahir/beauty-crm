@@ -170,7 +170,11 @@ def init_database():
         prepayment_required INTEGER DEFAULT 0,
         parking_info TEXT,
         wifi_available INTEGER DEFAULT 1,
-        updated_at TEXT
+        updated_at TEXT,
+        main_location TEXT,
+        main_location_ru TEXT,
+        main_location_en TEXT,
+        main_location_ar TEXT
     )''')
 
     # Миграция: добавить bot_name_en и bot_name_ar если их нет
@@ -190,6 +194,17 @@ def init_database():
         c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:30'")
     if 'hours_weekends' not in columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:30'")
+    
+    # Миграция: добавить main_location
+    location_migrations = {
+        'main_location': 'TEXT',
+        'main_location_ru': 'TEXT',
+        'main_location_en': 'TEXT',
+        'main_location_ar': 'TEXT'
+    }
+    for col, col_type in location_migrations.items():
+        if col not in columns:
+            c.execute(f"ALTER TABLE salon_settings ADD COLUMN {col} {col_type}")
 
     # Таблица истории чата
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history
@@ -336,6 +351,9 @@ def init_database():
         'employee_id': 'INTEGER',
         'birthday': 'TEXT',
         'phone': 'TEXT',
+        'full_name_ru': 'TEXT',
+        'full_name_en': 'TEXT',
+        'full_name_ar': 'TEXT'
     }
 
     for column_name, column_type in user_migrations.items():
@@ -900,8 +918,33 @@ def init_database():
         avatar_url TEXT,
         is_active INTEGER DEFAULT 1,
         display_order INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        employee_name TEXT,
+        employee_name_ru TEXT,
+        employee_name_en TEXT,
+        employee_name_ar TEXT,
+        employee_position TEXT,
+        employee_position_ru TEXT,
+        employee_position_en TEXT,
+        employee_position_ar TEXT
     )''')
+    
+    # Миграция: добавить поля сотрудников в public_reviews если их нет
+    c.execute("PRAGMA table_info(public_reviews)")
+    review_columns = [col[1] for col in c.fetchall()]
+    review_migrations = {
+        'employee_name': 'TEXT',
+        'employee_name_ru': 'TEXT',
+        'employee_name_en': 'TEXT',
+        'employee_name_ar': 'TEXT',
+        'employee_position': 'TEXT',
+        'employee_position_ru': 'TEXT',
+        'employee_position_en': 'TEXT',
+        'employee_position_ar': 'TEXT'
+    }
+    for col, col_type in review_migrations.items():
+        if col not in review_columns:
+            c.execute(f"ALTER TABLE public_reviews ADD COLUMN {col} {col_type}")
 
     # Таблица публичных FAQ
     c.execute('''CREATE TABLE IF NOT EXISTS public_faq (

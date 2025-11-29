@@ -37,7 +37,9 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
                 rating,
                 COALESCE({text_field}, text_ru, text_en) as text,
                 avatar_url,
-                display_order
+                display_order,
+                COALESCE(employee_name_{language}, employee_name) as employee_name,
+                COALESCE(employee_position_{language}, employee_position) as employee_position
             FROM public_reviews
             WHERE is_active = 1
             ORDER BY display_order DESC, created_at DESC
@@ -186,8 +188,10 @@ def add_review(data: Dict) -> Optional[int]:
         cursor.execute("""
             INSERT INTO public_reviews (
                 author_name, rating, text_ru, text_en, text_ar, text_de, text_es, 
-                text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order,
+                employee_name, employee_name_ru, employee_name_en, employee_name_ar,
+                employee_position, employee_position_ru, employee_position_en, employee_position_ar
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data.get('author_name'),
             data.get('rating', 5),
@@ -202,7 +206,15 @@ def add_review(data: Dict) -> Optional[int]:
             data.get('text_pt'),
             data.get('avatar_url'),
             data.get('is_active', 1),
-            data.get('display_order', 0)
+            data.get('display_order', 0),
+            data.get('employee_name'),
+            data.get('employee_name_ru'),
+            data.get('employee_name_en'),
+            data.get('employee_name_ar'),
+            data.get('employee_position'),
+            data.get('employee_position_ru'),
+            data.get('employee_position_en'),
+            data.get('employee_position_ar')
         ))
         
         conn.commit()

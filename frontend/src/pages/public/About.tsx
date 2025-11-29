@@ -18,7 +18,7 @@ interface TeamMember {
 
 export default function About() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['public/About', 'common']);
+  const { t, i18n } = useTranslation(['public/About', 'common']);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [salonInfo, setSalonInfo] = useState<any>({});
@@ -26,30 +26,32 @@ export default function About() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const currentLang = i18n.language;
+
         // Загружаем информацию о салоне
-        const salonData = await apiClient.getSalonInfo();
+        const salonData = await apiClient.getSalonInfo(currentLang);
         setSalonInfo(salonData);
 
         // Загружаем команду из API employees
-        const data = await apiClient.getPublicEmployees();
+        const data = await apiClient.getPublicEmployees(currentLang);
 
-        if (data.employees && data.employees.length > 0) {
+        if (Array.isArray(data) && data.length > 0) {
           // Filter to show only masters (exclude director and admin)
-          const filteredEmployees = data.employees.filter((e: any) => {
-            const position = (e.position || '').toLowerCase();
+          const filteredEmployees = data.filter((e: any) => {
+            const position = (e.role || '').toLowerCase();
             return position !== 'director' && position !== 'admin' && position !== 'директор' && position !== 'администратор';
           });
 
           const teamData = filteredEmployees.map((e: any) => {
             // Fix photo URL using shared utility
-            const photoUrl = getPhotoUrl(e.photo);
+            const photoUrl = getPhotoUrl(e.image);
 
             return {
               id: e.id,
-              name: e.full_name,
-              role: e.position || t('about:master_role'),
+              name: e.name,
+              role: e.role || t('about:master_role'),
               experience: e.experience || '',
-              avatar: photoUrl || e.full_name.charAt(0).toUpperCase()
+              avatar: photoUrl || e.name.charAt(0).toUpperCase()
             };
           });
           setTeam(teamData);
@@ -67,7 +69,7 @@ export default function About() {
     };
 
     fetchData();
-  }, []);
+  }, [i18n.language]);
 
   return (
     <div>

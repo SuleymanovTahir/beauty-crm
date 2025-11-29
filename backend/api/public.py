@@ -102,48 +102,7 @@ async def send_contact_message(form: ContactForm):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/salon-info")
-async def get_salon_info():
-    """Публичная информация о салоне (из БД)"""
-    try:
-        salon = get_salon_settings()
-        
-        return {
-            "name": salon.get("name", "Beauty Salon"),
-            "address": salon.get("address", ""),
-            "phone": salon.get("phone", ""),
-            "email": salon.get("email"),
-            "instagram": salon.get("instagram"),
-            "whatsapp": salon.get("whatsapp") or salon.get("phone", ""),
-            "booking_url": salon.get("booking_url", ""),
-            "google_maps": salon.get("google_maps", ""),
-            "hours": salon.get("hours", "10:30 - 21:30"),
-            "hours_weekdays": salon.get("hours_weekdays", "10:30 - 21:30"),
-            "hours_weekends": salon.get("hours_weekends", "10:30 - 21:30"),
-            "about": salon.get("about", "Премиальный салон красоты"),
-            "bot_name": salon.get("bot_name", "Assistant"),
-            "city": salon.get("city", "Dubai"),
-            "country": salon.get("country", "UAE"),
-            "currency": salon.get("currency", "AED")
-        }
-    except Exception as e:
-        # Если БД недоступна, возвращаем минимальный набор
-        return {
-            "name": "Beauty Salon",
-            "address": "",
-            "phone": "",
-            "email": None,
-            "instagram": None,
-            "booking_url": "",
-            "google_maps": "",
-            "hours_weekdays": "10:30 - 21:30",
-            "hours_weekends": "10:30 - 21:30",
-            "about": "Премиальный салон красоты",
-            "bot_name": "Assistant",
-            "city": "Dubai",
-            "country": "UAE",
-            "currency": "AED"
-        }
+
 
 
 @router.get("/services")
@@ -182,22 +141,7 @@ async def get_public_services():
     ]
 
 
-@router.get("/employees")
-async def get_public_employees():
-    """Публичный список активных сотрудников"""
-    employees = get_all_employees(active_only=True)
 
-    return {
-        "employees": [
-            {
-                "id": e[0],
-                "username": e[1],
-                "full_name": e[2],
-                "role": e[3],
-                "specialization": e[5] if len(e) > 5 else None
-            } for e in employees
-        ]
-    }
 
 
 @router.get("/available-slots")
@@ -281,46 +225,7 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
     return count == 0
 
 
-@router.get("/reviews")
-async def get_reviews(language: str = "en"):
-    """
-    Get active 5-star reviews in the specified language from database
-    """
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    
-    try:
-        # Получаем активные отзывы
-        c.execute("""
-            SELECT * FROM public_reviews 
-            WHERE is_active = 1 AND rating = 5
-            ORDER BY display_order ASC, created_at DESC
-        """)
-        
-        reviews = []
-        for row in c.fetchall():
-            row_dict = dict(row)
-            
-            # Выбираем текст на нужном языке
-            text_key = f"text_{language}"
-            # Fallback to English or Russian if specific language is missing
-            text = row_dict.get(text_key) or row_dict.get('text_en') or row_dict.get('text_ru', '')
-            
-            reviews.append({
-                "id": row_dict.get("id"),
-                "name": row_dict.get("author_name"),
-                "rating": row_dict.get("rating"),
-                "text": text,
-                "avatar": row_dict.get("avatar_url") or row_dict.get("author_name", "?")[0].upper()
-            })
-        
-        return {"reviews": reviews}
-    except Exception as e:
-        # logger.error(f"Error fetching reviews: {e}")
-        return {"reviews": []}
-    finally:
-        conn.close()
+
 
 # ... (create_booking is unchanged) ...
 
@@ -364,93 +269,10 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
     return {"news": news}
 
 
-@router.get("/faq")
-async def get_public_faq(language: str = "ru"):
-    """Получить список FAQ"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    
-    try:
-        c.execute("SELECT * FROM public_faq ORDER BY category, display_order ASC")
-        
-        faq_list = []
-        for row in c.fetchall():
-            row_dict = dict(row)
-            
-            # Выбираем текст на нужном языке
-            q_key = f"question_{language}"
-            a_key = f"answer_{language}"
-            
-            question = row_dict.get(q_key) or row_dict.get('question_en') or row_dict.get('question_ru', '')
-            answer = row_dict.get(a_key) or row_dict.get('answer_en') or row_dict.get('answer_ru', '')
-            
-            faq_list.append({
-                "id": row_dict.get("id"),
-                "question": question,
-                "answer": answer,
-                "category": row_dict.get("category")
-            })
-            
-        return {"faq": faq_list}
-    except Exception as e:
-        return {"faq": []}
-    finally:
-        conn.close()
 
 
-@router.get("/gallery")
-async def get_public_gallery(category: Optional[str] = None):
-    """Получить публичную галерею"""
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-    
-    try:
-        # Get display limits from settings
-        c.execute("SELECT gallery_display_count, portfolio_display_count FROM salon_settings LIMIT 1")
-        settings = c.fetchone()
-        limit = 6 # Default
-        
-        if settings:
-            if category == 'salon':
-                limit = settings['gallery_display_count'] or 6
-            elif category == 'portfolio':
-                limit = settings['portfolio_display_count'] or 6
-        
-        query = "SELECT * FROM gallery_images WHERE is_visible = 1"
-        params = []
-        
-        if category:
-            query += " AND category = ?"
-            params.append(category)
-            
-        query += " ORDER BY sort_order ASC, created_at DESC LIMIT ?"
-        params.append(limit)
-        
-        c.execute(query, params)
-        
-        images = []
-        for row in c.fetchall():
-            images.append(dict(row))
-            
-        return {"images": images}
-    except Exception as e:
-        # If columns don't exist yet, fallback to no limit or default
-        try:
-            query = "SELECT * FROM gallery_images WHERE is_visible = 1"
-            params = []
-            if category:
-                query += " AND category = ?"
-                params.append(category)
-            query += " ORDER BY sort_order ASC, created_at DESC LIMIT 6"
-            c.execute(query, params)
-            images = [dict(row) for row in c.fetchall()]
-            return {"images": images}
-        except:
-            return {"images": []}
-    finally:
-        conn.close()
+
+
 
 
 @router.get("/banners")

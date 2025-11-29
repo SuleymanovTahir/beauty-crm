@@ -17,6 +17,8 @@ interface Testimonial {
   rating: number;
   text: string;
   avatar: string;
+  employee_name?: string;
+  employee_position?: string;
 }
 
 const GallerySection = () => {
@@ -103,7 +105,14 @@ export default function Home() {
         const currentLang = i18n.language;
         const data = await apiClient.getPublicReviews(currentLang);
         if (data && data.reviews && data.reviews.length > 0) {
-          setTestimonials(data.reviews);
+          setTestimonials(data.reviews.map((item: any) => ({
+            name: item.name,
+            rating: item.rating,
+            text: item.text,
+            avatar: item.avatar_url || item.name.charAt(0).toUpperCase(),
+            employee_name: item.employee_name,
+            employee_position: item.employee_position
+          })));
         } else {
           // Fallback if API returns empty (e.g. network error)
           const loadedTestimonials = t('home:testimonials.items', { returnObjects: true });
@@ -312,9 +321,15 @@ export default function Home() {
                 <p className="text-xl text-gray-700 mb-6 italic">
                   "{testimonials[currentTestimonial].text}"
                 </p>
-                <p className="text-lg text-gray-900">
+                <p className="text-lg text-gray-900 font-semibold">
                   {testimonials[currentTestimonial].name}
                 </p>
+                {testimonials[currentTestimonial].employee_name && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    {t('home:testimonials.master')}: {testimonials[currentTestimonial].employee_name}
+                    {testimonials[currentTestimonial].employee_position && ` (${testimonials[currentTestimonial].employee_position})`}
+                  </p>
+                )}
               </div>
             </div>
           ) : null}
