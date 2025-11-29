@@ -74,7 +74,7 @@ export function Hero() {
               <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground animate-fade-in">
                 {t('heroTag') || "Премиальный салон красоты"}
               </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl tracking-tight text-primary animate-fade-in-up">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl tracking-tight text-primary animate-fade-in-up font-sans font-medium">
                 {heroBanner ? getTranslatedText(heroBanner.title_ru, heroBanner.title_en, heroBanner.title_ar) : (t('heroTitle') || "Ваша красота —")}
                 <br />
                 <span className="text-accent-foreground">

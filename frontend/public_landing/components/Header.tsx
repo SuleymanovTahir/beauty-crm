@@ -97,7 +97,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors duration-200 ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
+                className={`text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
                   }`}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
