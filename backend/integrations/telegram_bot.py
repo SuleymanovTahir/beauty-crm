@@ -273,30 +273,60 @@ async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Di
     
     Args:
         message: Текст сообщения (поддерживает HTML)
-        chat_id: ID чата (если None, берется из настроек салона)
+        chat_id: ID чата (если None, берется из .env или настроек салона)
+                 Можно указать несколько ID через запятую: "123,456,789"
     
     Returns:
         Результат отправки
     """
     try:
-        # Если chat_id не указан, берем из настроек
+        # Если chat_id не указан, берем из переменных окружения или настроек
         if chat_id is None:
-            salon_settings = get_salon_settings()
-            chat_id = salon_settings.get('telegram_manager_chat_id')
+            import os
+            # Приоритет: .env > база данных
+            chat_ids_str = os.getenv('TELEGRAM_MANAGER_CHAT_ID')
             
-            if not chat_id:
-                log_error("Telegram manager chat_id not configured in salon settings", "telegram")
+            if not chat_ids_str:
+                # Fallback: берем из настроек салона
+                salon_settings = get_salon_settings()
+                chat_ids_str = salon_settings.get('telegram_manager_chat_id')
+            
+            if not chat_ids_str:
+                log_error("Telegram manager chat_id not configured in .env or salon settings", "telegram")
                 return {"success": False, "error": "Manager chat_id not configured"}
-        
-        # Отправляем сообщение
-        result = telegram_bot.send_message(chat_id, message, parse_mode="HTML")
-        
-        if result.get("ok"):
-            log_info(f"Alert sent to Telegram chat {chat_id}", "telegram")
-            return {"success": True, "result": result}
+            
+            # Убираем скобки если есть: (123,456) -> 123,456
+            chat_ids_str = str(chat_ids_str).strip('()')
+            
+            # Поддержка нескольких ID через запятую
+            chat_ids = [id.strip() for id in chat_ids_str.split(',')]
         else:
-            log_error(f"Failed to send Telegram alert: {result}", "telegram")
-            return {"success": False, "error": result}
+            chat_ids = [str(chat_id)]
+        
+        # Отправляем сообщение всем указанным чатам
+        results = []
+        for cid in chat_ids:
+            try:
+                result = telegram_bot.send_message(int(cid), message, parse_mode="HTML")
+                results.append({"chat_id": cid, "result": result})
+                
+                if result.get("ok"):
+                    log_info(f"Alert sent to Telegram chat {cid}", "telegram")
+                else:
+                    log_error(f"Failed to send Telegram alert to {cid}: {result}", "telegram")
+            except Exception as e:
+                log_error(f"Error sending to chat {cid}: {e}", "telegram")
+                results.append({"chat_id": cid, "error": str(e)})
+        
+        # Проверяем, хотя бы одно сообщение отправлено успешно
+        success_count = sum(1 for r in results if r.get("result", {}).get("ok"))
+        
+        if success_count > 0:
+            log_info(f"Alert sent to {success_count}/{len(chat_ids)} Telegram chats", "telegram")
+            return {"success": True, "results": results, "sent_count": success_count}
+        else:
+            log_error(f"Failed to send Telegram alert to all chats", "telegram")
+            return {"success": False, "error": "Failed to send to all chats", "results": results}
             
     except Exception as e:
         log_error(f"Error sending Telegram alert: {e}", "telegram")
