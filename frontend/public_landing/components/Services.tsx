@@ -119,7 +119,9 @@ export function Services() {
                           )}
                           {service.duration && (
                             <p className="text-sm text-muted-foreground">
-                              {service.duration} min
+                              {String(service.duration).toLowerCase().includes('min')
+                                ? service.duration
+                                : `${service.duration} min`}
                             </p>
                           )}
                         </div>
