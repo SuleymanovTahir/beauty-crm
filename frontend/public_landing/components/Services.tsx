@@ -60,6 +60,8 @@ export function Services() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState("nails");
+
   if (loading) {
     return <div className="py-24 text-center">Loading services...</div>;
   }
@@ -79,13 +81,13 @@ export function Services() {
           </p>
         </div>
 
-        <Tabs defaultValue="nails" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-muted/50 p-2 rounded-2xl h-auto">
             {Object.keys(groupedServices).map((category) => (
               <TabsTrigger
                 key={category}
                 value={category}
-                className="py-4 rounded-xl data-[state=active]:!bg-black data-[state=active]:!text-white data-[state=active]:shadow-lg whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10"
+                className="py-4 rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-sm whitespace-normal min-h-[60px]"
               >
                 {getTabLabel(category)}
               </TabsTrigger>
@@ -107,18 +109,18 @@ export function Services() {
                     >
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1">
-                          <h3 className="text-lg font-medium mb-2 text-foreground group-hover:text-primary transition-colors">
+                          <h3 className="mb-2 text-primary group-hover:text-accent-foreground transition-colors">
                             {localizedName}
                           </h3>
                           {localizedDescription && (
                             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{localizedDescription}</p>
                           )}
-                          <p className="text-sm text-muted-foreground font-medium">
+                          <p className="text-sm text-muted-foreground">
                             {service.duration} min
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-lg font-semibold text-primary whitespace-nowrap">
+                          <p className="text-primary whitespace-nowrap">
                             {service.price} {service.currency || 'AED'}
                           </p>
                         </div>
@@ -133,7 +135,7 @@ export function Services() {
                   onClick={() => {
                     document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 text-lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6"
                 >
                   {t('bookNowBtn') || "Book Now"}
                 </Button>
