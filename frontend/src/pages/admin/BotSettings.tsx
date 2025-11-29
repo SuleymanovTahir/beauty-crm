@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/BotSettings.tsx
 // frontend/src/pages/admin/BotSettings.tsx - ПОЛНАЯ ВЕРСИЯ
 // Включает ВСЕ поля из bot_instructions_file.txt
 

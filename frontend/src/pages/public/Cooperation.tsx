@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/Cooperation.tsx
 import React, { useState } from 'react';
 import { Handshake, Send } from 'lucide-react';
 import { Button } from '../../components/ui/button';

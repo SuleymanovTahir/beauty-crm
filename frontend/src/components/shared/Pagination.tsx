@@ -1,3 +1,4 @@
+// /frontend/src/components/shared/Pagination.tsx
 import React from 'react';
 import { Button } from '../ui/button';
 import { useTranslation } from 'react-i18next';

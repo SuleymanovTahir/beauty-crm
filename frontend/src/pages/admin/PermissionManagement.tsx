@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/PermissionManagement.tsx
 import React, { useState, useEffect } from "react";
 import { Shield, Loader, Check, X, Settings } from "lucide-react";
 import { Button } from "../../components/ui/button";

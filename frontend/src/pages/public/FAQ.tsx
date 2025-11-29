@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/FAQ.tsx
 import React from 'react';
 import { HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../components/ui/accordion';

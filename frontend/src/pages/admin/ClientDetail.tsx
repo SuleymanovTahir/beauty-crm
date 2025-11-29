@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/ClientDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User } from 'lucide-react';

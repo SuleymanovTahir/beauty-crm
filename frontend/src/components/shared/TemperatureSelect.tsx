@@ -1,3 +1,4 @@
+// /frontend/src/components/shared/TemperatureSelect.tsx
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flame, Snowflake, ChevronDown, Sun } from 'lucide-react';

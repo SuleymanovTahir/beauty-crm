@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/BotModeSelector.tsx
 // frontend/src/components/chat/BotModeSelector.tsx
 import { Bot, User, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

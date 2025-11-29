@@ -1,3 +1,4 @@
+// /frontend/src/pages/manager/Messages.tsx
 // frontend/src/pages/manager/Messages.tsx - УЛУЧШЕННАЯ ВЕРСИЯ БЕЗ ПРЫЖКОВ
 import { useState, useEffect } from "react";
 import {

@@ -1,3 +1,4 @@
+// /frontend/public_landing/App.tsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LandingPage } from "./pages/LandingPage";
 import { ServiceDetail } from "./pages/ServiceDetail";

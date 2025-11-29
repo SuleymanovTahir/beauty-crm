@@ -1,3 +1,4 @@
+// /frontend/src/pages/manager/Funnel.tsx
 import { useState, useEffect } from 'react';
 import { Filter, TrendingUp, TrendingDown, AlertTriangle, CheckCircle, RefreshCw, Download, Loader, AlertCircle, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';

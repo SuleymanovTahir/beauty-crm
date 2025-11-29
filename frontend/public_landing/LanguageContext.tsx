@@ -1,3 +1,4 @@
+// /frontend/public_landing/LanguageContext.tsx
 import { createContext, useContext, ReactNode } from "react";
 
 type Language = "ru" | "en" | "ar" | "de" | "es" | "fr" | "hi" | "kk" | "pt";

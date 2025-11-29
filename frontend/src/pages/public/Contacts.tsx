@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/Contacts.tsx
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, Mail, Instagram, Clock, Send } from 'lucide-react';
 import { Button } from '../../components/ui/button';

@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/EmployeeInformation.tsx
 import { useState, useEffect } from 'react';
 import { User, Mail, Phone, Send, Instagram, MessageCircle, Briefcase, Award, Star, FileText, Lock, Camera, Loader, Upload, Trash2 } from 'lucide-react';
 import { Input } from '../ui/input';

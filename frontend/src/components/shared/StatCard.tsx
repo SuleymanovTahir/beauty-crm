@@ -1,3 +1,4 @@
+// /frontend/src/components/shared/StatCard.tsx
 // frontend/src/components/shared/StatCard.tsx
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 

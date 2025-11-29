@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/PriceList.tsx
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, Search } from 'lucide-react';
 import { Button } from '../../components/ui/button';

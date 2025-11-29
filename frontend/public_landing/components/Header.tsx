@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/Header.tsx
 import { useState, useEffect } from "react";
 import { Menu, X, Globe, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,13 +6,13 @@ import { useLanguage } from "../LanguageContext";
 import logo from "../assets/logo.png";
 
 const navigation = [
-  { name: "О нас", href: "#about" },
-  { name: "Услуги", href: "#services" },
-  { name: "Портфолио", href: "#portfolio" },
-  { name: "Команда", href: "#team" },
-  { name: "Отзывы", href: "#testimonials" },
-  { name: "Галерея", href: "#gallery" },
-  { name: "FAQ", href: "#faq" },
+  { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },
+  { name: "Услуги", href: "#services", key: "servicesTag", defaultText: "Услуги" },
+  { name: "Портфолио", href: "#portfolio", key: "portfolioTag", defaultText: "Портфолио" },
+  { name: "Команда", href: "#team", key: "teamTag", defaultText: "Команда" },
+  { name: "Отзывы", href: "#testimonials", key: "testimonialsTag", defaultText: "Отзывы" },
+  { name: "FAQ", href: "#faq", key: "faqTag", defaultText: "FAQ" },
+  { name: "Контакты", href: "#contacts", key: "contactsTag", defaultText: "Контакты" },
 ];
 
 interface HeaderProps {
@@ -99,7 +100,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className={`text-sm transition-colors duration-200 ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
                   }`}
               >
-                {t(item.href.replace('#', '') + 'Tag') || item.name}
+                {t(item.key, { defaultValue: item.defaultText }) || item.name}
               </a>
             ))}
 
@@ -198,7 +199,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className="block text-sm text-foreground/80 hover:text-foreground transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                {t(item.href.replace('#', '') + 'Tag') || item.name}
+                {t(item.key, { defaultValue: item.defaultText }) || item.name}
               </a>
             ))}
 

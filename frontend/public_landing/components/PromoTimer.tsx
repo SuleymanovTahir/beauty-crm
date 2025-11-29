@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/PromoTimer.tsx
 import { useState, useEffect } from "react";
 import { useLanguage } from "../LanguageContext";
 
@@ -63,39 +64,47 @@ export function PromoTimer() {
     if (!isVisible) return null;
 
     return (
-        <div className="mt-12 animate-fade-in">
-            <div className="flex flex-col gap-6">
-                <p className="text-white/80 text-sm uppercase tracking-[0.2em] mb-2">
-                    {t('promoEnds')}
+        <div className="mt-8 sm:mt-12 animate-fade-in">
+            <div className="bg-primary/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-primary/30">
+                <p className="text-foreground/80 text-xs sm:text-sm uppercase tracking-[0.2em] mb-3 sm:mb-4 text-center">
+                    {t('promoEnds', { defaultValue: 'Акция действует ещё' })}
                 </p>
 
-                <div className="flex items-center gap-4 md:gap-8">
+                <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-8">
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-light text-white tabular-nums tracking-wider">
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary tabular-nums tracking-wider">
                             {String(timeLeft.days).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] text-white/50 uppercase tracking-widest mt-2">{t('days')}</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest mt-1 sm:mt-2">
+                            {t('days', { defaultValue: 'дней' })}
+                        </div>
                     </div>
-                    <div className="text-2xl md:text-3xl font-light text-white/30 -mt-6">:</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl text-primary/30">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-light text-white tabular-nums tracking-wider">
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary tabular-nums tracking-wider">
                             {String(timeLeft.hours).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] text-white/50 uppercase tracking-widest mt-2">{t('hours')}</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest mt-1 sm:mt-2">
+                            {t('hours', { defaultValue: 'часов' })}
+                        </div>
                     </div>
-                    <div className="text-2xl md:text-3xl font-light text-white/30 -mt-6">:</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl text-primary/30">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-light text-white tabular-nums tracking-wider">
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary tabular-nums tracking-wider">
                             {String(timeLeft.minutes).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] text-white/50 uppercase tracking-widest mt-2">{t('minutes')}</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest mt-1 sm:mt-2">
+                            {t('minutes', { defaultValue: 'минут' })}
+                        </div>
                     </div>
-                    <div className="text-2xl md:text-3xl font-light text-white/30 -mt-6">:</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl text-primary/30">:</div>
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl md:text-5xl font-light text-white tabular-nums tracking-wider">
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-primary tabular-nums tracking-wider">
                             {String(timeLeft.seconds).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] text-white/50 uppercase tracking-widest mt-2">{t('seconds')}</div>
+                        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-widest mt-1 sm:mt-2">
+                            {t('seconds', { defaultValue: 'секунд' })}
+                        </div>
                     </div>
                 </div>
             </div>

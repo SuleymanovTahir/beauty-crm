@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/Terms.tsx
 import React from 'react';
 import { FileText } from 'lucide-react';
 import { apiClient } from '../../api/client';

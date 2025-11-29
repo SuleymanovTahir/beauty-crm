@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/About.tsx
 import { useEffect, useState } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { Heart, Award, Users, Sparkles } from 'lucide-react';

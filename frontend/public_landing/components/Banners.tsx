@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/Banners.tsx
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

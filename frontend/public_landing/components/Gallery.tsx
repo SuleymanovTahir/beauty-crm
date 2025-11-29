@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/Gallery.tsx
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
 import { useLanguage } from "../LanguageContext";

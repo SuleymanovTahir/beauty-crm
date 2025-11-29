@@ -1,8 +1,8 @@
+// /frontend/public_landing/pages/LandingPage.tsx
 import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";
 import { Hero } from "../components/Hero";
-import { Banners } from "../components/Banners";
 import { About } from "../components/About";
 import { Services } from "../components/Services";
 import { Portfolio } from "../components/Portfolio";

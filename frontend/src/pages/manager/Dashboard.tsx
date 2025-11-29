@@ -1,3 +1,4 @@
+// /frontend/src/pages/manager/Dashboard.tsx
 import { useState, useEffect } from 'react';
 import { LayoutDashboard, MessageSquare, Users, TrendingUp, MessageCircle, Filter, ArrowRight, Loader, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';

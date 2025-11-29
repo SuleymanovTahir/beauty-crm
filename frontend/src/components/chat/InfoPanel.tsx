@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/InfoPanel.tsx
 import { useState } from 'react';
 import { User, Phone, Instagram, Check, X, Loader, Edit2, Save } from 'lucide-react';
 import { Button } from '../ui/button';

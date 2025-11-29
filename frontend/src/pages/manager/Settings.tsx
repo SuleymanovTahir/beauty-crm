@@ -1,3 +1,4 @@
+// /frontend/src/pages/manager/Settings.tsx
 import React, { useState } from 'react';
 import { Settings as SettingsIcon, Bell, Shield, Mail, Smartphone } from 'lucide-react';
 import { Button } from '../../components/ui/button';

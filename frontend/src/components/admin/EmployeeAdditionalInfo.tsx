@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/EmployeeAdditionalInfo.tsx
 import { useState, useEffect } from 'react';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';

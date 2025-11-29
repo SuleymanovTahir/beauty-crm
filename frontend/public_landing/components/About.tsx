@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/About.tsx
 import { Sparkles, Award, Heart, Users } from "lucide-react";
 import { useLanguage } from "../LanguageContext";
 

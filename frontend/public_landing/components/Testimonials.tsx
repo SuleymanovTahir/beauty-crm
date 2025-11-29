@@ -1,3 +1,4 @@
+// /frontend/public_landing/components/Testimonials.tsx
 import { useState, useEffect } from "react";
 import { useLanguage } from "../LanguageContext";
 import { apiClient } from "../../src/api/client";

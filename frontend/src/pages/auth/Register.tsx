@@ -1,3 +1,4 @@
+// /frontend/src/pages/auth/Register.tsx
 import React, { useState } from "react";
 import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck } from "lucide-react";
 import { Button } from "../../components/ui/button";

@@ -1,3 +1,4 @@
+// /frontend/src/components/shared/InternalChat.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Send, Users, Loader, MessageCircle } from 'lucide-react';
 import { Button } from '../ui/button';

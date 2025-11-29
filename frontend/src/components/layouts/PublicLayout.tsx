@@ -1,3 +1,4 @@
+// /frontend/src/components/layouts/PublicLayout.tsx
 //src/components/PublicLayout.tsx
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';

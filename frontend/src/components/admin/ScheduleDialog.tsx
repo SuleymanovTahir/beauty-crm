@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/ScheduleDialog.tsx
 import React, { useState } from 'react';
 import { X, Calendar, Clock } from 'lucide-react';
 import { WorkScheduleTab } from './WorkScheduleTab';

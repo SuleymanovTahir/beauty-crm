@@ -1,3 +1,4 @@
+// /frontend/public_landing/MastersSection.tsx
 import { useState, useEffect } from "react";
 import { useLanguage } from "./LanguageContext";
 import { getPhotoUrl } from "../src/utils/photoUtils";

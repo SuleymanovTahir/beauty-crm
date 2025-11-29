@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/DataDeletion.tsx
 import React from 'react';
 import { apiClient } from '../../api/client';
 import { useTranslation } from 'react-i18next';

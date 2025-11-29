@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/publicContent/BannersTab.tsx
 import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Image as ImageIcon, Link as LinkIcon, Calendar, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../../components/ui/button';

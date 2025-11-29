@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/Home.tsx
 import React, { useState, useEffect } from 'react';
 import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 import { Calendar, Clock, Sparkles, Star, ChevronLeft, ChevronRight } from 'lucide-react';

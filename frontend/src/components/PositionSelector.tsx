@@ -1,3 +1,4 @@
+// /frontend/src/components/PositionSelector.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Search, Plus, Check, ChevronDown } from 'lucide-react';
 import { Input } from './ui/input';

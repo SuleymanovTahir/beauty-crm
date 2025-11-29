@@ -1,3 +1,4 @@
+// /frontend/public_landing/pages/ServiceDetail.tsx
 import { Header } from "../components/Header";
 import "../styles/public_landing_globals.css";
 import "../public_landing.css";

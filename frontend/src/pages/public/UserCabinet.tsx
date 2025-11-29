@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/UserCabinet.tsx
 import React, { useState } from 'react';
 import { User, Lock, AlertCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';

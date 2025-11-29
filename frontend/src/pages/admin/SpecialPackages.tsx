@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/SpecialPackages.tsx
 // frontend/src/pages/admin/SpecialPackages.tsx
 // Управление специальными пакетами и акциями
 

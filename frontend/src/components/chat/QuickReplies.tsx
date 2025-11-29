@@ -1,3 +1,4 @@
+// /frontend/src/components/chat/QuickReplies.tsx
 import { Zap } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

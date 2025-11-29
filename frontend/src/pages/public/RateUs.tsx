@@ -1,3 +1,4 @@
+// /frontend/src/pages/public/RateUs.tsx
 import { useState } from 'react';
 import { Star, Send, Loader, CheckCircle } from 'lucide-react';
 import { Button } from '../../components/ui/button';

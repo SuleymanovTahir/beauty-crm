@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/publicContent/GalleryTab.tsx
 import { useState, useEffect, useRef } from 'react';
 import { Image as ImageIcon, Upload, Trash2, Eye, EyeOff, Loader, Settings, Save, Pencil } from 'lucide-react';
 import { Button } from '../../../components/ui/button';

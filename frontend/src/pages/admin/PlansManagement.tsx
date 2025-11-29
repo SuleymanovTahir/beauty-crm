@@ -1,3 +1,4 @@
+// /frontend/src/pages/admin/PlansManagement.tsx
 import { useState, useEffect } from 'react';
 import { Target, Plus, Trash2, Loader, Users, User, Calendar } from 'lucide-react';
 import { Button } from '../../components/ui/button';

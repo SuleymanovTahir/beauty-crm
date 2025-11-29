@@ -1,3 +1,4 @@
+// /frontend/src/components/admin/PermissionsTab.tsx
 /**
  * Компонент для управления правами и ролями пользователя
  */
