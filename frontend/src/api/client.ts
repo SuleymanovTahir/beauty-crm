@@ -220,14 +220,14 @@ export const apiClient = {
   getAvailablePermissions: () =>
     apiCall('/api/permissions/available'),
   // ===== PUBLIC =====
-  getSalonInfo: () =>
-    apiCall('/public/salon-info'),
+  getSalonInfo: (lang: string = 'ru') =>
+    apiCall(`/api/public/salon-info?language=${lang}`),
 
   getPublicServices: () =>
     apiCall('/api/public/services'),
 
-  getPublicEmployees: () =>
-    apiCall('/api/employees?active_only=true'),
+  getPublicEmployees: (lang: string) =>
+    apiCall(`/api/public/employees?language=${lang}&active_only=true`),
 
   getPublicReviews: (lang: string) =>
     apiCall(`/api/public/reviews?language=${lang}`),

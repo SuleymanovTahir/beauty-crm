@@ -71,6 +71,7 @@
   "testimonials": {
     "items": [],
     "subtitle": "What they say about us",
-    "title": "Reviews from our clients"
+    "title": "Reviews from our clients",
+    "master": "Master"
   }
 }

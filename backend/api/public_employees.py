@@ -27,13 +27,14 @@ async def get_public_employees(
     
     try:
         # Определяем поля для перевода
+        name_field = f'full_name_{language}' if language != 'ru' else 'full_name'
         position_field = f'position_{language}' if language != 'ru' else 'position'
         bio_field = f'bio_{language}' if language != 'ru' else 'bio'
         
         query = f"""
             SELECT 
                 id,
-                full_name,
+                COALESCE({name_field}, full_name) as full_name,
                 COALESCE({position_field}, position) as position,
                 COALESCE({bio_field}, bio) as bio,
                 photo,
@@ -90,11 +91,13 @@ async def get_salon_info(
         name_field = 'name_ar' if language == 'ar' else 'name'
         address_field = 'address_ar' if language == 'ar' else 'address'
         hours_field = f'hours_{language}' if language in ['ru', 'ar'] else 'hours'
+        location_field = f'main_location_{language}' if language != 'ru' else 'main_location'
         
         query = f"""
             SELECT 
                 COALESCE({name_field}, name) as name,
                 COALESCE({address_field}, address) as address,
+                COALESCE({location_field}, main_location) as main_location,
                 google_maps,
                 COALESCE({hours_field}, hours) as hours,
                 hours_weekdays,
@@ -119,6 +122,7 @@ async def get_salon_info(
             return {
                 "name": row["name"],
                 "address": row["address"],
+                "main_location": row["main_location"],
                 "google_maps": row["google_maps"],
                 "hours": row["hours"],
                 "hours_weekdays": row["hours_weekdays"],
