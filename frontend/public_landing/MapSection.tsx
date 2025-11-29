@@ -1,14 +1,14 @@
 // /frontend/public_landing/MapSection.tsx
 import { MapPin, Phone, Clock } from "lucide-react";
-import { useLanguage } from "./LanguageContext";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface MapSectionProps {
   salonInfo?: any;
 }
 
 export function MapSection({ salonInfo }: MapSectionProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation(['public_landing', 'common']);
 
   const handleGetDirections = () => {
     const address = salonInfo?.address || "Business Bay, Dubai";

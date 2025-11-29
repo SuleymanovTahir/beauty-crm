@@ -1,9 +1,8 @@
 // /frontend/public_landing/BookingSection.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -11,15 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "lucide-react";
 import { toast } from "sonner";
-import { useLanguage } from "./LanguageContext";
+import { apiClient } from "../../src/api/client";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface BookingSectionProps {
-  services?: any[];
+  services: any[];
 }
 
-export function BookingSection({ services = [] }: BookingSectionProps) {
-  const { t } = useLanguage();
+export function BookingSection({ services }: BookingSectionProps) {
+  const { t } = useTranslation(['public_landing', 'common']);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -62,7 +64,7 @@ export function BookingSection({ services = [] }: BookingSectionProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: formData.name,
-          message: `New Booking Request:\n          Phone: ${formData.phone}`
+          message: `New Booking Request: \n          Phone: ${formData.phone} `
           // Service: ${formData.service}
         })
       });

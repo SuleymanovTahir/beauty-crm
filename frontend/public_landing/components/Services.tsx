@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/ui/tabs";
 import { Button } from "../../src/components/ui/button";
 import { apiClient } from "../../src/api/client";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 interface Service {
   id: number;
@@ -19,7 +19,8 @@ interface Service {
 }
 
 export function Services() {
-  const { t, language } = useLanguage();
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -116,9 +117,11 @@ export function Services() {
                           {localizedDescription && (
                             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{localizedDescription}</p>
                           )}
-                          <p className="text-sm text-muted-foreground">
-                            {service.duration} min
-                          </p>
+                          {service.duration && (
+                            <p className="text-sm text-muted-foreground">
+                              {service.duration} min
+                            </p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-primary whitespace-nowrap">

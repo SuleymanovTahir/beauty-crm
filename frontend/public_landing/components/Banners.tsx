@@ -1,6 +1,6 @@
 // /frontend/public_landing/components/Banners.tsx
 import { useState, useEffect } from 'react';
-import { useLanguage } from '../LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Banner {
@@ -17,7 +17,8 @@ interface Banner {
 }
 
 export function Banners() {
-    const { language } = useLanguage();
+    const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const language = i18n.language;
     const [banners, setBanners] = useState<Banner[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);

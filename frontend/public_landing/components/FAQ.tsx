@@ -6,7 +6,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone } from "lucide-react";
 
@@ -18,7 +18,8 @@ interface FAQItem {
 }
 
 export function FAQ() {
-    const { language, t } = useLanguage();
+    const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const language = i18n.language;
     const [faqs, setFaqs] = useState<FAQItem[]>([]);
     const [salonPhone, setSalonPhone] = useState<string>("+971 XX XXX XXXX");
     const [loading, setLoading] = useState(true);

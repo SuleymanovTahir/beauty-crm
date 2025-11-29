@@ -1,9 +1,9 @@
 // /frontend/public_landing/components/PromoTimer.tsx
 import { useState, useEffect } from "react";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export function PromoTimer() {
-    const { t } = useLanguage();
+    const { t } = useTranslation(['public_landing', 'common']);
     const [timeLeft, setTimeLeft] = useState({
         days: 0,
         hours: 0,

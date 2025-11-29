@@ -6,10 +6,10 @@ import { Footer } from "../components/Footer";
 // import logoImage from "../assets/main_banner.webp";
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export function PrivacyPolicy() {
-  const { t } = useLanguage();
+  const { t } = useTranslation(['public_landing', 'common']);
   const [salonInfo, setSalonInfo] = useState<any>({});
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 // /frontend/public_landing/components/Footer.tsx
 import { Instagram, Facebook, Phone, Mail, MapPin } from "lucide-react";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -9,7 +9,8 @@ interface FooterProps {
 }
 
 export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
-  const { t, language } = useLanguage();
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
   const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const currentYear = new Date().getFullYear();
 

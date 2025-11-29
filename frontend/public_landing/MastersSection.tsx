@@ -1,6 +1,6 @@
 // /frontend/public_landing/MastersSection.tsx
 import { useState, useEffect } from "react";
-import { useLanguage } from "./LanguageContext";
+import { useTranslation } from "react-i18next";
 import { getPhotoUrl } from "../src/utils/photoUtils";
 
 interface TeamMember {
@@ -14,7 +14,8 @@ interface TeamMember {
 import { apiClient } from "../src/api/client";
 
 export function MastersSection() {
-  const { language, t } = useLanguage();
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 

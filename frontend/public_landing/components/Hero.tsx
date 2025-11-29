@@ -1,7 +1,7 @@
 // /frontend/public_landing/components/Hero.tsx
 import { Button } from "@/components/ui/button";
 import { PromoTimer } from "./PromoTimer";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
 
@@ -19,7 +19,8 @@ interface Banner {
 }
 
 export function Hero() {
-  const { t, language } = useLanguage();
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
   const [heroBanner, setHeroBanner] = useState<Banner | null>(null);
 
   const defaultImage = "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjQzOTc3MDd8MA&ixlib=rb-4.1.0&q=80&w=1920";

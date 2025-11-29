@@ -1,9 +1,9 @@
 // /frontend/public_landing/components/About.tsx
 import { Sparkles, Award, Heart, Users } from "lucide-react";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export function About() {
-  const { t } = useLanguage();
+  const { t } = useTranslation(['public_landing', 'common']);
 
   const features = [
     {

@@ -16,10 +16,11 @@ import { BookingSection } from "../BookingSection";
 
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export function LandingPage() {
-    const { language } = useLanguage();
+    const { i18n } = useTranslation();
+    const language = i18n.language;
     const [salonInfo, setSalonInfo] = useState<any>({});
     const [services, setServices] = useState<any[]>([]);
 

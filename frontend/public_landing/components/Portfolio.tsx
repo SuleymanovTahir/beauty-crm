@@ -1,7 +1,7 @@
 // /frontend/public_landing/components/Portfolio.tsx
 import { useState, useEffect } from "react";
 import { apiClient } from "../../src/api/client";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "react-i18next";
 
 interface PortfolioImage {
   id: number;
@@ -11,7 +11,8 @@ interface PortfolioImage {
 }
 
 export function Portfolio() {
-  const { t, language } = useLanguage();
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
   const [images, setImages] = useState<PortfolioImage[]>([]);
   const [loading, setLoading] = useState(true);
 

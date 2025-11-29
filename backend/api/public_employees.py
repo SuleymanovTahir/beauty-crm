@@ -44,6 +44,7 @@ async def get_public_employees(
             FROM users
             WHERE is_service_provider = 1 
             AND is_active = 1
+            AND role NOT IN ('admin', 'director')
             ORDER BY public_page_order DESC, full_name ASC
         """
         

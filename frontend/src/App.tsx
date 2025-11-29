@@ -5,7 +5,6 @@ import { Toaster } from './components/ui/sonner';
 import './i18n';
 import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { LanguageProvider } from '../public_landing/LanguageContext';
 
 // Lazy load pages
 const AdminLayout = React.lazy(() => import('./components/layouts/AdminLayout'));
@@ -323,7 +322,7 @@ export default function App() {
               </Route>
 
               {/* New Public Routes (Standalone) */}
-              <Route element={<LanguageProvider><Outlet /></LanguageProvider>}>
+              <Route element={<Outlet />}>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/service/:category" element={<ServiceDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />
