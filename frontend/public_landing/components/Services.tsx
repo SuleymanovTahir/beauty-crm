@@ -80,12 +80,12 @@ export function Services() {
         </div>
 
         <Tabs defaultValue="nails" className="w-full">
-          <TabsList className="flex flex-wrap justify-center gap-4 mb-12 bg-transparent">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-muted/50 p-2 rounded-2xl h-auto">
             {Object.keys(groupedServices).map((category) => (
               <TabsTrigger
                 key={category}
                 value={category}
-                className="px-8 py-3 rounded-full border border-primary/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all uppercase tracking-wider text-sm"
+                className="py-4 rounded-xl data-[state=active]:!bg-black data-[state=active]:!text-white data-[state=active]:shadow-lg whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10"
               >
                 {getTabLabel(category)}
               </TabsTrigger>
@@ -94,29 +94,34 @@ export function Services() {
 
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
             <TabsContent key={category} value={category} className="mt-0">
-              <div className="grid md:grid-cols-2 gap-x-12 gap-y-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {categoryServices.map((service, index) => {
                   // Get localized fields
                   const localizedName = service[`name_${language}`] || service.name_ru || service.name;
                   const localizedDescription = service[`description_${language}`] || service.description_ru || service.description;
 
                   return (
-                    <div key={index} className="group flex justify-between items-baseline border-b border-primary/10 pb-4 hover:border-primary/30 transition-colors">
-                      <div className="flex-1 pr-8">
-                        <h3 className="text-xl text-foreground group-hover:text-primary transition-colors">
-                          {localizedName}
-                        </h3>
-                        {localizedDescription && (
-                          <p className="text-sm text-muted-foreground mt-1">{localizedDescription}</p>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-xl font-light whitespace-nowrap">
-                          {service.price} {service.currency || 'AED'}
-                        </span>
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider">
-                          {service.duration} min
-                        </span>
+                    <div
+                      key={index}
+                      className="group bg-card border border-border/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-medium mb-2 text-foreground group-hover:text-primary transition-colors">
+                            {localizedName}
+                          </h3>
+                          {localizedDescription && (
+                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{localizedDescription}</p>
+                          )}
+                          <p className="text-sm text-muted-foreground font-medium">
+                            {service.duration} min
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-primary whitespace-nowrap">
+                            {service.price} {service.currency || 'AED'}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )
