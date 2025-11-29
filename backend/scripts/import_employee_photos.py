@@ -3,7 +3,7 @@ import shutil
 import sqlite3
 import sys
 from pathlib import Path
-import uuid
+
 
 # Add backend directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -87,14 +87,15 @@ def import_photos():
             emp_id, emp_name = matched_employee
             print(f"✅ Match found: '{filename}' -> {emp_name} (ID: {emp_id})")
             
-            # Generate new filename
+            # Use original filename (normalized)
             ext = os.path.splitext(filename)[1].lower()
-            new_filename = f"{uuid.uuid4()}{ext}"
+            new_filename = f"{normalized_filename}{ext}"
             target_path = os.path.join(ABS_TARGET_DIR, new_filename)
             source_path = os.path.join(SOURCE_DIR, filename)
             
-            # Copy file
+            # Copy file (will overwrite if exists)
             shutil.copy2(source_path, target_path)
+            print(f"  📋 Copied/Overwritten: {new_filename}")
             
             # Update DB
             db_path = f"/{TARGET_DIR}/{new_filename}"
