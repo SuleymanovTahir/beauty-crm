@@ -1,5 +1,5 @@
 // /frontend/public_landing/MapSection.tsx
-import { MapPin, Phone, Clock } from "lucide-react";
+import { MapPin, Phone, Clock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
@@ -36,26 +36,11 @@ export function MapSection({ salonInfo }: MapSectionProps) {
 
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
           <div className="space-y-3 sm:space-y-4">
+            {/* Phone */}
             <div className="bg-card rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
-                    {salonInfo?.city || "Dubai"} ({t('mainLocation') || 'Основная локация'})
-                  </h3>
-                  <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
-                    {salonInfo?.address || "Business Bay, Dubai Marina, Internet City"}, {salonInfo?.country || "UAE"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-card rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-7 h-7 text-green-600" />
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
@@ -68,10 +53,45 @@ export function MapSection({ salonInfo }: MapSectionProps) {
               </div>
             </div>
 
+            {/* Email */}
             <div className="bg-card rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-7 h-7 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                    Email
+                  </h3>
+                  <a href={`mailto:${salonInfo?.email}`} className="text-primary hover:underline text-sm sm:text-base break-all">
+                    {salonInfo?.email || "info@salon.ru"}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="bg-card rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-7 h-7 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                    {t('address') || "Адрес"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
+                    {salonInfo?.address || "Business Bay, Dubai Marina"}, {salonInfo?.city || "Dubai"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Working Hours */}
+            <div className="bg-card rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all border border-border/50">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-7 h-7 text-purple-600" />
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
