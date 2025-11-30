@@ -18,7 +18,7 @@ interface FAQItem {
 }
 
 export function FAQ() {
-    const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
     const language = i18n.language;
     const [faqs, setFaqs] = useState<FAQItem[]>([]);
     const [salonPhone, setSalonPhone] = useState<string>("+971 XX XXX XXXX");
@@ -31,11 +31,11 @@ export function FAQ() {
                 const faqData = await faqResponse.json();
                 const rawFaqs = Array.isArray(faqData) ? faqData : (faqData.faq || []);
 
-                // Map multilingual fields to question/answer
+                // Use translations from dynamic.json instead of DB columns
                 const mappedFaqs = rawFaqs.map((item: any) => ({
                     ...item,
-                    question: item[`question_${language}`] || item.question_ru || item.question || "",
-                    answer: item[`answer_${language}`] || item.answer_ru || item.answer || ""
+                    question: t(`dynamic:public_faq.${item.id}.question_ru`, item.question_ru || ""),
+                    answer: t(`dynamic:public_faq.${item.id}.answer_ru`, item.answer_ru || "")
                 }));
 
                 setFaqs(mappedFaqs);
@@ -53,7 +53,7 @@ export function FAQ() {
         };
 
         fetchData();
-    }, [language]);
+    }, [language, t]);
 
     if (loading) {
         return (

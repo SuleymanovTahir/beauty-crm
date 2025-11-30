@@ -14,7 +14,7 @@ interface TeamMember {
 import { apiClient } from "../src/api/client";
 
 export function MastersSection() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const language = i18n.language;
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,9 +31,10 @@ export function MastersSection() {
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => ({
             id: emp.id,
-            name: emp.name, // Already translated by backend
-            role: emp.role, // Already translated by backend
-            specialty: emp.specialty, // Already translated by backend
+            name: emp.name,
+            // Use translations from dynamic.json
+            role: String(t(`dynamic:users.${emp.id}.position`, emp.position || "")),
+            specialty: String(t(`dynamic:users.${emp.id}.bio`, emp.bio || "")),
             image: getPhotoUrl(emp.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
           }));
           setTeam(teamMembers); // API returns sorted list
@@ -49,7 +50,7 @@ export function MastersSection() {
     };
 
     fetchEmployees();
-  }, [language]);
+  }, [language, t]);
 
   if (loading) {
     return (

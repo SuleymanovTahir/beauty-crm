@@ -19,8 +19,7 @@ interface Service {
 }
 
 export function Services() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const language = i18n.language;
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +30,7 @@ export function Services() {
       })
       .catch(err => console.error('Error loading services:', err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   // Helper to categorize services
   const getCategory = (serviceCategory: string | null | undefined) => {
@@ -100,9 +99,9 @@ export function Services() {
             <TabsContent key={category} value={category} className="mt-0">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {categoryServices.map((service, index) => {
-                  // Get localized fields
-                  const localizedName = service[`name_${language}`] || service.name_ru || service.name;
-                  const localizedDescription = service[`description_${language}`] || service.description_ru || service.description;
+                  // Use translations from dynamic.json
+                  const localizedName = String(t(`dynamic:services.${service.id}.name`, service.name_ru || service.name || ""));
+                  const localizedDescription = String(t(`dynamic:services.${service.id}.description`, service.description_ru || service.description || ""));
 
                   return (
                     <div

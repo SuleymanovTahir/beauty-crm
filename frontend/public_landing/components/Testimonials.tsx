@@ -11,7 +11,7 @@ interface Testimonial {
 }
 
 export function Testimonials() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const language = i18n.language;
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +21,12 @@ export function Testimonials() {
       try {
         const data = await apiClient.getPublicReviews(language);
         if (data.reviews && data.reviews.length > 0) {
-          // Map the text field based on language if available, otherwise fallback to text
+          // Use translations from dynamic.json instead of DB columns
           const mappedReviews = data.reviews.map((review: any) => ({
             ...review,
-            text: review[`text_${language}`] || review.text_ru || review.text || ""
+            // Use translation key: public_reviews.{id}.text_ru
+            text: t(`dynamic:public_reviews.${review.id}.text_ru`, review.text_ru || ""),
+            name: t(`dynamic:public_reviews.${review.id}.author_name`, review.author_name || review.name || "")
           }));
           setTestimonials(mappedReviews);
         }
@@ -37,7 +39,7 @@ export function Testimonials() {
     };
 
     fetchTestimonials();
-  }, [language]);
+  }, [language, t]);
 
   if (loading) {
     return (

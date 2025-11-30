@@ -1,6 +1,18 @@
 """
 Главный файл FastAPI приложения
 """
+import os
+import sys
+import types
+from contextlib import asynccontextmanager
+
+# --- PATCH FOR PYTHON 3.13+ (Missing cgi module) ---
+if "cgi" not in sys.modules:
+    cgi_mock = types.ModuleType("cgi")
+    cgi_mock.escape = lambda s, quote=True: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
+    sys.modules["cgi"] = cgi_mock
+# ---------------------------------------------------
+
 import asyncio
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse

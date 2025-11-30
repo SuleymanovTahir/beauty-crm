@@ -6,6 +6,14 @@ Usage: python3 backend/scripts/run_all_fixes.py
 import sys
 import os
 import asyncio
+import types
+
+# --- PATCH FOR PYTHON 3.13+ (Missing cgi module) ---
+if "cgi" not in sys.modules:
+    cgi_mock = types.ModuleType("cgi")
+    cgi_mock.escape = lambda s, quote=True: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
+    sys.modules["cgi"] = cgi_mock
+# ---------------------------------------------------
 
 # Add backend directory to sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,9 +43,45 @@ async def run_fix(name, func, *args, **kwargs):
         traceback.print_exc()
         return False
 
+def cleanup_system():
+    """Clean up caches and logs"""
+    print(f"\n{'='*60}")
+    print(f"🧹 CLEANING SYSTEM")
+    print(f"{'='*60}")
+    
+    # 1. Remove __pycache__
+    print("🗑️  Removing __pycache__...")
+    os.system('find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null')
+    
+    # 2. Remove translation cache
+    cache_dir = os.path.join(backend_dir, "scripts", "translations", ".cache")
+    if os.path.exists(cache_dir):
+        print(f"🗑️  Removing translation cache: {cache_dir}")
+        os.system(f'rm -rf "{cache_dir}"')
+        
+    # 3. Clear logs (keep files)
+    log_dir = os.path.join(backend_dir, "logs")
+    if os.path.exists(log_dir):
+        print("📝 Clearing logs...")
+        for log_file in os.listdir(log_dir):
+            if log_file.endswith(".log"):
+                file_path = os.path.join(log_dir, log_file)
+                try:
+                    # Open in write mode to truncate
+                    with open(file_path, 'w') as f:
+                        pass
+                    print(f"   Cleared {log_file}")
+                except Exception as e:
+                    print(f"   ❌ Failed to clear {log_file}: {e}")
+    
+    print("✅ System cleanup complete")
+
 async def main():
     print("🚀 STARTING UNIFIED FIX & CHECK SCRIPT")
     print(f"Backend Directory: {backend_dir}")
+    
+    # 0. Cleanup first
+    cleanup_system()
     
     results = {}
 
