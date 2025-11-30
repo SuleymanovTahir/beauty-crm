@@ -29,7 +29,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
           <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('locationTag') || 'Наше местоположение'}
           </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6 text-primary">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6 text-[var(--heading)]">
             {t('visitSalon') || "Посетите наш салон"}
           </h2>
         </div>
@@ -43,7 +43,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <Phone className="w-7 h-7 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('phone') || "Телефон"}
                   </h3>
                   <a href={`tel:${salonInfo?.phone}`} className="text-primary hover:underline text-sm sm:text-base">
@@ -60,7 +60,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <Mail className="w-7 h-7 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     Email
                   </h3>
                   <a href={`mailto:${salonInfo?.email}`} className="text-primary hover:underline text-sm sm:text-base break-all">
@@ -77,7 +77,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <MapPin className="w-7 h-7 text-red-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('address') || "Адрес"}
                   </h3>
                   <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
@@ -94,7 +94,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <Clock className="w-7 h-7 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-semibold text-primary mb-1">
+                  <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('workingHours') || "Часы работы"}
                   </h3>
                   <p className="text-xs sm:text-sm text-foreground/70 leading-snug">

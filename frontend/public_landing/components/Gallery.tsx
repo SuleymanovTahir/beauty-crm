@@ -42,7 +42,7 @@ export function Gallery() {
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('galleryTag') || 'Наш салон'}
           </p>
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('galleryTitle') || 'Атмосфера роскоши и комфорта'}
           </h2>
           <p className="text-lg text-foreground/70">

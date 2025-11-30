@@ -40,7 +40,7 @@ export function Portfolio() {
     <section id="portfolio" className="py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('portfolioTitle') || 'Наши работы'}
           </h2>
           <p className="text-lg text-foreground/70">

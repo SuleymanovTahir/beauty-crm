@@ -3247,8 +3247,9 @@
   --card-foreground: oklch(.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(.145 0 0);
-  --primary: #030213;
+  --primary: #db2777;
   --primary-foreground: oklch(1 0 0);
+  --heading: #030213;
   --secondary: oklch(.95 .0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
@@ -4022,4 +4023,19 @@ body.menu-open {
 
 .custom-dialog-scroll {
   max-height: 85vh;
+}
+
+/* FAQ Accordion - Pink background when open */
+[data-slot="accordion-item"][data-state="open"] {
+  background-color: var(--primary) !important;
+}
+
+[data-slot="accordion-item"][data-state="open"] [data-slot="accordion-trigger"],
+[data-slot="accordion-item"][data-state="open"] [data-slot="accordion-content"],
+[data-slot="accordion-item"][data-state="open"] * {
+  color: white !important;
+}
+
+[data-slot="accordion-item"][data-state="open"] svg {
+  color: white !important;
 }

@@ -103,7 +103,7 @@ export function Hero() {
         <div className="w-full max-w-2xl pt-16 sm:pt-32 space-y-8">
           {/* Title and Description */}
           <div className="space-y-6">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl text-primary animate-fade-in-up leading-tight">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl text-[var(--heading)] animate-fade-in-up leading-tight">
               {heroBanner ? getTranslatedText(
                 heroBanner.title_ru,
                 heroBanner.title_en,

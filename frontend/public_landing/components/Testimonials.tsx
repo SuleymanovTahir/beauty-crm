@@ -60,7 +60,7 @@ export function Testimonials() {
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('testimonialsTag') || 'Отзывы клиентов'}
           </p>
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('testimonialsTitle') || 'Что говорят о нас'}
           </h2>
           <p className="text-lg text-foreground/70">

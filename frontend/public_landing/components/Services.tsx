@@ -87,7 +87,7 @@ export function Services() {
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('servicesTag') || "Our Services"}
           </p>
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('servicesTitle') || "Choose Your Service"}
           </h2>
           <p className="text-lg text-foreground/70">

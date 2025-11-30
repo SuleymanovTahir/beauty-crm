@@ -71,7 +71,7 @@ export function MastersSection() {
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('teamTag') || 'Наша команда'}
           </p>
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('teamTitle') || 'Мастера своего дела'}
           </h2>
           <p className="text-lg text-foreground/70">
@@ -94,7 +94,7 @@ export function MastersSection() {
                   />
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-t from-card to-transparent">
-                  <h3 className="mb-1 text-sm sm:text-base text-primary">{member.name}</h3>
+                  <h3 className="mb-1 text-sm sm:text-base text-[var(--heading)]">{member.name}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground mb-1">{member.role}</p>
                   {/* <p className="text-sm text-foreground/70">{member.specialty}</p> */}
                 </div>

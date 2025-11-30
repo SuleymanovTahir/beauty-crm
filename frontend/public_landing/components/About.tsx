@@ -35,7 +35,7 @@ export function About() {
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
             {t('aboutTag') || "О нас"}
           </p>
-          <h2 className="text-4xl sm:text-5xl mb-6 text-primary">
+          <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
             {t('aboutTitle') || "Искусство красоты в каждой детали"}
           </h2>
           <p className="text-lg text-foreground/70">
@@ -52,7 +52,7 @@ export function About() {
               <div className="w-16 h-16 md:w-20 md:h-20 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <feature.icon className="w-8 h-8 md:w-10 md:h-10 text-pink-600" />
               </div>
-              <h3 className="text-lg md:text-xl mb-2 text-primary">{feature.title}</h3>
+              <h3 className="text-lg md:text-xl mb-2 text-[var(--heading)]">{feature.title}</h3>
               <p className="text-sm md:text-base text-muted-foreground">{feature.description}</p>
             </div>
           ))}

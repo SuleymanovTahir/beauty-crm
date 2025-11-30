@@ -74,7 +74,7 @@ export function FAQ() {
                     <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
                         {t('faqTag', { defaultValue: 'FAQ' })}
                     </p>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6 text-primary">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6 text-[var(--heading)]">
                         {t('faqTitle', { defaultValue: 'Часто задаваемые вопросы' })}
                     </h2>
                     <p className="text-base sm:text-lg text-foreground/70">
@@ -84,20 +84,22 @@ export function FAQ() {
 
                 {faqs.length > 0 ? (
                     <Accordion type="single" collapsible className="w-full space-y-3 sm:space-y-4">
-                        {faqs.map((faq, index) => (
-                            <AccordionItem
-                                key={faq.id}
-                                value={`item-${index}`}
-                                className="bg-card border-2 border-border/50 rounded-xl sm:rounded-2xl px-4 sm:px-6 data-[state=open]:shadow-lg data-[state=open]:border-primary/50 transition-all duration-300"
-                            >
-                                <AccordionTrigger className="text-left hover:no-underline py-4 sm:py-6">
-                                    <span className="text-sm sm:text-base text-primary pr-4">{faq.question}</span>
-                                </AccordionTrigger>
-                                <AccordionContent className="pb-4 sm:pb-6 text-xs sm:text-sm text-foreground/70 leading-relaxed">
-                                    {faq.answer}
-                                </AccordionContent>
-                            </AccordionItem>
-                        ))}
+                        {faqs.map((faq, index) => {
+                            return (
+                                <AccordionItem
+                                    key={faq.id}
+                                    value={`item-${index}`}
+                                    className="group bg-card border-2 border-border/50 rounded-xl sm:rounded-2xl px-4 sm:px-6 data-[state=open]:shadow-lg data-[state=open]:border-primary/50 transition-all duration-300"
+                                >
+                                    <AccordionTrigger className="text-left hover:no-underline py-4 sm:py-6 [&[data-state=open]>span]:!text-primary">
+                                        <span className="text-sm sm:text-base text-[var(--heading)] pr-4 transition-colors">{faq.question}</span>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="pb-4 sm:pb-6 text-xs sm:text-sm text-foreground/70 leading-relaxed">
+                                        {faq.answer}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            );
+                        })}
                     </Accordion>
                 ) : (
                     <div className="text-center text-muted-foreground">
