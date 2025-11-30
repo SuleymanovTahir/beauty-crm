@@ -106,41 +106,39 @@ async def send_contact_message(form: ContactForm):
 
 
 @router.get("/services")
-async def get_public_services(language: str = "ru"):
-    """Публичный список активных услуг с поддержкой языков"""
+async def get_public_services():
+    """Публичный список активных услуг"""
     services = get_all_services(active_only=True)
 
-    return {
-        "services": [
-            {
-                "id": s[0],  # id
-                "name": s[2],  # name (English)
-                "name_ru": s[3] if len(s) > 3 else None,
-                "name_ar": s[4] if len(s) > 4 else None,
-                "name_en": s[20] if len(s) > 20 else None,
-                "name_de": s[21] if len(s) > 21 else None,
-                "name_es": s[22] if len(s) > 22 else None,
-                "name_fr": s[23] if len(s) > 23 else None,
-                "name_hi": s[24] if len(s) > 24 else None,
-                "name_kk": s[25] if len(s) > 25 else None,
-                "name_pt": s[26] if len(s) > 26 else None,
-                "price": s[5],  # price
-                "currency": s[8],  # currency
-                "category": s[9],  # category
-                "duration": s[15] or 60,  # duration in minutes
-                "description": s[10] or "",  # description
-                "description_ru": s[11] if len(s) > 11 else None,
-                "description_ar": s[12] if len(s) > 12 else None,
-                "description_en": s[27] if len(s) > 27 else None,
-                "description_de": s[28] if len(s) > 28 else None,
-                "description_es": s[29] if len(s) > 29 else None,
-                "description_fr": s[30] if len(s) > 30 else None,
-                "description_hi": s[31] if len(s) > 31 else None,
-                "description_kk": s[32] if len(s) > 32 else None,
-                "description_pt": s[33] if len(s) > 33 else None
-            } for s in services
-        ]
-    }
+    return [
+        {
+            "id": s[0],  # id
+            "name": s[2],  # name (English)
+            "name_ru": s[3] if len(s) > 3 else None,
+            "name_ar": s[4] if len(s) > 4 else None,
+            "name_en": s[20] if len(s) > 20 else None,
+            "name_de": s[21] if len(s) > 21 else None,
+            "name_es": s[22] if len(s) > 22 else None,
+            "name_fr": s[23] if len(s) > 23 else None,
+            "name_hi": s[24] if len(s) > 24 else None,
+            "name_kk": s[25] if len(s) > 25 else None,
+            "name_pt": s[26] if len(s) > 26 else None,
+            "price": s[5],  # price
+            "currency": s[8],  # currency
+            "category": s[9],  # category
+            "duration": s[15] or 60,  # duration in minutes
+            "description": s[10] or "",  # description
+            "description_ru": s[11] if len(s) > 11 else None,
+            "description_ar": s[12] if len(s) > 12 else None,
+            "description_en": s[27] if len(s) > 27 else None,
+            "description_de": s[28] if len(s) > 28 else None,
+            "description_es": s[29] if len(s) > 29 else None,
+            "description_fr": s[30] if len(s) > 30 else None,
+            "description_hi": s[31] if len(s) > 31 else None,
+            "description_kk": s[32] if len(s) > 32 else None,
+            "description_pt": s[33] if len(s) > 33 else None
+        } for s in services
+    ]
 
 
 
