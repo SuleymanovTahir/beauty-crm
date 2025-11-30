@@ -98,7 +98,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                     {t('workingHours') || "Часы работы"}
                   </h3>
                   <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
-                    {t('monSun') || "Понедельник - Воскресенье"}: <span className="text-foreground font-medium">{salonInfo?.hours_weekdays || "10:30 - 21:30"}</span>
+                    {t('monSun') || "Понедельник - Воскресенье"}: <span className="text-foreground font-medium">{salonInfo?.hours || "10:30 - 21:30"}</span>
                   </p>
                 </div>
               </div>

@@ -41,6 +41,12 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             'main_location_hi': 'TEXT',
             'main_location_kk': 'TEXT',
             'main_location_pt': 'TEXT',
+            
+            # Address and Hours translations
+            'address_ru': 'TEXT',
+            'address_ar': 'TEXT',
+            'hours_ru': 'TEXT',
+            'hours_ar': 'TEXT',
         }
         
         # Add missing columns
