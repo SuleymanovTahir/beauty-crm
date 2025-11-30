@@ -78,7 +78,8 @@ export function Testimonials() {
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-4 h-4 sm:w-5 sm:h-5 ${i < testimonial.rating ? 'text-primary fill-primary' : 'text-muted/30 fill-muted/30'}`}
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${i < testimonial.rating ? '' : 'text-muted/30 fill-muted/30'}`}
+                    style={i < testimonial.rating ? { color: '#db2777', fill: '#db2777' } : {}}
                     viewBox="0 0 24 24"
                   >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />

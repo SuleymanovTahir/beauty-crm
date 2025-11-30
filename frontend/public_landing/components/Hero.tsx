@@ -142,7 +142,7 @@ export function Hero() {
               onClick={() => {
                 document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
+              className="hero-button-primary px-4 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
               size="lg"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />

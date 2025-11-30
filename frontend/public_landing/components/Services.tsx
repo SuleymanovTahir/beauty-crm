@@ -163,7 +163,7 @@ export function Services() {
                   onClick={() => {
                     document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6"
+                  className="hero-button-primary px-8 py-6"
                 >
                   {t('bookNowBtn') || "Book Now"}
                 </Button>

@@ -116,7 +116,7 @@ export function FAQ() {
                         <Button
                             variant="outline"
                             onClick={() => window.location.href = `tel:${salonPhone}`}
-                            className="w-full overflow-hidden px-4"
+                            className="w-full overflow-hidden px-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                         >
                             <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
                             <span className="truncate">{t('callUs', { defaultValue: 'Позвонить' })}: {salonPhone}</span>
@@ -125,7 +125,7 @@ export function FAQ() {
                             onClick={() => {
                                 document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
                             }}
-                            className="w-full overflow-hidden px-4 bg-primary text-primary-foreground hover:bg-primary/90"
+                            className="w-full overflow-hidden px-4 hero-button-primary"
                         >
                             <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
                             <span className="truncate">{t('bookNow', { defaultValue: "Записаться онлайн" })}</span>

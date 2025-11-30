@@ -229,7 +229,7 @@ export function BookingSection({ services }: BookingSectionProps) {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-6"
+            className="w-full hero-button-primary py-6"
           >
             {loading ? t('sending', { defaultValue: 'Отправка...' }) : t('submitBooking', { defaultValue: 'Отправить заявку' })}
           </Button>

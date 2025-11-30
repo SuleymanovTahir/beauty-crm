@@ -46,7 +46,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('phone') || "Телефон"}
                   </h3>
-                  <a href={`tel:${salonInfo?.phone}`} className="text-primary hover:underline text-sm sm:text-base">
+                  <a href={`tel:${salonInfo?.phone}`} className="text-foreground hover:underline text-sm sm:text-base">
                     {salonInfo?.phone || "+971 54 247 8604"}
                   </a>
                 </div>
@@ -63,7 +63,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     Email
                   </h3>
-                  <a href={`mailto:${salonInfo?.email}`} className="text-primary hover:underline text-sm sm:text-base break-all">
+                  <a href={`mailto:${salonInfo?.email}`} className="text-foreground hover:underline text-sm sm:text-base break-all">
                     {salonInfo?.email || "info@salon.ru"}
                   </a>
                 </div>
@@ -98,7 +98,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                     {t('workingHours') || "Часы работы"}
                   </h3>
                   <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
-                    {t('monSun') || "Понедельник - Воскресенье"}: <span className="text-primary font-medium">{salonInfo?.hours_weekdays || "10:30 - 21:30"}</span>
+                    {t('monSun') || "Понедельник - Воскресенье"}: <span className="text-foreground font-medium">{salonInfo?.hours_weekdays || "10:30 - 21:30"}</span>
                   </p>
                 </div>
               </div>
@@ -114,7 +114,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
               </Button>
               <Button
                 onClick={handleCall}
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 h-10 sm:h-12 shadow-sm hover:shadow-md text-sm"
+                className="flex-1 hero-button-primary h-10 sm:h-12 shadow-sm hover:shadow-md text-sm"
               >
                 {t('callUs') || "Позвонить"}
               </Button>

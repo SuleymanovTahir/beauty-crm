@@ -176,7 +176,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               onClick={() => {
                 document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
+              className="hero-button-primary"
             >
               {t('bookingTag') || 'Записаться'}
             </Button>
@@ -269,7 +269,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 setIsMobileMenuOpen(false);
                 document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              className="w-full hero-button-primary"
             >
               {t('bookingTag') || 'Записаться'}
             </Button>

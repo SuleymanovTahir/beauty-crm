@@ -4039,3 +4039,16 @@ body.menu-open {
 [data-slot="accordion-item"][data-state="open"] svg {
   color: white !important;
 }
+
+/* Hero Button Custom Hover */
+.hero-button-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  transition: all 0.3s ease;
+}
+
+.hero-button-primary:hover {
+  background-color: white !important;
+  color: var(--primary) !important;
+  opacity: 1 !important; /* Prevent transparency changes */
+}
