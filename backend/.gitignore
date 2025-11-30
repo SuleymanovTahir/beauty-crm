@@ -21,3 +21,6 @@ ENV/
 
 # Database
 salon_bot.db
+
+# Translation cache
+scripts/translations/.cache/

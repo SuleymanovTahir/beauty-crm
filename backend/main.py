@@ -26,6 +26,7 @@ from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
 from utils.utils import ensure_upload_directories
+from middleware import CacheControlMiddleware
 
 # Force reload check 3
 
@@ -198,6 +199,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Cache Control для API endpoints (предотвращает кэширование на мобильных)
+app.add_middleware(CacheControlMiddleware)
 
 # GZip Compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)

@@ -65,6 +65,17 @@ async def main():
     except Exception as e:
         log_error(f"❌ Ошибка при миграции публичного контента: {e}", "fix")
 
+    # 1.6 Fix localhost URLs in database
+    try:
+        from scripts.maintenance.fix_localhost_urls import fix_localhost_urls
+        log_info("🔗 Исправление localhost URL в изображениях...", "fix")
+        fixed_count = fix_localhost_urls()
+        print(f"✅ SUCCESS: Fixed {fixed_count} localhost URLs")
+    except ImportError:
+        log_warning("⚠️  Скрипт fix_localhost_urls не найден", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при исправлении URL: {e}", "fix")
+
 
     # 2. Data Integrity Checks (fix_data.py) - FIXED IMPORT PATH
     try:
