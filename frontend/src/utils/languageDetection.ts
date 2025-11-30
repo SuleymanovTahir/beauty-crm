@@ -93,28 +93,11 @@ export async function autoDetectAndSetLanguage(): Promise<string> {
     return savedLanguage;
   }
 
-  // First, try to detect browser language
-  const browserLang = navigator.language.split('-')[0];
-  const supportedLanguages = ['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
-
-  // If browser language is supported, use it
-  if (supportedLanguages.includes(browserLang)) {
-    localStorage.setItem('i18nextLng', browserLang);
-    return browserLang;
-  }
-
-  // If browser language is not supported, try country-based detection
-  const countryCode = await detectCountry();
-  if (countryCode) {
-    const language = getLanguageForCountry(countryCode);
-    localStorage.setItem('i18nextLng', language);
-    return language;
-  }
-
-  // Final fallback to English
-  const finalLang = 'en';
-  localStorage.setItem('i18nextLng', finalLang);
-  return finalLang;
+  // FORCE ENGLISH BY DEFAULT for new users
+  // We ignore browser language and IP detection to ensure the site starts in English
+  const defaultLang = 'en';
+  localStorage.setItem('i18nextLng', defaultLang);
+  return defaultLang;
 }
 
 export function getSortedLanguages(countryCode: string | null): string[] {
