@@ -82,6 +82,9 @@ def translate_content():
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     
+    # Save cache to disk
+    translator.save_cache_to_disk()
+    
     print(f"\n✅ Translation complete!")
     print(f"   Total translations: {total_translated}")
     print(f"   Output saved to: {TRANSLATE_OUTPUT}")

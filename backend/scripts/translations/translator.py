@@ -18,7 +18,22 @@ class Translator:
         self.use_cache = use_cache
         self.cache_dir = Path(CACHE_DIR)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        print("✅ Google Translate HTTP API ready")
+        
+        # Use single consolidated cache file instead of thousands of small files
+        self.cache_file = self.cache_dir / "translations_cache.json"
+        self.cache_data = {}
+        
+        # Load existing cache
+        if self.use_cache and self.cache_file.exists():
+            try:
+                with open(self.cache_file, 'r', encoding='utf-8') as f:
+                    self.cache_data = json.load(f)
+                print(f"✅ Google Translate HTTP API ready (loaded {len(self.cache_data)} cached translations)")
+            except Exception as e:
+                print(f"⚠️  Could not load cache: {e}")
+                self.cache_data = {}
+        else:
+            print("✅ Google Translate HTTP API ready")
     
     def _get_cache_key(self, text: str, source: str, target: str) -> str:
         """Generate cache key for translation"""
@@ -32,17 +47,7 @@ class Translator:
             return None
         
         cache_key = self._get_cache_key(text, source, target)
-        cache_file = self.cache_dir / f"{cache_key}.json"
-        
-        if cache_file.exists():
-            try:
-                with open(cache_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    return data.get('translation')
-            except:
-                pass
-        
-        return None
+        return self.cache_data.get(cache_key)
     
     def _save_to_cache(self, text: str, source: str, target: str, translation: str):
         """Save translation to cache"""
@@ -50,18 +55,19 @@ class Translator:
             return
         
         cache_key = self._get_cache_key(text, source, target)
-        cache_file = self.cache_dir / f"{cache_key}.json"
+        self.cache_data[cache_key] = translation
+    
+    def save_cache_to_disk(self):
+        """Save all cached translations to disk"""
+        if not self.use_cache:
+            return
         
         try:
-            with open(cache_file, 'w', encoding='utf-8') as f:
-                json.dump({
-                    'text': text,
-                    'source': source,
-                    'target': target,
-                    'translation': translation
-                }, f, ensure_ascii=False, indent=2)
-        except:
-            pass
+            with open(self.cache_file, 'w', encoding='utf-8') as f:
+                json.dump(self.cache_data, f, ensure_ascii=False, indent=2)
+            print(f"💾 Saved {len(self.cache_data)} translations to cache")
+        except Exception as e:
+            print(f"⚠️  Could not save cache: {e}")
     
     def _translate_via_http(self, text: str, source: str, target: str) -> str:
         """Translate using Google Translate HTTP API"""
