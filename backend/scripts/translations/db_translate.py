@@ -56,21 +56,33 @@ def translate_content():
             print(f"  🔄 Record ID {record_id}:")
             
             for field_name, field_data in record["fields"].items():
+                # Get the source text (from _ru field or base field)
                 source_text = field_data.get(SOURCE_LANGUAGE)
                 
-                if not source_text:
+                if not source_text or not source_text.strip():
                     continue
                 
-                print(f"    • {field_name}: '{source_text}'")
+                # Detect actual language of the source text
+                detected_lang = translator.detect_language(source_text)
+                print(f"    • {field_name}: '{source_text}' [detected: {detected_lang}]")
                 
-                # Translate to each missing language
+                # Store detected language in field data
+                field_data['detected_language'] = detected_lang
+                
+                # Translate to ALL languages
                 for lang in LANGUAGES:
-                    if lang == SOURCE_LANGUAGE:
-                        continue
+                    should_translate = False
                     
                     if field_data.get(lang) is None:
-                        # Translate
-                        translated = translator.translate(source_text, SOURCE_LANGUAGE, lang)
+                        should_translate = True
+                    elif lang == SOURCE_LANGUAGE and detected_lang != SOURCE_LANGUAGE:
+                        # If target is RU but detected is EN, we must translate EN -> RU
+                        # and OVERWRITE the existing value (which is EN)
+                        should_translate = True
+                    
+                    if should_translate:
+                        # Translate from detected language to target language
+                        translated = translator.translate(source_text, detected_lang, lang)
                         field_data[lang] = translated
                         total_translated += 1
                         print(f"      → {lang}: '{translated}'")

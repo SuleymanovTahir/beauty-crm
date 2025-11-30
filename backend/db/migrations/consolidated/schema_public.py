@@ -23,9 +23,21 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 title_ru TEXT NOT NULL,
                 title_en TEXT,
                 title_ar TEXT,
+                title_es TEXT,
+                title_de TEXT,
+                title_fr TEXT,
+                title_hi TEXT,
+                title_kk TEXT,
+                title_pt TEXT,
                 subtitle_ru TEXT,
                 subtitle_en TEXT,
                 subtitle_ar TEXT,
+                subtitle_es TEXT,
+                subtitle_de TEXT,
+                subtitle_fr TEXT,
+                subtitle_hi TEXT,
+                subtitle_kk TEXT,
+                subtitle_pt TEXT,
                 image_url TEXT,
                 link_url TEXT,
                 display_order INTEGER DEFAULT 0,
@@ -33,6 +45,23 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        
+        # Add missing columns to existing public_banners table
+        c.execute("PRAGMA table_info(public_banners)")
+        existing_columns = {col[1] for col in c.fetchall()}
+        
+        columns_to_add = {
+            'title_es': 'TEXT', 'title_de': 'TEXT', 'title_fr': 'TEXT',
+            'title_hi': 'TEXT', 'title_kk': 'TEXT', 'title_pt': 'TEXT',
+            'subtitle_es': 'TEXT', 'subtitle_de': 'TEXT', 'subtitle_fr': 'TEXT',
+            'subtitle_hi': 'TEXT', 'subtitle_kk': 'TEXT', 'subtitle_pt': 'TEXT'
+        }
+        
+        for col, dtype in columns_to_add.items():
+            if col not in existing_columns:
+                print(f"  ➕ Adding column to public_banners: {col}")
+                c.execute(f"ALTER TABLE public_banners ADD COLUMN {col} {dtype}")
+        
         print("  ✅ public_banners table ensured")
         
         # 2. Create public_reviews table

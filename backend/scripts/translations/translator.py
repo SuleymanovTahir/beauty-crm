@@ -93,6 +93,42 @@ class Translator:
             print(f"  ⚠️  Translation HTTP error: {e}")
             return text  # Fallback
     
+    def detect_language(self, text: str) -> str:
+        """
+        Detect language of text using Google Translate API
+        
+        Args:
+            text: Text to detect language for
+            
+        Returns:
+            Language code (e.g., 'en', 'ru', 'ar')
+        """
+        try:
+            # Encode text for URL
+            encoded_text = urllib.parse.quote(text[:200])  # Use first 200 chars for detection
+            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
+            
+            # Make request
+            req = urllib.request.Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0')
+            
+            with urllib.request.urlopen(req, timeout=10) as response:
+                data = response.read().decode('utf-8')
+                parsed = json.loads(data)
+                
+                # Language is in parsed[2] or parsed[8][0][0]
+                if parsed and len(parsed) > 2 and parsed[2]:
+                    detected_lang = parsed[2]
+                    return detected_lang
+                elif parsed and len(parsed) > 8 and parsed[8] and parsed[8][0]:
+                    detected_lang = parsed[8][0][0]
+                    return detected_lang
+                else:
+                    return 'ru'  # Default fallback
+        except Exception as e:
+            print(f"  ⚠️  Language detection error: {e}")
+            return 'ru'  # Default fallback
+    
     def translate(self, text: str, source: str, target: str) -> str:
         """
         Translate text from source language to target language

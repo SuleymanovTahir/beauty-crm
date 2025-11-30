@@ -34,9 +34,9 @@ TRANSLATION_CONFIG = {
         "fields": ["main_location", "address", "city", "country"], 
         "where": None
     },
-    "banners": {
+    "public_banners": {
         "id_field": "id",
-        "fields": ["title", "subtitle"],
+        "fields": ["title_ru", "subtitle_ru"],
         "where": "is_active = 1"
     }
 }
