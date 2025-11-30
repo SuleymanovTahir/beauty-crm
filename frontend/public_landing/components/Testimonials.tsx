@@ -72,7 +72,7 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id || index}
-              className="group bg-card border border-border/50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 flex flex-col h-full"
+              className="group bg-card border border-primary rounded-2xl p-6 hover:shadow-lg transition-all duration-300 flex flex-col h-full"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
