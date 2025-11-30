@@ -184,6 +184,9 @@ async def log_requests(request: Request, call_next):
         raise
 
 
+# GZip сжатие (должно быть одним из первых)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 # CORS для React
 app.add_middleware(
     CORSMiddleware,

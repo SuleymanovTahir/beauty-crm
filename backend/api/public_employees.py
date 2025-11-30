@@ -26,6 +26,11 @@ async def get_public_employees(
     cursor = conn.cursor()
     
     try:
+        # Sanitize language
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'en'
+
         # Определяем поля для перевода
         name_field = f'full_name_{language}'
         position_field = f'position_{language}'
@@ -86,6 +91,11 @@ async def get_salon_info(
     cursor = conn.cursor()
     
     try:
+        # Sanitize language
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'ru'
+
         # Определяем поля для перевода
         name_field = 'name_ar' if language == 'ar' else 'name'
         address_field = 'address_ar' if language == 'ar' else 'address'
