@@ -1,7 +1,7 @@
 {
   "absences": "Отсутствия",
   "access_rights": "Права доступа",
-  "by_role": "По роли",
+  "by_role": "По ролям",
   "can_manage_roles": "Может управлять ролями",
   "change_role": "Изменить роль",
   "change_role_to": "Изменить роль на",
@@ -32,7 +32,7 @@
   "schedule_settings": "Настройки расписания",
   "sunday": "Воскресенье",
   "thursday": "Четверг",
-  "to": "До",
+  "to": "К",
   "tuesday": "Вторник",
   "user_role": "Роль пользователя",
   "was_granted": "Было выдано",
