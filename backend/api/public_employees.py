@@ -98,7 +98,7 @@ async def get_salon_info(
 
         # Определяем поля для перевода
         name_field = 'name_ar' if language == 'ar' else 'name'
-        address_field = 'address_ar' if language == 'ar' else 'address'
+        address_field = 'address_ar' if language == 'ar' else ('address_ru' if language == 'ru' else 'address')
         hours_field = f'hours_{language}' if language in ['ru', 'ar'] else 'hours'
         location_field = f'main_location_{language}' if language != 'ru' else 'main_location'
         
