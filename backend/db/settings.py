@@ -104,51 +104,62 @@ def _get_default_salon_settings() -> dict:
 
 
 def update_salon_settings(data: dict) -> bool:
-    """Обновить настройки салона"""
+    """Обновить настройки салона (поддерживает частичное обновление)"""
     conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
 
     try:
-        c.execute("""UPDATE salon_settings SET
-                    name = ?, name_ar = ?, address = ?, address_ar = ?,
-                    google_maps = ?, hours = ?, hours_ru = ?, hours_ar = ?,
-                    hours_weekdays = ?, hours_weekends = ?,
-                    booking_url = ?, phone = ?, email = ?, instagram = ?,
-                    whatsapp = ?, bot_name = ?, bot_name_en = ?, bot_name_ar = ?,
-                    city = ?, country = ?, timezone = ?, timezone_offset = ?, 
-                    currency = ?, birthday_discount = ?,
-                    currency = ?, birthday_discount = ?, promo_end_date = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                    WHERE id = 1""",
-                  (data.get('name'),
-                   data.get('name_ar'),
-                   data.get('address'),
-                   data.get('address_ar'),
-                   data.get('google_maps'),
-                   data.get('hours'),
-                   data.get('hours_ru'),
-                   data.get('hours_ar'),
-                   data.get('hours_weekdays'),
-                   data.get('hours_weekends'),
-                   data.get('booking_url'),
-                   data.get('phone'),
-                   data.get('email'),
-                   data.get('instagram'),
-                   data.get('whatsapp'),
-                   data.get('bot_name'),
-                   data.get('bot_name_en'),
-                   data.get('bot_name_ar'),
-                   data.get('city'),
-                   data.get('country'),
-                   data.get('timezone'),
-                   data.get('timezone_offset'),
-                   data.get('currency'),
-                   data.get('currency'),
-                   data.get('birthday_discount'),
-                   data.get('promo_end_date')))
+        # Список всех возможных полей для обновления
+        field_mapping = {
+            'name': 'name',
+            'name_ar': 'name_ar',
+            'address': 'address',
+            'address_ar': 'address_ar',
+            'google_maps': 'google_maps',
+            'hours': 'hours',
+            'hours_ru': 'hours_ru',
+            'hours_ar': 'hours_ar',
+            'hours_weekdays': 'hours_weekdays',
+            'hours_weekends': 'hours_weekends',
+            'booking_url': 'booking_url',
+            'phone': 'phone',
+            'email': 'email',
+            'instagram': 'instagram',
+            'whatsapp': 'whatsapp',
+            'bot_name': 'bot_name',
+            'bot_name_en': 'bot_name_en',
+            'bot_name_ar': 'bot_name_ar',
+            'city': 'city',
+            'country': 'country',
+            'timezone': 'timezone',
+            'timezone_offset': 'timezone_offset',
+            'currency': 'currency',
+            'birthday_discount': 'birthday_discount',
+            'promo_end_date': 'promo_end_date'
+        }
+
+        # Формируем SET часть запроса только для предоставленных полей
+        set_parts = []
+        params = []
+
+        for data_key, db_column in field_mapping.items():
+            if data_key in data:
+                set_parts.append(f"{db_column} = ?")
+                params.append(data[data_key])
+
+        if not set_parts:
+            log_warning("⚠️ Нет полей для обновления", "database")
+            return False
+
+        # Добавляем updated_at
+        set_parts.append("updated_at = CURRENT_TIMESTAMP")
+
+        # Формируем и выполняем запрос
+        query = f"UPDATE salon_settings SET {', '.join(set_parts)} WHERE id = 1"
+        c.execute(query, params)
 
         conn.commit()
-        log_info("✅ Настройки салона обновлены", "database")
+        log_info(f"✅ Настройки салона обновлены ({len(set_parts)-1} полей)", "database")
         return True
     except Exception as e:
         log_error(f"Ошибка обновления настроек салона: {e}", "database")
