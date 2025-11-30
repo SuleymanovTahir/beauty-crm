@@ -1,1 +1,33 @@
-{}
+{
+  "public_banners": [
+    {
+      "id": 3,
+      "fields": {
+        "title_ru": {
+          "ru": "Luxury Spa Experience in Dubai",
+          "key": "public_banners.3.title_ru",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_ru": {
+          "ru": "Book Your Appointment Now",
+          "key": "public_banners.3.subtitle_ru",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ]
+}

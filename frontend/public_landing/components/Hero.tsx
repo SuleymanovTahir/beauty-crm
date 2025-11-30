@@ -10,9 +10,21 @@ interface Banner {
   title_ru: string;
   title_en?: string;
   title_ar?: string;
+  title_es?: string;
+  title_de?: string;
+  title_fr?: string;
+  title_hi?: string;
+  title_kk?: string;
+  title_pt?: string;
   subtitle_ru: string;
   subtitle_en?: string;
   subtitle_ar?: string;
+  subtitle_es?: string;
+  subtitle_de?: string;
+  subtitle_fr?: string;
+  subtitle_hi?: string;
+  subtitle_kk?: string;
+  subtitle_pt?: string;
   image_url: string;
   link_url?: string;
   is_active: boolean;
@@ -49,9 +61,25 @@ export function Hero() {
       });
   }, []);
 
-  const getTranslatedText = (ru: string, en?: string, ar?: string) => {
+  const getTranslatedText = (
+    ru: string,
+    en?: string,
+    ar?: string,
+    es?: string,
+    de?: string,
+    fr?: string,
+    hi?: string,
+    kk?: string,
+    pt?: string
+  ) => {
     if (language === 'en' && en) return en;
     if (language === 'ar' && ar) return ar;
+    if (language === 'es' && es) return es;
+    if (language === 'de' && de) return de;
+    if (language === 'fr' && fr) return fr;
+    if (language === 'hi' && hi) return hi;
+    if (language === 'kk' && kk) return kk;
+    if (language === 'pt' && pt) return pt;
     return ru;
   };
 
@@ -76,10 +104,30 @@ export function Hero() {
           {/* Title and Description */}
           <div className="space-y-6">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl text-primary animate-fade-in-up leading-tight">
-              {heroBanner ? getTranslatedText(heroBanner.title_ru, heroBanner.title_en, heroBanner.title_ar) : (t('heroTitle') || "Ваша красота —")}
+              {heroBanner ? getTranslatedText(
+                heroBanner.title_ru,
+                heroBanner.title_en,
+                heroBanner.title_ar,
+                heroBanner.title_es,
+                heroBanner.title_de,
+                heroBanner.title_fr,
+                heroBanner.title_hi,
+                heroBanner.title_kk,
+                heroBanner.title_pt
+              ) : (t('heroTitle') || "Ваша красота —")}
               <br />
               <span className="text-accent-foreground">
-                {heroBanner ? getTranslatedText(heroBanner.subtitle_ru, heroBanner.subtitle_en, heroBanner.subtitle_ar) : (t('heroSubtitle') || "наша страсть")}
+                {heroBanner ? getTranslatedText(
+                  heroBanner.subtitle_ru,
+                  heroBanner.subtitle_en,
+                  heroBanner.subtitle_ar,
+                  heroBanner.subtitle_es,
+                  heroBanner.subtitle_de,
+                  heroBanner.subtitle_fr,
+                  heroBanner.subtitle_hi,
+                  heroBanner.subtitle_kk,
+                  heroBanner.subtitle_pt
+                ) : (t('heroSubtitle') || "наша страсть")}
               </span>
             </h1>
 
