@@ -99,7 +99,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-foreground/80 hover:text-foreground" : "text-foreground/80 hover:text-foreground"
+                className={`text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-primary hover:text-primary/80" : "text-primary hover:text-primary/80"
                   }`}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
@@ -113,10 +113,10 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors"
               >
                 <Globe className="w-4 h-4 text-primary" />
-                <span className="text-sm uppercase">{language}</span>
+                <span className="text-sm uppercase text-primary">{language}</span>
               </button>
               {isLangMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[160px] py-1 z-50">
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden w-max min-w-[60px] py-1 z-50">
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
@@ -124,11 +124,11 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                         changeLanguage(lang.code as any);
                         setIsLangMenuOpen(false);
                       }}
-                      className={`block w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${language === lang.code ? 'bg-gray-50 font-medium' : ''
+                      className={`block w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-1.5 text-primary ${language === lang.code ? 'bg-gray-50 font-medium' : ''
                         }`}
                     >
-                      <span className="text-lg">{lang.flag}</span>
-                      {lang.name}
+                      <span className="text-lg leading-none">{lang.flag}</span>
+                      {lang.short}
                     </button>
                   ))}
                 </div>
@@ -163,7 +163,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-5 h-5"
+                    className="w-[22px] h-[22px]"
                   >
                     <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
                     <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
@@ -198,7 +198,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a
                 key={item.name}
                 href={item.href}
-                className="block text-sm text-foreground/80 hover:text-foreground transition-colors duration-200 py-2"
+                className="block text-sm text-primary hover:text-primary/80 transition-colors duration-200 py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
@@ -255,7 +255,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-6 h-6"
+                    className="w-7 h-7"
                   >
                     <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
                     <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
