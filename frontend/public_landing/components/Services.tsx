@@ -120,9 +120,9 @@ export function Services() {
             <TabsContent key={category} value={category} className="mt-0">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {categoryServices.map((service, index) => {
-                  // Use translations from dynamic.json
-                  const localizedName = String(t(`dynamic:services.${service.id}.name`, service.name_ru || service.name || ""));
-                  const localizedDescription = String(t(`dynamic:services.${service.id}.description`, service.description_ru || service.description || ""));
+                  // Use API provided localized fields
+                  const localizedName = (i18n.language === 'ru' && service.name_ru) ? service.name_ru : service.name;
+                  const localizedDescription = (i18n.language === 'ru' && service.description_ru) ? service.description_ru : service.description;
 
                   return (
                     <div

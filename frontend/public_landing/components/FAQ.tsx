@@ -31,11 +31,11 @@ export function FAQ() {
                 const faqData = await faqResponse.json();
                 const rawFaqs = Array.isArray(faqData) ? faqData : (faqData.faq || []);
 
-                // Use translations from dynamic.json instead of DB columns
+                // Use API provided localized fields
                 const mappedFaqs = rawFaqs.map((item: any) => ({
                     ...item,
-                    question: t(`dynamic:public_faq.${item.id}.question_ru`, item.question_ru || ""),
-                    answer: t(`dynamic:public_faq.${item.id}.answer_ru`, item.answer_ru || "")
+                    question: item.question || item.question_ru || "",
+                    answer: item.answer || item.answer_ru || ""
                 }));
 
                 setFaqs(mappedFaqs);

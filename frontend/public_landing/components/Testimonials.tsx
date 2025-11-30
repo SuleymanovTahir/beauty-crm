@@ -21,12 +21,11 @@ export function Testimonials() {
       try {
         const data = await apiClient.getPublicReviews(language);
         if (data.reviews && data.reviews.length > 0) {
-          // Use translations from dynamic.json instead of DB columns
+          // Use API provided localized fields
           const mappedReviews = data.reviews.map((review: any) => ({
             ...review,
-            // Use translation key: public_reviews.{id}.text_ru
-            text: t(`dynamic:public_reviews.${review.id}.text_ru`, review.text_ru || ""),
-            name: t(`dynamic:public_reviews.${review.id}.author_name`, review.author_name || review.name || "")
+            text: review.text || review.text_ru || "",
+            name: review.name || review.author_name || ""
           }));
           setTestimonials(mappedReviews);
         }
