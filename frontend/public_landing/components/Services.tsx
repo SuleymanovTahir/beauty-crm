@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/u
 import { Button } from "../../src/components/ui/button";
 import { apiClient } from "../../src/api/client";
 import { useTranslation } from "react-i18next";
+import { Hand, Scissors, Sparkles, Heart, Gift } from "lucide-react";
 
 interface Service {
   id: number;
@@ -61,6 +62,18 @@ export function Services() {
     }
   };
 
+  // Icon mapping for tabs
+  const getTabIcon = (value: string) => {
+    switch (value) {
+      case 'nails': return Hand;
+      case 'hair': return Scissors;
+      case 'makeup': return Sparkles;
+      case 'beauty': return Heart;
+      case 'other': return Gift;
+      default: return Sparkles;
+    }
+  };
+
   const [activeTab, setActiveTab] = useState("nails");
 
   if (loading) {
@@ -84,15 +97,21 @@ export function Services() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-muted/50 p-2 rounded-2xl h-auto">
-            {Object.keys(groupedServices).map((category) => (
-              <TabsTrigger
-                key={category}
-                value={category}
-                className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg"
-              >
-                {getTabLabel(category)}
-              </TabsTrigger>
-            ))}
+            {Object.keys(groupedServices).map((category) => {
+              const Icon = getTabIcon(category);
+              return (
+                <TabsTrigger
+                  key={category}
+                  value={category}
+                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                >
+                  <div className="flex items-center gap-2 justify-center">
+                    <Icon className="w-4 h-4" />
+                    <span>{getTabLabel(category)}</span>
+                  </div>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
@@ -128,7 +147,7 @@ export function Services() {
                             })()}
                           </span>
                         )}
-                        <span className="text-base sm:text-lg font-bold text-primary ml-auto">
+                        <span className="text-base sm:text-lg font-bold text-pink-600 ml-auto">
                           {service.price} {service.currency || 'AED'}
                         </span>
                       </div>

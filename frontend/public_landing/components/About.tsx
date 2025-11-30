@@ -47,13 +47,13 @@ export function About() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group relative bg-card p-8 rounded-2xl transition-all duration-300 hover:shadow-lg"
+              className="text-center group"
             >
-              <div className="mb-6 inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent/20 text-accent-foreground">
-                <feature.icon className="w-6 h-6" />
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <feature.icon className="w-8 h-8 md:w-10 md:h-10 text-pink-600" />
               </div>
-              <h3 className="mb-3 text-primary">{feature.title}</h3>
-              <p className="text-sm text-foreground/70">{feature.description}</p>
+              <h3 className="text-lg md:text-xl mb-2 text-primary">{feature.title}</h3>
+              <p className="text-sm md:text-base text-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>
