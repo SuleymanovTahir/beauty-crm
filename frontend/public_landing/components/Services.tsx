@@ -108,7 +108,7 @@ export function Services() {
                   style={isActive ? { backgroundColor: '#db2777', color: 'white' } : {}}
                 >
                   <div className="flex items-center gap-2 justify-center">
-                    <Icon className="w-4 h-4" style={isActive ? { color: 'white' } : {}} />
+                    <Icon className={`w-4 h-4 ${isActive ? '' : 'text-primary'}`} style={isActive ? { color: 'white' } : {}} />
                     <span>{getTabLabel(category)}</span>
                   </div>
                 </TabsTrigger>

@@ -4045,10 +4045,12 @@ body.menu-open {
   background-color: var(--primary);
   color: var(--primary-foreground);
   transition: all 0.3s ease;
+  border: 1px solid transparent;
 }
 
 .hero-button-primary:hover {
   background-color: white !important;
   color: var(--primary) !important;
   opacity: 1 !important; /* Prevent transparency changes */
+  border-color: var(--primary) !important;
 }

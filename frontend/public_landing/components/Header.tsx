@@ -112,7 +112,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-black/5 transition-colors"
               >
-                <Globe className="w-4 h-4" />
+                <Globe className="w-4 h-4 text-primary" />
                 <span className="text-sm uppercase">{language}</span>
               </button>
               {isLangMenuOpen && (
@@ -142,7 +142,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/80 hover:text-foreground transition-colors"
+                  className="text-primary hover:text-primary/80 transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
@@ -152,7 +152,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   href={`https://wa.me/${salonInfo.whatsapp.replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/80 hover:text-foreground transition-colors"
+                  className="text-primary hover:text-primary/80 transition-colors"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -234,7 +234,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/80 hover:text-foreground transition-colors"
+                  className="text-primary hover:text-primary/80 transition-colors"
                 >
                   <Instagram className="w-6 h-6" />
                 </a>
@@ -244,7 +244,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   href={`https://wa.me/${salonInfo.whatsapp.replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-foreground/80 hover:text-foreground transition-colors"
+                  className="text-primary hover:text-primary/80 transition-colors"
                 >
                   <svg
                     viewBox="0 0 24 24"
