@@ -119,6 +119,30 @@ def extract_translatable_content():
                             table_missing += 1
                             total_missing += 1
                     
+                    # NEW: Check if source language itself needs translation (correction)
+                    # This happens if we detected that source text is NOT in source language (e.g. EN text in RU field)
+                    # We can't easily detect here without instantiating Translator, which might be slow for all records
+                    # But we can check if we have a "detected_language" stored? No, we don't store it in DB yet.
+                    # So we rely on db_translate.py to do the actual detection and correction.
+                    # BUT db_translate.py only runs on items in this list.
+                    # So we MUST include items here if they look suspicious?
+                    
+                    # Actually, let's instantiate Translator here. It uses cache so it should be fast for repeated runs.
+                    # We'll do it only if we haven't already flagged this field as missing
+                    if not field_has_missing:
+                        # Lazy instantiation
+                        if 'translator' not in locals():
+                            from translator import Translator
+                            translator = Translator(use_cache=True)
+                        
+                        detected = translator.detect_language(source_value)
+                        # Only flag if detected is 'en' (reliable) and source is 'ru'
+                        if detected == 'en' and SOURCE_LANGUAGE == 'ru':
+                             print(f"    ⚠️  Language mismatch for {key}: detected '{detected}', expected '{SOURCE_LANGUAGE}'")
+                             field_has_missing = True
+                             # We don't increment total_missing here to avoid double counting if we re-run
+                             # But effectively this forces it into the output list
+                    
                     # Only include field if it has missing translations
                     if field_has_missing:
                         record_data["fields"][field] = field_data
@@ -138,6 +162,10 @@ def extract_translatable_content():
             print(f"  💡 Hint: Check table/column names in config")
     
     conn.close()
+    
+    # Save cache if translator was used
+    if 'translator' in locals():
+        translator.save_cache_to_disk()
     
     # Save results
     output_path = Path(EXTRACT_OUTPUT)
