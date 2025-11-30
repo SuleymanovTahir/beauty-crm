@@ -59,12 +59,14 @@ export function Hero() {
 
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
-      <div className="absolute inset-0">
-        <img
-          src={backgroundImage}
-          alt="Elegant Beauty"
-          className="w-full h-full object-cover"
-        />
+      <div className="absolute inset-0 bg-muted/20">
+        {backgroundImage && (
+          <img
+            src={backgroundImage}
+            alt="Elegant Beauty"
+            className="w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/40" />
       </div>
 

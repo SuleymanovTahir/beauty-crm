@@ -29,8 +29,16 @@ export function FAQ() {
             try {
                 const faqResponse = await fetch(`/api/public/faq?language=${language}`);
                 const faqData = await faqResponse.json();
-                const faqArray = Array.isArray(faqData) ? faqData : (faqData.faq || []);
-                setFaqs(faqArray);
+                const rawFaqs = Array.isArray(faqData) ? faqData : (faqData.faq || []);
+
+                // Map multilingual fields to question/answer
+                const mappedFaqs = rawFaqs.map((item: any) => ({
+                    ...item,
+                    question: item[`question_${language}`] || item.question_ru || item.question || "",
+                    answer: item[`answer_${language}`] || item.answer_ru || item.answer || ""
+                }));
+
+                setFaqs(mappedFaqs);
 
                 const salonResponse = await fetch(`/api/public/salon-info?language=${language}`);
                 const salonData = await salonResponse.json();

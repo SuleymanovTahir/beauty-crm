@@ -24,6 +24,11 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
     cursor = conn.cursor()
     
     try:
+        # Sanitize language to prevent SQL injection and errors
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'en'
+
         # Determine text column based on language
         text_field = f'text_{language}'
         
@@ -77,6 +82,11 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
     cursor = conn.cursor()
     
     try:
+        # Sanitize language
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'ru'
+
         question_field = f'question_{language}'
         answer_field = f'answer_{language}'
         
