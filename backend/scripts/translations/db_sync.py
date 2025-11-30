@@ -58,7 +58,7 @@ def sync_translations():
                     key = f"{table_name}.{record_id}.{field_name}"
                 
                 for lang, value in translations.items():
-                    if lang == SOURCE_LANGUAGE or lang == 'key':
+                    if lang == SOURCE_LANGUAGE or lang == 'key' or lang == 'detected_language':
                         continue
                         
                     if value:
