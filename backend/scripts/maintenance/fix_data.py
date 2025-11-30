@@ -574,6 +574,175 @@ def fix_employee_genders():
     conn.close()
 
 
+def fix_services_english_translations():
+    """Исправить английские переводы услуг - скопировать из поля name в name_en"""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    if not table_exists(c, 'services'):
+        print("⚠️  Таблица services не существует")
+        conn.close()
+        return
+
+    print("\n📝 Исправляем английские переводы услуг...")
+    
+    # Получаем услуги где name_en пустое, но name заполнено
+    c.execute("""
+        SELECT id, name, name_ru, name_en, description, description_en 
+        FROM services 
+        WHERE name IS NOT NULL AND (name_en IS NULL OR name_en = '')
+    """)
+    services = c.fetchall()
+    
+    if not services:
+        print("✅ Все услуги уже имеют английские переводы")
+        conn.close()
+        return
+    
+    print(f"Найдено {len(services)} услуг без английского перевода")
+    
+    for service_id, name, name_ru, name_en, description, description_en in services:
+        updates = []
+        params = []
+        
+        # Копируем name в name_en (name уже на английском)
+        if name:
+            updates.append("name_en = ?")
+            params.append(name)
+            print(f"  ✅ ID {service_id}: {name_ru} -> {name}")
+        
+        # Копируем description в description_en если есть
+        if description and (not description_en or description_en == ''):
+            updates.append("description_en = ?")
+            params.append(description)
+        
+        if updates:
+            params.append(service_id)
+            sql = f"UPDATE services SET {', '.join(updates)} WHERE id = ?"
+            c.execute(sql, params)
+    
+    conn.commit()
+    conn.close()
+    print(f"✅ Обновлено {len(services)} услуг")
+
+
+def cleanup_reviews_translations():
+    """Очистить неправильные переводы отзывов (русский текст в других языках)"""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    if not table_exists(c, 'public_reviews'):
+        print("⚠️  Таблица public_reviews не существует")
+        conn.close()
+        return
+
+    print("\n🧹 Очищаем неправильные переводы отзывов...")
+    
+    # Получаем все отзывы
+    c.execute("SELECT id, text_ru, text_en, text_ar, text_de, text_es, text_fr, text_hi, text_kk, text_pt FROM public_reviews")
+    reviews = c.fetchall()
+    
+    cleaned_count = 0
+    for review in reviews:
+        review_id = review[0]
+        text_ru = review[1]
+        
+        # Проверяем каждый язык (кроме русского и английского)
+        updates = []
+        params = []
+        
+        for i, lang in enumerate(['ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt'], start=3):
+            text_lang = review[i]
+            
+            # Если текст на другом языке совпадает с русским - очищаем
+            if text_lang and text_lang == text_ru:
+                updates.append(f"text_{lang} = NULL")
+                cleaned_count += 1
+                print(f"  🧹 ID {review_id}: Очищен {lang} (был дубликат русского)")
+        
+        if updates:
+            sql = f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = ?"
+            c.execute(sql, [review_id])
+    
+    conn.commit()
+    conn.close()
+    
+    if cleaned_count > 0:
+        print(f"✅ Очищено {cleaned_count} неправильных переводов")
+    else:
+        print("✅ Неправильных переводов не найдено")
+
+
+def cleanup_faq_translations():
+    """Очистить неправильные переводы FAQ (русский текст в других языках)"""
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    if not table_exists(c, 'public_faq'):
+        print("⚠️  Таблица public_faq не существует")
+        conn.close()
+        return
+
+    print("\n🧹 Очищаем неправильные переводы FAQ...")
+    
+    # Получаем все FAQ
+    c.execute("""
+        SELECT id, question_ru, answer_ru, 
+               question_en, answer_en,
+               question_ar, answer_ar,
+               question_de, answer_de,
+               question_es, answer_es,
+               question_fr, answer_fr,
+               question_hi, answer_hi,
+               question_kk, answer_kk,
+               question_pt, answer_pt
+        FROM public_faq
+    """)
+    faqs = c.fetchall()
+    
+    cleaned_count = 0
+    for faq in faqs:
+        faq_id = faq[0]
+        question_ru = faq[1]
+        answer_ru = faq[2]
+        
+        updates = []
+        
+        # Проверяем каждый язык (кроме русского и английского)
+        langs = ['ar', 'de', 'es', 'fr', 'hi', 'kk', 'pt']
+        for i, lang in enumerate(langs):
+            # Индексы: en=3,4  ar=5,6  de=7,8  es=9,10  fr=11,12  hi=13,14  kk=15,16  pt=17,18
+            q_idx = 5 + (i * 2)
+            a_idx = 6 + (i * 2)
+            
+            question_lang = faq[q_idx] if q_idx < len(faq) else None
+            answer_lang = faq[a_idx] if a_idx < len(faq) else None
+            
+            # Если вопрос совпадает с русским - очищаем
+            if question_lang and question_lang == question_ru:
+                updates.append(f"question_{lang} = NULL")
+                cleaned_count += 1
+                print(f"  🧹 FAQ {faq_id}: Очищен question_{lang}")
+            
+            # Если ответ совпадает с русским - очищаем
+            if answer_lang and answer_lang == answer_ru:
+                updates.append(f"answer_{lang} = NULL")
+                cleaned_count += 1
+                print(f"  🧹 FAQ {faq_id}: Очищен answer_{lang}")
+        
+        if updates:
+            sql = f"UPDATE public_faq SET {', '.join(updates)} WHERE id = ?"
+            c.execute(sql, [faq_id])
+    
+    conn.commit()
+    conn.close()
+    
+    if cleaned_count > 0:
+        print(f"✅ Очищено {cleaned_count} неправильных переводов")
+    else:
+        print("✅ Неправильных переводов не найдено")
+
+
 if __name__ == "__main__":
     print("=== Проверка данных в БД ===\n")
 
@@ -590,6 +759,14 @@ if __name__ == "__main__":
         fix_booking_data_collection()
         fix_missing_bot_fields()
         fix_employee_genders()
+        
+        print("\n" + "="*50)
+        print("Исправляем переводы...")
+        print("="*50)
+        
+        fix_services_english_translations()
+        cleanup_reviews_translations()
+        cleanup_faq_translations()
 
         print("\n✅ Проверка завершена!")
 
@@ -597,3 +774,4 @@ if __name__ == "__main__":
         print(f"\n❌ Ошибка: {e}")
         import traceback
         traceback.print_exc()
+

@@ -854,12 +854,12 @@ def seed_data():
         benefits_str = ", ".join(service['benefits']) if service.get('benefits') else ""
         
         c.execute("""
-            INSERT INTO services (service_key, name, name_ru, name_ar, category, price, min_price, max_price,
-                                  currency, description, description_ru, benefits, duration, is_active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
-        """, (service['key'], service['name'], service['name_ru'], service['name_ar'],
+            INSERT INTO services (service_key, name, name_ru, name_en, name_ar, category, price, min_price, max_price,
+                                  currency, description, description_ru, description_en, benefits, duration, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+        """, (service['key'], service['name'], service['name_ru'], service['name'], service['name_ar'],
               service['category'], service['price'], service['min_price'], service['max_price'],
-              service['currency'], service['description'], service['description_ru'], benefits_str, service['duration'], now, now))
+              service['currency'], service['description'], service['description_ru'], service['description'], benefits_str, service['duration'], now, now))
         service_ids[service['key']] = c.lastrowid
         print(f"✅ Добавлена услуга: {service['name_ru']} ({service['category']})")
 
