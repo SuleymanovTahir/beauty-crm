@@ -155,8 +155,14 @@ export default function Home() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const data = await apiClient.getPublicServices();
-        const serviceNames = data.services.map((s: any) => s.name).slice(0, 8);
+        const currentLang = i18n.language;
+        const data = await apiClient.getPublicServices(currentLang);
+        // Extract service names based on current language
+        const serviceNames = data.services.map((s: any) => {
+          // Try to get name in current language, fallback to English, then Russian
+          const nameField = `name_${currentLang}`;
+          return s[nameField] || s.name_en || s.name_ru || s.name;
+        }).slice(0, 8);
         setServices(serviceNames);
       } catch (err) {
         console.error('Error fetching services:', err);
@@ -168,7 +174,7 @@ export default function Home() {
     };
 
     fetchServices();
-  }, []);
+  }, [i18n.language, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

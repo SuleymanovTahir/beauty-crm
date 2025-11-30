@@ -78,7 +78,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ?
         // "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
         "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-background/5 backdrop-blur-sm shadow-sm"
         }`}
@@ -189,7 +189,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             className="lg:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={24} className="text-primary" /> : <Menu size={24} className="text-primary" />}
           </button>
         </div>
 
