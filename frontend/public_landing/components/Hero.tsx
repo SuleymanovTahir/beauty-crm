@@ -23,7 +23,7 @@ export function Hero() {
   const language = i18n.language;
   const [heroBanner, setHeroBanner] = useState<Banner | null>(null);
 
-  const defaultImage = "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjQzOTc3MDd8MA&ixlib=rb-4.1.0&q=80&w=1920";
+  // const defaultImage = "https://images.unsplash.com/photo-1664549761426-6a1cb1032854?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNwYSUyMHRyZWF0bWVudHxlbnwxfHx8fDE3NjQzOTc3MDd8MA&ixlib=rb-4.1.0&q=80&w=1920";
 
   useEffect(() => {
     const getApiUrl = () => {
@@ -55,7 +55,7 @@ export function Hero() {
     return ru;
   };
 
-  const backgroundImage = heroBanner?.image_url || defaultImage;
+  const backgroundImage = heroBanner?.image_url; // || defaultImage;
 
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
