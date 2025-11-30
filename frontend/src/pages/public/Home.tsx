@@ -156,12 +156,11 @@ export default function Home() {
     const fetchServices = async () => {
       try {
         const currentLang = i18n.language;
-        const data = await apiClient.getPublicServices(currentLang);
-        // Extract service names based on current language
+        const data = await apiClient.getPublicServices();
         const serviceNames = data.services.map((s: any) => {
-          // Try to get name in current language, fallback to English, then Russian
-          const nameField = `name_${currentLang}`;
-          return s[nameField] || s.name_en || s.name_ru || s.name;
+          // Get name in current language, fallback to English, then Russian
+          const langField = `name_${currentLang}`;
+          return s[langField] || s.name_en || s.name_ru || s.name;
         }).slice(0, 8);
         setServices(serviceNames);
       } catch (err) {

@@ -223,8 +223,8 @@ export const apiClient = {
   getSalonInfo: (lang: string = 'ru') =>
     apiCall(`/api/public/salon-info?language=${lang}`),
 
-  getPublicServices: (lang: string = 'ru') =>
-    apiCall(`/api/public/services?language=${lang}`),
+  getPublicServices: () =>
+    apiCall('/api/public/services'),
 
   getPublicEmployees: (lang: string) =>
     apiCall(`/api/public/employees?language=${lang}&active_only=true`),
