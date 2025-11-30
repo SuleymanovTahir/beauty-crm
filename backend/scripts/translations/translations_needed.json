@@ -1527,5 +1527,24 @@
         }
       }
     }
+  ],
+  "public_banners": [
+    {
+      "id": 4,
+      "fields": {
+        "title_ru": {
+          "ru": "Get a Discount Up to 50% for All Services at Our Beauty Salon in Dubai",
+          "key": "public_banners.4.title_ru",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
   ]
 }
