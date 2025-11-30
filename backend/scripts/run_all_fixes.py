@@ -76,6 +76,28 @@ async def main():
     except Exception as e:
         log_error(f"❌ Ошибка при исправлении URL: {e}", "fix")
 
+    # 1.7 Optimize Images (Backend & Frontend)
+    try:
+        from scripts.maintenance.optimize_images import optimize_images
+        
+        # 1. Optimize Backend Uploads (Standard)
+        backend_uploads = os.path.join(backend_dir, "static", "uploads")
+        if os.path.exists(backend_uploads):
+            log_info("🖼️ Оптимизация изображений (Backend)...", "fix")
+            optimize_images(backend_uploads, max_size_kb=500, max_width=1920)
+        
+        # 2. Optimize Frontend Public Assets (Aggressive for Logo etc)
+        # Assuming frontend is sibling to backend
+        frontend_public_dir = os.path.join(os.path.dirname(backend_dir), "frontend", "src", "pages", "public")
+        if os.path.exists(frontend_public_dir):
+            log_info("🖼️ Оптимизация изображений (Frontend Public)...", "fix")
+            optimize_images(frontend_public_dir, max_size_kb=100, max_width=500)
+            
+    except ImportError:
+        log_warning("⚠️  Скрипт optimize_images не найден", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при оптимизации изображений: {e}", "fix")
+
 
     # 2. Data Integrity Checks (fix_data.py) - FIXED IMPORT PATH
     try:
