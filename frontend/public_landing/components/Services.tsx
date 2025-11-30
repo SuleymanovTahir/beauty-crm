@@ -104,7 +104,7 @@ export function Services() {
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg"
+                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg border border-border/50"
                   style={isActive ? { backgroundColor: '#db2777', color: 'white' } : {}}
                 >
                   <div className="flex items-center gap-2 justify-center">
