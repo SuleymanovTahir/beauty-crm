@@ -48,7 +48,7 @@ export function Portfolio() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto">
           {images.map((item: any, index) => {
             // Get localized title
             const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
@@ -56,7 +56,7 @@ export function Portfolio() {
             return (
               <div
                 key={item.id || index}
-                className="group relative aspect-square overflow-hidden rounded-2xl bg-muted"
+                className="group relative aspect-square overflow-hidden rounded-xl md:rounded-2xl bg-muted"
               >
                 <img
                   src={item.image_path}

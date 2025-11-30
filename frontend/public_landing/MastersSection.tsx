@@ -80,21 +80,21 @@ export function MastersSection() {
         </div>
 
         {team.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
             {team.map((member) => (
               <div
                 key={member.id}
-                className="group relative overflow-hidden rounded-2xl bg-card"
+                className="group relative overflow-hidden rounded-xl md:rounded-2xl bg-card"
               >
-                <div className="aspect-square overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden">
                   <img
                     src={member.image}
                     alt={member.name}
                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
-                <div className="p-3 sm:p-6 bg-gradient-to-t from-card to-transparent">
-                  <h3 className="mb-1 sm:mb-2 text-sm sm:text-base text-primary">{member.name}</h3>
+                <div className="p-3 sm:p-4 bg-gradient-to-t from-card to-transparent">
+                  <h3 className="mb-1 text-sm sm:text-base text-primary">{member.name}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground mb-1">{member.role}</p>
                   {/* <p className="text-sm text-foreground/70">{member.specialty}</p> */}
                 </div>

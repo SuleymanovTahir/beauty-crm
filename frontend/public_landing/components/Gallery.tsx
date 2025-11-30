@@ -50,7 +50,7 @@ export function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-w-6xl mx-auto">
           {images.map((item: any, index) => {
             // Get localized title
             const localizedTitle = item[`title_${language}`] || item.title_ru || item.title;
@@ -58,7 +58,7 @@ export function Gallery() {
             return (
               <div
                 key={item.id || index}
-                className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted"
+                className="group relative aspect-square overflow-hidden rounded-xl md:rounded-2xl bg-muted"
               >
                 <img
                   src={item.image_path}

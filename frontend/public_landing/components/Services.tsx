@@ -99,14 +99,16 @@ export function Services() {
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-muted/50 p-2 rounded-2xl h-auto">
             {Object.keys(groupedServices).map((category) => {
               const Icon = getTabIcon(category);
+              const isActive = activeTab === category;
               return (
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:bg-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg"
+                  style={isActive ? { backgroundColor: '#db2777', color: 'white' } : {}}
                 >
                   <div className="flex items-center gap-2 justify-center">
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-4 h-4" style={isActive ? { color: 'white' } : {}} />
                     <span>{getTabLabel(category)}</span>
                   </div>
                 </TabsTrigger>
