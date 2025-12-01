@@ -132,6 +132,7 @@ async def get_salon_info(
                 "name": row["name"],
                 "address": row["address"],
                 "main_location": row["main_location"],
+                "google_maps_embed_url": row["google_maps"],  # Map to frontend expected key
                 "google_maps": row["google_maps"],
                 "hours": row["hours"],
                 "hours_weekdays": row["hours_weekdays"],
