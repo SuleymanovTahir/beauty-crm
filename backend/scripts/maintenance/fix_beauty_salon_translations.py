@@ -13,8 +13,11 @@ from utils.logger import log_info, log_error
 
 
 # Glossary of beauty salon terms with correct translations
+# This ensures context-aware translations for beauty salon services
 BEAUTY_SALON_GLOSSARY = {
     # English -> {language: correct_translation}
+    
+    # Waxing services
     "Full Arms": {
         "ru": "Руки полностью",
         "ar": "الذراعين بالكامل",
@@ -114,6 +117,50 @@ BEAUTY_SALON_GLOSSARY = {
         "hi": "पूर्ण बिकनी",
         "kk": "Толық бикини",
         "pt": "Biquíni completo"
+    },
+    
+    # Hair services
+    "Blow Dry": {
+        "ru": "Укладка феном",
+        "ar": "تجفيف بالمجفف",
+        "es": "Secado con secador",
+        "de": "Föhnen",
+        "fr": "Brushing",
+        "hi": "ब्लो ड्राई",
+        "kk": "Фенмен кептіру",
+        "pt": "Secagem"
+    },
+    "Hair Cut": {
+        "ru": "Стрижка",
+        "ar": "قص الشعر",
+        "es": "Corte de pelo",
+        "de": "Haarschnitt",
+        "fr": "Coupe de cheveux",
+        "hi": "बाल कटवाना",
+        "kk": "Шаш қию",
+        "pt": "Corte de cabelo"
+    },
+    
+    # Nail services  
+    "Manicure": {
+        "ru": "Маникюр",
+        "ar": "مانيكير",
+        "es": "Manicura",
+        "de": "Maniküre",
+        "fr": "Manucure",
+        "hi": "मैनीक्योर",
+        "kk": "Маникюр",
+        "pt": "Manicure"
+    },
+    "Pedicure": {
+        "ru": "Педикюр",
+        "ar": "باديكير",
+        "es": "Pedicura",
+        "de": "Pediküre",
+        "fr": "Pédicure",
+        "hi": "पेडीक्योर",
+        "kk": "Педикюр",
+        "pt": "Pedicure"
     }
 }
 

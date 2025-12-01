@@ -70,13 +70,42 @@ class Translator:
             print(f"⚠️  Could not save cache: {e}")
     
     def _translate_via_http(self, text: str, source: str, target: str) -> str:
-        """Translate using Google Translate HTTP API"""
+        """
+        Translate text using Google Translate HTTP API with context
+        
+        Args:
+            text: Text to translate
+            source: Source language code
+            target: Target language code
+            
+        Returns:
+            Translated text
+        """
         try:
-            # Encode text for URL
-            encoded_text = urllib.parse.quote(text)
+            # Add context for beauty salon services to improve translation accuracy
+            # This helps Google Translate understand the domain
+            context_prefix = ""
+            context_suffix = ""
+            
+            # Detect if this is likely a beauty salon term (short phrases, service names)
+            is_service_term = len(text.split()) <= 5 and not text.endswith('.')
+            
+            if is_service_term:
+                # Add context hint for better translation
+                # We'll add it and then remove it from the result
+                if source == 'en':
+                    context_prefix = "[Beauty salon service] "
+                elif source == 'ru':
+                    context_prefix = "[Услуга салона красоты] "
+                
+                text_with_context = context_prefix + text
+            else:
+                text_with_context = text
+            
+            # URL encode
+            encoded_text = urllib.parse.quote(text_with_context)
             url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
             
-            # Make request
             req = urllib.request.Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0')
             
@@ -86,7 +115,26 @@ class Translator:
                 
                 # Google Translate returns array of translations
                 if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
-                    return parsed[0][0][0]
+                    translated = parsed[0][0][0]
+                    
+                    # Remove context prefix from translation if it was added
+                    if context_prefix:
+                        # Try to remove the translated context prefix
+                        # This is a bit tricky as the prefix itself gets translated
+                        # So we'll just clean up common patterns
+                        translated = translated.replace("[Beauty salon service]", "").strip()
+                        translated = translated.replace("[Услуга салона красоты]", "").strip()
+                        translated = translated.replace("[خدمة صالون التجميل]", "").strip()
+                        translated = translated.replace("[Servicio de salón de belleza]", "").strip()
+                        translated = translated.replace("[Service de salon de beauté]", "").strip()
+                        translated = translated.replace("[Schönheitssalon-Service]", "").strip()
+                        translated = translated.replace("[सौंदर्य सैलून सेवा]", "").strip()
+                        translated = translated.replace("[Сұлулық салоны қызметі]", "").strip()
+                        translated = translated.replace("[Serviço de salão de beleza]", "").strip()
+                        # Remove any remaining brackets
+                        translated = translated.replace("[", "").replace("]", "").strip()
+                    
+                    return translated
                 else:
                     return text  # Fallback
         except Exception as e:

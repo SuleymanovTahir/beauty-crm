@@ -82,7 +82,8 @@
     "db:i18n:translate": "cd ../backend && python3 scripts/translations/db_translate.py",
     "db:i18n:sync": "cd ../backend && python3 scripts/translations/db_sync.py",
     "db:i18n:sync-db": "cd ../backend && python3 scripts/translations/db_sync_to_db.py",
-    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db",
+    "db:i18n:sync-frontend": "cd ../backend && python3 scripts/translations/sync_frontend_locales.py",
+    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db && npm run db:i18n:sync-frontend",
     "i18n:static": "cd ../backend && python3 scripts/translations/static_translate.py"
   },
   "overrides": {
