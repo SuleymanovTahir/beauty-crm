@@ -84,5 +84,13 @@
   "valid_from": "Действует с",
   "valid_until": "Действует до",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Когда клиент упоминает ключевые слова или промокод, бот предложит специальную цену",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "Когда клиент упоминает эти слова, бот предложит этот пакет"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "Когда клиент упоминает эти слова, бот предложит этот пакет",
+  "category_permanent_makeup": "Перманентный макияж",
+  "category_facial": "Уход за лицом",
+  "category_massage": "Массаж",
+  "category_nails": "Ногти",
+  "category_hair": "Волосы",
+  "category_lashes": "Ресницы",
+  "category_brows": "Брови",
+  "category_waxing": "Депиляция"
 }

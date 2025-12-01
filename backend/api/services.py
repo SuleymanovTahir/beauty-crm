@@ -51,6 +51,21 @@ async def list_services(
                 "is_active": bool(s[14]) if len(s) > 14 and s[14] is not None else True,
                 "duration": s[15] if len(s) > 15 else None,
                 "position_id": s[16] if len(s) > 16 else None,
+                # Additional language fields
+                "name_en": s[20] if len(s) > 20 else None,
+                "name_de": s[21] if len(s) > 21 else None,
+                "name_es": s[22] if len(s) > 22 else None,
+                "name_fr": s[23] if len(s) > 23 else None,
+                "name_hi": s[24] if len(s) > 24 else None,
+                "name_kk": s[25] if len(s) > 25 else None,
+                "name_pt": s[26] if len(s) > 26 else None,
+                "description_en": s[27] if len(s) > 27 else "",
+                "description_de": s[28] if len(s) > 28 else "",
+                "description_es": s[29] if len(s) > 29 else "",
+                "description_fr": s[30] if len(s) > 30 else "",
+                "description_hi": s[31] if len(s) > 31 else "",
+                "description_kk": s[32] if len(s) > 32 else "",
+                "description_pt": s[33] if len(s) > 33 else "",
             }
             for s in services
         ],
@@ -99,11 +114,13 @@ async def create_service_api(
             service_key=data.get('key'),
             name=data.get('name'),
             name_ru=data.get('name_ru'),
+            name_ar=data.get('name_ar'),
             price=float(data.get('price', 0)),
             currency=data.get('currency', 'AED'),
             category=data.get('category'),
             description=data.get('description'),
             description_ru=data.get('description_ru'),
+            description_ar=data.get('description_ar'),
             benefits=data.get('benefits', []),
             position_id=data.get('position_id')
         )

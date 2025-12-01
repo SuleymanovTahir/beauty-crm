@@ -109,7 +109,8 @@ def get_service(service_id):
 
 
 def create_service(service_key, name, name_ru, price, currency, category,
-                   description=None, description_ru=None, benefits=None, position_id=None):
+                   description=None, description_ru=None, benefits=None, position_id=None,
+                   name_ar=None, description_ar=None):
     """Создать новую услугу"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -119,11 +120,11 @@ def create_service(service_key, name, name_ru, price, currency, category,
 
     try:
         c.execute("""INSERT INTO services
-                     (service_key, name, name_ru, price, currency, category,
-                      description, description_ru, benefits, position_id, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                  (service_key, name, name_ru, price, currency, category,
-                   description, description_ru, benefits_str, position_id, now, now))
+                     (service_key, name, name_ru, name_ar, price, currency, category,
+                      description, description_ru, description_ar, benefits, position_id, created_at, updated_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                  (service_key, name, name_ru, name_ar, price, currency, category,
+                   description, description_ru, description_ar, benefits_str, position_id, now, now))
         conn.commit()
         conn.close()
         return True

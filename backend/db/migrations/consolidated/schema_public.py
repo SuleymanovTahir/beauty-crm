@@ -54,7 +54,17 @@ def migrate_public_schema(db_path="salon_bot.db"):
             'title_es': 'TEXT', 'title_de': 'TEXT', 'title_fr': 'TEXT',
             'title_hi': 'TEXT', 'title_kk': 'TEXT', 'title_pt': 'TEXT',
             'subtitle_es': 'TEXT', 'subtitle_de': 'TEXT', 'subtitle_fr': 'TEXT',
-            'subtitle_hi': 'TEXT', 'subtitle_kk': 'TEXT', 'subtitle_pt': 'TEXT'
+            'subtitle_hi': 'TEXT', 'subtitle_kk': 'TEXT', 'subtitle_pt': 'TEXT',
+            
+            # Background positioning
+            'bg_pos_desktop_x': 'INTEGER DEFAULT 50',
+            'bg_pos_desktop_y': 'INTEGER DEFAULT 50',
+            'bg_pos_mobile_x': 'INTEGER DEFAULT 50',
+            'bg_pos_mobile_y': 'INTEGER DEFAULT 50',
+
+            # Flip options
+            'is_flipped_horizontal': 'BOOLEAN DEFAULT 0',
+            'is_flipped_vertical': 'BOOLEAN DEFAULT 0'
         }
         
         for col, dtype in columns_to_add.items():

@@ -33,6 +33,12 @@ class BannerCreate(BaseModel):
     subtitle_ru: Optional[str] = None
     image_url: Optional[str] = None
     link_url: Optional[str] = None
+    bg_pos_desktop_x: Optional[int] = 50
+    bg_pos_desktop_y: Optional[int] = 50
+    bg_pos_mobile_x: Optional[int] = 50
+    bg_pos_mobile_y: Optional[int] = 50
+    is_flipped_horizontal: Optional[bool] = False
+    is_flipped_vertical: Optional[bool] = False
 
 class FAQCreate(BaseModel):
     question_ru: str
@@ -243,8 +249,8 @@ async def create_banner(banner: BannerCreate):
     try:
         c.execute("""
             INSERT INTO public_banners 
-            (title_ru, title_en, title_ar, subtitle_ru, subtitle_en, subtitle_ar, image_url, link_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (title_ru, title_en, title_ar, subtitle_ru, subtitle_en, subtitle_ar, image_url, link_url, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y, is_flipped_horizontal, is_flipped_vertical)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             banner.title_ru,
             translations_title.get('en', ''),
@@ -253,7 +259,13 @@ async def create_banner(banner: BannerCreate):
             translations_subtitle.get('en', ''),
             translations_subtitle.get('ar', ''),
             banner.image_url,
-            banner.link_url
+            banner.link_url,
+            banner.bg_pos_desktop_x,
+            banner.bg_pos_desktop_y,
+            banner.bg_pos_mobile_x,
+            banner.bg_pos_mobile_y,
+            banner.is_flipped_horizontal,
+            banner.is_flipped_vertical
         ))
         
         banner_id = c.lastrowid
@@ -273,6 +285,12 @@ class BannerUpdate(BaseModel):
     link_url: Optional[str] = None
     display_order: Optional[int] = None
     is_active: Optional[bool] = None
+    bg_pos_desktop_x: Optional[int] = None
+    bg_pos_desktop_y: Optional[int] = None
+    bg_pos_mobile_x: Optional[int] = None
+    bg_pos_mobile_y: Optional[int] = None
+    is_flipped_horizontal: Optional[bool] = None
+    is_flipped_vertical: Optional[bool] = None
 
 @router.put("/banners/{banner_id}")
 async def update_banner(banner_id: int, banner: BannerUpdate):
@@ -310,6 +328,30 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
             updates.append("is_active = ?")
             params.append(1 if banner.is_active else 0)
             
+        if banner.bg_pos_desktop_x is not None:
+            updates.append("bg_pos_desktop_x = ?")
+            params.append(banner.bg_pos_desktop_x)
+            
+        if banner.bg_pos_desktop_y is not None:
+            updates.append("bg_pos_desktop_y = ?")
+            params.append(banner.bg_pos_desktop_y)
+            
+        if banner.bg_pos_mobile_x is not None:
+            updates.append("bg_pos_mobile_x = ?")
+            params.append(banner.bg_pos_mobile_x)
+            
+        if banner.bg_pos_mobile_y is not None:
+            updates.append("bg_pos_mobile_y = ?")
+            params.append(banner.bg_pos_mobile_y)
+
+        if banner.is_flipped_horizontal is not None:
+            updates.append("is_flipped_horizontal = ?")
+            params.append(banner.is_flipped_horizontal)
+
+        if banner.is_flipped_vertical is not None:
+            updates.append("is_flipped_vertical = ?")
+            params.append(banner.is_flipped_vertical)
+            
         if not updates:
             return {"success": True, "message": "Нечего обновлять"}
             
@@ -328,14 +370,41 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
 
 @router.delete("/banners/{banner_id}")
 async def delete_banner(banner_id: int):
-    """Удалить баннер"""
+    """Удалить баннер и связанный файл изображения"""
+    import os
+    from pathlib import Path
+    
     conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:
+        # Получаем URL изображения перед удалением
+        c.execute("SELECT image_url FROM public_banners WHERE id = ?", (banner_id,))
+        row = c.fetchone()
+        
+        if row and row['image_url']:
+            image_url = row['image_url']
+            # Проверяем, что это локальный файл (начинается с /static/)
+            if image_url.startswith('/static/'):
+                # Преобразуем URL в путь к файлу
+                # /static/uploads/images/filename.jpg -> backend/static/uploads/images/filename.jpg
+                file_path = Path(__file__).parent.parent / image_url.lstrip('/')
+                
+                # Удаляем файл, если он существует
+                if file_path.exists():
+                    try:
+                        os.remove(file_path)
+                        from utils.logger import log_info
+                        log_info(f"Deleted file: {file_path}", "api")
+                    except Exception as e:
+                        from utils.logger import log_warning
+                        log_warning(f"Failed to delete file {file_path}: {e}", "api")
+        
+        # Удаляем запись из базы данных
         c.execute("DELETE FROM public_banners WHERE id = ?", (banner_id,))
         conn.commit()
-        return {"success": True, "message": "Баннер удален"}
+        return {"success": True, "message": "Баннер и файл удалены"}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))

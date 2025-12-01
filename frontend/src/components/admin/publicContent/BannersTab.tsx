@@ -1,11 +1,12 @@
 // /frontend/src/components/admin/publicContent/BannersTab.tsx
-import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Image as ImageIcon, Link as LinkIcon, Calendar, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Pencil, Trash2, Image as ImageIcon, Link as LinkIcon, Calendar, Eye, EyeOff, MousePointerClick, FlipHorizontal, FlipVertical } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '../../../components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { Checkbox } from '../../../components/ui/checkbox';
 import { toast } from 'sonner';
 import { apiClient } from '../../../api/client';
 
@@ -17,7 +18,129 @@ interface Banner {
     link_url?: string;
     display_order: number;
     is_active: boolean;
+    bg_pos_desktop_x?: number;
+    bg_pos_desktop_y?: number;
+    bg_pos_mobile_x?: number;
+    bg_pos_mobile_y?: number;
+    is_flipped_horizontal?: number | boolean;
+    is_flipped_vertical?: number | boolean;
 }
+
+const VisualPositionPicker = ({
+    label,
+    imageUrl,
+    x,
+    y,
+    onChange,
+    previewAspectRatio
+}: {
+    label: string,
+    imageUrl: string,
+    x: number,
+    y: number,
+    onChange: (x: number, y: number) => void,
+    previewAspectRatio: string
+}) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleInteract = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!containerRef.current) return;
+
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+
+        // Calculate visual percentage relative to the container
+        let visualX = ((clientX - rect.left) / rect.width) * 100;
+        let visualY = ((clientY - rect.top) / rect.height) * 100;
+
+        // Clamp values
+        visualX = Math.max(0, Math.min(100, visualX));
+        visualY = Math.max(0, Math.min(100, visualY));
+
+        // Preview shows original image, so visual position = actual position
+        onChange(Math.round(visualX), Math.round(visualY));
+    };
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        setIsDragging(true);
+        handleInteract(e);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isDragging) {
+            handleInteract(e);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    // Preview shows original, so marker position = x/y
+    const markerLeft = x;
+    const markerTop = y;
+
+
+    return (
+        <div className="space-y-3 border p-4 rounded-md bg-gray-50/50">
+            <div className="flex justify-between items-center">
+                <Label className="text-sm font-medium">{label}</Label>
+                <span className="text-xs font-mono text-muted-foreground">
+                    Pos: {x}% {y}%
+                </span>
+            </div>
+
+            <div className="space-y-1">
+                <div className="text-xs text-muted-foreground mb-1">
+                    Кликните или перетащите точку, чтобы выбрать центр:
+                </div>
+
+                <div
+                    ref={containerRef}
+                    className={`relative w-full ${previewAspectRatio} rounded-md overflow-hidden border bg-gray-200 shadow-inner cursor-crosshair touch-none group`}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    {imageUrl ? (
+                        <>
+                            <img
+                                src={imageUrl}
+                                alt="Preview"
+                                className="w-full h-full object-cover transition-all duration-75 select-none pointer-events-none"
+                                style={{
+                                    objectPosition: `${x}% ${y}%`
+                                }}
+                            />
+
+                            {/* Marker */}
+                            <div
+                                className="absolute w-6 h-6 border-2 border-white bg-primary/80 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-75 ease-out z-10 flex items-center justify-center"
+                                style={{ left: `${markerLeft}%`, top: `${markerTop}%` }}
+                            >
+                                <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                            Нет фото
+                        </div>
+                    )}
+
+                    {/* Overlay to simulate text contrast */}
+                    <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default function BannersTab() {
     const [banners, setBanners] = useState<Banner[]>([]);
@@ -32,7 +155,13 @@ export default function BannersTab() {
         title_ru: '',
         subtitle_ru: '',
         image_url: '',
-        link_url: ''
+        link_url: '',
+        bg_pos_desktop_x: 50,
+        bg_pos_desktop_y: 50,
+        bg_pos_mobile_x: 50,
+        bg_pos_mobile_y: 50,
+        is_flipped_horizontal: false,
+        is_flipped_vertical: false
     });
     const [uploadTab, setUploadTab] = useState('url'); // 'url' or 'file'
     const [uploading, setUploading] = useState(false);
@@ -92,13 +221,23 @@ export default function BannersTab() {
         setUploading(true);
         try {
             const response = await apiClient.uploadFile(file);
-            setFormData({ ...formData, image_url: response.file_url });
+            // Add timestamp to force refresh if URL is same
+            const newUrl = response.file_url; // + `?t=${Date.now()}`; 
+            // Actually, better to just update the state. 
+            // If the URL is exactly the same, React might not re-render the img tag if we don't change the src string.
+            // Let's append a timestamp to the src in the render method, or here.
+            // But saving the timestamp to DB is bad.
+            // We should only use timestamp for display.
+
+            setFormData({ ...formData, image_url: newUrl });
             toast.success('Файл загружен');
         } catch (error) {
             console.error('Upload error:', error);
             toast.error('Ошибка загрузки файла');
         } finally {
             setUploading(false);
+            // Reset input so same file can be selected again
+            e.target.value = '';
         }
     };
 
@@ -153,7 +292,13 @@ export default function BannersTab() {
             title_ru: banner.title_ru,
             subtitle_ru: banner.subtitle_ru || '',
             image_url: banner.image_url || '',
-            link_url: banner.link_url || ''
+            link_url: banner.link_url || '',
+            bg_pos_desktop_x: banner.bg_pos_desktop_x ?? 50,
+            bg_pos_desktop_y: banner.bg_pos_desktop_y ?? 50,
+            bg_pos_mobile_x: banner.bg_pos_mobile_x ?? 50,
+            bg_pos_mobile_y: banner.bg_pos_mobile_y ?? 50,
+            is_flipped_horizontal: !!(banner.is_flipped_horizontal),
+            is_flipped_vertical: !!(banner.is_flipped_vertical)
         });
         setIsDialogOpen(true);
     };
@@ -164,7 +309,13 @@ export default function BannersTab() {
             title_ru: '',
             subtitle_ru: '',
             image_url: '',
-            link_url: ''
+            link_url: '',
+            bg_pos_desktop_x: 50,
+            bg_pos_desktop_y: 50,
+            bg_pos_mobile_x: 50,
+            bg_pos_mobile_y: 50,
+            is_flipped_horizontal: false,
+            is_flipped_vertical: false
         });
         setUploadTab('url');
     };
@@ -236,7 +387,7 @@ export default function BannersTab() {
                                 Добавить баннер
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+                        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>
                                     {editingBanner ? 'Редактировать баннер' : 'Новый баннер'}
@@ -245,79 +396,130 @@ export default function BannersTab() {
                                     Заполните информацию о баннере. Изображение и заголовок обязательны.
                                 </DialogDescription>
                             </DialogHeader>
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <Label htmlFor="title">Заголовок (RU)</Label>
-                                    <Input
-                                        id="title"
-                                        value={formData.title_ru}
-                                        onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
-                                        required
-                                        placeholder="Например: Скидка 20% на все услуги"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="subtitle">Подзаголовок (RU)</Label>
-                                    <Input
-                                        id="subtitle"
-                                        value={formData.subtitle_ru}
-                                        onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
-                                        placeholder="Например: Только до конца месяца"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Изображение</Label>
-                                    <Tabs value={uploadTab} onValueChange={setUploadTab} className="w-full">
-                                        <TabsList className="grid w-full grid-cols-2">
-                                            <TabsTrigger value="url">Ссылка</TabsTrigger>
-                                            <TabsTrigger value="file">Загрузить файл</TabsTrigger>
-                                        </TabsList>
-                                        <TabsContent value="url" className="mt-2">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="title">Заголовок (RU)</Label>
                                             <Input
-                                                value={formData.image_url}
-                                                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                                                placeholder="https://example.com/image.jpg"
-                                            />
-                                        </TabsContent>
-                                        <TabsContent value="file" className="mt-2">
-                                            <Label
-                                                htmlFor="banner-file-upload"
-                                                className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
-                                            >
-                                                {uploading ? 'Загрузка...' : 'Выбрать файл'}
-                                            </Label>
-                                            <input
-                                                id="banner-file-upload"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleFileUpload}
-                                                disabled={uploading}
-                                                className="hidden"
-                                            />
-                                        </TabsContent>
-                                    </Tabs>
-
-                                    {formData.image_url && (
-                                        <div className="mt-2 relative aspect-video rounded-md overflow-hidden border bg-gray-100">
-                                            <img
-                                                src={formData.image_url}
-                                                alt="Preview"
-                                                className="w-full h-full object-cover"
+                                                id="title"
+                                                value={formData.title_ru}
+                                                onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
+                                                required
+                                                placeholder="Например: Скидка 20% на все услуги"
                                             />
                                         </div>
-                                    )}
+                                        <div>
+                                            <Label htmlFor="subtitle">Подзаголовок (RU)</Label>
+                                            <Input
+                                                id="subtitle"
+                                                value={formData.subtitle_ru}
+                                                onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
+                                                placeholder="Например: Только до конца месяца"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="link">Ссылка при клике (опционально)</Label>
+                                            <Input
+                                                id="link"
+                                                value={formData.link_url}
+                                                onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                                                placeholder="/services"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label>Изображение</Label>
+                                        <Tabs value={uploadTab} onValueChange={setUploadTab} className="w-full">
+                                            <TabsList className="grid w-full grid-cols-2">
+                                                <TabsTrigger value="url">Ссылка</TabsTrigger>
+                                                <TabsTrigger value="file">Загрузить файл</TabsTrigger>
+                                            </TabsList>
+                                            <TabsContent value="url" className="mt-2">
+                                                <Input
+                                                    value={formData.image_url}
+                                                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                                                    placeholder="https://example.com/image.jpg"
+                                                />
+                                            </TabsContent>
+                                            <TabsContent value="file" className="mt-2">
+                                                <Label
+                                                    htmlFor="banner-file-upload"
+                                                    className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+                                                >
+                                                    {uploading ? 'Загрузка...' : 'Выбрать файл'}
+                                                </Label>
+                                                <input
+                                                    id="banner-file-upload"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleFileUpload}
+                                                    disabled={uploading}
+                                                    className="hidden"
+                                                />
+                                            </TabsContent>
+                                        </Tabs>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <Label htmlFor="link">Ссылка при клике (опционально)</Label>
-                                    <Input
-                                        id="link"
-                                        value={formData.link_url}
-                                        onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
-                                        placeholder="/services"
-                                    />
-                                </div>
+                                {/* Position Controls */}
+                                {formData.image_url && (
+                                    <div className="space-y-4 pt-4 border-t">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <MousePointerClick className="w-4 h-4 text-primary" />
+                                                <h4 className="font-medium">Настройка отображения</h4>
+                                            </div>
+
+                                            {/* Flip Controls */}
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id="flip-h"
+                                                        checked={formData.is_flipped_horizontal}
+                                                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_flipped_horizontal: !!checked }))}
+                                                    />
+                                                    <Label htmlFor="flip-h" className="flex items-center gap-1 cursor-pointer">
+                                                        <FlipHorizontal className="w-4 h-4" />
+                                                        <span className="text-xs">Отразить по гор.</span>
+                                                    </Label>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Checkbox
+                                                        id="flip-v"
+                                                        checked={formData.is_flipped_vertical}
+                                                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_flipped_vertical: !!checked }))}
+                                                    />
+                                                    <Label htmlFor="flip-v" className="flex items-center gap-1 cursor-pointer">
+                                                        <FlipVertical className="w-4 h-4" />
+                                                        <span className="text-xs">Отразить по верт.</span>
+                                                    </Label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <VisualPositionPicker
+                                                label="Desktop (Большие экраны)"
+                                                imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
+                                                x={formData.bg_pos_desktop_x}
+                                                y={formData.bg_pos_desktop_y}
+                                                onChange={(x, y) => setFormData(prev => ({ ...prev, bg_pos_desktop_x: x, bg_pos_desktop_y: y }))}
+                                                previewAspectRatio="aspect-video"
+                                            />
+
+                                            <VisualPositionPicker
+                                                label="Mobile (Телефоны)"
+                                                imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
+                                                x={formData.bg_pos_mobile_x}
+                                                y={formData.bg_pos_mobile_y}
+                                                onChange={(x, y) => setFormData(prev => ({ ...prev, bg_pos_mobile_x: x, bg_pos_mobile_y: y }))}
+                                                previewAspectRatio="aspect-[9/16]"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <Button type="submit" className="w-full" disabled={uploading}>
                                     {editingBanner ? 'Сохранить' : 'Создать'}
@@ -339,6 +541,13 @@ export default function BannersTab() {
                                     src={banner.image_url}
                                     alt={banner.title_ru}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    style={{
+                                        objectPosition: `${banner.bg_pos_desktop_x ?? 50}% ${banner.bg_pos_desktop_y ?? 50}% `,
+                                        transform: [
+                                            banner.is_flipped_horizontal ? 'scaleX(-1)' : '',
+                                            banner.is_flipped_vertical ? 'scaleY(-1)' : ''
+                                        ].filter(Boolean).join(' ')
+                                    }}
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-400">

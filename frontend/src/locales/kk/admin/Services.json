@@ -84,5 +84,13 @@
   "valid_from": "Жарамды",
   "valid_until": "Дейін жарамды",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Клиент кілт сөздері немесе промо-кодты айтылған кезде, BOT арнайы бағамен ұсынылады",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "Клиент осы сөздерді айтып тұрған кезде, BOT бұл пакетті ұсынады"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "Клиент осы сөздерді айтып тұрған кезде, BOT бұл пакетті ұсынады",
+  "category_permanent_makeup": "Тұрақты макияж",
+  "category_facial": "Бет",
+  "category_massage": "Массаж",
+  "category_nails": "Тырнақтар",
+  "category_hair": "Шаш",
+  "category_lashes": "Кірпіктер",
+  "category_brows": "Қастар",
+  "category_waxing": "Балауыздау"
 }

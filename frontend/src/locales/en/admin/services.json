@@ -84,5 +84,13 @@
   "valid_from": "Valid from",
   "valid_until": "Valid until",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "When the client mentions keywords or promo code, the bot will offer a special price",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "When the client mentions these words, the bot will suggest this package"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "When the client mentions these words, the bot will suggest this package",
+  "category_permanent_makeup": "Permanent Makeup",
+  "category_facial": "Facial",
+  "category_massage": "Massage",
+  "category_nails": "Nails",
+  "category_hair": "Hair",
+  "category_lashes": "Lashes",
+  "category_brows": "Brows",
+  "category_waxing": "Waxing"
 }

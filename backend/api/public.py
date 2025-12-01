@@ -127,6 +127,15 @@ async def get_public_services():
             "currency": s[8],  # currency
             "category": s[9],  # category
             "duration": s[15] or 60,  # duration in minutes
+            "duration_ru": s[34] if len(s) > 34 else None,
+            "duration_en": s[35] if len(s) > 35 else None,
+            "duration_ar": s[36] if len(s) > 36 else None,
+            "duration_de": s[37] if len(s) > 37 else None,
+            "duration_es": s[38] if len(s) > 38 else None,
+            "duration_fr": s[39] if len(s) > 39 else None,
+            "duration_hi": s[40] if len(s) > 40 else None,
+            "duration_kk": s[41] if len(s) > 41 else None,
+            "duration_pt": s[42] if len(s) > 42 else None,
             "description": s[10] or "",  # description
             "description_ru": s[11] if len(s) > 11 else None,
             "description_ar": s[12] if len(s) > 12 else None,

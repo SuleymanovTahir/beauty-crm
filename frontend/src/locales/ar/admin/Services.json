@@ -84,5 +84,13 @@
   "valid_from": "صالحة من",
   "valid_until": "صالحة حتى",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "عندما يذكر العميل الكلمات الرئيسية أو الرمز الترويجي، سيقدم الروبوت سعرًا خاصًا",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "عندما يذكر العميل هذه الكلمات، سيقترح الروبوت هذه الحزمة"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "عندما يذكر العميل هذه الكلمات، سيقترح الروبوت هذه الحزمة",
+  "category_permanent_makeup": "مكياج دائم",
+  "category_facial": "العناية بالوجه",
+  "category_massage": "تدليك",
+  "category_nails": "الأظافر",
+  "category_hair": "شعر",
+  "category_lashes": "رموش",
+  "category_brows": "حواجب",
+  "category_waxing": "إزالة الشعر بالشمع"
 }
