@@ -84,5 +84,13 @@
   "valid_from": "से मान्य",
   "valid_until": "तब तक वैध",
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "जब ग्राहक कीवर्ड या प्रोमो कोड का उल्लेख करता है, तो बॉट एक विशेष कीमत की पेशकश करेगा",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "जब ग्राहक इन शब्दों का उल्लेख करता है, तो बॉट इस पैकेज का सुझाव देगा"
+  "when_client_mentions_these_words_bot_will_offer_this_package": "जब ग्राहक इन शब्दों का उल्लेख करता है, तो बॉट इस पैकेज का सुझाव देगा",
+  "category_permanent_makeup": "स्थायी मेकअप",
+  "category_facial": "चेहरे की देखभाल",
+  "category_massage": "मालिश",
+  "category_nails": "नाखून",
+  "category_hair": "बाल",
+  "category_lashes": "पलकें",
+  "category_brows": "भौंहें",
+  "category_waxing": "वैक्सिंग"
 }

@@ -61,7 +61,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
-                    Email
+                    {t('email') || "Email"}
                   </h3>
                   <a href={`mailto:${salonInfo?.email}`} className="text-foreground hover:underline text-sm sm:text-base break-all">
                     {salonInfo?.email || "info@salon.ru"}

@@ -28,6 +28,12 @@ interface Banner {
   image_url: string;
   link_url?: string;
   is_active: boolean;
+  bg_pos_desktop_x?: number;
+  bg_pos_desktop_y?: number;
+  bg_pos_mobile_x?: number;
+  bg_pos_mobile_y?: number;
+  is_flipped_horizontal?: number | boolean;
+  is_flipped_vertical?: number | boolean;
 }
 
 export function Hero() {
@@ -85,14 +91,42 @@ export function Hero() {
 
   const backgroundImage = heroBanner?.image_url; // || defaultImage;
 
+  // Invert coordinates when image is flipped
+  const isFlippedH = heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true;
+  const isFlippedV = heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true;
+
+  const desktopX = isFlippedH ? (100 - (heroBanner?.bg_pos_desktop_x ?? 50)) : (heroBanner?.bg_pos_desktop_x ?? 50);
+  const desktopY = isFlippedV ? (100 - (heroBanner?.bg_pos_desktop_y ?? 50)) : (heroBanner?.bg_pos_desktop_y ?? 50);
+  const mobileX = isFlippedH ? (100 - (heroBanner?.bg_pos_mobile_x ?? 50)) : (heroBanner?.bg_pos_mobile_x ?? 50);
+  const mobileY = isFlippedV ? (100 - (heroBanner?.bg_pos_mobile_y ?? 50)) : (heroBanner?.bg_pos_mobile_y ?? 50);
+
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
+      <style>{`
+        .hero-banner-img {
+          --object-pos-x: ${mobileX}%;
+          --object-pos-y: ${mobileY}%;
+          object-position: var(--object-pos-x) var(--object-pos-y);
+        }
+        @media (min-width: 640px) {
+          .hero-banner-img {
+            --object-pos-x: ${desktopX}%;
+            --object-pos-y: ${desktopY}%;
+          }
+        }
+      `}</style>
       <div className="absolute inset-0 bg-muted/20">
         {backgroundImage && (
           <img
             src={backgroundImage}
             alt="Elegant Beauty"
-            className="w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+            className="hero-banner-img w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+            style={{
+              transform: [
+                (heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true) ? 'scaleX(-1)' : '',
+                (heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true) ? 'scaleY(-1)' : ''
+              ].filter(Boolean).join(' ')
+            }}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/40" />

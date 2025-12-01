@@ -42,9 +42,51 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             'main_location_kk': 'TEXT',
             'main_location_pt': 'TEXT',
             
-            # Address and Hours translations
+            # Address translations (all 9 languages)
             'address_ru': 'TEXT',
+            'address_en': 'TEXT',
             'address_ar': 'TEXT',
+            'address_es': 'TEXT',
+            'address_de': 'TEXT',
+            'address_fr': 'TEXT',
+            'address_hi': 'TEXT',
+            'address_kk': 'TEXT',
+            'address_pt': 'TEXT',
+            
+            # Email translations (all 9 languages)
+            'email_ru': 'TEXT',
+            'email_en': 'TEXT',
+            'email_ar': 'TEXT',
+            'email_es': 'TEXT',
+            'email_de': 'TEXT',
+            'email_fr': 'TEXT',
+            'email_hi': 'TEXT',
+            'email_kk': 'TEXT',
+            'email_pt': 'TEXT',
+            
+            # City translations (all 9 languages)
+            'city_ru': 'TEXT',
+            'city_en': 'TEXT',
+            'city_ar': 'TEXT',
+            'city_es': 'TEXT',
+            'city_de': 'TEXT',
+            'city_fr': 'TEXT',
+            'city_hi': 'TEXT',
+            'city_kk': 'TEXT',
+            'city_pt': 'TEXT',
+            
+            # Country translations (all 9 languages)
+            'country_ru': 'TEXT',
+            'country_en': 'TEXT',
+            'country_ar': 'TEXT',
+            'country_es': 'TEXT',
+            'country_de': 'TEXT',
+            'country_fr': 'TEXT',
+            'country_hi': 'TEXT',
+            'country_kk': 'TEXT',
+            'country_pt': 'TEXT',
+            
+            # Hours translations
             'hours_ru': 'TEXT',
             'hours_ar': 'TEXT',
         }

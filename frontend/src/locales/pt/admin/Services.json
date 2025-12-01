@@ -83,6 +83,14 @@
   "used": "Usado",
   "valid_from": "Válido a partir de",
   "valid_until": "Válido até",
-  "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Quando o cliente mencionar palavras-chave ou código promocional, o bot oferecerá um preço especial",
-  "when_client_mentions_these_words_bot_will_offer_this_package": "Quando o cliente mencionar essas palavras, o bot irá sugerir este pacote"
+  "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Quando o cliente menciona palavras-chave ou código promocional, o bot oferecerá um preço especial",
+  "when_client_mentions_these_words_bot_will_offer_this_package": "Quando o cliente menciona essas palavras, o bot oferecerá este pacote",
+  "category_permanent_makeup": "Maquiagem permanente",
+  "category_facial": "Facial",
+  "category_massage": "Massagem",
+  "category_nails": "Unhas",
+  "category_hair": "Cabelo",
+  "category_lashes": "Cílios",
+  "category_brows": "Sobrancelhas",
+  "category_waxing": "Depilação"
 }

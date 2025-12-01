@@ -17,7 +17,7 @@ interface Banner {
 }
 
 export function Banners() {
-    const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const { i18n } = useTranslation(['public_landing', 'common']);
     const language = i18n.language;
     const [banners, setBanners] = useState<Banner[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -77,10 +77,12 @@ export function Banners() {
         setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
     };
 
-    const getTranslatedText = (ru: string, en?: string, ar?: string) => {
-        if (language === 'en' && en) return en;
-        if (language === 'ar' && ar) return ar;
-        return ru;
+    const getTranslatedText = (banner: any, field: 'title' | 'subtitle') => {
+        const currentLang = i18n.language;
+        // Try specific language field first (e.g. title_es)
+        // Fallback to English (title_en)
+        // Fallback to Russian (title_ru)
+        return banner[`${field}_${currentLang}`] || banner[`${field}_en`] || banner[`${field}_ru`];
     };
 
     if (loading || banners.length === 0) return null;
@@ -105,18 +107,10 @@ export function Banners() {
             <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center">
                 <div className="text-center text-white z-10">
                     <h2 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg animate-fade-in">
-                        {getTranslatedText(
-                            currentBanner.title_ru,
-                            currentBanner.title_en,
-                            currentBanner.title_ar
-                        )}
+                        {getTranslatedText(currentBanner, 'title')}
                     </h2>
                     <p className="text-xl md:text-2xl mb-8 drop-shadow-md animate-fade-in-delay">
-                        {getTranslatedText(
-                            currentBanner.subtitle_ru,
-                            currentBanner.subtitle_en,
-                            currentBanner.subtitle_ar
-                        )}
+                        {getTranslatedText(currentBanner, 'subtitle')}
                     </p>
                     {currentBanner.link_url && (
                         <a

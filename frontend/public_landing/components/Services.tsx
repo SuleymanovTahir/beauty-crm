@@ -121,8 +121,10 @@ export function Services() {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {categoryServices.map((service, index) => {
                   // Use API provided localized fields
-                  const localizedName = (i18n.language === 'ru' && service.name_ru) ? service.name_ru : service.name;
-                  const localizedDescription = (i18n.language === 'ru' && service.description_ru) ? service.description_ru : service.description;
+                  const currentLang = i18n.language;
+                  const localizedName = service[`name_${currentLang}`] || service.name;
+                  const localizedDescription = service[`description_${currentLang}`] || service.description;
+                  const localizedDuration = service[`duration_${currentLang}`] || service.duration;
 
                   return (
                     <div
@@ -138,10 +140,10 @@ export function Services() {
                       )}
 
                       <div className="flex items-center justify-between mt-auto pt-2">
-                        {service.duration && (
+                        {localizedDuration && (
                           <span className="text-xs sm:text-sm text-muted-foreground">
                             {(() => {
-                              const duration = String(service.duration);
+                              const duration = String(localizedDuration);
                               if (/[a-zа-я]/i.test(duration)) {
                                 return duration;
                               }

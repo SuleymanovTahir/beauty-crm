@@ -45,6 +45,16 @@ def migrate_services_schema(db_path="salon_bot.db"):
             'description_hi': 'TEXT',
             'description_kk': 'TEXT',
             'description_pt': 'TEXT',
+            # Translation columns for duration (all 9 languages)
+            'duration_ru': 'TEXT',
+            'duration_en': 'TEXT',
+            'duration_ar': 'TEXT',
+            'duration_de': 'TEXT',
+            'duration_es': 'TEXT',
+            'duration_fr': 'TEXT',
+            'duration_hi': 'TEXT',
+            'duration_kk': 'TEXT',
+            'duration_pt': 'TEXT',
         }
         
         # Add missing columns

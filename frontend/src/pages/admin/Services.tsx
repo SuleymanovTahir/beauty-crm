@@ -20,6 +20,7 @@ interface Service {
   key: string;
   name: string;
   name_ru: string;
+  name_ar?: string;
   price: number;
   min_price?: number;
   max_price?: number;
@@ -28,8 +29,10 @@ interface Service {
   category: string;
   description?: string;
   description_ru?: string;
+  description_ar?: string;
   benefits?: string[];
   is_active: boolean;
+  [key: string]: any;
 }
 
 interface SpecialPackage {
@@ -89,7 +92,7 @@ export default function Services() {
 
   // Services state
   const [services, setServices] = useState<Service[]>([]);
-  const { t } = useTranslation(['admin/Services', 'common']);
+  const { t, i18n } = useTranslation(['admin/Services', 'common']);
   const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -114,6 +117,7 @@ export default function Services() {
     key: '',
     name: '',
     name_ru: '',
+    name_ar: '',
     price: 0,
     min_price: '',
     max_price: '',
@@ -122,6 +126,7 @@ export default function Services() {
     category: '',
     description: '',
     description_ru: '',
+    description_ar: '',
     benefits: '',
     position_ids: [] as number[],
   });
@@ -187,7 +192,7 @@ export default function Services() {
   const loadData = async () => {
     try {
       setLoading(true);
-      
+
 
       if (activeTab === 'services') {
         const data = await api.getServices(false);
@@ -211,6 +216,7 @@ export default function Services() {
       key: '',
       name: '',
       name_ru: '',
+      name_ar: '',
       price: 0,
       min_price: '',
       max_price: '',
@@ -219,6 +225,7 @@ export default function Services() {
       category: '',
       description: '',
       description_ru: '',
+      description_ar: '',
       benefits: '',
       position_ids: [],
     });
@@ -246,6 +253,7 @@ export default function Services() {
       key: service.key,
       name: service.name,
       name_ru: service.name_ru,
+      name_ar: service.name_ar || '',
       price: service.price,
       min_price: service.min_price?.toString() || '',
       max_price: service.max_price?.toString() || '',
@@ -254,6 +262,7 @@ export default function Services() {
       category: service.category,
       description: service.description || '',
       description_ru: service.description_ru || '',
+      description_ar: service.description_ar || '',
       benefits: Array.isArray(service.benefits) ? service.benefits.join(' | ') : '',
       position_ids: positionIds,
     });
@@ -273,6 +282,7 @@ export default function Services() {
         key: serviceFormData.key,
         name: serviceFormData.name,
         name_ru: serviceFormData.name_ru,
+        name_ar: serviceFormData.name_ar,
         price: serviceFormData.price,
         min_price: serviceFormData.min_price ? Number(serviceFormData.min_price) : null,
         max_price: serviceFormData.max_price ? Number(serviceFormData.max_price) : null,
@@ -281,6 +291,7 @@ export default function Services() {
         category: serviceFormData.category,
         description: serviceFormData.description,
         description_ru: serviceFormData.description_ru,
+        description_ar: serviceFormData.description_ar,
         benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
       };
 
@@ -511,7 +522,7 @@ export default function Services() {
               }`}
           >
             <Scissors className="w-5 h-5 inline-block mr-2" />
-              {t('services:services')} ({filteredServices.length})
+            {t('services:services')} ({filteredServices.length})
           </button>
           <button
             onClick={() => setActiveTab('packages')}
@@ -586,8 +597,22 @@ export default function Services() {
                       <tr key={service.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{service.name}</p>
-                            <p className="text-xs text-gray-500">{service.name_ru}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {(() => {
+                                // Get base language code (e.g., 'es' from 'es-ES')
+                                const lang = i18n.language.split('-')[0];
+                                const localizedName = service[`name_${lang}`];
+                                return localizedName || service.name;
+                              })()}
+                            </p>
+                            {(() => {
+                              const lang = i18n.language.split('-')[0];
+                              const localizedDesc = service[`description_${lang}`];
+                              const description = localizedDesc || service.description;
+                              return description ? (
+                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
+                              ) : null;
+                            })()}
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -607,7 +632,7 @@ export default function Services() {
                         </td>
                         <td className="px-6 py-4">
                           <Badge className="bg-purple-100 text-purple-800">
-                            {service.category}
+                            {t(`services:category_${service.category.toLowerCase().replace(/\s+/g, '_')}`, service.category)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4">
@@ -653,7 +678,7 @@ export default function Services() {
             ) : (
               <div className="py-20 text-center text-gray-500">
                 <Scissors className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p>{t('services:services_not_found')}</p>
+                <p>{t('services:services_not_found')}</p>
               </div>
             )}
           </div>
@@ -893,6 +918,17 @@ export default function Services() {
               />
             </div>
 
+            <div>
+              <Label htmlFor="nameAr">{t('services:name')} (AR)</Label>
+              <Input
+                id="nameAr"
+                value={serviceFormData.name_ar}
+                onChange={(e) => setServiceFormData({ ...serviceFormData, name_ar: e.target.value })}
+                placeholder={t('services:permanent_makeup_brows')}
+                dir="rtl"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="price">{t('services:base_price')} *</Label>
@@ -975,7 +1011,18 @@ export default function Services() {
             </div>
 
             <div>
-                <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
+              <Label htmlFor="descriptionAr">{t('services:description')} (AR)</Label>
+              <Textarea
+                id="descriptionAr"
+                value={serviceFormData.description_ar}
+                onChange={(e) => setServiceFormData({ ...serviceFormData, description_ar: e.target.value })}
+                placeholder={t('services:professional_brow_tattooing')}
+                dir="rtl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="benefits">{t('services:benefits')} ({t('services:separate_through_pipe')})</Label>
               <Textarea
                 id="benefits"
                 value={serviceFormData.benefits}
@@ -1079,7 +1126,7 @@ export default function Services() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                  <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
+                <Label htmlFor="origPrice">{t('services:original_price')} *</Label>
                 <Input
                   id="origPrice"
                   type="number"
