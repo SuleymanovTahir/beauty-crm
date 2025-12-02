@@ -101,6 +101,20 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const element = document.querySelector(item.href);
+                  if (element) {
+                    const headerOffset = 80; // Height of fixed header
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: "smooth"
+                    });
+                  }
+                }}
                 className={`text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-primary hover:text-primary/80" : "text-primary hover:text-primary/80"
                   }`}
               >
@@ -201,7 +215,21 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 key={item.name}
                 href={item.href}
                 className="block text-sm text-primary hover:text-primary/80 transition-colors duration-200 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  const element = document.querySelector(item.href);
+                  if (element) {
+                    const headerOffset = 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: "smooth"
+                    });
+                  }
+                }}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
               </a>
