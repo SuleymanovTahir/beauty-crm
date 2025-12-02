@@ -14,6 +14,8 @@
   "aboutUs": "Über uns",
   "abuDhabi": "Abu Dhabi",
   "additionalComments": "Zusätzliche Wünsche oder Fragen",
+  "address": "Adresse",
+  "adminPanel": "Schönheitssalonservice Bedienfeld",
   "allRightsReserved": "Alle Rechte vorbehalten",
   "allergies": "Allergische Reaktionen",
   "aromatherapy": "Aromatherapie",
@@ -280,6 +282,5 @@
   "womenHaircut": "Damenhaarschnitt",
   "workingHours": "Öffnungszeiten",
   "yearsExperience": "jahrelange Erfahrung",
-  "yourName": "Ihr Name",
-  "address": "Adresse"
+  "yourName": "Ihr Name"
 }

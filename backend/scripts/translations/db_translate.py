@@ -79,6 +79,12 @@ def translate_content():
                         # If target is RU but detected is EN, we must translate EN -> RU
                         # and OVERWRITE the existing value (which is EN)
                         should_translate = True
+                    elif field_data.get(lang) == source_text and lang != detected_lang:
+                         # If the target language field has the SAME content as the source text
+                         # but the language is different (e.g. title_en == title_ru (Russian text))
+                         # then it's likely a copy-paste error or untranslated content. Force translate.
+                         print(f"      ⚠️  Force translating {lang} because it matches source text...")
+                         should_translate = True
                     
                     if should_translate:
                         # Translate from detected language to target language

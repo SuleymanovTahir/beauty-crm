@@ -14,6 +14,8 @@
   "aboutUs": "हमारे बारे में",
   "abuDhabi": "आबू धाबी",
   "additionalComments": "अतिरिक्त अनुरोध या प्रश्न",
+  "address": "पता",
+  "adminPanel": "ब्यूटी सैलून सेवा नियंत्रण कक्ष",
   "allRightsReserved": "सर्वाधिकार सुरक्षित",
   "allergies": "एलर्जी प्रतिक्रियाएं",
   "aromatherapy": "aromatherapy",
@@ -280,6 +282,5 @@
   "womenHaircut": "महिलाओं के बाल कटवाने",
   "workingHours": "खुलने का समय",
   "yearsExperience": "वर्षों का अनुभव",
-  "yourName": "आपका नाम",
-  "address": "पता"
+  "yourName": "आपका नाम"
 }

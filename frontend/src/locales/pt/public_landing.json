@@ -14,6 +14,8 @@
   "aboutUs": "Sobre nós",
   "abuDhabi": "Abu Dabi",
   "additionalComments": "Solicitações ou perguntas adicionais",
+  "address": "Endereço",
+  "adminPanel": "Painel de controle",
   "allRightsReserved": "Todos os direitos reservados",
   "allergies": "Reações alérgicas",
   "aromatherapy": "Aromaterapia",
@@ -280,6 +282,5 @@
   "womenHaircut": "Corte de cabelo feminino",
   "workingHours": "Horário de funcionamento",
   "yearsExperience": "anos de experiência",
-  "yourName": "seu nome",
-  "address": "Endereço"
+  "yourName": "seu nome"
 }

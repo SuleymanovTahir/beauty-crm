@@ -14,6 +14,8 @@
   "aboutUs": "Біз туралы",
   "abuDhabi": "Абу-Даби",
   "additionalComments": "Қосымша сұраныстар немесе сұрақтар",
+  "address": "Мекенжай",
+  "adminPanel": "Басқару тақтасы",
   "allRightsReserved": "Барлық құқықтар қорғалған",
   "allergies": "Аллергиялық реакциялар",
   "aromatherapy": "Аромотерапия",
@@ -280,6 +282,5 @@
   "womenHaircut": "Әйелдер шаштары",
   "workingHours": "Ашу сағаттары",
   "yearsExperience": "Жылдар тәжірибесі",
-  "yourName": "сіздің атыңыз",
-  "address": "Мекенжай"
+  "yourName": "сіздің атыңыз"
 }
