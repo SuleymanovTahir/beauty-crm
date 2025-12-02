@@ -51,7 +51,14 @@ def get_salon_settings() -> dict:
                 "updated_at": row_dict.get("updated_at"),
                 "hours_weekdays": row_dict.get("hours_weekdays", "10:30 - 21:00"),
                 "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00"),
-                "promo_end_date": row_dict.get("promo_end_date")
+                "promo_end_date": row_dict.get("promo_end_date"),
+                # SEO & Analytics fields
+                "google_analytics_id": row_dict.get("google_analytics_id"),
+                "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
+                "latitude": row_dict.get("latitude", 25.2048),  # JBR Dubai default
+                "longitude": row_dict.get("longitude", 55.2708),  # JBR Dubai default
+                "logo_url": row_dict.get("logo_url", "/assets/logo.webp"),
+                "base_url": row_dict.get("base_url", "https://mlediamant.com")
             }
         else:
             log_warning(
@@ -97,9 +104,15 @@ def _get_default_salon_settings() -> dict:
         "timezone_offset": "UTC+4",
         "currency": "AED",
         "birthday_discount": "15%",
-        "birthday_discount": "15%",
         "updated_at": None,
-        "promo_end_date": None
+        "promo_end_date": None,
+        # SEO & Analytics fields
+        "google_analytics_id": None,
+        "facebook_pixel_id": None,
+        "latitude": 25.2048,  # JBR Dubai
+        "longitude": 55.2708,  # JBR Dubai
+        "logo_url": "/assets/logo.webp",
+        "base_url": "https://mlediamant.com"
     }
 
 
@@ -135,7 +148,14 @@ def update_salon_settings(data: dict) -> bool:
             'timezone_offset': 'timezone_offset',
             'currency': 'currency',
             'birthday_discount': 'birthday_discount',
-            'promo_end_date': 'promo_end_date'
+            'promo_end_date': 'promo_end_date',
+            # SEO & Analytics fields
+            'google_analytics_id': 'google_analytics_id',
+            'facebook_pixel_id': 'facebook_pixel_id',
+            'latitude': 'latitude',
+            'longitude': 'longitude',
+            'logo_url': 'logo_url',
+            'base_url': 'base_url'
         }
 
         # Формируем SET часть запроса только для предоставленных полей

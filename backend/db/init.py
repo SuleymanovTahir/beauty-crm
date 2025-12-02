@@ -611,8 +611,9 @@ def init_database():
         c.execute("""INSERT INTO salon_settings 
                      (id, name, address, google_maps, hours, hours_ru, hours_ar,
                       booking_url, phone, bot_name, bot_name_en, bot_name_ar,
-                      city, country, timezone, currency, updated_at)
-                     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                      city, country, timezone, currency, 
+                      latitude, longitude, logo_url, base_url, updated_at)
+                     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                   ("M.Le Diamant Beauty Lounge",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
@@ -628,8 +629,12 @@ def init_database():
                    "UAE",
                    "Asia/Dubai",
                    "AED",
+                   25.2048,  # latitude (JBR Dubai)
+                   55.2708,  # longitude (JBR Dubai)
+                   "/assets/logo.webp",  # logo_url
+                   "https://mlediamant.com",  # base_url
                    now))
-        log_info("✅ Дефолтные настройки салона созданы", "database")
+        log_info("✅ Дефолтные настройки салона созданы (включая SEO поля)", "database")
     
     # Создать дефолтные настройки бота
     c.execute("SELECT COUNT(*) FROM bot_settings")

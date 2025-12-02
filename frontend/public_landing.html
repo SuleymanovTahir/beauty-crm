@@ -4,8 +4,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M.Le Diamant Beauty Lounge</title>
+
+  <!-- SEO Meta Tags -->
+  <title>M.Le Diamant Beauty Lounge - Premium Beauty Salon Dubai</title>
+  <meta name="description"
+    content="Experience luxury beauty services at M.Le Diamant Beauty Lounge. Expert manicure, spa treatments, and personalized care in a premium atmosphere. Book online today!" />
+  <link rel="canonical" href="https://mlediamant.com/" />
+
+  <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/favicon.webp" />
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="M.Le Diamant Beauty Lounge - Premium Beauty Salon" />
+  <meta property="og:description"
+    content="Experience luxury beauty services with expert masters in a premium atmosphere. Manicure, spa treatments, and personalized care." />
+  <meta property="og:image" content="https://mlediamant.com/assets/logo.webp" />
+  <meta property="og:url" content="https://mlediamant.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ru_RU" />
+  <meta property="og:locale:alternate" content="ar_AE" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="M.Le Diamant Beauty Lounge" />
+  <meta name="twitter:description" content="Premium beauty salon with expert services in Dubai" />
+  <meta name="twitter:image" content="https://mlediamant.com/assets/logo.webp" />
+
+  <!-- Hreflang for Multi-language Support -->
+  <link rel="alternate" hreflang="en" href="https://mlediamant.com/" />
+  <link rel="alternate" hreflang="ru" href="https://mlediamant.com/?lang=ru" />
+  <link rel="alternate" hreflang="ar" href="https://mlediamant.com/?lang=ar" />
+  <link rel="alternate" hreflang="x-default" href="https://mlediamant.com/" />
+
+  <!-- Schema.org Structured Data - BeautySalon -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    "name": "M.Le Diamant Beauty Lounge",
+    "image": "https://mlediamant.com/assets/logo.webp",
+    "url": "https://mlediamant.com",
+    "telephone": "+971526961100",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Dubai",
+      "addressLocality": "Dubai",
+      "addressRegion": "Dubai",
+      "addressCountry": "AE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 25.2048,
+      "longitude": 55.2708
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "09:00",
+        "closes": "21:00"
+      }
+    ],
+    "sameAs": [
+      "https://instagram.com/mlediamant"
+    ]
+  }
+  </script>
+
+  <!-- Schema.org Structured Data - Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "M.Le Diamant Beauty Lounge",
+    "url": "https://mlediamant.com",
+    "logo": "https://mlediamant.com/assets/logo.webp",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+971526961100",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Russian", "Arabic"]
+    },
+    "sameAs": [
+      "https://instagram.com/mlediamant"
+    ]
+  }
+  </script>
+
+  <!-- Dynamic SEO Metadata Loader -->
+  <script>
+    // Load SEO metadata from database and update meta tags
+    (async function () {
+      try {
+        const response = await fetch('/api/public/seo-metadata');
+        const seo = await response.json();
+
+        // Update title
+        document.title = seo.seo_title;
+
+        // Update meta description
+        document.querySelector('meta[name="description"]').setAttribute('content', seo.seo_description);
+
+        // Update Open Graph tags (use dynamic logo and base URL)
+        document.querySelector('meta[property="og:title"]').setAttribute('content', seo.salon_name + ' - Premium Beauty Salon');
+        document.querySelector('meta[property="og:description"]').setAttribute('content', seo.seo_description);
+        document.querySelector('meta[property="og:image"]').setAttribute('content', seo.logo_url);
+        document.querySelector('meta[property="og:url"]').setAttribute('content', seo.base_url);
+
+        // Update Twitter Cards (use dynamic logo)
+        document.querySelector('meta[name="twitter:title"]').setAttribute('content', seo.salon_name);
+        document.querySelector('meta[name="twitter:description"]').setAttribute('content', `Premium beauty salon with expert services in ${seo.city}`);
+        document.querySelector('meta[name="twitter:image"]').setAttribute('content', seo.logo_url);
+
+        // Update Schema.org BeautySalon (use dynamic values)
+        const beautySalonSchema = {
+          "@context": "https://schema.org",
+          "@type": "BeautySalon",
+          "name": seo.schema.name,
+          "image": seo.logo_url,
+          "url": seo.base_url,
+          "telephone": seo.schema.telephone,
+          "priceRange": "$$",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": seo.schema.address.streetAddress,
+            "addressLocality": seo.schema.address.addressLocality,
+            "addressRegion": seo.schema.address.addressRegion,
+            "addressCountry": seo.schema.address.addressCountry
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": seo.schema.geo.latitude,
+            "longitude": seo.schema.geo.longitude
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": seo.schema.openingHours.opens,
+              "closes": seo.schema.openingHours.closes
+            }
+          ],
+          "sameAs": seo.schema.sameAs
+        };
+
+        // Update Schema.org Organization (use dynamic values)
+        const organizationSchema = {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": seo.schema.name,
+          "url": seo.base_url,
+          "logo": seo.logo_url,
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": seo.schema.telephone,
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Russian", "Arabic"]
+          },
+          "sameAs": seo.schema.sameAs
+        };
+
+        // Replace existing schema scripts
+        const schemaScripts = document.querySelectorAll('script[type="application/ld+json"]');
+        if (schemaScripts.length >= 2) {
+          schemaScripts[0].textContent = JSON.stringify(beautySalonSchema, null, 2);
+          schemaScripts[1].textContent = JSON.stringify(organizationSchema, null, 2);
+        }
+
+        // ✅ Conditionally load Google Analytics if ID is set
+        if (seo.google_analytics_id) {
+          const gaScript = document.createElement('script');
+          gaScript.async = true;
+          gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${seo.google_analytics_id}`;
+          document.head.appendChild(gaScript);
+
+          const gaConfig = document.createElement('script');
+          gaConfig.textContent = `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${seo.google_analytics_id}');
+          `;
+          document.head.appendChild(gaConfig);
+          console.log('✅ Google Analytics loaded:', seo.google_analytics_id);
+        } else {
+          console.log('ℹ️ Google Analytics ID not set in database');
+        }
+
+        // ✅ Conditionally load Facebook Pixel if ID is set
+        if (seo.facebook_pixel_id) {
+          const fbPixel = document.createElement('script');
+          fbPixel.textContent = `
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '${seo.facebook_pixel_id}');
+            fbq('track', 'PageView');
+          `;
+          document.head.appendChild(fbPixel);
+
+          const fbNoscript = document.createElement('noscript');
+          fbNoscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${seo.facebook_pixel_id}&ev=PageView&noscript=1" />`;
+          document.body.appendChild(fbNoscript);
+          console.log('✅ Facebook Pixel loaded:', seo.facebook_pixel_id);
+        } else {
+          console.log('ℹ️ Facebook Pixel ID not set in database');
+        }
+
+        console.log('✅ SEO metadata loaded from database');
+      } catch (error) {
+        console.warn('⚠️ Failed to load dynamic SEO metadata, using defaults:', error);
+      }
+    })();
+  </script>
+
+  <!-- Google Analytics 4 -->
+
 </head>
 
 <body>
