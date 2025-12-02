@@ -120,27 +120,44 @@ async def main():
     except Exception as e:
         log_error(f"❌ Ошибка при исправлении URL: {e}", "fix")
 
-    # 1.7 Optimize Images (Backend & Frontend)
+    # 1.7 Optimize Images (Backend & Frontend) - Convert ALL to WebP
     try:
         from scripts.maintenance.optimize_images import optimize_images
         
-        # 1. Optimize Backend Uploads (Standard)
-        backend_uploads = os.path.join(backend_dir, "static", "uploads")
-        if os.path.exists(backend_uploads):
-            log_info("🖼️ Оптимизация изображений (Backend)...", "fix")
-            optimize_images(backend_uploads, max_size_kb=500, max_width=1920)
+        # 1. Optimize Backend Static (Standard)
+        backend_static = os.path.join(backend_dir, "static")
+        if os.path.exists(backend_static):
+            log_info("🖼️ Конвертация и оптимизация изображений (Backend)...", "fix")
+            optimize_images(backend_static, max_size_kb=500, max_width=1920)
         
-        # 2. Optimize Frontend Public Assets (Aggressive for Logo etc)
-        # Assuming frontend is sibling to backend
-        frontend_public_dir = os.path.join(os.path.dirname(backend_dir), "frontend", "src", "pages", "public")
-        if os.path.exists(frontend_public_dir):
-            log_info("🖼️ Оптимизация изображений (Frontend Public)...", "fix")
-            optimize_images(frontend_public_dir, max_size_kb=100, max_width=500)
+        # 2. Optimize Frontend Public Landing Assets (Aggressive)
+        frontend_dir = os.path.join(os.path.dirname(backend_dir), "frontend")
+        frontend_public_landing = os.path.join(frontend_dir, "public_landing")
+        if os.path.exists(frontend_public_landing):
+            log_info("🖼️ Конвертация и оптимизация изображений (Frontend Public Landing)...", "fix")
+            optimize_images(frontend_public_landing, max_size_kb=100, max_width=800)
+        
+        # 3. Optimize Frontend Src Pages Public (Aggressive for Logo etc)
+        frontend_src_public = os.path.join(frontend_dir, "src", "pages", "public")
+        if os.path.exists(frontend_src_public):
+            log_info("🖼️ Конвертация и оптимизация изображений (Frontend Src Public)...", "fix")
+            optimize_images(frontend_src_public, max_size_kb=100, max_width=500)
             
     except ImportError:
         log_warning("⚠️  Скрипт optimize_images не найден", "fix")
     except Exception as e:
         log_error(f"❌ Ошибка при оптимизации изображений: {e}", "fix")
+
+    # 1.8 SEO Optimization (Image WebP conversion + Alt attribute check)
+    try:
+        from scripts.maintenance.seo_optimizer import main as seo_optimizer
+        log_info("🔍 Запуск SEO оптимизации...", "fix")
+        seo_optimizer()
+        print("✅ SUCCESS: SEO Optimization")
+    except ImportError:
+        log_warning("⚠️  Скрипт seo_optimizer не найден", "fix")
+    except Exception as e:
+        log_error(f"❌ Ошибка при SEO оптимизации: {e}", "fix")
 
 
     # 2. Data Integrity Checks (fix_data.py) - FIXED IMPORT PATH

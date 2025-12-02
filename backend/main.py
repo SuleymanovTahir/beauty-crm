@@ -94,6 +94,8 @@ from api.booking_import import router as booking_import_router
 
 from api.payroll import router as payroll_router
 from api.feedback import router as feedback_router
+from api.sitemap import router as sitemap_router
+from api.seo_metadata import router as seo_metadata_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -160,6 +162,8 @@ app.include_router(webhooks_router)  # для Instagram webhook (/webhook)
 app.include_router(telegram_webhook_router)  # для Telegram webhook (/webhooks/telegram)
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
 app.include_router(internal_chat_router)
+app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)
+app.include_router(seo_metadata_router)  # для SEO метаданных (/api/public/seo-metadata)
 
 
 # ===== MIDDLEWARE =====

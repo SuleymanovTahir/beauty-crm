@@ -31,6 +31,15 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             'wifi_available': 'INTEGER DEFAULT 1',
             'google_place_id': 'TEXT',  # ✅ From add_google_fields.py
             'google_api_key': 'TEXT',   # ✅ From add_google_fields.py
+            
+            # SEO & Analytics fields
+            'google_analytics_id': 'TEXT',  # GA4 Measurement ID (e.g., G-XXXXXXXXXX)
+            'facebook_pixel_id': 'TEXT',    # Facebook Pixel ID
+            'latitude': 'REAL',             # Geo coordinates for Schema.org
+            'longitude': 'REAL',            # Geo coordinates for Schema.org
+            'logo_url': 'TEXT',             # Logo URL for Schema.org and meta tags
+            'base_url': 'TEXT DEFAULT "https://mlediamant.com"',  # Base site URL
+            
             # Translation columns for main_location (all 9 languages)
             'main_location_ru': 'TEXT',
             'main_location_en': 'TEXT',

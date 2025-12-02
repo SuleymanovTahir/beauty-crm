@@ -826,12 +826,13 @@ def seed_data():
     print("-" * 70)
     print("⏭️  Пропущено - мастера создаются через update_employee_details.py")
     
-    # Load actual master IDs from database
+    # Load actual master IDs from database (case-insensitive)
     master_ids = {}
     c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = 1")
     employees = c.fetchall()
     for row in employees:
-        master_ids[row['full_name']] = row['id']
+        # Store with uppercase key for consistent lookup
+        master_ids[row['full_name'].upper()] = row['id']
     
     if master_ids:
         print(f"✅ Найдено мастеров: {', '.join(master_ids.keys())}")
