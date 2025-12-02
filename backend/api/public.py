@@ -318,7 +318,6 @@ async def get_public_banners():
             ORDER BY display_order ASC
         """)
         
-        """)
         
         from core.config import BASE_URL
         
