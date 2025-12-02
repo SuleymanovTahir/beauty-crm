@@ -12,7 +12,7 @@ const navigation = [
   { name: "Команда", href: "#team", key: "teamTag", defaultText: "Команда" },
   { name: "Отзывы", href: "#testimonials", key: "testimonialsTag", defaultText: "Отзывы" },
   { name: "FAQ", href: "#faq", key: "faqTag", defaultText: "FAQ" },
-  { name: "Контакты", href: "#contacts", key: "contactsTag", defaultText: "Контакты" },
+  { name: "Контакты", href: "#location", key: "contactsTag", defaultText: "Контакты" },
 ];
 
 interface HeaderProps {

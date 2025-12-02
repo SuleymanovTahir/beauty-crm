@@ -100,13 +100,18 @@ async def send_contact_message(form: ContactForm):
             except Exception as e:
                 log_error(f"Error sending Telegram notification: {e}", "public_api")
         
-        # Запускаем все уведомления параллельно
-        await asyncio.gather(
-            send_admin_email(),
-            send_user_email(),
-            send_telegram_notification(),
-            return_exceptions=True  # Не падаем если одно из уведомлений упало
-        )
+        async def send_all_notifications():
+            """Отправить все уведомления"""
+            await asyncio.gather(
+                send_admin_email(),
+                send_user_email(),
+                send_telegram_notification(),
+                return_exceptions=True
+            )
+        
+        # Запускаем уведомления в фоне (fire-and-forget)
+        # Не ждем их завершения, чтобы сразу вернуть ответ пользователю
+        asyncio.create_task(send_all_notifications())
             
         return {"success": True, "message": "Message sent successfully"}
     except Exception as e:

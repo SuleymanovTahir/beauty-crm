@@ -23,7 +23,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
   };
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-12 bg-muted/30">
+    <section id="location" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-12 bg-muted/30">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-12 sm:mb-16">
           <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">

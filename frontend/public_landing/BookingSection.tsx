@@ -56,6 +56,19 @@ export function BookingSection({ services }: BookingSectionProps) {
       return;
     }
 
+    // Validate name length (minimum 2 characters)
+    if (formData.name.trim().length < 2) {
+      toast.error(t('nameMinLength', { defaultValue: 'Имя должно содержать минимум 2 символа' }));
+      return;
+    }
+
+    // Validate phone number (minimum 10 digits)
+    const phoneDigits = formData.phone.replace(/\D/g, ''); // Remove non-digits
+    if (phoneDigits.length < 10) {
+      toast.error(t('phoneMinLength', { defaultValue: 'Номер телефона должен содержать минимум 10 цифр' }));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -118,6 +131,7 @@ export function BookingSection({ services }: BookingSectionProps) {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="bg-input-background border-border/50"
+                minLength={2}
                 required
               />
             </div>
@@ -131,6 +145,7 @@ export function BookingSection({ services }: BookingSectionProps) {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="bg-input-background border-border/50"
+                minLength={10}
                 required
               />
             </div>
