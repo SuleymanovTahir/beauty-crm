@@ -98,8 +98,13 @@ async def send_contact_message(form: ContactForm):
         return {"success": True, "message": "Message sent successfully"}
     except Exception as e:
         from utils.logger import log_error
-        log_error(f"Error sending message: {e}", "public_api")
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        log_error(f"Error sending message: {e}\n{traceback.format_exc()}", "public_api")
+        # Don't return 500 if it's just a notification failure, but here we are in the main block
+        # If the error happened in the main logic, we should probably still return success if the message was "received" 
+        # but notifications failed. However, the try-except above covers notifications.
+        # This outer except catches unexpected errors.
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
 
@@ -109,6 +114,13 @@ async def send_contact_message(form: ContactForm):
 async def get_public_services():
     """Публичный список активных услуг"""
     services = get_all_services(active_only=True)
+    from core.config import BASE_URL
+
+    def sanitize_url(url):
+        if not url: return None
+        if "localhost:8000" in url and "localhost" not in BASE_URL:
+            return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
+        return url
 
     return [
         {
@@ -253,6 +265,14 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
         LIMIT ?
     """, (limit,))
 
+    from core.config import BASE_URL
+    
+    def sanitize_url(url):
+        if not url: return None
+        if "localhost:8000" in url and "localhost" not in BASE_URL:
+            return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
+        return url
+
     news = []
     for row in c.fetchall():
         # Выбираем нужный язык
@@ -270,7 +290,7 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
             "id": row[0],
             "title": title,
             "content": content,
-            "image_url": row[7],
+            "image_url": sanitize_url(row[7]),
             "published_at": row[8]
         })
 
@@ -298,7 +318,22 @@ async def get_public_banners():
             ORDER BY display_order ASC
         """)
         
-        banners = [dict(row) for row in c.fetchall()]
+        """)
+        
+        from core.config import BASE_URL
+        
+        def sanitize_url(url):
+            if not url: return None
+            if "localhost:8000" in url and "localhost" not in BASE_URL:
+                return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
+            return url
+
+        banners = []
+        for row in c.fetchall():
+            banner = dict(row)
+            banner['image_url'] = sanitize_url(banner['image_url'])
+            banners.append(banner)
+            
         return {"banners": banners}
     except Exception as e:
         from utils.logger import log_error
