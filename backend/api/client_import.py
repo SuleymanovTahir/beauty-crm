@@ -11,6 +11,7 @@ from utils.logger import log_info, log_error
 from db.clients import get_or_create_client, update_client_info
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 router = APIRouter()
 
@@ -174,7 +175,7 @@ def find_existing_client(phone: str = None, email: str = None, instagram_id: str
     if not phone and not email and not instagram_id:
         return None
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -296,7 +297,7 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
                 }
             
             # Update client with merged data
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             
             # Build UPDATE query dynamically
@@ -323,7 +324,7 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
         
         else:
             # Create new client
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             
             now = datetime.now().isoformat()
@@ -438,7 +439,7 @@ async def import_clients(file: UploadFile = File(...)):
         
         log_info(f"📋 Normalized columns: {df.columns.tolist()}", "import")
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         results = {

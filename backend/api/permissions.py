@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
+from db.connection import get_db_connection
 
 from core.config import (
     DATABASE_NAME, ROLES, CLIENT_STATUSES,
@@ -77,7 +78,7 @@ async def get_user_permissions(
         raise HTTPException(status_code=403, detail="Forbidden")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -157,7 +158,7 @@ async def update_user_role(
         )
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем текущую роль пользователя
@@ -227,7 +228,7 @@ async def update_user_custom_permissions(
         raise HTTPException(status_code=400, detail="Invalid permissions format")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем, существует ли пользователь
@@ -303,7 +304,7 @@ async def get_all_users_with_permissions(
         raise HTTPException(status_code=403, detail="Forbidden")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""

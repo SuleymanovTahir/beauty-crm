@@ -7,7 +7,7 @@
 - Сотрудники с днями рождения
 - Тестовые записи на ближайшие дни
 """
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime, timedelta
 import argparse
 import sys
@@ -26,7 +26,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
         email: Email для тестовых уведомлений
         days_ahead: Через сколько дней создать тестовые события (по умолчанию 1 = завтра)
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     print("=" * 80)
@@ -52,7 +52,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
         INSERT OR REPLACE INTO clients
         (instagram_id, username, name, email, phone, first_contact, last_contact,
          birthday, total_messages, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         test_client_id,
         "test_user_notify",
@@ -73,15 +73,15 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     # 2. Проверяем/создаем тестового сотрудника
     print("\n2️⃣ Проверка тестового сотрудника...")
 
-    c.execute("SELECT id FROM users WHERE username = ?", ("test_employee",))
+    c.execute("SELECT id FROM users WHERE username = %s", ("test_employee",))
     user = c.fetchone()
 
     if user:
         user_id = user[0]
         c.execute("""
             UPDATE users
-            SET email = ?, phone = ?, birthday = ?
-            WHERE id = ?
+            SET email = %s, phone = %s, birthday = %s
+            WHERE id = %s
         """, (email, "+971501234568", test_date_str, user_id))
         print(f"✅ Сотрудник обновлен: test_employee (ID: {user_id})")
     else:
@@ -91,7 +91,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
         c.execute("""
             INSERT INTO users
             (username, password_hash, full_name, email, phone, birthday, role, created_at, is_active)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             "test_employee",
             password_hash,
@@ -119,7 +119,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     c.execute("""
         INSERT INTO bookings
         (instagram_id, service_name, datetime, phone, name, status, created_at, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         test_client_id,
         "Маникюр + Педикюр",
@@ -143,7 +143,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     c.execute("""
         INSERT INTO bookings
         (instagram_id, service_name, datetime, phone, name, status, created_at, notes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         test_client_id,
         "SPA-процедуры",
@@ -163,12 +163,12 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     # 4. Настройки напоминаний о записях
     print("\n4️⃣ Проверка настроек напоминаний...")
 
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+    c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
     if not c.fetchone():
         print("⚠️  Создаю таблицу booking_reminder_settings...")
         c.execute("""
             CREATE TABLE booking_reminder_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 days_before INTEGER DEFAULT 0,
                 hours_before INTEGER DEFAULT 0,
@@ -191,7 +191,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
         c.execute("""
             INSERT INTO booking_reminder_settings
             (name, days_before, hours_before, notification_type, is_enabled, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (name, days, hours, ntype, 1, datetime.now().isoformat()))
 
     print(f"✅ Создано настроек напоминаний: {len(reminders)}")
@@ -202,12 +202,12 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
             print(f"   - {name}: за {hours} ч.")
 
     # Таблица для отслеживания отправленных напоминаний
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminders_sent'")
+    c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminders_sent'")
     if not c.fetchone():
         print("⚠️  Создаю таблицу booking_reminders_sent...")
         c.execute("""
             CREATE TABLE booking_reminders_sent (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 booking_id INTEGER NOT NULL,
                 reminder_setting_id INTEGER NOT NULL,
                 sent_at TEXT,

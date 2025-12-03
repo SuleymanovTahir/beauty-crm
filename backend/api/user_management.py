@@ -10,6 +10,7 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.permissions import (
     can_approve_users, can_manage_permissions,
@@ -38,7 +39,7 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -80,7 +81,7 @@ async def update_my_profile(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         updates = []
@@ -208,13 +209,13 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
             SELECT id, username, full_name, email, role, created_at, email_verified, photo
             FROM users
-            WHERE approved = 0 AND is_active = 1
+            WHERE approved = 0 AND is_active = TRUE
             ORDER BY created_at DESC
         """)
 
@@ -249,7 +250,7 @@ async def approve_user(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем email и имя пользователя
@@ -270,10 +271,10 @@ async def approve_user(
                 status_code=400
             )
 
-        # Одобряем пользователя (is_active = 1)
+        # Одобряем пользователя (is_active = TRUE)
         c.execute("""
             UPDATE users
-            SET approved = 1, is_active = 1, approved_by = ?, approved_at = datetime('now')
+            SET approved = 1, is_active = TRUE, approved_by = ?, approved_at = datetime('now')
             WHERE id = ?
         """, (user["id"], user_id))
 
@@ -303,7 +304,7 @@ async def reject_user(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем email и имя пользователя
@@ -319,7 +320,7 @@ async def reject_user(
         # Деактивируем пользователя
         c.execute("""
             UPDATE users
-            SET is_active = 0, approved = 0
+            SET is_active = FALSE, approved = 0
             WHERE id = ?
         """, (user_id,))
 

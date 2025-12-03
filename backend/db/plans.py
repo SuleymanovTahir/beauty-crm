@@ -1,11 +1,10 @@
 """
 Database functions for managing role-based plans and goals
 """
-import sqlite3
 import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_error
 
 
@@ -22,13 +21,13 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
         Plan dict or None
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         current_date = datetime.now().isoformat()
         
         # Get user's role
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         user_row = c.fetchone()
         if not user_row:
             conn.close()
@@ -43,17 +42,17 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
                    role_key, user_id, visible_to_positions, can_edit_positions,
                    is_position_plan, is_individual_plan
             FROM plans
-            WHERE user_id = ? 
-              AND metric_type = ?
-              AND is_active = 1
+            WHERE user_id = %s 
+              AND metric_type = %s
+              AND is_active = TRUE
               AND is_individual_plan = 1
-              AND start_date <= ?
-              AND end_date >= ?
+              AND start_date <= %s
+              AND end_date >= %s
         """
         params = [user_id, metric_type, current_date, current_date]
         
         if period_type:
-            query += " AND period_type = ?"
+            query += " AND period_type = %s"
             params.append(period_type)
         
         query += " ORDER BY created_at DESC LIMIT 1"
@@ -69,17 +68,17 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
                        role_key, user_id, visible_to_positions, can_edit_positions,
                        is_position_plan, is_individual_plan
                 FROM plans
-                WHERE role_key = ? 
-                  AND metric_type = ?
-                  AND is_active = 1
+                WHERE role_key = %s 
+                  AND metric_type = %s
+                  AND is_active = TRUE
                   AND is_position_plan = 1
-                  AND start_date <= ?
-                  AND end_date >= ?
+                  AND start_date <= %s
+                  AND end_date >= %s
             """
             params = [role_key, metric_type, current_date, current_date]
             
             if period_type:
-                query += " AND period_type = ?"
+                query += " AND period_type = %s"
                 params.append(period_type)
             
             query += " ORDER BY created_at DESC LIMIT 1"
@@ -97,15 +96,15 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
                 FROM plans
                 WHERE role_key IS NULL
                   AND user_id IS NULL
-                  AND metric_type = ?
-                  AND is_active = 1
-                  AND start_date <= ?
-                  AND end_date >= ?
+                  AND metric_type = %s
+                  AND is_active = TRUE
+                  AND start_date <= %s
+                  AND end_date >= %s
             """
             params = [metric_type, current_date, current_date]
             
             if period_type:
-                query += " AND period_type = ?"
+                query += " AND period_type = %s"
                 params.append(period_type)
             
             query += " ORDER BY created_at DESC LIMIT 1"
@@ -146,18 +145,18 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
                      created_by: int = None) -> Optional[int]:
     """Create plan for entire role (position)"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Deactivate existing role plans for this metric and period
         c.execute("""
             UPDATE plans 
-            SET is_active = 0, updated_at = ?
-            WHERE role_key = ? 
-              AND metric_type = ?
-              AND period_type = ?
+            SET is_active = FALSE, updated_at = %s
+            WHERE role_key = %s 
+              AND metric_type = %s
+              AND period_type = %s
               AND is_position_plan = 1
-              AND is_active = 1
+              AND is_active = TRUE
         """, (datetime.now().isoformat(), role_key, metric_type, period_type))
         
         # Create new role plan
@@ -171,7 +170,7 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
                 role_key, is_position_plan,
                 visible_to_positions, can_edit_positions
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 1, %s, %s)
         """, (metric_type, target_value, period_type, start_date, end_date, 
               created_by, role_key, visible_json, can_edit_json))
         
@@ -191,18 +190,18 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                        created_by: int = None) -> Optional[int]:
     """Create individual plan override for specific user"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Deactivate existing individual plans for this user, metric and period
         c.execute("""
             UPDATE plans 
-            SET is_active = 0, updated_at = ?
-            WHERE user_id = ? 
-              AND metric_type = ?
-              AND period_type = ?
+            SET is_active = FALSE, updated_at = %s
+            WHERE user_id = %s 
+              AND metric_type = %s
+              AND period_type = %s
               AND is_individual_plan = 1
-              AND is_active = 1
+              AND is_active = TRUE
         """, (datetime.now().isoformat(), user_id, metric_type, period_type))
         
         # Create new individual plan
@@ -212,7 +211,7 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                 start_date, end_date, created_by,
                 user_id, is_individual_plan
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 1)
         """, (metric_type, target_value, period_type, start_date, end_date, 
               created_by, user_id))
         
@@ -230,11 +229,11 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
 def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
     """Get all plans visible to user based on their role"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Get user's role
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         user_row = c.fetchone()
         if not user_row:
             conn.close()
@@ -250,9 +249,9 @@ def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
                    role_key, user_id, visible_to_positions, can_edit_positions,
                    is_position_plan, is_individual_plan
             FROM plans
-            WHERE is_active = 1
-              AND start_date <= ?
-              AND end_date >= ?
+            WHERE is_active = TRUE
+              AND start_date <= %s
+              AND end_date >= %s
             ORDER BY created_at DESC
         """, (current_date, current_date))
         
@@ -298,11 +297,11 @@ def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
 def can_user_edit_plan(user_id: int, plan_id: int) -> bool:
     """Check if user can edit plan"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Get user's role
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         user_row = c.fetchone()
         if not user_row:
             conn.close()
@@ -319,7 +318,7 @@ def can_user_edit_plan(user_id: int, plan_id: int) -> bool:
         c.execute("""
             SELECT user_id, role_key, can_edit_positions, created_by
             FROM plans
-            WHERE id = ?
+            WHERE id = %s
         """, (plan_id,))
         plan_row = c.fetchone()
         conn.close()
@@ -352,7 +351,7 @@ def can_user_edit_plan(user_id: int, plan_id: int) -> bool:
 def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str, Any]]:
     """Get all plans for a role"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         query = """
@@ -361,11 +360,11 @@ def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str,
                    role_key, user_id, visible_to_positions, can_edit_positions,
                    is_position_plan, is_individual_plan
             FROM plans
-            WHERE role_key = ?
+            WHERE role_key = %s
         """
         
         if active_only:
-            query += " AND is_active = 1"
+            query += " AND is_active = TRUE"
         
         query += " ORDER BY created_at DESC"
         
@@ -403,7 +402,7 @@ def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str,
 def get_plan(metric_type: str, period_type: str = None) -> Optional[Dict[str, Any]]:
     """Get active global plan for a specific metric (backward compatibility)"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         current_date = datetime.now().isoformat()
@@ -412,17 +411,17 @@ def get_plan(metric_type: str, period_type: str = None) -> Optional[Dict[str, An
             SELECT id, metric_type, target_value, period_type, 
                    start_date, end_date, created_by, created_at
             FROM plans
-            WHERE metric_type = ? 
+            WHERE metric_type = %s 
               AND role_key IS NULL
               AND user_id IS NULL
-              AND is_active = 1
-              AND start_date <= ?
-              AND end_date >= ?
+              AND is_active = TRUE
+              AND start_date <= %s
+              AND end_date >= %s
         """
         params = [metric_type, current_date, current_date]
         
         if period_type:
-            query += " AND period_type = ?"
+            query += " AND period_type = %s"
             params.append(period_type)
         
         query += " ORDER BY created_at DESC LIMIT 1"
@@ -453,25 +452,25 @@ def set_plan(metric_type: str, target_value: float, period_type: str,
              start_date: str, end_date: str, created_by: int = None) -> Optional[int]:
     """Create or update a global plan (backward compatibility)"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Deactivate existing global plans for this metric and period
         c.execute("""
             UPDATE plans 
-            SET is_active = 0, updated_at = ?
-            WHERE metric_type = ? 
-              AND period_type = ?
+            SET is_active = FALSE, updated_at = %s
+            WHERE metric_type = %s 
+              AND period_type = %s
               AND role_key IS NULL
               AND user_id IS NULL
-              AND is_active = 1
+              AND is_active = TRUE
         """, (datetime.now().isoformat(), metric_type, period_type))
         
         # Create new plan
         c.execute("""
             INSERT INTO plans (metric_type, target_value, period_type, 
                              start_date, end_date, created_by)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (metric_type, target_value, period_type, start_date, end_date, created_by))
         
         plan_id = c.lastrowid
@@ -517,7 +516,7 @@ def get_plan_progress(metric_type: str, current_value: float) -> Optional[Dict[s
 def get_all_plans(active_only: bool = True) -> list:
     """Get all plans (backward compatibility)"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         if active_only:
@@ -525,7 +524,7 @@ def get_all_plans(active_only: bool = True) -> list:
                 SELECT id, metric_type, target_value, period_type, 
                        start_date, end_date, created_by, created_at
                 FROM plans
-                WHERE is_active = 1
+                WHERE is_active = TRUE
                 ORDER BY metric_type, start_date DESC
             """)
         else:
@@ -565,13 +564,13 @@ def get_all_plans(active_only: bool = True) -> list:
 def delete_plan(plan_id: int) -> bool:
     """Soft delete a plan by deactivating it (backward compatibility)"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
             UPDATE plans 
-            SET is_active = 0, updated_at = ?
-            WHERE id = ?
+            SET is_active = FALSE, updated_at = %s
+            WHERE id = %s
         """, (datetime.now().isoformat(), plan_id))
         
         conn.commit()

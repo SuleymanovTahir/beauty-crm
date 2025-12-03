@@ -10,6 +10,7 @@ from db.settings import get_salon_settings
 from db.services import get_all_services
 from db.employees import get_all_employees
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from services.reviews import reviews_service
 
 router = APIRouter(tags=["Public"])
@@ -238,7 +239,7 @@ async def get_available_slots(
 
 def check_slot_availability(date: str, time: str, employee_id: Optional[int] = None) -> bool:
     """Проверить доступность слота"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Формируем дату-время
@@ -271,14 +272,14 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
 @router.get("/news")
 async def get_salon_news(limit: int = 10, language: str = "ru"):
     """Получить новости салона"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT id, title_ru, title_en, title_ar, content_ru, content_en, content_ar,
                image_url, published_at
         FROM salon_news
-        WHERE is_active = 1
+        WHERE is_active = TRUE
         ORDER BY published_at DESC
         LIMIT ?
     """, (limit,))
@@ -325,14 +326,14 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
 @router.get("/banners")
 async def get_public_banners():
     """Получить активные баннеры для главной страницы"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:
         c.execute("""
             SELECT * FROM public_banners 
-            WHERE is_active = 1 
+            WHERE is_active = TRUE 
             ORDER BY display_order ASC
         """)
         

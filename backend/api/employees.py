@@ -15,6 +15,7 @@ from db.employees import (
 from utils.utils import require_auth
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Employees"])
@@ -65,7 +66,7 @@ async def get_my_employee_profile(
 
     try:
         log_info(f"🔍 [Profile] Загрузка данных пользователя с id={user.get('id')}", "api")
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Запрашиваем данные из таблицы users (не employees!)
@@ -127,7 +128,7 @@ async def update_my_employee_profile(
     try:
         data = await request.json()
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Определяем, какие поля обновлять
@@ -371,7 +372,7 @@ async def reorder_employee(
     data = await request.json()
     new_order = data.get('sort_order')
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -419,7 +420,7 @@ async def update_employee_birthday(
         data = await request.json()
         birthday = data.get('birthday')
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""

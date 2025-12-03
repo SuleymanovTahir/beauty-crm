@@ -8,7 +8,7 @@
 """
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime, timedelta
 import asyncio
 
@@ -40,13 +40,13 @@ def test_broadcast_email_setup():
     print_section("ТЕСТ 1: Настройка акционной рассылки на Email")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # 1. Проверяем наличие таблицы user_subscriptions
         c.execute("""
-            SELECT name FROM sqlite_master
-            WHERE type='table' AND name='user_subscriptions'
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema='public' AND table_name='user_subscriptions'
         """)
 
         if not c.fetchone():
@@ -55,13 +55,13 @@ def test_broadcast_email_setup():
 
             c.execute("""
                 CREATE TABLE IF NOT EXISTS user_subscriptions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id SERIAL PRIMARY KEY,
                     user_id INTEGER NOT NULL,
                     subscription_type TEXT NOT NULL,
-                    is_subscribed INTEGER DEFAULT 1,
-                    email_enabled INTEGER DEFAULT 1,
-                    telegram_enabled INTEGER DEFAULT 0,
-                    instagram_enabled INTEGER DEFAULT 0,
+                    is_subscribed BOOLEAN DEFAULT TRUE,
+                    email_enabled BOOLEAN DEFAULT TRUE,
+                    telegram_enabled BOOLEAN DEFAULT FALSE,
+                    instagram_enabled BOOLEAN DEFAULT FALSE,
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     updated_at TEXT,
                     FOREIGN KEY (user_id) REFERENCES users (id),
@@ -73,7 +73,7 @@ def test_broadcast_email_setup():
 
         # 2. Проверяем наличие тестового пользователя
         test_email = "ii3391609@gmail.com"
-        c.execute("SELECT id, username, full_name FROM users WHERE email = ?", (test_email,))
+        c.execute("SELECT id, username, full_name FROM users WHERE email = %s", (test_email,))
         user = c.fetchone()
 
         if user:
@@ -87,19 +87,19 @@ def test_broadcast_email_setup():
                     username, email, password_hash, full_name, role,
                     is_active, email_verified, created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 "test_broadcast_user",
                 test_email,
                 "test_password_hash",  # В реальной системе - хэш пароля
                 "Тестовый Пользователь Рассылки",
                 "client",
-                1,  # is_active
-                1,  # email_verified
+                True,  # is_active
+                True,  # email_verified
                 datetime.now().isoformat()
             ))
-
-            user_id = c.lastrowid
+            c.execute("SELECT id FROM users WHERE email = %s", (test_email,))
+            user_id = c.fetchone()[0]
             conn.commit()
             print(f"   ✅ Тестовый пользователь создан с ID: {user_id}")
 
@@ -107,7 +107,7 @@ def test_broadcast_email_setup():
         c.execute("""
             SELECT id, is_subscribed, email_enabled
             FROM user_subscriptions
-            WHERE user_id = ? AND subscription_type = 'promotions'
+            WHERE user_id = %s AND subscription_type = 'promotions'
         """, (user_id,))
 
         subscription = c.fetchone()
@@ -121,8 +121,8 @@ def test_broadcast_email_setup():
             if not is_subscribed or not email_enabled:
                 c.execute("""
                     UPDATE user_subscriptions
-                    SET is_subscribed = 1, email_enabled = 1, updated_at = ?
-                    WHERE id = ?
+                    SET is_subscribed = TRUE, email_enabled = TRUE, updated_at = %s
+                    WHERE id = %s
                 """, (datetime.now().isoformat(), sub_id))
                 conn.commit()
                 print("   ✅ Подписка активирована")
@@ -135,14 +135,14 @@ def test_broadcast_email_setup():
                     email_enabled, telegram_enabled, instagram_enabled,
                     created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (
                 user_id,
                 'promotions',
-                1,  # is_subscribed
-                1,  # email_enabled
-                0,  # telegram_enabled
-                0,  # instagram_enabled
+                True,  # is_subscribed
+                True,  # email_enabled
+                False,  # telegram_enabled
+                False,  # instagram_enabled
                 datetime.now().isoformat()
             ))
             conn.commit()
@@ -150,8 +150,8 @@ def test_broadcast_email_setup():
 
         # 4. Проверяем таблицу broadcast_history
         c.execute("""
-            SELECT name FROM sqlite_master
-            WHERE type='table' AND name='broadcast_history'
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema='public' AND table_name='broadcast_history'
         """)
 
         if not c.fetchone():
@@ -159,7 +159,7 @@ def test_broadcast_email_setup():
 
             c.execute("""
                 CREATE TABLE IF NOT EXISTS broadcast_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id SERIAL PRIMARY KEY,
                     sender_id INTEGER,
                     subscription_type TEXT NOT NULL,
                     channels TEXT NOT NULL,
@@ -237,7 +237,7 @@ def test_instagram_reminders():
     print_section("ТЕСТ 2: Напоминания в Instagram для @stz_192")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # 1. Проверяем наличие клиента @stz_192
@@ -245,7 +245,7 @@ def test_instagram_reminders():
         c.execute("""
             SELECT instagram_id, username, name, phone
             FROM clients
-            WHERE username = ?
+            WHERE username = %s
         """, (test_username,))
 
         client = c.fetchone()
@@ -266,7 +266,7 @@ def test_instagram_reminders():
                     first_contact, last_contact, total_messages,
                     status, created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 "test_instagram_" + test_username,
                 test_username,
@@ -285,8 +285,8 @@ def test_instagram_reminders():
 
         # 2. Проверяем таблицу reminders
         c.execute("""
-            SELECT name FROM sqlite_master
-            WHERE type='table' AND name='reminders'
+            SELECT table_name FROM information_schema.tables
+            WHERE table_schema='public' AND table_name='reminders'
         """)
 
         if not c.fetchone():
@@ -294,13 +294,13 @@ def test_instagram_reminders():
 
             c.execute("""
                 CREATE TABLE IF NOT EXISTS reminders (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id SERIAL PRIMARY KEY,
                     client_id TEXT NOT NULL,
                     title TEXT NOT NULL,
                     description TEXT,
                     reminder_date TEXT NOT NULL,
                     reminder_type TEXT DEFAULT 'general',
-                    is_completed INTEGER DEFAULT 0,
+                    is_completed BOOLEAN DEFAULT FALSE,
                     created_by TEXT,
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     completed_at TEXT,
@@ -318,19 +318,22 @@ def test_instagram_reminders():
                 client_id, title, description, reminder_date,
                 reminder_type, is_completed, created_by, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             instagram_id,
             "Напомнить о записи",
             f"Отправить напоминание о предстоящей записи клиенту @{test_username}",
             reminder_date,
             "booking",
-            0,
+            False,
             "system",
             datetime.now().isoformat()
         ))
-
-        reminder_id = c.lastrowid
+        
+        # Get ID of inserted reminder
+        c.execute("SELECT id FROM reminders WHERE client_id = %s AND title = %s ORDER BY id DESC LIMIT 1", 
+                 (instagram_id, "Напомнить о записи"))
+        reminder_id = c.fetchone()[0]
         conn.commit()
 
         print_section("Тестовое напоминание создано")
@@ -344,7 +347,7 @@ def test_instagram_reminders():
         c.execute("""
             SELECT id, title, description, reminder_date, reminder_type, is_completed
             FROM reminders
-            WHERE client_id = ?
+            WHERE client_id = %s
             ORDER BY reminder_date ASC
         """, (instagram_id,))
 
@@ -368,8 +371,8 @@ def test_instagram_reminders():
         # 5. Информация о API
         print_section("API для работы с напоминаниями")
         print("\n   Получить напоминания:")
-        print("      GET /api/reminders?client_id={instagram_id}")
-        print("      GET /api/reminders?upcoming=true")
+        print("      GET /api/reminders%sclient_id={instagram_id}")
+        print("      GET /api/reminders%supcoming=true")
 
         print("\n   Создать напоминание:")
         print("      POST /api/reminders")

@@ -9,6 +9,7 @@ import secrets
 from datetime import datetime, timedelta
 from typing import Optional, List
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -58,7 +59,7 @@ def generate_token() -> str:
 
 def get_client_by_email(email: str):
     """Получить клиента по email"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
@@ -105,7 +106,7 @@ def send_reset_email(email: str, token: str):
 @router.post("/register")
 async def register_client(data: ClientRegister):
     """Регистрация нового клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -174,7 +175,7 @@ async def login_client(data: ClientLogin):
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
     # Обновляем last_login
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("UPDATE clients SET last_login = ? WHERE email = ?",
               (datetime.now().isoformat(), email))
@@ -210,7 +211,7 @@ async def request_password_reset(data: PasswordResetRequest):
     token = generate_token()
     expires_at = (datetime.now() + timedelta(hours=24)).isoformat()
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
@@ -230,7 +231,7 @@ async def request_password_reset(data: PasswordResetRequest):
 @router.post("/reset-password")
 async def reset_password(data: PasswordReset):
     """Сброс пароля по токену"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -279,7 +280,7 @@ async def reset_password(data: PasswordReset):
 @router.get("/my-bookings")
 async def get_client_bookings(client_id: str):
     """Получить историю записей клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
@@ -310,7 +311,7 @@ async def get_client_bookings(client_id: str):
 @router.get("/my-notifications")
 async def get_client_notifications(client_id: str, unread_only: bool = False):
     """Получить уведомления клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     query = """
@@ -345,7 +346,7 @@ async def get_client_notifications(client_id: str, unread_only: bool = False):
 @router.post("/notifications/{notification_id}/mark-read")
 async def mark_notification_read(notification_id: int):
     """Отметить уведомление как прочитанное"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""

@@ -745,7 +745,7 @@ export default function Chat() {
                     {selectedClient.profile_pic && selectedClient.profile_pic.trim() !== '' ? (
                       <img
                         src={selectedClient.profile_pic}
-                        alt={selectedClient.display_name}
+                        alt={`${selectedClient.display_name} profile picture`}
                         className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-lg flex-shrink-0"
                         crossOrigin="anonymous"
                         onError={(e) => {
@@ -945,7 +945,7 @@ export default function Chat() {
                                   }
                                   return `${import.meta.env.VITE_API_URL}${msg.message}`;
                                 })()}
-                                alt={t('chat:image')}
+                                alt={`Image from ${msg.sender === 'client' ? selectedClient?.display_name : 'manager'}`}
                                 loading="lazy"
                                 className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"
                                 onClick={() => window.open(msg.message, '_blank')}
@@ -1591,10 +1591,10 @@ export default function Chat() {
               <div className="p-2">
                 <p className="text-xs font-semibold text-gray-500 uppercase px-3 mb-2">Рекомендуемые</p>
                 {clients
-                  .filter(c => 
+                  .filter(c =>
                     c.id !== selectedClient?.id &&
                     (c.display_name.toLowerCase().includes(forwardSearchTerm.toLowerCase()) ||
-                    (c.username || '').toLowerCase().includes(forwardSearchTerm.toLowerCase()))
+                      (c.username || '').toLowerCase().includes(forwardSearchTerm.toLowerCase()))
                   )
                   .slice(0, 10)
                   .map(client => (

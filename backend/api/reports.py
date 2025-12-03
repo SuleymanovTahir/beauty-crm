@@ -11,6 +11,7 @@ import io
 from datetime import datetime, timedelta
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
@@ -30,7 +31,7 @@ async def get_sales_report(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Базовый запрос
@@ -159,7 +160,7 @@ async def get_clients_report(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Базовый запрос
@@ -287,7 +288,7 @@ async def get_performance_report(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Период

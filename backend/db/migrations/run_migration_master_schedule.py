@@ -2,7 +2,7 @@
 """
 Миграция: Добавление системы расписания мастеров
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from datetime import datetime
@@ -16,7 +16,7 @@ if 'DATABASE_NAME' not in globals():
         sys.path.insert(0, backend_dir)
     from core.config import DATABASE_NAME
 
-conn = sqlite3.connect(DATABASE_NAME)
+conn = get_db_connection()
 c = conn.cursor()
 
 try:
@@ -25,7 +25,7 @@ try:
     # Таблица рабочих часов мастера
     c.execute("""
         CREATE TABLE IF NOT EXISTS master_schedule (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             master_name TEXT NOT NULL,
             day_of_week INTEGER NOT NULL,  -- 0=Пн, 6=Вс
             start_time TEXT,               -- HH:MM (NULL = выходной день)
@@ -40,7 +40,7 @@ try:
     # Таблица выходных и отпусков
     c.execute("""
         CREATE TABLE IF NOT EXISTS master_time_off (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             master_name TEXT NOT NULL,
             start_date TEXT NOT NULL,      -- YYYY-MM-DD
             end_date TEXT NOT NULL,        -- YYYY-MM-DD
@@ -55,7 +55,7 @@ try:
     # Таблица доступных слотов времени (для быстрого поиска)
     c.execute("""
         CREATE TABLE IF NOT EXISTS available_slots (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             master_name TEXT NOT NULL,
             date TEXT NOT NULL,            -- YYYY-MM-DD
             time TEXT NOT NULL,            -- HH:MM

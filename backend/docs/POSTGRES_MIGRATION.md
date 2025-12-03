@@ -62,7 +62,7 @@ sudo -u postgres psql
 
 # В консоли PostgreSQL выполнить:
 CREATE DATABASE beauty_crm;
-CREATE USER beauty_crm_user WITH PASSWORD 'ваш_надежный_пароль_здесь';
+CREATE USER beauty_crm_user WITH PASSWORD 'local_password';
 GRANT ALL PRIVILEGES ON DATABASE beauty_crm TO beauty_crm_user;
 
 # Для PostgreSQL 15+ также нужно:
@@ -88,7 +88,7 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=beauty_crm
 POSTGRES_USER=beauty_crm_user
-POSTGRES_PASSWORD=ваш_надежный_пароль_здесь
+POSTGRES_PASSWORD=local_password
 ```
 
 Сохранить: `Ctrl+O → Enter → Ctrl+X`

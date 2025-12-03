@@ -9,6 +9,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 from core.auth import get_current_user_or_redirect as get_current_user
@@ -20,7 +21,7 @@ router = APIRouter(tags=["Salary"])
 async def get_user_salary_settings(user_id: int, current_user: dict = Depends(get_current_user)):
     """Получить настройки зарплаты для конкретного пользователя"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -55,7 +56,7 @@ async def update_salary_settings(user_id: int, request: Request, current_user: d
     try:
         data = await request.json()
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем существование пользователя
@@ -108,14 +109,14 @@ async def calculate_salary(
         return JSONResponse({"error": "Missing required fields"}, status_code=400)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         # Получить настройки зарплаты
         c.execute("""
             SELECT * FROM user_salary_settings
-            WHERE user_id = ? AND is_active = 1
+            WHERE user_id = ? AND is_active = TRUE
         """, (user_id,))
         settings = c.fetchone()
 
@@ -194,7 +195,7 @@ async def calculate_salary(
 async def get_salary_calculations(current_user: dict = Depends(get_current_user)):
     """Получить все расчеты зарплаты"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -230,7 +231,7 @@ async def approve_salary(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -262,7 +263,7 @@ async def mark_salary_paid(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""

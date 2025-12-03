@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_error, log_info
 from core.auth import get_current_user_or_redirect as get_current_user
 
@@ -18,7 +19,7 @@ async def get_user_schedule(
 ):
     """Получить расписание сотрудника"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
         
@@ -61,7 +62,7 @@ async def update_user_schedule(
         data = await request.json()
         schedule = data.get("schedule", [])
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Delete existing schedule

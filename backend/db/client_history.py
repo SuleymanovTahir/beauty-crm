@@ -1,23 +1,22 @@
 """
 Функции для работы с историей клиентов
 """
-import sqlite3
 from datetime import datetime, timedelta
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 
 def get_client_history(instagram_id: str, limit: int = 10):
     """Получить историю записей клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         c.execute("""
             SELECT service_name, datetime, status, master, revenue
             FROM bookings
-            WHERE instagram_id = ?
+            WHERE instagram_id = %s
             ORDER BY datetime DESC
-            LIMIT ?
+            LIMIT %s
         """, (instagram_id, limit))
         
         history = c.fetchall()
@@ -37,7 +36,7 @@ def get_client_history(instagram_id: str, limit: int = 10):
 
 def get_client_stats(instagram_id: str):
     """Получить статистику клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -45,7 +44,7 @@ def get_client_stats(instagram_id: str):
         c.execute("""
             SELECT MIN(datetime), COUNT(*), SUM(revenue)
             FROM bookings
-            WHERE instagram_id = ? AND status != 'cancelled'
+            WHERE instagram_id = %s AND status != 'cancelled'
         """, (instagram_id,))
         
         row = c.fetchone()
@@ -57,7 +56,7 @@ def get_client_stats(instagram_id: str):
         c.execute("""
             SELECT service_name, datetime, master
             FROM bookings
-            WHERE instagram_id = ? AND status != 'cancelled'
+            WHERE instagram_id = %s AND status != 'cancelled'
             ORDER BY datetime DESC
             LIMIT 1
         """, (instagram_id,))
@@ -103,7 +102,7 @@ def get_client_stats(instagram_id: str):
 
 def get_recommended_services(instagram_id: str):
     """Получить рекомендации на основе истории"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -111,7 +110,7 @@ def get_recommended_services(instagram_id: str):
         c.execute("""
             SELECT DISTINCT service_name
             FROM bookings
-            WHERE instagram_id = ? AND status != 'cancelled'
+            WHERE instagram_id = %s AND status != 'cancelled'
         """, (instagram_id,))
         
         past_services = [row[0] for row in c.fetchall()]

@@ -3,7 +3,6 @@ Migration: Seed Master Info
 Заполняет начальные данные для мастеров (experience, bio)
 """
 
-import sqlite3
 import sys
 import os
 
@@ -43,7 +42,7 @@ def seed_master_info(db_path=None):
                 experience = COALESCE(experience, '5+ лет'),
                 bio = COALESCE(bio, 'Профессиональный мастер с большим опытом')
             WHERE role IN ('master', 'employee') 
-            AND is_service_provider = 1
+            AND is_service_provider = TRUE
         """)
         
         if c.rowcount > 0:

@@ -8,6 +8,7 @@ import sqlite3
 
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from db import (
     get_all_services,
     get_all_special_packages,
@@ -843,11 +844,11 @@ service: Спа программа
 
             # Если указана категория услуги - фильтруем мастеров
             if service_category:
-                conn = sqlite3.connect(DATABASE_NAME)
+                conn = get_db_connection()
                 c = conn.cursor()
 
                 # Находим услуги этой категории
-                c.execute("SELECT id FROM services WHERE category = ? AND is_active = 1 LIMIT 1", (service_category,))
+                c.execute("SELECT id FROM services WHERE category = %s AND is_active = TRUE LIMIT 1", (service_category,))
                 service_row = c.fetchone()
                 conn.close()
 
@@ -1468,7 +1469,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         masters_text = "=== 👥 МАСТЕРА И ИХ УСЛУГИ (из БД) ===\n"
         masters_text += "⚠️ ПРОВЕРЯЙ ЭТОТ СПИСОК КОГДА КЛИЕНТ СПРАШИВАЕТ ПРО МАСТЕРА!\n\n"
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         for emp in employees[:5]:
@@ -1505,7 +1506,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                        us.duration, us.is_online_booking_enabled
                 FROM user_services us
                 JOIN services s ON us.service_id = s.id
-                WHERE us.user_id = ? AND s.is_active = 1 AND us.is_online_booking_enabled = 1
+                WHERE us.user_id = %s AND s.is_active = TRUE AND us.is_online_booking_enabled = TRUE
                 ORDER BY s.category, service_name
             """, (emp_id,))
 
@@ -1551,7 +1552,7 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         conn.close()
 
-        masters_text += "⚠️ ЕСЛИ КЛИЕНТ СПРАШИВАЕТ: 'а к Ляззат можно? она же по волосам?'\n"
+        masters_text += "⚠️ ЕСЛИ КЛИЕНТ СПРАШИВАЕТ: 'а к Ляззат можно%s она же по волосам%s'\n"
         masters_text += "ПРОВЕРЬ СПИСОК ВЫШЕ! Если Ляззат делает только Nails - ИСПРАВЬ клиента!\n"
         masters_text += "НЕ СОГЛАШАЙСЯ с неправильными утверждениями - ПРОВЕРЯЙ ФАКТЫ!\n"
 
@@ -1721,10 +1722,10 @@ Google Maps: {self.salon.get('google_maps', '')}
         if history is None:
             history = []
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute(
-            "SELECT name, username FROM clients WHERE instagram_id = ?", (instagram_id,))
+            "SELECT name, username FROM clients WHERE instagram_id = %s", (instagram_id,))
         client_data = c.fetchone()
         client_has_name = bool(client_data and (
             client_data[0] or client_data[1]))
@@ -1862,8 +1863,8 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         c.execute("""
             SELECT id, name_ru, price, currency FROM services 
-            WHERE (name LIKE ? OR name_ru LIKE ? OR name_ar LIKE ?)
-            AND is_active = 1
+            WHERE (name LIKE %s OR name_ru LIKE %s OR name_ar LIKE %s)
+            AND is_active = TRUE
             LIMIT 1
         """, (f"%{service_name}%", f"%{service_name}%", f"%{service_name}%"))
         service_row = c.fetchone()
@@ -1874,17 +1875,17 @@ Google Maps: {self.salon.get('google_maps', '')}
             if 'makeup' in service_name.lower() or 'макияж' in service_name.lower():
                 return """=== 💄 УТОЧНЕНИЕ ===
 У нас только перманентный макияж 😊
-Интересуют брови или губы?
-Или интересует что-то другое?"""
+Интересуют брови или губы%s
+Или интересует что-то другое%s"""
 
             # ✅ Умный поиск похожих услуг
             if service_name == 'Hair':
                 # Показываем все услуги категории Hair
-                c_temp = sqlite3.connect(DATABASE_NAME)
+                c_temp = get_db_connection()
                 c_temp.execute("""
                     SELECT name_ru, price, currency
                     FROM services
-                    WHERE category = 'Hair' AND is_active = 1
+                    WHERE category = 'Hair' AND is_active = TRUE
                 """)
                 hair_services = c_temp.fetchall()
                 c_temp.close()
@@ -1986,7 +1987,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                     c.execute("""
                         SELECT start_time, end_time
                         FROM user_schedule
-                        WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+                        WHERE user_id = %s AND day_of_week = %s AND is_active = TRUE
                     """, (emp_id, day_of_week))
 
                     schedule_row = c.fetchone()
@@ -1999,8 +2000,8 @@ Google Maps: {self.salon.get('google_maps', '')}
                     c.execute("""
                         SELECT datetime
                         FROM bookings
-                        WHERE (employee_id = ? OR master = ?)
-                        AND DATE(datetime) = ?
+                        WHERE (employee_id = %s OR master = %s)
+                        AND DATE(datetime) = %s
                         AND status != 'cancelled'
                     """, (emp_id, emp_name, target_date))
 
@@ -2077,7 +2078,7 @@ Google Maps: {self.salon.get('google_maps', '')}
 ✅ ПРЕДЛАГАЙ ТОЛЬКО ТО ВРЕМЯ КОТОРОЕ УКАЗАНО ВЫШЕ!
 
 Если клиент просит конкретное время (например "16:00"):
-1. ПОСМОТРИ в список выше - есть ли 16:00?
+1. ПОСМОТРИ в список выше - есть ли 16:00%s
 2. Если ЕСТЬ - предложи это время
 3. Если НЕТ - скажи что это время занято и предложи ближайшие доступные слоты из списка выше
 
@@ -2091,15 +2092,15 @@ Google Maps: {self.salon.get('google_maps', '')}
 
 def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
     """Получить последние предпочтения клиента (#2 - Умная память)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT service_name, master, datetime 
         FROM bookings 
-        WHERE instagram_id = ? AND status = 'completed'
+        WHERE instagram_id = %s AND status = 'completed'
         ORDER BY datetime DESC
-        LIMIT ?
+        LIMIT %s
     """, (instagram_id, limit))
 
     bookings = c.fetchall()
@@ -2115,10 +2116,10 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
         services[service] = services.get(service, 0) + 1
         if master:
             # ✅ ПРОВЕРЯЕМ что мастер существует в БД
-            conn2 = sqlite3.connect(DATABASE_NAME)
+            conn2 = get_db_connection()
             c2 = conn2.cursor()
             # Check if master exists and is active
-            c2.execute("SELECT COUNT(*) FROM users WHERE full_name = ? AND is_active = 1 AND is_service_provider = 1", (master,))
+            c2.execute("SELECT COUNT(*) FROM users WHERE full_name = %s AND is_active = TRUE AND is_service_provider = TRUE", (master,))
             if c2.fetchone()[0] > 0:
                 masters[master] = masters.get(master, 0) + 1
             conn2.close()
@@ -2138,23 +2139,23 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
 
 def get_popular_booking_times(service_name: str = None) -> List[str]:
     """Популярные времена записи (#9)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if service_name:
         c.execute("""
-            SELECT datetime, COUNT(*) as count
+            SELECT EXTRACT(HOUR FROM datetime::timestamp) as hour, COUNT(*) as count
             FROM bookings
-            WHERE service_name LIKE ?
-            GROUP BY strftime('%H', datetime)
+            WHERE service_name LIKE %s
+            GROUP BY EXTRACT(HOUR FROM datetime::timestamp)
             ORDER BY count DESC
             LIMIT 3
         """, (f"%{service_name}%",))
     else:
         c.execute("""
-            SELECT datetime, COUNT(*) as count
+            SELECT EXTRACT(HOUR FROM datetime::timestamp) as hour, COUNT(*) as count
             FROM bookings
-            GROUP BY strftime('%H', datetime)
+            GROUP BY EXTRACT(HOUR FROM datetime::timestamp)
             ORDER BY count DESC
             LIMIT 3
         """)
@@ -2163,10 +2164,9 @@ def get_popular_booking_times(service_name: str = None) -> List[str]:
     conn.close()
 
     popular_hours = []
-    for dt_str, count in results:
+    for hour, count in results:
         try:
-            dt = datetime.fromisoformat(dt_str)
-            popular_hours.append(f"{dt.hour:02d}:00")
+            popular_hours.append(f"{int(hour):02d}:00")
         except:
             continue
 
@@ -2207,13 +2207,13 @@ def analyze_client_tone(history: List[Tuple]) -> str:
 
 def get_client_objection_history(instagram_id: str) -> List[str]:
     """История возражений клиента (#6)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT message 
         FROM chat_history 
-        WHERE instagram_id = ? AND sender = 'client'
+        WHERE instagram_id = %s AND sender = 'client'
         ORDER BY timestamp DESC
         LIMIT 20
     """, (instagram_id,))
@@ -2247,13 +2247,13 @@ def get_client_objection_history(instagram_id: str) -> List[str]:
 
 def get_last_service_date(instagram_id: str, service_name: str) -> Optional[str]:
     """Когда клиент последний раз был на услуге (#10 - Upsell)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT datetime 
         FROM bookings 
-        WHERE instagram_id = ? AND service_name LIKE ? AND status = 'completed'
+        WHERE instagram_id = %s AND service_name LIKE %s AND status = 'completed'
         ORDER BY datetime DESC
         LIMIT 1
     """, (instagram_id, f"%{service_name}%"))

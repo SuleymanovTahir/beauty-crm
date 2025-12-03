@@ -3,7 +3,6 @@ Migration: Add Salon Amenities
 Добавляет поля удобств в таблицу salon_settings
 """
 
-import sqlite3
 import sys
 import os
 

@@ -8,6 +8,7 @@ import sqlite3
 import hashlib
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
@@ -44,7 +45,7 @@ async def create_user_api(
     if not full_name or len(full_name) < 2:
         return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -101,7 +102,7 @@ async def get_user_by_id(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -148,7 +149,7 @@ async def get_user_by_id(
 async def get_users(current_user: dict = Depends(get_current_user)):
     """Получить всех пользователей"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row  # ✅ ВАЖНО для dict
         c = conn.cursor()
 
@@ -209,11 +210,11 @@ async def approve_user(
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE users SET is_active = 1 WHERE id = ?", (user_id,))
+        c.execute("UPDATE users SET is_active = TRUE WHERE id = ?", (user_id,))
         conn.commit()
         
         if c.rowcount > 0:
@@ -241,11 +242,11 @@ async def reject_user(
     if not user or user["role"] != "admin":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
-        c.execute("DELETE FROM users WHERE id = ? AND is_active = 0", (user_id,))
+        c.execute("DELETE FROM users WHERE id = ? AND is_active = FALSE", (user_id,))
         conn.commit()
         
         if c.rowcount > 0:
@@ -277,7 +278,7 @@ async def delete_user_api(
         return JSONResponse({"error": "Нельзя удалить самого себя"}, status_code=400)
 
     # Проверяем роль удаляемого пользователя
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
     target_user = c.fetchone()
@@ -348,7 +349,7 @@ async def update_user_role(
                 status_code=403
             )
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -389,7 +390,7 @@ async def get_user_profile(
     if user["role"] != "admin" and user["id"] != user_id:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
@@ -423,7 +424,7 @@ async def get_user_profile_by_username(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
@@ -476,7 +477,7 @@ async def change_user_password(
             status_code=400
         )
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -550,7 +551,7 @@ async def update_user_profile(
             status_code=400
         )
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -607,7 +608,7 @@ async def get_user_notification_settings(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -659,7 +660,7 @@ async def update_user_notification_settings(
     data = await request.json()
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Обновляем настройки

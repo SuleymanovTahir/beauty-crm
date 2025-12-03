@@ -5,7 +5,7 @@ Updates database columns with translations from JSON files
 """
 
 import json
-import sqlite3
+from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
@@ -92,7 +92,7 @@ def sync_to_database():
                         
                         # Check if column exists
                         c.execute(f"PRAGMA table_info({table_name})")
-                        columns = {col[1] for col in c.fetchall()}
+                        columns = {col[0] for col in c.fetchall()}
                         
                         if target_column not in columns:
                             print(f"  ⚠️  Column {target_column} not found in {table_name}, skipping")
@@ -100,7 +100,7 @@ def sync_to_database():
                         
                         # Update the translation
                         try:
-                            query = f"UPDATE {table_name} SET {target_column} = ? WHERE {id_field} = ?"
+                            query = f"UPDATE {table_name} SET {target_column} = %s WHERE {id_field} = %s"
                             c.execute(query, (translation, record_id))
                             total_updates += 1
                             print(f"  ✅ Updated {table_name}.{target_column} for ID {record_id}")

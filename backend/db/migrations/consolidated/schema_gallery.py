@@ -1,7 +1,8 @@
 """
 Миграция для таблицы галереи (портфолио и фото салона)
 """
-import sqlite3
+from db.connection import get_db_connection
+from db.connection import get_db_connection
 from pathlib import Path
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
@@ -11,25 +12,25 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
     """Создать/обновить таблицу gallery_images"""
     log_info("🔧 Миграция схемы gallery_images...", "migration")
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Проверяем существование таблицы
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='gallery_images'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='gallery_images'")
         table_exists = c.fetchone() is not None
         
         if not table_exists:
             log_info("📦 Создание таблицы gallery_images...", "migration")
             c.execute("""
                 CREATE TABLE gallery_images (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id SERIAL PRIMARY KEY,
                     category TEXT NOT NULL,  -- 'portfolio' или 'salon'
                     image_path TEXT NOT NULL,
                     title TEXT,
                     description TEXT,
-                    sort_order INTEGER DEFAULT 0,
-                    is_visible INTEGER DEFAULT 1,
+                    sort_order BOOLEAN DEFAULT FALSE,
+                    is_visible BOOLEAN DEFAULT TRUE,
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
                 )
@@ -45,8 +46,12 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
             log_info("✅ Таблица gallery_images уже существует", "migration")
             
             # Проверяем наличие всех колонок
-            c.execute("PRAGMA table_info(gallery_images)")
-            existing_columns = {row[1] for row in c.fetchall()}
+            c.execute("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='gallery_images'
+            """)
+            existing_columns = {row[0] for row in c.fetchall()}
             
             required_columns = {
                 'id', 'category', 'image_path', 'title', 'description',
@@ -63,9 +68,9 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
                 if 'description' in missing_columns:
                     c.execute("ALTER TABLE gallery_images ADD COLUMN description TEXT")
                 if 'sort_order' in missing_columns:
-                    c.execute("ALTER TABLE gallery_images ADD COLUMN sort_order INTEGER DEFAULT 0")
+                    c.execute("ALTER TABLE gallery_images ADD COLUMN sort_order BOOLEAN DEFAULT FALSE")
                 if 'is_visible' in missing_columns:
-                    c.execute("ALTER TABLE gallery_images ADD COLUMN is_visible INTEGER DEFAULT 1")
+                    c.execute("ALTER TABLE gallery_images ADD COLUMN is_visible BOOLEAN DEFAULT TRUE")
                 if 'created_at' in missing_columns:
                     c.execute("ALTER TABLE gallery_images ADD COLUMN created_at TEXT DEFAULT CURRENT_TIMESTAMP")
                 if 'updated_at' in missing_columns:
@@ -88,22 +93,26 @@ def add_show_on_public_page_to_users():
     """Добавить поле show_on_public_page в таблицу users"""
     log_info("🔧 Добавление поля show_on_public_page в users...", "migration")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Проверяем наличие колонки
-        c.execute("PRAGMA table_info(users)")
-        existing_columns = {row[1] for row in c.fetchall()}
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='users'
+        """)
+        existing_columns = {row[0] for row in c.fetchall()}
         
         if 'show_on_public_page' not in existing_columns:
-            c.execute("ALTER TABLE users ADD COLUMN show_on_public_page INTEGER DEFAULT 1")
+            c.execute("ALTER TABLE users ADD COLUMN show_on_public_page BOOLEAN DEFAULT TRUE")
             log_info("✅ Колонка show_on_public_page добавлена", "migration")
         else:
             log_info("✅ Колонка show_on_public_page уже существует", "migration")
         
         if 'public_page_order' not in existing_columns:
-            c.execute("ALTER TABLE users ADD COLUMN public_page_order INTEGER DEFAULT 0")
+            c.execute("ALTER TABLE users ADD COLUMN public_page_order BOOLEAN DEFAULT FALSE")
             log_info("✅ Колонка public_page_order добавлена", "migration")
         else:
             log_info("✅ Колонка public_page_order уже существует", "migration")
@@ -123,7 +132,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
     """Импортировать изображения из папок в базу данных"""
     log_info("📸 Импорт изображений галереи...", "migration")
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -146,7 +155,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (?, ?, ?, ?, 1)
+                    VALUES (%s, %s, %s, %s, 1)
                 ''', ('portfolio', image_path, title, idx))
             log_info(f"✅ Импортировано {len(portfolio_images)} portfolio изображений", "migration")
         
@@ -159,7 +168,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (?, ?, ?, ?, 1)
+                    VALUES (%s, %s, %s, %s, 1)
                 ''', ('salon', image_path, title, idx))
             log_info(f"✅ Импортировано {len(salon_images)} salon изображений", "migration")
         
@@ -172,7 +181,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (?, ?, ?, ?, 1)
+                    VALUES (%s, %s, %s, %s, 1)
                 ''', ('services', image_path, title, idx))
             log_info(f"✅ Импортировано {len(services_images)} services изображений", "migration")
         
@@ -182,7 +191,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
         c.execute('SELECT category, COUNT(*) FROM gallery_images GROUP BY category')
         log_info("📊 Итого импортировано:", "migration")
         for row in c.fetchall():
-            log_info(f"  {row[0]}: {row[1]} изображений", "migration")
+            log_info(f"  {row[0]}: {row[0]} изображений", "migration")
         
     except Exception as e:
         conn.rollback()

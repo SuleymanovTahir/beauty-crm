@@ -1,12 +1,11 @@
 """
 Миграция: Связать мастеров с услугами
 """
-import sqlite3
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 def link_employees_to_services():
     """Создать связи между мастерами и услугами"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Проверяем что таблица существует
@@ -20,11 +19,11 @@ def link_employees_to_services():
     c.execute("DELETE FROM employee_services")
     
     # Получаем всех мастеров
-    c.execute("SELECT id, full_name, position FROM employees WHERE is_active = 1")
+    c.execute("SELECT id, full_name, position FROM employees WHERE is_active = TRUE")
     employees = c.fetchall()
     
     # Получаем все услуги
-    c.execute("SELECT id, name, category FROM services WHERE is_active = 1")
+    c.execute("SELECT id, name, category FROM services WHERE is_active = TRUE")
     services = c.fetchall()
     
     print(f"👥 Мастеров: {len(employees)}")
@@ -66,7 +65,7 @@ def link_employees_to_services():
     for emp_id, svc_id in links:
         c.execute("""
             INSERT OR IGNORE INTO employee_services (employee_id, service_id)
-            VALUES (?, ?)
+            VALUES (%s, %s)
         """, (emp_id, svc_id))
     
     conn.commit()

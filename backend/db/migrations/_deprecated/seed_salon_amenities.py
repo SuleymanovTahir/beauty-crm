@@ -3,7 +3,6 @@ Migration: Seed Salon Amenities
 Заполняет начальные данные об удобствах салона
 """
 
-import sqlite3
 import sys
 import os
 

@@ -6,14 +6,13 @@
           которые переопределяют базовые права из роли
 """
 
-import sqlite3
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 
 
 def migrate():
     """Создать таблицу user_permissions"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -31,7 +30,7 @@ def migrate():
         # Создаём таблицу
         c.execute("""
             CREATE TABLE user_permissions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 permission_key TEXT NOT NULL,
                 granted BOOLEAN DEFAULT 1,
@@ -73,7 +72,7 @@ def migrate():
 
 def rollback():
     """Откатить миграцию (удалить таблицу)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

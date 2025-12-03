@@ -3,7 +3,6 @@ Migration: Fix Service Durations
 Исправляет неправильную длительность услуг в базе данных
 """
 
-import sqlite3
 import sys
 import os
 

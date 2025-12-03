@@ -5,11 +5,13 @@
 import sys
 import os
 import traceback
-import sqlite3
+from pathlib import Path
 
-# Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# Add backend directory to sys.path
+backend_dir = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(backend_dir))
 
+from db.connection import get_db_connection
 from core.config import DATABASE_NAME
 
 def test_database_tables():
@@ -19,11 +21,11 @@ def test_database_tables():
     print("=" * 70)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем список таблиц
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name")
         tables = [row[0] for row in c.fetchall()]
 
         print(f"\n📋 Всего таблиц: {len(tables)}")
@@ -38,11 +40,11 @@ def test_database_tables():
         print("=" * 70)
 
         if 'notification_settings' in tables:
-            c.execute("PRAGMA table_info(notification_settings)")
+            c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='notification_settings'")
             columns = c.fetchall()
             print(f"\n✅ Таблица существует, колонок: {len(columns)}")
             for col in columns:
-                print(f"  - {col[1]} ({col[2]})")
+                print(f"  - {col[0]} ({col[1]})")
 
             c.execute("SELECT * FROM notification_settings")
             rows = c.fetchall()
@@ -59,11 +61,11 @@ def test_database_tables():
         print("=" * 70)
 
         if 'booking_reminder_settings' in tables:
-            c.execute("PRAGMA table_info(booking_reminder_settings)")
+            c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='booking_reminder_settings'")
             columns = c.fetchall()
             print(f"\n✅ Таблица существует, колонок: {len(columns)}")
             for col in columns:
-                print(f"  - {col[1]} ({col[2]})")
+                print(f"  - {col[0]} ({col[1]})")
 
             c.execute("SELECT * FROM booking_reminder_settings")
             rows = c.fetchall()

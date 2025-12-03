@@ -4,8 +4,7 @@
 Находит и удаляет дубликаты сотрудников, оставляя только записи с услугами.
 """
 
-import sqlite3
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_warning, log_error
 
 
@@ -15,7 +14,7 @@ def remove_duplicate_employees():
     Оставляет только те записи, у которых есть закреплённые услуги.
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         log_info("🔍 Начало миграции: поиск дубликатов сотрудников", "migration")
@@ -66,7 +65,7 @@ def remove_duplicate_employees():
             # Удаляем остальных
             for emp in employees[1:]:
                 # Проверяем, не связан ли с пользователями
-                c.execute("SELECT COUNT(*) FROM users WHERE employee_id = ?", (emp['id'],))
+                c.execute("SELECT COUNT(*) FROM users WHERE employee_id = %s", (emp['id'],))
                 user_count = c.fetchone()[0]
                 
                 if user_count > 0:
@@ -74,12 +73,12 @@ def remove_duplicate_employees():
                     log_info(f"   🔄 Переношу {user_count} пользователей с ID {emp['id']} на ID {keep_employee['id']}", "migration")
                     c.execute("""
                         UPDATE users 
-                        SET employee_id = ? 
-                        WHERE employee_id = ?
+                        SET employee_id = %s 
+                        WHERE employee_id = %s
                     """, (keep_employee['id'], emp['id']))
                 
                 # Удаляем дубликат
-                c.execute("DELETE FROM employees WHERE id = ?", (emp['id'],))
+                c.execute("DELETE FROM employees WHERE id = %s", (emp['id'],))
                 log_info(f"   ❌ Удалён дубликат: {emp['full_name']} (ID: {emp['id']}, услуг: {emp['services_count']})", "migration")
                 removed_count += 1
         

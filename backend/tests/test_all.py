@@ -67,17 +67,21 @@ def test_database():
 
     try:
         from core.config import DATABASE_NAME
-        import sqlite3
+        from db.connection import get_db_connection
 
         # Проверка существования БД
-        if not os.path.exists(DATABASE_NAME):
-            print(f"   ❌ База данных не найдена: {DATABASE_NAME}")
+        # Проверка существования БД
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            print("   ℹ️  PostgreSQL database (skipping file check)")
+        elif not os.path.exists(DATABASE_NAME):
+            print(f"   ❌ ОШИБКА: Файл БД не найден: {DATABASE_NAME}")
             return False
-
-        print(f"   ✅ База данных найдена: {DATABASE_NAME}")
+        
+        if os.getenv('DATABASE_TYPE') != 'postgresql':
+            print(f"   ✅ База данных найдена: {DATABASE_NAME}")
 
         # Подключение к БД
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверка основных таблиц
@@ -94,7 +98,11 @@ def test_database():
             'client_loyalty_points'
         ]
 
-        c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        else:
+            c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        
         existing_tables = [row[0] for row in c.fetchall()]
 
         print(f"\n   Всего таблиц в БД: {len(existing_tables)}")
@@ -159,15 +167,15 @@ def test_new_features():
         try:
             # Создаем тестового мастера в таблице users
             from core.config import DATABASE_NAME
-            import sqlite3
-            conn = sqlite3.connect(DATABASE_NAME)
+            from db.connection import get_db_connection
+            conn = get_db_connection()
             c = conn.cursor()
             test_master = "Тест Мастер"
             
             # Insert into users table
             c.execute("""
                 INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
-                VALUES (?, 'dummy_hash', ?, ?, ?, 1, 1)
+                VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
             """, (f"test_master_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
             user_id = c.lastrowid
             conn.commit()
@@ -193,12 +201,12 @@ def test_new_features():
         finally:
             # Cleanup test employee
             try:
-                conn = sqlite3.connect(DATABASE_NAME)
+                conn = get_db_connection()
                 c = conn.cursor()
-                c.execute("DELETE FROM users WHERE full_name = ?", (test_master,))
-                # Also clean up schedule
                 if 'user_id' in locals():
-                    c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
+                    c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
+                    c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
+                c.execute("DELETE FROM users WHERE full_name = %s", (test_master,))
                 conn.commit()
                 conn.close()
             except Exception:
@@ -292,14 +300,14 @@ def test_smart_assistant():
         print(f"\n   🧹 Очистка тестовых данных...")
         try:
             from core.config import DATABASE_NAME
-            import sqlite3
+            from db.connection import get_db_connection
             
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             
             # Удаляем тестового клиента и связанные данные
-            c.execute("DELETE FROM conversations WHERE client_id = ?", (test_client,))
-            c.execute("DELETE FROM clients WHERE instagram_id = ?", (test_client,))
+            c.execute("DELETE FROM conversations WHERE client_id = %s", (test_client,))
+            c.execute("DELETE FROM clients WHERE instagram_id = %s", (test_client,))
             deleted_conversations = c.rowcount
             
             conn.commit()

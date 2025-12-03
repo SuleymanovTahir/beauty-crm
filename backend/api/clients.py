@@ -7,6 +7,7 @@ from typing import Optional
 import time
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from db import (
     get_all_clients, get_client_by_id, get_or_create_client,
     update_client_info, update_client_status, pin_client,
@@ -22,7 +23,7 @@ router = APIRouter(tags=["Clients"])
 
 def get_client_messengers(client_id: str):
     """Получить список мессенджеров, которыми пользуется клиент"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     messengers = []
@@ -49,7 +50,7 @@ def get_client_messengers(client_id: str):
 
 def get_clients_by_messenger(messenger_type: str = 'instagram'):
     """Получить клиентов по типу мессенджера"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if messenger_type == 'instagram':
@@ -371,7 +372,7 @@ async def update_preferred_messenger_api(
         return JSONResponse({"error": "Invalid messenger type"}, status_code=400)
 
     # Обновляем поле
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -648,7 +649,7 @@ async def bulk_actions(
 
 def update_client_bot_mode(instagram_id: str, mode: str):
     """Изменить режим бота для клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""
@@ -663,7 +664,7 @@ def update_client_bot_mode(instagram_id: str, mode: str):
 
 def get_client_bot_mode(instagram_id: str) -> str:
     """Получить режим бота для клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""

@@ -3,7 +3,7 @@
 Миграция: Исправление master_schedule - разрешить NULL для start_time/end_time
 Это позволит хранить выходные дни (когда мастер не работает)
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 
@@ -16,7 +16,7 @@ if 'DATABASE_NAME' not in globals():
         sys.path.insert(0, backend_dir)
     from core.config import DATABASE_NAME
 
-conn = sqlite3.connect(DATABASE_NAME)
+conn = get_db_connection()
 c = conn.cursor()
 
 try:
@@ -38,7 +38,7 @@ try:
         # Создаем новую таблицу с правильной структурой
         c.execute("""
             CREATE TABLE master_schedule (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 master_name TEXT NOT NULL,
                 day_of_week INTEGER NOT NULL,
                 start_time TEXT,
@@ -55,14 +55,14 @@ try:
             c.executemany("""
                 INSERT INTO master_schedule
                 (id, master_name, day_of_week, start_time, end_time, is_active, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """, existing_data)
             print(f"✅ Restored {len(existing_data)} existing records")
     else:
         # Таблицы нет - создаем с нуля
         c.execute("""
             CREATE TABLE master_schedule (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 master_name TEXT NOT NULL,
                 day_of_week INTEGER NOT NULL,
                 start_time TEXT,

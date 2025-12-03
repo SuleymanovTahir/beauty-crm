@@ -7,6 +7,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 
@@ -14,7 +15,7 @@ class AnalyticsService:
     """Сервис для вычисления метрик и аналитики"""
 
     def __init__(self):
-        self.conn = sqlite3.connect(DATABASE_NAME)
+        self.conn = get_db_connection()
         self.c = self.conn.cursor()
 
     def __del__(self):
@@ -87,7 +88,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COALESCE(SUM(revenue), 0)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
         """, (start_date, end_date))
         total_revenue = self.c.fetchone()[0]
@@ -96,7 +97,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT DATE(datetime) as date, COALESCE(SUM(revenue), 0) as daily_revenue
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             GROUP BY DATE(datetime)
             ORDER BY date
@@ -107,7 +108,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COALESCE(AVG(revenue), 0)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             AND revenue > 0
         """, (start_date, end_date))
@@ -129,7 +130,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
         """, (start_date, end_date))
         total_bookings = self.c.fetchone()[0]
 
@@ -137,7 +138,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status = 'completed'
         """, (start_date, end_date))
         completed = self.c.fetchone()[0]
@@ -146,7 +147,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status = 'cancelled'
         """, (start_date, end_date))
         cancelled = self.c.fetchone()[0]
@@ -155,7 +156,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status = 'no_show'
         """, (start_date, end_date))
         no_show = self.c.fetchone()[0]
@@ -185,11 +186,11 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND instagram_id IN (
                 SELECT instagram_id
                 FROM clients
-                WHERE first_contact BETWEEN ? AND ?
+                WHERE first_contact BETWEEN %s AND %s
             )
         """, (start_date, end_date, start_date, end_date))
         new_clients = self.c.fetchone()[0]
@@ -198,7 +199,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND instagram_id IN (
                 SELECT instagram_id
                 FROM bookings
@@ -212,7 +213,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
         """, (start_date, end_date))
         total_active = self.c.fetchone()[0]
 
@@ -245,7 +246,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT master, COUNT(*) as bookings_count, COALESCE(SUM(revenue), 0) as revenue
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             AND master IS NOT NULL
             AND master != ''
@@ -267,7 +268,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(DISTINCT master)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND master IS NOT NULL
             AND master != ''
         """, (start_date, end_date))
@@ -276,7 +277,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND master IS NOT NULL
             AND master != ''
         """, (start_date, end_date))
@@ -296,7 +297,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT service_name, COUNT(*) as bookings_count, COALESCE(SUM(revenue), 0) as revenue
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             GROUP BY service_name
             ORDER BY bookings_count DESC
@@ -318,10 +319,11 @@ class AnalyticsService:
 
     def _get_peak_hours(self, start_date: str, end_date: str) -> List[Dict]:
         """Пиковые часы посещаемости"""
+        # PostgreSQL compatible date extraction
         self.c.execute("""
-            SELECT strftime('%H', datetime) as hour, COUNT(*) as count 
+            SELECT EXTRACT(HOUR FROM datetime::timestamp) as hour, COUNT(*) as count 
             FROM bookings 
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
             GROUP BY hour 
             ORDER BY count DESC 
@@ -329,7 +331,7 @@ class AnalyticsService:
         """, (start_date, end_date))
         
         return [
-            {"hour": f"{row[0]}:00", "count": row[1]} 
+            {"hour": f"{int(row[0])}:00", "count": row[1]} 
             for row in self.c.fetchall()
         ]
 
@@ -348,7 +350,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COALESCE(SUM(revenue), 0)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
         """, (start_date, end_date))
         current_revenue = self.c.fetchone()[0]
@@ -357,7 +359,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COALESCE(SUM(revenue), 0)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
             AND status != 'cancelled'
         """, (prev_start.isoformat(), prev_end.isoformat()))
         prev_revenue = self.c.fetchone()[0]
@@ -372,7 +374,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
         """, (start_date, end_date))
         current_bookings = self.c.fetchone()[0]
 
@@ -380,7 +382,7 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE datetime BETWEEN ? AND ?
+            WHERE datetime BETWEEN %s AND %s
         """, (prev_start.isoformat(), prev_end.isoformat()))
         prev_bookings = self.c.fetchone()[0]
 
@@ -412,8 +414,8 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COUNT(*)
             FROM bookings
-            WHERE master = ?
-            AND datetime BETWEEN ? AND ?
+            WHERE master = %s
+            AND datetime BETWEEN %s AND %s
         """, (master_name, start_datetime, end_datetime))
         bookings_count = self.c.fetchone()[0]
 
@@ -421,8 +423,8 @@ class AnalyticsService:
         self.c.execute("""
             SELECT COALESCE(SUM(revenue), 0)
             FROM bookings
-            WHERE master = ?
-            AND datetime BETWEEN ? AND ?
+            WHERE master = %s
+            AND datetime BETWEEN %s AND %s
             AND status != 'cancelled'
         """, (master_name, start_datetime, end_datetime))
         daily_revenue = self.c.fetchone()[0]

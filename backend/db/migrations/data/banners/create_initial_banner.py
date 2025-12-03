@@ -1,4 +1,3 @@
-import sqlite3
 from pathlib import Path
 
 def create_initial_banner(db_path="salon_bot.db"):
@@ -25,7 +24,7 @@ def create_initial_banner(db_path="salon_bot.db"):
                     'Профессиональные услуги красоты',
                     'Professional Beauty Services',
                     'خدمات تجميل احترافية',
-                    'https://images.unsplash.com/photo-1648065460033-5c59f2ef1d97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwd29tYW4lMjBiZWF1dHl8ZW58MXx8fHwxNzY0MjIzNDE5fDA&ixlib=rb-4.1.0&q=80&w=1080',
+                    'https://images.unsplash.com/photo-1648065460033-5c59f2ef1d97%scrop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwd29tYW4lMjBiZWF1dHl8ZW58MXx8fHwxNzY0MjIzNDE5fDA&ixlib=rb-4.1.0&q=80&w=1080',
                     '/services',
                     1,
                     1

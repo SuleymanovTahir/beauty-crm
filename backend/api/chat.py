@@ -26,8 +26,10 @@ def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram'
     """Получить историю чата по типу мессенджера"""
     import sqlite3
     from core.config import DATABASE_NAME
+    from db.connection import get_db_connection
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
+
     c = conn.cursor()
 
     if messenger_type == 'instagram':

@@ -13,11 +13,11 @@ def test_language_detection():
     translator = Translator(use_cache=False)
     
     test_texts = [
-        ("Привет, как дела?", "ru"),
-        ("Hello, how are you?", "en"),
+        ("Привет, как дела%s", "ru"),
+        ("Hello, how are you%s", "en"),
         ("مرحبا كيف حالك؟", "ar"),
-        ("Hola, ¿cómo estás?", "es"),
-        ("Bonjour, comment allez-vous?", "fr"),
+        ("Hola, ¿cómo estás%s", "es"),
+        ("Bonjour, comment allez-vous%s", "fr"),
         ("Get a Discount Up to 50% for All Services", "en"),
         ("Ваша красота — наша страсть", "ru"),
     ]

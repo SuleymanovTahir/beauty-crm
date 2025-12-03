@@ -10,6 +10,7 @@ from typing import Dict, List, Any
 from utils.logger import log_info, log_error
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 router = APIRouter()
 
@@ -141,7 +142,7 @@ def find_or_create_client(name: str, phone: str = None) -> str:
     Find existing client by name or phone, or create a temporary one
     Returns instagram_id
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -185,7 +186,7 @@ def find_service(service_name: str) -> str:
     if not service_name:
         return "Imported Service"
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -242,7 +243,7 @@ async def import_bookings(file: UploadFile = File(...)):
         
         log_info(f"📋 Normalized columns: {df.columns.tolist()}", "import")
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         results = {

@@ -8,6 +8,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 
@@ -34,7 +35,7 @@ class ConversationContext:
         Returns:
             bool: Успешность сохранения
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -81,7 +82,7 @@ class ConversationContext:
         Returns:
             Dict или None если контекст не найден или истек
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -121,7 +122,7 @@ class ConversationContext:
         Returns:
             Dict с контекстами по типам
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -162,7 +163,7 @@ class ConversationContext:
         Returns:
             bool: Успешность удаления
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -251,7 +252,7 @@ def cleanup_expired_contexts() -> int:
     Returns:
         int: Количество удаленных контекстов
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:

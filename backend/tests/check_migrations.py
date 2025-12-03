@@ -4,7 +4,7 @@
 Запуск: python check_migrations.py
 """
 
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from datetime import datetime
@@ -18,7 +18,7 @@ def check_database():
         return False
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         print("=" * 70)
@@ -44,8 +44,8 @@ def check_database():
         
         # 2. Проверяем BOT_SETTINGS
         print("📝 BOT_SETTINGS:")
-        c.execute("PRAGMA table_info(bot_settings)")
-        cols = [row[1] for row in c.fetchall()]
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bot_settings\'")
+        cols = [row[0] for row in c.fetchall()]
         print(f"   Колонок: {len(cols)}")
         
         c.execute("SELECT COUNT(*) FROM bot_settings")

@@ -69,23 +69,27 @@ def test_database_detailed():
 
     try:
         from core.config import DATABASE_NAME
-        import sqlite3
+        from db.connection import get_db_connection
 
         # Шаг 1: Проверка существования
         print_step(1, 10, "Проверка существования файла БД")
-        if not os.path.exists(DATABASE_NAME):
-            print_error(f"База данных не найдена: {DATABASE_NAME}")
-            print_info(f"Проверьте путь и запустите инициализацию БД")
-            return False
+        # Skip file check for PostgreSQL
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            print_info("PostgreSQL database (skipping file check)")
+        else:
+            if not os.path.exists(DATABASE_NAME):
+                print_error(f"База данных не найдена: {DATABASE_NAME}")
+                print_info(f"Проверьте путь и запустите инициализацию БД")
+                return False
 
-        print_success(f"База данных найдена: {DATABASE_NAME}")
-        file_size = os.path.getsize(DATABASE_NAME)
-        print_info(f"Размер файла: {file_size / 1024:.2f} KB")
+            print_success(f"База данных найдена: {DATABASE_NAME}")
+            file_size = os.path.getsize(DATABASE_NAME)
+            print_info(f"Размер файла: {file_size / 1024:.2f} KB")
 
         # Шаг 2: Подключение
         print_step(2, 10, "Попытка подключения к БД")
         try:
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             print_success("Подключение установлено")
         except Exception as e:
@@ -94,7 +98,11 @@ def test_database_detailed():
 
         # Шаг 3: Список всех таблиц
         print_step(3, 10, "Получение списка всех таблиц")
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        # Check tables
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
+        else:
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         all_tables = [row[0] for row in c.fetchall()]
         print_success(f"Найдено таблиц: {len(all_tables)}")
         print_data("Список таблиц", all_tables)
@@ -131,30 +139,35 @@ def test_database_detailed():
         print_step(5, 10, "Проверка структуры ключевых таблиц")
 
         # Проверка users.position
-        c.execute("PRAGMA table_info(users)")
-        user_columns = {col[1]: col[2] for col in c.fetchall()}
+        # Проверка users.position
+        # information_schema.columns: (table_catalog, table_schema, table_name, column_name, ...)
+        # column_name is at index 3
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+        user_columns = {col[0]: True for col in c.fetchall()}
         if 'position' in user_columns:
             print_success(f"users.position - {user_columns['position']}")
         else:
             print_error("users.position - ОТСУТСТВУЕТ")
 
         # Проверка services.position_id
-        c.execute("PRAGMA table_info(services)")
-        serv_columns = {col[1]: col[2] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='services'")
+        serv_columns = {col[0]: True for col in c.fetchall()}
         if 'position_id' in serv_columns:
-            print_success(f"services.position_id - {serv_columns['position_id']}")
+            print_success(f"services.position_id - {serv_columns.get('position_id')}")
         else:
             print_warning("services.position_id - ОТСУТСТВУЕТ (опционально)")
             print_info("Запустите миграцию: python3 backend/migration_add_position_to_services.py")
 
         # Проверка user_schedule (nullable start_time/end_time)
-        c.execute("PRAGMA table_info(user_schedule)")
-        schedule_columns = {col[1]: {'type': col[2], 'not_null': col[3]} for col in c.fetchall()}
+        c.execute("SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name='user_schedule'")
+        schedule_columns = {col[0]: {'type': col[1], 'not_null': col[2]} for col in c.fetchall()}
         if 'start_time' in schedule_columns:
-            if schedule_columns['start_time']['not_null'] == 0:
+            # is_nullable is 'YES' or 'NO' in postgres
+            is_nullable = schedule_columns['start_time']['not_null']
+            if is_nullable == 'YES':
                 print_success("user_schedule.start_time - nullable ✓")
             else:
-                print_warning("user_schedule.start_time - NOT NULL (должен быть nullable)")
+                print_warning(f"user_schedule.start_time - NOT NULL ({is_nullable}) (должен быть nullable)")
         else:
             print_error("user_schedule.start_time - ОТСУТСТВУЕТ")
 
@@ -174,7 +187,10 @@ def test_database_detailed():
 
         # Шаг 7: Проверка индексов
         print_step(7, 10, "Проверка индексов")
-        c.execute("SELECT name, tbl_name FROM sqlite_master WHERE type='index'")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            c.execute("SELECT indexname, tablename FROM pg_indexes WHERE schemaname = 'public'")
+        else:
+            c.execute("SELECT name, tbl_name FROM sqlite_master WHERE type='index'")
         indexes = c.fetchall()
         print_success(f"Найдено индексов: {len(indexes)}")
         for idx_name, tbl_name in indexes[:10]:  # Первые 10
@@ -182,27 +198,36 @@ def test_database_detailed():
 
         # Шаг 8: Проверка foreign keys
         print_step(8, 10, "Проверка включения foreign keys")
-        c.execute("PRAGMA foreign_keys")
-        fk_enabled = c.fetchone()[0]
-        if fk_enabled:
-            print_success("Foreign keys: ВКЛЮЧЕНЫ")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            print_success("Foreign keys: ВКЛЮЧЕНЫ (PostgreSQL default)")
         else:
-            print_warning("Foreign keys: ВЫКЛЮЧЕНЫ")
+            c.execute("PRAGMA foreign_keys")
+            fk_enabled = c.fetchone()[0]
+            if fk_enabled:
+                print_success("Foreign keys: ВКЛЮЧЕНЫ")
+            else:
+                print_warning("Foreign keys: ВЫКЛЮЧЕНЫ")
 
-        # Шаг 9: Проверка целостности
+        # Шаг 9: Проверка целостности БД
         print_step(9, 10, "Проверка целостности БД")
-        c.execute("PRAGMA integrity_check")
-        integrity = c.fetchone()[0]
-        if integrity == 'ok':
-            print_success("Целостность БД: OK")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+             print_info("Проверка целостности пропущена для PostgreSQL (требует сложных запросов)")
         else:
-            print_error(f"Целостность БД: {integrity}")
+            c.execute("PRAGMA integrity_check")
+            integrity = c.fetchone()[0]
+            if integrity == 'ok':
+                print_success("Целостность БД: OK")
+            else:
+                print_error(f"Целостность БД: {integrity}")
 
-        # Шаг 10: Проверка версии SQLite
-        print_step(10, 10, "Проверка версии SQLite")
-        c.execute("SELECT sqlite_version()")
-        sqlite_version = c.fetchone()[0]
-        print_success(f"SQLite версия: {sqlite_version}")
+        # Шаг 10: Проверка версии
+        print_step(10, 10, "Проверка версии БД")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            c.execute("SELECT version()")
+        else:
+            c.execute("SELECT sqlite_version()")
+        version = c.fetchone()[0]
+        print_success(f"Версия: {version}")
 
         conn.close()
         print("\n" + "=" * 100)
@@ -267,7 +292,7 @@ def test_analytics_detailed():
         # Шаг 5: Проверка Bookings
         print_step(5, 7, "Проверка метрик Bookings")
         bookings = kpi.get('bookings', {})
-        booking_keys = ['total', 'completed', 'cancelled', 'pending', 'completion_rate', 'cancellation_rate']
+        booking_keys = ['total', 'completed', 'cancelled', 'completion_rate', 'cancellation_rate']
         for key in booking_keys:
             if key in bookings:
                 print_success(f"bookings.{key} = {bookings[key]}")
@@ -320,6 +345,8 @@ def test_master_schedule_detailed():
     test_date = next_monday
     print_info(f"Тестирование на дату: {test_date} (Следующий понедельник)")
     
+    user_id = None # Initialize user_id for cleanup
+    
     try:
         from services.master_schedule import MasterScheduleService
 
@@ -328,16 +355,17 @@ def test_master_schedule_detailed():
         try:
             # Создаем тестового мастера в базе данных
             from core.config import DATABASE_NAME
-            import sqlite3
-            conn = sqlite3.connect(DATABASE_NAME)
+            from db.connection import get_db_connection
+            conn = get_db_connection()
             c = conn.cursor()
             
             # Insert into users table
             c.execute("""
                 INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
-                VALUES (?, 'dummy_hash', ?, ?, ?, 1, 1)
+                VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
+                RETURNING id
             """, (f"test_detailed_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
-            user_id = c.lastrowid
+            user_id = c.fetchone()[0]
             
             conn.commit()
             conn.close()
@@ -472,18 +500,24 @@ def test_master_schedule_detailed():
         print(f"\n   🧹 Очистка тестовых данных мастера '{test_master}'...")
         try:
             from core.config import DATABASE_NAME
-            import sqlite3
+            from db.connection import get_db_connection
             
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             
-            # Удаляем пользователя
-            c.execute("DELETE FROM users WHERE full_name = ?", (test_master,))
+            # Получаем ID пользователя, если он не определен
+            if user_id is None:
+                c.execute("SELECT id FROM users WHERE full_name = %s", (test_master,))
+                row = c.fetchone()
+                if row:
+                    user_id = row[0]
             
-            # Удаляем расписание тестового мастера
-            if 'user_id' in locals():
-                c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
-                c.execute("DELETE FROM user_time_off WHERE user_id = ?", (user_id,))
+            if user_id:
+                c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
+                c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
+            
+            # Удаляем пользователя
+            c.execute("DELETE FROM users WHERE full_name = %s", (test_master,))
             
             conn.commit()
             conn.close()

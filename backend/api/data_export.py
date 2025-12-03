@@ -11,6 +11,7 @@ import csv
 import io
 import json
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.permissions import can_export_data, can_import_data, can_access_resource, filter_data_by_permissions
 from utils.logger import log_info, log_error
@@ -27,14 +28,14 @@ async def export_clients(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Forbidden: No export permission"}, status_code=403)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем клиентов
         c.execute("""
             SELECT instagram_id, name, phone, email, telegram_username, status, created_at
             FROM clients
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY created_at DESC
         """)
 
@@ -97,7 +98,7 @@ async def import_clients(
         decoded = contents.decode('utf-8')
         reader = csv.DictReader(io.StringIO(decoded))
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         imported_count = 0

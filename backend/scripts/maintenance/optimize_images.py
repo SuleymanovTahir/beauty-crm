@@ -146,7 +146,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Optimize images in a directory")
-    parser.add_argument("directory", nargs="?", help="Directory to scan")
+    parser.add_argument("directory", nargs="%s", help="Directory to scan")
     parser.add_argument("--max-size", type=int, default=500, help="Max size in KB")
     parser.add_argument("--max-width", type=int, default=1920, help="Max width in pixels")
     

@@ -8,6 +8,7 @@ import sqlite3
 import os
 from pathlib import Path
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
@@ -24,7 +25,7 @@ async def get_gallery_images(
     category: 'portfolio' или 'salon'
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         query = "SELECT id, image_path, title, description, sort_order, is_visible FROM gallery_images WHERE category = ?"
@@ -69,7 +70,7 @@ async def add_gallery_image(
     try:
         data = await request.json()
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -110,7 +111,7 @@ async def update_gallery_image(
     try:
         data = await request.json()
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         updates = []
@@ -167,7 +168,7 @@ async def delete_gallery_image(
     try:
         from api.uploads import delete_upload_file
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Получаем путь к файлу
@@ -221,7 +222,7 @@ async def upload_gallery_image(
         # URL должен начинаться с /static, так как мы маунтим static папку
         image_path = f"/static/uploads/{category}/{file.filename}"
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Get max sort_order
@@ -272,7 +273,7 @@ async def update_gallery_settings(
         
     try:
         data = await request.json()
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Update or Insert settings
@@ -317,7 +318,7 @@ async def update_gallery_settings(
         if "no such column" in str(e):
              # Auto-migration fallback (risky but effective for this task)
              try:
-                 conn = sqlite3.connect(DATABASE_NAME)
+                 conn = get_db_connection()
                  c = conn.cursor()
                  if 'gallery_count' in data:
                      try:

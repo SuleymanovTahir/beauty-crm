@@ -14,6 +14,7 @@ from db import (
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 import core.config as config
+from db.connection import get_db_connection
 
 router = APIRouter(tags=["Services"])
 
@@ -183,7 +184,7 @@ async def toggle_service_status(
         log_info(f"🔄 API: Toggle request for service {service_id}", "api")
         
         # Прямой доступ к БД
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Получаем текущий статус

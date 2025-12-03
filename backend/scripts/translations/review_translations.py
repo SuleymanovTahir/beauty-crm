@@ -3,7 +3,7 @@
 Review all translations in the database
 Shows all translated content for manual verification
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
@@ -17,7 +17,7 @@ LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 
 def review_service_translations():
     """Review all service name translations"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     print("\n" + "="*80)
@@ -57,7 +57,7 @@ def review_service_translations():
 
 def review_banner_translations():
     """Review all banner translations"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     print("\n" + "="*80)
@@ -94,7 +94,7 @@ def export_translations_to_csv():
     """Export all translations to CSV for easy review in Excel"""
     import csv
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     output_file = "translations_review.csv"

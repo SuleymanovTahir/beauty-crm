@@ -109,7 +109,7 @@ class Translator:
             
             # URL encode
             encoded_text = urllib.parse.quote(text_with_context)
-            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
+            url = f"https://translate.googleapis.com/translate_a/single%sclient=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
             
             req = urllib.request.Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0')
@@ -159,7 +159,7 @@ class Translator:
         try:
             # Encode text for URL
             encoded_text = urllib.parse.quote(text[:200])  # Use first 200 chars for detection
-            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
+            url = f"https://translate.googleapis.com/translate_a/single%sclient=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
             
             # Make request
             req = urllib.request.Request(url)

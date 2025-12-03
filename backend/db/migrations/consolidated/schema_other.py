@@ -2,7 +2,7 @@
 Consolidated Other Tables Schema Migration
 All schema changes for other tables (notifications, chat, permissions, etc.)
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_other_schema(db_path="salon_bot.db"):
@@ -13,20 +13,20 @@ def migrate_other_schema(db_path="salon_bot.db"):
     print("🔧 OTHER TABLES SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Create notification_settings table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS notification_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
-                email_notifications INTEGER DEFAULT 1,
-                sms_notifications INTEGER DEFAULT 0,
-                booking_notifications INTEGER DEFAULT 1,
-                chat_notifications INTEGER DEFAULT 1,
-                daily_report INTEGER DEFAULT 1,
+                email_notifications BOOLEAN DEFAULT TRUE,
+                sms_notifications BOOLEAN DEFAULT FALSE,
+                booking_notifications BOOLEAN DEFAULT TRUE,
+                chat_notifications BOOLEAN DEFAULT TRUE,
+                daily_report BOOLEAN DEFAULT TRUE,
                 report_time TEXT DEFAULT '09:00',
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -38,12 +38,12 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create internal_chat table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS internal_chat (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 sender_id INTEGER NOT NULL,
                 receiver_id INTEGER,
                 message TEXT NOT NULL,
                 timestamp TEXT NOT NULL,
-                is_read INTEGER DEFAULT 0,
+                is_read BOOLEAN DEFAULT FALSE,
                 FOREIGN KEY (sender_id) REFERENCES users(id),
                 FOREIGN KEY (receiver_id) REFERENCES users(id)
             )
@@ -53,11 +53,11 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create permissions table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS permissions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 role TEXT NOT NULL,
                 resource TEXT NOT NULL,
                 action TEXT NOT NULL,
-                allowed INTEGER DEFAULT 1,
+                allowed BOOLEAN DEFAULT TRUE,
                 UNIQUE(role, resource, action)
             )
         """)
@@ -66,10 +66,10 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create broadcast_history table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS broadcast_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 message TEXT NOT NULL,
-                recipients_count INTEGER DEFAULT 0,
+                recipients_count BOOLEAN DEFAULT FALSE,
                 sent_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id)
             )
@@ -79,7 +79,7 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create director_approvals table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS director_approvals (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 request_type TEXT NOT NULL,
                 requested_by INTEGER NOT NULL,
                 request_data TEXT,
@@ -96,7 +96,7 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create positions table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS positions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL UNIQUE,
                 name_ru TEXT,
                 name_en TEXT,
@@ -112,12 +112,12 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create plans table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS plans (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 role TEXT NOT NULL,
                 price REAL NOT NULL,
                 features TEXT,
-                is_active INTEGER DEFAULT 1,
+                is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(name, role)
             )
@@ -127,9 +127,9 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create messenger_settings table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS messenger_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 messenger_type TEXT NOT NULL UNIQUE,
-                is_enabled INTEGER DEFAULT 0,
+                is_enabled BOOLEAN DEFAULT FALSE,
                 display_name TEXT NOT NULL,
                 api_token TEXT,
                 webhook_url TEXT,
@@ -143,14 +143,14 @@ def migrate_other_schema(db_path="salon_bot.db"):
         # Create messenger_messages table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS messenger_messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 messenger_type TEXT NOT NULL,
                 client_id TEXT NOT NULL,
                 external_message_id TEXT,
                 sender_type TEXT NOT NULL,
                 message_text TEXT,
                 attachments_json TEXT,
-                is_read INTEGER DEFAULT 0,
+                is_read BOOLEAN DEFAULT FALSE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (client_id) REFERENCES clients(instagram_id)
             )
@@ -163,17 +163,17 @@ def migrate_other_schema(db_path="salon_bot.db"):
         
         # Insert default messenger settings
         messengers = [
-            ('instagram', 'Instagram', 1),
-            ('whatsapp', 'WhatsApp', 0),
-            ('telegram', 'Telegram', 0),
-            ('tiktok', 'TikTok', 0)
+            ('instagram', 'Instagram', True),
+            ('whatsapp', 'WhatsApp', False),
+            ('telegram', 'Telegram', False),
+            ('tiktok', 'TikTok', False)
         ]
 
         for messenger_type, display_name, is_enabled in messengers:
             c.execute("""
-                INSERT OR IGNORE INTO messenger_settings (messenger_type, display_name, is_enabled)
-                VALUES (?, ?, ?)
-            """, (messenger_type, display_name, is_enabled))
+                INSERT INTO messenger_settings (messenger_type, display_name, is_enabled) VALUES (%s, %s, %s)
+            ON CONFLICT DO NOTHING
+    """, (messenger_type, display_name, is_enabled))
         print("  ✅ default messenger settings ensured")
         
         print("\n✅ All other tables ensured")

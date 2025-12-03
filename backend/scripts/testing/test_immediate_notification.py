@@ -3,7 +3,7 @@
 Скрипт для немедленного тестирования уведомлений
 Создает запись на время, которое даст напоминание ПРЯМО СЕЙЧАС
 """
-import sqlite3
+from db.connection import get_db_connection
 import argparse
 from datetime import datetime, timedelta
 import sys
@@ -30,7 +30,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
     print("=" * 80)
     print()
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -39,7 +39,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         c.execute("""
             INSERT OR REPLACE INTO clients
             (instagram_id, username, name, phone, email, status, first_contact, last_contact)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             'test_immediate_notification',
             '@test_notification',
@@ -62,7 +62,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         c.execute("""
             INSERT INTO bookings
             (datetime, name, phone, service_name, master, status, instagram_id, notes, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             booking_time.isoformat(),
             'Test Notification Client',
@@ -86,7 +86,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         c.execute("""
             SELECT id, name, days_before, hours_before
             FROM booking_reminder_settings
-            WHERE is_enabled = 1
+            WHERE is_enabled = TRUE
             ORDER BY days_before DESC, hours_before DESC
         """)
 
@@ -112,7 +112,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
             c.execute("""
                 INSERT INTO booking_reminder_settings
                 (name, days_before, hours_before, notification_type, is_enabled)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
             """, ('2 hours before', 0, 2, 'email', 1))
             print("   ✅ Настройка создана")
 

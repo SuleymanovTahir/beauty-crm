@@ -2,7 +2,7 @@
 """
 Миграция: Добавление системы предпочтений клиентов
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from datetime import datetime
@@ -16,7 +16,7 @@ if 'DATABASE_NAME' not in globals():
         sys.path.insert(0, backend_dir)
     from core.config import DATABASE_NAME
 
-conn = sqlite3.connect(DATABASE_NAME)
+conn = get_db_connection()
 c = conn.cursor()
 
 try:
@@ -25,7 +25,7 @@ try:
     # Таблица предпочтений клиента
     c.execute("""
         CREATE TABLE IF NOT EXISTS client_preferences (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT UNIQUE NOT NULL,
             preferred_master TEXT,
             preferred_service TEXT,
@@ -45,7 +45,7 @@ try:
     # Таблица контекста разговоров
     c.execute("""
         CREATE TABLE IF NOT EXISTS conversation_context (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT NOT NULL,
             context_type TEXT NOT NULL,
             context_data TEXT,
@@ -59,7 +59,7 @@ try:
     # Таблица паттернов взаимодействий
     c.execute("""
         CREATE TABLE IF NOT EXISTS client_interaction_patterns (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT NOT NULL,
             interaction_type TEXT,
             pattern_data TEXT,

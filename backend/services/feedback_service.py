@@ -4,13 +4,14 @@
 import sqlite3
 from datetime import datetime
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 import logging
 
 logger = logging.getLogger('crm')
 
 async def save_rating(instagram_id: str, rating: int, comment: str = None):
     """Сохранить оценку клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

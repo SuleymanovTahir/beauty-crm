@@ -2,7 +2,7 @@
 Consolidated Bookings Schema Migration
 All schema changes for bookings table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_bookings_schema(db_path="salon_bot.db"):
@@ -13,13 +13,13 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
     print("🔧 BOOKINGS SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(bookings)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bookings\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
@@ -29,9 +29,9 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
             'course_id': 'INTEGER',
             'course_session_number': 'INTEGER',
             'waitlist_position': 'INTEGER',
-            'is_waitlist': 'INTEGER DEFAULT 0',
-            'reminder_sent_24h': 'INTEGER DEFAULT 0',
-            'reminder_sent_2h': 'INTEGER DEFAULT 0',
+            'is_waitlist': 'BOOLEAN DEFAULT FALSE',
+            'reminder_sent_24h': 'BOOLEAN DEFAULT FALSE',
+            'reminder_sent_2h': 'BOOLEAN DEFAULT FALSE',
             'reminder_sent_at': 'TEXT',
         }
         
@@ -46,10 +46,10 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
         # Create booking_reminder_settings table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS booking_reminder_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
-                reminder_24h_enabled INTEGER DEFAULT 1,
-                reminder_2h_enabled INTEGER DEFAULT 1,
+                reminder_24h_enabled BOOLEAN DEFAULT TRUE,
+                reminder_2h_enabled BOOLEAN DEFAULT TRUE,
                 reminder_24h_template TEXT,
                 reminder_2h_template TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -60,14 +60,14 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
         print("  ✅ booking_reminder_settings table ensured")
         
         # Migration: Add new columns for flexible reminder system
-        c.execute("PRAGMA table_info(booking_reminder_settings)")
-        reminder_columns = [col[1] for col in c.fetchall()]
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'booking_reminder_settings\'")
+        reminder_columns = [col[0] for col in c.fetchall()]
         
         reminder_migrations = {
-            'days_before': 'INTEGER DEFAULT 0',
-            'hours_before': 'INTEGER DEFAULT 0',
-            'is_enabled': 'INTEGER DEFAULT 1',
-            'notification_type': 'TEXT DEFAULT "email"'
+            'days_before': 'BOOLEAN DEFAULT FALSE',
+            'hours_before': 'BOOLEAN DEFAULT FALSE',
+            'is_enabled': 'BOOLEAN DEFAULT TRUE',
+            'notification_type': "TEXT DEFAULT \'email\'"
         }
         
         for col, col_type in reminder_migrations.items():
@@ -80,7 +80,7 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
             CREATE TABLE IF NOT EXISTS booking_drafts (
                 instagram_id TEXT PRIMARY KEY,
                 data TEXT,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
         print("  ✅ booking_drafts table ensured")

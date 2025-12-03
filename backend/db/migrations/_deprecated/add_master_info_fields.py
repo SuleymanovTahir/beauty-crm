@@ -3,7 +3,6 @@ Migration: Add Master Info Fields
 Добавляет поля experience и bio в таблицу users для мастеров
 """
 
-import sqlite3
 import sys
 import os
 

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 from typing import Optional, List, Dict
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info
 
 router = APIRouter()
@@ -21,7 +22,7 @@ async def get_public_employees(
     """
     log_info(f"API: Запрос сотрудников на языке {language}", "api")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -47,8 +48,8 @@ async def get_public_employees(
                 NULL as instagram,
                 public_page_order as sort_order
             FROM users
-            WHERE is_service_provider = 1 
-            AND is_active = 1
+            WHERE is_service_provider = TRUE 
+            AND is_active = TRUE
             AND role NOT IN ('admin', 'director')
             ORDER BY public_page_order DESC, full_name ASC
         """
@@ -86,7 +87,7 @@ async def get_salon_info(
     
     - **language**: Код языка
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     

@@ -8,6 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
@@ -17,7 +18,7 @@ router = APIRouter(tags=["Templates"])
 def replace_placeholders(content: str, client_id: str) -> str:
     """Заменить плейсхолдеры на реальные данные"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Получить последнюю активную запись клиента
@@ -63,7 +64,7 @@ async def get_message_templates(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -110,7 +111,7 @@ async def create_template(
         if not name or not content:
             return JSONResponse({"error": "Missing data"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -147,7 +148,7 @@ async def update_template(
         content = data.get('content')
         category = data.get('category')
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем что шаблон принадлежит пользователю
@@ -204,7 +205,7 @@ async def delete_template(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем что шаблон принадлежит пользователю

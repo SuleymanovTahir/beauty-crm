@@ -2,7 +2,7 @@
 """
 Fix banner translations - translate Russian banner text to all languages
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
@@ -37,7 +37,7 @@ def fix_banner_translations():
     
     for lang in LANGUAGES:
         column = f"title_{lang}"
-        c.execute(f"UPDATE public_banners SET {column} = ? WHERE id = 4", (translations[lang],))
+        c.execute(f"UPDATE public_banners SET {column} = %s WHERE id = 4", (translations[lang],))
         print(f"  ✅ Updated {column}")
     
     conn.commit()

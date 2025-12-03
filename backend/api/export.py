@@ -12,6 +12,7 @@ import sqlite3
 from db import get_all_bookings, get_analytics_data
 from db.settings import get_salon_settings
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning
 
@@ -376,7 +377,7 @@ def export_bookings_excel(bookings):
 
 def export_full_data_csv():
     """Экспорт всех данных (клиенты + сообщения + записи) в один CSV"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     output = io.StringIO()
@@ -442,7 +443,7 @@ def export_full_data_excel():
     if not EXCEL_AVAILABLE:
         raise Exception("Excel экспорт недоступен")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     wb = Workbook()
@@ -552,7 +553,7 @@ async def export_clients(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     if date_from and date_to:
@@ -749,7 +750,7 @@ async def export_messages(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     query = """SELECT m.id, m.instagram_id, c.username, c.name, m.message_text, 

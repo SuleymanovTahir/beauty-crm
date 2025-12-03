@@ -38,7 +38,7 @@ def test_ui_logic():
     # But wait, the API logic for POST is:
     # await api.post(`/users/${employeeId}/services`, { ... })
     
-    # Let's use the update_employee_service function which acts as an upsert if we provide all fields?
+    # Let's use the update_employee_service function which acts as an upsert if we provide all fields%s
     # No, the frontend calls POST to add, DELETE to remove.
     # Let's verify the POST logic (add_employee_service)
     from db.employees import add_employee_service, remove_employee_service
@@ -60,7 +60,7 @@ def test_ui_logic():
     # Verify
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT * FROM user_services WHERE user_id = ? AND service_id = ?", (gulya_id, service_id))
+    c.execute("SELECT * FROM user_services WHERE user_id = %s AND service_id = %s", (gulya_id, service_id))
     row = c.fetchone()
     conn.close()
     if row:
@@ -86,7 +86,7 @@ def test_ui_logic():
     # Verify
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT price, duration, is_online_booking_enabled FROM user_services WHERE user_id = ? AND service_id = ?", (gulya_id, service_id))
+    c.execute("SELECT price, duration, is_online_booking_enabled FROM user_services WHERE user_id = %s AND service_id = %s", (gulya_id, service_id))
     row = c.fetchone()
     conn.close()
     
