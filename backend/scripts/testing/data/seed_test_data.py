@@ -826,13 +826,13 @@ def seed_data():
     print("-" * 70)
     print("⏭️  Пропущено - мастера создаются через update_employee_details.py")
     
-    # Load actual master IDs from database (case-insensitive)
+    # Load actual master IDs from database
     master_ids = {}
     c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = 1")
     employees = c.fetchall()
     for row in employees:
-        # Store with uppercase key for consistent lookup
-        master_ids[row['full_name'].upper()] = row['id']
+        actual_name = row['full_name']
+        master_ids[actual_name] = row['id']
     
     if master_ids:
         print(f"✅ Найдено мастеров: {', '.join(master_ids.keys())}")
@@ -871,7 +871,7 @@ def seed_data():
     if not master_ids:
         print("⚠️  Ошибка в seed_test_data: Мастера не найдены в БД")
     else:
-        # JENNIFER
+        # ДЖЕННИФЕР (Jennifer)
         jennifer_keys = [
             'full_legs', 'half_legs', 'full_arms', 'half_arms', 'full_body', 'underarms',
             'manicure_no_polish', 'manicure_normal', 'gelish_manicure', 'spa_manicure', 
@@ -880,23 +880,23 @@ def seed_data():
             'remove_lashes'
         ]
 
-        # SIMO
+        # СИМО (Simo)
         simo_keys = [
             'ombre', 'balayage', 'roots_bleach', 'toner_blowdry', 'bleach_hair', 'roots_color',
             'full_color', 'hair_trim', 'hair_cut_blowdry', 'blowdry', 'baby_cut',
             'natural_treatment', 'hair_extension_capsule'
         ]
 
-        # MESTAN (Same as Simo + Brows)
+        # МЕСТАН (Mestan) - Same as Simo + Brows
         mestan_keys = simo_keys + ['brow_coloring']
 
-        # LYAZZAT
+        # ЛЯЗЗАТ (Lyazzat)
         lyazzat_keys = [
             'manicure_no_polish', 'manicure_normal', 'gelish_manicure', 'spa_manicure', 
             'change_classic_polish', 'baby_manicure', 'japanese_manicure'
         ]
 
-        # GULYA
+        # ГУЛЯ (Gulya)
         gulya_keys = [
             'full_legs', 'full_arms', 'half_arms', 'full_body', 'bikini_line',
             'underarms', 'full_bikini', 'brazilian', 'full_face', 'chin', 'upper_lips',
@@ -904,12 +904,13 @@ def seed_data():
             'change_classic_polish', 'baby_manicure', 'japanese_manicure'
         ]
 
+        # Use actual Cyrillic names from database
         employee_specific_services = {
-            'JENNIFER': jennifer_keys,
-            'SIMO': simo_keys,
-            'MESTAN': mestan_keys,
-            'LYAZZAT': lyazzat_keys,
-            'GULYA': gulya_keys
+            'Дженнифер': jennifer_keys,
+            'Симо': simo_keys,
+            'Местан': mestan_keys,
+            'Ляззат': lyazzat_keys,
+            'Гуля': gulya_keys
         }
 
         # Clear existing assignments

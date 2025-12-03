@@ -111,7 +111,8 @@ async def populate_reviews():
     cursor = conn.cursor()
     
     try:
-        # Не удаляем существующие отзывы, используем INSERT OR REPLACE для сохранения переводов
+        # Очистка существующих отзывов
+        cursor.execute("DELETE FROM public_reviews")
         
         for review in REVIEWS:
             log_info(f"Переводим отзыв от {review['author_name']}", "populate")
@@ -119,9 +120,9 @@ async def populate_reviews():
             # Переводим текст отзыва
             text_translations = await translate_to_all_languages(review['text_ru'], 'ru')
             
-            # Вставляем или обновляем в БД (сохраняя существующие переводы)
+            # Вставляем в БД
             cursor.execute("""
-                INSERT OR REPLACE INTO public_reviews (
+                INSERT INTO public_reviews (
                     author_name, rating, 
                     text_ru, text_en, text_ar, text_de, text_es,
                     text_fr, text_hi, text_kk, text_pt,
@@ -164,7 +165,8 @@ async def populate_faq():
     cursor = conn.cursor()
     
     try:
-        # Не удаляем существующие FAQ, используем INSERT OR REPLACE для сохранения переводов
+        # Очистка существующих FAQ
+        cursor.execute("DELETE FROM public_faq")
         
         for faq in FAQ_ITEMS:
             log_info(f"Переводим вопрос: {faq['question_ru'][:50]}...", "populate")
@@ -175,9 +177,9 @@ async def populate_faq():
             # Переводим ответ
             answer_translations = await translate_to_all_languages(faq['answer_ru'], 'ru')
             
-            # Вставляем или обновляем в БД (сохраняя существующие переводы)
+            # Вставляем в БД
             cursor.execute("""
-                INSERT OR REPLACE INTO public_faq (
+                INSERT INTO public_faq (
                     question_ru, question_en, question_ar, question_de, question_es, 
                     question_fr, question_hi, question_kk, question_pt,
                     answer_ru, answer_en, answer_ar, answer_de, answer_es,

@@ -16,7 +16,9 @@ from config import (
     LANGUAGES,
     SOURCE_LANGUAGE,
     EXTRACT_OUTPUT,
-    TRANSLATE_OUTPUT
+    TRANSLATE_OUTPUT,
+    SKIP_TRANSLATION_FIELDS,
+    SKIP_TRANSLATION_PATTERNS
 )
 from translator import Translator
 
@@ -25,6 +27,8 @@ def translate_content():
     """
     Translate all missing translations from extracted data
     """
+    import re
+    
     print("🌍 Starting translation process...")
     
     # Check if extract file exists
@@ -45,6 +49,21 @@ def translate_content():
     # Initialize translator
     translator = Translator(use_cache=True)
     
+    # Helper function to check if field should be skipped
+    def should_skip_translation(table_name: str, field_name: str, text: str) -> bool:
+        """Check if this field should skip translation"""
+        # Check if field is in skip list for this table
+        if table_name in SKIP_TRANSLATION_FIELDS:
+            if field_name in SKIP_TRANSLATION_FIELDS[table_name]:
+                return True
+        
+        # Check if text matches any skip patterns
+        for pattern in SKIP_TRANSLATION_PATTERNS:
+            if re.match(pattern, text.strip()):
+                return True
+        
+        return False
+    
     # Process each table
     total_translated = 0
     
@@ -60,6 +79,15 @@ def translate_content():
                 source_text = field_data.get(SOURCE_LANGUAGE)
                 
                 if not source_text or not source_text.strip():
+                    continue
+                
+                # Check if this field should be skipped
+                if should_skip_translation(table_name, field_name, source_text):
+                    print(f"    ⏭️  {field_name}: '{source_text}' [SKIPPED - technical field or proper noun]")
+                    # Copy source text to all languages as-is
+                    for lang in LANGUAGES:
+                        if field_data.get(lang) is None:
+                            field_data[lang] = source_text
                     continue
                 
                 # Detect actual language of the source text

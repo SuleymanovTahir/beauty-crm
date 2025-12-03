@@ -88,7 +88,12 @@ class Translator:
             context_suffix = ""
             
             # Detect if this is likely a beauty salon term (short phrases, service names)
-            is_service_term = len(text.split()) <= 5 and not text.endswith('.')
+            # Exclude proper nouns (e.g., "Samsung Innovation Campus")
+            words = text.split()
+            capital_words_count = sum(1 for word in words if len(word) > 0 and word[0].isupper())
+            # If more than 1 word starts with capital, it's likely a proper noun/brand name
+            is_proper_noun = capital_words_count > 1
+            is_service_term = len(words) <= 2 and not text.endswith('.') and not is_proper_noun
             
             if is_service_term:
                 # Add context hint for better translation

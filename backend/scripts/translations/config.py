@@ -36,7 +36,8 @@ TRANSLATION_CONFIG = {
     },
     "public_banners": {
         "id_field": "id",
-        "fields": ["title_ru", "subtitle_ru"],
+        "fields": ["title_ru", "title_en", "title_ar", "title_de", "title_es", "title_fr", "title_hi", "title_kk", "title_pt",
+                   "subtitle_ru", "subtitle_en", "subtitle_ar", "subtitle_de", "subtitle_es", "subtitle_fr", "subtitle_hi", "subtitle_kk", "subtitle_pt"],
         "where": "is_active = 1"
     }
 }
@@ -50,3 +51,14 @@ CACHE_DIR = "scripts/translations/.cache"
 # Output files
 EXTRACT_OUTPUT = "scripts/translations/translations_needed.json"
 TRANSLATE_OUTPUT = "scripts/translations/translations_completed.json"
+
+# Fields that should NEVER be translated (technical fields, proper nouns, etc.)
+SKIP_TRANSLATION_FIELDS = {
+    "salon_settings": ["city", "country"]  # Proper nouns should not be translated
+}
+
+# Patterns that indicate content should not be translated
+# Only skip English time formats, not Russian ones
+SKIP_TRANSLATION_PATTERNS = [
+    r'^[A-Z]{2,3}$',  # Country codes like "UAE", "USA"
+]
