@@ -143,11 +143,13 @@ export function Services() {
                         {localizedDuration && (
                           <span className="text-xs sm:text-sm text-muted-foreground">
                             {(() => {
-                              const duration = String(localizedDuration);
-                              if (/[a-zа-я]/i.test(duration)) {
-                                return duration;
+                              const duration = String(localizedDuration).trim();
+                              // If it contains only digits, append 'min'
+                              if (/^\d+$/.test(duration)) {
+                                return `${duration} min`;
                               }
-                              return `${duration} min`;
+                              // Otherwise assume it's already formatted (contains letters, symbols, etc.)
+                              return duration;
                             })()}
                           </span>
                         )}

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Globe, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.png";
 
 const navigation = [
   { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },

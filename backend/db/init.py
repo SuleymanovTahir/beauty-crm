@@ -465,7 +465,8 @@ def init_database():
         'birthday_days_advance': 'INTEGER DEFAULT 7',
         'chat_notifications': 'INTEGER DEFAULT 1',
         'daily_report': 'INTEGER DEFAULT 1',
-        'report_time': 'TEXT DEFAULT "09:00"'
+        'report_time': 'TEXT DEFAULT "09:00"',
+        'updated_at': 'TEXT DEFAULT CURRENT_TIMESTAMP'
     }
     for col, col_type in notif_migrations.items():
         if col not in notif_columns:

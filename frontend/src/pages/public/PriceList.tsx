@@ -19,11 +19,21 @@ interface Service {
   price: number;
   category: string;
   description: string;
+  duration?: string;
+  duration_ru?: string;
+  duration_en?: string;
+  duration_ar?: string;
+  duration_de?: string;
+  duration_es?: string;
+  duration_fr?: string;
+  duration_hi?: string;
+  duration_kk?: string;
+  duration_pt?: string;
 }
 
 export default function PriceList() {
   const navigate = useNavigate();
-  const { t } = useTranslation(['public/PriceList', 'common']);
+  const { t, i18n } = useTranslation(['public/PriceList', 'common']);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +79,12 @@ export default function PriceList() {
 
   const getCategoryName = (category: string): string => {
     return t(`pricelist:categories.${category}`);
+  };
+
+  const getDuration = (service: Service): string => {
+    const lang = i18n.language;
+    const durationKey = `duration_${lang}` as keyof Service;
+    return (service[durationKey] as string) || service.duration || '';
   };
 
   if (loading) {
@@ -167,6 +183,9 @@ export default function PriceList() {
                             <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
                             <p className="text-xl font-bold text-pink-600 ml-4 whitespace-nowrap">{service.price} {t('common:currency')}</p>
                           </div>
+                          {getDuration(service) && (
+                            <p className="text-sm text-purple-600 font-medium mb-1">⏱️ {getDuration(service)}</p>
+                          )}
                           <p className="text-sm text-gray-600">{service.description}</p>
                         </div>
                       ))}

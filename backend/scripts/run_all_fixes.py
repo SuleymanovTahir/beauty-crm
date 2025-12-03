@@ -53,11 +53,11 @@ def cleanup_system():
     print("🗑️  Removing __pycache__...")
     os.system('find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null')
     
-    # 2. Remove translation cache
-    cache_dir = os.path.join(backend_dir, "scripts", "translations", ".cache")
-    if os.path.exists(cache_dir):
-        print(f"🗑️  Removing translation cache: {cache_dir}")
-        os.system(f'rm -rf "{cache_dir}"')
+    # 2. Remove translation cache - DISABLED to preserve translations
+    # cache_dir = os.path.join(backend_dir, "scripts", "translations", ".cache")
+    # if os.path.exists(cache_dir):
+    #     print(f"🗑️  Removing translation cache: {cache_dir}")
+    #     os.system(f'rm -rf "{cache_dir}"')
         
     # 3. Clear logs (keep files)
     log_dir = os.path.join(backend_dir, "logs")

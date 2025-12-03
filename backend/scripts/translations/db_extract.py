@@ -93,8 +93,11 @@ def extract_translatable_content():
                     if not source_value or not str(source_value).strip():
                         continue
                     
-                    # Generate key: table.id.field
-                    key = f"{table_name}.{record_id}.{field}"
+                    # Generate key: table.id.field.hash
+                    # We include hash of source value to detect content changes
+                    import hashlib
+                    hash_val = hashlib.md5(str(source_value).encode()).hexdigest()[:8]
+                    key = f"{table_name}.{record_id}.{field}.{hash_val}"
                     
                     field_data = {
                         SOURCE_LANGUAGE: source_value,
@@ -111,9 +114,30 @@ def extract_translatable_content():
                         # Check if key exists in existing translations
                         existing_val = existing_translations.get(lang, {}).get(key)
                         
-                        if existing_val:
+                        # Check if target column in DB is empty
+                        # We try to guess the target column name
+                        target_col_name = None
+                        
+                        # Case 1: Field has language suffix (e.g. title_ru -> title_en)
+                        if field.endswith(f"_{SOURCE_LANGUAGE}"):
+                            base_name = field[:-3]
+                            target_col_name = f"{base_name}_{lang}"
+                        # Case 2: Field is base name (e.g. description -> description_en)
+                        else:
+                            target_col_name = f"{field}_{lang}"
+                            
+                        # Check if this column exists in the row and is empty
+                        db_val_missing = False
+                        if target_col_name in row_dict:
+                            val = row_dict[target_col_name]
+                            if not val or not str(val).strip():
+                                db_val_missing = True
+                        
+                        if existing_val and not db_val_missing:
                             field_data[lang] = existing_val
                         else:
+                            # If DB value is missing, we treat it as missing translation
+                            # even if we have it in JSON (so it gets synced back to DB)
                             field_data[lang] = None
                             field_has_missing = True
                             table_missing += 1

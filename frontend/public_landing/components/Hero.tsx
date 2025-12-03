@@ -65,7 +65,7 @@ export function Hero() {
       .catch(err => {
         console.error('Error loading hero banner:', err);
       });
-  }, []);
+  }, [language]); // Re-fetch when language changes
 
   const getTranslatedText = (
     ru: string,

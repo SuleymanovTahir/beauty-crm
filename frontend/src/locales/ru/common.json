@@ -85,7 +85,7 @@
   "group_chat": "Групповой чат",
   "hair": "Волосы",
   "hairColoring": "Окрашивание волос",
-  "happyClients": "",
+  "happyClients": "довольных клиентов",
   "heroDescription": "Откройте для себя мир изысканной красоты в атмосфере роскоши и комфорта. Профессиональный уход и безупречный сервис.",
   "heroSubtitle": "наша страсть",
   "heroTag": "Премиальный салон красоты",
@@ -191,7 +191,7 @@
   "privacyTitle": "Конфиденциальность",
   "private_chat_with": "Приватный чат с",
   "promoEnds": "Акция заканчивается через:",
-  "qualityGuarantee": "",
+  "qualityGuarantee": "гарантия качества",
   "quick_replies_title": "Название быстрых ответов",
   "quick_reply_booked": "Быстрый ответ забронирован",
   "quick_reply_call_later": "Быстрый ответ, позвоните позже",
@@ -302,6 +302,6 @@
   "viewCertificates": "Посмотреть сертификаты",
   "visitSalon": "Посетите наш салон",
   "workingHours": "Часы работы",
-  "yearsExperience": "",
+  "yearsExperience": "лет опыта",
   "yourName": "Ваше имя"
 }

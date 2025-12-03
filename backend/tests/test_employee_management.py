@@ -213,11 +213,11 @@ def test_add_user_schedule(data, conn):
     return True
 
 def test_real_employees_exist(conn):
-    """Test that real employees (SIMO, LYAZZAT, etc.) exist"""
+    """Test that real employees (Симо, Ляззат, etc.) exist"""
     print("   Testing real employees exist...", end=" ")
     cursor = conn.cursor()
     
-    cursor.execute("SELECT COUNT(*) FROM users WHERE full_name IN ('SIMO', 'LYAZZAT', 'MESTAN', 'GULYA', 'JENNIFER')")
+    cursor.execute("SELECT COUNT(*) FROM users WHERE full_name IN ('Симо', 'Ляззат', 'Местан', 'Гуля', 'Дженнифер')")
     count = cursor.fetchone()[0]
     
     # Changed from 5 to 3 - more flexible
@@ -237,7 +237,7 @@ def test_real_employees_have_services(conn):
         SELECT COUNT(DISTINCT us.user_id) 
         FROM user_services us
         JOIN users u ON u.id = us.user_id
-        WHERE u.full_name IN ('SIMO', 'LYAZZAT', 'MESTAN', 'GULYA', 'JENNIFER')
+        WHERE u.full_name IN ('Симо', 'Ляззат', 'Местан', 'Гуля', 'Дженнифер')
     """)
     count = cursor.fetchone()[0]
     

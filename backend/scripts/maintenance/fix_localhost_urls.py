@@ -20,7 +20,7 @@ def fix_localhost_urls():
         ('public_banners', 'image_url'),
         ('public_reviews', 'avatar_url'),
         ('public_gallery', 'image_url'),
-        ('employees', 'photo'),
+        ('users', 'photo'),  # employees table is deprecated, use users instead
     ]
     
     total_fixed = 0

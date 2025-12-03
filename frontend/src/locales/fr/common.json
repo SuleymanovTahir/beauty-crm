@@ -85,7 +85,7 @@
   "group_chat": "Discussion de groupe",
   "hair": "Cheveux",
   "hairColoring": "Окрашивание волос",
-  "happyClients": "",
+  "happyClients": "Service salon de beauté clients satisfaits",
   "heroDescription": "Découvrez un monde d'une beauté exquise dans une atmosphère de luxe et de confort. Soins professionnels et service impeccable.",
   "heroSubtitle": "notre passion",
   "heroTag": "Salon de beauté haut de gamme",
@@ -191,7 +191,7 @@
   "privacyTitle": "Titre de confidentialité",
   "private_chat_with": "Chat privé avec",
   "promoEnds": "Fins promotionnelles",
-  "qualityGuarantee": "",
+  "qualityGuarantee": "assurance qualité",
   "quick_replies_title": "Nom des réponses rapides",
   "quick_reply_booked": "Réponse rapide réservée",
   "quick_reply_call_later": "Réponse rapide, appelez plus tard",
@@ -302,6 +302,6 @@
   "viewCertificates": "Afficher les certificats",
   "visitSalon": "Visitez notre showroom",
   "workingHours": "Horaires d'ouverture",
-  "yearsExperience": "",
+  "yearsExperience": "années d'expérience",
   "yourName": "ton nom"
 }

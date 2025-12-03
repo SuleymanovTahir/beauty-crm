@@ -121,7 +121,15 @@ export function ServiceDetail() {
                                         <div className="flex-1">
                                             <h4 className="text-[#2d2d2d] mb-1">{service.name}</h4>
                                             {service.duration && (
-                                                <p className="text-sm text-[#6b6b6b]">{service.duration} {t('minutes', { defaultValue: 'мин' })}</p>
+                                                <p className="text-sm text-[#6b6b6b]">
+                                                    {(() => {
+                                                        const duration = String(service.duration).trim();
+                                                        if (/^\d+$/.test(duration)) {
+                                                            return `${duration} ${t('minutes', { defaultValue: 'мин' })}`;
+                                                        }
+                                                        return duration;
+                                                    })()}
+                                                </p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-4">

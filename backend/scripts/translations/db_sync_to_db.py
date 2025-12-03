@@ -73,14 +73,21 @@ def sync_to_database():
                             continue
                         
                         # Determine target column name
-                        # For fields like "title_ru", target is "title_{lang}"
-                        # For fields like "name", target is "name_{lang}"
-                        if field_name.endswith(f"_{SOURCE_LANGUAGE}"):
-                            # Remove _ru suffix and add new language
-                            base_field = field_name[:-3]  # Remove "_ru"
-                            target_column = f"{base_field}_{lang}"
-                        else:
-                            # Direct field name
+                        # For fields like "title_ru", "title_en", "title_ar" - use as is
+                        # For fields like "name", "full_name" - append _{lang}
+                        
+                        # Check if field already has a language suffix
+                        has_lang_suffix = False
+                        for check_lang in LANGUAGES:
+                            if field_name.endswith(f"_{check_lang}"):
+                                has_lang_suffix = True
+                                # Extract base field name (e.g., "title" from "title_ru")
+                                base_field = field_name[:-3]  # Remove "_ru", "_en", etc.
+                                target_column = f"{base_field}_{lang}"
+                                break
+                        
+                        if not has_lang_suffix:
+                            # Field doesn't have language suffix, add it
                             target_column = f"{field_name}_{lang}"
                         
                         # Check if column exists

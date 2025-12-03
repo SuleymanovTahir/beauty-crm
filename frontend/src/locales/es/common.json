@@ -85,7 +85,7 @@
   "group_chat": "Chat grupal",
   "hair": "Cabello",
   "hairColoring": "Окрашивание волос",
-  "happyClients": "",
+  "happyClients": "clientes satisfechos",
   "heroDescription": "Descubra un mundo de exquisita belleza en una atmósfera de lujo y confort. Atención profesional y servicio impecable.",
   "heroSubtitle": "nuestra pasión",
   "heroTag": "salón de belleza premium",
@@ -191,7 +191,7 @@
   "privacyTitle": "Título de privacidad",
   "private_chat_with": "charla privada con",
   "promoEnds": "promociones",
-  "qualityGuarantee": "",
+  "qualityGuarantee": "garantía de calidad",
   "quick_replies_title": "Nombre de respuestas rápidas",
   "quick_reply_booked": "Respuesta rápida reservada",
   "quick_reply_call_later": "Respuesta rápida, llama más tarde.",
@@ -302,6 +302,6 @@
   "viewCertificates": "Ver certificados",
   "visitSalon": "Visita nuestra sala de exposición",
   "workingHours": "Horario de apertura",
-  "yearsExperience": "",
+  "yearsExperience": "años de experiencia",
   "yourName": "Su nombre"
 }

@@ -85,7 +85,7 @@
   "group_chat": "Топтық сөйлесу",
   "hair": "Жүн",
   "hairColoring": "Окрашивание волос",
-  "happyClients": "",
+  "happyClients": "Клиенттерге қанағаттанған",
   "heroDescription": "Керемет сұлулық әлемін сән-салтанат пен жайлылық жағдайында ашыңыз. Кәсіби күтім және мінсіз қызмет.",
   "heroSubtitle": "Біздің құмарлығымыз",
   "heroTag": "Премиум сұлулық салоны",
@@ -191,7 +191,7 @@
   "privacyTitle": "Құпиялылық туралы",
   "private_chat_with": "Жеке чат",
   "promoEnds": "Промоендер",
-  "qualityGuarantee": "",
+  "qualityGuarantee": "сапа кепілдігі",
   "quick_replies_title": "Жылдам жауаптардың аты",
   "quick_reply_booked": "Жылдам жауап сақталған",
   "quick_reply_call_later": "Жылдам жауап, кейінірек қоңырау шалыңыз",
@@ -302,6 +302,6 @@
   "viewCertificates": "Сертификаттарды қарау",
   "visitSalon": "Біздің көрме залымызға кіріңіз",
   "workingHours": "Ашу сағаттары",
-  "yearsExperience": "",
+  "yearsExperience": "тәжірибесі",
   "yourName": "сіздің атыңыз"
 }
