@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Any
 import json
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 
@@ -21,7 +22,7 @@ class SmartAssistant:
 
     def _load_preferences(self) -> Optional[Dict]:
         """Загрузить предпочтения клиента"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -29,7 +30,7 @@ class SmartAssistant:
                    preferred_time_of_day, allergies, special_notes,
                    auto_book_enabled, auto_book_interval_weeks
             FROM client_preferences
-            WHERE client_id = ?
+            WHERE client_id = %s
         """, (self.client_id,))
 
         result = c.fetchone()
@@ -50,13 +51,13 @@ class SmartAssistant:
 
     def _load_booking_history(self) -> List[Dict]:
         """Загрузить историю записей клиента"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
             SELECT service_name, datetime, master, status, revenue
             FROM bookings
-            WHERE instagram_id = ?
+            WHERE instagram_id = %s
             ORDER BY datetime DESC
             LIMIT 10
         """, (self.client_id,))
@@ -78,7 +79,7 @@ class SmartAssistant:
         """Персонализированное приветствие"""
         if not self.history:
             # Новый клиент
-            return f"Привет, {client_name}! 👋 Рады видеть тебя впервые! Я помогу тебе записаться на процедуру. Что тебя интересует?"
+            return f"Привет, {client_name}! 👋 Рады видеть тебя впервые! Я помогу тебе записаться на процедуру. Что тебя интересует%s"
 
         # Постоянный клиент
         last_booking = self.history[0]
@@ -86,9 +87,9 @@ class SmartAssistant:
         days_since = (datetime.now() - last_date).days
 
         if days_since < 7:
-            return f"Привет, {client_name}! 😊 Как впечатления от последнего визита?"
+            return f"Привет, {client_name}! 😊 Как впечатления от последнего визита%s"
         elif days_since < 30:
-            return f"Привет, {client_name}! 💖 Давно не виделись! Как дела?"
+            return f"Привет, {client_name}! 💖 Давно не виделись! Как дела%s"
         else:
             return f"Привет, {client_name}! 🌟 Соскучились! Прошло уже {days_since} дней. Пора бы нам встретиться! 😉"
 
@@ -206,7 +207,7 @@ class SmartAssistant:
         suggestion = self.suggest_next_booking()
 
         if not suggestion:
-            return "Давай запишу тебя на процедуру! Что тебя интересует?"
+            return "Давай запишу тебя на процедуру! Что тебя интересует%s"
 
         service = suggestion['service']
         master = suggestion['master']
@@ -215,38 +216,38 @@ class SmartAssistant:
 
         if confidence > 0.8:
             # Высокая уверенность - прямое предложение
-            return f"Как обычно, {service} к мастеру {master}? 😊 Могу записать на {date}!"
+            return f"Как обычно, {service} к мастеру {master}%s 😊 Могу записать на {date}!"
         elif confidence > 0.5:
             # Средняя уверенность - предложение с вопросом
-            return f"Давно не делала {service}! Записать к {master} как в прошлый раз?"
+            return f"Давно не делала {service}! Записать к {master} как в прошлый раз%s"
         else:
             # Низкая уверенность - общий вопрос
-            return "Что будем делать на этот раз? 💅"
+            return "Что будем делать на этот раз%s 💅"
 
     def save_preferences(self, preferences: Dict) -> bool:
         """Сохранить предпочтения клиента"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             now = datetime.now().isoformat()
 
             # Проверяем, есть ли уже запись
-            c.execute("SELECT id FROM client_preferences WHERE client_id = ?", (self.client_id,))
+            c.execute("SELECT id FROM client_preferences WHERE client_id = %s", (self.client_id,))
             existing = c.fetchone()
 
             if existing:
                 # Обновляем
                 c.execute("""
                     UPDATE client_preferences
-                    SET preferred_master = ?,
-                        preferred_service = ?,
-                        preferred_day_of_week = ?,
-                        preferred_time_of_day = ?,
-                        allergies = ?,
-                        special_notes = ?,
-                        updated_at = ?
-                    WHERE client_id = ?
+                    SET preferred_master = %s,
+                        preferred_service = %s,
+                        preferred_day_of_week = %s,
+                        preferred_time_of_day = %s,
+                        allergies = %s,
+                        special_notes = %s,
+                        updated_at = %s
+                    WHERE client_id = %s
                 """, (
                     preferences.get('preferred_master'),
                     preferences.get('preferred_service'),
@@ -263,7 +264,7 @@ class SmartAssistant:
                     INSERT INTO client_preferences
                     (client_id, preferred_master, preferred_service, preferred_day_of_week,
                      preferred_time_of_day, allergies, special_notes, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     self.client_id,
                     preferences.get('preferred_master'),
@@ -290,7 +291,7 @@ class SmartAssistant:
     def learn_from_booking(self, booking_data: Dict):
         """Обучиться на основе новой записи"""
         # Анализируем паттерны и обновляем предпочтения
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -298,7 +299,7 @@ class SmartAssistant:
             c.execute("""
                 SELECT master, COUNT(*) as count
                 FROM bookings
-                WHERE instagram_id = ?
+                WHERE instagram_id = %s
                 GROUP BY master
                 ORDER BY count DESC
                 LIMIT 1
@@ -308,9 +309,13 @@ class SmartAssistant:
 
             if top_master and top_master[1] >= 3:  # Если 3+ раза у одного мастера
                 c.execute("""
-                    INSERT OR REPLACE INTO client_interaction_patterns
+                    INSERT INTO client_interaction_patterns
                     (client_id, interaction_type, pattern_data, confidence_score, last_updated)
-                    VALUES (?, 'preferred_master', ?, ?, ?)
+                    VALUES (%s, 'preferred_master', %s, %s, %s)
+                    ON CONFLICT (client_id, interaction_type) DO UPDATE SET
+                    pattern_data = EXCLUDED.pattern_data,
+                    confidence_score = EXCLUDED.confidence_score,
+                    last_updated = EXCLUDED.last_updated
                 """, (
                     self.client_id,
                     json.dumps({"master": top_master[0]}),

@@ -8,6 +8,7 @@ import sqlite3
 import json
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
@@ -16,11 +17,11 @@ router = APIRouter(tags=["Automation"])
 
 def create_automation_table():
     """Создать таблицу автоматизации"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute('''CREATE TABLE IF NOT EXISTS automation_rules (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         description TEXT,
         trigger_type TEXT NOT NULL,
@@ -32,7 +33,7 @@ def create_automation_table():
     )''')
     
     c.execute('''CREATE TABLE IF NOT EXISTS automation_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         rule_id INTEGER NOT NULL,
         client_id TEXT,
         trigger_data TEXT,
@@ -55,7 +56,7 @@ async def get_automation_rules(session_token: Optional[str] = Cookie(None)):
     
     create_automation_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -112,7 +113,7 @@ async def create_automation_rule(
         if not all([name, trigger_type]):
             return JSONResponse({"error": "Name and trigger_type are required"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -150,7 +151,7 @@ async def update_automation_rule(
     create_automation_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         updates = []
@@ -197,7 +198,7 @@ async def delete_automation_rule(
     create_automation_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Удаляем логи
@@ -234,7 +235,7 @@ async def get_automation_logs(
     
     create_automation_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -283,7 +284,7 @@ def execute_automation_rule(rule_id: int, client_id: str, trigger_data: Dict[str
     create_automation_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Получаем правило

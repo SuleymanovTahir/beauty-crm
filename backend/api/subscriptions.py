@@ -8,6 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import get_current_user
 from core.subscriptions import get_subscription_types_for_role, get_all_subscription_types
 from utils.logger import log_info, log_error
@@ -39,7 +40,7 @@ async def get_user_subscriptions(current_user: dict = Depends(get_current_user))
         user_id = current_user['id']
         role = current_user.get('role', 'client')
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем доступные типы подписок для роли
@@ -109,7 +110,7 @@ async def update_user_subscription(
         if sub_type not in all_types:
             raise HTTPException(status_code=400, detail="Неверный тип подписки")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Строим SQL запрос динамически в зависимости от того, какие каналы обновляются
@@ -177,7 +178,7 @@ async def update_multiple_subscriptions(
         user_id = current_user['id']
         all_types = get_all_subscription_types()
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         for sub in subscriptions:
@@ -238,7 +239,7 @@ async def delete_account(
         # Проверяем пароль
         import hashlib
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("SELECT password_hash FROM users WHERE id = ?", (user_id,))

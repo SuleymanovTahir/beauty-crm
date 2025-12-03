@@ -2,7 +2,7 @@
 Утилита для очистки тестовых данных
 Автоматически удаляет все тестовые записи после выполнения тестов
 """
-import sqlite3
+from db.connection import get_db_connection
 from core.config import DATABASE_NAME
 from typing import List, Optional
 
@@ -38,16 +38,33 @@ class TestDataCleaner:
         Returns:
             Количество удаленных записей
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         deleted = 0
         
         try:
             if specific_usernames:
                 # Удаляем конкретных пользователей
-                placeholders = ','.join(['?' for _ in specific_usernames])
-                c.execute(f"DELETE FROM users WHERE username IN ({placeholders})", specific_usernames)
-                deleted = c.rowcount
+                placeholders = ','.join(['%s' for _ in specific_usernames])
+                # Сначала получаем ID
+                c.execute(f"SELECT id FROM users WHERE username IN ({placeholders})", tuple(specific_usernames))
+                user_ids = [row[0] for row in c.fetchall()]
+                
+                if user_ids:
+                    id_placeholders = ','.join(['%s' for _ in user_ids])
+                    c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({id_placeholders})", tuple(user_ids))
+                    c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({id_placeholders})", tuple(user_ids))
+                    # Check if tables exist before deleting
+                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='user_subscriptions'")
+                    if c.fetchone():
+                        c.execute(f"DELETE FROM user_subscriptions WHERE user_id IN ({id_placeholders})", tuple(user_ids))
+                    
+                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='broadcast_history'")
+                    if c.fetchone():
+                        c.execute(f"DELETE FROM broadcast_history WHERE sender_id IN ({id_placeholders})", tuple(user_ids))
+                        
+                    c.execute(f"DELETE FROM users WHERE id IN ({id_placeholders})", tuple(user_ids))
+                    deleted = c.rowcount
             else:
                 # Удаляем всех пользователей с тестовыми именами
                 c.execute("SELECT id, username, full_name FROM users")
@@ -59,8 +76,20 @@ class TestDataCleaner:
                         test_user_ids.append(user_id)
                 
                 if test_user_ids:
-                    placeholders = ','.join(['?' for _ in test_user_ids])
-                    c.execute(f"DELETE FROM users WHERE id IN ({placeholders})", test_user_ids)
+                    placeholders = ','.join(['%s' for _ in test_user_ids])
+                    c.execute(f"DELETE FROM user_schedule WHERE user_id IN ({placeholders})", tuple(test_user_ids))
+                    c.execute(f"DELETE FROM user_time_off WHERE user_id IN ({placeholders})", tuple(test_user_ids))
+                    
+                    # Check if tables exist before deleting
+                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='user_subscriptions'")
+                    if c.fetchone():
+                        c.execute(f"DELETE FROM user_subscriptions WHERE user_id IN ({placeholders})", tuple(test_user_ids))
+                    
+                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='broadcast_history'")
+                    if c.fetchone():
+                        c.execute(f"DELETE FROM broadcast_history WHERE sender_id IN ({placeholders})", tuple(test_user_ids))
+                        
+                    c.execute(f"DELETE FROM users WHERE id IN ({placeholders})", tuple(test_user_ids))
                     deleted = c.rowcount
             
             conn.commit()
@@ -79,7 +108,7 @@ class TestDataCleaner:
         Returns:
             Количество удаленных записей
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         deleted = 0
         
@@ -88,10 +117,16 @@ class TestDataCleaner:
                 # Удаляем конкретных клиентов
                 for client_id in specific_ids:
                     # Удаляем связанные данные
-                    c.execute("DELETE FROM conversations WHERE client_id = ?", (client_id,))
-                    c.execute("DELETE FROM bookings WHERE instagram_id = ?", (client_id,))
-                    c.execute("DELETE FROM client_loyalty_points WHERE client_id = ?", (client_id,))
-                    c.execute("DELETE FROM clients WHERE instagram_id = ?", (client_id,))
+                    c.execute("DELETE FROM conversations WHERE client_id = %s", (client_id,))
+                    c.execute("DELETE FROM bookings WHERE instagram_id = %s", (client_id,))
+                    c.execute("DELETE FROM client_loyalty_points WHERE client_id = %s", (client_id,))
+                    
+                    # Check if loyalty_transactions exists
+                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='loyalty_transactions'")
+                    if c.fetchone():
+                        c.execute("DELETE FROM loyalty_transactions WHERE client_id = %s", (client_id,))
+                        
+                    c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))
                     deleted += c.rowcount
             else:
                 # Удаляем всех клиентов с тестовыми именами
@@ -107,10 +142,16 @@ class TestDataCleaner:
                 
                 if test_client_ids:
                     for client_id in test_client_ids:
-                        c.execute("DELETE FROM conversations WHERE client_id = ?", (client_id,))
-                        c.execute("DELETE FROM bookings WHERE instagram_id = ?", (client_id,))
-                        c.execute("DELETE FROM client_loyalty_points WHERE client_id = ?", (client_id,))
-                        c.execute("DELETE FROM clients WHERE instagram_id = ?", (client_id,))
+                        c.execute("DELETE FROM conversations WHERE client_id = %s", (client_id,))
+                        c.execute("DELETE FROM bookings WHERE instagram_id = %s", (client_id,))
+                        c.execute("DELETE FROM client_loyalty_points WHERE client_id = %s", (client_id,))
+                        
+                        # Check if loyalty_transactions exists
+                        c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='loyalty_transactions'")
+                        if c.fetchone():
+                            c.execute("DELETE FROM loyalty_transactions WHERE client_id = %s", (client_id,))
+                            
+                        c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))
                         deleted += c.rowcount
             
             conn.commit()
@@ -121,7 +162,7 @@ class TestDataCleaner:
     
     def cleanup_test_bookings(self) -> int:
         """Удаляет тестовые записи"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         deleted = 0
         
@@ -146,7 +187,7 @@ class TestDataCleaner:
     
     def cleanup_test_conversations(self) -> int:
         """Удаляет тестовые сообщения"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         deleted = 0
         

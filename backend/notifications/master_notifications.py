@@ -1,11 +1,11 @@
 """
 Модуль для отправки уведомлений мастерам о новых записях
 """
-import sqlite3
 from datetime import datetime
 from typing import Optional, Dict, Any
 import asyncio
-from core.config import DATABASE_NAME, TELEGRAM_BOT_TOKEN
+from db.connection import get_db_connection
+from core.config import TELEGRAM_BOT_TOKEN
 from utils.logger import log_info, log_error
 
 
@@ -19,7 +19,7 @@ async def send_telegram_notification(telegram_username: str, message: str, user_
         import aiohttp
 
         # Получаем chat_id пользователя
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем, есть ли у нас сохраненный telegram_chat_id
@@ -116,7 +116,7 @@ async def send_email_notification(email: str, subject: str, message: str) -> boo
 
 def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
     """Получить информацию о мастере по имени"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Ищем мастера по full_name или username
@@ -275,14 +275,14 @@ def save_notification_log(
     error_message: str = None
 ):
     """Сохранить лог уведомления"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         # Создаем таблицу для логов уведомлений, если её нет
         c.execute("""
             CREATE TABLE IF NOT EXISTS notification_logs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 master_id INTEGER,
                 booking_id INTEGER,
                 notification_type TEXT,

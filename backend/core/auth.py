@@ -14,6 +14,7 @@ from db import (
     verify_user, create_session, delete_session,
 )
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import require_auth
 
@@ -57,7 +58,7 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
 
         """
         # ЗАКОММЕНТИРОВАНО: Проверка email верификации и активации
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute("SELECT is_active, email_verified, email FROM users WHERE id = ?", (user["id"],))
         result = c.fetchone()
@@ -187,7 +188,7 @@ async def api_register(
             )
 
         # Проверяем что логин и email не заняты
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("SELECT id FROM users WHERE username = ?", (username,))
@@ -347,7 +348,7 @@ async def verify_email(
     try:
         from datetime import datetime
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Находим пользователя с таким email и кодом
@@ -410,7 +411,7 @@ async def verify_email(
 async def resend_verification(email: str = Form(...)):
     """API: Повторная отправка кода верификации"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -478,7 +479,7 @@ async def resend_verification(email: str = Form(...)):
 async def verify_email_token(token: str):
     """API: Подтверждение email по токену и автоматический вход"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Находим пользователя с таким токеном
@@ -560,12 +561,12 @@ async def verify_email_token(token: str):
 async def get_positions():
     """API: Получить список доступных должностей"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Создаем таблицу если её нет
         c.execute('''CREATE TABLE IF NOT EXISTS positions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL UNIQUE,
             name_en TEXT,
             name_ar TEXT,
@@ -643,7 +644,7 @@ async def forgot_password(email: str = Form(...)):
     try:
         log_info(f"Password reset request for email: {email}", "auth")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем существует ли пользователь с таким email
@@ -711,7 +712,7 @@ async def reset_password(
     try:
         log_info("Password reset attempt with token", "auth")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем токен и срок действия

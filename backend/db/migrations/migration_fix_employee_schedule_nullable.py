@@ -3,7 +3,7 @@
 Миграция: Исправление employee_schedule - разрешить NULL для start_time/end_time
 Это позволит хранить выходные дни (когда мастер не работает)
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 
@@ -15,7 +15,7 @@ if 'DATABASE_NAME' not in globals():
     from core.config import DATABASE_NAME
 
 def migrate():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     # Включаем FK для проверки целостности при пересоздании
     conn.execute("PRAGMA foreign_keys = ON")
     c = conn.cursor()
@@ -45,7 +45,7 @@ def migrate():
         # Создаем новую таблицу с правильной структурой (start_time/end_time без NOT NULL)
         c.execute("""
             CREATE TABLE employee_schedule (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 employee_id INTEGER NOT NULL,
                 day_of_week INTEGER NOT NULL,
                 start_time TEXT,
@@ -64,7 +64,7 @@ def migrate():
             c.executemany("""
                 INSERT INTO employee_schedule
                 (id, employee_id, day_of_week, start_time, end_time, is_active)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """, existing_data)
             print(f"✅ Restored {len(existing_data)} existing records")
 

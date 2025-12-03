@@ -5,11 +5,13 @@
 import sys
 import os
 import traceback
-import sqlite3
+from pathlib import Path
 
-# Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# Add backend directory to sys.path
+backend_dir = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(backend_dir))
 
+from db.connection import get_db_connection
 from core.config import DATABASE_NAME
 
 def test_booking_reminder_settings_table():
@@ -19,11 +21,11 @@ def test_booking_reminder_settings_table():
     print("=" * 70)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем существование таблицы
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
         exists = c.fetchone()
 
         if not exists:
@@ -31,16 +33,16 @@ def test_booking_reminder_settings_table():
             return False
 
         # Получаем схему
-        c.execute("PRAGMA table_info(booking_reminder_settings)")
+        c.execute("SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name='booking_reminder_settings'")
         columns = c.fetchall()
 
         print(f"\n✅ Таблица существует, колонок: {len(columns)}")
         print("\n📋 Схема таблицы:")
         for col in columns:
-            print(f"  - {col[1]} ({col[2]})")
+            print(f"  - {col[0]} ({col[1]}, {col[2]})")
 
         # Проверяем обязательные колонки
-        column_names = [col[1] for col in columns]
+        column_names = [col[0] for col in columns]
         required_columns = ['id', 'name', 'days_before', 'hours_before', 'notification_type', 'is_enabled']
 
         missing = [col for col in required_columns if col not in column_names]
@@ -83,9 +85,9 @@ def test_reminders_api_direct():
         print("   ✅ Функция создания таблицы выполнена")
 
         # Проверяем что таблица создалась
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
         exists = c.fetchone()
         conn.close()
 
@@ -149,7 +151,7 @@ def test_toggle_reminder():
     print("=" * 70)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Найдем первую запись
@@ -167,20 +169,20 @@ def test_toggle_reminder():
 
         # Переключаем состояние
         new_state = 0 if current_state else 1
-        c.execute("UPDATE booking_reminder_settings SET is_enabled = ? WHERE id = ?", (new_state, reminder_id))
+        c.execute("UPDATE booking_reminder_settings SET is_enabled = %s WHERE id = %s", (new_state, reminder_id))
         conn.commit()
 
         print(f"   ➡️  Переключено на: {'Включено' if new_state else 'Выключено'}")
 
         # Проверяем что изменилось
-        c.execute("SELECT is_enabled FROM booking_reminder_settings WHERE id = ?", (reminder_id,))
+        c.execute("SELECT is_enabled FROM booking_reminder_settings WHERE id = %s", (reminder_id,))
         updated_state = c.fetchone()[0]
 
         if updated_state == new_state:
             print("   ✅ Состояние успешно обновлено")
 
             # Возвращаем обратно
-            c.execute("UPDATE booking_reminder_settings SET is_enabled = ? WHERE id = ?", (current_state, reminder_id))
+            c.execute("UPDATE booking_reminder_settings SET is_enabled = %s WHERE id = %s", (current_state, reminder_id))
             conn.commit()
             print(f"   ↩️  Возвращено в исходное состояние")
 

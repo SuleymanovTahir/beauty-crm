@@ -2,7 +2,7 @@
 Consolidated Users Schema Migration
 All schema changes for users table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime
 
 
@@ -14,21 +14,21 @@ def migrate_users_schema(db_path="salon_bot.db"):
     print("🔧 USERS SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(users)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'users\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
             'birthday': 'TEXT',
             'phone': 'TEXT',
             'email_verification_token': 'TEXT',
-            'email_verified': 'INTEGER DEFAULT 0',
-            'language': 'TEXT DEFAULT "ru"',
+            'email_verified': 'BOOLEAN DEFAULT FALSE',
+            'language': "TEXT DEFAULT \'ru\'",
             'notification_preferences': 'TEXT',
             'password_reset_token': 'TEXT',
             'password_reset_expires': 'TEXT',
@@ -45,7 +45,7 @@ def migrate_users_schema(db_path="salon_bot.db"):
             'specialization': 'TEXT',
             'years_of_experience': 'INTEGER',
             'certificates': 'TEXT',
-            'is_service_provider': 'INTEGER DEFAULT 0',
+            'is_service_provider': 'BOOLEAN DEFAULT FALSE',
             'gender': 'TEXT',
             # Translations
             'position_ru': 'TEXT', 'position_en': 'TEXT', 'position_ar': 'TEXT',

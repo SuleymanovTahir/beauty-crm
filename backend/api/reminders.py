@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import sqlite3
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.datetime_utils import get_current_time, get_salon_timezone
@@ -18,11 +19,11 @@ router = APIRouter(tags=["Reminders"])
 
 def create_reminders_table():
     """Создать таблицу напоминаний"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute('''CREATE TABLE IF NOT EXISTS reminders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id TEXT NOT NULL,
         title TEXT NOT NULL,
         description TEXT,
@@ -52,7 +53,7 @@ async def get_reminders(
     
     create_reminders_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -151,7 +152,7 @@ async def create_reminder(
         except ValueError:
             return JSONResponse({"error": "Invalid date format"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -190,7 +191,7 @@ async def complete_reminder(
     create_reminders_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -231,7 +232,7 @@ async def delete_reminder(
     create_reminders_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
@@ -267,7 +268,7 @@ async def get_upcoming_reminders(
     
     create_reminders_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -312,11 +313,11 @@ async def get_upcoming_reminders(
 
 def create_booking_reminder_settings_table():
     """Создать таблицу настроек напоминаний о записях"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         days_before INTEGER DEFAULT 0,
         hours_before INTEGER DEFAULT 0,
@@ -340,7 +341,7 @@ async def get_booking_reminder_settings(
 
     create_booking_reminder_settings_table()
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -400,7 +401,7 @@ async def create_booking_reminder_setting(
             return JSONResponse({"error": "At least days_before or hours_before must be > 0"},
                               status_code=400)
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -441,7 +442,7 @@ async def update_booking_reminder_setting(
     data = await request.json()
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем существование
@@ -512,7 +513,7 @@ async def toggle_booking_reminder_setting(
     create_booking_reminder_settings_table()
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем текущее состояние
@@ -557,7 +558,7 @@ async def delete_booking_reminder_setting(
     create_booking_reminder_settings_table()
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("DELETE FROM booking_reminder_settings WHERE id = ?", (setting_id,))

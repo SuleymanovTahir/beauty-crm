@@ -6,8 +6,10 @@ from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
 import sqlite3
+import os
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.datetime_utils import get_current_time, get_salon_timezone
@@ -18,11 +20,11 @@ router = APIRouter(tags=["Notifications"])
 
 def create_notifications_table():
     """Создать таблицу уведомлений"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute('''CREATE TABLE IF NOT EXISTS notifications (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id TEXT NOT NULL,
         title TEXT NOT NULL,
         message TEXT NOT NULL,
@@ -51,7 +53,7 @@ async def get_notifications(
     
     create_notifications_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -59,7 +61,7 @@ async def get_notifications(
             c.execute("""
                 SELECT id, title, message, type, is_read, created_at, action_url
                 FROM notifications 
-                WHERE user_id = ? AND is_read = 0
+                WHERE user_id = ? AND is_read = FALSE
                 ORDER BY created_at DESC
                 LIMIT ?
             """, (user["id"], limit))
@@ -107,12 +109,12 @@ async def mark_notification_read(
     create_notifications_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
             UPDATE notifications 
-            SET is_read = 1, read_at = ?
+            SET is_read = TRUE, read_at = ?
             WHERE id = ? AND user_id = ?
         """, (get_current_time().isoformat(), notification_id, user["id"]))
         
@@ -142,13 +144,13 @@ async def mark_all_notifications_read(
     create_notifications_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
             UPDATE notifications 
-            SET is_read = 1, read_at = ?
-            WHERE user_id = ? AND is_read = 0
+            SET is_read = TRUE, read_at = ?
+            WHERE user_id = ? AND is_read = FALSE
         """, (get_current_time().isoformat(), user["id"]))
         
         updated_count = c.rowcount
@@ -177,13 +179,13 @@ async def get_unread_count(
     create_notifications_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
             SELECT COUNT(*) 
             FROM notifications 
-            WHERE user_id = ? AND is_read = 0
+            WHERE user_id = ? AND is_read = FALSE
         """, (user["id"],))
         
         count = c.fetchone()[0]
@@ -202,7 +204,7 @@ def create_notification(user_id: str, title: str, message: str,
     create_notifications_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -320,13 +322,13 @@ async def get_notification_settings_api():
     try:
         user_id = 1  # TODO: Get from session
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Создаем таблицу если её нет
         c.execute("""
             CREATE TABLE IF NOT EXISTS notification_settings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 email_notifications INTEGER DEFAULT 1,
                 sms_notifications INTEGER DEFAULT 1,
@@ -345,7 +347,7 @@ async def get_notification_settings_api():
 
         c.execute("""
             SELECT * FROM notification_settings
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (user_id,))
 
         row = c.fetchone()
@@ -400,7 +402,7 @@ async def save_notification_settings(request: Request):
         # TODO: Получить user_id из сессии когда будет авторизация
         user_id = 1  # По умолчанию для первого пользователя
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем есть ли уже настройки
@@ -415,8 +417,12 @@ async def save_notification_settings(request: Request):
             # Используем динамическое обновление чтобы не ломаться если колонок нет
             
             # Сначала проверим какие колонки есть
-            c.execute("PRAGMA table_info(notification_settings)")
-            columns = [row[1] for row in c.fetchall()]
+            if os.getenv('DATABASE_TYPE') == 'postgresql':
+                c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='notification_settings'")
+                columns = [row[0] for row in c.fetchall()]
+            else:
+                c.execute("PRAGMA table_info(notification_settings)")
+                columns = [row[1] for row in c.fetchall()]
             
             update_fields = []
             params = []
@@ -531,7 +537,7 @@ async def send_manual_reminder(
             return JSONResponse({"error": "client_id required"}, status_code=400)
 
         # Получаем информацию о записи
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         if booking_id:
@@ -666,7 +672,7 @@ async def send_broadcast_message(
             return JSONResponse({"error": "message required"}, status_code=400)
 
         # Получаем список клиентов
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Базовый запрос зависит от фильтра

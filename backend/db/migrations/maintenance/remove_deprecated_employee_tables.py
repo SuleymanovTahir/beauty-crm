@@ -2,7 +2,7 @@
 """
 Миграция: Удаление устаревших таблиц employees и employee_salary_settings
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -11,14 +11,13 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
 sys.path.insert(0, backend_dir)
 
-from core.config import DATABASE_NAME
 
 
 def remove_deprecated_employee_tables():
     """Удалить устаревшие таблицы employees и employee_salary_settings"""
     print("🔧 Удаление устаревших таблиц employees...")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

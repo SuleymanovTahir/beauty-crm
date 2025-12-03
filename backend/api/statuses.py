@@ -7,6 +7,7 @@ from typing import Optional
 import sqlite3
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
@@ -21,7 +22,7 @@ async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Создаём таблицу если не существует
@@ -100,7 +101,7 @@ async def create_client_status(
         
         from datetime import datetime
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем существование
@@ -136,7 +137,7 @@ async def delete_client_status(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем что это не системный статус
@@ -171,7 +172,7 @@ async def get_booking_statuses(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -245,7 +246,7 @@ async def create_booking_status(
         
         from datetime import datetime
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("SELECT status_key FROM booking_statuses WHERE status_key = ?", (status_key,))

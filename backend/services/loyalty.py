@@ -8,6 +8,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 
@@ -19,14 +20,14 @@ class LoyaltyService:
 
     def get_client_loyalty(self, client_id: str) -> Optional[Dict]:
         """Получить данные лояльности клиента"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             c.execute("""
                 SELECT total_points, available_points, spent_points, loyalty_level
                 FROM client_loyalty_points
-                WHERE client_id = ?
+                WHERE client_id = %s
             """, (client_id,))
 
             result = c.fetchone()
@@ -56,16 +57,17 @@ class LoyaltyService:
 
     def _create_loyalty_account(self, client_id: str) -> bool:
         """Создать аккаунт лояльности для нового клиента"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             now = datetime.now().isoformat()
 
             c.execute("""
-                INSERT OR IGNORE INTO client_loyalty_points
+                INSERT INTO client_loyalty_points
                 (client_id, total_points, available_points, spent_points, loyalty_level, created_at, updated_at)
-                VALUES (?, 0, 0, 0, 'bronze', ?, ?)
+                VALUES (%s, 0, 0, 0, 'bronze', %s, %s)
+                ON CONFLICT (client_id) DO NOTHING
             """, (client_id, now, now))
 
             conn.commit()
@@ -99,7 +101,7 @@ class LoyaltyService:
         Returns:
             bool: Успешность операции
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -115,7 +117,7 @@ class LoyaltyService:
             c.execute("""
                 SELECT points_multiplier
                 FROM loyalty_levels
-                WHERE level_name = ?
+                WHERE level_name = %s
             """, (loyalty["loyalty_level"],))
 
             multiplier_row = c.fetchone()
@@ -128,16 +130,16 @@ class LoyaltyService:
             c.execute("""
                 INSERT INTO loyalty_transactions
                 (client_id, transaction_type, points, reason, booking_id, created_at, expires_at)
-                VALUES (?, 'earn', ?, ?, ?, ?, ?)
+                VALUES (%s, 'earn', %s, %s, %s, %s, %s)
             """, (client_id, actual_points, reason, booking_id, now.isoformat(), expires_at))
 
             # Обновляем баланс
             c.execute("""
                 UPDATE client_loyalty_points
-                SET total_points = total_points + ?,
-                    available_points = available_points + ?,
-                    updated_at = ?
-                WHERE client_id = ?
+                SET total_points = total_points + %s,
+                    available_points = available_points + %s,
+                    updated_at = %s
+                WHERE client_id = %s
             """, (actual_points, actual_points, now.isoformat(), client_id))
 
             # Проверяем, не достиг ли клиент нового уровня
@@ -173,7 +175,7 @@ class LoyaltyService:
         Returns:
             bool: Успешность операции
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -181,7 +183,7 @@ class LoyaltyService:
             c.execute("""
                 SELECT available_points
                 FROM client_loyalty_points
-                WHERE client_id = ?
+                WHERE client_id = %s
             """, (client_id,))
 
             result = c.fetchone()
@@ -195,16 +197,16 @@ class LoyaltyService:
             c.execute("""
                 INSERT INTO loyalty_transactions
                 (client_id, transaction_type, points, reason, booking_id, created_at)
-                VALUES (?, 'spend', ?, ?, ?, ?)
+                VALUES (%s, 'spend', %s, %s, %s, %s)
             """, (client_id, -points, reason, booking_id, now))
 
             # Обновляем баланс
             c.execute("""
                 UPDATE client_loyalty_points
-                SET available_points = available_points - ?,
-                    spent_points = spent_points + ?,
-                    updated_at = ?
-                WHERE client_id = ?
+                SET available_points = available_points - %s,
+                    spent_points = spent_points + %s,
+                    updated_at = %s
+                WHERE client_id = %s
             """, (points, points, now, client_id))
 
             conn.commit()
@@ -224,7 +226,7 @@ class LoyaltyService:
         cursor.execute("""
             SELECT total_points, loyalty_level
             FROM client_loyalty_points
-            WHERE client_id = ?
+            WHERE client_id = %s
         """, (client_id,))
 
         result = cursor.fetchone()
@@ -237,7 +239,7 @@ class LoyaltyService:
         cursor.execute("""
             SELECT level_name
             FROM loyalty_levels
-            WHERE min_points <= ?
+            WHERE min_points <= %s
             ORDER BY min_points DESC
             LIMIT 1
         """, (total_points,))
@@ -253,8 +255,8 @@ class LoyaltyService:
             now = datetime.now().isoformat()
             cursor.execute("""
                 UPDATE client_loyalty_points
-                SET loyalty_level = ?, updated_at = ?
-                WHERE client_id = ?
+                SET loyalty_level = %s, updated_at = %s
+                WHERE client_id = %s
             """, (new_level, now, client_id))
 
             log_info(f"Level upgraded for {client_id}: {current_level} -> {new_level}", "loyalty")
@@ -265,16 +267,16 @@ class LoyaltyService:
         limit: int = 50
     ) -> List[Dict]:
         """Получить историю транзакций баллов"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             c.execute("""
                 SELECT transaction_type, points, reason, created_at, expires_at
                 FROM loyalty_transactions
-                WHERE client_id = ?
+                WHERE client_id = %s
                 ORDER BY created_at DESC
-                LIMIT ?
+                LIMIT %s
             """, (client_id, limit))
 
             transactions = []
@@ -297,7 +299,7 @@ class LoyaltyService:
 
     def get_all_levels(self) -> List[Dict]:
         """Получить все уровни лояльности"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -334,7 +336,7 @@ class LoyaltyService:
         Returns:
             Dict с original_price, discount_percent, discount_amount, final_price
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -342,7 +344,7 @@ class LoyaltyService:
             c.execute("""
                 SELECT loyalty_level
                 FROM client_loyalty_points
-                WHERE client_id = ?
+                WHERE client_id = %s
             """, (client_id,))
 
             result = c.fetchone()
@@ -360,7 +362,7 @@ class LoyaltyService:
             c.execute("""
                 SELECT discount_percent
                 FROM loyalty_levels
-                WHERE level_name = ?
+                WHERE level_name = %s
             """, (loyalty_level,))
 
             discount_row = c.fetchone()

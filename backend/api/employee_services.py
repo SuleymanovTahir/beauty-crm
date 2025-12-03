@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from core.auth import get_current_user_or_redirect as get_current_user
@@ -20,7 +21,7 @@ async def get_user_services(
 ):
     """Получить все услуги сотрудника с настройками"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
         
@@ -58,7 +59,7 @@ async def get_user_services(
         c.execute("""
             SELECT id, name, name_ru, name_ar, category, price, duration
             FROM services
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY category, name
         """)
         
@@ -112,7 +113,7 @@ async def add_user_service(
         if not service_id:
             return JSONResponse({"error": "service_id required"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Check if already assigned
@@ -158,7 +159,7 @@ async def update_user_service(
     try:
         data = await request.json()
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Build update query
@@ -221,7 +222,7 @@ async def delete_user_service(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("DELETE FROM user_services WHERE user_id = ? AND service_id = ?",

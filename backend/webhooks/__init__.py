@@ -557,9 +557,11 @@ async def process_message_background(messaging_event: dict):
                     
                     # ✅ ПРОВЕРКА НА ДУБЛИКАТЫ: Проверяем существует ли уже такая запись
                     import sqlite3
+                    from core.config import DATABASE_NAME
+                    from db.connection import get_db_connection
                     from datetime import datetime as dt_now, timedelta
                     
-                    conn_check = sqlite3.connect(DATABASE_NAME)
+                    conn_check = get_db_connection()
                     c_check = conn_check.cursor()
                     
                     # Проверяем записи за последние 5 минут с теми же параметрами

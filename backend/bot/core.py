@@ -10,7 +10,9 @@ from bot.tools import get_available_time_slots, check_time_slot_available
 from utils.datetime_utils import get_current_time
 
 
-from core.config import DATABASE_NAME, GEMINI_API_KEY, GEMINI_MODEL
+from core.config import DATABASE_NAME
+from db.connection import get_db_connection
+from core.config import GEMINI_API_KEY, GEMINI_MODEL
 from db import (
     get_salon_settings,
     get_bot_settings,
@@ -348,9 +350,9 @@ class SalonBot:
                                 if service_name:
                                     from bot.tools import get_available_time_slots
                                     # Функция уже парсит длительность, используем её логику
-                                    conn = sqlite3.connect(DATABASE_NAME)
+                                    conn = get_db_connection()
                                     c = conn.cursor()
-                                    c.execute("SELECT duration FROM services WHERE name_ru LIKE ? OR name LIKE ?", 
+                                    c.execute("SELECT duration FROM services WHERE name_ru LIKE %s OR name LIKE %s", 
                                              (f"%{service_name}%", f"%{service_name}%"))
                                     dur_row = c.fetchone()
                                     if dur_row and dur_row[0]:
@@ -406,13 +408,13 @@ class SalonBot:
                 print(f"🔄 Detected 'same time' intent")
                 
                 # Fetch last booking
-                conn = sqlite3.connect(DATABASE_NAME)
+                conn = get_db_connection()
                 c = conn.cursor()
                 try:
                     c.execute("""
                         SELECT datetime, master, service_name
                         FROM bookings 
-                        WHERE instagram_id = ? 
+                        WHERE instagram_id = %s 
                         AND status != 'cancelled'
                         ORDER BY created_at DESC LIMIT 1
                     """, (instagram_id,))
@@ -479,7 +481,7 @@ class SalonBot:
     (Он делает ту же услугу: {lb_service})
     
     ⚠️ СКАЖИ (ПОЗИТИВНО):
-    "Отлично! На это же время свободен мастер {found_other_master}. Записать друга к нему?"
+    "Отлично! На это же время свободен мастер {found_other_master}. Записать друга к нему%s"
     (Не извиняйся, просто предложи альтернативу!)
     """
                                 else:

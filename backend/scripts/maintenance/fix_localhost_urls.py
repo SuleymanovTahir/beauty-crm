@@ -3,14 +3,14 @@
 Проблема: В базе данных сохранены URL вида http://localhost:8000/static/...
 Решение: Заменить на относительные пути /static/...
 """
-import sqlite3
+from db.connection import get_db_connection
 import re
 
 DATABASE_NAME = "salon_bot.db"
 
 def fix_localhost_urls():
     """Исправить все localhost URL на относительные пути"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Паттерн для поиска localhost URL
@@ -45,7 +45,7 @@ def fix_localhost_urls():
                         relative_path = match.group(1)
                         
                         # Обновить запись
-                        c.execute(f"UPDATE {table} SET {column} = ? WHERE id = ?", (relative_path, row_id))
+                        c.execute(f"UPDATE {table} SET {column} = %s WHERE id = %s", (relative_path, row_id))
                         print(f"   Исправлено: {url} → {relative_path}")
                         total_fixed += 1
             

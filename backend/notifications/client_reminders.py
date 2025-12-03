@@ -1,11 +1,11 @@
 """
 Модуль для отправки напоминаний клиентам о записях
 """
-import sqlite3
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 import asyncio
-from core.config import DATABASE_NAME, PAGE_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, INSTAGRAM_BUSINESS_ID
+from db.connection import get_db_connection
+from core.config import PAGE_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, INSTAGRAM_BUSINESS_ID
 from utils.logger import log_info, log_error
 
 
@@ -55,7 +55,7 @@ async def send_telegram_reminder(client_id: str, message: str) -> bool:
         import aiohttp
 
         # Получаем telegram_chat_id клиента
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -105,7 +105,7 @@ async def send_whatsapp_reminder(client_id: str, message: str) -> bool:
 
 def get_client_preferred_messenger(client_id: str) -> Optional[str]:
     """Получить предпочтительный мессенджер клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Пытаемся получить из таблицы clients (если она существует)
@@ -128,7 +128,7 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
 
     # Если preferred_messenger не указан, определяем автоматически
     # по последним сообщениям
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверяем Instagram
@@ -247,7 +247,7 @@ async def send_reminders_for_upcoming_bookings(hours_before: int = 24) -> List[D
     Returns:
         Список результатов отправки
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Вычисляем временной интервал
@@ -314,14 +314,14 @@ def save_reminder_log(
     error_message: str = None
 ):
     """Сохранить лог напоминания"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         # Создаем таблицу для логов напоминаний, если её нет
         c.execute("""
             CREATE TABLE IF NOT EXISTS reminder_logs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 booking_id INTEGER,
                 client_id TEXT,
                 messenger_type TEXT,

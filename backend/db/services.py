@@ -5,7 +5,6 @@ import sqlite3
 from datetime import datetime
 from typing import Optional
 
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 
@@ -25,7 +24,7 @@ def get_all_services(active_only=True, include_positions=False):
     c = conn.cursor()
 
     if active_only:
-        c.execute("SELECT * FROM services WHERE is_active = 1 ORDER BY category, name")
+        c.execute("SELECT * FROM services WHERE is_active = TRUE ORDER BY category, name")
     else:
         c.execute("SELECT * FROM services ORDER BY category, name")
 
@@ -45,7 +44,7 @@ def get_all_services(active_only=True, include_positions=False):
             SELECT p.id, p.name
             FROM service_positions sp
             JOIN positions p ON sp.position_id = p.id
-            WHERE sp.service_id = ?
+            WHERE sp.service_id = %s
             ORDER BY p.name
         """, (service_id,))
 
@@ -83,7 +82,7 @@ def get_service_by_key(service_key):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM services WHERE service_key = ?", (service_key,))
+    c.execute("SELECT * FROM services WHERE service_key = %s", (service_key,))
     service = c.fetchone()
     
     conn.close()
@@ -95,7 +94,7 @@ def get_service(service_id):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM services WHERE id = ?", (service_id,))
+    c.execute("SELECT * FROM services WHERE id = %s", (service_id,))
     result = c.fetchone()
     
     if result:
@@ -122,7 +121,7 @@ def create_service(service_key, name, name_ru, price, currency, category,
         c.execute("""INSERT INTO services
                      (service_key, name, name_ru, name_ar, price, currency, category,
                       description, description_ru, description_ar, benefits, position_id, created_at, updated_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   (service_key, name, name_ru, name_ar, price, currency, category,
                    description, description_ru, description_ar, benefits_str, position_id, now, now))
         conn.commit()
@@ -147,14 +146,14 @@ def update_service(service_id, **kwargs):
         elif key == 'is_active':
             # Преобразуем is_active в число (0 или 1)
             value = 1 if value in [True, 1, '1', 'true', 'True'] else 0
-        updates.append(f"{key} = ?")
+        updates.append(f"{key} = %s")
         params.append(value)
     
-    updates.append("updated_at = ?")
+    updates.append("updated_at = %s")
     params.append(datetime.now().isoformat())
     params.append(service_id)
     
-    query = f"UPDATE services SET {', '.join(updates)} WHERE id = ?"
+    query = f"UPDATE services SET {', '.join(updates)} WHERE id = %s"
     c.execute(query, params)
     
     # --- SYNC UPDATES TO EMPLOYEES ---
@@ -163,15 +162,15 @@ def update_service(service_id, **kwargs):
     sync_params = []
     
     if 'price' in kwargs:
-        sync_updates.append("price = ?")
+        sync_updates.append("price = %s")
         sync_params.append(kwargs['price'])
         
     if 'duration' in kwargs:
-        sync_updates.append("duration = ?")
+        sync_updates.append("duration = %s")
         sync_params.append(kwargs['duration'])
         
     if sync_updates:
-        sync_query = f"UPDATE user_services SET {', '.join(sync_updates)} WHERE service_id = ?"
+        sync_query = f"UPDATE user_services SET {', '.join(sync_updates)} WHERE service_id = %s"
         sync_params.append(service_id)
         c.execute(sync_query, sync_params)
         from utils.logger import log_info
@@ -188,7 +187,7 @@ def delete_service(service_id):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("DELETE FROM services WHERE id = ?", (service_id,))
+    c.execute("DELETE FROM services WHERE id = %s", (service_id,))
     
     conn.commit()
     affected = c.rowcount
@@ -211,9 +210,9 @@ def get_all_special_packages(active_only=True):
     
     if active_only:
         c.execute("""SELECT * FROM special_packages 
-                     WHERE is_active = 1 
-                     AND valid_from <= ? 
-                     AND valid_until >= ?
+                     WHERE is_active = TRUE 
+                     AND valid_from <= %s 
+                     AND valid_until >= %s
                      ORDER BY created_at DESC""", (now, now))
     else:
         c.execute("SELECT * FROM special_packages ORDER BY created_at DESC")
@@ -228,7 +227,7 @@ def get_special_package_by_id(package_id):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM special_packages WHERE id = ?", (package_id,))
+    c.execute("SELECT * FROM special_packages WHERE id = %s", (package_id,))
     package = c.fetchone()
     
     conn.close()
@@ -244,9 +243,9 @@ def find_special_package_by_keywords(message: str):
     message_lower = message.lower()
     
     c.execute("""SELECT * FROM special_packages 
-                 WHERE is_active = 1 
-                 AND valid_from <= ? 
-                 AND valid_until >= ?""", (now, now))
+                 WHERE is_active = TRUE 
+                 AND valid_from <= %s 
+                 AND valid_until >= %s""", (now, now))
     
     packages = c.fetchall()
     conn.close()
@@ -283,7 +282,7 @@ def create_special_package(name, name_ru, original_price, special_price, currenc
                       special_price, currency, discount_percent, services_included, 
                       promo_code, keywords, valid_from, valid_until, created_at, 
                       updated_at, max_usage)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   (name, name_ru, description, description_ru, original_price, 
                    special_price, currency, discount_percent, services_str, 
                    promo_code, keywords_str, valid_from, valid_until, now, now, 
@@ -311,14 +310,14 @@ def update_special_package(package_id, **kwargs):
             value = ','.join(value)
         elif key == 'keywords' and isinstance(value, list):
             value = ','.join(value)
-        updates.append(f"{key} = ?")
+        updates.append(f"{key} = %s")
         params.append(value)
     
-    updates.append("updated_at = ?")
+    updates.append("updated_at = %s")
     params.append(datetime.now().isoformat())
     params.append(package_id)
     
-    query = f"UPDATE special_packages SET {', '.join(updates)} WHERE id = ?"
+    query = f"UPDATE special_packages SET {', '.join(updates)} WHERE id = %s"
     c.execute(query, params)
     
     conn.commit()
@@ -331,7 +330,7 @@ def delete_special_package(package_id):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("DELETE FROM special_packages WHERE id = ?", (package_id,))
+    c.execute("DELETE FROM special_packages WHERE id = %s", (package_id,))
     
     conn.commit()
     conn.close()
@@ -343,7 +342,7 @@ def increment_package_usage(package_id):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("UPDATE special_packages SET usage_count = usage_count + 1 WHERE id = ?", 
+    c.execute("UPDATE special_packages SET usage_count = usage_count + 1 WHERE id = %s", 
               (package_id,))
     
     conn.commit()
@@ -361,7 +360,7 @@ def toggle_service_active_status(service_id):
     
     try:
         # Получаем текущий статус
-        c.execute("SELECT is_active FROM services WHERE id = ?", (service_id,))
+        c.execute("SELECT is_active FROM services WHERE id = %s", (service_id,))
         result = c.fetchone()
         
         if not result:
@@ -377,7 +376,7 @@ def toggle_service_active_status(service_id):
         
         # Обновляем статус
         c.execute(
-            "UPDATE services SET is_active = ?, updated_at = ? WHERE id = ?", 
+            "UPDATE services SET is_active = %s, updated_at = %s WHERE id = %s", 
             (new_status, datetime.now().isoformat(), service_id)
         )
         
@@ -389,7 +388,7 @@ def toggle_service_active_status(service_id):
         conn.commit()
         
         # Проверяем результат
-        c.execute("SELECT is_active FROM services WHERE id = ?", (service_id,))
+        c.execute("SELECT is_active FROM services WHERE id = %s", (service_id,))
         updated = c.fetchone()
         final_status = bool(updated[0]) if updated else None
         
@@ -445,14 +444,14 @@ def get_service_positions(service_id):
     Returns:
         List[dict]: Список должностей с id и name
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT p.id, p.name
         FROM service_positions sp
         JOIN positions p ON sp.position_id = p.id
-        WHERE sp.service_id = ?
+        WHERE sp.service_id = %s
         ORDER BY p.name
     """, (service_id,))
 
@@ -473,19 +472,19 @@ def update_service_positions(service_id, position_ids):
     Returns:
         bool: True если успешно
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         # 1. Удаляем все существующие связи для этой услуги
-        c.execute("DELETE FROM service_positions WHERE service_id = ?", (service_id,))
+        c.execute("DELETE FROM service_positions WHERE service_id = %s", (service_id,))
 
         # 2. Добавляем новые связи
         if position_ids:
             for position_id in position_ids:
                 c.execute("""
                     INSERT INTO service_positions (service_id, position_id)
-                    VALUES (?, ?)
+                    VALUES (%s, %s)
                 """, (service_id, position_id))
 
         conn.commit()
@@ -516,13 +515,13 @@ def add_service_position(service_id, position_id):
     Returns:
         bool: True если успешно
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         c.execute("""
             INSERT OR IGNORE INTO service_positions (service_id, position_id)
-            VALUES (?, ?)
+            VALUES (%s, %s)
         """, (service_id, position_id))
 
         conn.commit()
@@ -549,13 +548,13 @@ def remove_service_position(service_id, position_id):
     Returns:
         bool: True если успешно
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         c.execute("""
             DELETE FROM service_positions
-            WHERE service_id = ? AND position_id = ?
+            WHERE service_id = %s AND position_id = %s
         """, (service_id, position_id))
 
         conn.commit()

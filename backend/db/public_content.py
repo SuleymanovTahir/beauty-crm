@@ -4,7 +4,7 @@
 import sqlite3
 from typing import List, Dict, Optional
 from datetime import datetime
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 
@@ -19,7 +19,7 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
     Returns:
         List[Dict]: Список отзывов
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -46,7 +46,7 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
                 COALESCE(employee_name_{language}, employee_name_en, employee_name_ru, employee_name) as employee_name,
                 COALESCE(employee_position_{language}, employee_position_en, employee_position_ru, employee_position) as employee_position
             FROM public_reviews
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY display_order DESC, created_at DESC
         """
         
@@ -77,7 +77,7 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
     Returns:
         List[Dict]: Список вопросов и ответов
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
@@ -98,7 +98,7 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
                 category,
                 display_order
             FROM public_faq
-            WHERE is_active = 1
+            WHERE is_active = TRUE
         """
         
         if category:
@@ -130,20 +130,20 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
     Returns:
         List[Dict]: Список элементов галереи
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
-        # Note: Gallery usually returns ALL fields because frontend might need them?
+        # Note: Gallery usually returns ALL fields because frontend might need them%s
         # But here we are returning specific fields.
         # Wait, the previous implementation returned title_ru, description_ru hardcoded!
-        # We should return ALL localized fields or at least the requested language?
+        # We should return ALL localized fields or at least the requested language%s
         # The API signature doesn't take language.
         # Let's look at how it's used.
         # Frontend `Portfolio.tsx` calls `getPublicGallery`.
         # It expects `title`.
-        # If we don't pass language, we should probably return ALL fields so frontend can choose?
+        # If we don't pass language, we should probably return ALL fields so frontend can choose%s
         # OR we should update the API to take language.
         # `backend/api/public_content.py` -> `get_gallery` DOES NOT take language.
         # But `backend/api/public.py` -> `get_public_gallery` DOES NOT take language.
@@ -158,7 +158,7 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         """
         
         if category:
-            query += " AND category = ?"
+            query += " AND category = %s"
             params = [category]
         else:
             params = []
@@ -191,7 +191,7 @@ def add_review(data: Dict) -> Optional[int]:
     Returns:
         int: ID созданного отзыва или None при ошибке
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -201,7 +201,7 @@ def add_review(data: Dict) -> Optional[int]:
                 text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order,
                 employee_name, employee_name_ru, employee_name_en, employee_name_ar,
                 employee_position, employee_position_ru, employee_position_en, employee_position_ar
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('author_name'),
             data.get('rating', 5),
@@ -250,7 +250,7 @@ def add_faq(data: Dict) -> Optional[int]:
     Returns:
         int: ID созданного FAQ или None при ошибке
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -259,7 +259,7 @@ def add_faq(data: Dict) -> Optional[int]:
                 question_ru, question_en, question_ar,
                 answer_ru, answer_en, answer_ar,
                 category, is_active, display_order
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('question_ru'),
             data.get('question_en'),
@@ -295,7 +295,7 @@ def add_gallery_item(data: Dict) -> Optional[int]:
     Returns:
         int: ID созданного элемента или None при ошибке
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -304,7 +304,7 @@ def add_gallery_item(data: Dict) -> Optional[int]:
                 title_ru, title_en, title_ar,
                 description_ru, description_en, description_ar,
                 image_url, category, is_active, display_order
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             data.get('title_ru'),
             data.get('title_en'),

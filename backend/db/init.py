@@ -1,7 +1,7 @@
 """
 Инициализация базы данных
 """
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime
 import hashlib
 
@@ -17,11 +17,10 @@ from utils.logger import log_info, log_warning
 
 def init_database():
     """Создать базу данных и все таблицы"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
-    # Включаем поддержку foreign keys
-    c.execute("PRAGMA foreign_keys = ON")
+    # PostgreSQL не использует PRAGMA, foreign keys включены по умолчанию
     
     # Таблица клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS clients
@@ -31,29 +30,29 @@ def init_database():
               name TEXT,
               first_contact TEXT,
               last_contact TEXT,
-              total_messages INTEGER DEFAULT 0,
+              total_messages BOOLEAN DEFAULT FALSE,
               labels TEXT,
               status TEXT DEFAULT 'new',
               lifetime_value REAL DEFAULT 0,
               profile_pic TEXT,
               notes TEXT,
-              is_pinned INTEGER DEFAULT 0,
+              is_pinned BOOLEAN DEFAULT FALSE,
               detected_language TEXT DEFAULT 'ru',
               gender TEXT,
               card_number TEXT,
               discount REAL DEFAULT 0,
-              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-              total_visits INTEGER DEFAULT 0,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              total_visits BOOLEAN DEFAULT FALSE,
               additional_phone TEXT,
-              newsletter_agreed INTEGER DEFAULT 0,
-              personal_data_agreed INTEGER DEFAULT 0,
+              newsletter_agreed BOOLEAN DEFAULT FALSE,
+              personal_data_agreed BOOLEAN DEFAULT FALSE,
               total_spend REAL DEFAULT 0,
               paid_amount REAL DEFAULT 0,
               birthday TEXT,
               email TEXT,
               password_hash TEXT,
               last_login TEXT,
-              is_verified INTEGER DEFAULT 0,
+              is_verified BOOLEAN DEFAULT FALSE,
               preferred_messenger TEXT,
               language TEXT DEFAULT 'ru',
               bot_mode TEXT DEFAULT 'assistant',
@@ -105,7 +104,7 @@ def init_database():
         contextual_rules TEXT,
         auto_cancel_discounts TEXT DEFAULT 'Не предлагай скидки и специальные предложения автоматически. Предлагай их только если клиент явно интересуется скидками.',
         comment_reply_settings TEXT DEFAULT '{}',
-        manager_consultation_enabled INTEGER DEFAULT 1,
+        manager_consultation_enabled BOOLEAN DEFAULT TRUE,
         manager_consultation_prompt TEXT,
         booking_data_collection TEXT,
         booking_time_logic TEXT,
@@ -116,8 +115,15 @@ def init_database():
     )''')
 
     # Миграция: добавить отсутствующие колонки в bot_settings
-    c.execute("PRAGMA table_info(bot_settings)")
-    bot_columns = [col[1] for col in c.fetchall()]
+    try:
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='bot_settings'
+        """)
+        bot_columns = [row[0] for row in c.fetchall()]
+    except:
+        bot_columns = []
 
     # Список колонок которые могут отсутствовать в старой схеме
     migrations_needed = {
@@ -167,9 +173,9 @@ def init_database():
         currency TEXT DEFAULT 'AED',
         birthday_discount TEXT DEFAULT '15%',
         payment_methods TEXT DEFAULT 'Наличные, карта',
-        prepayment_required INTEGER DEFAULT 0,
+        prepayment_required BOOLEAN DEFAULT FALSE,
         parking_info TEXT,
-        wifi_available INTEGER DEFAULT 1,
+        wifi_available BOOLEAN DEFAULT TRUE,
         updated_at TEXT,
         main_location TEXT,
         main_location_ru TEXT,
@@ -178,8 +184,23 @@ def init_database():
     )''')
 
     # Миграция: добавить bot_name_en и bot_name_ar если их нет
-    c.execute("PRAGMA table_info(salon_settings)")
-    columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='salon_settings'
+
+        """)
+
+        columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        columns = []
     if 'bot_name_en' not in columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_en TEXT")
     if 'bot_name_ar' not in columns:
@@ -208,18 +229,18 @@ def init_database():
 
     # Таблица истории чата
     c.execute('''CREATE TABLE IF NOT EXISTS chat_history
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   instagram_id TEXT,
                   message TEXT,
                   sender TEXT,
                   timestamp TEXT,
                   language TEXT,
-                  is_read INTEGER DEFAULT 0,
+                  is_read BOOLEAN DEFAULT FALSE,
                   message_type TEXT DEFAULT 'text')''')
 
     # Таблица записей
     c.execute('''CREATE TABLE IF NOT EXISTS bookings
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   instagram_id TEXT,
                   service_name TEXT,
                   master TEXT,
@@ -234,19 +255,39 @@ def init_database():
                   special_package_id INTEGER)''')
 
     # Таблица настроек напоминаний о записях
-    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        booking_id INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        reminder_time TEXT NOT NULL,
-        is_enabled INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (booking_id) REFERENCES bookings(id)
-    )''')
+    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings
+                 (id SERIAL PRIMARY KEY,
+                  name TEXT NOT NULL,
+                  days_before INTEGER DEFAULT 0,
+                  hours_before INTEGER DEFAULT 0,
+                  notification_type TEXT DEFAULT 'email',
+                  is_enabled BOOLEAN DEFAULT TRUE,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # Таблица отправленных напоминаний
+    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminders_sent
+                 (id SERIAL PRIMARY KEY,
+                  booking_id INTEGER NOT NULL,
+                  reminder_setting_id INTEGER NOT NULL,
+                  sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  status TEXT DEFAULT 'sent',
+                  error_message TEXT,
+                  UNIQUE(booking_id, reminder_setting_id),
+                  FOREIGN KEY (booking_id) REFERENCES bookings(id),
+                  FOREIGN KEY (reminder_setting_id) REFERENCES booking_reminder_settings(id))''')
+
 
     # Миграция: добавить master в bookings
-    c.execute("PRAGMA table_info(bookings)")
-    booking_columns = [col[1] for col in c.fetchall()]
+    try:
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='bookings'
+        """)
+        booking_columns = [row[0] for row in c.fetchall()]
+    except:
+        booking_columns = []
     if 'master' not in booking_columns:
         c.execute("ALTER TABLE bookings ADD COLUMN master TEXT")
 
@@ -262,7 +303,7 @@ def init_database():
 
     # Таблица взаимодействий
     c.execute('''CREATE TABLE IF NOT EXISTS client_interactions
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   instagram_id TEXT,
                   interaction_type TEXT,
                   timestamp TEXT,
@@ -270,7 +311,7 @@ def init_database():
 
     # Таблица истории переписки
     c.execute('''CREATE TABLE IF NOT EXISTS conversations
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   client_id TEXT,
                   role TEXT,
                   content TEXT,
@@ -279,7 +320,7 @@ def init_database():
 
     # Таблица должностей (Positions)
     c.execute('''CREATE TABLE IF NOT EXISTS positions
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   name TEXT NOT NULL,
                   name_en TEXT,
                   name_ru TEXT,
@@ -291,14 +332,21 @@ def init_database():
                   name_zh TEXT,
                   name_pt TEXT,
                   description TEXT,
-                  sort_order INTEGER DEFAULT 0,
-                  is_active INTEGER DEFAULT 1,
+                  sort_order BOOLEAN DEFAULT FALSE,
+                  is_active BOOLEAN DEFAULT TRUE,
                   created_at TEXT,
                   updated_at TEXT)''')
     
     # Миграция: добавить отсутствующие колонки в positions
-    c.execute("PRAGMA table_info(positions)")
-    pos_columns = [col[1] for col in c.fetchall()]
+    try:
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='positions'
+        """)
+        position_columns = [row[0] for row in c.fetchall()]
+    except:
+        position_columns = []
     pos_migrations = {
         'name_en': 'TEXT',
         'name_ru': 'TEXT',
@@ -314,12 +362,12 @@ def init_database():
         'updated_at': 'TEXT'
     }
     for col, col_type in pos_migrations.items():
-        if col not in pos_columns:
+        if col not in position_columns:
             c.execute(f"ALTER TABLE positions ADD COLUMN {col} {col_type}")
 
     # Таблица пользователей
     c.execute('''CREATE TABLE IF NOT EXISTS users
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   username TEXT UNIQUE NOT NULL,
                   password_hash TEXT NOT NULL,
                   full_name TEXT,
@@ -327,7 +375,7 @@ def init_database():
                   role TEXT DEFAULT 'employee',
                   created_at TEXT,
                   last_login TEXT,
-                  is_active INTEGER DEFAULT 1,
+                  is_active BOOLEAN DEFAULT TRUE,
                   position TEXT,
                   photo TEXT,
                   photo_url TEXT,
@@ -336,11 +384,18 @@ def init_database():
                   specialization TEXT,
                   years_of_experience INTEGER,
                   certificates TEXT,
-                  is_service_provider INTEGER DEFAULT 0)''')
+                  is_service_provider BOOLEAN DEFAULT FALSE)''')
 
     # Миграция: добавить отсутствующие колонки в users
-    c.execute("PRAGMA table_info(users)")
-    user_columns = [col[1] for col in c.fetchall()]
+    try:
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='users'
+        """)
+        user_columns = [row[0] for row in c.fetchall()]
+    except:
+        user_columns = []
 
     # Список колонок которые могут отсутствовать в старой схеме
     user_migrations = {
@@ -362,7 +417,7 @@ def init_database():
 
     # Таблица сессий
     c.execute('''CREATE TABLE IF NOT EXISTS sessions
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   user_id INTEGER,
                   session_token TEXT UNIQUE,
                   created_at TEXT,
@@ -371,7 +426,7 @@ def init_database():
 
     # Таблица логов активности
     c.execute('''CREATE TABLE IF NOT EXISTS activity_log
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   user_id INTEGER,
                   action TEXT,
                   entity_type TEXT,
@@ -382,7 +437,7 @@ def init_database():
 
     # Таблица кастомных статусов
     c.execute('''CREATE TABLE IF NOT EXISTS custom_statuses
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   status_key TEXT UNIQUE NOT NULL,
                   status_label TEXT NOT NULL,
                   status_color TEXT NOT NULL,
@@ -393,7 +448,7 @@ def init_database():
 
     # Таблица услуг
     c.execute('''CREATE TABLE IF NOT EXISTS services
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   service_key TEXT UNIQUE NOT NULL,
                   name TEXT NOT NULL,
                   name_ru TEXT,
@@ -407,23 +462,23 @@ def init_database():
                   description_ru TEXT,
                   description_ar TEXT,
                   benefits TEXT,
-                  is_active INTEGER DEFAULT 1,
+                  is_active BOOLEAN DEFAULT TRUE,
                   duration TEXT,
                   created_at TEXT,
                   updated_at TEXT)''')
     
     # Таблица связи пользователей с услугами
     c.execute('''CREATE TABLE IF NOT EXISTS user_services (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         service_id INTEGER NOT NULL,
         price REAL,
         price_min REAL,
         price_max REAL,
         duration TEXT,
-        is_online_booking_enabled INTEGER DEFAULT 1,
-        is_calendar_enabled INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        is_online_booking_enabled BOOLEAN DEFAULT TRUE,
+        is_calendar_enabled BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_id, service_id),
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (service_id) REFERENCES services(id)
@@ -431,7 +486,7 @@ def init_database():
     
     # DEPRECATED: employees table consolidated into users with is_service_provider flag
     # c.execute('''CREATE TABLE IF NOT EXISTS employees
-    #              (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #              (id SERIAL PRIMARY KEY,
     #               full_name TEXT NOT NULL,
     #               position TEXT,
     #               experience TEXT,
@@ -440,8 +495,8 @@ def init_database():
     #               phone TEXT,
     #               email TEXT,
     #               instagram TEXT,
-    #               is_active INTEGER DEFAULT 1,
-    #               sort_order INTEGER DEFAULT 0,
+    #               is_active BOOLEAN DEFAULT TRUE,
+    #               sort_order BOOLEAN DEFAULT FALSE,
     #               created_at TEXT,
     #               updated_at TEXT)''')
 
@@ -449,23 +504,38 @@ def init_database():
     c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        email_notifications BOOLEAN DEFAULT 1,
-        sms_notifications BOOLEAN DEFAULT 0,
-        booking_notifications BOOLEAN DEFAULT 1,
-        birthday_reminders BOOLEAN DEFAULT 1,
+        email_notifications BOOLEAN DEFAULT TRUE,
+        sms_notifications BOOLEAN DEFAULT FALSE,
+        booking_notifications BOOLEAN DEFAULT TRUE,
+        birthday_reminders BOOLEAN DEFAULT TRUE,
         birthday_days_advance INTEGER DEFAULT 7,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     
     # Миграция: добавить отсутствующие колонки в notification_settings
-    c.execute("PRAGMA table_info(notification_settings)")
-    notif_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='notification_settings'
+
+        """)
+
+        notif_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        notif_columns = []
     notif_migrations = {
         'birthday_reminders': 'BOOLEAN DEFAULT 1',
         'birthday_days_advance': 'INTEGER DEFAULT 7',
         'chat_notifications': 'INTEGER DEFAULT 1',
         'daily_report': 'INTEGER DEFAULT 1',
-        'report_time': 'TEXT DEFAULT "09:00"',
+        'report_time': "TEXT DEFAULT '09:00'",
         'updated_at': 'TEXT DEFAULT CURRENT_TIMESTAMP'
     }
     for col, col_type in notif_migrations.items():
@@ -474,77 +544,78 @@ def init_database():
     
     # Таблица расписания сотрудников
     c.execute('''CREATE TABLE IF NOT EXISTS user_schedule (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         day_of_week INTEGER NOT NULL,
         start_time TEXT,
         end_time TEXT,
-        is_active INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id),
         UNIQUE(user_id, day_of_week)
     )''')
     
     # Таблица выходных дней сотрудников
     c.execute('''CREATE TABLE IF NOT EXISTS user_time_off (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         start_date TEXT NOT NULL,
         end_date TEXT NOT NULL,
         reason TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     
     # Таблица уровней лояльности
     c.execute('''CREATE TABLE IF NOT EXISTS loyalty_levels (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         level_name TEXT NOT NULL,
         min_points INTEGER NOT NULL,
         discount_percent REAL DEFAULT 0,
         points_multiplier REAL DEFAULT 1.0,
         benefits TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
     
     # Заполняем уровни лояльности если пусто
     c.execute("SELECT COUNT(*) FROM loyalty_levels")
     if c.fetchone()[0] == 0:
-        loyalty_levels = [
-            ("bronze", 0, 0, 1.0, "Базовый уровень"),
-            ("silver", 1000, 5, 1.1, "Скидка 5% на услуги"),
-            ("gold", 5000, 10, 1.2, "Скидка 10% на услуги, приоритетная запись"),
-            ("platinum", 10000, 15, 1.5, "Скидка 15%, личный менеджер, такси")
+        loyalty_levels_data = [
+            {"name": "bronze", "min_points": 0, "discount_percentage": 0, "points_multiplier": 1.0, "perks": "Базовый уровень", "icon": "🥉", "color": "#CD7F32"},
+            {"name": "silver", "min_points": 1000, "discount_percentage": 5, "points_multiplier": 1.1, "perks": "Скидка 5% на услуги", "icon": "🥈", "color": "#C0C0C0"},
+            {"name": "gold", "min_points": 5000, "discount_percentage": 10, "points_multiplier": 1.2, "perks": "Скидка 10% на услуги, приоритетная запись", "icon": "🥇", "color": "#FFD700"},
+            {"name": "platinum", "min_points": 10000, "discount_percentage": 15, "points_multiplier": 1.5, "perks": "Скидка 15%, личный менеджер, такси", "icon": "💎", "color": "#E5E4E2"}
         ]
-        c.executemany("""
-            INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits)
-            VALUES (?, ?, ?, ?, ?)
-        """, loyalty_levels)
-        log_info(f"✅ Создано {len(loyalty_levels)} уровней лояльности", "db")
+        for level in loyalty_levels_data:
+            c.execute("""
+                INSERT INTO loyalty_levels (name, min_points, discount_percentage, points_multiplier, perks, icon, color, is_active, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, NOW())
+            """, (level["name"], level["min_points"], level["discount_percentage"], level["points_multiplier"], level["perks"], level["icon"], level["color"]))
+        log_info(f"✅ Создано {len(loyalty_levels_data)} уровней лояльности", "db")
     
     # Таблица баллов лояльности клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS client_loyalty_points (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id TEXT NOT NULL,
-        total_points INTEGER DEFAULT 0,
-        available_points INTEGER DEFAULT 0,
-        spent_points INTEGER DEFAULT 0,
+        total_points BOOLEAN DEFAULT FALSE,
+        available_points BOOLEAN DEFAULT FALSE,
+        spent_points BOOLEAN DEFAULT FALSE,
         loyalty_level TEXT DEFAULT 'bronze',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(client_id)
     )''')
 
     # Таблица транзакций баллов лояльности
     c.execute('''CREATE TABLE IF NOT EXISTS loyalty_transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id TEXT NOT NULL,
         transaction_type TEXT NOT NULL,
         points INTEGER NOT NULL,
         reason TEXT,
         booking_id INTEGER,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         expires_at TEXT,
         FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
         FOREIGN KEY (booking_id) REFERENCES bookings(id)
@@ -552,7 +623,7 @@ def init_database():
 
     # Таблица специальных пакетов
     c.execute('''CREATE TABLE IF NOT EXISTS special_packages
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   name TEXT NOT NULL,
                   name_ru TEXT NOT NULL,
                   description TEXT,
@@ -566,15 +637,15 @@ def init_database():
                   keywords TEXT NOT NULL,
                   valid_from TEXT NOT NULL,
                   valid_until TEXT NOT NULL,
-                  is_active INTEGER DEFAULT 1,
-                  usage_count INTEGER DEFAULT 0,
+                  is_active BOOLEAN DEFAULT TRUE,
+                  usage_count BOOLEAN DEFAULT FALSE,
                   max_usage INTEGER,
                   created_at TEXT,
                   updated_at TEXT)''')
     
     # Таблица кастомных ролей
     c.execute('''CREATE TABLE IF NOT EXISTS custom_roles
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   role_key TEXT UNIQUE NOT NULL,
                   role_name TEXT NOT NULL,
                   role_description TEXT,
@@ -584,13 +655,13 @@ def init_database():
     
     # Таблица прав доступа
     c.execute('''CREATE TABLE IF NOT EXISTS role_permissions
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 (id SERIAL PRIMARY KEY,
                   role_key TEXT NOT NULL,
                   permission_key TEXT NOT NULL,
-                  can_view INTEGER DEFAULT 0,
-                  can_create INTEGER DEFAULT 0,
-                  can_edit INTEGER DEFAULT 0,
-                  can_delete INTEGER DEFAULT 0,
+                  can_view BOOLEAN DEFAULT FALSE,
+                  can_create BOOLEAN DEFAULT FALSE,
+                  can_edit BOOLEAN DEFAULT FALSE,
+                  can_delete BOOLEAN DEFAULT FALSE,
                   UNIQUE(role_key, permission_key))''')
     
     # Создать дефолтного администратора если его нет
@@ -600,7 +671,7 @@ def init_database():
         password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
         c.execute("""
             INSERT INTO users (username, password_hash, full_name, role, position, is_active, created_at)
-            VALUES ('admin', ?, 'Tahir', 'director', 'Director', 1, datetime('now'))
+            VALUES ('admin', %s, 'Tahir', 'director', 'Director', TRUE, NOW())
         """, (password_hash,))
         log_info("✅ Создан администратор (логин: admin, пароль: admin123)", "db")
     
@@ -614,7 +685,7 @@ def init_database():
                       booking_url, phone, bot_name, bot_name_en, bot_name_ar,
                       city, country, timezone, currency, 
                       latitude, longitude, logo_url, base_url, updated_at)
-                     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   ("M.Le Diamant Beauty Lounge",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
@@ -877,7 +948,7 @@ def init_database():
 
         # Build query dynamically
         columns = ', '.join(bot_settings_data.keys())
-        placeholders = ', '.join(['?'] * len(bot_settings_data))
+        placeholders = ', '.join(['%s'] * len(bot_settings_data))
         values = list(bot_settings_data.values())
 
         c.execute(f"INSERT INTO bot_settings ({columns}) VALUES ({placeholders})", values)
@@ -886,7 +957,7 @@ def init_database():
     
     # Таблица отзывов и рейтингов
     c.execute('''CREATE TABLE IF NOT EXISTS ratings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         booking_id INTEGER,
         instagram_id TEXT,
         rating INTEGER,
@@ -897,7 +968,7 @@ def init_database():
     
     # Таблица логов напоминаний
     c.execute('''CREATE TABLE IF NOT EXISTS reminder_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         booking_id INTEGER,
         client_id TEXT,
         reminder_type TEXT,
@@ -909,7 +980,7 @@ def init_database():
 
     # Таблица публичных отзывов
     c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         author_name TEXT NOT NULL,
         rating INTEGER NOT NULL,
         text_ru TEXT,
@@ -922,9 +993,9 @@ def init_database():
         text_kk TEXT,
         text_pt TEXT,
         avatar_url TEXT,
-        is_active INTEGER DEFAULT 1,
-        display_order INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        is_active BOOLEAN DEFAULT TRUE,
+        display_order BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         employee_name TEXT,
         employee_name_ru TEXT,
         employee_name_en TEXT,
@@ -936,8 +1007,23 @@ def init_database():
     )''')
     
     # Миграция: добавить поля сотрудников в public_reviews если их нет
-    c.execute("PRAGMA table_info(public_reviews)")
-    review_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='public_reviews'
+
+        """)
+
+        review_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        review_columns = []
     review_migrations = {
         'employee_name': 'TEXT',
         'employee_name_ru': 'TEXT',
@@ -954,7 +1040,7 @@ def init_database():
 
     # Таблица публичных FAQ
     c.execute('''CREATE TABLE IF NOT EXISTS public_faq (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         question_ru TEXT,
         question_en TEXT,
         question_ar TEXT,
@@ -974,14 +1060,14 @@ def init_database():
         answer_kk TEXT,
         answer_pt TEXT,
         category TEXT,
-        is_active INTEGER DEFAULT 1,
-        display_order INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        is_active BOOLEAN DEFAULT TRUE,
+        display_order BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
 
     # Таблица предпочтений клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS client_preferences (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id INTEGER NOT NULL,
         preferred_master INTEGER,
         preferred_service INTEGER,
@@ -989,10 +1075,10 @@ def init_database():
         preferred_time_of_day TEXT,
         allergies TEXT,
         special_notes TEXT,
-        auto_book_enabled INTEGER DEFAULT 1,
+        auto_book_enabled BOOLEAN DEFAULT TRUE,
         auto_book_interval_weeks INTEGER DEFAULT 3,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
         FOREIGN KEY (preferred_master) REFERENCES users(id),
         FOREIGN KEY (preferred_service) REFERENCES services(id),
@@ -1001,59 +1087,135 @@ def init_database():
 
     # Таблица настроек мессенджеров
     c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        messenger_type TEXT NOT NULL UNIQUE,
+        id SERIAL PRIMARY KEY,
+        messenger_type TEXT UNIQUE NOT NULL,
         display_name TEXT NOT NULL,
-        is_enabled INTEGER DEFAULT 0,
+        is_enabled BOOLEAN DEFAULT FALSE,
         api_token TEXT,
         webhook_url TEXT,
         config_json TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
     
     # Инициализация дефолтных настроек мессенджеров
-    default_messengers = [
-        ('instagram', 'Instagram', 1),
-        ('whatsapp', 'WhatsApp', 0),
-        ('telegram', 'Telegram', 0),
-        ('tiktok', 'TikTok', 0)
+    messenger_defaults = [
+        ('instagram', 'Instagram', True),
+        ('whatsapp', 'WhatsApp', False),
+        ('telegram', 'Telegram', False),
+        ('tiktok', 'TikTok', False)
     ]
-    for messenger_type, display_name, is_enabled in default_messengers:
+    for messenger_type, display_name, is_enabled in messenger_defaults:
         c.execute("""
-            INSERT OR IGNORE INTO messenger_settings (messenger_type, display_name, is_enabled)
-            VALUES (?, ?, ?)
+            INSERT INTO messenger_settings (messenger_type, display_name, is_enabled)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (messenger_type) DO NOTHING
         """, (messenger_type, display_name, is_enabled))
 
     # Миграция: добавить position_ru в users если нет
-    c.execute("PRAGMA table_info(users)")
-    user_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='users'
+
+        """)
+
+        user_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        user_columns = []
     if 'position_ru' not in user_columns:
         c.execute("ALTER TABLE users ADD COLUMN position_ru TEXT")
     
     # Миграция: добавить telegram_manager_chat_id в salon_settings
-    c.execute("PRAGMA table_info(salon_settings)")
-    salon_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='salon_settings'
+
+        """)
+
+        salon_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        salon_columns = []
     if 'telegram_manager_chat_id' not in salon_columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN telegram_manager_chat_id TEXT")
     
     # Миграция: добавить недостающие колонки в loyalty_levels
-    c.execute("PRAGMA table_info(loyalty_levels)")
-    loyalty_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='loyalty_levels'
+
+        """)
+
+        loyalty_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        loyalty_columns = []
     if 'points_multiplier' not in loyalty_columns:
         c.execute("ALTER TABLE loyalty_levels ADD COLUMN points_multiplier REAL DEFAULT 1.0")
     
     # Миграция: добавить недостающие колонки в client_loyalty_points
-    c.execute("PRAGMA table_info(client_loyalty_points)")
-    client_loyalty_columns = [col[1] for col in c.fetchall()]
+    try:
+
+        c.execute("""
+
+            SELECT column_name 
+
+            FROM information_schema.columns 
+
+            WHERE table_name='client_loyalty_points'
+
+        """)
+
+        client_loyalty_columns = [row[0] for row in c.fetchall()]
+
+    except:
+
+        client_loyalty_columns = []
     if 'total_points' not in client_loyalty_columns:
-        c.execute("ALTER TABLE client_loyalty_points ADD COLUMN total_points INTEGER DEFAULT 0")
+        c.execute("ALTER TABLE client_loyalty_points ADD COLUMN total_points BOOLEAN DEFAULT FALSE")
     
     # Миграция: добавить name в booking_reminder_settings если есть таблица
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+    c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
     if c.fetchone():
-        c.execute("PRAGMA table_info(booking_reminder_settings)")
-        reminder_columns = [col[1] for col in c.fetchall()]
+        try:
+
+            c.execute("""
+
+                SELECT column_name 
+
+                FROM information_schema.columns 
+
+                WHERE table_name='booking_reminder_settings'
+
+            """)
+
+            reminder_columns = [row[0] for row in c.fetchall()]
+
+        except:
+
+            reminder_columns = []
         if 'name' not in reminder_columns:
             c.execute("ALTER TABLE booking_reminder_settings ADD COLUMN name TEXT DEFAULT 'Default Reminder'")
     
@@ -1075,7 +1237,7 @@ def init_database():
         
         c.executemany("""
             INSERT INTO services (service_key, name, name_ru, category, price, duration, is_active, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 1, datetime('now'))
+            VALUES (?, ?, ?, ?, ?, ?, 1, NOW())
         """, default_services)
         log_info(f"✅ Создано {len(default_services)} базовых услуг", "db")
     
@@ -1167,15 +1329,16 @@ def init_database():
     ]
     
     for emp in employees_data:
-        c.execute("SELECT COUNT(*) FROM users WHERE username = ?", (emp["username"],))
+        c.execute("SELECT COUNT(*) FROM users WHERE username = %s", (emp["username"],))
         if c.fetchone()[0] == 0:
             password_hash = hashlib.sha256((emp["username"][:4] + "123").encode()).hexdigest()
             c.execute("""
                 INSERT INTO users (username, password_hash, full_name, role, position, photo, is_active, is_service_provider, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, 1, 1, datetime('now'))
+                VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE, NOW())
+                RETURNING id
             """, (emp["username"], password_hash, emp["full_name"], emp["role"], emp["position"], emp["photo"]))
             
-            user_id = c.lastrowid
+            user_id = c.fetchone()[0]
             log_info(f"✅ Создан сотрудник: {emp['full_name']} (логин: {emp['username']}, пароль: {emp['username'][:4]}123)", "db")
             
             # Назначаем все услуги сотруднику
@@ -1183,20 +1346,22 @@ def init_database():
             services = c.fetchall()
             for svc in services:
                 c.execute("""
-                    INSERT OR IGNORE INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
-                    VALUES (?, ?, ?, ?, 1, 1)
+                    INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
+                    VALUES (%s, %s, %s, %s, TRUE, TRUE)
+                    ON CONFLICT DO NOTHING
                 """, (user_id, svc[0], svc[1], svc[2]))
         else:
             # Если сотрудник уже есть, тоже проверим и добавим услуги если их нет
-            c.execute("SELECT id FROM users WHERE username = ?", (emp["username"],))
+            c.execute("SELECT id FROM users WHERE username = %s", (emp["username"],))
             user_id = c.fetchone()[0]
             
             c.execute("SELECT id, price, duration FROM services")
             services = c.fetchall()
             for svc in services:
                 c.execute("""
-                    INSERT OR IGNORE INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
-                    VALUES (?, ?, ?, ?, 1, 1)
+                    INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
+                    VALUES (%s, %s, %s, %s, TRUE, TRUE)
+                    ON CONFLICT DO NOTHING
                 """, (user_id, svc[0], svc[1], svc[2]))
     
     conn.commit()

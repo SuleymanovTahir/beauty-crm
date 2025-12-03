@@ -50,7 +50,7 @@ interface ExtendedMessage extends ClientMessage {
   starred: boolean;
   unread: boolean;
   archived: boolean;
-  profile_pic?: string; 
+  profile_pic?: string;
 }
 
 const categories = [
@@ -533,7 +533,7 @@ export default function Messages() {
                       <>
                         <img
                           src={messages.find(m => m.id === message.id)?.profile_pic || ''}
-                          alt={message.display_name}
+                          alt={`${message.display_name} profile picture`}
                           className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                           crossOrigin="anonymous"
                           onError={(e) => {

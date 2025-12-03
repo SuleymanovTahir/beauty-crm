@@ -2,7 +2,7 @@
 Consolidated Services Schema Migration
 All schema changes for services table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_services_schema(db_path="salon_bot.db"):
@@ -13,13 +13,13 @@ def migrate_services_schema(db_path="salon_bot.db"):
     print("🔧 SERVICES SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(services)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'services\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
@@ -68,15 +68,15 @@ def migrate_services_schema(db_path="salon_bot.db"):
         # Create user_services table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS user_services (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
                 service_id INTEGER NOT NULL,
                 price REAL,
                 price_min REAL,
                 price_max REAL,
                 duration TEXT,
-                is_online_booking_enabled INTEGER DEFAULT 1,
-                is_calendar_enabled INTEGER DEFAULT 1,
+                is_online_booking_enabled BOOLEAN DEFAULT TRUE,
+                is_calendar_enabled BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(user_id, service_id),
                 FOREIGN KEY (user_id) REFERENCES users(id),

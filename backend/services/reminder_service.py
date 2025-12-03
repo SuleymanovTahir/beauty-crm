@@ -4,12 +4,13 @@
 import sqlite3
 from datetime import datetime, timedelta
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 import logging
 
 logger = logging.getLogger('crm')
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     return conn
 
 async def check_and_send_reminders():

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from services.translation_service import translate_to_all_languages
 
 router = APIRouter(tags=["Public Admin"], prefix="/public-admin")
@@ -58,7 +59,7 @@ class GalleryCreate(BaseModel):
 @router.get("/reviews")
 async def get_all_reviews():
     """Получить все отзывы (для админки)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -78,7 +79,7 @@ async def create_review(review: ReviewCreate):
     # Переводим на все языки
     translations = await translate_to_all_languages(review.text_ru)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -114,7 +115,7 @@ async def create_review(review: ReviewCreate):
 @router.put("/reviews/{review_id}")
 async def update_review(review_id: int, review: ReviewUpdate):
     """Обновить отзыв"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -179,7 +180,7 @@ async def update_review(review_id: int, review: ReviewUpdate):
 @router.delete("/reviews/{review_id}")
 async def delete_review(review_id: int):
     """Удалить отзыв"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -195,7 +196,7 @@ async def delete_review(review_id: int):
 @router.patch("/reviews/{review_id}/toggle")
 async def toggle_review(review_id: int):
     """Переключить активность отзыва"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -225,7 +226,7 @@ async def toggle_review(review_id: int):
 @router.get("/banners")
 async def get_all_banners():
     """Получить все баннеры"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -243,7 +244,7 @@ async def create_banner(banner: BannerCreate):
     if banner.subtitle_ru:
         translations_subtitle = await translate_to_all_languages(banner.subtitle_ru)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -295,7 +296,7 @@ class BannerUpdate(BaseModel):
 @router.put("/banners/{banner_id}")
 async def update_banner(banner_id: int, banner: BannerUpdate):
     """Обновить баннер"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -374,7 +375,7 @@ async def delete_banner(banner_id: int):
     import os
     from pathlib import Path
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -418,7 +419,7 @@ async def delete_banner(banner_id: int):
 @router.get("/faq")
 async def get_all_faq():
     """Получить все FAQ"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -434,7 +435,7 @@ async def create_faq(faq: FAQCreate):
     translations_q = await translate_to_all_languages(faq.question_ru)
     translations_a = await translate_to_all_languages(faq.answer_ru)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -471,7 +472,7 @@ class FAQUpdate(BaseModel):
 @router.put("/faq/{faq_id}")
 async def update_faq(faq_id: int, faq: FAQUpdate):
     """Обновить FAQ"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -515,7 +516,7 @@ async def update_faq(faq_id: int, faq: FAQUpdate):
 @router.delete("/faq/{faq_id}")
 async def delete_faq(faq_id: int):
     """Удалить FAQ"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -535,7 +536,7 @@ async def delete_faq(faq_id: int):
 @router.get("/gallery")
 async def get_all_gallery():
     """Получить всю галерею"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -556,7 +557,7 @@ async def create_gallery_item(item: GalleryCreate):
     if item.description_ru:
         translations_desc = await translate_to_all_languages(item.description_ru)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

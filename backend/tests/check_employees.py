@@ -2,7 +2,7 @@
 """
 Проверка существующих сотрудников в БД
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 

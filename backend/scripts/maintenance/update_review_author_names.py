@@ -1,7 +1,7 @@
 """
 Script to translate/transliterate author names in public_reviews table
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -15,7 +15,7 @@ from scripts.translations.translator import Translator
 
 def update_review_author_names():
     """Translate author names from Russian to all supported languages"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     # Initialize translator
@@ -53,13 +53,13 @@ def update_review_author_names():
                     translations[f'author_name_{lang}'] = author_name
             
             # Update database
-            update_fields = ', '.join([f"{field} = ?" for field in translations.keys()])
+            update_fields = ', '.join([f"{field} = %s" for field in translations.keys()])
             update_values = list(translations.values()) + [review_id]
             
             cursor.execute(f"""
                 UPDATE public_reviews 
                 SET {update_fields}
-                WHERE id = ?
+                WHERE id = %s
             """, update_values)
         
         # Save translator cache

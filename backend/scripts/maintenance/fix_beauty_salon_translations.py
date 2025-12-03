@@ -2,7 +2,7 @@
 Fix incorrect beauty salon service translations
 Corrects literal translations that don't make sense in beauty salon context
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -167,7 +167,7 @@ BEAUTY_SALON_GLOSSARY = {
 
 def fix_service_translations():
     """Fix incorrect service translations using beauty salon glossary"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -175,7 +175,7 @@ def fix_service_translations():
         
         for english_name, translations in BEAUTY_SALON_GLOSSARY.items():
             # Find service by English name
-            cursor.execute("SELECT id FROM services WHERE name = ?", (english_name,))
+            cursor.execute("SELECT id FROM services WHERE name = %s", (english_name,))
             result = cursor.fetchone()
             
             if not result:
@@ -189,7 +189,7 @@ def fix_service_translations():
             for lang, correct_translation in translations.items():
                 column_name = f"name_{lang}"
                 cursor.execute(
-                    f"UPDATE services SET {column_name} = ? WHERE id = ?",
+                    f"UPDATE services SET {column_name} = %s WHERE id = %s",
                     (correct_translation, service_id)
                 )
                 log_info(f"  ✅ Updated {column_name}: {correct_translation}", "fix")

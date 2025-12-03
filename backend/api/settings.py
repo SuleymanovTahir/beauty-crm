@@ -9,6 +9,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
 
@@ -34,7 +35,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         # TODO: Получить user_id из сессии когда будет авторизация
         user_id = 1  # По умолчанию для первого пользователя
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем есть ли уже настройки
@@ -103,11 +104,11 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         if "no such table" in str(e).lower():
             log_info("Creating notification_settings table", "settings")
             try:
-                conn = sqlite3.connect(DATABASE_NAME)
+                conn = get_db_connection()
                 c = conn.cursor()
                 c.execute("""
                     CREATE TABLE IF NOT EXISTS notification_settings (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id SERIAL PRIMARY KEY,
                         user_id INTEGER NOT NULL,
                         email_notifications INTEGER DEFAULT 1,
                         sms_notifications INTEGER DEFAULT 0,
@@ -170,7 +171,7 @@ async def get_notification_settings():
     try:
         user_id = 1  # TODO: Получить из сессии
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""

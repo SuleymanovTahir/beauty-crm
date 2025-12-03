@@ -1,4 +1,4 @@
-import sqlite3
+from db.connection import get_db_connection
 import asyncio
 import json
 from db.positions import create_position, get_position
@@ -13,8 +13,7 @@ from core.config import DATABASE_NAME
 async def test_changes():
     print("🧪 Testing changes...")
     
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
     c = conn.cursor()
     
     # 1. Verify Notification Defaults
@@ -66,7 +65,7 @@ async def test_changes():
             print("❌ Failed to fetch position")
             
         # Cleanup
-        # c.execute("DELETE FROM positions WHERE id = ?", (pos_id,))
+        # c.execute("DELETE FROM positions WHERE id = %s", (pos_id,))
         # conn.commit()
     else:
         print("❌ Failed to create position (might already exist)")

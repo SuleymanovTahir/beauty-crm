@@ -34,6 +34,7 @@ import os
 
 from utils.logger import logger, log_info, log_error, log_critical,log_warning
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from db import init_database
 from db.settings import get_salon_settings
 from bot import get_bot
@@ -366,7 +367,7 @@ async def get_diagnostics():
     import sqlite3
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Собираем данные
@@ -378,7 +379,10 @@ async def get_diagnostics():
         }
         
         # Таблицы
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        if os.getenv('DATABASE_TYPE') == 'postgresql':
+            c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
+        else:
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
         tables = [row[0] for row in c.fetchall()]
         
         for table in tables:
@@ -391,13 +395,22 @@ async def get_diagnostics():
             c.execute("SELECT * FROM bot_settings LIMIT 1")
             row = c.fetchone()
             if row:
-                c.execute("PRAGMA table_info(bot_settings)")
-                columns = [col[1] for col in c.fetchall()]
+                if os.getenv('DATABASE_TYPE') == 'postgresql':
+                    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='bot_settings'")
+                    columns = [col[0] for col in c.fetchall()]
+                else:
+                    c.execute("PRAGMA table_info(bot_settings)")
+                    columns = [col[1] for col in c.fetchall()]
                 diagnostics["bot_settings"] = dict(zip(columns, row))
         
         # employees
-        if 'employees' in tables:
-            c.execute("SELECT full_name, position, is_active FROM users WHERE is_service_provider = 1 ORDER BY sort_order")
+        if 'employees' in tables or 'users' in tables: # users is the new table name
+            # Check if users table has is_service_provider column
+            if 'users' in tables:
+                 c.execute("SELECT full_name, position, is_active FROM users WHERE is_service_provider = TRUE ORDER BY sort_order")
+            else:
+                 c.execute("SELECT full_name, position, is_active FROM employees WHERE is_active = 1") # Fallback for old table
+
             diagnostics["employees"] = [
                 {"name": row[0], "position": row[1], "active": bool(row[2])}
                 for row in c.fetchall()
@@ -481,13 +494,13 @@ async def startup_event():
     # Рекомендуется только для development окружения
     # NOTE: Закомментировано - запускайте вручную: python3 tests/run_all_tests.py
 
-    # from scripts.run_all_fixes import main as run_all_fixes
-    # log_info("🔧 Запуск всех исправлений...", "startup")
-    # await run_all_fixes()
+    from scripts.run_all_fixes import main as run_all_fixes
+    log_info("🔧 Запуск всех исправлений...", "startup")
+    await run_all_fixes()
 
     # from tests.run_all_tests import run_all_tests
     # log_info("🧪 Запуск всех тестов...", "startup")
-    # run_all_tests() 
+    # run_all_tests()
 
 
  
@@ -546,7 +559,7 @@ if __name__ == "__main__":
         import sqlite3
     
         try:
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
 
             log_info("=" * 70, "diagnostics")
@@ -554,7 +567,10 @@ if __name__ == "__main__":
             log_info("=" * 70, "diagnostics")
 
             # Таблицы
-            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            if os.getenv('DATABASE_TYPE') == 'postgresql':
+                c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
+            else:
+                c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
             tables = [row[0] for row in c.fetchall()]
             log_info(f"📋 Таблиц в БД: {len(tables)}", "diagnostics")
             for table in tables:
@@ -567,8 +583,12 @@ if __name__ == "__main__":
                 log_info("", "diagnostics")
                 log_info("🤖 BOT_SETTINGS ДЕТАЛЬНО:", "diagnostics")
 
-                c.execute("PRAGMA table_info(bot_settings)")
-                columns = [col[1] for col in c.fetchall()]
+                if os.getenv('DATABASE_TYPE') == 'postgresql':
+                    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='bot_settings'")
+                    columns = [col[0] for col in c.fetchall()]
+                else:
+                    c.execute("PRAGMA table_info(bot_settings)")
+                    columns = [col[1] for col in c.fetchall()]
                 log_info(f"   Колонок: {len(columns)}", "diagnostics")
 
                 c.execute("SELECT COUNT(*) FROM bot_settings")
@@ -596,22 +616,22 @@ if __name__ == "__main__":
                             log_warning(f"   ❌ {field}: колонка отсутствует", "diagnostics")
 
             # employees детально
-            if 'employees' in tables:
+            if 'users' in tables:
                 log_info("", "diagnostics")
                 log_info("👥 EMPLOYEES ДЕТАЛЬНО:", "diagnostics")
 
-                c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = 1")
+                c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = TRUE")
                 count = c.fetchone()[0]
                 log_info(f"   Записей: {count}", "diagnostics")
 
                 if count > 0:
-                    c.execute("SELECT full_name, position FROM users WHERE is_service_provider = 1 ORDER BY sort_order")
+                    c.execute("SELECT full_name, position FROM users WHERE is_service_provider = TRUE ORDER BY sort_order")
                     for i, row in enumerate(c.fetchall(), 1):
                         log_info(f"   {i}. {row[0]} - {row[1]}", "diagnostics")
                 else:
                     log_warning("   ⚠️  Таблица пуста! Запустите seed_employees", "diagnostics")
             else:
-                log_warning("   ❌ Таблица employees не создана!", "diagnostics")
+                log_warning("   ❌ Таблица users не создана!", "diagnostics")
 
             log_info("=" * 70, "diagnostics")
             log_info("✅ ДИАГНОСТИКА ЗАВЕРШЕНА", "diagnostics")

@@ -2,7 +2,7 @@
 Consolidated Salon Settings Schema Migration
 All schema changes for salon_settings table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_salon_schema(db_path="salon_bot.db"):
@@ -13,22 +13,22 @@ def migrate_salon_schema(db_path="salon_bot.db"):
     print("🔧 SALON SETTINGS SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(salon_settings)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'salon_settings\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
             'hours_weekdays': 'TEXT',
             'hours_weekends': 'TEXT',
-            'payment_methods': 'TEXT DEFAULT "Наличные, карта"',
-            'prepayment_required': 'INTEGER DEFAULT 0',
+            'payment_methods': "TEXT DEFAULT \'Наличные, карта\'",
+            'prepayment_required': 'BOOLEAN DEFAULT FALSE',
             'parking_info': 'TEXT',
-            'wifi_available': 'INTEGER DEFAULT 1',
+            'wifi_available': 'BOOLEAN DEFAULT TRUE',
             'google_place_id': 'TEXT',  # ✅ From add_google_fields.py
             'google_api_key': 'TEXT',   # ✅ From add_google_fields.py
             
@@ -38,7 +38,7 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             'latitude': 'REAL',             # Geo coordinates for Schema.org
             'longitude': 'REAL',            # Geo coordinates for Schema.org
             'logo_url': 'TEXT',             # Logo URL for Schema.org and meta tags
-            'base_url': 'TEXT DEFAULT "https://mlediamant.com"',  # Base site URL
+            'base_url': "TEXT DEFAULT \'https://mlediamant.com\'",  # Base site URL
             
             # Translation columns for main_location (all 9 languages)
             'main_location_ru': 'TEXT',
@@ -114,8 +114,12 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             print("\n✅ All columns already exist")
         
         # Проверяем колонку promo_end_date
-        c.execute("PRAGMA table_info(salon_settings)")
-        columns = [row[1] for row in c.fetchall()]
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='salon_settings'
+        """)
+        columns = [row[0] for row in c.fetchall()]
         
         if 'promo_end_date' not in columns:
             c.execute("ALTER TABLE salon_settings ADD COLUMN promo_end_date TEXT")

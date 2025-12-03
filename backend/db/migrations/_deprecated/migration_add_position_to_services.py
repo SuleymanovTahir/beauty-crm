@@ -5,7 +5,7 @@
 Позволяет указать какая должность мастера может выполнять услугу.
 NULL или 0 = любой мастер может выполнять
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from datetime import datetime
@@ -19,7 +19,7 @@ if 'DATABASE_NAME' not in globals():
         sys.path.insert(0, backend_dir)
     from core.config import DATABASE_NAME
 
-conn = sqlite3.connect(DATABASE_NAME)
+conn = get_db_connection()
 c = conn.cursor()
 
 try:

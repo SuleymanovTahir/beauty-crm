@@ -2,7 +2,7 @@
 Consolidated Public Content Schema Migration
 All schema changes for public content (banners, reviews, faq, gallery)
 """
-import sqlite3
+from db.connection import get_db_connection
 
 def migrate_public_schema(db_path="salon_bot.db"):
     """
@@ -12,14 +12,14 @@ def migrate_public_schema(db_path="salon_bot.db"):
     print("🔧 PUBLIC CONTENT SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # 1. Create public_banners table
         c.execute("""
             CREATE TABLE IF NOT EXISTS public_banners (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 title_ru TEXT NOT NULL,
                 title_en TEXT,
                 title_ar TEXT,
@@ -40,15 +40,15 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 subtitle_pt TEXT,
                 image_url TEXT,
                 link_url TEXT,
-                display_order INTEGER DEFAULT 0,
-                is_active INTEGER DEFAULT 1,
+                display_order BOOLEAN DEFAULT FALSE,
+                is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
         
         # Add missing columns to existing public_banners table
-        c.execute("PRAGMA table_info(public_banners)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'public_banners\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         columns_to_add = {
             'title_es': 'TEXT', 'title_de': 'TEXT', 'title_fr': 'TEXT',
@@ -63,8 +63,8 @@ def migrate_public_schema(db_path="salon_bot.db"):
             'bg_pos_mobile_y': 'INTEGER DEFAULT 50',
 
             # Flip options
-            'is_flipped_horizontal': 'BOOLEAN DEFAULT 0',
-            'is_flipped_vertical': 'BOOLEAN DEFAULT 0'
+            'is_flipped_horizontal': 'BOOLEAN DEFAULT FALSE',
+            'is_flipped_vertical': 'BOOLEAN DEFAULT FALSE'
         }
         
         for col, dtype in columns_to_add.items():
@@ -77,7 +77,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
         # 2. Create public_reviews table
         c.execute("""
             CREATE TABLE IF NOT EXISTS public_reviews (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 author_name TEXT NOT NULL,
                 rating INTEGER DEFAULT 5,
                 text_ru TEXT,
@@ -90,8 +90,8 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 text_kk TEXT,
                 text_pt TEXT,
                 avatar_url TEXT,
-                display_order INTEGER DEFAULT 0,
-                is_active INTEGER DEFAULT 1,
+                display_order BOOLEAN DEFAULT FALSE,
+                is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 
                 -- Translations for author name
@@ -113,8 +113,8 @@ def migrate_public_schema(db_path="salon_bot.db"):
         """)
         
         # Check and add columns if they don't exist (for existing tables)
-        c.execute("PRAGMA table_info(public_reviews)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'public_reviews\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         columns_to_add = {
             'author_name_ru': 'TEXT', 'author_name_en': 'TEXT', 'author_name_ar': 'TEXT',
@@ -141,7 +141,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
         # 3. Create public_faq table
         c.execute("""
             CREATE TABLE IF NOT EXISTS public_faq (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 question_ru TEXT NOT NULL,
                 question_en TEXT,
                 question_ar TEXT,
@@ -149,7 +149,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 answer_en TEXT,
                 answer_ar TEXT,
                 category TEXT DEFAULT 'general',
-                display_order INTEGER DEFAULT 0,
+                display_order BOOLEAN DEFAULT FALSE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -158,7 +158,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
         # 4. Create public_gallery table
         c.execute("""
             CREATE TABLE IF NOT EXISTS public_gallery (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 image_url TEXT NOT NULL,
                 title_ru TEXT,
                 title_en TEXT,
@@ -167,7 +167,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 description_en TEXT,
                 description_ar TEXT,
                 category TEXT DEFAULT 'works',
-                display_order INTEGER DEFAULT 0,
+                display_order BOOLEAN DEFAULT FALSE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)

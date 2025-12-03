@@ -4,7 +4,7 @@
 """
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 
 # Добавляем путь к backend для импортов
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../..')))
@@ -18,12 +18,12 @@ def fix_notification_settings_table():
     print("ИСПРАВЛЕНИЕ ТАБЛИЦЫ notification_settings")
     print("=" * 70)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # 1. Проверяем текущую схему
     print("\n📋 Текущая схема:")
-    c.execute("PRAGMA table_info(notification_settings)")
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
     current_columns = c.fetchall()
     for col in current_columns:
         print(f"  - {col[1]} ({col[2]})")
@@ -42,7 +42,7 @@ def fix_notification_settings_table():
     print("\n✨ Создание новой таблицы с правильной схемой...")
     c.execute("""
         CREATE TABLE notification_settings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL,
             email_notifications INTEGER DEFAULT 1,
             sms_notifications INTEGER DEFAULT 0,
@@ -57,7 +57,7 @@ def fix_notification_settings_table():
     """)
 
     print("\n📋 Новая схема:")
-    c.execute("PRAGMA table_info(notification_settings)")
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
     new_columns = c.fetchall()
     for col in new_columns:
         print(f"  - {col[1]} ({col[2]})")
@@ -72,7 +72,7 @@ def fix_notification_settings_table():
                 INSERT INTO notification_settings
                 (user_id, email_notifications, sms_notifications, booking_notifications,
                  chat_notifications, daily_report, report_time)
-                VALUES (?, ?, ?, ?, 1, 1, '09:00')
+                VALUES (%s, %s, %s, %s, 1, 1, '09:00')
             """, (row[1], row[2], row[3], row[4]))
         print("  ✅ Данные мигрированы")
 

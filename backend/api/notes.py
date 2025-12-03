@@ -7,6 +7,7 @@ from typing import Optional
 import sqlite3
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
@@ -24,7 +25,7 @@ async def get_client_notes(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -71,7 +72,7 @@ async def add_client_note(
         if not note_text:
             return JSONResponse({"error": "Missing note_text"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -103,7 +104,7 @@ async def delete_client_note(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("DELETE FROM client_notes WHERE id = ? AND client_id = ?", 
@@ -139,7 +140,7 @@ async def update_client_note(
         if not note_text:
             return JSONResponse({"error": "Missing note_text"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Проверяем что заметка принадлежит этому клиенту

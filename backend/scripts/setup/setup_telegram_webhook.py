@@ -136,14 +136,14 @@ if __name__ == '__main__':
 
         if not webhook_url.startswith('https://'):
             print("⚠️  Warning: Telegram requires HTTPS!")
-            confirm = input("Continue anyway? (y/n): ").strip().lower()
+            confirm = input("Continue anyway%s (y/n): ").strip().lower()
             if confirm != 'y':
                 sys.exit(0)
 
         setup_webhook(webhook_url)
 
     elif choice == '2':
-        confirm = input("Remove webhook? (y/n): ").strip().lower()
+        confirm = input("Remove webhook%s (y/n): ").strip().lower()
         if confirm == 'y':
             remove_webhook()
 

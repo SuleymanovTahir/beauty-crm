@@ -1,11 +1,10 @@
 """
 Проверка расписаний мастеров
 """
-import sqlite3
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 def check_schedules():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверяем есть ли расписания
@@ -13,7 +12,7 @@ def check_schedules():
         SELECT e.full_name, es.start_time, es.end_time, es.is_active
         FROM employees e
         LEFT JOIN employee_schedule es ON e.id = es.employee_id
-        WHERE e.is_active = 1
+        WHERE e.is_active = TRUE
     """)
 
     print("📅 РАСПИСАНИЯ МАСТЕРОВ:")

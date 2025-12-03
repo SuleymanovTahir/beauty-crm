@@ -1,7 +1,7 @@
 """
 Функции для работы с сотрудниками салона
 DEPRECATED: This module is a compatibility wrapper around users table.
-All employee data is now stored in users table with is_service_provider = 1.
+All employee data is now stored in users table with is_service_provider = TRUE.
 """
 import sqlite3
 from datetime import datetime
@@ -43,17 +43,21 @@ def get_all_employees(active_only=True, service_providers_only=False):
     c = conn.cursor()
 
     # Check if is_service_provider column exists
-    c.execute("PRAGMA table_info(users)")
-    columns = [row[1] for row in c.fetchall()]
+    c.execute("""
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='users'
+    """)
+    columns = [row[0] for row in c.fetchall()]
     
     if 'is_service_provider' in columns:
-        query = "SELECT * FROM users WHERE is_service_provider = 1 AND role NOT IN ('director', 'admin')"
+        query = "SELECT * FROM users WHERE is_service_provider = TRUE AND role NOT IN ('director', 'admin')"
     else:
         # Fallback: filter by role
         query = "SELECT * FROM users WHERE role IN ('employee', 'master')"
     
     if active_only:
-        query += " AND is_active = 1"
+        query += " AND is_active = TRUE"
         # Для публичных страниц показываем только тех, у кого show_on_public_page = 1
         if 'show_on_public_page' in columns:
             query += " AND show_on_public_page = 1"
@@ -77,7 +81,7 @@ def get_employee(employee_id: int):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM users WHERE id = ? AND is_service_provider = 1", (employee_id,))
+    c.execute("SELECT * FROM users WHERE id = %s AND is_service_provider = TRUE", (employee_id,))
     employee = c.fetchone()
     
     conn.close()
@@ -135,7 +139,7 @@ def update_employee(employee_id: int, **kwargs):
     
     params.append(employee_id)
     
-    query = f"UPDATE users SET {', '.join(updates)} WHERE id = ? AND is_service_provider = 1"
+    query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s AND is_service_provider = TRUE"
     c.execute(query, params)
     
     conn.commit()
@@ -149,7 +153,7 @@ def delete_employee(employee_id: int):
     c = conn.cursor()
     
     # Soft delete - just deactivate
-    c.execute("UPDATE users SET is_active = 0 WHERE id = ? AND is_service_provider = 1", 
+    c.execute("UPDATE users SET is_active = FALSE WHERE id = %s AND is_service_provider = TRUE", 
               (employee_id,))
     
     conn.commit()
@@ -167,8 +171,12 @@ def get_employee_services(employee_id: int):
     c = conn.cursor()
     
     # Check if new columns exist in user_services
-    c.execute("PRAGMA table_info(user_services)")
-    us_columns = [row[1] for row in c.fetchall()]
+    c.execute("""
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='user_services'
+    """)
+    us_columns = [row[0] for row in c.fetchall()]
     
     has_settings = 'price' in us_columns
     
@@ -177,12 +185,12 @@ def get_employee_services(employee_id: int):
                             us.is_calendar_enabled, us.price_min, us.price_max
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ? AND s.is_active = 1""", (employee_id,))
+                     WHERE us.user_id = ? AND s.is_active = TRUE""", (employee_id,))
     else:
         c.execute("""SELECT s.*, NULL, NULL, 1, 1, NULL, NULL
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ? AND s.is_active = 1""", (employee_id,))
+                     WHERE us.user_id = ? AND s.is_active = TRUE""", (employee_id,))
     
     services = c.fetchall()
     conn.close()
@@ -254,11 +262,17 @@ def add_employee_service(employee_id: int, service_id: int,
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Check if table has new columns
-    c.execute("PRAGMA table_info(user_services)")
-    columns = [info[1] for info in c.fetchall()]
+    # Check if new columns exist
+    c.execute("""
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='user_services'
+    """)
+    us_columns = [row[0] for row in c.fetchall()]
     
-    if 'price' in columns:
+    has_settings = 'price' in us_columns
+    
+    if has_settings:
         c.execute("""
             INSERT OR IGNORE INTO user_services 
             (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled, price_min, price_max)
@@ -298,9 +312,13 @@ def get_employees_by_service(service_id: int):
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Check if new columns exist in user_services
-    c.execute("PRAGMA table_info(user_services)")
-    us_columns = [row[1] for row in c.fetchall()]
+    # Check if new columns exist
+    c.execute("""
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='user_services'
+    """)
+    us_columns = [row[0] for row in c.fetchall()]
     
     has_settings = 'price' in us_columns
     
@@ -308,15 +326,15 @@ def get_employees_by_service(service_id: int):
         c.execute("""SELECT u.*, us.price, us.duration, us.price_min, us.price_max 
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
-                     WHERE us.service_id = ? AND u.is_active = 1 AND u.is_service_provider = 1
-                     AND (us.is_online_booking_enabled = 1 OR us.is_online_booking_enabled IS NULL)""",
+                     WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE
+                     AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)""",
                   (service_id,))
     else:
         # Fallback for old schema
         c.execute("""SELECT u.*, NULL as price, NULL as duration, NULL as price_min, NULL as price_max
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
-                     WHERE us.service_id = ? AND u.is_active = 1 AND u.is_service_provider = 1""",
+                     WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE""",
                   (service_id,))
     
     employees = c.fetchall()
@@ -332,7 +350,7 @@ def get_employee_schedule(employee_id: int):
     c = conn.cursor()
     
     c.execute("""SELECT * FROM user_schedule 
-                 WHERE user_id = ? AND is_active = 1
+                 WHERE user_id = ? AND is_active = TRUE
                  ORDER BY day_of_week""", (employee_id,))
     
     schedule = c.fetchall()
@@ -383,9 +401,9 @@ def get_available_employees(service_id: int, date_time: str):
         FROM users u
         JOIN user_services us ON u.id = us.user_id
         JOIN user_schedule sch ON u.id = sch.user_id
-        WHERE us.service_id = ?
-        AND u.is_active = 1
-        AND u.is_service_provider = 1
+        WHERE us.service_id = %s
+        AND u.is_active = TRUE
+        AND u.is_service_provider = TRUE
         AND sch.day_of_week = ?
         AND sch.start_time <= ?
         AND sch.end_time >= ?
@@ -408,7 +426,7 @@ def get_employee_busy_slots(employee_id: int, date: str):
     c = conn.cursor()
 
     # Получаем имя пользователя
-    c.execute("SELECT full_name FROM users WHERE id = ?", (employee_id,))
+    c.execute("SELECT full_name FROM users WHERE id = %s", (employee_id,))
     user = c.fetchone()
     if not user:
         conn.close()
@@ -453,7 +471,7 @@ def get_employee_busy_slots(employee_id: int, date: str):
                     end = start + timedelta(hours=hours, minutes=minutes)
                 else:
                     # По умолчанию 1 час
-                    end = start + timedelta(hours=1)
+                    end = start + timedelta(hours = TRUE)
 
                 busy_slots.append({
                     'booking_id': booking_id,

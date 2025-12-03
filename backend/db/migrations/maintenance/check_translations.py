@@ -1,7 +1,7 @@
 """
 Проверка переводов имён с автоматическим заполнением
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -10,18 +10,17 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
 sys.path.insert(0, backend_dir)
 
-from core.config import DATABASE_NAME
 from utils.translator import auto_translate_name
 
 def check_translations():
     """Проверяет переводы и автоматически заполняет пустые"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT id, full_name, name_ru, name_ar
         FROM employees
-        WHERE is_active = 1
+        WHERE is_active = TRUE
     """)
 
     print("🌍 ПЕРЕВОДЫ ИМЁН МАСТЕРОВ:")
@@ -39,9 +38,9 @@ def check_translations():
 
             c.execute("""
                 UPDATE employees
-                SET name_ru = COALESCE(name_ru, ?),
-                    name_ar = COALESCE(name_ar, ?)
-                WHERE id = ?
+                SET name_ru = COALESCE(name_ru, %s),
+                    name_ar = COALESCE(name_ar, %s)
+                WHERE id = %s
             """, (translations['ru'], translations['ar'], emp_id))
 
             print(f"✅ {name}: ru={translations['ru']}, ar={translations['ar']} (автоперевод)")

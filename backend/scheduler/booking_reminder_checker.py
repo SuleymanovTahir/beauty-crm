@@ -3,7 +3,7 @@
 
 Проверяет предстоящие записи и отправляет напоминания согласно настройкам
 """
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime, timedelta
 from typing import List, Dict
 import asyncio
@@ -13,7 +13,6 @@ import sys
 # Добавляем корневую директорию в PYTHONPATH
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from core.config import DATABASE_NAME
 from db.settings import get_salon_settings
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
@@ -21,14 +20,14 @@ from utils.email import send_email_async
 
 def get_active_reminder_settings() -> List[Dict]:
     """Получить активные настройки напоминаний"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         c.execute("""
             SELECT id, days_before, hours_before, notification_type
             FROM booking_reminder_settings
-            WHERE is_enabled = 1
+            WHERE is_enabled = TRUE
             ORDER BY days_before DESC, hours_before DESC
         """)
 
@@ -61,7 +60,7 @@ def get_active_reminder_settings() -> List[Dict]:
 
 def get_bookings_needing_reminders() -> List[Dict]:
     """Получить записи, которым нужны напоминания"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -94,7 +93,7 @@ def get_bookings_needing_reminders() -> List[Dict]:
 
 def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     """Проверить, было ли уже отправлено напоминание"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -112,7 +111,7 @@ def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
 
 def mark_reminder_sent(booking_id: int, reminder_setting_id: int, status: str = 'sent', error_message: str = None):
     """Отметить напоминание как отправленное"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:

@@ -6,7 +6,9 @@ from fastapi.responses import JSONResponse
 from typing import Optional, List
 from pydantic import BaseModel
 import sqlite3
+from psycopg2.extras import RealDictCursor
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from services.master_schedule import MasterScheduleService
@@ -29,12 +31,6 @@ class TimeOffCreate(BaseModel):
     type: str
     reason: Optional[str] = None
 
-# --- Helper Functions ---
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
-
 # Removed - now using user_id directly instead of employee_id
 
 # --- New Endpoints for Admin UI (User ID based) ---
@@ -43,12 +39,12 @@ def get_db_connection():
 async def get_user_schedule(user_id: int):
     conn = get_db_connection()
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
         
         cursor.execute("""
             SELECT day_of_week, start_time, end_time, is_active 
             FROM user_schedule 
-            WHERE user_id = ? 
+            WHERE user_id = %s 
             ORDER BY day_of_week
         """, (user_id,))
         
@@ -85,17 +81,17 @@ async def get_user_schedule(user_id: int):
 async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
     conn = get_db_connection()
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
         
         # Удаляем старое расписание
-        cursor.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
+        cursor.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
         
         # Добавляем новое
         for item in data.schedule:
             cursor.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                VALUES (?, ?, ?, ?, ?)
-            """, (user_id, item.day_of_week, item.start_time, item.end_time, 1 if item.is_working else 0))
+                VALUES (%s, %s, %s, %s, %s)
+            """, (user_id, item.day_of_week, item.start_time, item.end_time, True if item.is_working else False))
             
         conn.commit()
         return {"status": "success"}
@@ -106,12 +102,12 @@ async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
 async def get_user_time_off(user_id: int):
     conn = get_db_connection()
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
         
         cursor.execute("""
             SELECT id, start_date as start_datetime, end_date as end_datetime, reason 
             FROM user_time_off 
-            WHERE user_id = ? 
+            WHERE user_id = %s 
             ORDER BY start_date DESC
         """, (user_id,))
         
@@ -124,15 +120,16 @@ async def get_user_time_off(user_id: int):
 async def add_user_time_off(user_id: int, data: TimeOffCreate):
     conn = get_db_connection()
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
         
         cursor.execute("""
             INSERT INTO user_time_off (user_id, start_date, end_date, reason)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s) RETURNING id
         """, (user_id, data.start_datetime, data.end_datetime, data.reason))
         
+        time_off_id = cursor.fetchone()['id']
         conn.commit()
-        return {"status": "success", "id": cursor.lastrowid}
+        return {"status": "success", "id": time_off_id}
     finally:
         conn.close()
 
@@ -140,8 +137,8 @@ async def add_user_time_off(user_id: int, data: TimeOffCreate):
 async def delete_time_off_by_id(id: int):
     conn = get_db_connection()
     try:
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM user_time_off WHERE id = ?", (id,))
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor.execute("DELETE FROM user_time_off WHERE id = %s", (id,))
         conn.commit()
         return {"status": "success"}
     finally:

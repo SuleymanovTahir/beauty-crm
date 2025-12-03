@@ -211,7 +211,7 @@
           document.head.appendChild(fbPixel);
 
           const fbNoscript = document.createElement('noscript');
-          fbNoscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${seo.facebook_pixel_id}&ev=PageView&noscript=1" />`;
+          fbNoscript.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${seo.facebook_pixel_id}&ev=PageView&noscript=1" alt="Facebook Pixel" />`;
           document.body.appendChild(fbNoscript);
           console.log('✅ Facebook Pixel loaded:', seo.facebook_pixel_id);
         } else {

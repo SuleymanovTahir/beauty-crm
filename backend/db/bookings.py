@@ -1,18 +1,16 @@
 """
 Функции для работы с записями
 """
-import sqlite3
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Tuple
 
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 
 
 def get_all_bookings():
     """Получить все записи"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -53,7 +51,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     c.execute("""INSERT INTO bookings 
              (instagram_id, service_name, datetime, phone, name, status, 
               created_at, special_package_id, master)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
           (instagram_id, service, datetime_str, phone, name, "confirmed", 
            now, special_package_id, master))
     
@@ -61,7 +59,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     
     # ✅ ЗАЩИТА ОТ ПЕРЕЗАПИСИ ПРОФИЛЯ ("Запись для друга")
     # Проверяем текущие данные клиента
-    c.execute("SELECT name, phone FROM clients WHERE instagram_id = ?", (instagram_id,))
+    c.execute("SELECT name, phone FROM clients WHERE instagram_id = %s", (instagram_id,))
     current_client = c.fetchone()
     
     # Обновляем профиль ТОЛЬКО если он пустой или неполный
@@ -72,8 +70,8 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
         
     if should_update_profile:
         c.execute("""UPDATE clients 
-                     SET status = 'lead', phone = ?, name = ? 
-                     WHERE instagram_id = ?""",
+                     SET status = 'lead', phone = %s, name = %s 
+                     WHERE instagram_id = %s""",
                   (phone, name, instagram_id))
     
     # Увеличиваем счетчик использования пакета если это спец. пакет
@@ -96,11 +94,11 @@ def update_booking_status(booking_id: int, status: str) -> bool:
         if status == 'completed':
             completed_at = get_current_time().isoformat()
             c.execute("""UPDATE bookings 
-                        SET status = ?, completed_at = ? 
-                        WHERE id = ?""",
+                        SET status = %s, completed_at = %s 
+                        WHERE id = %s""",
                       (status, completed_at, booking_id))
         else:
-            c.execute("UPDATE bookings SET status = ? WHERE id = ?",
+            c.execute("UPDATE bookings SET status = %s WHERE id = %s",
                       (status, booking_id))
         
         conn.commit()
@@ -120,7 +118,7 @@ def get_booking_progress(instagram_id: str) -> Optional[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("SELECT * FROM booking_temp WHERE instagram_id = ?", (instagram_id,))
+    c.execute("SELECT * FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
     row = c.fetchone()
     conn.close()
     
@@ -144,7 +142,7 @@ def update_booking_progress(instagram_id: str, data: Dict):
     
     c.execute("""INSERT OR REPLACE INTO booking_temp 
                  (instagram_id, service_name, date, time, phone, name, step)
-                 VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                 VALUES (%s, %s, %s, %s, %s, %s, %s)""",
               (instagram_id, data.get('service_name'), data.get('date'),
                data.get('time'), data.get('phone'), data.get('name'), 
                data.get('step')))
@@ -157,7 +155,7 @@ def clear_booking_progress(instagram_id: str):
     """Очистить прогресс записи"""
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM booking_temp WHERE instagram_id = ?", (instagram_id,))
+    c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
     conn.commit()
     conn.close()
 
@@ -173,10 +171,10 @@ def search_bookings(query: str, limit: int = 50):
                    b.datetime, b.phone, b.status, b.created_at, b.revenue
             FROM bookings b
             LEFT JOIN clients c ON b.instagram_id = c.instagram_id
-            WHERE b.service_name LIKE ? OR b.name LIKE ? OR c.username LIKE ? 
-                  OR c.name LIKE ? OR b.phone LIKE ?
+            WHERE b.service_name LIKE %s OR b.name LIKE %s OR c.username LIKE %s 
+                  OR c.name LIKE %s OR b.phone LIKE %s
             ORDER BY b.created_at DESC
-            LIMIT ?
+            LIMIT %s
         """, (query, query, query, query, query, limit))
         
         bookings = c.fetchall()
@@ -213,7 +211,7 @@ def get_booking_progress(instagram_id: str) -> Optional[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("SELECT data FROM booking_drafts WHERE instagram_id = ?", (instagram_id,))
+        c.execute("SELECT data FROM booking_drafts WHERE instagram_id = %s", (instagram_id,))
         row = c.fetchone()
         if row:
             import json
@@ -237,7 +235,7 @@ def update_booking_progress(instagram_id: str, data: Dict):
         
         c.execute("""
             INSERT OR REPLACE INTO booking_drafts (instagram_id, data, updated_at)
-            VALUES (?, ?, CURRENT_TIMESTAMP)
+            VALUES (%s, %s, CURRENT_TIMESTAMP)
         """, (instagram_id, json.dumps(current)))
         conn.commit()
     except Exception as e:
@@ -250,7 +248,7 @@ def clear_booking_progress(instagram_id: str):
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("DELETE FROM booking_drafts WHERE instagram_id = ?", (instagram_id,))
+        c.execute("DELETE FROM booking_drafts WHERE instagram_id = %s", (instagram_id,))
         conn.commit()
     except Exception as e:
         print(f"Error clearing booking progress: {e}")
@@ -276,7 +274,7 @@ def get_client_usual_booking_pattern(instagram_id: str) -> Optional[Dict]:
                strftime('%w', datetime) as weekday,
                strftime('%H', datetime) as hour
         FROM bookings
-        WHERE instagram_id = ? AND status = 'completed'
+        WHERE instagram_id = %s AND status = 'completed'
         ORDER BY datetime DESC
         LIMIT 3
     """, (instagram_id,))
@@ -339,7 +337,7 @@ def get_client_course_progress(instagram_id: str, service_name: str) -> Optional
     c.execute("""
         SELECT total_sessions, discount_percent
         FROM service_courses
-        WHERE service_name LIKE ?
+        WHERE service_name LIKE %s
     """, (f"%{service_name}%",))
     
     course = c.fetchone()
@@ -354,10 +352,10 @@ def get_client_course_progress(instagram_id: str, service_name: str) -> Optional
     c.execute("""
         SELECT COUNT(*) 
         FROM bookings
-        WHERE instagram_id = ? 
-        AND service_name LIKE ?
+        WHERE instagram_id = %s 
+        AND service_name LIKE %s
         AND status = 'completed'
-        AND datetime >= ?
+        AND datetime >= %s
     """, (instagram_id, f"%{service_name}%", (get_current_time() - timedelta(days=90)).strftime('%Y-%m-%d %H:%M')))
     
     completed_count = c.fetchone()[0]
@@ -376,12 +374,12 @@ def get_client_course_progress(instagram_id: str, service_name: str) -> Optional
 
 def add_to_waitlist(instagram_id: str, service: str, preferred_date: str, preferred_time: str):
     """Добавить клиента в лист ожидания"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Создаём таблицу если её нет
     c.execute('''CREATE TABLE IF NOT EXISTS booking_waitlist (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id TEXT NOT NULL,
         service TEXT NOT NULL,
         preferred_date DATE NOT NULL,
@@ -394,7 +392,7 @@ def add_to_waitlist(instagram_id: str, service: str, preferred_date: str, prefer
     c.execute("""
         INSERT INTO booking_waitlist 
         (client_id, service, preferred_date, preferred_time)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
     """, (instagram_id, service, preferred_date, preferred_time))
     
     conn.commit()
@@ -403,15 +401,15 @@ def add_to_waitlist(instagram_id: str, service: str, preferred_date: str, prefer
 
 def get_waitlist_for_slot(service: str, date: str, time: str) -> List[str]:
     """Получить список ожидающих для конкретного слота"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""
         SELECT client_id 
         FROM booking_waitlist
-        WHERE service LIKE ? 
-        AND preferred_date = ?
-        AND preferred_time = ?
+        WHERE service LIKE %s 
+        AND preferred_date = %s
+        AND preferred_time = %s
         AND notified = 0
         ORDER BY created_at ASC
     """, (f"%{service}%", date, time))
@@ -424,16 +422,16 @@ def get_waitlist_for_slot(service: str, date: str, time: str) -> List[str]:
 
 def mark_waitlist_notified(instagram_id: str, service: str, date: str, time: str):
     """Отметить что клиента уведомили"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""
         UPDATE booking_waitlist
         SET notified = 1
-        WHERE client_id = ?
-        AND service LIKE ?
-        AND preferred_date = ?
-        AND preferred_time = ?
+        WHERE client_id = %s
+        AND service LIKE %s
+        AND preferred_date = %s
+        AND preferred_time = %s
     """, (instagram_id, f"%{service}%", date, time))
     
     conn.commit()
@@ -458,7 +456,7 @@ def check_if_urgent_booking(message: str) -> bool:
 
 def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[str, str, str]]:
     """Получить клиентов для повторной записи (#16)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     cutoff_date = (get_current_time() - timedelta(days=days_since)).strftime('%Y-%m-%d %H:%M')
@@ -468,9 +466,9 @@ def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[
         FROM bookings b
         JOIN bookings b2 ON b.instagram_id = b2.instagram_id
         JOIN clients c ON b.instagram_id = c.instagram_id
-        WHERE b.service_name LIKE ?
+        WHERE b.service_name LIKE %s
         AND b.status = 'completed'
-        AND b.datetime <= ?
+        AND b.datetime <= %s
         AND b.instagram_id NOT IN (
             SELECT instagram_id 
             FROM bookings 
@@ -487,7 +485,7 @@ def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[
 
 def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
     """Получить предстоящие записи для напоминаний (#15)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     start_time = get_current_time().strftime('%Y-%m-%d %H:%M')
@@ -499,7 +497,7 @@ def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
         FROM bookings b
         JOIN clients c ON b.instagram_id = c.instagram_id
         WHERE b.status IN ('pending', 'confirmed')
-        AND b.datetime BETWEEN ? AND ?
+        AND b.datetime BETWEEN %s AND %s
     """, (start_time, end_time))
     
     results = c.fetchall()
@@ -516,7 +514,7 @@ def cancel_booking(booking_id: int) -> bool:
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE bookings SET status = 'cancelled' WHERE id = ?", (booking_id,))
+        c.execute("UPDATE bookings SET status = 'cancelled' WHERE id = %s", (booking_id,))
         conn.commit()
         success = c.rowcount > 0
         conn.close()
@@ -533,7 +531,7 @@ def delete_booking(booking_id: int) -> bool:
     c = conn.cursor()
     
     try:
-        c.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
+        c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
         conn.commit()
         success = c.rowcount > 0
         conn.close()
@@ -558,9 +556,9 @@ def find_active_booking(instagram_id: str) -> Optional[Dict]:
     c.execute("""
         SELECT id, service_name, datetime, master, phone
         FROM bookings
-        WHERE instagram_id = ? 
+        WHERE instagram_id = %s 
         AND status IN ('confirmed', 'pending')
-        AND datetime >= ?
+        AND datetime >= %s
         ORDER BY datetime ASC
         LIMIT 1
     """, (instagram_id, now))

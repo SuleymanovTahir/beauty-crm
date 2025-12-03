@@ -4,7 +4,7 @@ Extract translatable content from database
 Identifies all text fields that need translation and checks against JSON files
 """
 
-import sqlite3
+from db.connection import get_db_connection
 import json
 import sys
 import os
@@ -146,10 +146,10 @@ def extract_translatable_content():
                     # NEW: Check if source language itself needs translation (correction)
                     # This happens if we detected that source text is NOT in source language (e.g. EN text in RU field)
                     # We can't easily detect here without instantiating Translator, which might be slow for all records
-                    # But we can check if we have a "detected_language" stored? No, we don't store it in DB yet.
+                    # But we can check if we have a "detected_language" stored%s No, we don't store it in DB yet.
                     # So we rely on db_translate.py to do the actual detection and correction.
                     # BUT db_translate.py only runs on items in this list.
-                    # So we MUST include items here if they look suspicious?
+                    # So we MUST include items here if they look suspicious%s
                     
                     # Actually, let's instantiate Translator here. It uses cache so it should be fast for repeated runs.
                     # We'll do it only if we haven't already flagged this field as missing

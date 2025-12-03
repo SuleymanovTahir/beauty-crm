@@ -8,6 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
@@ -22,7 +23,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         result = {
@@ -35,7 +36,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         # ===== 1. ПРОВЕРКА БАЗЫ ДАННЫХ =====
         
         # Таблица employees
-        c.execute("SELECT COUNT(*) FROM employees WHERE is_active = 1")
+        c.execute("SELECT COUNT(*) FROM employees WHERE is_active = TRUE")
         active_employees = c.fetchone()[0]
         
         c.execute("""
@@ -65,7 +66,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             SELECT COUNT(*) 
             FROM employee_services es
             JOIN employees e ON es.employee_id = e.id
-            WHERE e.is_active = 1
+            WHERE e.is_active = TRUE
         """)
         active_links = c.fetchone()[0]
         
@@ -74,7 +75,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             FROM employee_services es
             JOIN employees e ON es.employee_id = e.id
             JOIN services s ON es.service_id = s.id
-            WHERE e.is_active = 1
+            WHERE e.is_active = TRUE
             LIMIT 10
         """)
         sample_links = c.fetchall()
@@ -92,13 +93,13 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         }
         
         # Таблица services
-        c.execute("SELECT COUNT(*) FROM services WHERE is_active = 1")
+        c.execute("SELECT COUNT(*) FROM services WHERE is_active = TRUE")
         active_services = c.fetchone()[0]
         
         c.execute("""
             SELECT id, name, name_ru, category, price
             FROM services
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY category
             LIMIT 10
         """)
@@ -146,7 +147,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         has_services_block = "УСЛУГИ САЛОНА" in system_prompt or "SERVICES" in system_prompt
         
         # Считаем упоминания
-        c.execute("SELECT full_name, name_ru FROM employees WHERE is_active = 1")
+        c.execute("SELECT full_name, name_ru FROM employees WHERE is_active = TRUE")
         active_masters = c.fetchall()
         
         master_mentions = 0
@@ -179,7 +180,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             SELECT id, name, name_ru 
             FROM services 
             WHERE (name LIKE '%Manicure%' OR name_ru LIKE '%маникюр%')
-            AND is_active = 1
+            AND is_active = TRUE
             LIMIT 1
         """)
         manicure_service = c.fetchone()

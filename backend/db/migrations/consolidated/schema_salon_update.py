@@ -1,15 +1,19 @@
-import sqlite3
+from db.connection import get_db_connection
 
 def migrate_salon_schema(db_path="salon_bot.db"):
     """Add translation columns to salon_settings table"""
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     print("🔧 Checking salon_settings schema...")
     
     # Check existing columns
-    c.execute("PRAGMA table_info(salon_settings)")
-    columns = [row[1] for row in c.fetchall()]
+    c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='salon_settings'
+        """)
+    columns = [row[0] for row in c.fetchall()]
     
     new_columns = [
         ("address_ru", "TEXT"),
@@ -22,7 +26,7 @@ def migrate_salon_schema(db_path="salon_bot.db"):
             print(f"  ➕ Adding column {col_name}...")
             try:
                 c.execute(f"ALTER TABLE salon_settings ADD COLUMN {col_name} {col_type}")
-            except sqlite3.OperationalError as e:
+            except Exception as e:
                 print(f"  ⚠️ Error adding {col_name}: {e}")
         else:
             print(f"  ✅ Column {col_name} already exists")

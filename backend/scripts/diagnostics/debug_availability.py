@@ -1,5 +1,5 @@
 
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -13,7 +13,7 @@ from datetime import datetime
 
 def debug_availability():
     print(f"Checking availability for 2025-11-26 (Wednesday)")
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     print("\n--- Service Check ---")
@@ -23,7 +23,7 @@ def debug_availability():
     
     for s_id, s_name, s_name_ru in services_found:
         print(f"Checking masters for service: {s_name} ({s_id})")
-        c.execute("SELECT user_id, is_online_booking_enabled FROM user_services WHERE service_id = ?", (s_id,))
+        c.execute("SELECT user_id, is_online_booking_enabled FROM user_services WHERE service_id = %s", (s_id,))
         links = c.fetchall()
         print(f"  Masters with this service: {links}")
 
@@ -35,7 +35,7 @@ def debug_availability():
         print(f"ID: {m[0]}, Name: {m[1]}, Active: {m[2]}, Provider: {m[3]}")
         
         # Check User Services
-        c.execute("SELECT s.name, s.name_ru, us.is_online_booking_enabled FROM user_services us JOIN services s ON us.service_id = s.id WHERE us.user_id = ?", (m[0],))
+        c.execute("SELECT s.name, s.name_ru, us.is_online_booking_enabled FROM user_services us JOIN services s ON us.service_id = s.id WHERE us.user_id = %s", (m[0],))
         services = c.fetchall()
         print(f"  Services: {services}")
         for s in services:
@@ -43,7 +43,7 @@ def debug_availability():
                 print(f"  !!! FOUND MANICURE: {s[0]} ({s[1]}), Enabled: {s[2]}")
 
         # Check Schedule for Wednesday (2)
-        c.execute("SELECT start_time, end_time, is_active FROM user_schedule WHERE user_id = ? AND day_of_week = 2", (m[0],))
+        c.execute("SELECT start_time, end_time, is_active FROM user_schedule WHERE user_id = %s AND day_of_week = 2", (m[0],))
         schedule = c.fetchone()
         if schedule:
             print(f"  Schedule (Wed): {schedule[0]} - {schedule[1]}, Active: {schedule[2]}")
@@ -51,13 +51,13 @@ def debug_availability():
             print(f"  Schedule (Wed): NOT SET")
 
         # Check Time Offs
-        c.execute("SELECT date_from, date_to FROM user_time_off WHERE user_id = ?", (m[0],))
+        c.execute("SELECT date_from, date_to FROM user_time_off WHERE user_id = %s", (m[0],))
         time_offs = c.fetchall()
         if time_offs:
             print(f"  Time Offs: {time_offs}")
 
         # Check Bookings
-        c.execute("SELECT datetime, status FROM bookings WHERE master = ? AND datetime LIKE '2025-11-26%'", (m[1],))
+        c.execute("SELECT datetime, status FROM bookings WHERE master = %s AND datetime LIKE '2025-11-26%'", (m[1],))
         bookings = c.fetchall()
         if bookings:
             print(f"  Bookings on 2025-11-26: {bookings}")
@@ -72,7 +72,7 @@ def debug_availability():
     if s_row:
         print(f"  Selected Service: ID={s_row[0]}, Name={s_row[1]}, Duration={s_row[2]}")
         # Check masters for THIS service
-        c.execute("SELECT user_id FROM user_services WHERE service_id = ? AND is_online_booking_enabled = 1", (s_row[0],))
+        c.execute("SELECT user_id FROM user_services WHERE service_id = %s AND is_online_booking_enabled = 1", (s_row[0],))
         masters_with_service = c.fetchall()
         print(f"  Masters with this service enabled: {masters_with_service}")
     else:

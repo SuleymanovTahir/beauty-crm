@@ -1,6 +1,6 @@
 import os
 import shutil
-import sqlite3
+from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
@@ -20,7 +20,7 @@ def setup_directories():
         print(f"Created directory: {ABS_TARGET_DIR}")
 
 def get_employees(cursor):
-    cursor.execute("SELECT id, full_name, username FROM users WHERE is_service_provider = 1")
+    cursor.execute("SELECT id, full_name, username FROM users WHERE is_service_provider = TRUE")
     return cursor.fetchall()
 
 def normalize_name(name):
@@ -36,7 +36,7 @@ def import_photos():
 
     setup_directories()
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     employees = get_employees(cursor)
@@ -99,7 +99,7 @@ def import_photos():
             
             # Update DB
             db_path = f"/{TARGET_DIR}/{new_filename}"
-            cursor.execute("UPDATE users SET photo = ? WHERE id = ?", (db_path, emp_id))
+            cursor.execute("UPDATE users SET photo = %s WHERE id = %s", (db_path, emp_id))
             updated_count += 1
         else:
             print(f"⚠️  No match for: '{filename}'")

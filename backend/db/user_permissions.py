@@ -1,9 +1,9 @@
 """
 Функции для работы с индивидуальными правами пользователей
 """
-import sqlite3
 from typing import Dict, List, Optional, Tuple
-from core.config import DATABASE_NAME, ROLES
+from db.connection import get_db_connection
+from core.config import ROLES
 from utils.logger import log_info, log_error, log_warning
 
 
@@ -14,14 +14,14 @@ def get_user_individual_permissions(user_id: int) -> Dict[str, bool]:
     Returns:
         Dict с ключами permission_key и значениями granted (True/False)
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         c.execute("""
             SELECT permission_key, granted
             FROM user_permissions
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (user_id,))
         
         permissions = {}
@@ -91,14 +91,14 @@ def grant_user_permission(
         granted_by: ID пользователя, который выдаёт право
         notes: Примечания
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Проверяем существует ли уже запись
         c.execute("""
             SELECT id FROM user_permissions
-            WHERE user_id = ? AND permission_key = ?
+            WHERE user_id = %s AND permission_key = %s
         """, (user_id, permission_key))
         
         existing = c.fetchone()
@@ -107,14 +107,14 @@ def grant_user_permission(
             # Обновляем существующую запись
             c.execute("""
                 UPDATE user_permissions
-                SET granted = ?, granted_by = ?, granted_at = CURRENT_TIMESTAMP, notes = ?
-                WHERE user_id = ? AND permission_key = ?
+                SET granted = %s, granted_by = %s, granted_at = CURRENT_TIMESTAMP, notes = %s
+                WHERE user_id = %s AND permission_key = %s
             """, (1 if granted else 0, granted_by, notes, user_id, permission_key))
         else:
             # Создаём новую запись
             c.execute("""
                 INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, notes)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
             """, (user_id, permission_key, 1 if granted else 0, granted_by, notes))
         
         conn.commit()
@@ -143,14 +143,14 @@ def bulk_update_user_permissions(
         permissions: Dict {permission_key: granted}
         granted_by: ID пользователя, который изменяет права
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         for perm_key, granted in permissions.items():
             c.execute("""
                 INSERT INTO user_permissions (user_id, permission_key, granted, granted_by)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
                 ON CONFLICT(user_id, permission_key) DO UPDATE SET
                     granted = excluded.granted,
                     granted_by = excluded.granted_by,
@@ -173,13 +173,13 @@ def remove_user_permission(user_id: int, permission_key: str) -> bool:
     """
     Удалить индивидуальное право (вернуть к базовому из роли)
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         c.execute("""
             DELETE FROM user_permissions
-            WHERE user_id = ? AND permission_key = ?
+            WHERE user_id = %s AND permission_key = %s
         """, (user_id, permission_key))
         
         conn.commit()

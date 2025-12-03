@@ -9,6 +9,7 @@ import asyncio
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.email import send_email_async
@@ -65,7 +66,7 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
         )
 
         # Обновляем статус отправки email в БД
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
             UPDATE internal_chat
@@ -96,7 +97,7 @@ async def get_internal_messages(
     if not user:
         return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Если указан конкретный пользователь, получаем только переписку с ним
@@ -147,8 +148,8 @@ async def get_internal_messages(
     if with_user_id:
         c.execute("""
             UPDATE internal_chat
-            SET is_read = 1, read_at = ?
-            WHERE to_user_id = ? AND from_user_id = ? AND is_read = 0
+            SET is_read = TRUE, read_at = ?
+            WHERE to_user_id = ? AND from_user_id = ? AND is_read = FALSE
         """, (datetime.now().isoformat(), user['id'], with_user_id))
         conn.commit()
 
@@ -177,7 +178,7 @@ async def send_internal_message(
     if not to_user_id:
         return JSONResponse({"error": "Не указан получатель"}, status_code=400)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Вставляем сообщение
@@ -224,13 +225,13 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT id, username, full_name, role, email
         FROM users
-        WHERE id != ? AND is_active = 1
+        WHERE id != ? AND is_active = TRUE
         ORDER BY full_name
     """, (user['id'],))
 
@@ -254,13 +255,13 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         SELECT COUNT(*)
         FROM internal_chat
-        WHERE to_user_id = ? AND is_read = 0
+        WHERE to_user_id = ? AND is_read = FALSE
     """, (user['id'],))
 
     count = c.fetchone()[0]
@@ -285,14 +286,14 @@ async def mark_messages_read(
     if not from_user_id:
         return JSONResponse({"error": "Не указан отправитель"}, status_code=400)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     now = datetime.now().isoformat()
     c.execute("""
         UPDATE internal_chat
-        SET is_read = 1, read_at = ?
-        WHERE to_user_id = ? AND from_user_id = ? AND is_read = 0
+        SET is_read = TRUE, read_at = ?
+        WHERE to_user_id = ? AND from_user_id = ? AND is_read = FALSE
     """, (now, user['id'], from_user_id))
 
     conn.commit()

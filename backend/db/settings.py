@@ -4,7 +4,7 @@
 import sqlite3
 from datetime import datetime
 
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_error, log_warning, log_info
 
 
@@ -12,7 +12,7 @@ from utils.logger import log_error, log_warning, log_info
 
 def get_salon_settings() -> dict:
     """Получить настройки салона из БД"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -118,7 +118,7 @@ def _get_default_salon_settings() -> dict:
 
 def update_salon_settings(data: dict) -> bool:
     """Обновить настройки салона (поддерживает частичное обновление)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -164,7 +164,7 @@ def update_salon_settings(data: dict) -> bool:
 
         for data_key, db_column in field_mapping.items():
             if data_key in data:
-                set_parts.append(f"{db_column} = ?")
+                set_parts.append(f"{db_column} = %s")
                 params.append(data[data_key])
 
         if not set_parts:
@@ -193,7 +193,7 @@ def update_salon_settings(data: dict) -> bool:
 
 def get_bot_settings() -> dict:
     """Получить настройки бота из БД"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -342,7 +342,7 @@ def _get_default_bot_settings() -> dict:
         "greeting_message": "Привет! 😊 Добро пожаловать в M.Le Diamant!",
         "farewell_message": "Спасибо! До встречи! 💖",
         "price_explanation": "Мы в премиум-сегменте 💎",
-        "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться?",
+        "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться%s",
         "premium_justification": "",
         "booking_redirect_message": "Я AI-ассистент, запись онлайн!\nВыберите время: {BOOKING_URL}",
         "fomo_messages": "",
@@ -388,13 +388,17 @@ def _get_default_bot_settings() -> dict:
 
 def update_bot_settings(data: dict) -> bool:
     """Обновить настройки бота"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         # Получаем список всех колонок
-        c.execute("PRAGMA table_info(bot_settings)")
-        columns = [row[1] for row in c.fetchall()]
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='bot_settings'
+        """)
+        columns = [row[0] for row in c.fetchall()]
 
         # Формируем SET часть запроса только для существующих колонок
         set_parts = []
@@ -452,7 +456,7 @@ def update_bot_settings(data: dict) -> bool:
 
         for data_key, db_column in field_mapping.items():
             if db_column in columns and data_key in data:
-                set_parts.append(f"{db_column} = ?")
+                set_parts.append(f"{db_column} = %s")
                 params.append(data[data_key])
 
         if set_parts:
@@ -481,7 +485,7 @@ def update_bot_settings(data: dict) -> bool:
 
 def get_custom_statuses() -> list:
     """Получить все кастомные статусы"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -497,14 +501,14 @@ def get_custom_statuses() -> list:
 def create_custom_status(status_key: str, status_label: str, status_color: str,
                          status_icon: str, created_by: int) -> bool:
     """Создать кастомный статус"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO custom_statuses 
                      (status_key, status_label, status_color, status_icon, created_at, created_by)
-                     VALUES (?, ?, ?, ?, ?, ?)""",
+                     VALUES (%s, %s, %s, %s, %s, %s)""",
                   (status_key, status_label, status_color, status_icon, now, created_by))
         conn.commit()
         log_info(f"✅ Статус '{status_key}' создан", "database")
@@ -523,7 +527,7 @@ def create_custom_status(status_key: str, status_label: str, status_color: str,
 def update_custom_status(status_key: str, status_label: str = None,
                          status_color: str = None, status_icon: str = None) -> bool:
     """Обновить кастомный статус"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -531,20 +535,20 @@ def update_custom_status(status_key: str, status_label: str = None,
         params = []
 
         if status_label:
-            updates.append("status_label = ?")
+            updates.append("status_label = %s")
             params.append(status_label)
 
         if status_color:
-            updates.append("status_color = ?")
+            updates.append("status_color = %s")
             params.append(status_color)
 
         if status_icon:
-            updates.append("status_icon = ?")
+            updates.append("status_icon = %s")
             params.append(status_icon)
 
         if updates:
             params.append(status_key)
-            query = f"UPDATE custom_statuses SET {', '.join(updates)} WHERE status_key = ?"
+            query = f"UPDATE custom_statuses SET {', '.join(updates)} WHERE status_key = %s"
             c.execute(query, params)
             conn.commit()
             log_info(f"✅ Статус '{status_key}' обновлен", "database")
@@ -560,11 +564,11 @@ def update_custom_status(status_key: str, status_label: str = None,
 
 def delete_custom_status(status_key: str) -> bool:
     """Удалить кастомный статус"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("DELETE FROM custom_statuses WHERE status_key = ?",
+        c.execute("DELETE FROM custom_statuses WHERE status_key = %s",
                   (status_key,))
         conn.commit()
         log_info(f"✅ Статус '{status_key}' удален", "database")
@@ -640,7 +644,7 @@ def get_all_roles() -> list:
         }
     ]
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -664,7 +668,7 @@ def get_all_roles() -> list:
 
 def create_custom_role(role_key: str, role_name: str, role_description: str = None, created_by: int = None) -> bool:
     """Создать кастомную роль"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if role_key in ['admin', 'manager', 'employee']:
@@ -675,7 +679,7 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
     try:
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO custom_roles (role_key, role_name, role_description, created_at, created_by)
-                    VALUES (?, ?, ?, ?, ?)""",
+                    VALUES (%s, %s, %s, %s, %s)""",
                   (role_key, role_name, role_description, now, created_by))
 
         conn.commit()
@@ -694,7 +698,7 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
 
 def delete_custom_role(role_key: str) -> bool:
     """Удалить кастомную роль"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if role_key in ['admin', 'manager', 'employee']:
@@ -702,8 +706,8 @@ def delete_custom_role(role_key: str) -> bool:
         return False
 
     try:
-        c.execute("DELETE FROM custom_roles WHERE role_key = ?", (role_key,))
-        c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
+        c.execute("DELETE FROM custom_roles WHERE role_key = %s", (role_key,))
+        c.execute("DELETE FROM role_permissions WHERE role_key = %s", (role_key,))
 
         conn.commit()
         log_info(f"✅ Роль '{role_key}' удалена", "database")
@@ -718,7 +722,7 @@ def delete_custom_role(role_key: str) -> bool:
 
 def get_role_permissions(role_key: str) -> dict:
     """Получить права роли"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if role_key == 'admin':
@@ -735,7 +739,7 @@ def get_role_permissions(role_key: str) -> dict:
 
     try:
         c.execute("""SELECT permission_key, can_view, can_create, can_edit, can_delete
-                    FROM role_permissions WHERE role_key = ?""", (role_key,))
+                    FROM role_permissions WHERE role_key = %s""", (role_key,))
 
         permissions = {}
         for row in c.fetchall():
@@ -756,7 +760,7 @@ def get_role_permissions(role_key: str) -> dict:
 
 def update_role_permissions(role_key: str, permissions: dict) -> bool:
     """Обновить права роли"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if role_key == 'admin':
@@ -764,12 +768,12 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
         return False
 
     try:
-        c.execute("DELETE FROM role_permissions WHERE role_key = ?", (role_key,))
+        c.execute("DELETE FROM role_permissions WHERE role_key = %s", (role_key,))
 
         for perm_key, perms in permissions.items():
             c.execute("""INSERT INTO role_permissions 
                         (role_key, permission_key, can_view, can_create, can_edit, can_delete)
-                        VALUES (?, ?, ?, ?, ?, ?)""",
+                        VALUES (%s, %s, %s, %s, %s, %s)""",
                       (role_key, perm_key,
                        1 if perms.get('can_view') else 0,
                        1 if perms.get('can_create') else 0,
@@ -799,11 +803,11 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
     Returns:
         bool: True если право есть
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
@@ -816,7 +820,7 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
 
         column = f"can_{action}"
         c.execute(f"""SELECT {column} FROM role_permissions 
-                     WHERE role_key = ? AND permission_key = ?""",
+                     WHERE role_key = %s AND permission_key = %s""",
                   (role_key, permission_key))
 
         result = c.fetchone()
@@ -831,12 +835,12 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
 
 def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
         UPDATE salon_settings 
-        SET bot_globally_enabled = ?
+        SET bot_globally_enabled = %s
         WHERE id = 1
     """, (1 if enabled else 0,))
 

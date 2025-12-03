@@ -8,7 +8,7 @@
 4. Диалоги
 5. Баллы лояльности
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 import random
@@ -24,7 +24,7 @@ from core.config import DATABASE_NAME
 from scripts.data.seed_test_data import seed_data as seed_employees_and_services
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
@@ -45,7 +45,7 @@ def seed_clients(conn):
     for name, username, phone, notes in clients:
         # Проверяем существование по instagram_id (используем username как ID для теста)
         instagram_id = username
-        c.execute("SELECT instagram_id FROM clients WHERE instagram_id = ?", (instagram_id,))
+        c.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s", (instagram_id,))
         existing = c.fetchone()
         
         if existing:
@@ -54,7 +54,7 @@ def seed_clients(conn):
         else:
             c.execute("""
                 INSERT INTO clients (instagram_id, username, name, phone, notes, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """, (instagram_id, username, name, phone, notes, datetime.now().isoformat()))
             client_ids.append(instagram_id)
             print(f"✅ Добавлен клиент: {name} (ID: {instagram_id})")
@@ -93,7 +93,7 @@ def seed_bookings(conn, client_ids):
         
         c.execute("""
             INSERT INTO bookings (instagram_id, master, service_name, datetime, status, created_at)
-            VALUES (?, ?, ?, ?, 'completed', ?)
+            VALUES (%s, %s, %s, %s, 'completed', %s)
         """, (client_id, master, service, dt.isoformat(), dt.isoformat()))
         print(f"✅ Добавлена прошлая запись: {dt.date()} - {master} - {service}")
 
@@ -110,7 +110,7 @@ def seed_bookings(conn, client_ids):
         
         c.execute("""
             INSERT INTO bookings (instagram_id, master, service_name, datetime, status, created_at)
-            VALUES (?, ?, ?, ?, 'confirmed', ?)
+            VALUES (%s, %s, %s, %s, 'confirmed', %s)
         """, (client_id, master, service, dt.isoformat(), now.isoformat()))
         print(f"✅ Добавлена будущая запись: {dt.date()} - {master} - {service}")
 
@@ -120,11 +120,11 @@ def seed_conversations(conn, client_ids):
     c = conn.cursor()
     
     for client_id in client_ids:
-        c.execute("SELECT id FROM conversations WHERE client_id = ?", (client_id,))
+        c.execute("SELECT id FROM conversations WHERE client_id = %s", (client_id,))
         if not c.fetchone():
             c.execute("""
                 INSERT INTO conversations (client_id, timestamp)
-                VALUES (?, ?)
+                VALUES (%s, %s)
             """, (client_id, datetime.now().isoformat()))
             print(f"✅ Создан диалог для клиента ID {client_id}")
 
@@ -135,11 +135,11 @@ def seed_loyalty(conn, client_ids):
     
     for client_id in client_ids:
         points = random.randint(0, 500)
-        c.execute("SELECT id FROM client_loyalty_points WHERE client_id = ?", (client_id,))
+        c.execute("SELECT id FROM client_loyalty_points WHERE client_id = %s", (client_id,))
         if not c.fetchone():
             c.execute("""
                 INSERT INTO client_loyalty_points (client_id, total_points, available_points, spent_points, loyalty_level, updated_at)
-                VALUES (?, ?, ?, 0, 'bronze', ?)
+                VALUES (%s, %s, %s, 0, 'bronze', %s)
             """, (client_id, points, points, datetime.now().isoformat()))
             print(f"✅ Начислены баллы клиенту ID {client_id}: {points}")
 
@@ -152,16 +152,16 @@ def cleanup_test_data(conn):
     
     # Удаляем тестовых клиентов
     test_client_ids = ['anna_smith', 'maria_g', 'lenap', 'sarah_j', 'fatima_a']
-    c.execute(f"DELETE FROM bookings WHERE instagram_id IN ({','.join(['?']*len(test_client_ids))})", test_client_ids)
+    c.execute(f"DELETE FROM bookings WHERE instagram_id IN ({','.join(['%s']*len(test_client_ids))})", test_client_ids)
     deleted_bookings = c.rowcount
     
-    c.execute(f"DELETE FROM conversations WHERE client_id IN ({','.join(['?']*len(test_client_ids))})", test_client_ids)
+    c.execute(f"DELETE FROM conversations WHERE client_id IN ({','.join(['%s']*len(test_client_ids))})", test_client_ids)
     deleted_conversations = c.rowcount
     
-    c.execute(f"DELETE FROM client_loyalty_points WHERE client_id IN ({','.join(['?']*len(test_client_ids))})", test_client_ids)
+    c.execute(f"DELETE FROM client_loyalty_points WHERE client_id IN ({','.join(['%s']*len(test_client_ids))})", test_client_ids)
     deleted_loyalty = c.rowcount
     
-    c.execute(f"DELETE FROM clients WHERE instagram_id IN ({','.join(['?']*len(test_client_ids))})", test_client_ids)
+    c.execute(f"DELETE FROM clients WHERE instagram_id IN ({','.join(['%s']*len(test_client_ids))})", test_client_ids)
     deleted_clients = c.rowcount
     
     print(f"✅ Удалено: {deleted_clients} клиентов, {deleted_bookings} записей, {deleted_conversations} диалогов, {deleted_loyalty} баллов лояльности")
