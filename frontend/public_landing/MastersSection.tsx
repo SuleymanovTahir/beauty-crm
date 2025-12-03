@@ -32,9 +32,9 @@ export function MastersSection() {
           const teamMembers = data.map((emp: any) => ({
             id: emp.id,
             name: emp.name,
-            // Use translations from dynamic.json
-            role: String(t(`dynamic:users.${emp.id}.position`, emp.position || "")),
-            specialty: String(t(`dynamic:users.${emp.id}.bio`, emp.bio || "")),
+            // API already returns translated role based on language
+            role: emp.role || "",
+            specialty: emp.specialty || "",
             image: getPhotoUrl(emp.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
           }));
           setTeam(teamMembers); // API returns sorted list

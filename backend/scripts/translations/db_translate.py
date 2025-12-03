@@ -115,11 +115,23 @@ def translate_content():
                          should_translate = True
                     
                     if should_translate:
-                        # Translate from detected language to target language
-                        translated = translator.translate(source_text, detected_lang, lang)
+                        # Special handling for names (transliteration)
+                        if table_name == 'users' and field_name == 'full_name':
+                            # For Latin languages, use transliteration
+                            if lang in ['en', 'de', 'es', 'fr', 'pt']:
+                                translated = translator.transliterate_ru_to_latin(source_text)
+                                print(f"      → {lang}: '{translated}' (transliterated)")
+                            else:
+                                # For non-Latin (ar, hi, kk), use translation (phonetic)
+                                translated = translator.translate(source_text, detected_lang, lang)
+                                print(f"      → {lang}: '{translated}'")
+                        else:
+                            # Standard translation for other fields
+                            translated = translator.translate(source_text, detected_lang, lang)
+                            print(f"      → {lang}: '{translated}'")
+                        
                         field_data[lang] = translated
                         total_translated += 1
-                        print(f"      → {lang}: '{translated}'")
     
     # Save translated data
     output_path = Path(TRANSLATE_OUTPUT)
