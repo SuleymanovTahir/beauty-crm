@@ -47,19 +47,6 @@
           "pt": "Campus de Inovação Samsung",
           "detected_language": "en"
         },
-        "title_de": {
-          "ru": "Инновационный кампус Samsung",
-          "key": "public_banners.4.title_de.5c18a16e",
-          "en": "Samsung Innovation Campus",
-          "ar": "مجمع سامسونج للابتكار",
-          "es": "Campus de innovación de Samsung",
-          "de": "Samsung Innovation Campus",
-          "fr": "Campus d'innovation Samsung",
-          "hi": "सैमसंग इनोवेशन कैंपस",
-          "kk": "Samsung Innovation Campus",
-          "pt": "Campus de Inovação Samsung",
-          "detected_language": "en"
-        },
         "title_fr": {
           "ru": "Кампус инноваций Samsung",
           "key": "public_banners.4.title_fr.3446b205",
