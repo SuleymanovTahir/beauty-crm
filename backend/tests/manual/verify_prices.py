@@ -1,6 +1,6 @@
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime
 
 # Add backend to path

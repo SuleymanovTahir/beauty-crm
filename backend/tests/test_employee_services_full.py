@@ -28,7 +28,7 @@ def test_employee_services():
         SELECT us.price, us.duration, us.is_online_booking_enabled 
         FROM user_services us 
         JOIN services s ON us.service_id = s.id 
-        WHERE us.user_id = ? AND s.name = 'Half arms'
+        WHERE us.user_id = %s AND s.name = 'Half arms'
     """, (gulya_id,))
     row = c.fetchone()
     
@@ -81,7 +81,7 @@ def test_employee_services():
     c.execute("""
         SELECT price, duration, is_online_booking_enabled 
         FROM user_services 
-        WHERE user_id = ? AND service_id = ?
+        WHERE user_id = %s AND service_id = %s
     """, (gulya_id, service_id))
     row = c.fetchone()
     conn.close()

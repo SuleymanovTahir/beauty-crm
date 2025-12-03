@@ -8,6 +8,7 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 import sqlite3
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 
 router = APIRouter(tags=["Feedback"])
 
@@ -18,7 +19,7 @@ async def get_feedback_stats(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
         
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

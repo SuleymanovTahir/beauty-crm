@@ -1,7 +1,7 @@
 """
 Сохранить Telegram Bot Token в базу данных
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -14,13 +14,13 @@ TELEGRAM_TOKEN = "6784705707:AAHmgFZ1GwvAZ443DNWd4fgT3s1O3sXkySI"
 
 def save_token():
     """Сохранить токен в БД"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Обновляем токен и включаем Telegram
     c.execute("""
         UPDATE messenger_settings
-        SET api_token = ?,
+        SET api_token = %s,
             is_enabled = 1,
             updated_at = CURRENT_TIMESTAMP
         WHERE messenger_type = 'telegram'

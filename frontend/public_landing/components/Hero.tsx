@@ -148,7 +148,7 @@ export function Hero() {
                 heroBanner.title_hi,
                 heroBanner.title_kk,
                 heroBanner.title_pt
-              ) : (t('heroTitle') || "Ваша красота —")}
+              ) : ""}
               <br />
               <span className="text-accent-foreground">
                 {heroBanner ? getTranslatedText(
@@ -161,7 +161,7 @@ export function Hero() {
                   heroBanner.subtitle_hi,
                   heroBanner.subtitle_kk,
                   heroBanner.subtitle_pt
-                ) : (t('heroSubtitle') || "наша страсть")}
+                ) : ""}
               </span>
             </h1>
 

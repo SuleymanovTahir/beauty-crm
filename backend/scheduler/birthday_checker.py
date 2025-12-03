@@ -1,10 +1,10 @@
-import sqlite3
+from db.connection import get_db_connection
 import threading
 import time
 import asyncio
 from datetime import datetime, timedelta
 from typing import List, Tuple
-from core.config import DATABASE_NAME, SHOW_SCHEDULER_START
+from core.config import SHOW_SCHEDULER_START
 from api.notifications import create_notification
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
@@ -12,7 +12,7 @@ from utils.email import send_email_async
 
 def get_upcoming_birthdays() -> List[Tuple]:
     """Получить предстоящие дни рождения"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     today = datetime.now().date()
@@ -76,7 +76,7 @@ def get_upcoming_birthdays() -> List[Tuple]:
 
 def check_if_notification_sent(user_id: int, notification_type: str, notification_date: str) -> bool:
     """Проверить, было ли уже отправлено уведомление"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""
@@ -92,7 +92,7 @@ def check_if_notification_sent(user_id: int, notification_type: str, notificatio
 
 def mark_notification_sent(user_id: int, notification_type: str, notification_date: str):
     """Отметить уведомление как отправленное"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     now = datetime.now().isoformat()
@@ -108,7 +108,7 @@ def mark_notification_sent(user_id: int, notification_type: str, notification_da
 
 def get_all_staff() -> List[Tuple]:
     """Получить всех сотрудников для уведомления (с email)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
@@ -246,7 +246,7 @@ def start_birthday_checker():
 
 def get_client_birthdays_today() -> List[Tuple]:
     """Получить клиентов с днем рождения сегодня"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     today = datetime.now().date()
@@ -290,7 +290,7 @@ def get_client_birthdays_today() -> List[Tuple]:
 
 def check_if_client_congratulated(instagram_id: str, date: str) -> bool:
     """Проверить, было ли отправлено поздравление клиенту"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     c.execute("""
@@ -348,7 +348,7 @@ async def send_birthday_congratulations():
                     log_info(f"🎂 Отправлено поздравление клиенту {name} ({instagram_id})", "birthday_checker")
 
                 # Сохраняем уведомление в БД
-                conn = sqlite3.connect(DATABASE_NAME)
+                conn = get_db_connection()
                 c = conn.cursor()
 
                 c.execute("""

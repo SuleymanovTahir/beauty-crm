@@ -1,4 +1,3 @@
-import sqlite3
 import os
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'salon_bot.db')
@@ -13,7 +12,7 @@ def create_public_content_tables():
         # Таблица отзывов
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS public_reviews (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 author_name TEXT NOT NULL,
                 rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
                 text_ru TEXT NOT NULL,
@@ -36,7 +35,7 @@ def create_public_content_tables():
         # Таблица баннеров
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS public_banners (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 title_ru TEXT NOT NULL,
                 title_en TEXT,
                 title_ar TEXT,
@@ -55,7 +54,7 @@ def create_public_content_tables():
         # Таблица FAQ
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS public_faq (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 question_ru TEXT NOT NULL,
                 question_en TEXT,
                 question_ar TEXT,
@@ -85,7 +84,7 @@ def create_public_content_tables():
         # Таблица галереи
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS public_gallery (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 title_ru TEXT,
                 title_en TEXT,
                 title_ar TEXT,
@@ -116,7 +115,7 @@ def create_public_content_tables():
         # Таблица баннеров
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS public_banners (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 title_ru TEXT NOT NULL,
                 title_en TEXT,
                 title_ar TEXT,

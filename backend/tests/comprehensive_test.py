@@ -10,7 +10,7 @@
 ╚════════════════════════════════════════════════════════════════════════════╝
 """
 
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 import traceback

@@ -37,7 +37,7 @@ def cleanup_old_cache():
     print(f"🗑️  Found {len(old_cache_files)} old cache files")
     
     # Confirm deletion
-    response = input(f"Delete {len(old_cache_files)} old cache files? (yes/no): ")
+    response = input(f"Delete {len(old_cache_files)} old cache files%s (yes/no): ")
     
     if response.lower() in ['yes', 'y']:
         deleted = 0

@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime, timedelta, time as dt_time
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.datetime_utils import get_current_time
 
@@ -17,10 +18,10 @@ class MasterScheduleService:
 
     def _get_user_id(self, master_name: str) -> Optional[int]:
         """Получить ID пользователя по имени"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("SELECT id FROM users WHERE full_name = ? AND is_service_provider = 1", (master_name,))
+            c.execute("SELECT id FROM users WHERE full_name = %s AND is_service_provider = TRUE", (master_name,))
             row = c.fetchone()
             return row[0] if row else None
         finally:
@@ -41,14 +42,14 @@ class MasterScheduleService:
             log_error(f"User not found: {master_name}", "schedule")
             return False
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             # Проверяем, есть ли уже запись
             c.execute("""
                 SELECT id FROM user_schedule
-                WHERE user_id = ? AND day_of_week = ?
+                WHERE user_id = %s AND day_of_week = %s
             """, (user_id, day_of_week))
 
             existing = c.fetchone()
@@ -57,15 +58,15 @@ class MasterScheduleService:
                 # Обновляем
                 c.execute("""
                     UPDATE user_schedule
-                    SET start_time = ?, end_time = ?, is_active = 1
-                    WHERE user_id = ? AND day_of_week = ?
+                    SET start_time = %s, end_time = %s, is_active = TRUE
+                    WHERE user_id = %s AND day_of_week = %s
                 """, (start_time, end_time, user_id, day_of_week))
             else:
                 # Создаем новую
                 c.execute("""
                     INSERT INTO user_schedule
                     (user_id, day_of_week, start_time, end_time, is_active)
-                    VALUES (?, ?, ?, ?, 1)
+                    VALUES (%s, %s, %s, %s, TRUE)
                 """, (user_id, day_of_week, start_time, end_time))
 
             conn.commit()
@@ -85,14 +86,14 @@ class MasterScheduleService:
         if not user_id:
             return []
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             c.execute("""
                 SELECT day_of_week, start_time, end_time, is_active
                 FROM user_schedule
-                WHERE user_id = ?
+                WHERE user_id = %s
                 ORDER BY day_of_week
             """, (user_id,))
 
@@ -142,7 +143,7 @@ class MasterScheduleService:
         if not user_id:
             return False
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -153,7 +154,7 @@ class MasterScheduleService:
             c.execute("""
                 INSERT INTO user_time_off
                 (user_id, start_date, end_date, reason)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
             """, (user_id, start_dt, end_dt, reason))
 
             conn.commit()
@@ -175,23 +176,23 @@ class MasterScheduleService:
         if not user_id:
             return []
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
             query = """
                 SELECT id, start_date, end_date, reason
                 FROM user_time_off
-                WHERE user_id = ?
+                WHERE user_id = %s
             """
             params = [user_id]
 
             if start_date:
-                query += " AND end_date >= ?"
+                query += " AND end_date >= %s"
                 params.append(f"{start_date} 00:00:00")
             
             if end_date:
-                query += " AND start_date <= ?"
+                query += " AND start_date <= %s"
                 params.append(f"{end_date} 23:59:59")
 
             query += " ORDER BY start_date"
@@ -221,11 +222,11 @@ class MasterScheduleService:
 
     def remove_time_off(self, time_off_id: int) -> bool:
         """Удалить выходной/отпуск"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
-            c.execute("DELETE FROM user_time_off WHERE id = ?", (time_off_id,))
+            c.execute("DELETE FROM user_time_off WHERE id = %s", (time_off_id,))
             conn.commit()
             log_info(f"Time off {time_off_id} removed", "schedule")
             return True
@@ -245,7 +246,7 @@ class MasterScheduleService:
         if not user_id:
             return False
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -257,7 +258,7 @@ class MasterScheduleService:
             c.execute("""
                 SELECT start_time, end_time
                 FROM user_schedule
-                WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+                WHERE user_id = %s AND day_of_week = %s AND is_active = TRUE
             """, (user_id, day_of_week))
 
             schedule = c.fetchone()
@@ -279,8 +280,8 @@ class MasterScheduleService:
             c.execute("""
                 SELECT COUNT(*)
                 FROM user_time_off
-                WHERE user_id = ?
-                AND ? BETWEEN start_date AND end_date
+                WHERE user_id = %s
+                AND %s BETWEEN start_date AND end_date
             """, (user_id, check_dt))
 
             if c.fetchone()[0] > 0:
@@ -293,8 +294,8 @@ class MasterScheduleService:
             c.execute("""
                 SELECT COUNT(*)
                 FROM bookings
-                WHERE master = ?
-                AND datetime = ?
+                WHERE master = %s
+                AND datetime = %s
                 AND status != 'cancelled'
             """, (master_name, datetime_str))
 
@@ -322,7 +323,7 @@ class MasterScheduleService:
         if not user_id:
             return []
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -333,7 +334,7 @@ class MasterScheduleService:
             c.execute("""
                 SELECT start_time, end_time
                 FROM user_schedule
-                WHERE user_id = ? AND day_of_week = ? AND is_active = 1
+                WHERE user_id = %s AND day_of_week = %s AND is_active = TRUE
             """, (user_id, day_of_week))
 
             schedule = c.fetchone()
@@ -353,11 +354,11 @@ class MasterScheduleService:
             c.execute("""
                 SELECT start_date, end_date
                 FROM user_time_off
-                WHERE user_id = ?
+                WHERE user_id = %s
                 AND (
-                    (start_date BETWEEN ? AND ?) OR
-                    (end_date BETWEEN ? AND ?) OR
-                    (start_date <= ? AND end_date >= ?)
+                    (start_date BETWEEN %s AND %s) OR
+                    (end_date BETWEEN %s AND %s) OR
+                    (start_date <= %s AND end_date >= %s)
                 )
             """, (user_id, day_start, day_end, day_start, day_end, day_start, day_end))
 
@@ -371,8 +372,8 @@ class MasterScheduleService:
             c.execute("""
                 SELECT datetime
                 FROM bookings
-                WHERE UPPER(master) = UPPER(?)
-                AND DATE(datetime) = ?
+                WHERE UPPER(master) = UPPER(%s)
+                AND DATE(datetime) = %s
                 AND status != 'cancelled'
             """, (master_name, date))
 
@@ -446,7 +447,7 @@ class MasterScheduleService:
 
     def get_all_masters_availability(self, date: str) -> Dict[str, List[str]]:
         """Получить доступность всех мастеров на день"""
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -455,7 +456,7 @@ class MasterScheduleService:
                 SELECT DISTINCT u.full_name
                 FROM user_schedule us
                 JOIN users u ON us.user_id = u.id
-                WHERE us.is_active = 1 AND u.is_service_provider = 1
+                WHERE us.is_active = TRUE AND u.is_service_provider = TRUE
             """)
 
             masters = [row[0] for row in c.fetchall()]

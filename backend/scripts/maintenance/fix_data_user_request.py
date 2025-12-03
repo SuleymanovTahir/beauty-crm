@@ -1,10 +1,10 @@
-import sqlite3
+from db.connection import get_db_connection
 import os
 
 DATABASE_NAME = "salon_bot.db"
 
 def fix_data():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     print("🔧 Starting data fix...")
@@ -16,10 +16,10 @@ def fix_data():
     # Update base email and all translations (since it shouldn't be translated)
     c.execute("""
         UPDATE salon_settings 
-        SET email = ?,
-            email_ru = ?, email_en = ?, email_ar = ?,
-            email_de = ?, email_es = ?, email_fr = ?,
-            email_hi = ?, email_kk = ?, email_pt = ?
+        SET email = %s,
+            email_ru = %s, email_en = %s, email_ar = %s,
+            email_de = %s, email_es = %s, email_fr = %s,
+            email_hi = %s, email_kk = %s, email_pt = %s
         WHERE id = 1
     """, (email, email, email, email, email, email, email, email, email, email))
     
@@ -37,7 +37,7 @@ def fix_data():
     print("👥 Updating employee positions...")
     for name, position_ru in employees:
         # Check if user exists
-        c.execute("SELECT id FROM users WHERE full_name LIKE ?", (f"%{name}%",))
+        c.execute("SELECT id FROM users WHERE full_name LIKE %s", (f"%{name}%",))
         row = c.fetchone()
         if row:
             user_id = row[0]
@@ -45,11 +45,11 @@ def fix_data():
             # And clear translations to force re-translation
             c.execute("""
                 UPDATE users 
-                SET position = ?, position_ru = ?,
+                SET position = %s, position_ru = %s,
                     position_en = NULL, position_ar = NULL, position_de = NULL,
                     position_es = NULL, position_fr = NULL, position_hi = NULL,
                     position_kk = NULL, position_pt = NULL
-                WHERE id = ?
+                WHERE id = %s
             """, (position_ru, position_ru, user_id))
             print(f"  ✅ Updated {name} -> {position_ru}")
         else:

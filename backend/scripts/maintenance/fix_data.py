@@ -3,7 +3,7 @@
 Скрипт для проверки и исправления данных в базе
 """
 
-import sqlite3
+from db.connection import get_db_connection
 import json
 import os
 from datetime import datetime
@@ -30,14 +30,13 @@ except ImportError:
 def table_exists(cursor, table_name):
     """Проверить существование таблицы"""
     cursor.execute("""
-        SELECT name FROM sqlite_master
-        WHERE type='table' AND name=?
+        SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name=%s
     """, (table_name,))
     return cursor.fetchone() is not None
 
 def check_bot_settings():
     """Проверить настройки бота"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -47,8 +46,8 @@ def check_bot_settings():
         return
 
     # Получить все поля
-    c.execute("PRAGMA table_info(bot_settings)")
-    columns = [row[1] for row in c.fetchall()]
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bot_settings\'")
+    columns = [row[0] for row in c.fetchall()]
 
     # Получить данные
     c.execute("SELECT * FROM bot_settings WHERE id = 1")
@@ -111,7 +110,7 @@ def check_bot_settings():
 
 def check_users():
     """Проверить пользователей"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -120,8 +119,8 @@ def check_users():
         conn.close()
         return
 
-    c.execute("PRAGMA table_info(users)")
-    columns = [row[1] for row in c.fetchall()]
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'users\'")
+    columns = [row[0] for row in c.fetchall()]
 
     print("\n=== Таблица users ===")
     print(f"Колонки: {', '.join(columns)}")
@@ -150,7 +149,7 @@ def check_users():
 
 def check_salon_settings():
     """Проверить настройки салона"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -167,8 +166,8 @@ def check_salon_settings():
         conn.close()
         return
 
-    c.execute("PRAGMA table_info(salon_settings)")
-    columns = [r[1] for r in c.fetchall()]
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'salon_settings\'")
+    columns = [r[0] for r in c.fetchall()]
     data = dict(zip(columns, row))
 
     print("\n=== Настройки салона ===")
@@ -190,7 +189,7 @@ def check_salon_settings():
 
 def fix_manager_consultation_prompt():
     """Исправить manager_consultation_prompt"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -232,7 +231,7 @@ def fix_manager_consultation_prompt():
 "Вижу что клиент молчит после твоего ответа о длительности процедуры. Это типично - человек обдумывает временные затраты.
 
 Я бы на твоем месте через 30-60 минут написал:
-'Кстати, для длинных волос 4 часа - это стандарт 💆‍♀️ Зато результат держится 3-4 месяца без коррекции! Многие клиентки специально берут выходной - получается мини-отпуск для себя. Хотите посмотреть расписание на удобное время?'
+'Кстати, для длинных волос 4 часа - это стандарт 💆‍♀️ Зато результат держится 3-4 месяца без коррекции! Многие клиентки специально берут выходной - получается мини-отпуск для себя. Хотите посмотреть расписание на удобное время%s'
 
 Почему это работает: ты нормализуешь длительность (4 часа = стандарт), показываешь выгоду (3-4 месяца результат), создаешь позитивный фрейм (отпуск вместо траты времени) и даешь мягкий призыв к действию."
 
@@ -250,7 +249,7 @@ def fix_manager_consultation_prompt():
     # Обновить
     c.execute("""
         UPDATE bot_settings
-        SET manager_consultation_prompt = ?, updated_at = ?
+        SET manager_consultation_prompt = %s, updated_at = %s
         WHERE id = 1
     """, (default_prompt, datetime.now().isoformat()))
 
@@ -262,7 +261,7 @@ def fix_manager_consultation_prompt():
 
 def fix_booking_data_collection():
     """Исправить booking_data_collection"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -298,7 +297,7 @@ def fix_booking_data_collection():
 
 ✅ ПРАВИЛЬНО:
 "Отлично! Записываю вас на маникюр завтра в 15:00 к Диане.
-Как вас зовут и какой номер WhatsApp?"
+Как вас зовут и какой номер WhatsApp%s"
 
 ❌ НЕПРАВИЛЬНО:
 "Для записи нужно имя и WhatsApp" (когда услуга/время не выбраны)
@@ -306,7 +305,7 @@ def fix_booking_data_collection():
 
     c.execute("""
         UPDATE bot_settings
-        SET booking_data_collection = ?, updated_at = ?
+        SET booking_data_collection = %s, updated_at = %s
         WHERE id = 1
     """, (value, datetime.now().isoformat()))
 
@@ -318,7 +317,7 @@ def fix_booking_data_collection():
 
 def fix_missing_bot_fields():
     """Заполнить пустые поля настроек бота значениями по умолчанию"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверить существование таблицы
@@ -339,7 +338,7 @@ def fix_missing_bot_fields():
 ШАБЛОН:
 Manicure Gel от 150 AED 💅
 Держится 3 недели
-Записаться?""",
+Записаться%s""",
 
         'objection_handling': """💬 ОБЩИЕ ПРАВИЛА РАБОТЫ С ВОЗРАЖЕНИЯМИ
 
@@ -360,25 +359,25 @@ Manicure Gel от 150 AED 💅
 Пример:
 "Мне очень жаль что так вышло 😔
 Давайте я соединю вас с менеджером - она лично разберется.
-Укажите удобный способ связи?"
+Укажите удобный способ связи%s"
 """,
 
         'example_dialogues': """💬 ПРИМЕРЫ ИДЕАЛЬНЫХ ДИАЛОГОВ
 
 Пример 1 - Быстрая конверсия:
-👤: Сколько стоит маникюр?
+👤: Сколько стоит маникюр%s
 🤖: Manicure Gel от 150 AED 💅
      Держится 3 недели
-     Записаться?
+     Записаться%s
 👤: Да
-🤖: Отлично! Какой день вам удобен?
+🤖: Отлично! Какой день вам удобен%s
 
 Пример 2 - Работа с возражением:
 👤: Дорого
 🤖: Да, понимаю 💙
      Наши мастера - топ Dubai, премиум материалы
      Держится 3-4 недели = выгоднее чем дешевый на неделю
-     Попробуете один раз?""",
+     Попробуете один раз%s""",
 
         'context_memory': """🧠 ПАМЯТЬ КОНТЕКСТА
 
@@ -388,7 +387,7 @@ Manicure Gel от 150 AED 💅
 
 Пример:
 "Вижу что в прошлый раз вы делали Gel Manicure у Дианы.
-Записать к ней снова?"
+Записать к ней снова%s"
 """,
 
         'avoid_repetition': """🔄 ИЗБЕГАЙ ПОВТОРЕНИЙ
@@ -398,11 +397,11 @@ Manicure Gel от 150 AED 💅
 ✅ Варьируй формулировки
 ✅ Адаптируйся к стилю клиента
 
-Вместо повторения "Записаться?" используй:
-- "Бронирую?"
-- "Оформить запись?"
-- "Подойдет?"
-- "Удобно?"
+Вместо повторения "Записаться%s" используй:
+- "Бронирую%s"
+- "Оформить запись%s"
+- "Подойдет%s"
+- "Удобно%s"
 """,
 
         'conversation_flow_rules': """📊 ПРАВИЛА ВЕДЕНИЯ ДИАЛОГА
@@ -459,14 +458,14 @@ Manicure Gel от 150 AED 💅
 ✅ Учитывай день недели
 
 ПРАВИЛЬНО:
-"Есть окно завтра в 14:00 или послезавтра в 17:00. Что удобнее?"
+"Есть окно завтра в 14:00 или послезавтра в 17:00. Что удобнее%s"
 
 НЕПРАВИЛЬНО:
-"Когда вам удобно?" (слишком открыто)
+"Когда вам удобно%s" (слишком открыто)
 "Есть время" (не конкретно)
 
 ШАБЛОН:
-Завтра в [время1] или [день2] в [время2]?""",
+Завтра в [время1] или [день2] в [время2]%s""",
 
         'pre_booking_data_collection': """📝 СБОР ДАННЫХ ДО ЗАПИСИ
 
@@ -480,7 +479,7 @@ Manicure Gel от 150 AED 💅
 
 ✅ ПРАВИЛЬНО:
 "Отлично! Записываю на маникюр завтра в 15:00.
-Как вас зовут и какой номер WhatsApp?"
+Как вас зовут и какой номер WhatsApp%s"
 
 ❌ НЕПРАВИЛЬНО:
 "Для записи нужно имя и WhatsApp" (когда время не выбрано)"""
@@ -496,8 +495,8 @@ Manicure Gel от 150 AED 💅
         return
 
     # Получаем структуру таблицы
-    c.execute("PRAGMA table_info(bot_settings)")
-    columns = [r[1] for r in c.fetchall()]
+    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bot_settings\'")
+    columns = [r[0] for r in c.fetchall()]
     data = dict(zip(columns, row))
 
     # Обновляем пустые поля
@@ -513,7 +512,7 @@ Manicure Gel от 150 AED 💅
                 print(f"  📝 Заполняю {field}...")
                 c.execute(f"""
                     UPDATE bot_settings
-                    SET {field} = ?
+                    SET {field} = %s
                     WHERE id = 1
                 """, (default_value,))
                 updated_fields.append(field)
@@ -521,7 +520,7 @@ Manicure Gel от 150 AED 💅
     if updated_fields:
         c.execute("""
             UPDATE bot_settings
-            SET updated_at = ?
+            SET updated_at = %s
             WHERE id = 1
         """, (datetime.now().isoformat(),))
 
@@ -537,7 +536,7 @@ Manicure Gel от 150 AED 💅
 
 def fix_employee_genders():
     """Исправить пол сотрудников"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if not table_exists(c, 'users'):
@@ -558,13 +557,13 @@ def fix_employee_genders():
     
     for name, gender in gender_map.items():
         # Используем LIKE для поиска по части имени
-        c.execute("SELECT id, full_name, gender FROM users WHERE full_name LIKE ?", (f"%{name}%",))
+        c.execute("SELECT id, full_name, gender FROM users WHERE full_name LIKE %s", (f"%{name}%",))
         rows = c.fetchall()
         
         for row in rows:
             user_id, full_name, current_gender = row
             if current_gender != gender:
-                c.execute("UPDATE users SET gender = ? WHERE id = ?", (gender, user_id))
+                c.execute("UPDATE users SET gender = %s WHERE id = %s", (gender, user_id))
                 print(f"   ✅ {full_name}: {current_gender} -> {gender}")
             else:
                 # print(f"   ✓ {full_name} уже {gender}")
@@ -576,7 +575,7 @@ def fix_employee_genders():
 
 def fix_services_english_translations():
     """Исправить английские переводы услуг - скопировать из поля name в name_en"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if not table_exists(c, 'services'):
@@ -607,18 +606,18 @@ def fix_services_english_translations():
         
         # Копируем name в name_en (name уже на английском)
         if name:
-            updates.append("name_en = ?")
+            updates.append("name_en = %s")
             params.append(name)
             print(f"  ✅ ID {service_id}: {name_ru} -> {name}")
         
         # Копируем description в description_en если есть
         if description and (not description_en or description_en == ''):
-            updates.append("description_en = ?")
+            updates.append("description_en = %s")
             params.append(description)
         
         if updates:
             params.append(service_id)
-            sql = f"UPDATE services SET {', '.join(updates)} WHERE id = ?"
+            sql = f"UPDATE services SET {', '.join(updates)} WHERE id = %s"
             c.execute(sql, params)
     
     conn.commit()
@@ -628,7 +627,7 @@ def fix_services_english_translations():
 
 def cleanup_reviews_translations():
     """Очистить неправильные переводы отзывов (русский текст в других языках)"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if not table_exists(c, 'public_reviews'):
@@ -661,7 +660,7 @@ def cleanup_reviews_translations():
                 print(f"  🧹 ID {review_id}: Очищен {lang} (был дубликат русского)")
         
         if updates:
-            sql = f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = ?"
+            sql = f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = %s"
             c.execute(sql, [review_id])
     
     conn.commit()
@@ -675,7 +674,7 @@ def cleanup_reviews_translations():
 
 def cleanup_faq_translations():
     """Очистить неправильные переводы FAQ (русский текст в других языках)"""
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     if not table_exists(c, 'public_faq'):
@@ -731,7 +730,7 @@ def cleanup_faq_translations():
                 print(f"  🧹 FAQ {faq_id}: Очищен answer_{lang}")
         
         if updates:
-            sql = f"UPDATE public_faq SET {', '.join(updates)} WHERE id = ?"
+            sql = f"UPDATE public_faq SET {', '.join(updates)} WHERE id = %s"
             c.execute(sql, [faq_id])
     
     conn.commit()
@@ -743,7 +742,8 @@ def cleanup_faq_translations():
         print("✅ Неправильных переводов не найдено")
 
 
-if __name__ == "__main__":
+def fix_all_data():
+    """Запустить все исправления данных"""
     print("=== Проверка данных в БД ===\n")
 
     try:
@@ -774,4 +774,7 @@ if __name__ == "__main__":
         print(f"\n❌ Ошибка: {e}")
         import traceback
         traceback.print_exc()
+
+if __name__ == "__main__":
+    fix_all_data()
 

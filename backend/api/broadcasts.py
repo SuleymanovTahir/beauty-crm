@@ -8,6 +8,7 @@ import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import get_current_user
 from utils.logger import log_info, log_error
 
@@ -43,7 +44,7 @@ async def preview_broadcast(
         raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Базовый запрос для получения подписчиков
@@ -53,7 +54,7 @@ async def preview_broadcast(
             INNER JOIN user_subscriptions s ON u.id = s.user_id
             WHERE s.subscription_type = ?
             AND s.is_subscribed = 1
-            AND u.is_active = 1
+            AND u.is_active = TRUE
             AND u.email_verified = 1
         """
         params = [broadcast.subscription_type]
@@ -145,7 +146,7 @@ async def send_broadcast(
         raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем список получателей
@@ -155,7 +156,7 @@ async def send_broadcast(
             INNER JOIN user_subscriptions s ON u.id = s.user_id
             WHERE s.subscription_type = ?
             AND s.is_subscribed = 1
-            AND u.is_active = 1
+            AND u.is_active = TRUE
             AND u.email_verified = 1
         """
         params = [broadcast.subscription_type]
@@ -271,7 +272,7 @@ async def get_broadcast_history(
         raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("""
@@ -313,7 +314,7 @@ async def unsubscribe_from_channel(
         if channel not in ["email", "telegram", "instagram"]:
             raise HTTPException(status_code=400, detail="Неверный канал")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         channel_field = f"{channel}_enabled"

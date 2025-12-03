@@ -10,6 +10,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from services.master_schedule import MasterScheduleService
 from services.smart_assistant import SmartAssistant
@@ -38,7 +39,7 @@ class AutoBookingService:
         Returns:
             List[Dict]: Список рекомендаций {client_id, master, time, confidence}
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:
@@ -186,7 +187,7 @@ class AutoBookingService:
         Returns:
             Dict со статистикой по загрузке
         """
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         try:

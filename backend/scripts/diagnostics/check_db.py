@@ -2,7 +2,7 @@
 """
 Проверка структуры базы данных
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -22,7 +22,7 @@ def check_database():
         print(f"⚠️  База данных {DATABASE_NAME} пустая (0 байт)")
         return False
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     print("=" * 80)

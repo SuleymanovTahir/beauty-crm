@@ -2,14 +2,13 @@
 Migration: Convert phone field to JSON array format
 Allows storing multiple phone numbers per client
 """
-import sqlite3
+from db.connection import get_db_connection
 import json
-from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
 def migrate():
     """Convert single phone strings to JSON arrays"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -35,7 +34,7 @@ def migrate():
             phone_json = json.dumps(phone_array)
             
             c.execute(
-                "UPDATE clients SET phone = ? WHERE instagram_id = ?",
+                "UPDATE clients SET phone = %s WHERE instagram_id = %s",
                 (phone_json, instagram_id)
             )
             updated_count += 1

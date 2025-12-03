@@ -5,7 +5,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import sqlite3
+from db.connection import get_db_connection
 from core.config import DATABASE_NAME
 from services.translation_service import translate_to_all_languages
 from utils.logger import log_info, log_error
@@ -53,49 +53,49 @@ REVIEWS = [
 # Расширенные FAQ
 FAQ_ITEMS = [
     {
-        "question_ru": "Как записаться на процедуру?",
+        "question_ru": "Как записаться на процедуру%s",
         "answer_ru": "Вы можете записаться онлайн через форму на нашем сайте, позвонив по телефону или написав нам в социальных сетях. Мы работаем ежедневно с 10:30 до 21:30.",
         "category": "booking",
         "display_order": 10
     },
     {
-        "question_ru": "Можно ли отменить или перенести запись?",
+        "question_ru": "Можно ли отменить или перенести запись%s",
         "answer_ru": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее, чтобы мы могли предложить время другим клиентам.",
         "category": "booking",
         "display_order": 9
     },
     {
-        "question_ru": "Какие материалы вы используете?",
+        "question_ru": "Какие материалы вы используете%s",
         "answer_ru": "Мы используем только профессиональные материалы премиум-класса от ведущих мировых брендов: OPI, CND, L'Oreal Professional, Kerastase, MAC и другие. Все продукты сертифицированы и безопасны.",
         "category": "services",
         "display_order": 8
     },
     {
-        "question_ru": "Есть ли у вас программа лояльности?",
+        "question_ru": "Есть ли у вас программа лояльности%s",
         "answer_ru": "Да, у нас действует накопительная система скидок для постоянных клиентов. При первом посещении вы получаете карту клиента, на которую начисляются бонусы. Также действуют специальные предложения и акции.",
         "category": "loyalty",
         "display_order": 7
     },
     {
-        "question_ru": "Сколько времени занимает процедура?",
+        "question_ru": "Сколько времени занимает процедура%s",
         "answer_ru": "Длительность зависит от выбранной процедуры. В среднем: маникюр - 60-90 минут, окрашивание волос - 2-3 часа, макияж - 60-90 минут. Точное время уточняйте при записи.",
         "category": "services",
         "display_order": 6
     },
     {
-        "question_ru": "Можно ли делать несколько процедур за одно посещение?",
+        "question_ru": "Можно ли делать несколько процедур за одно посещение%s",
         "answer_ru": "Конечно! Вы можете комбинировать различные услуги. Например, маникюр + педикюр, окрашивание + стрижка + укладка. При бронировании нескольких услуг сообщите об этом администратору для корректного планирования времени.",
         "category": "services",
         "display_order": 5
     },
     {
-        "question_ru": "Есть ли противопоказания к процедурам?",
+        "question_ru": "Есть ли противопоказания к процедурам%s",
         "answer_ru": "Некоторые процедуры имеют противопоказания (беременность, аллергические реакции, кожные заболевания). Наши мастера проведут консультацию перед процедурой и подберут безопасные варианты.",
         "category": "health",
         "display_order": 4
     },
     {
-        "question_ru": "Какие способы оплаты вы принимаете?",
+        "question_ru": "Какие способы оплаты вы принимаете%s",
         "answer_ru": "Мы принимаем наличные, банковские карты (Visa, Mastercard), а также оплату через мобильные приложения. Оплата производится после оказания услуги.",
         "category": "payment",
         "display_order": 3
@@ -107,7 +107,7 @@ async def populate_reviews():
     """Заполнить базу отзывами с переводами"""
     log_info("⭐ Заполнение отзывов с переводами...", "populate")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -127,7 +127,7 @@ async def populate_reviews():
                     text_ru, text_en, text_ar, text_de, text_es,
                     text_fr, text_hi, text_kk, text_pt,
                     avatar_url, is_active, display_order
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 review['author_name'],
                 review['rating'],
@@ -141,7 +141,7 @@ async def populate_reviews():
                 text_translations.get('kk'),
                 text_translations.get('pt'),
                 review.get('avatar_url'),
-                1,
+                True,
                 review['display_order']
             ))
         
@@ -161,7 +161,7 @@ async def populate_faq():
     """Заполнить базу FAQ с переводами"""
     log_info("📝 Заполнение FAQ с переводами...", "populate")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
@@ -185,7 +185,7 @@ async def populate_faq():
                     answer_ru, answer_en, answer_ar, answer_de, answer_es,
                     answer_fr, answer_hi, answer_kk, answer_pt,
                     category, is_active, display_order
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 question_translations.get('ru'),
                 question_translations.get('en'),
@@ -206,7 +206,7 @@ async def populate_faq():
                 answer_translations.get('kk'),
                 answer_translations.get('pt'),
                 faq['category'],
-                1,
+                True,
                 faq['display_order']
             ))
         
@@ -264,13 +264,13 @@ async def populate_employees():
         }
     ]
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
         for emp in employees:
             # Проверяем существует ли сотрудник
-            cursor.execute("SELECT id FROM users WHERE username = ?", (emp['username'],))
+            cursor.execute("SELECT id FROM users WHERE username = %s", (emp['username'],))
             existing = cursor.fetchone()
             
             if existing:
@@ -283,27 +283,27 @@ async def populate_employees():
                 # Обновляем сотрудника с фото и переводами
                 cursor.execute("""
                     UPDATE users SET
-                        photo = ?,
-                        position_ru = ?,
-                        position_en = ?,
-                        position_ar = ?,
-                        position_de = ?,
-                        position_es = ?,
-                        position_fr = ?,
-                        position_hi = ?,
-                        position_kk = ?,
-                        position_pt = ?,
-                        bio = ?,
-                        bio_en = ?,
-                        bio_ar = ?,
-                        bio_de = ?,
-                        bio_es = ?,
-                        bio_fr = ?,
-                        bio_hi = ?,
-                        bio_kk = ?,
-                        bio_pt = ?,
-                        is_service_provider = 1
-                    WHERE username = ?
+                        photo = %s,
+                        position_ru = %s,
+                        position_en = %s,
+                        position_ar = %s,
+                        position_de = %s,
+                        position_es = %s,
+                        position_fr = %s,
+                        position_hi = %s,
+                        position_kk = %s,
+                        position_pt = %s,
+                        bio = %s,
+                        bio_en = %s,
+                        bio_ar = %s,
+                        bio_de = %s,
+                        bio_es = %s,
+                        bio_fr = %s,
+                        bio_hi = %s,
+                        bio_kk = %s,
+                        bio_pt = %s,
+                        is_service_provider = TRUE
+                    WHERE username = %s
                 """, (
                     emp['photo'],
                     emp['position_ru'],
@@ -343,7 +343,7 @@ async def populate_employees():
                         bio, bio_en, bio_ar, bio_de, bio_es,
                         bio_fr, bio_hi, bio_kk, bio_pt,
                         is_service_provider, created_at
-                    ) VALUES (?, ?, 'master', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)
+                    ) VALUES (%s, %s, 'master', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, True, CURRENT_TIMESTAMP)
                 """, (
                     emp['username'],
                     emp['full_name'],
@@ -373,11 +373,11 @@ async def populate_employees():
                 
                 # Создаем настройки уведомлений
                 cursor.execute("""
-                    INSERT OR IGNORE INTO notification_settings (
+                    INSERT INTO notification_settings (
                         user_id, email_notifications, sms_notifications, 
                         booking_notifications, birthday_reminders, birthday_days_advance,
                         chat_notifications, daily_report, report_time
-                    ) VALUES (?, 1, 0, 1, 1, 7, 1, 1, '09:00')
+                    ) VALUES (%s, True, False, True, True, 7, True, True, '09:00')
                 """, (user_id,))
                 
         conn.commit()
@@ -394,13 +394,13 @@ def update_employee_schema():
     """Обновить схему сотрудников для переводов"""
     log_info("👥 Обновление схемы сотрудников...", "populate")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
         # Проверяем наличие нужных колонок
-        cursor.execute("PRAGMA table_info(users)")
-        columns = [col[1] for col in cursor.fetchall()]
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
+        columns = [col[0] for col in cursor.fetchall()]
         
         # Добавляем колонки для переводов если их нет
         needed_columns = {

@@ -4,26 +4,28 @@ Test script for Employee Scheduling API
 """
 import sys
 import os
-import sqlite3
-from fastapi.testclient import TestClient
+from pathlib import Path
 
-# Add backend to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Add backend directory to sys.path
+backend_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(backend_dir))
 
 from main import app
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
 def setup_test_data():
     """Create test user"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
         # Create a test user
-        cursor.execute("INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider) VALUES ('test_schedule_user', 'hash', 'Test Schedule User', 'employee', 1, 1)")
-        user_id = cursor.lastrowid
+        cursor.execute("INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", ('test_schedule_user', 'hash', 'Test Schedule User', 'employee', True, True))
+        user_id = cursor.fetchone()[0]
         
         conn.commit()
         return {'user_id': user_id, 'employee_id': None}, conn
@@ -37,9 +39,9 @@ def cleanup_test_data(conn, data):
     user_id = data['user_id']
     employee_id = data['employee_id']
     
-    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    cursor.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
-    cursor.execute("DELETE FROM user_time_off WHERE user_id = ?", (user_id,))
+    cursor.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
+    cursor.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
+    cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
     conn.commit()
     conn.close()
 

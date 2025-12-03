@@ -2,7 +2,7 @@
 Consolidated Bot Settings Schema Migration
 All schema changes for bot_settings table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_bot_schema(db_path="salon_bot.db"):
@@ -13,24 +13,24 @@ def migrate_bot_schema(db_path="salon_bot.db"):
     print("🔧 BOT SETTINGS SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(bot_settings)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bot_settings\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
-            'bot_mode': 'TEXT DEFAULT "sales"',
+            'bot_mode': "TEXT DEFAULT \'sales\'",
             'temperature': 'REAL DEFAULT 0.7',
             'max_message_length': 'INTEGER DEFAULT 4',
             'voice_message_response': 'TEXT',
             'contextual_rules': 'TEXT',
             'auto_cancel_discounts': 'TEXT',
-            'comment_reply_settings': 'TEXT DEFAULT "{}"',
-            'manager_consultation_enabled': 'INTEGER DEFAULT 1',
+            'comment_reply_settings': "TEXT DEFAULT \'{}\'",
+            'manager_consultation_enabled': 'BOOLEAN DEFAULT TRUE',
             'manager_consultation_prompt': 'TEXT',
             'booking_data_collection': 'TEXT',
             'booking_time_logic': 'TEXT',

@@ -12,6 +12,7 @@ from db import (
     get_or_create_client, update_client_info, log_activity
 )
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
 from services.smart_assistant import SmartAssistant
@@ -22,7 +23,7 @@ router = APIRouter(tags=["Bookings"])
 
 def get_client_messengers_for_bookings(client_id: str):
     """Получить список мессенджеров клиента для bookings"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     messengers = []
@@ -136,7 +137,7 @@ async def create_booking_api(
         save_booking(instagram_id, service, datetime_str, phone, name, master=master)
 
         # Получаем ID созданной записи
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute("SELECT id FROM bookings WHERE instagram_id = ? ORDER BY id DESC LIMIT 1",
                   (instagram_id,))
@@ -280,7 +281,7 @@ async def import_bookings(
                     if phone or name:
                         update_client_info(instagram_id, name=name, phone=phone)
                     
-                    conn = sqlite3.connect(DATABASE_NAME)
+                    conn = get_db_connection()
                     c = conn.cursor()
                     
                     c.execute("""INSERT INTO bookings 
@@ -340,7 +341,7 @@ async def import_bookings(
                     if phone or name:
                         update_client_info(instagram_id, name=name, phone=phone)
                     
-                    conn = sqlite3.connect(DATABASE_NAME)
+                    conn = get_db_connection()
                     c = conn.cursor()
                     
                     c.execute("""INSERT INTO bookings 
@@ -526,7 +527,7 @@ async def update_booking_api(
 
     try:
         # Получаем старую запись для сравнения
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",
@@ -605,7 +606,7 @@ async def delete_booking_api(
 
     try:
         # Получаем информацию о записи для уведомления
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",

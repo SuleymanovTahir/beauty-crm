@@ -33,7 +33,7 @@ def test_static_translation():
     test_data = {
         "greeting": "Hello world",
         "nested": {
-            "question": "Как дела?"
+            "question": "Как дела%s"
         }
     }
     

@@ -1,7 +1,7 @@
 """
 Script to update salon settings translations (address, hours)
 """
-import sqlite3
+from db.connection import get_db_connection
 import asyncio
 import os
 import sys
@@ -16,7 +16,7 @@ async def update_salon_translations():
     """Update salon settings with Russian and Arabic translations"""
     print("🔧 Updating salon translations...")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -31,10 +31,10 @@ async def update_salon_translations():
         c.execute("""
             UPDATE salon_settings
             SET 
-                address_ru = ?,
-                address_ar = ?,
-                hours_ru = ?,
-                hours_ar = ?
+                address_ru = %s,
+                address_ar = %s,
+                hours_ru = %s,
+                hours_ar = %s
             WHERE id = 1
         """, (address_ru, address_ar, hours_ru, hours_ar))
         

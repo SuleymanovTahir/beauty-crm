@@ -1,4 +1,4 @@
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 import asyncio
@@ -23,36 +23,36 @@ async def test_save_settings():
         'birthdayDaysAdvance': 3
     }
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Check if row exists
-    c.execute("SELECT id FROM notification_settings WHERE user_id = ?", (user_id,))
+    c.execute("SELECT id FROM notification_settings WHERE user_id = %s", (user_id,))
     existing = c.fetchone()
     
     if existing:
         print("🔄 Updating existing settings...")
         # Simulate the UPDATE logic from the code
-        c.execute("PRAGMA table_info(notification_settings)")
-        columns = [row[1] for row in c.fetchall()]
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
+        columns = [row[0] for row in c.fetchall()]
         
         update_fields = []
         params = []
         
         if 'email_notifications' in columns:
-            update_fields.append("email_notifications = ?")
-            params.append(1)
+            update_fields.append("email_notifications = %s")
+            params.append(TRUE)
         if 'chat_notifications' in columns:
-            update_fields.append("chat_notifications = ?")
-            params.append(1)
+            update_fields.append("chat_notifications = %s")
+            params.append(TRUE)
         if 'birthday_reminders' in columns:
-            update_fields.append("birthday_reminders = ?")
-            params.append(1)
+            update_fields.append("birthday_reminders = %s")
+            params.append(TRUE)
             
         update_fields.append("updated_at = CURRENT_TIMESTAMP")
         params.append(user_id)
         
-        sql = f"UPDATE notification_settings SET {', '.join(update_fields)} WHERE user_id = ?"
+        sql = f"UPDATE notification_settings SET {', '.join(update_fields)} WHERE user_id = %s"
         try:
             c.execute(sql, params)
             print("✅ Update successful")
@@ -63,11 +63,11 @@ async def test_save_settings():
         print("🆕 Inserting new settings...")
         try:
             c.execute("""
-                INSERT INTO notification_settings (
-                    user_id, email_notifications, sms_notifications, booking_notifications,
-                    chat_notifications, daily_report, report_time, birthday_reminders, birthday_days_advance
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (user_id, 1, 0, 1, 1, 1, '10:00', 1, 3))
+            INSERT INTO notification_settings (
+                id, email_notifications, sms_notifications, push_notifications,
+                booking_reminders, birthday_reminders, report_time, daily_report, birthday_days_advance
+                ) VALUES (1, TRUE, FALSE, TRUE, TRUE, TRUE, '10:00', TRUE, 3)
+        """)
             print("✅ Insert successful")
         except Exception as e:
             print(f"❌ Insert failed: {e}")
@@ -75,7 +75,7 @@ async def test_save_settings():
     conn.commit()
     
     # Verify data
-    c.execute("SELECT * FROM notification_settings WHERE user_id = ?", (user_id,))
+    c.execute("SELECT * FROM notification_settings WHERE user_id = %s", (user_id,))
     row = c.fetchone()
     print(f"📊 Saved data: {row}")
     

@@ -5,7 +5,7 @@ Startup тесты - БЕЗ HTTP запросов (для запуска при 
 """
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 
 # Добавляем путь к backend для импортов
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
@@ -21,11 +21,11 @@ def startup_test_notifications():
     try:
         log_info("🔔 Проверка таблиц уведомлений...", "startup_test")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Проверяем notification_settings
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='notification_settings'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='notification_settings'")
         if c.fetchone():
             c.execute("SELECT COUNT(*) FROM notification_settings")
             count = c.fetchone()[0]
@@ -34,7 +34,7 @@ def startup_test_notifications():
             log_warning("  ⚠️  Таблица notification_settings не существует", "startup_test")
 
         # Проверяем booking_reminder_settings
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='booking_reminder_settings'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
         if c.fetchone():
             c.execute("SELECT COUNT(*) FROM booking_reminder_settings WHERE reminder_24h_enabled = 1")
             enabled = c.fetchone()[0]
@@ -63,7 +63,7 @@ def startup_test_reminders_api():
         create_booking_reminder_settings_table()
 
         # Проверяем результат
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
         count = c.fetchone()[0]
@@ -82,20 +82,20 @@ def startup_test_notifications_api():
     try:
         log_info("🔔 Проверка таблицы notification_settings...", "startup_test")
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # ✅ ТОЛЬКО ПРОВЕРКА - таблица должна быть создана в db/init.py
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='notification_settings'")
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='notification_settings'")
         if not c.fetchone():
             log_error("  ❌ Таблица notification_settings не существует! Запустите db/init.py", "startup_test")
             conn.close()
             return False
 
         # Проверяем схему
-        c.execute("PRAGMA table_info(notification_settings)")
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
         columns = c.fetchall()
-        column_names = [col[1] for col in columns]
+        column_names = [col[0] for col in columns]
 
         required = ['user_id', 'email_notifications', 'sms_notifications', 
                     'booking_notifications', 'birthday_reminders']

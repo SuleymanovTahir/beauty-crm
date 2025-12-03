@@ -1,6 +1,6 @@
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime, timedelta
 
 # Add backend directory to path
@@ -10,7 +10,7 @@ from core.config import DATABASE_NAME
 from bot.tools import get_available_time_slots
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -37,31 +37,31 @@ def verify_bot_logic():
     print(f"   Checking slots for {tomorrow} (Day {day_of_week})...")
 
     # Check if schedule exists for this day of week
-    c.execute("SELECT id FROM user_schedule WHERE user_id = ? AND day_of_week = ?", (mestan_id, day_of_week))
+    c.execute("SELECT id FROM user_schedule WHERE user_id = %s AND day_of_week = %s", (mestan_id, day_of_week))
     schedule_exists = c.fetchone()
     
     if not schedule_exists:
         print(f"   Creating schedule for Mestan for day {day_of_week}...")
         c.execute("""INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                     VALUES (?, ?, '10:00', '20:00', 1)""", (mestan_id, day_of_week))
+                     VALUES (%s, %s, '10:00', '20:00', 1)""", (mestan_id, day_of_week))
     else:
         # Ensure it is active and has hours
         c.execute("""UPDATE user_schedule 
                      SET is_active = 1, start_time = '10:00', end_time = '20:00'
-                     WHERE user_id = ? AND day_of_week = ?""", (mestan_id, day_of_week))
+                     WHERE user_id = %s AND day_of_week = %s""", (mestan_id, day_of_week))
         
     conn.commit()
 
     # Enable online booking
     c.execute("""UPDATE user_services 
                  SET is_online_booking_enabled = 1 
-                 WHERE user_id = ? AND service_id = ?""", 
+                 WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()
     print("   ✅ Enabled online booking for Mestan -> Hair Treatment")
 
     # DEBUG: Check user status
-    c.execute("SELECT is_active, is_service_provider FROM users WHERE id = ?", (mestan_id,))
+    c.execute("SELECT is_active, is_service_provider FROM users WHERE id = %s", (mestan_id,))
     status = c.fetchone()
     print(f"   DEBUG: Mestan Status - Active: {status[0]}, Service Provider: {status[1]}")
 
@@ -72,7 +72,7 @@ def verify_bot_logic():
         JOIN user_services us ON u.id = us.user_id
         WHERE u.is_active = 1 
           AND u.is_service_provider = 1
-          AND us.service_id = ?
+          AND us.service_id = %s
           AND us.is_online_booking_enabled = 1
     """, (service_id,))
     masters = c.fetchall()
@@ -100,7 +100,7 @@ def verify_bot_logic():
     # 3. Disable online booking
     c.execute("""UPDATE user_services 
                  SET is_online_booking_enabled = 0 
-                 WHERE user_id = ? AND service_id = ?""", 
+                 WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()
     print("   🚫 Disabled online booking for Mestan -> Hair Treatment")
@@ -118,7 +118,7 @@ def verify_bot_logic():
     # 5. Cleanup (Re-enable)
     c.execute("""UPDATE user_services 
                  SET is_online_booking_enabled = 1 
-                 WHERE user_id = ? AND service_id = ?""", 
+                 WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()
     print("   🔄 Re-enabled online booking for Mestan.")

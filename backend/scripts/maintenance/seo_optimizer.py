@@ -94,19 +94,40 @@ def check_alt_attributes():
         try:
             content = file_path.read_text(encoding='utf-8')
             
-            # Find img tags without alt attribute
-            # Pattern: <img ... > without alt=
-            img_tags = re.findall(r'<img[^>]*>', content, re.IGNORECASE)
+            # Skip tracking pixels and analytics
+            if 'facebook.com/tr' in content or 'google-analytics' in content:
+                # Check if it's a tracking pixel (1x1 invisible image)
+                tracking_pattern = r'<img[^>]*(?:facebook\.com/tr|google-analytics)[^>]*>'
+                content = re.sub(tracking_pattern, '', content, flags=re.IGNORECASE)
+            
+            # Find img tags - handle multiline tags
+            # Use DOTALL to match across newlines
+            img_tags = re.findall(r'<img[^>]*>', content, re.IGNORECASE | re.DOTALL)
             
             for tag in img_tags:
+                # Skip if has alt attribute (even empty alt="")
                 if 'alt=' not in tag.lower():
+                    # Skip tracking pixels (1x1 hidden images)
+                    if 'display:none' in tag or 'display: none' in tag:
+                        continue
+                    if 'height="1"' in tag and 'width="1"' in tag:
+                        continue
+                    
                     # Extract src for better reporting
-                    src_match = re.search(r'src=["\']([^"\']+)["\']', tag)
+                    src_match = re.search(r'src=["\']([^"\']+)["\']', tag, re.DOTALL)
+                    if not src_match:
+                        # Try to find src in dynamic expressions
+                        src_match = re.search(r'src=\{[^}]+\}', tag)
+                    
                     src = src_match.group(1) if src_match else "unknown"
+                    
+                    # Clean up multiline tags for display
+                    clean_tag = ' '.join(tag.split())
+                    
                     issues.append({
                         'file': file_path.relative_to(frontend_dir),
                         'src': src,
-                        'tag': tag[:80] + '...' if len(tag) > 80 else tag
+                        'tag': clean_tag[:80] + '...' if len(clean_tag) > 80 else clean_tag
                     })
         except Exception as e:
             log_error(f"Error checking {file_path}: {e}", "seo")

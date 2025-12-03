@@ -1,12 +1,11 @@
-import sqlite3
+from db.connection import get_db_connection
 import hashlib
 from datetime import datetime
-from core.config import DATABASE_NAME
 
 
 def seed_employees():
     """Заполнить employees и создать users для них"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     now = datetime.now().isoformat()
@@ -85,7 +84,7 @@ def seed_employees():
         c.execute("""
         INSERT INTO employees
         (full_name, position, phone, email, sort_order, is_active, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, 1, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, 1, %s, %s)
         """, (emp["full_name"], emp["position"], emp["phone"], emp["email"],
               emp["sort_order"], now, now))
 
@@ -95,7 +94,7 @@ def seed_employees():
         username = emp["full_name"].lower().replace(' ', '_')
 
         # Проверить уникальность
-        c.execute("SELECT id FROM users WHERE username = ?", (username,))
+        c.execute("SELECT id FROM users WHERE username = %s", (username,))
         if c.fetchone():
             print(f"⏭️  User {username} уже существует")
             continue
@@ -108,7 +107,7 @@ def seed_employees():
         c.execute("""
             INSERT INTO users
             (username, password_hash, full_name, email, role, position, employee_id, created_at, is_active, photo)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1, %s)
         """, (username, password_hash, emp["full_name"], emp["email"],
               emp["role"], emp["position"], employee_id, now, emp.get("photo")))
 

@@ -7,6 +7,7 @@ from typing import Optional, List
 import sqlite3
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
@@ -15,11 +16,11 @@ router = APIRouter(tags=["Tags"])
 
 def create_tags_table():
     """Создать таблицу тегов"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute('''CREATE TABLE IF NOT EXISTS tags (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT UNIQUE NOT NULL,
         color TEXT DEFAULT '#3B82F6',
         description TEXT,
@@ -48,7 +49,7 @@ async def get_tags(session_token: Optional[str] = Cookie(None)):
     
     create_tags_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -92,7 +93,7 @@ async def create_tag(
         if not name:
             return JSONResponse({"error": "Tag name is required"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -131,7 +132,7 @@ async def delete_tag(
     create_tags_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         # Удаляем связи с клиентами
@@ -174,7 +175,7 @@ async def add_client_tag(
         if not tag_id:
             return JSONResponse({"error": "Tag ID is required"}, status_code=400)
         
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -209,7 +210,7 @@ async def remove_client_tag(
     create_tags_table()
     
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
@@ -244,7 +245,7 @@ async def get_client_tags(
     
     create_tags_table()
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

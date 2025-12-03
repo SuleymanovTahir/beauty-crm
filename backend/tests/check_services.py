@@ -1,6 +1,6 @@
 # Создай файл backend/check_services.py
 
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 
@@ -11,7 +11,7 @@ from core.config import DATABASE_NAME
 
 def check_services():
     """Проверить какие услуги есть в БД"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     print("=" * 60)
@@ -61,7 +61,7 @@ def check_services():
         c.execute("""
             SELECT id, name, name_ru, is_active 
             FROM services 
-            WHERE name LIKE ? OR name_ru LIKE ?
+            WHERE name LIKE %s OR name_ru LIKE %s
             LIMIT 1
         """, (f"%{key}%", f"%{key}%"))
         

@@ -1,12 +1,10 @@
 """
 Функции для работы с клиентами
 """
-import sqlite3
 from datetime import datetime
 from typing import Optional
 import re
 from utils.logger import log_info,log_error
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 
@@ -36,13 +34,17 @@ def ensure_client_columns(conn=None):
     """Add missing columns for new import fields if they don't exist."""
     should_close = False
     if conn is None:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         should_close = True
         
     c = conn.cursor()
     try:
-        c.execute("PRAGMA table_info(clients)")
-        existing = {row[1] for row in c.fetchall()}
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='clients'
+        """)
+        existing = {row[0] for row in c.fetchall()}
         new_cols = {
             "total_spend": "REAL DEFAULT 0",
             "total_visits": "INTEGER DEFAULT 0",
@@ -67,7 +69,7 @@ def ensure_client_columns(conn=None):
 
 def get_all_clients():
     """Получить всех клиентов"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -91,7 +93,7 @@ def get_all_clients():
 
 def get_client_by_id(instagram_id: str):
     """Получить клиента по ID"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("""SELECT instagram_id, username, phone, name, first_contact,
@@ -108,7 +110,7 @@ def get_client_by_id(instagram_id: str):
 
 def get_or_create_client(instagram_id: str, username: str = None):
     """Получить или создать клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("SELECT * FROM clients WHERE instagram_id = ?", (instagram_id,))
@@ -140,7 +142,7 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
                        gender: str = None, age: int = None, birth_date: str = None,
                        profile_pic: str = None):
     """Обновить информацию о клиенте"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     updates = []
@@ -198,7 +200,7 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
 
 def update_client_status(instagram_id: str, status: str):
     """Обновить статус клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("UPDATE clients SET status = ? WHERE instagram_id = ?",
@@ -210,7 +212,7 @@ def update_client_status(instagram_id: str, status: str):
 
 def pin_client(instagram_id: str, pinned: bool = True):
     """Закрепить/открепить клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("UPDATE clients SET is_pinned = ? WHERE instagram_id = ?",
@@ -222,7 +224,7 @@ def pin_client(instagram_id: str, pinned: bool = True):
 
 def delete_client(instagram_id: str) -> bool:
     """Удалить клиента и все его данные"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -283,7 +285,7 @@ def detect_and_save_language(instagram_id: str, message: str) -> str:
     else:
         language = 'ru'  # По умолчанию русский
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("UPDATE clients SET detected_language = ? WHERE instagram_id = ?",
@@ -299,7 +301,7 @@ def detect_and_save_language(instagram_id: str, message: str) -> str:
 
 def get_client_language(instagram_id: str) -> str:
     """Получить язык клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -317,7 +319,7 @@ def get_client_language(instagram_id: str) -> str:
 # В конец файла backend/db/clients.py
 def update_client(instagram_id: str, data: dict):
     """Обновить данные клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     update_fields = []
@@ -350,7 +352,7 @@ def update_client(instagram_id: str, data: dict):
 
 def get_client_bot_mode(instagram_id: str) -> str:
     """Получить режим бота для клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -366,7 +368,7 @@ def get_client_bot_mode(instagram_id: str) -> str:
 
 def update_client_bot_mode(instagram_id: str, mode: str) -> bool:
     """Обновить режим бота для клиента"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -388,7 +390,7 @@ def auto_fill_name_from_username(instagram_id: str):
     """
     Автоматически заполнить имя клиента из username если имя пустое
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -430,13 +432,13 @@ def auto_fill_name_from_username(instagram_id: str):
 
 def track_client_interest(instagram_id: str, service_name: str):
     """Отслеживать интерес клиента к услуге"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Создаём таблицу если её нет
         c.execute('''CREATE TABLE IF NOT EXISTS client_interests (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT NOT NULL,
             service_name TEXT NOT NULL,
             interest_count INTEGER DEFAULT 1,
@@ -481,7 +483,7 @@ def track_client_interest(instagram_id: str, service_name: str):
 
 def get_client_interest_count(instagram_id: str, service_name: str) -> int:
     """Получить количество запросов по услуге"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -502,7 +504,7 @@ def get_client_interest_count(instagram_id: str, service_name: str) -> int:
 
 def is_hot_client(instagram_id: str, service_name: str = None) -> bool:
     """Проверить является ли клиент "горячим" (#5)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -537,7 +539,7 @@ def is_hot_client(instagram_id: str, service_name: str = None) -> bool:
 
 def calculate_client_temperature(instagram_id: str) -> str:
     """Рассчитать температуру клиента: hot, warm, cold"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -586,13 +588,17 @@ def update_client_temperature(instagram_id: str):
     """Обновить температуру клиента в БД"""
     temperature = calculate_client_temperature(instagram_id)
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Проверяем есть ли колонка temperature
-        c.execute("PRAGMA table_info(clients)")
-        columns = [row[1] for row in c.fetchall()]
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='clients'
+        """)
+        columns = [row[0] for row in c.fetchall()]
         
         if 'temperature' not in columns:
             # Добавляем колонку
@@ -615,13 +621,17 @@ def update_client_temperature(instagram_id: str):
 
 def set_client_temperature(instagram_id: str, temperature: str) -> bool:
     """Установить температуру клиента вручную"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Проверяем есть ли колонка temperature
-        c.execute("PRAGMA table_info(clients)")
-        columns = [row[1] for row in c.fetchall()]
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='clients'
+        """)
+        columns = [row[0] for row in c.fetchall()]
         
         if 'temperature' not in columns:
             c.execute("ALTER TABLE clients ADD COLUMN temperature TEXT DEFAULT 'cold'")
@@ -645,7 +655,7 @@ def set_client_temperature(instagram_id: str, temperature: str) -> bool:
 
 def calculate_no_show_risk(instagram_id: str) -> float:
     """Рассчитать риск no-show клиента (#19)"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

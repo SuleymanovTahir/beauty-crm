@@ -5,8 +5,7 @@
 Эта миграция удаляет старую таблицу.
 """
 
-import sqlite3
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.logger import log_info, log_warning, log_error
 
 
@@ -16,7 +15,7 @@ def remove_master_schedule_table():
     Все данные теперь хранятся в employee_schedule.
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
         
         log_info("🗑️  Начало миграции: удаление устаревшей таблицы master_schedule", "migration")

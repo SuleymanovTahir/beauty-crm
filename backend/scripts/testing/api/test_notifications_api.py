@@ -5,7 +5,7 @@
 import sys
 import os
 import traceback
-import sqlite3
+from db.connection import get_db_connection
 
 # Добавляем путь к backend для импортов
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
@@ -19,7 +19,7 @@ def test_database_tables():
     print("=" * 70)
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем список таблиц
@@ -38,7 +38,7 @@ def test_database_tables():
         print("=" * 70)
 
         if 'notification_settings' in tables:
-            c.execute("PRAGMA table_info(notification_settings)")
+            c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
             columns = c.fetchall()
             print(f"\n✅ Таблица существует, колонок: {len(columns)}")
             for col in columns:
@@ -59,7 +59,7 @@ def test_database_tables():
         print("=" * 70)
 
         if 'booking_reminder_settings' in tables:
-            c.execute("PRAGMA table_info(booking_reminder_settings)")
+            c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'booking_reminder_settings\'")
             columns = c.fetchall()
             print(f"\n✅ Таблица существует, колонок: {len(columns)}")
             for col in columns:

@@ -89,15 +89,15 @@ def test_master_schedule():
     try:
         # Создаем тестового мастера в таблице users
         from core.config import DATABASE_NAME
-        import sqlite3
-        conn = sqlite3.connect(DATABASE_NAME)
+        from db.connection import get_db_connection
+        conn = get_db_connection()
         c = conn.cursor()
         test_master = "Анна"
         
         # Insert into users table
         c.execute("""
             INSERT INTO users (username, password_hash, full_name, role, position, is_active, is_service_provider) 
-            VALUES (?, 'dummy_hash', ?, ?, ?, 1, 1)
+            VALUES (%s, 'dummy_hash', %s, %s, %s, TRUE, TRUE)
         """, (f"test_anna_{int(datetime.now().timestamp())}", test_master, "employee", "Stylist"))
         user_id = c.lastrowid
         conn.commit()
@@ -141,14 +141,14 @@ def test_master_schedule():
     finally:
         # Cleanup test employee
         try:
-            import sqlite3
+            from db.connection import get_db_connection
             from core.config import DATABASE_NAME
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
-            c.execute("DELETE FROM users WHERE full_name = ?", (test_master,))
             if 'user_id' in locals():
-                c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
-                c.execute("DELETE FROM user_time_off WHERE user_id = ?", (user_id,))
+                c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
+                c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
+            c.execute("DELETE FROM users WHERE full_name = %s", (test_master,))
             conn.commit()
             conn.close()
         except Exception:
@@ -160,8 +160,23 @@ def test_loyalty_program():
     print_section("ТЕСТ 3: Программа лояльности")
 
     try:
-        loyalty = LoyaltyService()
+        # Create test client
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        c = conn.cursor()
         test_client = "test_client_123"
+        
+        # Check if client exists
+        c.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s", (test_client,))
+        if not c.fetchone():
+            c.execute("""
+                INSERT INTO clients (instagram_id, username, name, phone, status, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (test_client, test_client, "Test Client Loyalty", "+1234567890", "active", datetime.now().isoformat()))
+            conn.commit()
+        conn.close()
+
+        loyalty = LoyaltyService()
 
         # Тест 3.1: Получение данных лояльности
         print_subsection("Получение данных лояльности клиента")

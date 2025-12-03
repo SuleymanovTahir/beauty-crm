@@ -2,7 +2,7 @@
 Consolidated Clients Schema Migration
 All schema changes for clients table in one place
 """
-import sqlite3
+from db.connection import get_db_connection
 
 
 def migrate_clients_schema(db_path="salon_bot.db"):
@@ -13,21 +13,21 @@ def migrate_clients_schema(db_path="salon_bot.db"):
     print("🔧 CLIENTS SCHEMA MIGRATION")
     print("="*60)
     
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get existing columns
-        c.execute("PRAGMA table_info(clients)")
-        existing_columns = {col[1] for col in c.fetchall()}
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'clients\'")
+        existing_columns = {col[0] for col in c.fetchall()}
         
         # Define all columns that should exist
         columns_to_add = {
             'account_balance': 'REAL DEFAULT 0',
-            'loyalty_points': 'INTEGER DEFAULT 0',
+            'loyalty_points': 'BOOLEAN DEFAULT FALSE',
             'notes': 'TEXT',
             'created_at': 'TEXT DEFAULT CURRENT_TIMESTAMP',
-            'preferred_messenger': 'TEXT DEFAULT "instagram"',
+            'preferred_messenger': "TEXT DEFAULT \'instagram\'",
             'preferences': 'TEXT',
             'interests': 'TEXT',
             'birthday': 'TEXT',
@@ -46,7 +46,7 @@ def migrate_clients_schema(db_path="salon_bot.db"):
         # Create conversations table if not exists
         c.execute("""
             CREATE TABLE IF NOT EXISTS conversations (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 client_id TEXT NOT NULL,
                 message TEXT NOT NULL,
                 sender TEXT NOT NULL,

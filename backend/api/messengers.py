@@ -8,6 +8,7 @@ import sqlite3
 import json
 
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
@@ -23,7 +24,7 @@ async def get_messenger_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -75,14 +76,14 @@ async def get_enabled_messengers(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         c.execute("""
             SELECT messenger_type, display_name
             FROM messenger_settings
-            WHERE is_enabled = 1
+            WHERE is_enabled = TRUE
             ORDER BY
                 CASE messenger_type
                     WHEN 'instagram' THEN 1
@@ -126,7 +127,7 @@ async def update_messenger_setting(
     if messenger_type not in valid_types:
         return JSONResponse({"error": "Invalid messenger type"}, status_code=400)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -191,7 +192,7 @@ async def get_messenger_messages(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -260,7 +261,7 @@ async def send_messenger_message(
     if not client_id or not message_text:
         return JSONResponse({"error": "client_id and message_text are required"}, status_code=400)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
@@ -310,14 +311,14 @@ async def get_unread_messages_count(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
 
     try:
         c.execute("""
             SELECT messenger_type, COUNT(*) as count
             FROM messenger_messages
-            WHERE is_read = 0 AND sender_type = 'client'
+            WHERE is_read = FALSE AND sender_type = 'client'
             GROUP BY messenger_type
         """)
 

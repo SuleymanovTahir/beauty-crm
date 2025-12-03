@@ -3,7 +3,7 @@
 Скрипт для добавления тестовых данных в БД
 Включает полный список услуг и детальную привязку к мастерам
 """
-import sqlite3
+from db.connection import get_db_connection
 import sys
 import os
 from datetime import datetime
@@ -812,8 +812,8 @@ SERVICES_DATA = [
 ]
 
 def seed_data():
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    # conn.row_factory removed for PostgreSQL
     c = conn.cursor()
     now = datetime.now().isoformat()
 
@@ -857,7 +857,7 @@ def seed_data():
         c.execute("""
             INSERT INTO services (service_key, name, name_ru, name_en, name_ar, category, price, min_price, max_price,
                                   currency, description, description_ru, description_en, benefits, duration, is_active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s, %s)
         """, (service['key'], service['name'], service['name_ru'], service['name'], service['name_ar'],
               service['category'], service['price'], service['min_price'], service['max_price'],
               service['currency'], service['description'], service['description_ru'], service['description'], benefits_str, service['duration'], now, now))
@@ -925,10 +925,10 @@ def seed_data():
                         try:
                             c.execute("""
                                 INSERT INTO user_services (user_id, service_id, is_online_booking_enabled)
-                                VALUES (?, ?, 1)
+                                VALUES (%s, %s, 1)
                             """, (user_id, service_ids[key]))
                             assigned_count += 1
-                        except sqlite3.IntegrityError:
+                        except Exception:
                             pass
                 print(f"✅ {emp_name}: assigned {assigned_count} services")
             else:
@@ -944,7 +944,7 @@ def seed_data():
         for day in range(6):  # 0=Пн, 5=Сб
             c.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                VALUES (?, ?, '10:00', '21:00', 1)
+                VALUES (%s, %s, '10:00', '21:00', 1)
             """, (master_id, day))
         print(f"✅ {master_name}: Пн-Сб 10:00-21:00")
 

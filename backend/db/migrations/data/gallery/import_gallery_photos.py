@@ -1,19 +1,18 @@
 """
 Улучшенный импорт фото из папок в галерею
 """
-import sqlite3
+from db.connection import get_db_connection
 import shutil
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-from core.config import DATABASE_NAME
 
 def import_gallery_photos():
     """Импортировать фото из папок портфолио, услуг и салона"""
     print("📸 Импорт фото галереи...")
     
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
@@ -69,11 +68,11 @@ def import_gallery_photos():
                     image_path = f"/static/uploads/{category}/{img_file.name}"
                     
                     # Проверяем, не импортировано ли уже
-                    c.execute("SELECT id FROM gallery_images WHERE image_path = ?", (image_path,))
+                    c.execute("SELECT id FROM gallery_images WHERE image_path = %s", (image_path,))
                     if not c.fetchone():
                         c.execute("""
                             INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                            VALUES (?, ?, ?, ?, 1)
+                            VALUES (%s, %s, %s, %s, 1)
                         """, (category, image_path, img_file.stem, idx))
                         imported_count += 1
                         print(f"  ✅ Импортировано в БД: {img_file.name}")

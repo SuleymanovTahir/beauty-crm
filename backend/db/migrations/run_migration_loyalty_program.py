@@ -2,7 +2,7 @@
 """
 Миграция: Программа лояльности с баллами и уровнями
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from datetime import datetime
@@ -16,7 +16,7 @@ if 'DATABASE_NAME' not in globals():
         sys.path.insert(0, backend_dir)
     from core.config import DATABASE_NAME
 
-conn = sqlite3.connect(DATABASE_NAME)
+conn = get_db_connection()
 c = conn.cursor()
 
 try:
@@ -25,7 +25,7 @@ try:
     # Таблица баллов клиента
     c.execute("""
         CREATE TABLE IF NOT EXISTS client_loyalty_points (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT UNIQUE NOT NULL,
             total_points INTEGER DEFAULT 0,
             available_points INTEGER DEFAULT 0,  -- Доступные для использования
@@ -41,7 +41,7 @@ try:
     # История начисления/списания баллов
     c.execute("""
         CREATE TABLE IF NOT EXISTS loyalty_transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             client_id TEXT NOT NULL,
             transaction_type TEXT NOT NULL,  -- 'earn', 'spend', 'expire'
             points INTEGER NOT NULL,
@@ -58,7 +58,7 @@ try:
     # Таблица уровней лояльности и их преимуществ
     c.execute("""
         CREATE TABLE IF NOT EXISTS loyalty_levels (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             level_name TEXT UNIQUE NOT NULL,  -- bronze, silver, gold, platinum
             min_points INTEGER NOT NULL,      -- Минимум баллов для уровня
             discount_percent REAL DEFAULT 0,  -- Процент скидки
@@ -85,7 +85,7 @@ try:
         c.execute("""
             INSERT OR IGNORE INTO loyalty_levels
             (level_name, min_points, discount_percent, points_multiplier, special_perks, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (*level, now))
 
     print("✅ Default loyalty levels inserted")

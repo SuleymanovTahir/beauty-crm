@@ -4,7 +4,7 @@
 import sqlite3
 from datetime import datetime, timedelta
 
-from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 
 
@@ -15,7 +15,7 @@ def get_stats(comparison_period: str = "7days"):
     Args:
         comparison_period: Период сравнения ('7days', '30days', 'month', 'week')
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Определяем период сравнения
@@ -78,7 +78,7 @@ def get_stats(comparison_period: str = "7days"):
 
         # Active clients: made a booking in the last 30 days
         active_threshold = (get_current_time() - timedelta(days=30)).isoformat()
-        c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= ?", (active_threshold,))
+        c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s", (active_threshold,))
         active_clients = c.fetchone()[0]
 
     except sqlite3.OperationalError:
@@ -91,46 +91,46 @@ def get_stats(comparison_period: str = "7days"):
     # === ПРЕДЫДУЩИЙ ПЕРИОД (для сравнения) ===
     c.execute("""
         SELECT COUNT(*) FROM clients 
-        WHERE created_at >= ? AND created_at < ?
+        WHERE created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_new_clients = c.fetchone()[0]
 
     c.execute("""
         SELECT COUNT(*) FROM clients 
-        WHERE status='vip' AND created_at >= ? AND created_at < ?
+        WHERE status='vip' AND created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_vip_clients = c.fetchone()[0]
 
     # Prev active clients (bookings in previous window)
     prev_active_threshold_start = (get_current_time() - timedelta(days=60)).isoformat()
     prev_active_threshold_end = (get_current_time() - timedelta(days=30)).isoformat()
-    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= ? AND created_at < ?", 
+    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s AND created_at < %s", 
               (prev_active_threshold_start, prev_active_threshold_end))
     prev_active_clients = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
-        WHERE created_at >= ? AND created_at < ?
+        WHERE created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_bookings = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
-        WHERE status='completed' AND created_at >= ? AND created_at < ?
+        WHERE status='completed' AND created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_completed = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
         WHERE (status='pending' OR status='confirmed') 
-        AND created_at >= ? AND created_at < ?
+        AND created_at >= %s AND created_at < %s
     """, (previous_period_start, previous_period_end))
     prev_pending = c.fetchone()[0]
     
     try:
         c.execute("""
             SELECT SUM(revenue) FROM bookings 
-            WHERE status='completed' AND created_at >= ? AND created_at < ?
+            WHERE status='completed' AND created_at >= %s AND created_at < %s
         """, (previous_period_start, previous_period_end))
         prev_revenue = c.fetchone()[0] or 0
     except sqlite3.OperationalError:
@@ -139,44 +139,44 @@ def get_stats(comparison_period: str = "7days"):
     # === ТЕКУЩИЙ ПЕРИОД (новые данные) ===
     c.execute("""
         SELECT COUNT(*) FROM clients 
-        WHERE created_at >= ?
+        WHERE created_at >= %s
     """, (period_start,))
     current_new_clients = c.fetchone()[0]
 
     c.execute("""
         SELECT COUNT(*) FROM clients 
-        WHERE status='vip' AND created_at >= ?
+        WHERE status='vip' AND created_at >= %s
     """, (period_start,))
     current_vip_clients = c.fetchone()[0]
 
     # Current active clients growth (bookings in current window)
     # Note: This is slightly different from "Total Active Clients" which is a snapshot.
     # For growth, we compare "clients active in this period" vs "clients active in prev period".
-    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= ?", (period_start,))
+    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s", (period_start,))
     current_active_clients_growth = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
-        WHERE created_at >= ?
+        WHERE created_at >= %s
     """, (period_start,))
     current_bookings = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
-        WHERE status='completed' AND created_at >= ?
+        WHERE status='completed' AND created_at >= %s
     """, (period_start,))
     current_completed = c.fetchone()[0]
     
     c.execute("""
         SELECT COUNT(*) FROM bookings 
-        WHERE (status='pending' OR status='confirmed') AND created_at >= ?
+        WHERE (status='pending' OR status='confirmed') AND created_at >= %s
     """, (period_start,))
     current_pending = c.fetchone()[0]
     
     try:
         c.execute("""
             SELECT SUM(revenue) FROM bookings 
-            WHERE status='completed' AND created_at >= ?
+            WHERE status='completed' AND created_at >= %s
         """, (period_start,))
         current_revenue = c.fetchone()[0] or 0
     except sqlite3.OperationalError:
@@ -278,7 +278,7 @@ def get_stats(comparison_period: str = "7days"):
 
 def get_analytics_data(days=30, date_from=None, date_to=None):
     """Получить данные для аналитики с периодом"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     if date_from and date_to:
@@ -291,7 +291,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     # Записи по дням
     c.execute("""SELECT DATE(created_at) as date, COUNT(*) as count
                  FROM bookings 
-                 WHERE created_at >= ? AND created_at <= ?
+                 WHERE created_at >= %s AND created_at <= %s
                  GROUP BY DATE(created_at)
                  ORDER BY date""", (start_date, end_date))
     bookings_by_day = c.fetchall()
@@ -302,7 +302,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     # Статистика по услугам
     c.execute("""SELECT service_name, COUNT(*) as count, SUM(revenue) as revenue
                  FROM bookings 
-                 WHERE created_at >= ? AND created_at <= ?
+                 WHERE created_at >= %s AND created_at <= %s
                  GROUP BY service_name 
                  ORDER BY count DESC""", (start_date, end_date))
     services_stats = c.fetchall()
@@ -313,7 +313,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     # Статистика по статусам
     c.execute("""SELECT status, COUNT(*) as count
                  FROM bookings 
-                 WHERE created_at >= ? AND created_at <= ?
+                 WHERE created_at >= %s AND created_at <= %s
                  GROUP BY status""", (start_date, end_date))
     status_stats = c.fetchall()
     
@@ -331,8 +331,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 LEAD(sender) OVER (PARTITION BY instagram_id ORDER BY timestamp) as next_sender
             FROM chat_history
             WHERE sender = 'client'
-            AND timestamp >= ?
-            AND timestamp <= ?
+            AND timestamp >= %s
+            AND timestamp <= %s
         )
         SELECT 
             AVG(
@@ -358,7 +358,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
 
 def get_funnel_data():
     """Получить данные воронки продаж"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute("SELECT COUNT(*) FROM clients")
@@ -400,7 +400,7 @@ def get_funnel_data():
 
 def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     """Получить расширенную аналитику"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Определяем период
@@ -415,7 +415,7 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     c.execute("""
         SELECT DATE(created_at) as date, COUNT(DISTINCT instagram_id) as unique_clients
         FROM messages 
-        WHERE created_at >= ? AND created_at <= ?
+        WHERE created_at >= %s AND created_at <= %s
         GROUP BY DATE(created_at)
         ORDER BY date
     """, (start_date, end_date))
@@ -427,7 +427,7 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
                c.total_messages, c.lifetime_value
         FROM clients c
         LEFT JOIN messages m ON c.instagram_id = m.instagram_id 
-            AND m.created_at >= ? AND m.created_at <= ?
+            AND m.created_at >= %s AND m.created_at <= %s
         GROUP BY c.instagram_id
         HAVING message_count > 0
         ORDER BY message_count DESC
@@ -439,7 +439,7 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     c.execute("""
         SELECT strftime('%H', created_at) as hour, COUNT(*) as count
         FROM messages 
-        WHERE created_at >= ? AND created_at <= ?
+        WHERE created_at >= %s AND created_at <= %s
         GROUP BY strftime('%H', created_at)
         ORDER BY hour
     """, (start_date, end_date))
@@ -449,7 +449,7 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     c.execute("""
         SELECT message_type, COUNT(*) as count
         FROM messages 
-        WHERE created_at >= ? AND created_at <= ?
+        WHERE created_at >= %s AND created_at <= %s
         GROUP BY message_type
     """, (start_date, end_date))
     message_types = c.fetchall()
@@ -458,7 +458,7 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     c.execute("""
         SELECT AVG(LENGTH(message_text)) as avg_length
         FROM messages 
-        WHERE created_at >= ? AND created_at <= ? 
+        WHERE created_at >= %s AND created_at <= %s 
         AND message_text IS NOT NULL
     """, (start_date, end_date))
     avg_message_length = c.fetchone()[0] or 0
@@ -508,14 +508,14 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
 
 def get_client_insights_data(client_id):
     """Получить инсайты по конкретному клиенту"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     # Основная информация о клиенте
     c.execute("""
         SELECT instagram_id, username, name, phone, status, 
                total_messages, lifetime_value, first_contact, last_contact
-        FROM clients WHERE instagram_id = ?
+        FROM clients WHERE instagram_id = %s
     """, (client_id,))
     client_info = c.fetchone()
     
@@ -527,7 +527,7 @@ def get_client_insights_data(client_id):
     c.execute("""
         SELECT message_text, sender, message_type, created_at
         FROM messages 
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
         ORDER BY created_at DESC
         LIMIT 50
     """, (client_id,))
@@ -543,7 +543,7 @@ def get_client_insights_data(client_id):
             MIN(created_at) as first_message,
             MAX(created_at) as last_message
         FROM messages 
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
     """, (client_id,))
     activity_stats = c.fetchone()
     
@@ -551,7 +551,7 @@ def get_client_insights_data(client_id):
     c.execute("""
         SELECT id, service_name, datetime, status, revenue
         FROM bookings 
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
         ORDER BY datetime DESC
     """, (client_id,))
     bookings = c.fetchall()
@@ -564,7 +564,7 @@ def get_client_insights_data(client_id):
                 THEN julianday(created_at) - julianday(LAG(created_at) OVER (ORDER BY created_at))
                 END) * 24 * 60 as avg_response_time_minutes
         FROM messages 
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
     """, (client_id,))
     response_time = c.fetchone()[0]
     
@@ -613,7 +613,7 @@ def get_client_insights_data(client_id):
 
 def get_performance_metrics_data(period=30):
     """Получить метрики производительности"""
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     end_date = get_current_time().isoformat()
@@ -623,17 +623,17 @@ def get_performance_metrics_data(period=30):
     c.execute("SELECT COUNT(*) FROM clients")
     total_clients = c.fetchone()[0]
     
-    c.execute("SELECT COUNT(*) FROM messages WHERE created_at >= ?", (start_date,))
+    c.execute("SELECT COUNT(*) FROM messages WHERE created_at >= %s", (start_date,))
     total_messages = c.fetchone()[0]
     
-    c.execute("SELECT COUNT(*) FROM bookings WHERE created_at >= ?", (start_date,))
+    c.execute("SELECT COUNT(*) FROM bookings WHERE created_at >= %s", (start_date,))
     total_bookings = c.fetchone()[0]
     
     # Метрики вовлеченности
     c.execute("""
         SELECT COUNT(DISTINCT instagram_id) 
         FROM messages 
-        WHERE created_at >= ? AND sender = 'client'
+        WHERE created_at >= %s AND sender = 'client'
     """, (start_date,))
     active_clients = c.fetchone()[0]
     
@@ -642,7 +642,7 @@ def get_performance_metrics_data(period=30):
         FROM (
             SELECT instagram_id, COUNT(*) as message_count
             FROM messages 
-            WHERE created_at >= ? AND sender = 'client'
+            WHERE created_at >= %s AND sender = 'client'
             GROUP BY instagram_id
         )
     """, (start_date,))
@@ -652,7 +652,7 @@ def get_performance_metrics_data(period=30):
     c.execute("""
         SELECT COUNT(DISTINCT instagram_id) 
         FROM bookings 
-        WHERE created_at >= ?
+        WHERE created_at >= %s
     """, (start_date,))
     clients_with_bookings = c.fetchone()[0]
     
@@ -662,7 +662,7 @@ def get_performance_metrics_data(period=30):
     c.execute("""
         SELECT SUM(revenue) 
         FROM bookings 
-        WHERE created_at >= ? AND status = 'completed'
+        WHERE created_at >= %s AND status = 'completed'
     """, (start_date,))
     total_revenue = c.fetchone()[0] or 0
     
@@ -674,7 +674,7 @@ def get_performance_metrics_data(period=30):
             julianday(created_at) - julianday(LAG(created_at) OVER (ORDER BY created_at))
         ) * 24 * 60
         FROM messages 
-        WHERE created_at >= ? AND sender = 'bot'
+        WHERE created_at >= %s AND sender = 'bot'
     """, (start_date,))
     avg_response_time = c.fetchone()[0]
     

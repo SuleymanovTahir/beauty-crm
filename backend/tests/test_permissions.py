@@ -13,7 +13,7 @@
 """
 import sys
 import os
-import sqlite3
+from db.connection import get_db_connection
 from datetime import datetime
 
 # Добавляем путь к backend
@@ -221,7 +221,7 @@ def test_user_permissions_in_database():
     print_section("ТЕСТ 6: Права пользователей в БД")
 
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем всех пользователей

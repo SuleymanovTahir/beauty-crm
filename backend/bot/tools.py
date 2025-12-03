@@ -6,6 +6,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from core.config import DATABASE_NAME
+from db.connection import get_db_connection
 from services.master_schedule import MasterScheduleService
 
 
@@ -18,14 +19,14 @@ def get_available_time_slots(
     """
     Получить реально свободные слоты из БД с учетом графика и услуг
     """
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # 1. Определяем ID услуги и длительность если передано название
         service_id = None
         if service_name:
-            c.execute("SELECT id, duration FROM services WHERE name_ru LIKE ? OR name LIKE ?", 
+            c.execute("SELECT id, duration FROM services WHERE name_ru LIKE %s OR name LIKE %s", 
                      (f"%{service_name}%", f"%{service_name}%"))
             service_row = c.fetchone()
             if service_row:
@@ -66,7 +67,7 @@ def get_available_time_slots(
                 JOIN user_services us ON u.id = us.user_id
                 WHERE u.is_active = 1 
                   AND u.is_service_provider = 1
-                  AND us.service_id = ?
+                  AND us.service_id = %s
                   AND us.is_online_booking_enabled = 1
             """, (service_id,))
             potential_masters = c.fetchall()

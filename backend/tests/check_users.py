@@ -1,7 +1,7 @@
 """
 Проверка пользователей в базе данных
 """
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 
@@ -20,7 +20,7 @@ try:
     c = conn.cursor()
 
     # Проверяем существует ли таблица users
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
+    c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='users'")
     if not c.fetchone():
         print("❌ Таблица users не существует!")
         print("   Запустите backend чтобы создать таблицы: python main.py")

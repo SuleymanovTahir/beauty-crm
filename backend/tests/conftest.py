@@ -2,7 +2,7 @@
 Pytest конфигурация и фикстуры
 """
 import pytest
-import sqlite3
+from db.connection import get_db_connection
 import os
 import sys
 from fastapi.testclient import TestClient
@@ -34,7 +34,7 @@ def clean_database(test_db_path):
 
     # Создаем базовые таблицы
     c.execute('''CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
         full_name TEXT,
@@ -47,7 +47,7 @@ def clean_database(test_db_path):
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS clients (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         phone TEXT,
         email TEXT,
@@ -57,7 +57,7 @@ def clean_database(test_db_path):
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS employees (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         full_name TEXT NOT NULL,
         position TEXT,
         phone TEXT,
@@ -69,7 +69,7 @@ def clean_database(test_db_path):
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS services (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         name_en TEXT,
         name_ar TEXT,
@@ -82,7 +82,7 @@ def clean_database(test_db_path):
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS bookings (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         client_id INTEGER,
         service_id INTEGER,
         employee_id INTEGER,
@@ -97,7 +97,7 @@ def clean_database(test_db_path):
     )''')
 
     c.execute('''CREATE TABLE IF NOT EXISTS positions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL UNIQUE,
         name_en TEXT,
         name_ar TEXT,
@@ -155,7 +155,7 @@ def sample_user(db_connection):
     cursor = db_connection.cursor()
     cursor.execute("""
         INSERT INTO users (username, password_hash, full_name, email, role, position, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, ("testuser", password_hash, "Test User", "test@example.com", "admin", "Администратор", now))
 
     db_connection.commit()

@@ -51,10 +51,10 @@ def test_database_connection():
     print("-" * 80)
 
     try:
-        import sqlite3
+        from db.connection import get_db_connection
         from core.config import DATABASE_NAME
 
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем список таблиц
@@ -168,7 +168,7 @@ def test_api_endpoints():
                 print(f"      💡 Этот эндпоинт слишком медленный!")
                 results.append((name, False, timeout))
             except requests.exceptions.ConnectionError:
-                print(f"   ❌ {name}: CONNECTION ERROR (сервер не запущен?)")
+                print(f"   ❌ {name}: CONNECTION ERROR (сервер не запущен%s)")
                 results.append((name, False, 0))
             except Exception as e:
                 print(f"   ❌ {name}: {e}")
