@@ -730,7 +730,7 @@ def init_database():
                       booking_url, phone, email, instagram, whatsapp, bot_name, bot_name_en, bot_name_ar,
                       city, country, timezone, currency, 
                       latitude, longitude, logo_url, base_url, updated_at)
-                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   ("M.Le Diamant Beauty Lounge",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",

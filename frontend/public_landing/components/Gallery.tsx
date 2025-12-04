@@ -18,12 +18,17 @@ export function Gallery() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
+        console.log('🖼️  Gallery: Fetching salon images...');
         const data = await apiClient.getPublicGallery('salon');
+        console.log('🖼️  Gallery: API response:', data);
         if (data.images && data.images.length > 0) {
+          console.log(`🖼️  Gallery: Found ${data.images.length} images`);
           setImages(data.images);
+        } else {
+          console.log('🖼️  Gallery: No images found or empty array');
         }
       } catch (error) {
-        console.error('Error loading gallery:', error);
+        console.error('❌ Gallery: Error loading gallery:', error);
       } finally {
         setLoading(false);
       }
@@ -32,8 +37,15 @@ export function Gallery() {
     fetchImages();
   }, []);
 
-  if (loading) return null;
-  if (images.length === 0) return null;
+  if (loading) {
+    console.log('🖼️  Gallery: Still loading...');
+    return null;
+  }
+  if (images.length === 0) {
+    console.log('🖼️  Gallery: No images to display, returning null');
+    return null;
+  }
+  console.log(`🖼️  Gallery: Rendering ${images.length} images`);
 
   return (
     <section id="gallery" className="py-24 bg-background">

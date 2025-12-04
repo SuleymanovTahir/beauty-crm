@@ -123,20 +123,17 @@ export function MapSection({ salonInfo }: MapSectionProps) {
 
           <div className="w-full h-[500px] lg:h-auto lg:min-h-[600px] rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-border/50">
             <iframe
+              className="w-full h-full rounded-2xl"
               src={salonInfo?.google_maps ?
                 (salonInfo.google_maps.includes('maps.app.goo.gl') ?
-                  `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1!2d55.13!3d25.08!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6ca7b1e1e1e1%3A0x1e1e1e1e1e1e1e1e!2sShop%2013%2C%20Amwaj%203%20Plaza%20Level%2C%20JBR%2C%20Dubai!5e0!3m2!1sen!2sae!4v1733334000000`
+                  // Converted from short URL to embed format with real coordinates
+                  `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1!2d55.1315886!3d25.0738739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f138d81fa2729%3A0x4f52784c0fa00c32!2sM%20Le%20Diamant%20-%20Best%20Beauty%20Salon%20in%20Jumeirah%20Beach%20Dubai!5e0!3m2!1sen!2sae!4v1733334000000`
                   : salonInfo.google_maps)
-                : "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d231543.89654711885!2d55.04788838369384!3d25.07619619999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f17!3m3!1m2!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2s!4v1234567890123"}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
+                : ""
+              } loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Salon Location"
-              className="w-full h-full"
-            />
+            ></iframe>
           </div>
         </div>
       </div>

@@ -338,3 +338,46 @@ async def get_public_banners():
         return {"banners": []}
     finally:
         conn.close()
+
+@router.get("/gallery")
+async def get_public_gallery(category: Optional[str] = None):
+    """
+    Получить изображения галереи (публичный доступ)
+    category: 'portfolio' или 'salon' (опционально, если не указан - возвращает все)
+    """
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        if category:
+            c.execute("""
+                SELECT id, category, image_path, title, description, sort_order 
+                FROM gallery_images 
+                WHERE category = %s AND is_visible = TRUE
+                ORDER BY sort_order ASC, id ASC
+            """, (category,))
+        else:
+            c.execute("""
+                SELECT id, category, image_path, title, description, sort_order 
+                FROM gallery_images 
+                WHERE is_visible = TRUE
+                ORDER BY category, sort_order ASC, id ASC
+            """)        
+        images = []
+        for row in c.fetchall():
+            images.append({
+                "id": row[0],
+                "category": row[1],
+                "image_path": row[2],
+                "title": row[3],
+                "description": row[4],
+                "sort_order": row[5]
+            })
+        
+        conn.close()
+        return {"success": True, "images": images}
+        
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error fetching gallery images: {e}", "api")
+        return {"success": False, "images": [], "error": str(e)}

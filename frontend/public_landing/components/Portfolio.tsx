@@ -19,12 +19,17 @@ export function Portfolio() {
   useEffect(() => {
     const fetchImages = async () => {
       try {
+        console.log('🎨 Portfolio: Fetching portfolio images...');
         const data = await apiClient.getPublicGallery('portfolio');
+        console.log('🎨 Portfolio: API response:', data);
         if (data.images && data.images.length > 0) {
+          console.log(`🎨 Portfolio: Found ${data.images.length} images`);
           setImages(data.images);
+        } else {
+          console.log('🎨 Portfolio: No images found or empty array');
         }
       } catch (error) {
-        console.error('Error loading portfolio:', error);
+        console.error('❌ Portfolio: Error loading portfolio:', error);
       } finally {
         setLoading(false);
       }
@@ -33,8 +38,15 @@ export function Portfolio() {
     fetchImages();
   }, []);
 
-  if (loading) return null;
-  if (images.length === 0) return null;
+  if (loading) {
+    console.log('🎨 Portfolio: Still loading...');
+    return null;
+  }
+  if (images.length === 0) {
+    console.log('🎨 Portfolio: No images to display, returning null');
+    return null;
+  }
+  console.log(`🎨 Portfolio: Rendering ${images.length} images`);
 
   return (
     <section id="portfolio" className="py-24 bg-muted/30">

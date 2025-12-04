@@ -139,9 +139,10 @@ def run_all_migrations():
     except Exception as e:
         print(f"⚠️  Предупреждение при добавлении show_on_public_page: {e}")
     
-    # Import gallery images from disk
+    # Import gallery images from disk (copy from frontend source to static/uploads and DB)
     try:
-        import_gallery_images()
+        from db.migrations.data.gallery.import_gallery_photos import import_gallery_photos
+        import_gallery_photos()
     except Exception as e:
         print(f"⚠️  Предупреждение при импорте изображений галереи: {e}")
 
