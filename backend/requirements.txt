@@ -14,7 +14,6 @@ email-validator
 cffi
 xlrd
 xlwt
-playwright
 beautifulsoup4
 lxml
 openpyxl
@@ -25,4 +24,3 @@ charset-normalizer
 certifi
 urllib3
 psycopg2-binary
-country-flag-icons

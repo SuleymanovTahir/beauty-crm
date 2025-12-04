@@ -371,6 +371,59 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
         log_error(f"Failed to send password reset email: {e}", "email")
         return False
 
+def send_email_sync(recipients: list, subject: str, message: str, html: str = None) -> bool:
+    """
+    Синхронная функция отправки email (для использования в background tasks)
+
+    Args:
+        recipients: Список email адресов получателей
+        subject: Тема письма
+        message: Текст письма (plain text)
+        html: HTML версия письма (опционально)
+
+    Returns:
+        bool: True если отправлено успешно
+    """
+    try:
+        # SMTP настройки из переменных окружения
+        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
+
+        if not smtp_user or not smtp_password:
+            log_error("SMTP credentials not configured in .env", "email")
+            return False
+
+        # Создаем сообщение
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = smtp_from
+        msg['To'] = ', '.join(recipients)
+
+        # Добавляем текстовую часть
+        part1 = MIMEText(message, 'plain')
+        msg.attach(part1)
+
+        # Добавляем HTML часть (если есть)
+        if html:
+            part2 = MIMEText(html, 'html')
+            msg.attach(part2)
+
+        # Отправляем
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(msg)
+
+        log_info(f"Email sent to {', '.join(recipients)}: {subject}", "email")
+        return True
+
+    except Exception as e:
+        log_error(f"Failed to send email: {e}", "email")
+        return False
+
 async def send_email_async(recipients: list, subject: str, message: str, html: str = None) -> bool:
     """
     Универсальная асинхронная функция отправки email
@@ -386,47 +439,5 @@ async def send_email_async(recipients: list, subject: str, message: str, html: s
     """
     import asyncio
     
-    def _send_email_sync():
-        """Синхронная функция отправки email"""
-        try:
-            # SMTP настройки из переменных окружения
-            smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
-            smtp_port = int(os.getenv('SMTP_PORT', '587'))
-            smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
-            smtp_password = os.getenv('SMTP_PASSWORD')
-            smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
-
-            if not smtp_user or not smtp_password:
-                log_error("SMTP credentials not configured in .env", "email")
-                return False
-
-            # Создаем сообщение
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = subject
-            msg['From'] = smtp_from
-            msg['To'] = ', '.join(recipients)
-
-            # Добавляем текстовую часть
-            part1 = MIMEText(message, 'plain')
-            msg.attach(part1)
-
-            # Добавляем HTML часть (если есть)
-            if html:
-                part2 = MIMEText(html, 'html')
-                msg.attach(part2)
-
-            # Отправляем
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
-
-            log_info(f"Email sent to {', '.join(recipients)}: {subject}", "email")
-            return True
-
-        except Exception as e:
-            log_error(f"Failed to send email: {e}", "email")
-            return False
-    
     # Запускаем синхронную функцию в отдельном потоке
-    return await asyncio.to_thread(_send_email_sync)
+    return await asyncio.to_thread(send_email_sync, recipients, subject, message, html)

@@ -71,7 +71,7 @@ def seed_production_data():
                     'subtitle_ru': 'Профессиональные услуги красоты',
                     'subtitle_en': 'Professional Beauty Services',
                     'subtitle_ar': 'خدمات تجميل احترافية',
-                    'image_url': '/static/uploads/images/banner2.webp', # Ensure this file exists or use external URL
+                    'image_url': '/static/uploads/faces/banner2.webp', # Ensure this file exists or use external URL
                     'link_url': '/services',
                     'display_order': 1,
                     'is_active': True
@@ -83,7 +83,7 @@ def seed_production_data():
                     'subtitle_ru': 'На все услуги салона',
                     'subtitle_en': 'On all salon services',
                     'subtitle_ar': 'على جميع خدمات الصالون',
-                    'image_url': '/static/uploads/images/Мароканская баня.webp',
+                    'image_url': '/static/uploads/faces/Мароканская баня.webp',
                     'link_url': '/services',
                     'display_order': 2,
                     'is_active': True # Set to False if you don't want it active by default

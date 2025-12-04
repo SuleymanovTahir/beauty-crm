@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
-def grant_permissions_to_user(db_name, db_host, db_port, superuser, target_user, grant_superuser=True):
+def grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, target_user, grant_superuser=True):
     """
     Выдать полные права пользователю на базу данных и схему public.
     
@@ -24,6 +24,7 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, target_user,
         db_host: Хост PostgreSQL
         db_port: Порт PostgreSQL
         superuser: Суперпользователь для подключения
+        superuser_password: Пароль суперпользователя
         target_user: Пользователь, которому выдаём права
         grant_superuser: Выдать ли SUPERUSER роль (True для development)
     """
@@ -32,6 +33,7 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, target_user,
         conn = psycopg2.connect(
             dbname='postgres',
             user=superuser,
+            password=superuser_password,
             host=db_host,
             port=db_port
         )
@@ -60,6 +62,7 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, target_user,
         conn = psycopg2.connect(
             dbname=db_name,
             user=superuser,
+            password=superuser_password,
             host=db_host,
             port=db_port
         )
@@ -112,10 +115,11 @@ def recreate_database():
     db_host = os.getenv('POSTGRES_HOST', 'localhost')
     db_port = os.getenv('POSTGRES_PORT', '5432')
     app_user = os.getenv('POSTGRES_USER', 'beauty_crm_user')
+    superuser_password = os.getenv('POSTGRES_SUPERUSER_PASSWORD', os.getenv('POSTGRES_PASSWORD', ''))
     
     # ВАЖНО: Для операций CREATE DATABASE нужны права владельца БД или суперюзера
-    # На macOS с Postgres.app обычно используется текущий пользователь системы как суперюзер
-    superuser = os.getenv('USER', 'postgres')  # Текущий пользователь macOS
+    # На production используем 'ubuntu', на macOS - текущий пользователь
+    superuser = os.getenv('POSTGRES_SUPERUSER', os.getenv('USER', 'postgres'))
     
     print(f"⚙️  Параметры подключения: host={db_host}, superuser={superuser}, db={db_name}")
     print(f"⚙️  Пользователь приложения: {app_user}")
@@ -127,6 +131,7 @@ def recreate_database():
         conn = psycopg2.connect(
             dbname='postgres',
             user=superuser,
+            password=superuser_password,
             host=db_host,
             port=db_port
         )
@@ -149,11 +154,11 @@ def recreate_database():
         
         # Выдаём права пользователю приложения
         # Всегда выдаём SUPERUSER для упрощения (выбор пользователя: вариант B)
-        grant_permissions_to_user(db_name, db_host, db_port, superuser, app_user, grant_superuser=True)
+        grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, app_user, grant_superuser=True)
         
         # Также выдаём права суперпользователю
         if superuser != app_user:
-            grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser, grant_superuser=True)
+            grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, superuser, grant_superuser=True)
         
         
     except Exception as e:
@@ -162,7 +167,13 @@ def recreate_database():
         if "role" in str(e) and "does not exist" in str(e):
             print("⚠️  Попытка подключения с пользователем 'postgres'...")
             try:
-                conn = psycopg2.connect(dbname='postgres', user='postgres', host=db_host, port=db_port)
+                conn = psycopg2.connect(
+                    dbname='postgres',
+                    user='postgres',
+                    password=superuser_password,
+                    host=db_host,
+                    port=db_port
+                )
                 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
                 cursor = conn.cursor()
                 
@@ -180,8 +191,8 @@ def recreate_database():
                 
                 # Выдаём права через postgres суперпользователя
                 # Всегда выдаём SUPERUSER (выбор пользователя: вариант B)
-                grant_permissions_to_user(db_name, db_host, db_port, 'postgres', app_user, grant_superuser=True)
-                grant_permissions_to_user(db_name, db_host, db_port, 'postgres', 'postgres', grant_superuser=True)
+                grant_permissions_to_user(db_name, db_host, db_port, 'postgres', superuser_password, app_user, grant_superuser=True)
+                grant_permissions_to_user(db_name, db_host, db_port, 'postgres', superuser_password, 'postgres', grant_superuser=True)
                 
                 
             except Exception as e2:
@@ -206,7 +217,8 @@ def drop_database():
     db_name = os.getenv('POSTGRES_DB', 'beauty_crm')
     db_host = os.getenv('POSTGRES_HOST', 'localhost')
     db_port = os.getenv('POSTGRES_PORT', '5432')
-    superuser = os.getenv('USER', 'postgres')
+    superuser = os.getenv('POSTGRES_SUPERUSER', os.getenv('USER', 'postgres'))
+    superuser_password = os.getenv('POSTGRES_SUPERUSER_PASSWORD', os.getenv('POSTGRES_PASSWORD', ''))
     
     print(f"⚠️  ВНИМАНИЕ: Удаление базы данных '{db_name}'...")
     
@@ -214,6 +226,7 @@ def drop_database():
         conn = psycopg2.connect(
             dbname='postgres',
             user=superuser,
+            password=superuser_password,
             host=db_host,
             port=db_port
         )
@@ -239,7 +252,13 @@ def drop_database():
         print(f"❌ Ошибка при удалении БД: {e}")
         # Пробуем через postgres
         try:
-            conn = psycopg2.connect(dbname='postgres', user='postgres', host=db_host, port=db_port)
+            conn = psycopg2.connect(
+                dbname='postgres',
+                user='postgres',
+                password=superuser_password,
+                host=db_host,
+                port=db_port
+            )
             conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
             cursor = conn.cursor()
             

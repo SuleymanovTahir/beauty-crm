@@ -1,7 +1,7 @@
 """
 Публичные API endpoints (без авторизации)
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timedelta
@@ -35,92 +35,72 @@ class ContactForm(BaseModel):
     message: str
 
 @router.post("/send-message")
-async def send_contact_message(form: ContactForm):
+async def send_contact_message(form: ContactForm, background_tasks: BackgroundTasks):
     """Отправка сообщения с контактной формы"""
+    from utils.logger import log_info, log_error
+    
+    # Логируем
+    log_info(f"📩 New message from {form.name}: {form.message}", "public_api")
+    
+    # Добавляем задачу в фон для отправки уведомлений
+    background_tasks.add_task(process_contact_notifications, form)
+    
+    # Сразу возвращаем успешный ответ
+    return {"success": True, "message": "Message sent successfully"}
+
+def process_contact_notifications(form: ContactForm):
+    """Обработка уведомлений в фоновом режиме"""
+    from utils.logger import log_info, log_error
+    from utils.email import send_email_sync
+    from integrations.telegram_bot import send_telegram_alert
+    import os
+    import asyncio
+    
+    # 1. Получаем email администратора
+    admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
+    
+    # 2. Отправляем email администратору
+    if admin_email:
+        subject = f"📩 Новая заявка с сайта: {form.name}"
+        message_text = (
+            f"Имя: {form.name}\n"
+            f"Email: {form.email or 'Не указан'}\n"
+            f"Сообщение:\n{form.message}"
+        )
+        send_email_sync([admin_email], subject, message_text)
+        log_info(f"Admin notification sent to {admin_email}", "public_api")
+    
+    # 3. Отправляем подтверждение пользователю
+    if form.email:
+        user_subject = "Ваша заявка принята | M.Le Diamant"
+        user_message = (
+            f"Здравствуйте, {form.name}!\n\n"
+            f"Спасибо за ваше обращение. Мы получили вашу заявку и свяжемся с вами в ближайшее время.\n\n"
+            f"С уважением,\nКоманда M.Le Diamant"
+        )
+        send_email_sync([form.email], user_subject, user_message)
+    
+    # 4. Отправляем уведомление в Telegram
     try:
-        from utils.logger import log_info, log_error
-        from bot import get_bot
-        from utils.email import send_email_async
-        from integrations.telegram_bot import send_telegram_alert
+        telegram_message = (
+            f"📩 <b>Новая заявка с сайта!</b>\n\n"
+            f"👤 <b>Имя:</b> {form.name}\n"
+            f"📧 <b>Email:</b> {form.email or 'Не указан'}\n\n"
+            f"📝 <b>Сообщение:</b>\n{form.message}"
+        )
         
-        # Логируем
-        log_info(f"📩 New message from {form.name}: {form.message}", "public_api")
+        # send_telegram_alert is async, so we need to run it in an event loop
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        telegram_result = loop.run_until_complete(send_telegram_alert(telegram_message))
+        loop.close()
         
-        # 1. Получаем email администратора из переменных окружения
-        import os
-        admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
-        
-        
-        # 2-4. Отправляем уведомления параллельно для ускорения
-        import asyncio
-        
-        async def send_admin_email():
-            """Отправить email администратору"""
-            if admin_email:
-                subject = f"📩 Новая заявка с сайта: {form.name}"
-                message_text = (
-                    f"Имя: {form.name}\n"
-                    f"Email: {form.email or 'Не указан'}\n"
-                    f"Сообщение:\n{form.message}"
-                )
-                await send_email_async([admin_email], subject, message_text)
-                log_info(f"Admin notification sent to {admin_email}", "public_api")
-            else:
-                log_info("No admin emails found to send notification", "public_api")
-        
-        async def send_user_email():
-            """Отправить подтверждение пользователю"""
-            if form.email:
-                user_subject = "Ваша заявка принята | M.Le Diamant"
-                user_message = (
-                    f"Здравствуйте, {form.name}!\n\n"
-                    f"Спасибо за ваше обращение. Мы получили вашу заявку и свяжемся с вами в ближайшее время.\n\n"
-                    f"С уважением,\nКоманда M.Le Diamant"
-                )
-                await send_email_async([form.email], user_subject, user_message)
-        
-        async def send_telegram_notification():
-            """Отправить уведомление в Telegram"""
-            try:
-                telegram_message = (
-                    f"📩 <b>Новая заявка с сайта!</b>\n\n"
-                    f"👤 <b>Имя:</b> {form.name}\n"
-                    f"📧 <b>Email:</b> {form.email or 'Не указан'}\n\n"
-                    f"📝 <b>Сообщение:</b>\n{form.message}"
-                )
-                
-                telegram_result = await send_telegram_alert(telegram_message)
-                
-                if telegram_result.get("success"):
-                    log_info("Telegram notification sent successfully", "public_api")
-                else:
-                    log_error(f"Failed to send Telegram notification: {telegram_result.get('error')}", "public_api")
-            except Exception as e:
-                log_error(f"Error sending Telegram notification: {e}", "public_api")
-        
-        async def send_all_notifications():
-            """Отправить все уведомления"""
-            await asyncio.gather(
-                send_admin_email(),
-                send_user_email(),
-                send_telegram_notification(),
-                return_exceptions=True
-            )
-        
-        # Запускаем уведомления в фоне (fire-and-forget)
-        # Не ждем их завершения, чтобы сразу вернуть ответ пользователю
-        asyncio.create_task(send_all_notifications())
-            
-        return {"success": True, "message": "Message sent successfully"}
+        if telegram_result.get("success"):
+            log_info("Telegram notification sent successfully", "public_api")
+        else:
+            log_error(f"Failed to send Telegram notification: {telegram_result.get('error')}", "public_api")
     except Exception as e:
-        from utils.logger import log_error
-        import traceback
-        log_error(f"Error sending message: {e}\n{traceback.format_exc()}", "public_api")
-        # Don't return 500 if it's just a notification failure, but here we are in the main block
-        # If the error happened in the main logic, we should probably still return success if the message was "received" 
-        # but notifications failed. However, the try-except above covers notifications.
-        # This outer except catches unexpected errors.
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        log_error(f"Error sending Telegram notification: {e}", "public_api")
 
 @router.get("/services")
 async def get_public_services():
