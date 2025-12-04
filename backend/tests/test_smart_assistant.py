@@ -103,7 +103,6 @@ def test_smart_assistant():
         traceback.print_exc()
         return False
 
-
 if __name__ == "__main__":
     success = test_smart_assistant()
     sys.exit(0 if success else 1)

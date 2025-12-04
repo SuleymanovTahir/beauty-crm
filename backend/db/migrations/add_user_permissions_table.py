@@ -9,7 +9,6 @@
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 
-
 def migrate():
     """Создать таблицу user_permissions"""
     conn = get_db_connection()
@@ -69,7 +68,6 @@ def migrate():
     finally:
         conn.close()
 
-
 def rollback():
     """Откатить миграцию (удалить таблицу)"""
     conn = get_db_connection()
@@ -86,7 +84,6 @@ def rollback():
         return False
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     print("=" * 70)

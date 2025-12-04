@@ -4,7 +4,7 @@ API Endpoints для управления правами и ролями пол�
 from fastapi import APIRouter, Request, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from db.connection import get_db_connection
 
 from core.config import (
@@ -15,7 +15,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Permissions"])
-
 
 @router.get("/permissions/roles")
 async def get_all_roles(session_token: Optional[str] = Cookie(None)):
@@ -33,7 +32,6 @@ async def get_all_roles(session_token: Optional[str] = Cookie(None)):
         "count": len(ROLES)
     }
 
-
 @router.get("/permissions/descriptions")
 async def get_permission_descriptions(session_token: Optional[str] = Cookie(None)):
     """Получить описания всех прав"""
@@ -49,7 +47,6 @@ async def get_permission_descriptions(session_token: Optional[str] = Cookie(None
         "count": len(PERMISSION_DESCRIPTIONS)
     }
 
-
 @router.get("/permissions/statuses")
 async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
     """Получить все статусы клиентов"""
@@ -61,7 +58,6 @@ async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
         "statuses": CLIENT_STATUSES,
         "count": len(CLIENT_STATUSES)
     }
-
 
 @router.get("/permissions/user/{user_id}")
 async def get_user_permissions(
@@ -84,7 +80,7 @@ async def get_user_permissions(
         c.execute("""
             SELECT id, username, full_name, role, email
             FROM users
-            WHERE id = ?
+            WHERE id =%s
         """, (user_id,))
 
         target_user = c.fetchone()
@@ -102,7 +98,7 @@ async def get_user_permissions(
         c.execute("""
             SELECT permission_key, granted
             FROM user_permissions
-            WHERE user_id = ?
+            WHERE user_id =%s
         """, (user_id,))
 
         custom_permissions = {}
@@ -131,7 +127,6 @@ async def get_user_permissions(
     except sqlite3.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
-
 
 @router.put("/permissions/user/{user_id}/role")
 async def update_user_role(
@@ -162,7 +157,7 @@ async def update_user_role(
         c = conn.cursor()
 
         # Получаем текущую роль пользователя
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id =%s", (user_id,))
         result = c.fetchone()
 
         if not result:
@@ -182,8 +177,8 @@ async def update_user_role(
         # Обновляем роль
         c.execute("""
             UPDATE users
-            SET role = ?, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?
+            SET role =%s, updated_at = CURRENT_TIMESTAMP
+            WHERE id =%s
         """, (new_role, user_id))
 
         conn.commit()
@@ -204,7 +199,6 @@ async def update_user_role(
     except sqlite3.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
-
 
 @router.put("/permissions/user/{user_id}/custom")
 async def update_user_custom_permissions(
@@ -232,7 +226,7 @@ async def update_user_custom_permissions(
         c = conn.cursor()
 
         # Проверяем, существует ли пользователь
-        c.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT id FROM users WHERE id =%s", (user_id,))
         if not c.fetchone():
             conn.close()
             raise HTTPException(status_code=404, detail="User not found")
@@ -241,9 +235,9 @@ async def update_user_custom_permissions(
         for perm_key, granted in permissions.items():
             c.execute("""
                 INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, granted_at)
-                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+                VALUES (%s,%s,%s,%s, CURRENT_TIMESTAMP)
                 ON CONFLICT(user_id, permission_key)
-                DO UPDATE SET granted = ?, granted_by = ?, granted_at = CURRENT_TIMESTAMP
+                DO UPDATE SET granted =%s, granted_by =%s, granted_at = CURRENT_TIMESTAMP
             """, (user_id, perm_key, int(granted), user["id"], int(granted), user["id"]))
 
         conn.commit()
@@ -263,7 +257,6 @@ async def update_user_custom_permissions(
     except sqlite3.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
-
 
 @router.post("/permissions/check")
 async def check_permission(
@@ -289,7 +282,6 @@ async def check_permission(
         "permission": permission,
         "has_permission": has_perm
     }
-
 
 @router.get("/permissions/users")
 async def get_all_users_with_permissions(

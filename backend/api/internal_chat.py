@@ -4,7 +4,7 @@ API для внутреннего чата между сотрудниками
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 import asyncio
 from datetime import datetime
 
@@ -15,7 +15,6 @@ from utils.logger import log_error, log_info
 from utils.email import send_email_async
 
 router = APIRouter(tags=["Internal Chat"], prefix="/api/internal-chat")
-
 
 # === HELPER FUNCTIONS ===
 
@@ -70,9 +69,9 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
         c = conn.cursor()
         c.execute("""
             UPDATE internal_chat
-            SET email_sent = 1, email_sent_at = ?
-            WHERE to_user_id = ? AND from_user_id = (
-                SELECT id FROM users WHERE full_name = ?
+            SET email_sent = 1, email_sent_at = %s
+            WHERE to_user_id = %s AND from_user_id = (
+                SELECT id FROM users WHERE full_name = %s
             )
             ORDER BY created_at DESC
             LIMIT 1
@@ -84,7 +83,6 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
 
     except Exception as e:
         log_error(f"Ошибка отправки email уведомления: {e}", "internal_chat")
-
 
 @router.get("/messages")
 async def get_internal_messages(
@@ -111,10 +109,10 @@ async def get_internal_messages(
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.from_user_id = u1.id
             LEFT JOIN users u2 ON ic.to_user_id = u2.id
-            WHERE (ic.from_user_id = ? AND ic.to_user_id = ?)
-               OR (ic.from_user_id = ? AND ic.to_user_id = ?)
+            WHERE (ic.from_user_id = %s AND ic.to_user_id = %s)
+               OR (ic.from_user_id = %s AND ic.to_user_id = %s)
             ORDER BY ic.created_at ASC
-            LIMIT ?
+            LIMIT %s
         """, (user['id'], with_user_id, with_user_id, user['id'], limit))
     else:
         # Получаем все сообщения пользователя
@@ -127,9 +125,9 @@ async def get_internal_messages(
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.from_user_id = u1.id
             LEFT JOIN users u2 ON ic.to_user_id = u2.id
-            WHERE ic.from_user_id = ? OR ic.to_user_id = ?
+            WHERE ic.from_user_id = %s OR ic.to_user_id = %s
             ORDER BY ic.created_at DESC
-            LIMIT ?
+            LIMIT %s
         """, (user['id'], user['id'], limit))
 
     messages = [{
@@ -148,15 +146,14 @@ async def get_internal_messages(
     if with_user_id:
         c.execute("""
             UPDATE internal_chat
-            SET is_read = TRUE, read_at = ?
-            WHERE to_user_id = ? AND from_user_id = ? AND is_read = FALSE
+            SET is_read = TRUE, read_at = %s
+            WHERE to_user_id = %s AND from_user_id = %s AND is_read = FALSE
         """, (datetime.now().isoformat(), user['id'], with_user_id))
         conn.commit()
 
     conn.close()
 
     return {"messages": messages}
-
 
 @router.post("/send")
 async def send_internal_message(
@@ -185,7 +182,7 @@ async def send_internal_message(
     now = datetime.now().isoformat()
     c.execute("""
         INSERT INTO internal_chat (from_user_id, to_user_id, message, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
     """, (user['id'], to_user_id, message, now, now))
 
     message_id = c.lastrowid
@@ -195,7 +192,7 @@ async def send_internal_message(
     c.execute("""
         SELECT email, full_name
         FROM users
-        WHERE id = ?
+        WHERE id = %s
     """, (to_user_id,))
 
     recipient_info = c.fetchone()
@@ -217,7 +214,6 @@ async def send_internal_message(
         "message_id": message_id
     }
 
-
 @router.get("/users")
 async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     """Получить список пользователей для чата"""
@@ -231,7 +227,7 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
     c.execute("""
         SELECT id, username, full_name, role, email
         FROM users
-        WHERE id != ? AND is_active = TRUE
+        WHERE id != %s AND is_active = TRUE
         ORDER BY full_name
     """, (user['id'],))
 
@@ -247,7 +243,6 @@ async def get_chat_users(session_token: Optional[str] = Cookie(None)):
 
     return {"users": users}
 
-
 @router.get("/unread-count")
 async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных сообщений"""
@@ -261,14 +256,13 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     c.execute("""
         SELECT COUNT(*)
         FROM internal_chat
-        WHERE to_user_id = ? AND is_read = FALSE
+        WHERE to_user_id = %s AND is_read = FALSE
     """, (user['id'],))
 
     count = c.fetchone()[0]
     conn.close()
 
     return {"unread_count": count}
-
 
 @router.post("/mark-read")
 async def mark_messages_read(
@@ -292,8 +286,8 @@ async def mark_messages_read(
     now = datetime.now().isoformat()
     c.execute("""
         UPDATE internal_chat
-        SET is_read = TRUE, read_at = ?
-        WHERE to_user_id = ? AND from_user_id = ? AND is_read = FALSE
+        SET is_read = TRUE, read_at = %s
+        WHERE to_user_id = %s AND from_user_id = %s AND is_read = FALSE
     """, (now, user['id'], from_user_id))
 
     conn.commit()

@@ -67,20 +67,17 @@ FAILED_TESTS = [
     }
 ]
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
 
-
 def print_section(text):
     """Секция"""
     print("\n" + "-" * 80)
     print(f"  {text}")
     print("-" * 80)
-
 
 def run_test(test_file, description, timeout=30):
     """
@@ -126,7 +123,6 @@ def run_test(test_file, description, timeout=30):
         print(f"   ❌ FAIL - {description}")
         print(f"   Ошибка: {e}")
         return False
-
 
 def main():
     """Главная функция"""
@@ -185,7 +181,6 @@ def main():
         print(f"  ⚠️  {failed} тест(ов) провалено")
         print("=" * 80)
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

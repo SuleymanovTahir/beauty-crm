@@ -9,9 +9,9 @@ from fastapi import Cookie, HTTPException
 
 from db import get_user_by_session, get_all_clients, get_unread_messages_count
 from db.settings import get_custom_statuses
+from db.connection import get_db_connection
 from core.config import CLIENT_STATUSES
 from utils.logger import log_info, log_error, log_debug
-
 
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====
 
@@ -26,7 +26,6 @@ def ensure_upload_directories():
     for directory in directories:
         os.makedirs(directory, exist_ok=True)
     log_info(f"✅ Созданы директории: {', '.join(directories)}", "startup")
-
 
 def sanitize_filename(filename: str) -> str:
     """
@@ -47,7 +46,6 @@ def sanitize_filename(filename: str) -> str:
         name, ext = os.path.splitext(safe_name)
         safe_name = name[:100] + ext
     return safe_name
-
 
 def validate_file_upload(file, max_size_mb: int = 10, allowed_extensions: list = None):
     """
@@ -72,7 +70,6 @@ def validate_file_upload(file, max_size_mb: int = 10, allowed_extensions: list =
     
     return True, None
 
-
 # ===== АВТОРИЗАЦИЯ =====
 
 def require_auth(session_token: Optional[str] = Cookie(None)):
@@ -87,7 +84,6 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
         return None
     user = get_user_by_session(session_token)
     return user if user else None
-
 
 # После функции require_auth (строка ~60)
 
@@ -119,19 +115,23 @@ def check_permission(user: dict, permission: str) -> bool:
         return True
     
     # Проверяем индивидуальные права из БД
-    conn = sqlite3.connect(DATABASE_NAME)
-    c = conn.cursor()
-    
-    c.execute("""
-        SELECT granted FROM user_permissions
-        WHERE user_id = ? AND permission_key = ?
-    """, (user['id'], permission))
-    
-    result = c.fetchone()
-    conn.close()
-    
-    return bool(result and result[0]) if result else False
-
+    # Проверяем индивидуальные права из БД
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("""
+            SELECT granted FROM user_permissions
+            WHERE user_id = %s AND permission_key = %s
+        """, (user['id'], permission))
+        
+        result = c.fetchone()
+        conn.close()
+        
+        return bool(result and result[0]) if result else False
+    except Exception as e:
+        log_error(f"Error checking permission {permission} for user {user.get('id')}: {e}", "utils")
+        return False
 
 def require_permission(permission: str):
     """
@@ -157,7 +157,6 @@ def require_permission(permission: str):
             return await func(*args, session_token=session_token, **kwargs)
         return wrapper
     return decorator
-
 
 def get_current_user(session_token: Optional[str] = Cookie(None)):
     """
@@ -191,7 +190,6 @@ def get_current_user(session_token: Optional[str] = Cookie(None)):
     
     return user
 
-
 def check_role_permission(user: dict, required_role: str) -> bool:
     """
     Проверить роль пользователя с учетом иерархии
@@ -214,7 +212,6 @@ def check_role_permission(user: dict, required_role: str) -> bool:
     
     return user_level >= required_level
 
-
 def require_role(required_role: str):
     """
     Декоратор для проверки роли пользователя
@@ -233,7 +230,6 @@ def require_role(required_role: str):
             )
         return user
     return decorator
-
 
 # ===== КЛИЕНТЫ =====
 
@@ -254,7 +250,6 @@ def get_client_display_name(client) -> str:
         return f"@{client[1]}"
     else:
         return client[0][:15] + "..."
-
 
 def get_total_unread() -> int:
     """
@@ -285,7 +280,6 @@ def get_total_unread() -> int:
         log_error(f"Error in get_total_unread: {e}", "utils")
         return 0
 
-
 # ===== СТАТУСЫ =====
 
 def get_all_statuses() -> dict:
@@ -303,7 +297,6 @@ def get_all_statuses() -> dict:
             "icon": status[4]
         }
     return statuses
-
 
 # ===== ФОРМАТИРОВАНИЕ =====
 
@@ -331,7 +324,6 @@ def format_phone(phone: str) -> str:
     else:
         return phone  # возвращаем как есть
 
-
 def format_currency(amount: float, currency: str = "AED") -> str:
     """
     Форматировать денежную сумму
@@ -347,7 +339,6 @@ def format_currency(amount: float, currency: str = "AED") -> str:
         return f"0 {currency}"
     
     return f"{amount:,.2f} {currency}".replace(",", " ")
-
 
 def truncate_text(text: str, max_length: int = 50, suffix: str = "...") -> str:
     """
@@ -366,7 +357,6 @@ def truncate_text(text: str, max_length: int = 50, suffix: str = "...") -> str:
     
     return text[:max_length].strip() + suffix
 
-
 # ===== ВАЛИДАЦИЯ =====
 
 def is_valid_email(email: str) -> bool:
@@ -383,7 +373,6 @@ def is_valid_email(email: str) -> bool:
         return False
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return bool(re.match(pattern, email))
-
 
 def is_valid_phone(phone: str) -> bool:
     """
@@ -402,7 +391,6 @@ def is_valid_phone(phone: str) -> bool:
     # Проверяем длину (от 10 до 15 цифр)
     return 10 <= len(digits) <= 15
 
-
 def is_valid_instagram_username(username: str) -> bool:
     """
     Проверить валидность Instagram username
@@ -418,7 +406,6 @@ def is_valid_instagram_username(username: str) -> bool:
     # Instagram username: буквы, цифры, точки, подчёркивания, до 30 символов
     pattern = r'^[a-zA-Z0-9._]{1,30}$'
     return bool(re.match(pattern, username))
-
 
 def validate_password(password: str, min_length: int = 6) -> tuple:
     """
@@ -443,7 +430,6 @@ def validate_password(password: str, min_length: int = 6) -> tuple:
     # - наличие спецсимволов
     
     return True, None
-
 
 # ===== БЕЗОПАСНОСТЬ =====
 
@@ -474,7 +460,6 @@ def escape_html(text: str) -> str:
     
     return text
 
-
 def sanitize_input(text: str, max_length: int = 1000) -> str:
     """
     Очистить пользовательский ввод
@@ -501,7 +486,6 @@ def sanitize_input(text: str, max_length: int = 1000) -> str:
     
     return text
 
-
 # ===== ДЕБАГ И ЛОГИРОВАНИЕ =====
 
 def log_function_call(func_name: str, **kwargs):
@@ -514,7 +498,6 @@ def log_function_call(func_name: str, **kwargs):
     """
     params = ", ".join([f"{k}={v}" for k, v in kwargs.items()])
     log_debug(f"📞 Вызов: {func_name}({params})", "utils")
-
 
 def safe_execute(func, *args, default=None, log_errors=True, **kwargs):
     """
@@ -537,7 +520,6 @@ def safe_execute(func, *args, default=None, log_errors=True, **kwargs):
             log_error(f"Ошибка в {func.__name__}: {e}", "utils")
         return default
 
-
 # ===== РАБОТА С ДАТАМИ =====
 
 def format_datetime(dt_string: str, format: str = "%d.%m.%Y %H:%M") -> str:
@@ -557,7 +539,6 @@ def format_datetime(dt_string: str, format: str = "%d.%m.%Y %H:%M") -> str:
         return dt.strftime(format)
     except:
         return dt_string
-
 
 def get_time_ago(dt_string: str) -> str:
     """
@@ -594,7 +575,6 @@ def get_time_ago(dt_string: str) -> str:
     except:
         return dt_string
 
-
 # ===== ПАГИНАЦИЯ =====
 
 def paginate_list(items: list, page: int = 1, per_page: int = 20):
@@ -625,7 +605,6 @@ def paginate_list(items: list, page: int = 1, per_page: int = 20):
         "has_next": page < pages
     }
 
-
 # ===== СТАТИСТИКА =====
 
 def calculate_percentage(part: float, total: float, decimals: int = 2) -> float:
@@ -643,7 +622,6 @@ def calculate_percentage(part: float, total: float, decimals: int = 2) -> float:
     if not total or total == 0:
         return 0.0
     return round((part / total) * 100, decimals)
-
 
 def calculate_growth(current: float, previous: float) -> dict:
     """

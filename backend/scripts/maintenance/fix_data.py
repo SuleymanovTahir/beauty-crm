@@ -107,7 +107,6 @@ def check_bot_settings():
 
     conn.close()
 
-
 def check_users():
     """Проверить пользователей"""
     conn = get_db_connection()
@@ -145,7 +144,6 @@ def check_users():
         print(f"\n⚠️  Пользователей без должности: {empty_positions}")
 
     conn.close()
-
 
 def check_salon_settings():
     """Проверить настройки салона"""
@@ -185,7 +183,6 @@ def check_salon_settings():
         print(f"Тип данных: {type(weekdays)}")
 
     conn.close()
-
 
 def fix_manager_consultation_prompt():
     """Исправить manager_consultation_prompt"""
@@ -258,7 +255,6 @@ def fix_manager_consultation_prompt():
 
     print("✅ manager_consultation_prompt обновлен")
 
-
 def fix_booking_data_collection():
     """Исправить booking_data_collection"""
     conn = get_db_connection()
@@ -313,7 +309,6 @@ def fix_booking_data_collection():
     conn.close()
 
     print("✅ booking_data_collection обновлен")
-
 
 def fix_missing_bot_fields():
     """Заполнить пустые поля настроек бота значениями по умолчанию"""
@@ -533,7 +528,6 @@ Manicure Gel от 150 AED 💅
 
     conn.close()
 
-
 def fix_employee_genders():
     """Исправить пол сотрудников"""
     conn = get_db_connection()
@@ -571,7 +565,6 @@ def fix_employee_genders():
 
     conn.commit()
     conn.close()
-
 
 def fix_services_english_translations():
     """Исправить английские переводы услуг - скопировать из поля name в name_en"""
@@ -624,7 +617,6 @@ def fix_services_english_translations():
     conn.close()
     print(f"✅ Обновлено {len(services)} услуг")
 
-
 def cleanup_reviews_translations():
     """Очистить неправильные переводы отзывов (русский текст в других языках)"""
     conn = get_db_connection()
@@ -670,7 +662,6 @@ def cleanup_reviews_translations():
         print(f"✅ Очищено {cleaned_count} неправильных переводов")
     else:
         print("✅ Неправильных переводов не найдено")
-
 
 def cleanup_faq_translations():
     """Очистить неправильные переводы FAQ (русский текст в других языках)"""
@@ -740,7 +731,6 @@ def cleanup_faq_translations():
         print(f"✅ Очищено {cleaned_count} неправильных переводов")
     else:
         print("✅ Неправильных переводов не найдено")
-
 
 def fix_all_data():
     """Запустить все исправления данных"""

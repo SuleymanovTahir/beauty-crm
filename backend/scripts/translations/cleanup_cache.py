@@ -7,7 +7,6 @@ import shutil
 from pathlib import Path
 from config import CACHE_DIR
 
-
 def cleanup_old_cache():
     """
     Delete all old individual cache files, keeping only the consolidated cache
@@ -52,7 +51,6 @@ def cleanup_old_cache():
         print(f"💾 Kept consolidated cache: {cache_file.name}")
     else:
         print("❌ Cleanup cancelled")
-
 
 if __name__ == "__main__":
     cleanup_old_cache()

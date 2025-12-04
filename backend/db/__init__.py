@@ -49,7 +49,6 @@ from .bookings import (
     get_upcoming_bookings,                # #15
 )
 
-
 # Услуги
 from .services import (
     get_all_services,

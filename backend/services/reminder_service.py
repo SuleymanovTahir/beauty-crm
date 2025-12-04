@@ -1,7 +1,7 @@
 """
 Сервис для отправки автоматических напоминаний
 """
-import sqlite3
+
 from datetime import datetime, timedelta
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -31,7 +31,7 @@ async def check_and_send_reminders():
             SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
             FROM bookings b
             LEFT JOIN reminder_logs r ON b.id = r.booking_id AND r.reminder_type = '24h'
-            WHERE b.datetime BETWEEN ? AND ?
+            WHERE b.datetime BETWEEN %s AND %s
             AND b.status = 'confirmed'
             AND r.id IS NULL
         """, (tomorrow_start.isoformat(), tomorrow_end.isoformat()))
@@ -49,7 +49,7 @@ async def check_and_send_reminders():
             SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
             FROM bookings b
             LEFT JOIN reminder_logs r ON b.id = r.booking_id AND r.reminder_type = '2h'
-            WHERE b.datetime BETWEEN ? AND ?
+            WHERE b.datetime BETWEEN %s AND %s
             AND b.status = 'confirmed'
             AND r.id IS NULL
         """, (two_hours_start.isoformat(), two_hours_end.isoformat()))
@@ -99,7 +99,7 @@ async def send_reminder(booking, reminder_type):
         c = conn.cursor()
         c.execute("""
             INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat(), status))
         conn.commit()
         conn.close()
@@ -112,7 +112,7 @@ async def send_reminder(booking, reminder_type):
             c = conn.cursor()
             c.execute("""
                 INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
-                VALUES (?, ?, ?, ?, 'error')
+                VALUES (%s, %s, %s, %s, 'error')
             """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat()))
             conn.commit()
             conn.close()

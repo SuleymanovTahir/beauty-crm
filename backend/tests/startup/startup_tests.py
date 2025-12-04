@@ -15,7 +15,6 @@ if backend_path not in sys.path:
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error, log_warning
 
-
 def startup_test_notifications():
     """Быстрая проверка таблиц уведомлений при старте"""
     try:
@@ -51,7 +50,6 @@ def startup_test_notifications():
         log_error(f"  ❌ Ошибка проверки: {e}", "startup_test")
         return False
 
-
 def startup_test_reminders_api():
     """Проверка API напоминаний (прямой вызов функций)"""
     try:
@@ -75,7 +73,6 @@ def startup_test_reminders_api():
     except Exception as e:
         log_error(f"  ❌ Ошибка API напоминаний: {e}", "startup_test")
         return False
-
 
 def startup_test_notifications_api():
     """Проверка таблицы notification_settings напрямую"""
@@ -128,7 +125,6 @@ def startup_test_notifications_api():
         log_error(traceback.format_exc(), "startup_test")
         return False
 
-
 def run_all_startup_tests():
     """Запустить все startup тесты"""
     log_info("=" * 70, "startup_test")
@@ -158,7 +154,6 @@ def run_all_startup_tests():
     log_info("=" * 70, "startup_test")
 
     return passed == total
-
 
 if __name__ == "__main__":
     # Можно запустить вручную

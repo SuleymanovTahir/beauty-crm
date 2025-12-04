@@ -8,7 +8,6 @@ from core.config import GEMINI_API_KEY, GEMINI_MODEL
 # Конфигурируем Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 
-
 async def ask_gemini(prompt: str, context: str = "") -> str:
     """
     Отправить запрос к Gemini AI

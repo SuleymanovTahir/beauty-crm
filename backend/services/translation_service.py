@@ -63,7 +63,6 @@ async def translate_text(text: str, source_lang: str = 'ru', target_lang: str = 
         log_error(f"Translation error: {e}", "translation")
         return text
 
-
 async def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict[str, str]:
     """
     Переводит текст на все поддерживаемые языки за один запрос
@@ -114,7 +113,6 @@ async def translate_to_all_languages(text: str, source_lang: str = 'ru') -> Dict
         log_error(f"Batch translation error: {e}", "translation")
         # Fallback
         return {lang: text for lang in LANGUAGE_NAMES}
-
 
 async def batch_translate(texts: List[str], source_lang: str = 'ru', target_lang: str = 'en') -> List[str]:
     """

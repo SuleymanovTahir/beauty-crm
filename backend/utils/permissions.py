@@ -16,15 +16,15 @@
         # Можно редактировать пользователей
 """
 
-import sqlite3
+import logging
 from typing import Optional, Dict, List, Tuple
 from functools import wraps
 from fastapi import Cookie
 from fastapi.responses import JSONResponse
 
-from core.config import ROLES, has_permission as config_has_permission, DATABASE_NAME
+from core.config import ROLES, has_permission as config_has_permission
 from utils.logger import log_info, log_error
-
+from db.connection import get_db_connection
 
 class RoleHierarchy:
     """Класс для работы с иерархией ролей"""
@@ -184,7 +184,6 @@ class RoleHierarchy:
 
         return True, ""
 
-
 class PermissionChecker:
     """Класс для проверки конкретных прав пользователей"""
 
@@ -336,7 +335,6 @@ class PermissionChecker:
         """Может ли роль просматривать Instagram чат"""
         return RoleHierarchy.has_permission(role, 'instagram_chat_view')
 
-
 # ===== ДЕКОРАТОРЫ ДЛЯ FASTAPI =====
 
 def require_role(allowed_roles: List[str]):
@@ -369,7 +367,6 @@ def require_role(allowed_roles: List[str]):
         return wrapper
     return decorator
 
-
 def require_permission(permission: str):
     """
     Декоратор для проверки конкретного права
@@ -400,18 +397,15 @@ def require_permission(permission: str):
         return wrapper
     return decorator
 
-
 # ===== LEGACY ФУНКЦИИ (для обратной совместимости) =====
 
 def get_role_level(role: str) -> int:
     """УСТАРЕВШАЯ: Используйте RoleHierarchy.get_hierarchy_level()"""
     return RoleHierarchy.get_hierarchy_level(role)
 
-
 def has_higher_role(user_role: str, required_role: str) -> bool:
     """УСТАРЕВШАЯ: Используйте RoleHierarchy.get_hierarchy_level() для сравнения"""
     return RoleHierarchy.get_hierarchy_level(user_role) >= RoleHierarchy.get_hierarchy_level(required_role)
-
 
 def can_access_resource(user_id: int, resource: str, action: str = 'view') -> bool:
     """
@@ -420,25 +414,27 @@ def can_access_resource(user_id: int, resource: str, action: str = 'view') -> bo
     Для новых проверок используйте PermissionChecker
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Получаем роль пользователя
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         row = c.fetchone()
         if not row:
+            conn.close()
             return False
 
         user_role = row[0]
 
         # Директор всегда имеет доступ
         if user_role == 'director':
+            conn.close()
             return True
 
         # Проверяем индивидуальные права пользователя
         c.execute("""
             SELECT granted FROM user_permissions
-            WHERE user_id = ? AND permission_key = ?
+            WHERE user_id = %s AND permission_key = %s
         """, (user_id, resource))
 
         user_perm = c.fetchone()
@@ -449,10 +445,12 @@ def can_access_resource(user_id: int, resource: str, action: str = 'view') -> bo
 
         # Проверяем права роли
         action_column = f'can_{action}'
-        c.execute(f"""
+        # Note: action_column is safe here as it comes from internal logic, not user input
+        query = f"""
             SELECT {action_column} FROM role_permissions
-            WHERE role_key = ? AND permission_key = ?
-        """, (user_role, resource))
+            WHERE role_key = %s AND permission_key = %s
+        """
+        c.execute(query, (user_role, resource))
 
         role_perm = c.fetchone()
         conn.close()
@@ -466,7 +464,6 @@ def can_access_resource(user_id: int, resource: str, action: str = 'view') -> bo
         log_error(f"Ошибка проверки прав: {e}", "permissions")
         return False
 
-
 def get_user_permissions(user_id: int) -> Dict[str, Dict[str, bool]]:
     """
     LEGACY: Получить все права пользователя из БД
@@ -474,12 +471,13 @@ def get_user_permissions(user_id: int) -> Dict[str, Dict[str, bool]]:
     Для новых проверок используйте PermissionChecker
     """
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         row = c.fetchone()
         if not row:
+            conn.close()
             return {}
 
         user_role = row[0]
@@ -502,7 +500,7 @@ def get_user_permissions(user_id: int) -> Dict[str, Dict[str, bool]]:
         c.execute("""
             SELECT permission_key, can_view, can_create, can_edit, can_delete
             FROM role_permissions
-            WHERE role_key = ?
+            WHERE role_key = %s
         """, (user_role,))
 
         for row in c.fetchall():
@@ -518,7 +516,7 @@ def get_user_permissions(user_id: int) -> Dict[str, Dict[str, bool]]:
         c.execute("""
             SELECT permission_key, granted
             FROM user_permissions
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (user_id,))
 
         for row in c.fetchall():
@@ -536,22 +534,22 @@ def get_user_permissions(user_id: int) -> Dict[str, Dict[str, bool]]:
         log_error(f"Ошибка получения прав: {e}", "permissions")
         return {}
 
-
 def grant_user_permission(user_id: int, resource: str, granted_by_id: int) -> bool:
     """LEGACY: Дать пользователю доступ к ресурсу"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         if not can_access_resource(granted_by_id, 'manage_permissions', 'create'):
             log_error(f"User {granted_by_id} не может давать права", "permissions")
+            conn.close()
             return False
 
         c.execute("""
             INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, granted_at)
-            VALUES (?, ?, 1, ?, datetime('now'))
+            VALUES (%s, %s, TRUE, %s, NOW())
             ON CONFLICT(user_id, permission_key)
-            DO UPDATE SET granted = 1, granted_by = ?, granted_at = datetime('now')
+            DO UPDATE SET granted = TRUE, granted_by = %s, granted_at = NOW()
         """, (user_id, resource, granted_by_id, granted_by_id))
 
         conn.commit()
@@ -564,22 +562,22 @@ def grant_user_permission(user_id: int, resource: str, granted_by_id: int) -> bo
         log_error(f"Ошибка предоставления прав: {e}", "permissions")
         return False
 
-
 def revoke_user_permission(user_id: int, resource: str, revoked_by_id: int) -> bool:
     """LEGACY: Отобрать у пользователя доступ к ресурсу"""
     try:
-        conn = sqlite3.connect(DATABASE_NAME)
+        conn = get_db_connection()
         c = conn.cursor()
 
         if not can_access_resource(revoked_by_id, 'manage_permissions', 'delete'):
             log_error(f"User {revoked_by_id} не может забирать права", "permissions")
+            conn.close()
             return False
 
         c.execute("""
             INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, granted_at)
-            VALUES (?, ?, 0, ?, datetime('now'))
+            VALUES (%s, %s, FALSE, %s, NOW())
             ON CONFLICT(user_id, permission_key)
-            DO UPDATE SET granted = 0, granted_by = ?, granted_at = datetime('now')
+            DO UPDATE SET granted = FALSE, granted_by = %s, granted_at = NOW()
         """, (user_id, resource, revoked_by_id, revoked_by_id))
 
         conn.commit()
@@ -592,26 +590,21 @@ def revoke_user_permission(user_id: int, resource: str, revoked_by_id: int) -> b
         log_error(f"Ошибка отзыва прав: {e}", "permissions")
         return False
 
-
 def can_approve_users(user_id: int) -> bool:
     """Может ли пользователь одобрять новых пользователей"""
     return can_access_resource(user_id, 'approve_users', 'create')
-
 
 def can_manage_permissions(user_id: int) -> bool:
     """Может ли пользователь управлять правами других пользователей"""
     return can_access_resource(user_id, 'manage_permissions', 'edit')
 
-
 def can_export_data(user_id: int) -> bool:
     """Может ли пользователь экспортировать данные"""
     return can_access_resource(user_id, 'export_data', 'view')
 
-
 def can_import_data(user_id: int) -> bool:
     """Может ли пользователь импортировать данные"""
     return can_access_resource(user_id, 'import_data', 'create')
-
 
 def filter_data_by_permissions(data: List[Dict], user_id: int, hide_contacts: bool = False) -> List[Dict]:
     """

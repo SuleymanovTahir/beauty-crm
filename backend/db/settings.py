@@ -1,12 +1,11 @@
 """
 Функции для работы с настройками салона и бота
 """
-import sqlite3
+
 from datetime import datetime
 
 from db.connection import get_db_connection
 from utils.logger import log_error, log_warning, log_info
-
 
 # ===== НАСТРОЙКИ САЛОНА =====
 
@@ -75,7 +74,6 @@ def get_salon_settings() -> dict:
     finally:
         conn.close()
 
-
 def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     return {
@@ -114,7 +112,6 @@ def _get_default_salon_settings() -> dict:
         "logo_url": "/assets/logo.webp",
         "base_url": "https://mlediamant.com"
     }
-
 
 def update_salon_settings(data: dict) -> bool:
     """Обновить настройки салона (поддерживает частичное обновление)"""
@@ -187,7 +184,6 @@ def update_salon_settings(data: dict) -> bool:
         return False
     finally:
         conn.close()
-
 
 # ===== НАСТРОЙКИ БОТА =====
 
@@ -304,7 +300,6 @@ def get_bot_settings() -> dict:
     finally:
         conn.close()
 
-
 def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
     """Заменить плейсхолдеры в настройках бота на реальные значения"""
     replacements = {
@@ -325,7 +320,6 @@ def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
             bot_settings[key] = value
 
     return bot_settings
-
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
@@ -480,7 +474,6 @@ def update_bot_settings(data: dict) -> bool:
     finally:
         conn.close()
 
-
 # ===== КАСТОМНЫЕ СТАТУСЫ =====
 
 def get_custom_statuses() -> list:
@@ -496,7 +489,6 @@ def get_custom_statuses() -> list:
         return []
     finally:
         conn.close()
-
 
 def create_custom_status(status_key: str, status_label: str, status_color: str,
                          status_icon: str, created_by: int) -> bool:
@@ -522,7 +514,6 @@ def create_custom_status(status_key: str, status_label: str, status_color: str,
         return False
     finally:
         conn.close()
-
 
 def update_custom_status(status_key: str, status_label: str = None,
                          status_color: str = None, status_icon: str = None) -> bool:
@@ -561,7 +552,6 @@ def update_custom_status(status_key: str, status_label: str = None,
     finally:
         conn.close()
 
-
 def delete_custom_status(status_key: str) -> bool:
     """Удалить кастомный статус"""
     conn = get_db_connection()
@@ -579,7 +569,6 @@ def delete_custom_status(status_key: str) -> bool:
         return False
     finally:
         conn.close()
-
 
 # ===== РОЛИ И ПРАВА ДОСТУПА =====
 
@@ -601,7 +590,6 @@ AVAILABLE_PERMISSIONS = {
     'settings_edit': 'Редактирование настроек',
     'bot_settings_edit': 'Редактирование настроек бота',
 }
-
 
 def get_all_roles() -> list:
     """Получить все роли (встроенные + кастомные)"""
@@ -665,7 +653,6 @@ def get_all_roles() -> list:
 
     return builtin_roles
 
-
 def create_custom_role(role_key: str, role_name: str, role_description: str = None, created_by: int = None) -> bool:
     """Создать кастомную роль"""
     conn = get_db_connection()
@@ -695,7 +682,6 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
     finally:
         conn.close()
 
-
 def delete_custom_role(role_key: str) -> bool:
     """Удалить кастомную роль"""
     conn = get_db_connection()
@@ -718,7 +704,6 @@ def delete_custom_role(role_key: str) -> bool:
         return False
     finally:
         conn.close()
-
 
 def get_role_permissions(role_key: str) -> dict:
     """Получить права роли"""
@@ -757,7 +742,6 @@ def get_role_permissions(role_key: str) -> dict:
     finally:
         conn.close()
 
-
 def update_role_permissions(role_key: str, permissions: dict) -> bool:
     """Обновить права роли"""
     conn = get_db_connection()
@@ -789,7 +773,6 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
         return False
     finally:
         conn.close()
-
 
 def check_user_permission(user_id: int, permission_key: str, action: str = 'view') -> bool:
     """
@@ -831,7 +814,6 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         return False
     finally:
         conn.close()
-
 
 def update_bot_globally_enabled(enabled: bool):
     """Включить/выключить бота глобально"""

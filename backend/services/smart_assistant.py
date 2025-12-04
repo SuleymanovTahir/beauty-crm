@@ -3,14 +3,13 @@
 
 Персонализирует общение на основе истории и предпочтений
 """
-import sqlite3
+
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Any
 import json
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-
 
 class SmartAssistant:
     """Умный помощник для персонализированного общения с клиентами"""
@@ -332,12 +331,10 @@ class SmartAssistant:
         finally:
             conn.close()
 
-
 def get_smart_greeting(client_id: str, client_name: str) -> str:
     """Получить умное приветствие для клиента"""
     assistant = SmartAssistant(client_id)
     return assistant.get_personalized_greeting(client_name)
-
 
 def get_smart_suggestion(client_id: str, client_name: str) -> str:
     """Получить умное предложение для клиента"""

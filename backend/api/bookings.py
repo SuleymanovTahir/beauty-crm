@@ -4,7 +4,7 @@ API Endpoints для работы с записями
 from fastapi import APIRouter, Request, Cookie, File, UploadFile
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from datetime import datetime
 
 from db import (
@@ -20,7 +20,6 @@ from notifications.master_notifications import notify_master_about_booking, get_
 
 router = APIRouter(tags=["Bookings"])
 
-
 def get_client_messengers_for_bookings(client_id: str):
     """Получить список мессенджеров клиента для bookings"""
     conn = get_db_connection()
@@ -29,7 +28,7 @@ def get_client_messengers_for_bookings(client_id: str):
     messengers = []
 
     # Проверяем Instagram
-    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = %s", (client_id,))
     if c.fetchone()[0] > 0:
         messengers.append('instagram')
 
@@ -37,7 +36,7 @@ def get_client_messengers_for_bookings(client_id: str):
     c.execute("""
         SELECT DISTINCT messenger_type
         FROM messenger_messages
-        WHERE client_id = ?
+        WHERE client_id = %s
     """, (client_id,))
 
     for row in c.fetchall():
@@ -46,7 +45,6 @@ def get_client_messengers_for_bookings(client_id: str):
 
     conn.close()
     return messengers
-
 
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):
@@ -83,7 +81,6 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
         "count": len(bookings)
     }
 
-
 @router.get("/bookings/{booking_id}")
 async def get_booking_detail(
     booking_id: int,
@@ -112,7 +109,6 @@ async def get_booking_detail(
         "revenue": booking[8] if len(booking) > 8 else 0
     }
 
-
 @router.post("/bookings")
 async def create_booking_api(
     request: Request,
@@ -139,7 +135,7 @@ async def create_booking_api(
         # Получаем ID созданной записи
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT id FROM bookings WHERE instagram_id = ? ORDER BY id DESC LIMIT 1",
+        c.execute("SELECT id FROM bookings WHERE instagram_id = %s ORDER BY id DESC LIMIT 1",
                   (instagram_id,))
         booking_result = c.fetchone()
         booking_id = booking_result[0] if booking_result else None
@@ -203,7 +199,6 @@ async def create_booking_api(
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(
     booking_id: int,
@@ -228,7 +223,6 @@ async def update_booking_status_api(
         return {"success": True, "message": "Booking status updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
-
 
 @router.post("/bookings/import")
 async def import_bookings(
@@ -287,7 +281,7 @@ async def import_bookings(
                     c.execute("""INSERT INTO bookings 
                                  (instagram_id, service_name, datetime, phone, name, 
                                   status, created_at, revenue)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
                               (instagram_id, service, datetime_str, phone, name, status, 
                                datetime.now().isoformat(), revenue))
                     
@@ -347,7 +341,7 @@ async def import_bookings(
                     c.execute("""INSERT INTO bookings 
                                  (instagram_id, service_name, datetime, phone, name, 
                                   status, created_at, revenue)
-                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
                               (instagram_id, service, datetime_str, phone, name, status, 
                                datetime.now().isoformat(), revenue))
                     
@@ -407,7 +401,6 @@ async def add_to_booking_waitlist(
         log_error(f"Waitlist error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/bookings/pattern/{client_id}")
 async def get_client_booking_pattern(
     client_id: str,
@@ -430,7 +423,6 @@ async def get_client_booking_pattern(
     except Exception as e:
         log_error(f"Pattern error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/bookings/incomplete/{client_id}")
 async def get_incomplete_client_booking(
@@ -455,7 +447,6 @@ async def get_incomplete_client_booking(
         log_error(f"Incomplete booking error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/bookings/course-progress/{client_id}")
 async def get_course_progress(
     client_id: str,
@@ -479,7 +470,6 @@ async def get_course_progress(
     except Exception as e:
         log_error(f"Course progress error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/bookings/no-show-risk/{client_id}")
 async def get_no_show_risk(
@@ -511,7 +501,6 @@ async def get_no_show_risk(
         log_error(f"No-show risk error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.put("/bookings/{booking_id}")
 async def update_booking_api(
     booking_id: int,
@@ -530,7 +519,7 @@ async def update_booking_api(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",
+        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = %s",
                   (booking_id,))
         old_booking = c.fetchone()
 
@@ -549,8 +538,8 @@ async def update_booking_api(
 
         c.execute("""
             UPDATE bookings
-            SET service_name = ?, datetime = ?, master = ?, name = ?, phone = ?
-            WHERE id = ?
+            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s
+            WHERE id = %s
         """, (new_service, new_datetime, new_master, new_name, new_phone, booking_id))
 
         conn.commit()
@@ -593,7 +582,6 @@ async def update_booking_api(
         log_error(f"Booking update error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.delete("/bookings/{booking_id}")
 async def delete_booking_api(
     booking_id: int,
@@ -609,7 +597,7 @@ async def delete_booking_api(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = ?",
+        c.execute("SELECT service_name, datetime, master, name, phone FROM bookings WHERE id = %s",
                   (booking_id,))
         booking = c.fetchone()
 
@@ -620,7 +608,7 @@ async def delete_booking_api(
         service, datetime_str, master, name, phone = booking
 
         # Удаляем запись
-        c.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
+        c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
         conn.commit()
         conn.close()
 

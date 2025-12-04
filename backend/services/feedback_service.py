@@ -1,7 +1,7 @@
 """
 Сервис для сбора и анализа отзывов
 """
-import sqlite3
+
 from datetime import datetime
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -18,7 +18,7 @@ async def save_rating(instagram_id: str, rating: int, comment: str = None):
         # Находим последнее завершенное бронирование клиента
         c.execute("""
             SELECT id FROM bookings 
-            WHERE instagram_id = ? AND status = 'completed'
+            WHERE instagram_id = %s AND status = 'completed'
             ORDER BY datetime DESC LIMIT 1
         """, (instagram_id,))
         
@@ -27,7 +27,7 @@ async def save_rating(instagram_id: str, rating: int, comment: str = None):
         
         c.execute("""
             INSERT INTO ratings (booking_id, instagram_id, rating, comment, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (booking_id, instagram_id, rating, comment, datetime.now().isoformat()))
         
         conn.commit()

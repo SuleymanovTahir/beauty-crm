@@ -5,7 +5,6 @@ from datetime import datetime
 from utils.logger import log_info
 from db.connection import get_db_connection
 
-
 def save_message(instagram_id: str, message: str, sender: str, 
                 language: str = None, message_type: str = 'text'):
     """Сохранить сообщение"""
@@ -16,7 +15,7 @@ def save_message(instagram_id: str, message: str, sender: str,
     c.execute("""
         SELECT id FROM chat_history 
         WHERE instagram_id = %s AND message = %s AND sender = %s
-        AND datetime(timestamp) > datetime('now', '-10 seconds')
+        AND timestamp > NOW() - INTERVAL '10 seconds'
         LIMIT 1
     """, (instagram_id, message, sender))
     
@@ -27,7 +26,7 @@ def save_message(instagram_id: str, message: str, sender: str,
 
     
     now = datetime.now().isoformat()
-    is_read = TRUE if sender == 'bot' else 0
+    is_read = True if sender == 'bot' else False
     
     c.execute("""INSERT INTO chat_history 
                  (instagram_id, message, sender, timestamp, language, is_read, message_type)
@@ -38,7 +37,6 @@ def save_message(instagram_id: str, message: str, sender: str,
     
     conn.commit()
     conn.close()
-
 
 def get_chat_history(instagram_id: str, limit: int = 10):
     """Получить историю чата"""
@@ -56,7 +54,6 @@ def get_chat_history(instagram_id: str, limit: int = 10):
     
     return list(reversed(history))
 
-
 def get_all_messages(limit: int = 100):
     """Получить все сообщения"""
     conn = get_db_connection()
@@ -68,7 +65,6 @@ def get_all_messages(limit: int = 100):
     messages = c.fetchall()
     conn.close()
     return messages
-
 
 def mark_messages_as_read(instagram_id: str, user_id: int = None):
     """Отметить сообщения как прочитанные"""
@@ -82,7 +78,6 @@ def mark_messages_as_read(instagram_id: str, user_id: int = None):
     
     conn.commit()
     conn.close()
-
 
 def get_unread_messages_count(instagram_id: str) -> int:
     """Получить количество непрочитанных сообщений"""
@@ -126,7 +121,6 @@ def save_reaction(message_id: int, emoji: str, user_id: int = None):
         return False
     finally:
         conn.close()
-
 
 def search_messages(query: str, limit: int = 50):
     """Поиск сообщений по тексту"""

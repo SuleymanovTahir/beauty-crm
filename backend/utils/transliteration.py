@@ -46,16 +46,13 @@ SINGLE_AR = {
     'z': 'ز'
 }
 
-
 def is_latin(text: str) -> bool:
     """Проверить содержит ли текст латиницу"""
     return any(c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' for c in text)
 
-
 def is_cyrillic(text: str) -> bool:
     """Проверить содержит ли текст кириллицу"""
     return any('\u0400' <= c <= '\u04FF' for c in text)
-
 
 def transliterate_to_cyrillic(text: str) -> str:
     """
@@ -125,7 +122,6 @@ def transliterate_to_cyrillic(text: str) -> str:
 
     return result_str
 
-
 def transliterate_to_arabic(text: str) -> str:
     """
     Транслитерация латиницы в арабский (упрощенная фонетическая)
@@ -152,7 +148,6 @@ def transliterate_to_arabic(text: str) -> str:
             result.append(char)
 
     return ''.join(result)
-
 
 def transliterate_name(name: str, target_language: str) -> str:
     """
@@ -185,7 +180,6 @@ def transliterate_name(name: str, target_language: str) -> str:
         if name.isupper():
             return name[0].upper() + name[1:].lower()
         return name
-
 
 def transliterate_employees_for_language(employees: list, language: str) -> list:
     """
@@ -221,7 +215,6 @@ def transliterate_employees_for_language(employees: list, language: str) -> list
         result.append(emp_copy)
 
     return result
-
 
 if __name__ == "__main__":
     # Тесты

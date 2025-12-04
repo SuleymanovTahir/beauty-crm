@@ -17,7 +17,6 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.config import DATABASE_NAME
 
-
 def setup_test_notifications(email: str, days_ahead: int = 1):
     """
     Создать тестовые данные для проверки уведомлений
@@ -49,7 +48,7 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     test_client_id = "test_client_notifications"
 
     c.execute("""
-        INSERT OR REPLACE INTO clients
+        INSERT INTO clients
         (instagram_id, username, name, email, phone, first_contact, last_contact,
          birthday, total_messages, status)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -239,7 +238,6 @@ def setup_test_notifications(email: str, days_ahead: int = 1):
     print(f"   3. Запустите планировщик напоминаний о записях:")
     print(f"      python -m scheduler.booking_reminder_checker")
     print("\n")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Настройка тестовых уведомлений')

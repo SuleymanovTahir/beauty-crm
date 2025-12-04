@@ -4,8 +4,6 @@
 """
 from typing import Dict, List, Tuple, Optional
 from datetime import datetime, timedelta
-import sqlite3
-
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -16,7 +14,6 @@ from db import (
 from db.services import format_service_price_for_bot
 from db.employees import get_all_employees
 from utils.datetime_utils import get_current_time, format_time_for_display, format_date_for_display
-
 
 def transliterate_to_russian(name: str) -> str:
     """Транслитерация английского имени в русское"""
@@ -38,7 +35,6 @@ def transliterate_to_russian(name: str) -> str:
         result.append(translit_map.get(char, char))
 
     return ''.join(result)
-
 
 def translate_position(position: str, language: str) -> str:
     """Перевод должности на нужный язык"""
@@ -120,7 +116,6 @@ def translate_position(position: str, language: str) -> str:
         return translations[position_upper].get(language, position)
 
     return position
-
 
 class PromptBuilder:
     """Построитель промптов для AI-бота"""
@@ -407,10 +402,6 @@ class PromptBuilder:
     ✅ Если есть "Рекомендуемые услуги" - предложи их ненавязчиво:
        "Кстати, вы давно не делали педикюр. Может запишем вместе с маникюром?"
     ✅ Если "Последний визит" был давно (>3 недель) - "Давно вас не видели! Пора обновить маникюр?"
-
-
-
-
 
 🚨 КРИТИЧНО - ПРОВЕРКА ПЕРЕД СОЗДАНИЕМ ЗАПИСИ:
 
@@ -1453,14 +1444,10 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         return services_text
 
-
-
     def _build_masters_list(self, client_language: str = 'ru') -> str:
         """Список мастеров салона С ИХ УСЛУГАМИ из БД"""
         from db.employees import get_all_employees
-        import sqlite3
 
-        # service_providers_only=True исключает админов, директоров и других не обслуживающих клиентов
         employees = get_all_employees(active_only=True, service_providers_only=True)
 
         if not employees:
@@ -1557,7 +1544,6 @@ Google Maps: {self.salon.get('google_maps', '')}
         masters_text += "НЕ СОГЛАШАЙСЯ с неправильными утверждениями - ПРОВЕРЯЙ ФАКТЫ!\n"
 
         return masters_text
-
 
     def _build_history(self, history: List[Tuple]) -> str:
         """История диалога"""
@@ -2089,7 +2075,6 @@ Google Maps: {self.salon.get('google_maps', '')}
 
 # В начало файла после импортов добавь:
 
-
 def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
     """Получить последние предпочтения клиента (#2 - Умная память)"""
     conn = get_db_connection()
@@ -2136,7 +2121,6 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
         'total_visits': len(bookings)
     }
 
-
 def get_popular_booking_times(service_name: str = None) -> List[str]:
     """Популярные времена записи (#9)"""
     conn = get_db_connection()
@@ -2172,7 +2156,6 @@ def get_popular_booking_times(service_name: str = None) -> List[str]:
 
     return popular_hours if popular_hours else ["15:00", "18:00"]
 
-
 def analyze_client_tone(history: List[Tuple]) -> str:
     """Анализировать стиль общения клиента (#3 - Адаптация тона)"""
     if not history:
@@ -2203,7 +2186,6 @@ def analyze_client_tone(history: List[Tuple]) -> str:
         return "detailed"  # Подробный
     else:
         return "neutral"  # Нейтральный
-
 
 def get_client_objection_history(instagram_id: str) -> List[str]:
     """История возражений клиента (#6)"""
@@ -2243,7 +2225,6 @@ def get_client_objection_history(instagram_id: str) -> List[str]:
                 found_objections.append(obj_type)
 
     return found_objections
-
 
 def get_last_service_date(instagram_id: str, service_name: str) -> Optional[str]:
     """Когда клиент последний раз был на услуге (#10 - Upsell)"""

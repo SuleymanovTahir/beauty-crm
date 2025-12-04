@@ -3,14 +3,13 @@ API Endpoints для управления расписанием сотрудн�
 """
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_error, log_info
 from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Employee Schedule"])
-
 
 @router.get("/users/{user_id}/schedule")
 async def get_user_schedule(
@@ -26,7 +25,7 @@ async def get_user_schedule(
         c.execute("""
             SELECT day_of_week, start_time, end_time, is_active
             FROM user_schedule
-            WHERE user_id = ?
+            WHERE user_id = %s
             ORDER BY day_of_week
         """, (user_id,))
         
@@ -47,7 +46,6 @@ async def get_user_schedule(
         log_error(f"Error getting user schedule: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/users/{user_id}/schedule")
 async def update_user_schedule(
     user_id: int,
@@ -66,13 +64,13 @@ async def update_user_schedule(
         c = conn.cursor()
         
         # Delete existing schedule
-        c.execute("DELETE FROM user_schedule WHERE user_id = ?", (user_id,))
+        c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
         
         # Insert new schedule
         for entry in schedule:
             c.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
             """, (
                 user_id,
                 entry["day_of_week"],

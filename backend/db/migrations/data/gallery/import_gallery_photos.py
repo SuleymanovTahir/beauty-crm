@@ -7,7 +7,6 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-
 def import_gallery_photos():
     """Импортировать фото из папок портфолио, услуг и салона"""
     print("📸 Импорт фото галереи...")
@@ -86,7 +85,6 @@ def import_gallery_photos():
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     import_gallery_photos()

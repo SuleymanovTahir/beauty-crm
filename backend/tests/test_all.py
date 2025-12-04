@@ -13,20 +13,17 @@ import traceback
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
 
-
 def print_section(text):
     """Секция теста"""
     print("\n" + "-" * 80)
     print(f"  {text}")
     print("-" * 80)
-
 
 def run_test_module(module_name, description):
     """
@@ -59,7 +56,6 @@ def run_test_module(module_name, description):
         print(f"   ❌ ОШИБКА: {e}")
         traceback.print_exc()
         return False
-
 
 def test_database():
     """Тест 1: Базовая проверка БД"""
@@ -130,7 +126,6 @@ def test_database():
         print(f"   ❌ ОШИБКА: {e}")
         traceback.print_exc()
         return False
-
 
 def test_new_features():
     """Тест 2: Новые функции (Dashboard, Schedule, Loyalty, AutoBooking)"""
@@ -256,7 +251,6 @@ def test_new_features():
         traceback.print_exc()
         return False
 
-
 def test_smart_assistant():
     """Тест 3: SmartAssistant"""
     print_section("ТЕСТ 3: SmartAssistant (AI)")
@@ -320,7 +314,6 @@ def test_smart_assistant():
     
     return result
 
-
 def test_api_imports():
     """Тест 4: Проверка API модулей"""
     print_section("ТЕСТ 4: Проверка API модулей")
@@ -351,7 +344,6 @@ def test_api_imports():
     print(f"\n   Результаты: {success_count}/{total_count} модулей загружены")
 
     return success_count == total_count
-
 
 def main():
     """Запуск всех тестов"""
@@ -402,7 +394,6 @@ def main():
             print(f"   ⚠️  Ошибка очистки: {e}")
 
     return failed == 0
-
 
 if __name__ == "__main__":
     success = main()

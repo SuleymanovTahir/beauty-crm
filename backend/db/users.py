@@ -8,7 +8,6 @@ import secrets
 
 from db.connection import get_db_connection
 
-
 def get_all_users():
     """Получить всех пользователей"""
     conn = get_db_connection()
@@ -21,7 +20,6 @@ def get_all_users():
     users = c.fetchall()
     conn.close()
     return users
-
 
 def create_user(username: str, password: str, full_name: str = None,
                 email: str = None, role: str = 'employee'):
@@ -44,7 +42,6 @@ def create_user(username: str, password: str, full_name: str = None,
     except sqlite3.IntegrityError:
         conn.close()
         return None
-
 
 def verify_user(username: str, password: str) -> Optional[Dict]:
     """Проверить логин и пароль"""
@@ -72,7 +69,6 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
         }
     return None
 
-
 def delete_user(user_id: int) -> bool:
     """Удалить пользователя"""
     conn = get_db_connection()
@@ -91,7 +87,6 @@ def delete_user(user_id: int) -> bool:
         print(f"Ошибка удаления пользователя: {e}")
         conn.close()
         return False
-
 
 def get_user_by_email(email: str):
     """Получить пользователя по email"""
@@ -113,7 +108,6 @@ def get_user_by_email(email: str):
             "email": user[3]
         }
     return None
-
 
 # ===== СЕССИИ =====
 
@@ -138,7 +132,6 @@ def create_session(user_id: int) -> str:
     conn.close()
     
     return session_token
-
 
 def get_user_by_session(session_token: str) -> Optional[Dict]:
     """Получить пользователя по токену сессии"""
@@ -167,7 +160,6 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
         }
     return None
 
-
 def delete_session(session_token: str):
     """Удалить сессию (выход)"""
     conn = get_db_connection()
@@ -175,7 +167,6 @@ def delete_session(session_token: str):
     c.execute("DELETE FROM sessions WHERE session_token = %s", (session_token,))
     conn.commit()
     conn.close()
-
 
 # ===== СБРОС ПАРОЛЯ =====
 
@@ -207,7 +198,6 @@ def create_password_reset_token(user_id: int) -> str:
     
     return token
 
-
 def verify_reset_token(token: str):
     """Проверить токен сброса пароля"""
     conn = get_db_connection()
@@ -224,7 +214,6 @@ def verify_reset_token(token: str):
     
     return result[0] if result else None
 
-
 def mark_reset_token_used(token: str):
     """Отметить токен как использованный"""
     conn = get_db_connection()
@@ -234,7 +223,6 @@ def mark_reset_token_used(token: str):
     
     conn.commit()
     conn.close()
-
 
 def reset_user_password(user_id: int, new_password: str):
     """Сбросить пароль пользователя"""
@@ -250,7 +238,6 @@ def reset_user_password(user_id: int, new_password: str):
     conn.close()
     
     return True
-
 
 # ===== ЛОГ АКТИВНОСТИ =====
 

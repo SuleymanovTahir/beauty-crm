@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Cookie, HTTPException, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 import time
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from db import (
@@ -20,7 +20,6 @@ from services.smart_assistant import SmartAssistant, get_smart_greeting, get_sma
 
 router = APIRouter(tags=["Clients"])
 
-
 def get_client_messengers(client_id: str):
     """Получить список мессенджеров, которыми пользуется клиент"""
     conn = get_db_connection()
@@ -29,7 +28,7 @@ def get_client_messengers(client_id: str):
     messengers = []
 
     # Проверяем Instagram (из старой таблицы)
-    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = %s", (client_id,))
     if c.fetchone()[0] > 0:
         messengers.append('instagram')
 
@@ -37,7 +36,7 @@ def get_client_messengers(client_id: str):
     c.execute("""
         SELECT DISTINCT messenger_type
         FROM messenger_messages
-        WHERE client_id = ?
+        WHERE client_id = %s
     """, (client_id,))
 
     for row in c.fetchall():
@@ -46,7 +45,6 @@ def get_client_messengers(client_id: str):
 
     conn.close()
     return messengers
-
 
 def get_clients_by_messenger(messenger_type: str = 'instagram'):
     """Получить клиентов по типу мессенджера"""
@@ -75,14 +73,13 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages
             FROM clients c
             JOIN messenger_messages mm ON c.instagram_id = mm.client_id
-            WHERE mm.messenger_type = ?
+            WHERE mm.messenger_type = %s
             ORDER BY c.is_pinned DESC, c.last_contact DESC
         """, (messenger_type,))
 
     clients = c.fetchall()
     conn.close()
     return clients
-
 
 @router.get("/clients")
 async def list_clients(
@@ -127,7 +124,6 @@ async def list_clients(
         "messenger": messenger
     }
 
-
 @router.get("/clients/{client_id}/messengers")
 async def get_client_messengers_api(
     client_id: str,
@@ -140,7 +136,6 @@ async def get_client_messengers_api(
 
     messengers = get_client_messengers(client_id)
     return {"messengers": messengers}
-
 
 @router.get("/clients/{client_id}")
 async def get_client_detail(client_id: str, session_token: Optional[str] = Cookie(None)):
@@ -234,7 +229,6 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
         ]
     }
 
-
 @router.post("/clients")
 async def create_client_api(
     request: Request,
@@ -266,7 +260,6 @@ async def create_client_api(
         log_error(f"Error creating client: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/clients/{client_id}/update")
 async def update_client_api(
     client_id: str,
@@ -296,7 +289,6 @@ async def update_client_api(
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
-
 @router.post("/clients/{client_id}/status")
 async def update_client_status_api(
     client_id: str,
@@ -319,7 +311,6 @@ async def update_client_status_api(
                 client_id, f"Status: {status}")
     
     return {"success": True, "message": "Client status updated"}
-
 
 @router.post("/clients/{client_id}/temperature")
 async def update_client_temperature_api(
@@ -351,7 +342,6 @@ async def update_client_temperature_api(
     
     return JSONResponse({"error": "Update failed"}, status_code=500)
 
-
 @router.post("/clients/{client_id}/preferred-messenger")
 async def update_preferred_messenger_api(
     client_id: str,
@@ -378,8 +368,8 @@ async def update_preferred_messenger_api(
     try:
         c.execute("""
             UPDATE clients
-            SET preferred_messenger = ?
-            WHERE instagram_id = ?
+            SET preferred_messenger = %s
+            WHERE instagram_id = %s
         """, (preferred_messenger, client_id))
         conn.commit()
 
@@ -392,7 +382,6 @@ async def update_preferred_messenger_api(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
-
 
 @router.post("/clients/{client_id}/pin")
 async def pin_client_api(
@@ -420,7 +409,6 @@ async def pin_client_api(
         "message": "Pinned" if not is_pinned else "Unpinned"
     }
 
-
 @router.post("/clients/{client_id}/delete")
 async def delete_client_api(
     client_id: str,
@@ -443,7 +431,6 @@ async def delete_client_api(
     except Exception as e:
         log_error(f"Error deleting client: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
-
 
 @router.get("/search")
 async def search_clients(
@@ -508,7 +495,6 @@ async def search_clients(
         log_error(f"Search error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/search/suggestions")
 async def get_search_suggestions(
     q: str,
@@ -555,7 +541,6 @@ async def get_search_suggestions(
     except Exception as e:
         log_error(f"Search suggestions error: {e}", "api")
         return {"suggestions": []}
-
 
 @router.post("/clients/bulk")
 async def bulk_actions(
@@ -654,13 +639,12 @@ def update_client_bot_mode(instagram_id: str, mode: str):
     
     c.execute("""
         UPDATE clients 
-        SET bot_mode = ?
-        WHERE instagram_id = ?
+        SET bot_mode = %s
+        WHERE instagram_id = %s
     """, (mode, instagram_id))
     
     conn.commit()
     conn.close()
-
 
 def get_client_bot_mode(instagram_id: str) -> str:
     """Получить режим бота для клиента"""
@@ -670,7 +654,7 @@ def get_client_bot_mode(instagram_id: str) -> str:
     c.execute("""
         SELECT bot_mode 
         FROM clients 
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
     """, (instagram_id,))
     
     result = c.fetchone()
@@ -706,7 +690,6 @@ async def update_client_bot_mode_api(
         log_error(f"Error updating bot mode: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/clients/{client_id}/preferences")
 async def get_client_preferences_api(
     client_id: str,
@@ -735,7 +718,6 @@ async def get_client_preferences_api(
     except Exception as e:
         log_error(f"Error getting client preferences: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/clients/{client_id}/preferences")
 async def update_client_preferences_api(
@@ -768,7 +750,6 @@ async def update_client_preferences_api(
         log_error(f"Error updating client preferences: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/clients/{client_id}/smart-greeting")
 async def get_smart_greeting_api(
     client_id: str,
@@ -797,7 +778,6 @@ async def get_smart_greeting_api(
     except Exception as e:
         log_error(f"Error getting smart greeting: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/clients/{client_id}/smart-suggestion")
 async def get_smart_suggestion_api(

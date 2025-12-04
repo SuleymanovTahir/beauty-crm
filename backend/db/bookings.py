@@ -7,7 +7,6 @@ from typing import List, Optional, Dict, Tuple
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 
-
 def get_all_bookings():
     """Получить все записи"""
     conn = get_db_connection()
@@ -31,7 +30,6 @@ def get_all_bookings():
     bookings = c.fetchall()
     conn.close()
     return bookings
-
 
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
                 phone: str, name: str, special_package_id: int = None, master: str = None):
@@ -84,7 +82,6 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     
     return booking_id
 
-
 def update_booking_status(booking_id: int, status: str) -> bool:
     """Обновить статус записи"""
     conn = get_db_connection()
@@ -110,7 +107,6 @@ def update_booking_status(booking_id: int, status: str) -> bool:
         conn.close()
         return False
 
-
 # ===== ВРЕМЕННЫЕ ДАННЫЕ ЗАПИСИ =====
 
 def get_booking_progress(instagram_id: str) -> Optional[Dict]:
@@ -134,13 +130,12 @@ def get_booking_progress(instagram_id: str) -> Optional[Dict]:
         }
     return None
 
-
 def update_booking_progress(instagram_id: str, data: Dict):
     """Обновить прогресс записи"""
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""INSERT OR REPLACE INTO booking_temp 
+    c.execute("""INSERT INTO booking_temp 
                  (instagram_id, service_name, date, time, phone, name, step)
                  VALUES (%s, %s, %s, %s, %s, %s, %s)""",
               (instagram_id, data.get('service_name'), data.get('date'),
@@ -150,7 +145,6 @@ def update_booking_progress(instagram_id: str, data: Dict):
     conn.commit()
     conn.close()
 
-
 def clear_booking_progress(instagram_id: str):
     """Очистить прогресс записи"""
     conn = get_db_connection()
@@ -158,7 +152,6 @@ def clear_booking_progress(instagram_id: str):
     c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
     conn.commit()
     conn.close()
-
 
 def search_bookings(query: str, limit: int = 50):
     """Поиск записей по тексту"""
@@ -234,7 +227,7 @@ def update_booking_progress(instagram_id: str, data: Dict):
         current.update(data)
         
         c.execute("""
-            INSERT OR REPLACE INTO booking_drafts (instagram_id, data, updated_at)
+            INSERT INTO booking_drafts (instagram_id, data, updated_at)
             VALUES (%s, %s, CURRENT_TIMESTAMP)
         """, (instagram_id, json.dumps(current)))
         conn.commit()
@@ -255,11 +248,9 @@ def clear_booking_progress(instagram_id: str):
     finally:
         conn.close()
 
-
 def mark_booking_incomplete(instagram_id: str, progress: Dict):
     """Отметить запись как незавершённую"""
     update_booking_progress(instagram_id, progress)
-
 
 # ===== #7 - БЫСТРАЯ ЗАПИСЬ ДЛЯ ПОСТОЯННЫХ =====
 
@@ -369,7 +360,6 @@ def get_client_course_progress(instagram_id: str, service_name: str) -> Optional
         'discount': discount
     }
 
-
 # ===== #17 - УМНАЯ ОЧЕРЕДЬ ОЖИДАНИЯ =====
 
 def add_to_waitlist(instagram_id: str, service: str, preferred_date: str, preferred_time: str):
@@ -398,7 +388,6 @@ def add_to_waitlist(instagram_id: str, service: str, preferred_date: str, prefer
     conn.commit()
     conn.close()
 
-
 def get_waitlist_for_slot(service: str, date: str, time: str) -> List[str]:
     """Получить список ожидающих для конкретного слота"""
     conn = get_db_connection()
@@ -419,7 +408,6 @@ def get_waitlist_for_slot(service: str, date: str, time: str) -> List[str]:
     
     return results
 
-
 def mark_waitlist_notified(instagram_id: str, service: str, date: str, time: str):
     """Отметить что клиента уведомили"""
     conn = get_db_connection()
@@ -437,7 +425,6 @@ def mark_waitlist_notified(instagram_id: str, service: str, date: str, time: str
     conn.commit()
     conn.close()
 
-
 # ===== #18 - ДЕТЕКТОР "СКОРО УЕЗЖАЕТ" =====
 
 def check_if_urgent_booking(message: str) -> bool:
@@ -450,9 +437,7 @@ def check_if_urgent_booking(message: str) -> bool:
     message_lower = message.lower()
     return any(keyword in message_lower for keyword in urgent_keywords)
 
-
 # ===== #19 - ПРЕДСКАЗАНИЕ NO-SHOW =====
-
 
 def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[str, str, str]]:
     """Получить клиентов для повторной записи (#16)"""
@@ -482,7 +467,6 @@ def get_clients_for_rebooking(service_name: str, days_since: int) -> List[Tuple[
     
     return results
 
-
 def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
     """Получить предстоящие записи для напоминаний (#15)"""
     conn = get_db_connection()
@@ -505,7 +489,6 @@ def get_upcoming_bookings(hours: int = 24) -> List[Tuple]:
     
     return results
 
-
 # ===== #20 - УПРАВЛЕНИЕ ЗАПИСЯМИ (ОТМЕНА/ИЗМЕНЕНИЕ) =====
 
 def cancel_booking(booking_id: int) -> bool:
@@ -524,7 +507,6 @@ def cancel_booking(booking_id: int) -> bool:
         conn.close()
         return False
 
-
 def delete_booking(booking_id: int) -> bool:
     """Удалить запись из БД (полное удаление)"""
     conn = get_db_connection()
@@ -540,7 +522,6 @@ def delete_booking(booking_id: int) -> bool:
         print(f"❌ Ошибка удаления записи: {e}")
         conn.close()
         return False
-
 
 def find_active_booking(instagram_id: str) -> Optional[Dict]:
     """

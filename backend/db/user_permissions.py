@@ -6,7 +6,6 @@ from db.connection import get_db_connection
 from core.config import ROLES
 from utils.logger import log_info, log_error, log_warning
 
-
 def get_user_individual_permissions(user_id: int) -> Dict[str, bool]:
     """
     Получить индивидуальные права пользователя
@@ -35,7 +34,6 @@ def get_user_individual_permissions(user_id: int) -> Dict[str, bool]:
         return {}
     finally:
         conn.close()
-
 
 def get_user_effective_permissions(user_id: int, user_role: str) -> Dict[str, bool]:
     """
@@ -72,7 +70,6 @@ def get_user_effective_permissions(user_id: int, user_role: str) -> Dict[str, bo
         effective[perm_key] = granted
     
     return effective
-
 
 def grant_user_permission(
     user_id: int,
@@ -129,7 +126,6 @@ def grant_user_permission(
     finally:
         conn.close()
 
-
 def bulk_update_user_permissions(
     user_id: int,
     permissions: Dict[str, bool],
@@ -168,7 +164,6 @@ def bulk_update_user_permissions(
     finally:
         conn.close()
 
-
 def remove_user_permission(user_id: int, permission_key: str) -> bool:
     """
     Удалить индивидуальное право (вернуть к базовому из роли)
@@ -192,7 +187,6 @@ def remove_user_permission(user_id: int, permission_key: str) -> bool:
         return False
     finally:
         conn.close()
-
 
 def can_grant_permission(granter_id: int, granter_role: str, target_user_id: int, target_role: str, permission_key: str) -> Tuple[bool, str]:
     """

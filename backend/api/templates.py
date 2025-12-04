@@ -4,7 +4,7 @@ API для шаблонов сообщений
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -13,7 +13,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Templates"])
-
 
 def replace_placeholders(content: str, client_id: str) -> str:
     """Заменить плейсхолдеры на реальные данные"""
@@ -25,7 +24,7 @@ def replace_placeholders(content: str, client_id: str) -> str:
         c.execute("""
             SELECT date, time, service_name 
             FROM bookings 
-            WHERE instagram_id = ? AND status IN ('pending', 'confirmed')
+            WHERE instagram_id =%s AND status IN ('pending', 'confirmed')
             ORDER BY date DESC, time DESC 
             LIMIT 1
         """, (client_id,))
@@ -53,7 +52,6 @@ def replace_placeholders(content: str, client_id: str) -> str:
         log_error(f"Error replacing placeholders: {e}", "templates")
         return content
 
-
 @router.get("/chat/templates")
 async def get_message_templates(
     session_token: Optional[str] = Cookie(None)
@@ -70,7 +68,7 @@ async def get_message_templates(
         c.execute("""
             SELECT id, name, content, category
             FROM message_templates
-            WHERE user_id IS NULL OR user_id = ?
+            WHERE user_id IS NULL OR user_id =%s
             ORDER BY category, name
             """, (user["id"],))
 
@@ -90,7 +88,6 @@ async def get_message_templates(
     except Exception as e:
         log_error(f"Error getting templates: {e}", "templates")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/chat/templates")
 async def create_template(
@@ -116,7 +113,7 @@ async def create_template(
         
         c.execute("""
             INSERT INTO message_templates (name, content, category, user_id)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s)
         """, (name, content, category, user["id"]))
         
         conn.commit()
@@ -129,7 +126,6 @@ async def create_template(
     except Exception as e:
         log_error(f"Error creating template: {e}", "templates")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/chat/templates/{template_id}")
 async def update_template(
@@ -153,7 +149,7 @@ async def update_template(
         
         # Проверяем что шаблон принадлежит пользователю
         c.execute("""
-            SELECT user_id FROM message_templates WHERE id = ?
+            SELECT user_id FROM message_templates WHERE id =%s
         """, (template_id,))
         
         result = c.fetchone()
@@ -166,13 +162,13 @@ async def update_template(
         params = []
         
         if name:
-            updates.append("name = ?")
+            updates.append("name =%s")
             params.append(name)
         if content:
-            updates.append("content = ?")
+            updates.append("content =%s")
             params.append(content)
         if category:
-            updates.append("category = ?")
+            updates.append("category =%s")
             params.append(category)
         
         if updates:
@@ -180,7 +176,7 @@ async def update_template(
             c.execute(f"""
                 UPDATE message_templates 
                 SET {', '.join(updates)}
-                WHERE id = ?
+                WHERE id =%s
             """, params)
             
             conn.commit()
@@ -192,7 +188,6 @@ async def update_template(
     except Exception as e:
         log_error(f"Error updating template: {e}", "templates")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/chat/templates/{template_id}")
 async def delete_template(
@@ -210,7 +205,7 @@ async def delete_template(
         
         # Проверяем что шаблон принадлежит пользователю
         c.execute("""
-            SELECT user_id FROM message_templates WHERE id = ?
+            SELECT user_id FROM message_templates WHERE id =%s
         """, (template_id,))
         
         result = c.fetchone()
@@ -218,7 +213,7 @@ async def delete_template(
             conn.close()
             return JSONResponse({"error": "Access denied"}, status_code=403)
         
-        c.execute("DELETE FROM message_templates WHERE id = ?", (template_id,))
+        c.execute("DELETE FROM message_templates WHERE id =%s", (template_id,))
         conn.commit()
         conn.close()
         

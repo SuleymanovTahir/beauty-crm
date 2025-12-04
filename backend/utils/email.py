@@ -276,7 +276,6 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
         log_error(f"Failed to send approval notification: {e}", "email")
         return False
 
-
 def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -> bool:
     """
     Отправить email со ссылкой для сброса пароля
@@ -371,7 +370,6 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
     except Exception as e:
         log_error(f"Failed to send password reset email: {e}", "email")
         return False
-
 
 async def send_email_async(recipients: list, subject: str, message: str, html: str = None) -> bool:
     """

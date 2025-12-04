@@ -143,7 +143,6 @@ def seed_loyalty(conn, client_ids):
             """, (client_id, points, points, datetime.now().isoformat()))
             print(f"✅ Начислены баллы клиенту ID {client_id}: {points}")
 
-
 def cleanup_test_data(conn):
     """Удаляет тестовые данные после успешного выполнения"""
     print("\n🧹 ОЧИСТКА ТЕСТОВЫХ ДАННЫХ:")

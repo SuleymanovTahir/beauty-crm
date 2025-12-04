@@ -33,7 +33,6 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 (UPLOAD_DIR / "audio").mkdir(exist_ok=True)
 (UPLOAD_DIR / "files").mkdir(exist_ok=True)
 
-
 def get_file_category(content_type: str) -> str:
     """Определить категорию файла по MIME типу"""
     if content_type.startswith('image/'):
@@ -44,7 +43,6 @@ def get_file_category(content_type: str) -> str:
         return 'audio'
     else:
         return 'files'
-
 
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -106,7 +104,6 @@ async def upload_file(file: UploadFile = File(...)):
             detail=f"Upload failed: {str(e)}"
         )
 
-
 def delete_upload_file(file_path: str) -> bool:
     """
     Удалить файл из папки uploads
@@ -138,7 +135,6 @@ def delete_upload_file(file_path: str) -> bool:
     except Exception as e:
         print(f"❌ Error deleting file {file_path}: {e}")
         return False
-
 
 def delete_old_photo_if_exists(old_photo_path: str, new_photo_path: str) -> bool:
     """

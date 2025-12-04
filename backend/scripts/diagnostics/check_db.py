@@ -10,7 +10,6 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from core.config import DATABASE_NAME
 
-
 def check_database():
     """Проверить данные в базе"""
 
@@ -185,7 +184,6 @@ def check_database():
     print("=" * 80 + "\n")
 
     return True
-
 
 if __name__ == "__main__":
     try:

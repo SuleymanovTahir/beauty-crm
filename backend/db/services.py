@@ -1,12 +1,11 @@
 """
 Функции для работы с услугами и специальными пакетами
 """
-import sqlite3
+
 from datetime import datetime
 from typing import Optional
 
 from db.connection import get_db_connection
-
 
 # ===== УСЛУГИ =====
 
@@ -76,7 +75,6 @@ def get_all_services(active_only=True, include_positions=False):
     conn.close()
     return result
 
-
 def get_service_by_key(service_key):
     """Получить услугу по ключу"""
     conn = get_db_connection()
@@ -87,7 +85,6 @@ def get_service_by_key(service_key):
     
     conn.close()
     return service
-
 
 def get_service(service_id):
     """Получить услугу по ID"""
@@ -105,7 +102,6 @@ def get_service(service_id):
     
     conn.close()
     return None
-
 
 def create_service(service_key, name, name_ru, price, currency, category,
                    description=None, description_ru=None, benefits=None, position_id=None,
@@ -130,7 +126,6 @@ def create_service(service_key, name, name_ru, price, currency, category,
     except sqlite3.IntegrityError:
         conn.close()
         return False
-
 
 def update_service(service_id, **kwargs):
     """Обновить услугу"""
@@ -181,7 +176,6 @@ def update_service(service_id, **kwargs):
     conn.close()
     return True
 
-
 def delete_service(service_id):
     """Удалить услугу ПОЛНОСТЬЮ"""
     conn = get_db_connection()
@@ -197,7 +191,6 @@ def delete_service(service_id):
         print(f"✅ Услуга {service_id} удалена из БД")
     
     return affected > 0
-
 
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
 
@@ -221,7 +214,6 @@ def get_all_special_packages(active_only=True):
     conn.close()
     return packages
 
-
 def get_special_package_by_id(package_id):
     """Получить пакет по ID"""
     conn = get_db_connection()
@@ -232,7 +224,6 @@ def get_special_package_by_id(package_id):
     
     conn.close()
     return package
-
 
 def find_special_package_by_keywords(message: str):
     """Найти подходящий спец. пакет по ключевым словам в сообщении"""
@@ -260,7 +251,6 @@ def find_special_package_by_keywords(message: str):
                     return package
     
     return None
-
 
 def create_special_package(name, name_ru, original_price, special_price, currency,
                            keywords, valid_from, valid_until, description=None,
@@ -296,7 +286,6 @@ def create_special_package(name, name_ru, original_price, special_price, currenc
         print(f"Ошибка создания пакета: {e}")
         return None
 
-
 def update_special_package(package_id, **kwargs):
     """Обновить специальный пакет"""
     conn = get_db_connection()
@@ -324,7 +313,6 @@ def update_special_package(package_id, **kwargs):
     conn.close()
     return True
 
-
 def delete_special_package(package_id):
     """Удалить специальный пакет"""
     conn = get_db_connection()
@@ -335,7 +323,6 @@ def delete_special_package(package_id):
     conn.commit()
     conn.close()
     return True
-
 
 def increment_package_usage(package_id):
     """Увеличить счетчик использования пакета"""
@@ -348,7 +335,6 @@ def increment_package_usage(package_id):
     conn.commit()
     conn.close()
     return True
-
 
 # backend/db/services.py - ПОЛНОСТЬЮ УДАЛИТЕ старую функцию toggle_service_active_status
 # И ЗАМЕНИТЕ на эту новую версию:
@@ -431,7 +417,6 @@ def format_service_price_for_bot(service) -> str:
         price_clean = format_number(price)
         return f"{price_clean} {currency}"
 
-
 # ===== SERVICE POSITIONS (Должности для услуг) =====
 
 def get_service_positions(service_id):
@@ -459,7 +444,6 @@ def get_service_positions(service_id):
 
     conn.close()
     return positions
-
 
 def update_service_positions(service_id, position_ids):
     """
@@ -503,7 +487,6 @@ def update_service_positions(service_id, position_ids):
         log_error(f"Error updating service positions: {e}", "database")
         return False
 
-
 def add_service_position(service_id, position_id):
     """
     Добавить должность к услуге
@@ -520,7 +503,7 @@ def add_service_position(service_id, position_id):
 
     try:
         c.execute("""
-            INSERT OR IGNORE INTO service_positions (service_id, position_id)
+            INSERT INTO service_positions (service_id, position_id)
             VALUES (%s, %s)
         """, (service_id, position_id))
 
@@ -535,7 +518,6 @@ def add_service_position(service_id, position_id):
         from utils.logger import log_error
         log_error(f"Error adding service position: {e}", "database")
         return False
-
 
 def remove_service_position(service_id, position_id):
     """

@@ -5,7 +5,7 @@ Settings management API
 from fastapi import APIRouter, HTTPException, Request,Cookie
 from pydantic import BaseModel
 from typing import Optional
-import sqlite3
+
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -15,7 +15,6 @@ from db.settings import get_bot_settings, update_bot_settings, get_salon_setting
 
 router = APIRouter()
 
-
 class NotificationSettings(BaseModel):
     """Модель настроек уведомлений"""
     emailNotifications: bool = True
@@ -24,7 +23,6 @@ class NotificationSettings(BaseModel):
     chatNotifications: bool = True
     dailyReport: bool = True
     reportTime: str = "09:00"
-
 
 @router.post("/settings/notifications")
 async def save_notification_settings(request: Request, settings: NotificationSettings):
@@ -41,7 +39,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         # Проверяем есть ли уже настройки
         c.execute("""
             SELECT id FROM notification_settings
-            WHERE user_id = ?
+            WHERE user_id =%s
         """, (user_id,))
         existing = c.fetchone()
 
@@ -50,14 +48,14 @@ async def save_notification_settings(request: Request, settings: NotificationSet
             c.execute("""
                 UPDATE notification_settings
                 SET
-                    email_notifications = ?,
-                    sms_notifications = ?,
-                    booking_notifications = ?,
-                    chat_notifications = ?,
-                    daily_report = ?,
-                    report_time = ?,
+                    email_notifications =%s,
+                    sms_notifications =%s,
+                    booking_notifications =%s,
+                    chat_notifications =%s,
+                    daily_report =%s,
+                    report_time =%s,
                     updated_at = CURRENT_TIMESTAMP
-                WHERE user_id = ?
+                WHERE user_id =%s
             """, (
                 1 if settings.emailNotifications else 0,
                 1 if settings.smsNotifications else 0,
@@ -79,7 +77,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                     chat_notifications,
                     daily_report,
                     report_time
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s)
             """, (
                 user_id,
                 1 if settings.emailNotifications else 0,
@@ -132,7 +130,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                         chat_notifications,
                         daily_report,
                         report_time
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (%s,%s,%s,%s,%s,%s,%s)
                 """, (
                     user_id,
                     1 if settings.emailNotifications else 0,
@@ -162,7 +160,6 @@ async def save_notification_settings(request: Request, settings: NotificationSet
         log_error(f"Error saving notification settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.get("/settings/notifications")
 async def get_notification_settings():
     """
@@ -183,7 +180,7 @@ async def get_notification_settings():
                 daily_report,
                 report_time
             FROM notification_settings
-            WHERE user_id = ?
+            WHERE user_id =%s
         """, (user_id,))
 
         result = c.fetchone()
@@ -223,7 +220,6 @@ async def get_notification_settings():
         log_error(f"Error loading notification settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # ===== BOT SETTINGS =====
 
 @router.get("/bot-settings")
@@ -237,7 +233,6 @@ async def get_bot_settings_api():
     except Exception as e:
         log_error(f"Error loading bot settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/settings/bot")
 async def update_bot_settings_api(request: Request):
@@ -256,7 +251,6 @@ async def update_bot_settings_api(request: Request):
     except Exception as e:
         log_error(f"Error updating bot settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/bot-settings/reload")
 async def reload_bot():
@@ -277,7 +271,6 @@ async def reload_bot():
         log_error(f"Error reloading bot: {e}", "settings")
         # Возвращаем success=True даже при ошибке, чтобы не блокировать UI
         return {"success": True, "message": "Settings saved (bot reload skipped)"}
-
 
 # ===== BACKUP =====
 
@@ -324,7 +317,6 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error creating backup: {e}", "settings")
         raise HTTPException(status_code=500, detail=f"Failed to create backup: {str(e)}")
 
-
 # ===== SALON SETTINGS =====
 
 @router.get("/salon-settings")
@@ -338,7 +330,6 @@ async def get_salon_settings_api():
     except Exception as e:
         log_error(f"Error loading salon settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/salon-settings")
 async def update_salon_settings_api(request: Request):

@@ -6,7 +6,6 @@ from core.config import PAGE_ACCESS_TOKEN
 from utils.logger import log_error,log_info
 import os
 
-
 async def send_message(recipient_id: str, message: str) -> dict:
     """
     Отправить сообщение в Instagram
@@ -46,7 +45,6 @@ async def send_message(recipient_id: str, message: str) -> dict:
     except Exception as e:
         log_error(f"❌ Ошибка отправки в Instagram: {e}", "instagram", exc_info=True)
         return {"error": str(e)}
-
 
 async def send_file(recipient_id: str, file_url: str, file_type: str = "image") -> dict:
     """
@@ -137,7 +135,6 @@ async def send_file(recipient_id: str, file_url: str, file_type: str = "image") 
         log_error(f"❌ Неожиданная ошибка: {e}", "instagram", exc_info=True)
         return {"error": str(e)}
 
-
 async def send_typing_indicator(recipient_id: str) -> None:
     """
     Показать индикатор печати
@@ -166,7 +163,6 @@ async def send_typing_indicator(recipient_id: str) -> None:
     except Exception as e:
         print(f"⚠️ Не удалось показать typing: {e}")
 
-
 async def mark_as_seen(recipient_id: str) -> None:
     """
     Отметить сообщение как прочитанное
@@ -194,7 +190,6 @@ async def mark_as_seen(recipient_id: str) -> None:
                 await client.post(url, params=params, json=data)
     except Exception as e:
         print(f"⚠️ Не удалось отметить как прочитанное: {e}")
-
 
 async def send_reaction(recipient_id: str, message_id: str, reaction: str = "❤️") -> dict:
     """

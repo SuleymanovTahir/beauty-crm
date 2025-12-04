@@ -4,7 +4,6 @@
 from datetime import datetime, timedelta
 from db.connection import get_db_connection
 
-
 def get_client_history(instagram_id: str, limit: int = 10):
     """Получить историю записей клиента"""
     conn = get_db_connection()
@@ -32,7 +31,6 @@ def get_client_history(instagram_id: str, limit: int = 10):
         ]
     finally:
         conn.close()
-
 
 def get_client_stats(instagram_id: str):
     """Получить статистику клиента"""
@@ -99,7 +97,6 @@ def get_client_stats(instagram_id: str):
     finally:
         conn.close()
 
-
 def get_recommended_services(instagram_id: str):
     """Получить рекомендации на основе истории"""
     conn = get_db_connection()
@@ -131,7 +128,6 @@ def get_recommended_services(instagram_id: str):
         return recommendations
     finally:
         conn.close()
-
 
 def should_send_retention_reminder(instagram_id: str, service_type: str = "Маникюр"):
     """Проверить нужно ли отправить напоминание о повторном визите"""

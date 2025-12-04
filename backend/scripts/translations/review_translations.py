@@ -54,7 +54,6 @@ def review_service_translations():
     print("✅ Review complete!")
     print("="*80)
 
-
 def review_banner_translations():
     """Review all banner translations"""
     conn = get_db_connection()
@@ -89,7 +88,6 @@ def review_banner_translations():
     print("✅ Review complete!")
     print("="*80)
 
-
 def export_translations_to_csv():
     """Export all translations to CSV for easy review in Excel"""
     import csv
@@ -119,7 +117,6 @@ def export_translations_to_csv():
     conn.close()
     print(f"\n✅ Exported translations to: {output_file}")
     print(f"   Open this file in Excel/Google Sheets to review all translations")
-
 
 if __name__ == "__main__":
     import argparse

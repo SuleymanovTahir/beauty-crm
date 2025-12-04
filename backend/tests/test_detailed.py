@@ -14,13 +14,11 @@ import json
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 100)
     print(f"  {text}")
     print("=" * 100)
-
 
 def print_section(text):
     """Секция теста"""
@@ -28,31 +26,25 @@ def print_section(text):
     print(f"  {text}")
     print("-" * 100)
 
-
 def print_step(step_num, total, description):
     """Шаг теста"""
     print(f"\n[Шаг {step_num}/{total}] {description}")
-
 
 def print_success(message):
     """Успех"""
     print(f"   ✅ {message}")
 
-
 def print_error(message):
     """Ошибка"""
     print(f"   ❌ {message}")
-
 
 def print_warning(message):
     """Предупреждение"""
     print(f"   ⚠️  {message}")
 
-
 def print_info(message):
     """Информация"""
     print(f"   ℹ️  {message}")
-
 
 def print_data(label, data):
     """Вывод данных"""
@@ -61,7 +53,6 @@ def print_data(label, data):
         print(f"      {json.dumps(data, indent=6, ensure_ascii=False)}")
     else:
         print(f"      {data}")
-
 
 def test_database_detailed():
     """ТЕСТ 1: Детальная проверка базы данных"""
@@ -239,7 +230,6 @@ def test_database_detailed():
         traceback.print_exc()
         return False
 
-
 def test_analytics_detailed():
     """ТЕСТ 2: Детальная проверка Analytics"""
     print_header("ТЕСТ 2: ДЕТАЛЬНАЯ ПРОВЕРКА ANALYTICS (DASHBOARD)")
@@ -326,7 +316,6 @@ def test_analytics_detailed():
         print_error(f"КРИТИЧЕСКАЯ ОШИБКА: {e}")
         traceback.print_exc()
         return False
-
 
 def test_master_schedule_detailed():
     """ТЕСТ 3: Детальная проверка Master Schedule"""
@@ -529,7 +518,6 @@ def test_master_schedule_detailed():
     
     return result
 
-
 def main():
     """Запуск всех детальных тестов"""
     print_header("🔍 ДЕТАЛЬНОЕ ТЕСТИРОВАНИЕ CRM СИСТЕМЫ")
@@ -567,7 +555,6 @@ def main():
     print("=" * 100 + "\n")
 
     return failed == 0
-
 
 if __name__ == "__main__":
     success = main()

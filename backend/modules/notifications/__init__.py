@@ -10,11 +10,9 @@ from typing import List, Dict, Any, Optional
 from utils.logger import log_info, log_warning, log_error
 from modules import get_module_config, is_module_enabled
 
-
 def is_notifications_enabled() -> bool:
     """Проверить, включен ли модуль уведомлений"""
     return is_module_enabled('notifications')
-
 
 def get_notification_channels(event: str) -> Dict[str, bool]:
     """
@@ -42,7 +40,6 @@ def get_notification_channels(event: str) -> Dict[str, bool]:
         'email': event_config.get('email', False) and channels.get('email', {}).get('enabled', False),
         'telegram': event_config.get('telegram', False) and channels.get('telegram', {}).get('enabled', False)
     }
-
 
 async def send_notification(
     event: str,
@@ -90,7 +87,6 @@ async def send_notification(
             results['errors'].append(f"Telegram: {str(e)}")
 
     return results
-
 
 __all__ = [
     'is_notifications_enabled',

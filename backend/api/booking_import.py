@@ -8,12 +8,11 @@ import io
 from datetime import datetime
 from typing import Dict, List, Any
 from utils.logger import log_info, log_error
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 router = APIRouter()
-
 
 def normalize_column_name(col: str) -> str:
     """Normalize column names to match database fields"""
@@ -53,7 +52,6 @@ def normalize_column_name(col: str) -> str:
     }
     
     return mappings.get(col_lower, col_lower)
-
 
 def parse_datetime(date_str: Any, time_str: Any = None) -> str:
     """Parse date and time from various formats to ISO 8601"""
@@ -96,7 +94,6 @@ def parse_datetime(date_str: Any, time_str: Any = None) -> str:
             
     return None
 
-
 def parse_currency(value: Any) -> float:
     """Parse currency string to float"""
     if pd.isna(value) or not value:
@@ -114,7 +111,6 @@ def parse_currency(value: Any) -> float:
         return float(clean_val)
     except ValueError:
         return 0.0
-
 
 def validate_phone(phone: str) -> str:
     """Validate and normalize phone number"""
@@ -136,7 +132,6 @@ def validate_phone(phone: str) -> str:
     
     return phone_clean
 
-
 def find_or_create_client(name: str, phone: str = None) -> str:
     """
     Find existing client by name or phone, or create a temporary one
@@ -149,14 +144,14 @@ def find_or_create_client(name: str, phone: str = None) -> str:
     try:
         # Search by phone first
         if phone:
-            c.execute("SELECT instagram_id FROM clients WHERE phone LIKE ?", (f'%{phone}%',))
+            c.execute("SELECT instagram_id FROM clients WHERE phone LIKE %s", (f'%{phone}%',))
             result = c.fetchone()
             if result:
                 return result['instagram_id']
         
         # Search by name
         if name:
-            c.execute("SELECT instagram_id FROM clients WHERE LOWER(name) = LOWER(?)", (name,))
+            c.execute("SELECT instagram_id FROM clients WHERE LOWER(name) = LOWER(%s)", (name,))
             result = c.fetchone()
             if result:
                 return result['instagram_id']
@@ -169,7 +164,7 @@ def find_or_create_client(name: str, phone: str = None) -> str:
         c.execute("""
             INSERT INTO clients 
             (instagram_id, name, phone, status, labels, total_messages, detected_language)
-            VALUES (?, ?, ?, 'new', 'Imported', 0, 'ru')
+            VALUES (%s, %s, %s, 'new', 'Imported', 0, 'ru')
         """, (instagram_id, name, phone_json))
         
         conn.commit()
@@ -180,7 +175,6 @@ def find_or_create_client(name: str, phone: str = None) -> str:
     finally:
         conn.close()
 
-
 def find_service(service_name: str) -> str:
     """Find service by name, return service name or original"""
     if not service_name:
@@ -190,7 +184,7 @@ def find_service(service_name: str) -> str:
     c = conn.cursor()
     
     try:
-        c.execute("SELECT name_ru FROM services WHERE LOWER(name_ru) = LOWER(?) OR LOWER(name) = LOWER(?)", 
+        c.execute("SELECT name_ru FROM services WHERE LOWER(name_ru) = LOWER(%s) OR LOWER(name) = LOWER(%s)", 
                   (service_name, service_name))
         result = c.fetchone()
         if result:
@@ -198,7 +192,6 @@ def find_service(service_name: str) -> str:
         return service_name
     finally:
         conn.close()
-
 
 @router.post("/bookings/import")
 async def import_bookings(file: UploadFile = File(...)):
@@ -297,7 +290,7 @@ async def import_bookings(file: UploadFile = File(...)):
                 c.execute("""
                     INSERT INTO bookings 
                     (client_id, name, service, service_name, datetime, phone, master, status, revenue, notes, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     client_id,
                     client_name,
@@ -341,7 +334,6 @@ async def import_bookings(file: UploadFile = File(...)):
             status_code=500,
             detail=f"Import failed: {str(e)}"
         )
-
 
 @router.get("/bookings/import/template")
 async def download_booking_template(format: str = 'csv'):

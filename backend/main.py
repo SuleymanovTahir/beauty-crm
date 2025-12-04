@@ -166,7 +166,6 @@ app.include_router(internal_chat_router)
 app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)
 app.include_router(seo_metadata_router)  # для SEO метаданных (/api/public/seo-metadata)
 
-
 # ===== MIDDLEWARE =====
 
 @app.middleware("http")
@@ -177,7 +176,6 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     return response
-
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -199,7 +197,6 @@ async def log_requests(request: Request, call_next):
         log_error(f"❌ ОШИБКА: {request.method} {request.url.path}", "middleware", 
                  exc_info=True)
         raise
-
 
 # GZip сжатие (должно быть одним из первых)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -226,7 +223,6 @@ app.add_middleware(CacheControlMiddleware)
 # GZip Compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-
 # ===== ГЛОБАЛЬНЫЙ ОБРАБОТЧИК ОШИБОК =====
 
 @app.exception_handler(Exception)
@@ -245,7 +241,6 @@ async def global_exception_handler(request: Request, exc: Exception):
             "message": str(exc),
         }
     )
-
 
 # ===== ОСНОВНЫЕ ENDPOINTS =====
 
@@ -268,7 +263,6 @@ async def root():
             "Прокси для изображений Instagram"  # ✅ НОВАЯ ФИЧА
         ]
     }
-
 
 @app.get("/health")
 async def health():
@@ -302,7 +296,6 @@ async def terms():
 @app.get("/data-deletion")
 async def data_deletion():
     return RedirectResponse(url="/#/data-deletion")
-
 
 @app.post("/admin/run-migration/{migration_name}")
 async def run_migration(migration_name: str):
@@ -356,15 +349,12 @@ async def run_migration(migration_name: str):
             status_code=500
         )
 
-
-
 @app.get("/admin/diagnostics")
 async def get_diagnostics():
     """Получить диагностику БД (только для разработки)"""
     if os.getenv("ENVIRONMENT") == "production":
         return JSONResponse({"error": "Diagnostics disabled in production"}, status_code=403)
-    
-    import sqlite3
+
     
     try:
         conn = get_db_connection()
@@ -423,7 +413,6 @@ async def get_diagnostics():
         log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @app.get("/api/diagnostics/full")
 async def run_full_diagnostics_endpoint():
     """Запустить полную диагностику системы (только для разработки)"""
@@ -454,7 +443,6 @@ async def run_full_diagnostics_endpoint():
             },
             status_code=500
         )
-
 
 # ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
 
@@ -502,9 +490,7 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
-
  
-
 
     # Инициализация бота
     bot = get_bot()
@@ -544,8 +530,6 @@ async def startup_event():
         
         log_info("✅ Планировщики запущены с async поддержкой (включая email-напоминания)", "startup")
 
-
-
 if __name__ == "__main__":
     import uvicorn
     
@@ -556,7 +540,7 @@ if __name__ == "__main__":
         log_level="info"
     )
     def diagnose_database():
-        import sqlite3
+
     
         try:
             conn = get_db_connection()
@@ -644,7 +628,6 @@ if __name__ == "__main__":
             import traceback
             log_error(traceback.format_exc(), "diagnostics")
 
-
 # ============================================================================
 # POSITIONS API
 # ============================================================================
@@ -660,7 +643,6 @@ async def get_positions(active_only: bool = True):
         log_error(f"Error getting positions: {e}", "api")
         return {"success": False, "error": str(e)}
 
-
 @app.get("/api/positions/{position_id}")
 async def get_position_by_id(position_id: int):
     """Получить должность по ID"""
@@ -674,7 +656,6 @@ async def get_position_by_id(position_id: int):
     except Exception as e:
         log_error(f"Error getting position: {e}", "api")
         return {"success": False, "error": str(e)}
-
 
 @app.post("/api/positions")
 async def create_new_position(request: Request):
@@ -699,7 +680,6 @@ async def create_new_position(request: Request):
         log_error(f"Error creating position: {e}", "api")
         return {"success": False, "error": str(e)}
 
-
 @app.put("/api/positions/{position_id}")
 async def update_position_by_id(position_id: int, request: Request):
     """Обновить должность"""
@@ -716,7 +696,6 @@ async def update_position_by_id(position_id: int, request: Request):
     except Exception as e:
         log_error(f"Error updating position: {e}", "api")
         return {"success": False, "error": str(e)}
-
 
 @app.delete("/api/positions/{position_id}")
 async def delete_position_by_id(position_id: int, hard: bool = False):
@@ -740,7 +719,6 @@ async def delete_position_by_id(position_id: int, hard: bool = False):
     except Exception as e:
         log_error(f"Error deleting position: {e}", "api")
         return {"success": False, "error": str(e)}
-
 
 @app.get("/api/positions/{position_id}/employees")
 async def get_employees_by_position_id(position_id: int):

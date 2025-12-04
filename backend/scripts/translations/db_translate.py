@@ -26,7 +26,6 @@ from config import (
 )
 from translator import Translator
 
-
 def translate_content():
     """
     Translate all missing translations from extracted data
@@ -163,7 +162,6 @@ def translate_content():
     print(f"   Output saved to: {TRANSLATE_OUTPUT}")
     print(f"\n💡 Next step: Sync translations to database")
     print(f"   npm run db:i18n:sync")
-
 
 if __name__ == "__main__":
     translate_content()

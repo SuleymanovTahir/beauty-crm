@@ -17,20 +17,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from core.config import DATABASE_NAME
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
 
-
 def print_section(text):
     """Секция теста"""
     print("\n" + "-" * 80)
     print(f"  {text}")
     print("-" * 80)
-
 
 def test_broadcast_email_setup():
     """
@@ -229,7 +226,6 @@ def test_broadcast_email_setup():
         traceback.print_exc()
         return False
 
-
 def test_instagram_reminders():
     """
     ТЕСТ 2: Напоминания в Instagram для @stz_192
@@ -404,7 +400,6 @@ def test_instagram_reminders():
         traceback.print_exc()
         return False
 
-
 def main():
     """Запуск всех тестов"""
     print_header("ТЕСТИРОВАНИЕ РАССЫЛОК И НАПОМИНАНИЙ")
@@ -446,7 +441,6 @@ def main():
     print("=" * 80 + "\n")
 
     return passed == total
-
 
 if __name__ == "__main__":
     success = main()

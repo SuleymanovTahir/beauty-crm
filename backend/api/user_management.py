@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Cookie, HTTPException, Form
 from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
-import sqlite3
+
 import hashlib
 import secrets
 from datetime import datetime, timedelta
@@ -45,7 +45,7 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
         c.execute("""
             SELECT id, username, full_name, email, role, COALESCE(photo, photo_url) as photo
             FROM users
-            WHERE id = ?
+            WHERE id = %s
         """, (user["id"],))
 
         result = c.fetchone()
@@ -94,12 +94,12 @@ async def update_my_profile(
                 return JSONResponse({"error": "Логин должен быть минимум 3 символа"}, status_code=400)
 
             # Проверяем уникальность
-            c.execute("SELECT id FROM users WHERE username = ? AND id != ?", (data.username, user["id"]))
+            c.execute("SELECT id FROM users WHERE username = %s AND id != %s", (data.username, user["id"]))
             if c.fetchone():
                 conn.close()
                 return JSONResponse({"error": "Логин уже занят"}, status_code=400)
 
-            updates.append("username = ?")
+            updates.append("username = %s")
             params.append(data.username)
 
         # Обновление full_name
@@ -108,7 +108,7 @@ async def update_my_profile(
                 conn.close()
                 return JSONResponse({"error": "Имя должно быть минимум 2 символа"}, status_code=400)
 
-            updates.append("full_name = ?")
+            updates.append("full_name = %s")
             params.append(data.full_name)
 
         # Обновление email
@@ -118,15 +118,15 @@ async def update_my_profile(
                 return JSONResponse({"error": "Некорректный email"}, status_code=400)
 
             # Проверяем уникальность
-            c.execute("SELECT id FROM users WHERE email = ? AND id != ?", (data.email, user["id"]))
+            c.execute("SELECT id FROM users WHERE email = %s AND id != %s", (data.email, user["id"]))
             if c.fetchone():
                 conn.close()
                 return JSONResponse({"error": "Email уже используется"}, status_code=400)
 
-            updates.append("email = ?")
+            updates.append("email = %s")
             params.append(data.email)
             # Сбрасываем верификацию при смене email
-            updates.append("email_verified = ?")
+            updates.append("email_verified = %s")
             params.append(0)
 
         # Обновление пароля
@@ -136,7 +136,7 @@ async def update_my_profile(
                 return JSONResponse({"error": "Укажите текущий пароль"}, status_code=400)
 
             # Проверяем текущий пароль
-            c.execute("SELECT password_hash FROM users WHERE id = ?", (user["id"],))
+            c.execute("SELECT password_hash FROM users WHERE id = %s", (user["id"],))
             result = c.fetchone()
             if not result:
                 conn.close()
@@ -152,12 +152,12 @@ async def update_my_profile(
                 return JSONResponse({"error": "Новый пароль должен быть минимум 6 символов"}, status_code=400)
 
             new_hash = hashlib.sha256(data.new_password.encode()).hexdigest()
-            updates.append("password_hash = ?")
+            updates.append("password_hash = %s")
             params.append(new_hash)
 
         # Обновление фото
         if data.photo_url is not None:
-            updates.append("photo = ?")
+            updates.append("photo = %s")
             params.append(data.photo_url)
 
         if not updates:
@@ -166,7 +166,7 @@ async def update_my_profile(
 
         # Выполняем обновление
         params.append(user["id"])
-        query = f"UPDATE users SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
         c.execute(query, params)
         conn.commit()
 
@@ -174,7 +174,7 @@ async def update_my_profile(
         c.execute("""
             SELECT id, username, full_name, email, role, photo
             FROM users
-            WHERE id = ?
+            WHERE id = %s
         """, (user["id"],))
 
         result = c.fetchone()
@@ -238,7 +238,6 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error getting pending users: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/api/users/{user_id}/approve")
 async def approve_user(
     user_id: int,
@@ -254,7 +253,7 @@ async def approve_user(
         c = conn.cursor()
 
         # Получаем email и имя пользователя
-        c.execute("SELECT email, full_name, email_verified FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT email, full_name, email_verified FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
@@ -274,8 +273,8 @@ async def approve_user(
         # Одобряем пользователя (is_active = TRUE)
         c.execute("""
             UPDATE users
-            SET approved = 1, is_active = TRUE, approved_by = ?, approved_at = datetime('now')
-            WHERE id = ?
+            SET approved = 1, is_active = TRUE, approved_by = %s, approved_at = NOW()
+            WHERE id = %s
         """, (user["id"], user_id))
 
         conn.commit()
@@ -292,7 +291,6 @@ async def approve_user(
         log_error(f"Error approving user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/api/users/{user_id}/reject")
 async def reject_user(
     user_id: int,
@@ -308,7 +306,7 @@ async def reject_user(
         c = conn.cursor()
 
         # Получаем email и имя пользователя
-        c.execute("SELECT email, full_name FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT email, full_name FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
@@ -321,7 +319,7 @@ async def reject_user(
         c.execute("""
             UPDATE users
             SET is_active = FALSE, approved = 0
-            WHERE id = ?
+            WHERE id = %s
         """, (user_id,))
 
         conn.commit()
@@ -338,7 +336,6 @@ async def reject_user(
         log_error(f"Error rejecting user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 # ===== УПРАВЛЕНИЕ ПРАВАМИ =====
 
 @router.get("/api/users/{user_id}/permissions")
@@ -353,7 +350,6 @@ async def get_user_permissions_api(
 
     permissions = get_user_permissions(user_id)
     return {"permissions": permissions}
-
 
 @router.post("/api/users/{user_id}/permissions/{resource}/grant")
 async def grant_permission_api(
@@ -371,7 +367,6 @@ async def grant_permission_api(
         return {"success": True}
     else:
         return JSONResponse({"error": "Failed to grant permission"}, status_code=500)
-
 
 @router.post("/api/users/{user_id}/permissions/{resource}/revoke")
 async def revoke_permission_api(

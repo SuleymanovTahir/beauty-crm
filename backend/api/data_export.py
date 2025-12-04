@@ -6,7 +6,7 @@ API для экспорта/импорта данных с проверкой п
 from fastapi import APIRouter, Request, Cookie, UploadFile, File
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional
-import sqlite3
+
 import csv
 import io
 import json
@@ -79,7 +79,6 @@ async def export_clients(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error exporting clients: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 # ===== ИМПОРТ =====
 
 @router.post("/api/import/clients")
@@ -116,7 +115,7 @@ async def import_clients(
                 continue
 
             # Проверяем, существует ли клиент
-            c.execute("SELECT id FROM clients WHERE instagram_id = ?", (instagram_id,))
+            c.execute("SELECT id FROM clients WHERE instagram_id = %s", (instagram_id,))
             existing = c.fetchone()
 
             if existing:
@@ -130,7 +129,7 @@ async def import_clients(
 
             c.execute("""
                 INSERT INTO clients (instagram_id, name, phone, email, telegram_username, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+                VALUES (%s, %s, %s, %s, %s, %s, NOW())
             """, (instagram_id, name, phone, email, telegram, row.get('status', 'cold')))
 
             imported_count += 1
