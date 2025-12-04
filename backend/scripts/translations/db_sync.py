@@ -9,7 +9,9 @@ import sys
 import os
 from pathlib import Path
 
-# Add parent directory to path
+# Add backend directory to path
+backend_dir = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(backend_dir))
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import (
@@ -18,7 +20,7 @@ from config import (
     SOURCE_LANGUAGE
 )
 
-FRONTEND_LOCALES_DIR = Path(__file__).parent.parent.parent.parent / "frontend" / "src" / "locales"
+FRONTEND_LOCALES_DIR = backend_dir.parent / "frontend" / "src" / "locales"
 
 def sync_translations():
     """

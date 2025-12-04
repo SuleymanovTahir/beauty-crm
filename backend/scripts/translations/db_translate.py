@@ -9,7 +9,11 @@ import sys
 from pathlib import Path
 from typing import Dict, Any
 
-# Add parent directory to path
+# Add backend directory to path
+backend_dir = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(backend_dir))
+# Also add current directory for local imports if needed, but usually backend root is enough if we import as scripts.translations...
+# But here imports are `from config` which implies current dir.
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import (
@@ -115,19 +119,30 @@ def translate_content():
                          #      should_translate = True
                     
                     if should_translate:
+                        # Determine if we should use context injection
+                        # Only use for services table to avoid issues with names
+                        use_context = (table_name == 'services')
+                        
                         # Special handling for names (transliteration)
                         if table_name == 'users' and field_name == 'full_name':
+                            # Ensure source is title cased first
+                            source_clean = source_text.title()
+                            
                             # For Latin languages, use transliteration
                             if lang in ['en', 'de', 'es', 'fr', 'pt']:
-                                translated = translator.transliterate_ru_to_latin(source_text)
+                                translated = translator.transliterate_ru_to_latin(source_clean)
                                 print(f"      → {lang}: '{translated}' (transliterated)")
                             else:
                                 # For non-Latin (ar, hi, kk), use translation (phonetic)
-                                translated = translator.translate(source_text, detected_lang, lang)
+                                translated = translator.translate(source_clean, detected_lang, lang, use_context=False)
                                 print(f"      → {lang}: '{translated}'")
+                            
+                            # Ensure result is title cased
+                            if translated:
+                                translated = translated.title()
                         else:
                             # Standard translation for other fields
-                            translated = translator.translate(source_text, detected_lang, lang)
+                            translated = translator.translate(source_text, detected_lang, lang, use_context=use_context)
                             print(f"      → {lang}: '{translated}'")
                         
                         field_data[lang] = translated
