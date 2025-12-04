@@ -36,7 +36,10 @@ def import_gallery_photos():
         # Создаем папки назначения если их нет
         (project_root / "backend/static/uploads/portfolio").mkdir(parents=True, exist_ok=True)
         (project_root / "backend/static/uploads/salon").mkdir(parents=True, exist_ok=True)
+        (project_root / "backend/static/uploads/portfolio").mkdir(parents=True, exist_ok=True)
+        (project_root / "backend/static/uploads/salon").mkdir(parents=True, exist_ok=True)
         (project_root / "backend/static/uploads/services").mkdir(parents=True, exist_ok=True)
+        (project_root / "backend/static/uploads/faces").mkdir(parents=True, exist_ok=True)
         
         imported_count = 0
         
@@ -49,8 +52,8 @@ def import_gallery_photos():
             },
             {
                 'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Красивые лица",
-                'dest': project_root / "backend/static/uploads/portfolio",
-                'category': 'portfolio'
+                'dest': project_root / "backend/static/uploads/faces",
+                'category': 'faces'
             },
             {
                 'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Фото салона",

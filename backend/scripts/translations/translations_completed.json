@@ -1,4 +1,535 @@
 {
+  "public_reviews": [
+    {
+      "id": 7,
+      "fields": {
+        "text_ru": {
+          "ru": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.",
+          "key": "public_reviews.7.text_ru.941dc55e",
+          "en": "Amazing salon! ",
+          "ar": "صالون مذهل! السادة محترفون حقيقيون. لقد قمت بعمل مكياج حواجب دائم، وكانت النتيجة فاقت كل التوقعات. طبيعية جدا وجميلة.",
+          "es": "Salón increíble! Los maestros son verdaderos profesionales. Me maquillé las cejas permanentemente, el resultado superó todas las expectativas. Muy natural y hermoso.",
+          "de": "Toller Salon! Die Meister sind wahre Profis. Ich habe ein permanentes Augenbrauen-Make-up gemacht, das Ergebnis hat alle Erwartungen übertroffen. Sehr natürlich und schön.",
+          "fr": "Salon incroyable ! Les maîtres sont de vrais professionnels. J'ai fait un maquillage permanent des sourcils, le résultat a dépassé toutes les attentes. Très naturel et beau.",
+          "hi": "अद्भुत सैलून! स्वामी सच्चे पेशेवर हैं। मैंने स्थायी भौं मेकअप किया, परिणाम सभी अपेक्षाओं से अधिक रहा। बहुत ही प्राकृतिक और सुंदर.",
+          "kk": "Таңқаларлық салон! Магистрлер - бұл нағыз мамандар. Мен қастардың тұрақты макияжын жасадым, нәтиже барлық күткеннен асып түсті. Өте табиғи және әдемі.",
+          "pt": "Salão incrível! Os mestres são verdadeiros profissionais. Fiz maquiagem definitiva nas sobrancelhas, o resultado superou todas as expectativas. Muito natural e bonito.",
+          "detected_language": "ru"
+        },
+        "author_name": {
+          "ru": "Анна Петрова",
+          "key": "public_reviews.7.author_name.73217063",
+          "en": "Anna Petrova",
+          "ar": "آنا بتروفا",
+          "es": "Anna Petrová",
+          "de": "Anna Petrowa",
+          "fr": "Anna Petrova",
+          "hi": "अन्ना पेत्रोवा",
+          "kk": "Анна Петрова",
+          "pt": "Ana Petrova",
+          "detected_language": "co"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.8.text_ru.6f00ad70",
+          "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
+          "ar": "أفضل صالون تجميل في دبي! ",
+          "es": "¡El mejor salón de belleza en Dubai! ",
+          "de": "Bester Schönheitssalon in Dubai! ",
+          "fr": "Meilleur salon de beauté à Dubaï ! ",
+          "hi": "दुबई में सर्वश्रेष्ठ ब्यूटी सैलून! ",
+          "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
+          "pt": "Melhor salão de beleza em Dubai! ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Сара Дженкинс",
+          "key": "public_reviews.8.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "text_ru": {
+          "ru": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!",
+          "key": "public_reviews.9.text_ru.9b9eb8cb",
+          "en": "I've been going here for manicures and pedicures for a year now. ",
+          "ar": "لقد كنت أذهب إلى هنا من أجل عمليات تجميل الأظافر والباديكير منذ عام الآن. دائما نظيفة تماما ومعقمة وعالية الجودة. أوصي به لجميع أصدقائي!",
+          "es": "Llevo un año yendo aquí para hacerme manicura y pedicura. Siempre perfectamente limpio, esterilizado y de gran calidad. ¡Se lo recomiendo a todos mis amigos!",
+          "de": "Ich gehe jetzt seit einem Jahr zur Maniküre und Pediküre hierher. Immer perfekt sauber, steril und hochwertig. Ich empfehle es allen meinen Freunden!",
+          "fr": "Cela fait maintenant un an que je vais ici pour des manucures et des pédicures. Toujours parfaitement propre, stérile et de haute qualité. Je le recommande à tous mes amis !",
+          "hi": "मैं पिछले एक साल से यहां मैनीक्योर और पेडीक्योर के लिए जा रही हूं। हमेशा पूरी तरह से साफ, कीटाणुरहित और उच्च गुणवत्ता वाला। मैं अपने सभी दोस्तों को इसकी अनुशंसा करता हूँ!",
+          "kk": "Мен мұнда қазір бір жылдан бері маникюрдер мен педикерлер үшін бара жатқанмын. Әрқашан таза, зарарсыздандырылған және жоғары сапалы. Мен оны барлық достарыма ұсынамын!",
+          "pt": "Há um ano que venho aqui fazer manicure e pedicure. Sempre perfeitamente limpo, estéril e de alta qualidade. Recomendo a todos os meus amigos!",
+          "detected_language": "ru"
+        },
+        "author_name": {
+          "ru": "Елена Смирнова",
+          "key": "public_reviews.9.author_name.cafa8492",
+          "en": "Elena Smirnova",
+          "ar": "ايلينا سميرنوفا",
+          "es": "Elena Smirnova",
+          "de": "Elena Smirnova",
+          "fr": "Elena Smirnova",
+          "hi": "ऐलेना स्मिर्नोवा",
+          "kk": "Елена Смирнов",
+          "pt": "Elena Smirnova",
+          "detected_language": "bg"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.10.text_ru.f38138da",
+          "en": "Incredible service. ",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
+          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
+          "kk": "Керемет қызмет. Менде бет әлпеті болды, терісі жарқырайды. Мен сенімді боламын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
+          "detected_language": "es"
+        },
+        "author_name": {
+          "ru": "Мария Гонсалес",
+          "key": "public_reviews.10.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.11.text_ru.ae85e84b",
+          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "ar": "خدمة ممتازة وفريق عمل محترف. ",
+          "es": "Excelente servicio y personal profesional. ",
+          "de": "Exzellenter Service und professionelles Personal. ",
+          "fr": "Excellent service et personnel professionnel. ",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
+          "kk": "Тамаша қызмет көрсету және кәсіби қызметкерлер. ",
+          "pt": "Excelente atendimento e equipe profissional. ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Фатима Аль-Сайед",
+          "key": "public_reviews.11.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Саид",
+          "pt": "Fátima Al-Sayed",
+          "detected_language": "en"
+        }
+      }
+    }
+  ],
+  "public_faq": [
+    {
+      "id": 13,
+      "fields": {
+        "question_ru": {
+          "ru": "Как записаться на процедуру",
+          "key": "public_faq.13.question_ru.ca37a34b",
+          "en": "How to sign up for the procedure",
+          "ar": "كيفية الاشتراك في هذا الإجراء",
+          "es": "Cómo inscribirse en el trámite",
+          "de": "So melden Sie sich für das Verfahren an",
+          "fr": "Comment s'inscrire à la procédure",
+          "hi": "प्रक्रिया के लिए साइन अप कैसे करें",
+          "kk": "Процедураға қалай тіркелуге болады",
+          "pt": "Como se inscrever no procedimento",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Вы можете записаться на процедуру через форму на нашем сайте, позвонив по телефону, или написав нам в Instagram. Мы свяжемся с вами для подтверждения записи.",
+          "key": "public_faq.13.answer_ru.0aebd2fd",
+          "en": "You can sign up for the procedure through the form on our website, by calling, or writing to us on Instagram. ",
+          "ar": "يمكنك الاشتراك في الإجراء من خلال النموذج الموجود على موقعنا الإلكتروني أو عن طريق الاتصال بنا أو مراسلتنا على Instagram. سوف نتصل بك لتأكيد موعدك.",
+          "es": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos por Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
+          "de": "Sie können sich für das Verfahren über das Formular auf unserer Website anmelden, indem Sie uns anrufen oder uns auf Instagram schreiben. Wir werden Sie kontaktieren, um Ihren Termin zu bestätigen.",
+          "fr": "Vous pouvez vous inscrire à la procédure via le formulaire sur notre site Internet, en nous appelant ou en nous écrivant sur Instagram. Nous vous contacterons pour confirmer votre rendez-vous.",
+          "hi": "आप हमारी वेबसाइट पर फ़ॉर्म के माध्यम से, कॉल करके या इंस्टाग्राम पर हमें लिखकर प्रक्रिया के लिए साइन अप कर सकते हैं। हम आपकी नियुक्ति की पुष्टि करने के लिए आपसे संपर्क करेंगे।",
+          "kk": "Процедураға біздің веб-сайттағы пішін арқылы, Instagram-да қоңырау шалып, жаза отырып, бізге жазыла аласыз. Кездесуді растау үшін сізбен хабарласамыз.",
+          "pt": "Você pode se inscrever no procedimento através do formulário em nosso site, ligando ou escrevendo para nós no Instagram. Entraremos em contato para confirmar seu agendamento.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие способы оплаты вы принимаете",
+          "key": "public_faq.14.question_ru.0db37e23",
+          "en": "What payment methods do you accept?",
+          "ar": "ما هي طرق الدفع التي تقبلونها؟",
+          "es": "¿Qué métodos de pago aceptan?",
+          "de": "Welche Zahlungsmethoden akzeptieren Sie?",
+          "fr": "Quels modes de paiement acceptez-vous ?",
+          "hi": "आप कौन सी भुगतान पद्धतियां स्वीकार करते हैं?",
+          "kk": "Сіз қандай төлем әдістерін қабылдайсыз?",
+          "pt": "Quais métodos de pagamento você aceita?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги.",
+          "key": "public_faq.14.answer_ru.c07c855f",
+          "en": "We accept payment in cash and cards (Visa, MasterCard, American Express). ",
+          "ar": "نحن نقبل الدفع نقدًا وبطاقات (فيزا، ماستركارد، أمريكان إكسبريس). يتم الدفع بعد تقديم الخدمة.",
+          "es": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
+          "de": "Wir akzeptieren Zahlungen in bar und mit Karten (Visa, MasterCard, American Express). Die Bezahlung erfolgt nach Erbringung der Leistung.",
+          "fr": "Nous acceptons les paiements en espèces et par cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+          "hi": "हम नकद और कार्ड (वीज़ा, मास्टरकार्ड, अमेरिकन एक्सप्रेस) में भुगतान स्वीकार करते हैं। सेवा प्रदान करने के बाद भुगतान किया जाता है।",
+          "kk": "Біз төлемді қолма-қол ақшамен және карточкаларда қабылдаймыз (Visa, MasterCard, American Express). Төлем қызмет көрсетілгеннен кейін жүзеге асырылады.",
+          "pt": "Aceitamos pagamento em dinheiro e cartões (Visa, MasterCard, American Express). O pagamento é feito após a prestação do serviço.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "question_ru": {
+          "ru": "Могу ли я отменить или перенести запись",
+          "key": "public_faq.15.question_ru.e2d9683f",
+          "en": "Can I cancel or reschedule an appointment?",
+          "ar": "هل يمكنني إلغاء أو إعادة جدولة موعد؟",
+          "es": "¿Puedo cancelar o reprogramar una cita?",
+          "de": "Kann ich einen Termin absagen oder verschieben?",
+          "fr": "Puis-je annuler ou reporter un rendez-vous ?",
+          "hi": "क्या मैं किसी अपॉइंटमेंट को रद्द या पुनर्निर्धारित कर सकता हूँ?",
+          "kk": "Кездесуді болдырмауға немесе қайта жоспарлауға бола ма?",
+          "pt": "Posso cancelar ou reagendar uma consulta?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+          "key": "public_faq.15.answer_ru.6efb24d6",
+          "en": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. ",
+          "ar": "نعم، يمكنك إلغاء أو إعادة جدولة موعدك حتى 24 ساعة قبل الموعد المقرر. إذا تم الإلغاء قبل أقل من 24 ساعة، فقد يتم فرض غرامة قدرها 50% من تكلفة الخدمة.",
+          "es": "Sí, puedes cancelar o reprogramar tu cita hasta 24 horas antes de la hora programada. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
+          "de": "Ja, Sie können Ihren Termin bis zu 24 Stunden vor Ihrem geplanten Termin absagen oder verschieben. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
+          "fr": "Oui, vous pouvez annuler ou reprogrammer votre rendez-vous jusqu'à 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
+          "hi": "हां, आप अपने निर्धारित समय से 24 घंटे पहले तक अपनी नियुक्ति रद्द या पुनर्निर्धारित कर सकते हैं। 24 घंटे से कम समय पहले रद्द करने पर सेवा की लागत का 50% जुर्माना लगाया जा सकता है।",
+          "kk": "Ия, сіз кездесуден 24 сағат бұрын кездесуден бас тартуға немесе қайта жоспарлай аласыз. Егер алдын-ала 24 сағаттан аз болса, алдын-ала 24 сағаттан аз болса, онда қызмет құнының 50% айыппұл алынады.",
+          "pt": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие материалы вы используете",
+          "key": "public_faq.16.question_ru.04ca7970",
+          "en": "What materials do you use",
+          "ar": "ما هي المواد التي تستخدمها",
+          "es": "¿Qué materiales utilizas?",
+          "de": "Welche Materialien verwenden Sie?",
+          "fr": "Quels matériaux utilisez-vous",
+          "hi": "आप कौन सी सामग्री का उपयोग करते हैं",
+          "kk": "Сіз қандай материалдарды қолданасыз",
+          "pt": "Que materiais você usa",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+          "key": "public_faq.16.answer_ru.9989a917",
+          "en": "We use only certified premium materials from the world's leading brands. ",
+          "ar": "نحن نستخدم فقط المواد المتميزة المعتمدة من العلامات التجارية الرائدة في العالم. جميع الأصباغ مضادة للحساسية وآمنة للصحة.",
+          "es": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud.",
+          "de": "Wir verwenden ausschließlich zertifizierte Premiummaterialien der weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
+          "fr": "Nous utilisons uniquement des matériaux certifiés haut de gamme provenant des plus grandes marques mondiales. Tous les pigments sont hypoallergéniques et sans danger pour la santé.",
+          "hi": "हम दुनिया के अग्रणी ब्रांडों से केवल प्रमाणित प्रीमियम सामग्री का उपयोग करते हैं। सभी रंगद्रव्य हाइपोएलर्जेनिक हैं और स्वास्थ्य के लिए सुरक्षित हैं।",
+          "kk": "Біз әлемдегі жетекші брендтерден тек сертификатталған премиум материалдарды қолданамыз. Барлық пигменттер гипоаллергенді және денсаулыққа қауіпсіз.",
+          "pt": "Utilizamos apenas materiais premium certificados das marcas líderes mundiais. Todos os pigmentos são hipoalergênicos e seguros para a saúde.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли у ваших мастеров сертификаты",
+          "key": "public_faq.17.question_ru.10e5389c",
+          "en": "Do your craftsmen have certificates?",
+          "ar": "هل لدى الحرفيين شهادات؟",
+          "es": "¿Tienen sus artesanos certificados?",
+          "de": "Verfügen Ihre Handwerker über Zertifikate?",
+          "fr": "Vos artisans ont-ils des certificats ?",
+          "hi": "क्या आपके कारीगरों के पास प्रमाणपत्र हैं?",
+          "kk": "Қолөнершілеріңізде сертификаттар бар ма?",
+          "pt": "Seus artesãos possuem certificados?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.",
+          "key": "public_faq.17.answer_ru.c33e5756",
+          "en": "Yes, all our masters have international certificates and regularly take advanced training courses.",
+          "ar": "نعم، جميع الأساتذة لدينا حاصلون على شهادات دولية ويأخذون دورات تدريبية متقدمة بانتظام.",
+          "es": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
+          "de": "Ja, alle unsere Meister verfügen über internationale Zertifikate und nehmen regelmäßig an Fortbildungen teil.",
+          "fr": "Oui, tous nos masters sont titulaires de certificats internationaux et suivent régulièrement des formations avancées.",
+          "hi": "हां, हमारे सभी मास्टर्स के पास अंतरराष्ट्रीय प्रमाणपत्र हैं और वे नियमित रूप से उन्नत प्रशिक्षण पाठ्यक्रम लेते हैं।",
+          "kk": "Иә, біздің барлық шеберлеріміз халықаралық сертификаттарға ие және үнемі біліктілікті арттыру курстарынан өтеді.",
+          "pt": "Sim, todos os nossos mestres possuem certificados internacionais e realizam regularmente cursos de formação avançada.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "question_ru": {
+          "ru": "Нужна ли подготовка перед процедурой",
+          "key": "public_faq.18.question_ru.4a091b3c",
+          "en": "Is preparation necessary before the procedure?",
+          "ar": "هل التحضير ضروري قبل الإجراء؟",
+          "es": "¿Es necesaria preparación antes del procedimiento?",
+          "de": "Ist vor dem Eingriff eine Vorbereitung notwendig?",
+          "fr": "Une préparation est-elle nécessaire avant l’intervention ?",
+          "hi": "क्या प्रक्रिया से पहले तैयारी आवश्यक है?",
+          "kk": "Процедураға дейін дайындық қажет пе?",
+          "pt": "É necessária preparação antes do procedimento?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.",
+          "key": "public_faq.18.answer_ru.c6e12dad",
+          "en": "Yes, some procedures require preparation. ",
+          "ar": "نعم، بعض الإجراءات تتطلب التحضير. نحن نقدم توصيات مفصلة عند التسجيل.",
+          "es": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
+          "de": "Ja, einige Verfahren erfordern eine Vorbereitung. Detaillierte Empfehlungen geben wir Ihnen bei der Anmeldung.",
+          "fr": "Oui, certaines procédures nécessitent une préparation. Nous fournissons des recommandations détaillées lors de l’inscription.",
+          "hi": "हां, कुछ प्रक्रियाओं के लिए तैयारी की आवश्यकता होती है। हम पंजीकरण पर विस्तृत अनुशंसाएँ प्रदान करते हैं।",
+          "kk": "Иә, кейбір процедуралар дайындауды қажет етеді. Біз тіркеуден өткеннен кейін егжей-тегжейлі ұсыныстар береміз.",
+          "pt": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do registro.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли противопоказания к процедурам",
+          "key": "public_faq.19.question_ru.6d37eadc",
+          "en": "Are there any contraindications to the procedures?",
+          "ar": "هل هناك أي موانع للإجراءات؟",
+          "es": "¿Existe alguna contraindicación para los procedimientos?",
+          "de": "Gibt es Kontraindikationen für die Verfahren?",
+          "fr": "Y a-t-il des contre-indications aux procédures ?",
+          "hi": "क्या प्रक्रियाओं में कोई मतभेद हैं?",
+          "kk": "Процедураларға қарсы көрсетілімдер бар ма?",
+          "pt": "Existem contra-indicações para os procedimentos?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
+          "key": "public_faq.19.answer_ru.a2d7b11d",
+          "en": "Yes, each procedure has its own contraindications. ",
+          "ar": "نعم، كل إجراء له موانع خاصة به. الرئيسية: الحمل، الرضاعة، الالتهابات الحادة، أمراض الدم، الأورام. قبل الإجراء، مطلوب التشاور مع أخصائي.",
+          "es": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento es necesaria la consulta con un especialista.",
+          "de": "Ja, jedes Verfahren hat seine eigenen Kontraindikationen. Hauptsächlich: Schwangerschaft, Stillzeit, akute entzündliche Prozesse, Blutkrankheiten, Onkologie. Vor dem Eingriff ist eine Rücksprache mit einem Spezialisten erforderlich.",
+          "fr": "Oui, chaque procédure a ses propres contre-indications. Principal : grossesse, allaitement, processus inflammatoires aigus, maladies du sang, oncologie. Avant l'intervention, une consultation avec un spécialiste est nécessaire.",
+          "hi": "हां, प्रत्येक प्रक्रिया के अपने मतभेद होते हैं। मुख्य: गर्भावस्था, स्तनपान, तीव्र सूजन प्रक्रियाएं, रक्त रोग, ऑन्कोलॉजी। प्रक्रिया से पहले, किसी विशेषज्ञ से परामर्श आवश्यक है।",
+          "kk": "Иә, әр процедураның өз көрсеткіштері бар. Негізгі: жүктілік, лактация, жедел қабатты қабыну процестері, қан аурулары, онкология. Процедураға дейін маманмен кеңес алу қажет.",
+          "pt": "Sim, cada procedimento tem suas contra-indicações. Principal: gravidez, lactação, processos inflamatórios agudos, doenças do sangue, oncologia. Antes do procedimento, é necessária consulta com um especialista.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "question_ru": {
+          "ru": "Предоставляете ли вы гарантию на услуги",
+          "key": "public_faq.20.question_ru.53c63ea4",
+          "en": "Do you provide a guarantee for services",
+          "ar": "هل تقدم ضمانا للخدمات",
+          "es": "¿Ofrecen una garantía por los servicios?",
+          "de": "Gewähren Sie eine Garantie für Dienstleistungen?",
+          "fr": "Fournissez-vous une garantie pour les services",
+          "hi": "क्या आप सेवाओं के लिए गारंटी प्रदान करते हैं?",
+          "kk": "Сіз қызметтерге кепілдік бересіз бе?",
+          "pt": "Você fornece uma garantia para serviços",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
+          "key": "public_faq.20.answer_ru.5480ef0d",
+          "en": "Yes, we guarantee the quality of all our services. ",
+          "ar": "نعم، نحن نضمن جودة جميع خدماتنا. إذا لم تكن راضيًا عن النتيجة، فاتصل بنا خلال 7 أيام وسنجد الحل.",
+          "es": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
+          "de": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Sollten Sie mit dem Ergebnis nicht zufrieden sein, kontaktieren Sie uns innerhalb von 7 Tagen und wir finden eine Lösung.",
+          "fr": "Oui, nous garantissons la qualité de tous nos services. Si vous n'êtes pas satisfait du résultat, contactez-nous dans les 7 jours et nous trouverons une solution.",
+          "hi": "हां, हम अपनी सभी सेवाओं की गुणवत्ता की गारंटी देते हैं। यदि आप परिणाम से संतुष्ट नहीं हैं, तो 7 दिनों के भीतर हमसे संपर्क करें और हम समाधान ढूंढेंगे।",
+          "kk": "Иә, біз барлық қызметтеріміздің сапасына кепілдік береміз. Егер сіз нәтижеге қанағаттанбасаңыз, бізге 7 күн ішінде хабарласыңыз және біз шешім табамыз.",
+          "pt": "Sim, garantimos a qualidade de todos os nossos serviços. Se não ficar satisfeito com o resultado, contacte-nos no prazo de 7 dias e encontraremos uma solução.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли у вас программа лояльности",
+          "key": "public_faq.21.question_ru.40eab490",
+          "en": "Do you have a loyalty program",
+          "ar": "هل لديك برنامج الولاء",
+          "es": "¿Tienes un programa de fidelización?",
+          "de": "Haben Sie ein Treueprogramm?",
+          "fr": "Avez-vous un programme de fidélité",
+          "hi": "क्या आपके पास कोई लॉयल्टी कार्यक्रम है",
+          "kk": "Сізде адалдық бағдарламасы бар ма?",
+          "pt": "Você tem um programa de fidelidade",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
+          "key": "public_faq.21.answer_ru.caa87ffe",
+          "en": "Yes, we have a cumulative loyalty program. ",
+          "ar": "نعم، لدينا برنامج ولاء تراكمي. بعد كل زيارة تتلقى مكافآت يمكن استخدامها لدفع ثمن الزيارات المستقبلية.",
+          "es": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas futuras.",
+          "de": "Ja, wir haben ein kumulatives Treueprogramm. Nach jedem Besuch erhalten Sie Prämien, mit denen Sie künftige Besuche bezahlen können.",
+          "fr": "Oui, nous avons un programme de fidélité cumulatif. Après chaque visite, vous recevez des bonus qui peuvent être utilisés pour payer de futures visites.",
+          "hi": "हाँ, हमारे पास एक संचयी वफादारी कार्यक्रम है। प्रत्येक विज़िट के बाद आपको बोनस प्राप्त होता है जिसका उपयोग भविष्य की विज़िट के भुगतान के लिए किया जा सकता है।",
+          "kk": "Иә, бізде кумулятивті адалдық бағдарламасы бар. Әр сапардан кейін сіз болашаққа кіру үшін пайдалануға болатын бонустар аласыз.",
+          "pt": "Sim, temos um programa de fidelidade cumulativo. Após cada visita você recebe bônus que podem ser usados ​​para pagar visitas futuras.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "question_ru": {
+          "ru": "Работаете ли вы в выходные",
+          "key": "public_faq.22.question_ru.09fd8154",
+          "en": "Do you work on weekends",
+          "ar": "هل تعمل في عطلة نهاية الأسبوع",
+          "es": "¿Trabajas los fines de semana?",
+          "de": "Arbeiten Sie am Wochenende?",
+          "fr": "Travaillez-vous le week-end",
+          "hi": "क्या आप सप्ताहांत पर काम करते हैं",
+          "kk": "Сіз демалыс күндері жұмыс жасайсыз ба?",
+          "pt": "Você trabalha nos finais de semana",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы работаем 7 дней в неделю.",
+          "key": "public_faq.22.answer_ru.652dc0a6",
+          "en": "Yes, we work 7 days a week.",
+          "ar": "نعم، نحن نعمل 7 أيام في الأسبوع.",
+          "es": "Sí, trabajamos los 7 días de la semana.",
+          "de": "Ja, wir arbeiten 7 Tage die Woche.",
+          "fr": "Oui, nous travaillons 7 jours sur 7.",
+          "hi": "हां, हम सप्ताह में सातों दिन काम करते हैं।",
+          "kk": "Иә, біз аптасына 7 күн жұмыс істейміз.",
+          "pt": "Sim, trabalhamos 7 dias por semana.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "question_ru": {
+          "ru": "Можно ли подарить сертификат на услуги",
+          "key": "public_faq.23.question_ru.bcc59516",
+          "en": "Is it possible to give a certificate for services?",
+          "ar": "هل من الممكن إعطاء شهادة للخدمات؟",
+          "es": "¿Es posible emitir un certificado de servicios?",
+          "de": "Ist es möglich, für Dienstleistungen ein Zertifikat auszustellen?",
+          "fr": "Est-il possible de délivrer une attestation pour des prestations ?",
+          "hi": "क्या सेवाओं के लिए प्रमाणपत्र देना संभव है?",
+          "kk": "Қызметтерге сертификат беруге бола ма?",
+          "pt": "É possível emitir certificado de serviços?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
+          "key": "public_faq.23.answer_ru.3ae65684",
+          "en": "Yes, we offer gift certificates for any amount or for specific services. ",
+          "ar": "نعم، نقدم شهادات هدايا بأي مبلغ أو لخدمات محددة. اتصل بنا للحصول على الشهادة.",
+          "es": "Sí, ofrecemos certificados de regalo por cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
+          "de": "Ja, wir bieten Geschenkgutscheine in beliebiger Höhe oder für bestimmte Leistungen an. Kontaktieren Sie uns, um ein Zertifikat zu erhalten.",
+          "fr": "Oui, nous proposons des chèques-cadeaux pour n'importe quel montant ou pour des services spécifiques. Contactez-nous pour obtenir un certificat.",
+          "hi": "हां, हम किसी भी राशि या विशिष्ट सेवाओं के लिए उपहार प्रमाण पत्र प्रदान करते हैं। प्रमाणपत्र प्राप्त करने के लिए हमसे संपर्क करें.",
+          "kk": "Иә, біз кез-келген сома немесе нақты қызметтер үшін сыйлық сертификаттарын ұсынамыз. Сертификат алу үшін бізге хабарласыңыз.",
+          "pt": "Sim, oferecemos vales-presente de qualquer valor ou para serviços específicos. Entre em contato conosco para obter um certificado.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "fields": {
+        "question_ru": {
+          "ru": "Где находится ваш салон",
+          "key": "public_faq.24.question_ru.2cc640a7",
+          "en": "Where is your salon located?",
+          "ar": "أين يقع صالونك؟",
+          "es": "¿Dónde está ubicado tu salón?",
+          "de": "Wo befindet sich Ihr Salon?",
+          "fr": "Où se trouve votre salon ?",
+          "hi": "आपका सैलून कहाँ स्थित है?",
+          "kk": "Сіздің салоныңыз қай жерде орналасқан?",
+          "pt": "Onde fica o seu salão?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы находимся в центре Дубая. Подробную информацию о том, как добраться, вы можете найти на странице Контакты.",
+          "key": "public_faq.24.answer_ru.62473075",
+          "en": "We are located in the center of Dubai. ",
+          "ar": "نحن موجودون في وسط دبي. يمكن العثور على معلومات مفصلة حول كيفية الوصول إلى هناك على صفحة جهات الاتصال.",
+          "es": "Estamos ubicados en el centro de Dubai. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",
+          "de": "Wir befinden uns im Zentrum von Dubai. Detaillierte Informationen zur Anfahrt finden Sie auf der Seite Kontakte.",
+          "fr": "Nous sommes situés au centre de Dubaï. Des informations détaillées sur la façon de s'y rendre sont disponibles sur la page Contacts.",
+          "hi": "हम दुबई के केंद्र में स्थित हैं। वहां कैसे पहुंचें इसकी विस्तृत जानकारी संपर्क पृष्ठ पर पाई जा सकती है।",
+          "kk": "Біз Дубай орталығында орналасқан. Онда қалай жетуге болатындығы туралы толық ақпаратты Контактілер бетінен табуға болады.",
+          "pt": "Estamos localizados no centro de Dubai. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos.",
+          "detected_language": "ru"
+        }
+      }
+    }
+  ],
   "services": [
     {
       "id": 14,
@@ -19,101 +550,11 @@
       }
     },
     {
-      "id": 9,
-      "fields": {
-        "duration": {
-          "ru": "Услуги салона красоты 1 час",
-          "key": "services.9.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "duration": {
-          "ru": "Услуги салона красоты 1 час",
-          "key": "services.11.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
       "id": 6,
       "fields": {
         "duration": {
           "ru": "Услуги салона красоты 1 час",
           "key": "services.6.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 12,
-      "fields": {
-        "duration": {
-          "ru": "Услуги салона красоты 1 час",
-          "key": "services.12.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "duration": {
-          "ru": "Услуги салона красоты 1 час",
-          "key": "services.15.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "duration": {
-          "ru": "Услуги салона красоты 1 час",
-          "key": "services.17.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -163,11 +604,65 @@
       }
     },
     {
+      "id": 9,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.9.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
       "id": 10,
       "fields": {
         "duration": {
           "ru": "Услуги салона красоты 1 час",
           "key": "services.10.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.11.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.12.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -199,11 +694,47 @@
       }
     },
     {
+      "id": 15,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.15.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
       "id": 16,
       "fields": {
         "duration": {
           "ru": "Услуги салона красоты 1 час",
           "key": "services.16.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.17.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -522,30 +1053,56 @@
     {
       "id": 1,
       "fields": {
-        "title_en": {
-          "ru": "Красота и элегантность",
-          "key": "public_banners.1.title_en.4687a10a",
-          "en": "Beauty and elegance",
+        "title_ru": {
+          "ru": "Красота и Элегантность",
+          "key": "public_banners.1.title_ru.0b52ad71",
+          "en": "Beauty and Elegance",
           "ar": "الجمال والأناقة",
           "es": "Belleza y elegancia",
           "de": "Schönheit und Eleganz",
           "fr": "Beauté et élégance",
           "hi": "सुंदरता और सुंदरता",
           "kk": "Сұлулық және әсемдік",
-          "pt": "Beleza e elegância",
+          "pt": "Beleza e Elegância",
+          "detected_language": "ru"
+        },
+        "title_en": {
+          "ru": "Красота и элегантность",
+          "key": "public_banners.1.title_en.4eca14ce",
+          "en": "Beauty and Elegance",
+          "ar": "الجمال والأناقة",
+          "es": "Belleza y elegancia",
+          "de": "Schönheit und Eleganz",
+          "fr": "Beauté et élégance",
+          "hi": "सुंदरता और सुंदरता",
+          "kk": "Сұлулық және әсемдік",
+          "pt": "Beleza e Elegância",
           "detected_language": "en"
+        },
+        "subtitle_ru": {
+          "ru": "Профессиональные услуги красоты",
+          "key": "public_banners.1.subtitle_ru.a02f5b36",
+          "en": "Professional beauty services",
+          "ar": "خدمات التجميل المهنية",
+          "es": "Servicios de belleza profesionales.",
+          "de": "Professionelle Schönheitsdienstleistungen",
+          "fr": "Services de beauté professionnels",
+          "hi": "व्यावसायिक सौंदर्य सेवाएँ",
+          "kk": "Кәсіби сұлулық қызметтері",
+          "pt": "Serviços profissionais de beleza",
+          "detected_language": "ru"
         },
         "subtitle_en": {
           "ru": "Профессиональные косметические услуги",
-          "key": "public_banners.1.subtitle_en.95ee795f",
-          "en": "Professional cosmetic services",
+          "key": "public_banners.1.subtitle_en.86f36861",
+          "en": "Professional Beauty Services",
           "ar": "خدمات التجميل المهنية",
-          "es": "Servicios de cosmética profesional.",
-          "de": "Professionelle kosmetische Dienstleistungen",
-          "fr": "Services cosmétiques professionnels",
-          "hi": "पेशेवर कॉस्मेटिक सेवाएँ",
-          "kk": "Кәсіби косметикалық қызметтер",
-          "pt": "Serviços cosméticos profissionais",
+          "es": "Servicios de belleza profesionales",
+          "de": "Professionelle Schönheitsdienstleistungen",
+          "fr": "Services de beauté professionnels",
+          "hi": "व्यावसायिक सौंदर्य सेवाएँ",
+          "kk": "Кәсіби сұлулық қызметтері",
+          "pt": "Serviços profissionais de beleza",
           "detected_language": "en"
         }
       }
@@ -553,148 +1110,57 @@
     {
       "id": 2,
       "fields": {
-        "title_en": {
+        "title_ru": {
           "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_en.8898447c",
-          "en": "Discounts of up to 50%",
-          "ar": "خصومات تصل إلى 50%",
-          "es": "Descuentos de hasta el 50%",
-          "de": "Rabatte von bis zu 50 %",
-          "fr": "Des réductions jusqu'à 50%",
-          "hi": "50% तक की छूट",
-          "kk": "50% дейін жеңілдіктер",
-          "pt": "Descontos de até 50%",
-          "detected_language": "en"
-        },
-        "title_de": {
-          "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_de.09819cde",
-          "en": "Discounts of up to 50%",
-          "ar": "خصومات تصل إلى 50%",
-          "es": "Descuentos de hasta el 50%",
-          "de": "Rabatte von bis zu 50 %",
-          "fr": "Des réductions jusqu'à 50%",
-          "hi": "50% तक की छूट",
-          "kk": "50% дейін жеңілдіктер",
-          "pt": "Descontos de até 50%",
-          "detected_language": "de"
-        },
-        "title_es": {
-          "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_es.c7c5e0b2",
+          "key": "public_banners.2.title_ru.816f4b30",
           "en": "Discounts up to 50%",
           "ar": "خصومات تصل إلى 50%",
-          "es": "Descuentos de hasta el 50%",
+          "es": "Descuentos hasta el 50%",
           "de": "Rabatte bis zu 50 %",
           "fr": "Réductions jusqu'à 50%",
           "hi": "50% तक की छूट",
           "kk": "50% дейін жеңілдіктер",
           "pt": "Descontos de até 50%",
-          "detected_language": "es"
+          "detected_language": "ru"
         },
-        "title_fr": {
+        "title_en": {
           "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_fr.9b372647",
-          "en": "Discounts of up to 50%",
+          "key": "public_banners.2.title_en.82e81214",
+          "en": "Discounts up to 50%",
           "ar": "خصومات تصل إلى 50%",
-          "es": "Descuentos de hasta el 50%",
-          "de": "Rabatte von bis zu 50 %",
-          "fr": "Des réductions jusqu'à 50%",
+          "es": "Descuentos hasta el 50%",
+          "de": "Rabatte bis zu 50 %",
+          "fr": "Réductions jusqu'à 50%",
           "hi": "50% तक की छूट",
           "kk": "50% дейін жеңілдіктер",
           "pt": "Descontos de até 50%",
-          "detected_language": "fr"
+          "detected_language": "en"
         },
         "subtitle_ru": {
-          "ru": "Во всех услугах салона",
-          "key": "public_banners.2.subtitle_ru.4f919a80",
-          "en": "In all salon services",
-          "ar": "في كافة خدمات الصالون",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen",
-          "fr": "Dans tous les services du salon",
-          "hi": "सभी सैलून सेवाओं में",
-          "kk": "Барлық салон қызметтерінде",
-          "pt": "Em todos os serviços de salão",
+          "ru": "На все услуги салона",
+          "key": "public_banners.2.subtitle_ru.f9d0958e",
+          "en": "For all salon services",
+          "ar": "لجميع خدمات الصالون",
+          "es": "Para todos los servicios de salón",
+          "de": "Für alle Salondienstleistungen",
+          "fr": "Pour tous les services du salon",
+          "hi": "सभी सैलून सेवाओं के लिए",
+          "kk": "Барлық салон қызметтері үшін",
+          "pt": "Para todos os serviços de salão",
           "detected_language": "ru"
         },
         "subtitle_en": {
-          "ru": "Во всех услугах салона",
-          "key": "public_banners.2.subtitle_en.0e1c38ec",
-          "en": "In all salon services",
-          "ar": "في كافة خدمات الصالون",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen",
-          "fr": "Dans tous les services du salon",
-          "hi": "सभी सैलून सेवाओं में",
+          "ru": "На все услуги салона",
+          "key": "public_banners.2.subtitle_en.7f804704",
+          "en": "On all salon services",
+          "ar": "على جميع خدمات الصالون",
+          "es": "En todos los servicios del salón",
+          "de": "Auf alle Salondienstleistungen",
+          "fr": "Sur tous les services du salon",
+          "hi": "सभी सैलून सेवाओं पर",
           "kk": "Барлық салон қызметтерінде",
           "pt": "Em todos os serviços de salão",
           "detected_language": "en"
-        },
-        "subtitle_ar": {
-          "ru": "Во всех услугах салона",
-          "key": "public_banners.2.subtitle_ar.67b62ed1",
-          "en": "In all salon services",
-          "ar": "في كافة خدمات الصالون",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen",
-          "fr": "Dans tous les services du salon",
-          "hi": "सभी सैलून सेवाओं में",
-          "kk": "Барлық салон қызметтерінде",
-          "pt": "Em todos os serviços de salão",
-          "detected_language": "ar"
-        },
-        "subtitle_de": {
-          "ru": "Во всех услугах салона",
-          "key": "public_banners.2.subtitle_de.3004d5ec",
-          "en": "In all salon services",
-          "ar": "في كافة خدمات الصالون",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen",
-          "fr": "Dans tous les services du salon",
-          "hi": "सभी सैलून सेवाओं में",
-          "kk": "Барлық салон қызметтерінде",
-          "pt": "Em todos os serviços de salão",
-          "detected_language": "de"
-        },
-        "subtitle_es": {
-          "ru": "Во всех услугах салона.",
-          "key": "public_banners.2.subtitle_es.770f8cd2",
-          "en": "In all salon services.",
-          "ar": "في كافة خدمات الصالون.",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen.",
-          "fr": "Dans tous les services du salon.",
-          "hi": "सभी सैलून सेवाओं में.",
-          "kk": "Барлық салон қызметтерінде.",
-          "pt": "Em todos os serviços de salão.",
-          "detected_language": "es"
-        },
-        "subtitle_fr": {
-          "ru": "Во всех услугах салона",
-          "key": "public_banners.2.subtitle_fr.ea96461e",
-          "en": "In all salon services",
-          "ar": "في كافة خدمات الصالون",
-          "es": "En todos los servicios del salón.",
-          "de": "In allen Salondienstleistungen",
-          "fr": "Dans tous les services du salon",
-          "hi": "सभी सैलून सेवाओं में",
-          "kk": "Барлық салон қызметтерінде",
-          "pt": "Em todos os serviços de salão",
-          "detected_language": "fr"
-        },
-        "subtitle_hi": {
-          "ru": "Все услуги салона",
-          "key": "public_banners.2.subtitle_hi.992b815d",
-          "en": "All salon services",
-          "ar": "جميع خدمات الصالون",
-          "es": "Todos los servicios del salón",
-          "de": "Alle Salondienstleistungen",
-          "fr": "Toutes les prestations du salon",
-          "hi": "सभी सैलून सेवाओं में",
-          "kk": "Барлық салон қызметтері",
-          "pt": "Todos os serviços de salão",
-          "detected_language": "hi"
         }
       }
     }
