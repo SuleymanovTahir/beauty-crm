@@ -84,8 +84,9 @@
     "db:i18n:sync": "cd ../backend && venv/bin/python scripts/translations/db_sync.py",
     "db:i18n:sync-db": "cd ../backend && venv/bin/python scripts/translations/db_sync_to_db.py",
     "db:i18n:sync-frontend": "cd ../backend && venv/bin/python scripts/translations/sync_frontend_locales.py",
-    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db && npm run db:i18n:sync-frontend",
-    "i18n:static": "cd ../backend && venv/bin/python scripts/translations/static_translate.py"
+    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db && npm run db:i18n:sync-frontend && npm run frontend:i18n:auto",
+    "i18n:static": "cd ../backend && venv/bin/python scripts/translations/static_translate.py",
+    "frontend:i18n:auto": "cd ../backend && venv/bin/python scripts/translations/frontend_translate.py"
   },
   "overrides": {
     "glob": "^10.0.0",
