@@ -57,10 +57,11 @@ def create_position(name: str, name_en: str = None, name_ar: str = None,
     try:
         c.execute("""INSERT INTO positions
                      (name, name_en, name_ar, name_fr, name_de, description, sort_order, is_active, created_at, updated_at)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)
+                     RETURNING id""",
                   (name, name_en, name_ar, name_fr, name_de, description, sort_order, now, now))
 
-        position_id = c.lastrowid
+        position_id = c.fetchone()[0]
         conn.commit()
         return position_id
     except sqlite3.IntegrityError:

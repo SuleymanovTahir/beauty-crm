@@ -3,9 +3,26 @@
     {
       "id": 7,
       "fields": {
+        "position": {
+          "ru": "Director",
+          "key": "users.7.position.7c5ba892",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
         "full_name": {
-          "ru": "Турсунай",
-          "key": "users.7.full_name.ab8bc7dd",
+          "ru": "JENNIFER",
+          "key": "users.6.full_name.da883156",
           "en": null,
           "ar": null,
           "es": null,
@@ -16,49 +33,8 @@
           "pt": null
         },
         "position": {
-          "ru": "Director",
-          "key": "users.7.position.7c5ba892",
-          "en": "Director",
-          "ar": "المدير",
-          "es": "Directora",
-          "de": "Schönheitssalonservice Direktor",
-          "fr": "Service salon de beauté Directrice",
-          "hi": "ब्यूटी सैलून सेवा निदेशक",
-          "kk": "Директордың директоры",
-          "pt": "Diretor"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "full_name": {
-          "ru": "JENNIFER",
-          "key": "users.6.full_name.da883156",
-          "en": "JENNIFER",
-          "ar": "جينيفر",
-          "es": "JENNIFER",
-          "de": "JENNIFER",
-          "fr": "JENNIFER",
-          "hi": "ब्यूटी सैलून सेवा जेनिफर",
-          "kk": "Дженнифер",
-          "pt": "JENNIFER"
-        },
-        "position": {
           "ru": "Nail Master/Massages",
           "key": "users.6.position.d68a2270",
-          "en": "Nail Master/Massages",
-          "ar": "ماجستير الأظافر/التدليك",
-          "es": "Maestro de uñas/Masajes",
-          "de": "Nagelmeister/Massagen",
-          "fr": "Maître des Ongles/Massages",
-          "hi": "नेल मास्टर/मालिश",
-          "kk": "Тырнақ қожайыны / массаж",
-          "pt": "Mestre de unhas/massagens"
-        },
-        "bio": {
-          "ru": "Специалист по nail-дизайну и массажным техникам",
-          "key": "users.6.bio.dd2b1fca",
           "en": null,
           "ar": null,
           "es": null,
@@ -76,30 +52,18 @@
         "full_name": {
           "ru": "LYAZZAT",
           "key": "users.4.full_name.cff5b0c9",
-          "en": "LYAZZAT",
-          "ar": "ليازات",
-          "es": "LYAZZAT",
-          "de": "LYAZZAT",
-          "fr": "LYAZZAT",
-          "hi": "ब्यूटी सैलून सेवा LYAZZAT",
-          "kk": "Ляззат",
-          "pt": "LYAZZAT"
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         },
         "position": {
           "ru": "Nail Master",
           "key": "users.4.position.1c34eb1b",
-          "en": "Nail Master",
-          "ar": "سيد الأظافر",
-          "es": "Maestro de uñas",
-          "de": "Nagelmeister",
-          "fr": "Maître des Ongles",
-          "hi": "नेल मास्टर",
-          "kk": "Тырнақ шебері",
-          "pt": "Mestre de unhas"
-        },
-        "bio": {
-          "ru": "Эксперт по уходу за ногтями",
-          "key": "users.4.bio.e26d3b88",
           "en": null,
           "ar": null,
           "es": null,
@@ -117,30 +81,18 @@
         "full_name": {
           "ru": "SIMO",
           "key": "users.2.full_name.3bfe88dd",
-          "en": "SIMO",
-          "ar": "سيمو",
-          "es": "SIMO",
-          "de": "SIMO",
-          "fr": "SIMO",
-          "hi": "ब्यूटी सैलून सेवा सिमो",
-          "kk": "Simo",
-          "pt": "SIMO"
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         },
         "position": {
           "ru": "Hair Stylist",
           "key": "users.2.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        },
-        "bio": {
-          "ru": "Мастер стрижек и окрашивания",
-          "key": "users.2.bio.b8b7cc7b",
           "en": null,
           "ar": null,
           "es": null,
@@ -170,18 +122,6 @@
         "position": {
           "ru": "Hair Stylist",
           "key": "users.3.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        },
-        "bio": {
-          "ru": "Стилист-парикмахер с креативным подходом",
-          "key": "users.3.bio.abf5132f",
           "en": null,
           "ar": null,
           "es": null,
@@ -211,18 +151,6 @@
         "position": {
           "ru": "Nail/Waxing",
           "key": "users.5.position.0e33fa6b",
-          "en": "Nail/Waxing",
-          "ar": "الأظافر/إزالة الشعر بالشمع",
-          "es": "Uñas/Depilación",
-          "de": "Schönheitssalonservice Nägel/Wachsen",
-          "fr": "Service institut de beauté Onglerie/Epilation",
-          "hi": "ब्यूटी सैलून सेवा नेल/वैक्सिंग",
-          "kk": "Тырнақ / балауыз",
-          "pt": "Unhas/Depilação"
-        },
-        "bio": {
-          "ru": "Профессиональный мастер с многолетним опытом",
-          "key": "users.5.bio.0d2e40c5",
           "en": null,
           "ar": null,
           "es": null,
@@ -2515,56 +2443,13 @@
       }
     }
   ],
-  "salon_settings": [
-    {
-      "id": 1,
-      "fields": {
-        "address": {
-          "ru": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
-          "key": "salon_settings.1.address.343b34cf",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "city": {
-          "ru": "Dubai",
-          "key": "salon_settings.1.city.23b998b1",
-          "en": "Dubai",
-          "ar": "Dubai",
-          "es": "Dubai",
-          "de": "Dubai",
-          "fr": "Dubai",
-          "hi": "Dubai",
-          "kk": "Dubai",
-          "pt": "Dubai"
-        },
-        "country": {
-          "ru": "UAE",
-          "key": "salon_settings.1.country.b6ae56d2",
-          "en": "UAE",
-          "ar": "UAE",
-          "es": "UAE",
-          "de": "UAE",
-          "fr": "UAE",
-          "hi": "UAE",
-          "kk": "UAE",
-          "pt": "UAE"
-        }
-      }
-    }
-  ],
   "public_banners": [
     {
       "id": 2,
       "fields": {
         "title_ru": {
-          "ru": "Получите скидку до 50% на все услуги в нашем салоне красоты в Дубае.",
-          "key": "public_banners.2.title_ru.747d0277",
+          "ru": "Получите скидку до 50% на все услуги в нашем салоне красоты в Дубае",
+          "key": "public_banners.2.title_ru.92d62431",
           "en": null,
           "ar": null,
           "es": null,
@@ -2575,68 +2460,20 @@
           "pt": null
         },
         "title_en": {
-          "ru": "Get up to 50% off on all services at our beauty salon in Dubai",
-          "key": "public_banners.2.title_en.8516b4d9",
-          "en": "Get up to 50% off on all services at our beauty salon in Dubai",
-          "ar": "احصل على خصم يصل إلى 50% على جميع الخدمات في صالون التجميل الخاص بنا في دبي",
-          "es": "Consigue hasta un 50% de descuento en todos los servicios de nuestro salón de belleza en Dubái",
-          "de": "Erhalten Sie bis zu 50 % Rabatt auf alle Dienstleistungen in unserem Schönheitssalon in Dubai",
-          "fr": "Obtenez jusqu'à 50 % de réduction sur tous les services de notre salon de beauté à Dubaï",
-          "hi": "दुबई में हमारे ब्यूटी सैलून में सभी सेवाओं पर 50% तक की छूट पाएं",
-          "kk": "Дубайдағы сұлулық салонындағы барлық қызметтерге 50% жеңілдік алыңыз",
-          "pt": "Ganhe até 50% de desconto em todos os serviços do nosso salão de beleza em Dubai"
+          "ru": "Get up to 50% off all services at our beauty salon in Dubai",
+          "key": "public_banners.2.title_en.3e577407",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         },
         "title_ar": {
           "ru": "احصل على خصم يصل إلى 50% على جميع الخدمات في صالون التجميل الخاص بنا في دبي",
           "key": "public_banners.2.title_ar.c0e86f8e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_es": {
-          "ru": "Consigue hasta un 50% de descuento en todos los servicios de nuestro salón de belleza en Dubái",
-          "key": "public_banners.2.title_es.fc3a31a3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_fr": {
-          "ru": "Obtenez jusqu'à 50 % de réduction sur tous les services de notre salon de beauté à Dubaï",
-          "key": "public_banners.2.title_fr.48c3185e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_kk": {
-          "ru": "Дубайдағы сұлулық салонындағы барлық қызметтерге 50% жеңілдік алыңыз",
-          "key": "public_banners.2.title_kk.47749fd9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_pt": {
-          "ru": "Ganhe até 50% de desconto em todos os serviços do nosso salão de beleza em Dubai",
-          "key": "public_banners.2.title_pt.45609cbc",
           "en": null,
           "ar": null,
           "es": null,

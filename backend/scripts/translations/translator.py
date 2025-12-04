@@ -69,7 +69,7 @@ class Translator:
         except Exception as e:
             print(f"⚠️  Could not save cache: {e}")
     
-    def _translate_via_http(self, text: str, source: str, target: str) -> str:
+    def _translate_via_http(self, text: str, source: str, target: str, use_context: bool = False) -> str:
         """
         Translate text using Google Translate HTTP API with context
         
@@ -77,6 +77,7 @@ class Translator:
             text: Text to translate
             source: Source language code
             target: Target language code
+            use_context: Whether to inject context (e.g. for services)
             
         Returns:
             Translated text
@@ -85,31 +86,27 @@ class Translator:
             # Add context for beauty salon services to improve translation accuracy
             # This helps Google Translate understand the domain
             context_prefix = ""
-            context_suffix = ""
             
-            # Detect if this is likely a beauty salon term (short phrases, service names)
-            # Exclude proper nouns (e.g., "Samsung Innovation Campus")
-            words = text.split()
-            capital_words_count = sum(1 for word in words if len(word) > 0 and word[0].isupper())
-            # If more than 1 word starts with capital, it's likely a proper noun/brand name
-            is_proper_noun = capital_words_count > 1
-            is_service_term = len(words) <= 2 and not text.endswith('.') and not is_proper_noun
-            
-            if is_service_term:
-                # Add context hint for better translation
-                # We'll add it and then remove it from the result
-                if source == 'en':
-                    context_prefix = "[Beauty salon service] "
-                elif source == 'ru':
-                    context_prefix = "[Услуга салона красоты] "
+            if use_context:
+                # Detect if this is likely a beauty salon term (short phrases, service names)
+                # Exclude proper nouns (e.g., "Samsung Innovation Campus")
+                words = text.split()
+                capital_words_count = sum(1 for word in words if len(word) > 0 and word[0].isupper())
+                # If more than 1 word starts with capital, it's likely a proper noun/brand name
+                is_proper_noun = capital_words_count > 1
+                is_service_term = len(words) <= 3 and not text.endswith('.') and not is_proper_noun
                 
-                text_with_context = context_prefix + text
-            else:
-                text_with_context = text
+                if is_service_term:
+                    if source == 'en':
+                        context_prefix = "[Beauty salon service] "
+                    elif source == 'ru':
+                        context_prefix = "[Услуга салона красоты] "
+            
+            text_with_context = context_prefix + text
             
             # URL encode
             encoded_text = urllib.parse.quote(text_with_context)
-            url = f"https://translate.googleapis.com/translate_a/single%sclient=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
+            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
             
             req = urllib.request.Request(url)
             req.add_header('User-Agent', 'Mozilla/5.0')
@@ -159,7 +156,7 @@ class Translator:
         try:
             # Encode text for URL
             encoded_text = urllib.parse.quote(text[:200])  # Use first 200 chars for detection
-            url = f"https://translate.googleapis.com/translate_a/single%sclient=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
+            url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q={encoded_text}"
             
             # Make request
             req = urllib.request.Request(url)
@@ -182,7 +179,7 @@ class Translator:
             print(f"  ⚠️  Language detection error: {e}")
             return 'ru'  # Default fallback
     
-    def translate(self, text: str, source: str, target: str) -> str:
+    def translate(self, text: str, source: str, target: str, use_context: bool = False) -> str:
         """
         Translate text from source language to target language
         
@@ -190,6 +187,7 @@ class Translator:
             text: Text to translate
             source: Source language code (e.g., 'ru')
             target: Target language code (e.g., 'en')
+            use_context: Whether to inject context
             
         Returns:
             Translated text, or original text if translation fails
@@ -203,13 +201,15 @@ class Translator:
             return text
         
         # Check cache first
-        cached = self._get_cached_translation(text, source, target)
+        # We append context flag to key to differentiate
+        cache_key_suffix = "|ctx" if use_context else ""
+        cached = self._get_cached_translation(text + cache_key_suffix, source, target)
         if cached:
             return cached
         
         # Translate using Google Translate HTTP API
-        translated = self._translate_via_http(text, source, target)
-        self._save_to_cache(text, source, target, translated)
+        translated = self._translate_via_http(text, source, target, use_context=use_context)
+        self._save_to_cache(text + cache_key_suffix, source, target, translated)
         
         # Small delay to avoid rate limiting
         time.sleep(0.1)

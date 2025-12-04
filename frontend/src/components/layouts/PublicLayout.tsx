@@ -74,6 +74,17 @@ export default function PublicLayout() {
                   <span className="text-sm">{salonInfo.phone}</span>
                 </a>
               )}
+              {salonInfo.instagram && (
+                <a
+                  href={`https://instagram.com/${salonInfo.instagram.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-pink-600 hover:text-pink-700 transition-colors"
+                  title="Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+              )}
               {salonInfo.whatsapp && (
                 <a
                   href={`https://wa.me/${salonInfo.whatsapp.replace(/\D/g, '')}`}

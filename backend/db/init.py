@@ -332,7 +332,7 @@ def init_database():
                   name_zh TEXT,
                   name_pt TEXT,
                   description TEXT,
-                  sort_order BOOLEAN DEFAULT FALSE,
+                  sort_order INTEGER DEFAULT 0,
                   is_active BOOLEAN DEFAULT TRUE,
                   created_at TEXT,
                   updated_at TEXT)''')
@@ -1085,6 +1085,20 @@ def init_database():
         UNIQUE(client_id)
     )''')
 
+    # Таблица подписок пользователей
+    c.execute('''CREATE TABLE IF NOT EXISTS user_subscriptions (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        subscription_type TEXT NOT NULL,
+        is_subscribed BOOLEAN DEFAULT TRUE,
+        email_enabled BOOLEAN DEFAULT TRUE,
+        telegram_enabled BOOLEAN DEFAULT TRUE,
+        instagram_enabled BOOLEAN DEFAULT TRUE,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(user_id, subscription_type)
+    )''')
+
     # Таблица настроек мессенджеров
     c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
         id SERIAL PRIMARY KEY,
@@ -1223,23 +1237,6 @@ def init_database():
     from .clients import ensure_client_columns
     ensure_client_columns(conn)
     
-    # Создать базовые услуги если их нет
-    c.execute("SELECT COUNT(*) FROM services")
-    if c.fetchone()[0] == 0:
-        default_services = [
-            ("haircut_woman", "Women's Haircut", "Женская стрижка", "Hair", 250.0, "60"),
-            ("haircut_man", "Men's Haircut", "Мужская стрижка", "Hair", 150.0, "45"),
-            ("manicure_classic", "Classic Manicure", "Классический маникюр", "Nails", 120.0, "60"),
-            ("pedicure_classic", "Classic Pedicure", "Классический педикюр", "Nails", 150.0, "60"),
-            ("massage_relax", "Relax Massage", "Релакс массаж", "Massage", 300.0, "60"),
-            ("facial_basic", "Basic Facial", "Базовый уход за лицом", "Face", 250.0, "60")
-        ]
-        
-        c.executemany("""
-            INSERT INTO services (service_key, name, name_ru, category, price, duration, is_active, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, 1, NOW())
-        """, default_services)
-        log_info(f"✅ Создано {len(default_services)} базовых услуг", "db")
     
     # Создать начальных сотрудников с фото
     

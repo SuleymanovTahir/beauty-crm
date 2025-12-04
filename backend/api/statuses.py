@@ -31,7 +31,7 @@ async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
                 status_key TEXT PRIMARY KEY,
                 status_label TEXT NOT NULL,
                 status_color TEXT NOT NULL,
-                is_system BOOLEAN DEFAULT 0,
+                is_system BOOLEAN DEFAULT FALSE,
                 created_at TEXT NOT NULL
             )
         """)
@@ -43,20 +43,20 @@ async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
             now = datetime.now().isoformat()
             
             system_statuses = [
-                ('new', 'Новый', 'bg-green-100 text-green-800', 1),
-                ('contacted', 'Связались', 'bg-blue-100 text-blue-800', 1),
-                ('interested', 'Заинтересован', 'bg-yellow-100 text-yellow-800', 1),
-                ('lead', 'Лид', 'bg-orange-100 text-orange-800', 1),
-                ('customer', 'Клиент', 'bg-purple-100 text-purple-800', 1),
-                ('vip', 'VIP', 'bg-pink-100 text-pink-800', 1),
-                ('inactive', 'Неактивен', 'bg-gray-100 text-gray-800', 1),
-                ('blocked', 'Заблокирован', 'bg-red-100 text-red-800', 1),
+                ('new', 'Новый', 'bg-green-100 text-green-800', True),
+                ('contacted', 'Связались', 'bg-blue-100 text-blue-800', True),
+                ('interested', 'Заинтересован', 'bg-yellow-100 text-yellow-800', True),
+                ('lead', 'Лид', 'bg-orange-100 text-orange-800', True),
+                ('customer', 'Клиент', 'bg-purple-100 text-purple-800', True),
+                ('vip', 'VIP', 'bg-pink-100 text-pink-800', True),
+                ('inactive', 'Неактивен', 'bg-gray-100 text-gray-800', True),
+                ('blocked', 'Заблокирован', 'bg-red-100 text-red-800', True),
             ]
             
             for status_key, label, color, is_system in system_statuses:
                 c.execute("""
                     INSERT INTO client_statuses (status_key, status_label, status_color, is_system, created_at)
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s)
                 """, (status_key, label, color, is_system, now))
             
             conn.commit()
@@ -105,14 +105,14 @@ async def create_client_status(
         c = conn.cursor()
         
         # Проверяем существование
-        c.execute("SELECT status_key FROM client_statuses WHERE status_key = ?", (status_key,))
+        c.execute("SELECT status_key FROM client_statuses WHERE status_key = %s", (status_key,))
         if c.fetchone():
             conn.close()
             return JSONResponse({"error": "Status already exists"}, status_code=400)
         
         c.execute("""
             INSERT INTO client_statuses (status_key, status_label, status_color, is_system, created_at)
-            VALUES (?, ?, ?, 0, ?)
+            VALUES (%s, %s, %s, FALSE, %s)
         """, (status_key, status_label, status_color, datetime.now().isoformat()))
         
         conn.commit()
@@ -141,7 +141,7 @@ async def delete_client_status(
         c = conn.cursor()
         
         # Проверяем что это не системный статус
-        c.execute("SELECT is_system FROM client_statuses WHERE status_key = ?", (status_key,))
+        c.execute("SELECT is_system FROM client_statuses WHERE status_key = %s", (status_key,))
         result = c.fetchone()
         
         if not result:
@@ -152,7 +152,7 @@ async def delete_client_status(
             conn.close()
             return JSONResponse({"error": "Cannot delete system status"}, status_code=400)
         
-        c.execute("DELETE FROM client_statuses WHERE status_key = ?", (status_key,))
+        c.execute("DELETE FROM client_statuses WHERE status_key = %s", (status_key,))
         conn.commit()
         conn.close()
         
@@ -180,7 +180,7 @@ async def get_booking_statuses(session_token: Optional[str] = Cookie(None)):
                 status_key TEXT PRIMARY KEY,
                 status_label TEXT NOT NULL,
                 status_color TEXT NOT NULL,
-                is_system BOOLEAN DEFAULT 0,
+                is_system BOOLEAN DEFAULT FALSE,
                 created_at TEXT NOT NULL
             )
         """)
@@ -191,17 +191,17 @@ async def get_booking_statuses(session_token: Optional[str] = Cookie(None)):
             now = datetime.now().isoformat()
             
             system_statuses = [
-                ('pending', 'Ожидает', 'bg-yellow-100 text-yellow-800', 1),
-                ('confirmed', 'Подтверждена', 'bg-green-100 text-green-800', 1),
-                ('completed', 'Завершена', 'bg-blue-100 text-blue-800', 1),
-                ('cancelled', 'Отменена', 'bg-red-100 text-red-800', 1),
-                ('new', 'Новая', 'bg-purple-100 text-purple-800', 1),
+                ('pending', 'Ожидает', 'bg-yellow-100 text-yellow-800', True),
+                ('confirmed', 'Подтверждена', 'bg-green-100 text-green-800', True),
+                ('completed', 'Завершена', 'bg-blue-100 text-blue-800', True),
+                ('cancelled', 'Отменена', 'bg-red-100 text-red-800', True),
+                ('new', 'Новая', 'bg-purple-100 text-purple-800', True),
             ]
             
             for status_key, label, color, is_system in system_statuses:
                 c.execute("""
                     INSERT INTO booking_statuses (status_key, status_label, status_color, is_system, created_at)
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s)
                 """, (status_key, label, color, is_system, now))
             
             conn.commit()
@@ -249,14 +249,14 @@ async def create_booking_status(
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("SELECT status_key FROM booking_statuses WHERE status_key = ?", (status_key,))
+        c.execute("SELECT status_key FROM booking_statuses WHERE status_key = %s", (status_key,))
         if c.fetchone():
             conn.close()
             return JSONResponse({"error": "Status already exists"}, status_code=400)
         
         c.execute("""
             INSERT INTO booking_statuses (status_key, status_label, status_color, is_system, created_at)
-            VALUES (?, ?, ?, 0, ?)
+            VALUES (%s, %s, %s, FALSE, %s)
         """, (status_key, status_label, status_color, datetime.now().isoformat()))
         
         conn.commit()

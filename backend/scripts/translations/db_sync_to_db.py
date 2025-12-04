@@ -5,12 +5,15 @@ Updates database columns with translations from JSON files
 """
 
 import json
-from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
-# Add parent directory to path
+# Add backend directory to path
+backend_dir = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(backend_dir))
 sys.path.insert(0, str(Path(__file__).parent))
+
+from db.connection import get_db_connection
 
 from config import (
     TRANSLATE_OUTPUT,
@@ -40,7 +43,7 @@ def sync_to_database():
         print("✨ No translations to sync.")
         return
     
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
     
     total_updates = 0
@@ -91,7 +94,7 @@ def sync_to_database():
                             target_column = f"{field_name}_{lang}"
                         
                         # Check if column exists
-                        c.execute(f"PRAGMA table_info({table_name})")
+                        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table_name,))
                         columns = {col[0] for col in c.fetchall()}
                         
                         if target_column not in columns:
