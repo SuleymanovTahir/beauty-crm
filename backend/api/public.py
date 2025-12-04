@@ -324,9 +324,11 @@ async def get_public_banners():
             return url
 
         banners = []
-        for row in c.fetchall():
-            banner = dict(row)
-            banner['image_url'] = sanitize_url(banner['image_url'])
+        rows = c.fetchall()
+        columns = [desc[0] for desc in c.description]
+        for row in rows:
+            banner = dict(zip(columns, row))
+            banner['image_url'] = sanitize_url(banner.get('image_url'))
             banners.append(banner)
             
         return {"banners": banners}
