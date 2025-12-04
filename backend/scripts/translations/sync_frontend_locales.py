@@ -34,7 +34,6 @@ def get_all_keys_from_file(file_path: Path) -> Set[str]:
     
     return set(data.keys())
 
-
 def get_all_keys_across_languages(filename: str) -> Set[str]:
     """Get union of all keys across all language files"""
     all_keys = set()
@@ -45,7 +44,6 @@ def get_all_keys_across_languages(filename: str) -> Set[str]:
         all_keys.update(keys)
     
     return all_keys
-
 
 def add_missing_translations():
     """Add missing translations to all locale files"""
@@ -123,7 +121,6 @@ def add_missing_translations():
     
     print(f"\n✨ Added {total_added} missing translations!")
     return total_added
-
 
 if __name__ == "__main__":
     print("🔍 Checking for missing translations in frontend locale files...")

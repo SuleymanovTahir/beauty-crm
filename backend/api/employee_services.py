@@ -4,7 +4,7 @@ API Endpoints для управления услугами сотруднико�
 from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth
@@ -12,7 +12,6 @@ from utils.logger import log_error, log_info
 from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Employee Services"])
-
 
 @router.get("/users/{user_id}/services")
 async def get_user_services(
@@ -35,7 +34,7 @@ async def get_user_services(
                 us.is_online_booking_enabled, us.is_calendar_enabled
             FROM services s
             JOIN user_services us ON s.id = us.service_id
-            WHERE us.user_id = ?
+            WHERE us.user_id = %s
             ORDER BY s.category, s.name
         """, (user_id,))
         
@@ -89,7 +88,6 @@ async def get_user_services(
         log_error(f"Error getting user services: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/users/{user_id}/services")
 async def add_user_service(
     user_id: int,
@@ -117,7 +115,7 @@ async def add_user_service(
         c = conn.cursor()
         
         # Check if already assigned
-        c.execute("SELECT id FROM user_services WHERE user_id = ? AND service_id = ?",
+        c.execute("SELECT id FROM user_services WHERE user_id = %s AND service_id = %s",
                  (user_id, service_id))
         if c.fetchone():
             conn.close()
@@ -128,7 +126,7 @@ async def add_user_service(
             INSERT INTO user_services 
             (user_id, service_id, price, price_min, price_max, duration, 
              is_online_booking_enabled, is_calendar_enabled)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (user_id, service_id, price, price_min, price_max, duration,
               1 if is_online_booking_enabled else 0,
               1 if is_calendar_enabled else 0))
@@ -143,7 +141,6 @@ async def add_user_service(
     except Exception as e:
         log_error(f"Error adding user service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/users/{user_id}/services/{service_id}")
 async def update_user_service(
@@ -167,27 +164,27 @@ async def update_user_service(
         params = []
         
         if "price" in data:
-            updates.append("price = ?")
+            updates.append("price = %s")
             params.append(data["price"])
         
         if "price_min" in data:
-            updates.append("price_min = ?")
+            updates.append("price_min = %s")
             params.append(data["price_min"])
         
         if "price_max" in data:
-            updates.append("price_max = ?")
+            updates.append("price_max = %s")
             params.append(data["price_max"])
         
         if "duration" in data:
-            updates.append("duration = ?")
+            updates.append("duration = %s")
             params.append(data["duration"])
         
         if "is_online_booking_enabled" in data:
-            updates.append("is_online_booking_enabled = ?")
+            updates.append("is_online_booking_enabled = %s")
             params.append(1 if data["is_online_booking_enabled"] else 0)
         
         if "is_calendar_enabled" in data:
-            updates.append("is_calendar_enabled = ?")
+            updates.append("is_calendar_enabled = %s")
             params.append(1 if data["is_calendar_enabled"] else 0)
         
         if not updates:
@@ -196,7 +193,7 @@ async def update_user_service(
         
         params.extend([user_id, service_id])
         
-        query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = ? AND service_id = ?"
+        query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = %s AND service_id = %s"
         c.execute(query, params)
         
         conn.commit()
@@ -209,7 +206,6 @@ async def update_user_service(
     except Exception as e:
         log_error(f"Error updating user service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/users/{user_id}/services/{service_id}")
 async def delete_user_service(
@@ -225,7 +221,7 @@ async def delete_user_service(
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("DELETE FROM user_services WHERE user_id = ? AND service_id = ?",
+        c.execute("DELETE FROM user_services WHERE user_id = %s AND service_id = %s",
                  (user_id, service_id))
         
         conn.commit()

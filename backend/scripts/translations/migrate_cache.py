@@ -9,7 +9,6 @@ import shutil
 from pathlib import Path
 from config import CACHE_DIR
 
-
 def migrate_cache():
     """
     Migrate from individual cache files to consolidated cache
@@ -74,7 +73,6 @@ def migrate_cache():
     print(f"   rm -rf {cache_dir}/*.json && mv {cache_file} {cache_dir}/")
     print(f"\n   Or use the cleanup script:")
     print(f"   python3 scripts/translations/cleanup_cache.py")
-
 
 if __name__ == "__main__":
     migrate_cache()

@@ -14,12 +14,10 @@ if backend_dir not in sys.path:
 
 from core.config import DATABASE_NAME
 
-
 def print_header(text):
     print("\n" + "="*80)
     print(f"  {text}")
     print("="*80)
-
 
 def run_migration_function(func, description):
     """Run a migration function and return success status"""
@@ -33,7 +31,6 @@ def run_migration_function(func, description):
         import traceback
         traceback.print_exc()
         return False
-
 
 def run_all_migrations():
     """Run all consolidated migrations"""
@@ -168,7 +165,6 @@ def run_all_migrations():
     print("="*80 + "\n")
 
     return failed == 0
-
 
 if __name__ == "__main__":
     try:

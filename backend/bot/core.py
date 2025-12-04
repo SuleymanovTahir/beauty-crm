@@ -1,5 +1,5 @@
 # backend/bot/core.py
-import sqlite3
+
 import google.generativeai as genai
 import httpx
 import os
@@ -8,7 +8,6 @@ from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 from bot.tools import get_available_time_slots, check_time_slot_available
 from utils.datetime_utils import get_current_time
-
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -20,7 +19,6 @@ from db import (
 )
 from services.smart_assistant import SmartAssistant
 from services.conversation_context import ConversationContext
-
 
 class SalonBot:
     """
@@ -734,7 +732,6 @@ class SalonBot:
             
         raise Exception("All retry attempts exhausted")
 
-
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке"""
         responses = {
@@ -782,10 +779,8 @@ class SalonBot:
 
         return False
 
-
 # Глобальный экземпляр бота
 _bot_instance = None
-
 
 def get_bot() -> SalonBot:
     """Получить глобальный экземпляр бота (singleton)"""

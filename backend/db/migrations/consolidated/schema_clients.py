@@ -4,7 +4,6 @@ All schema changes for clients table in one place
 """
 from db.connection import get_db_connection
 
-
 def migrate_clients_schema(db_path="salon_bot.db"):
     """
     Apply all clients table schema changes
@@ -75,7 +74,6 @@ def migrate_clients_schema(db_path="salon_bot.db"):
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     migrate_clients_schema()

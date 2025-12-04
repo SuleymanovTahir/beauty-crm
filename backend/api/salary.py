@@ -5,7 +5,7 @@ API Endpoints для расчета зарплаты сотрудников
 from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from datetime import datetime, timedelta
 
 from core.config import DATABASE_NAME
@@ -15,7 +15,6 @@ from utils.logger import log_info, log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Salary"])
-
 
 @router.get("/salary/settings/{user_id}")
 async def get_user_salary_settings(user_id: int, current_user: dict = Depends(get_current_user)):
@@ -29,7 +28,7 @@ async def get_user_salary_settings(user_id: int, current_user: dict = Depends(ge
             SELECT uss.*, u.full_name
             FROM user_salary_settings uss
             JOIN users u ON uss.user_id = u.id
-            WHERE uss.user_id = ?
+            WHERE uss.user_id =%s
         """, (user_id,))
         
         row = c.fetchone()
@@ -46,7 +45,6 @@ async def get_user_salary_settings(user_id: int, current_user: dict = Depends(ge
     finally:
         conn.close()
 
-
 @router.post("/salary/settings/{user_id}")
 async def update_salary_settings(user_id: int, request: Request, current_user: dict = Depends(get_current_user)):
     """Обновить настройки зарплаты пользователя"""
@@ -60,16 +58,16 @@ async def update_salary_settings(user_id: int, request: Request, current_user: d
         c = conn.cursor()
         
         # Проверяем существование пользователя
-        c.execute("SELECT id FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT id FROM users WHERE id =%s", (user_id,))
         if not c.fetchone():
             return {"success": False, "error": "Пользователь не найден"}
         
         # Обновляем или создаем настройки
         c.execute("""
-            INSERT OR REPLACE INTO user_salary_settings
+            INSERT INTO user_salary_settings
             (user_id, salary_type, hourly_rate, monthly_rate, commission_rate,
              bonus_rate, currency, is_active, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s, NOW(), NOW())
         """, (
             user_id,
             data.get("salary_type", "hourly"),
@@ -89,7 +87,6 @@ async def update_salary_settings(user_id: int, request: Request, current_user: d
     except Exception as e:
         log_error(f"Error updating salary settings: {e}", "salary")
         return {"success": False, "error": str(e)}
-
 
 @router.post("/salary/calculate")
 async def calculate_salary(
@@ -116,7 +113,7 @@ async def calculate_salary(
         # Получить настройки зарплаты
         c.execute("""
             SELECT * FROM user_salary_settings
-            WHERE user_id = ? AND is_active = TRUE
+            WHERE user_id =%s AND is_active = TRUE
         """, (user_id,))
         settings = c.fetchone()
 
@@ -127,9 +124,9 @@ async def calculate_salary(
         c.execute("""
             SELECT COUNT(*) as count, SUM(b.price) as revenue
             FROM bookings b
-            WHERE b.master = (SELECT name FROM employees WHERE id = ?)
+            WHERE b.master = (SELECT name FROM employees WHERE id =%s)
             AND b.status = 'completed'
-            AND b.datetime BETWEEN ? AND ?
+            AND b.datetime BETWEEN%s AND%s
         """, (user_id, period_start, period_end))
         services = c.fetchone()
 
@@ -161,7 +158,7 @@ async def calculate_salary(
             INSERT INTO salary_calculations
             (employee_id, period_start, period_end, services_completed, services_revenue,
              base_salary, commission_amount, total_salary, status, calculated_at, calculated_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s, 'pending', NOW(),%s)
         """, (
             employee_id, period_start, period_end, services_completed, services_revenue,
             base_salary, commission_amount, total_salary, current_user["id"]
@@ -189,7 +186,6 @@ async def calculate_salary(
     except Exception as e:
         log_error(f"Error calculating salary: {e}", "salary")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/salary/calculations")
 async def get_salary_calculations(current_user: dict = Depends(get_current_user)):
@@ -220,7 +216,6 @@ async def get_salary_calculations(current_user: dict = Depends(get_current_user)
         log_error(f"Error fetching salary calculations: {e}", "salary")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/salary/{calculation_id}/approve")
 async def approve_salary(
     calculation_id: int,
@@ -237,9 +232,9 @@ async def approve_salary(
         c.execute("""
             UPDATE salary_calculations
             SET status = 'approved',
-                approved_at = datetime('now'),
-                approved_by = ?
-            WHERE id = ?
+                approved_at = NOW(),
+                approved_by =%s
+            WHERE id =%s
         """, (current_user["id"], calculation_id))
 
         conn.commit()
@@ -251,7 +246,6 @@ async def approve_salary(
     except Exception as e:
         log_error(f"Error approving salary: {e}", "salary")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/salary/{calculation_id}/pay")
 async def mark_salary_paid(
@@ -269,8 +263,8 @@ async def mark_salary_paid(
         c.execute("""
             UPDATE salary_calculations
             SET status = 'paid',
-                paid_at = datetime('now')
-            WHERE id = ?
+                paid_at = NOW()
+            WHERE id =%s
         """, (calculation_id,))
 
         conn.commit()

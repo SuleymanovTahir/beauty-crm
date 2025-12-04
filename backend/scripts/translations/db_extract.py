@@ -214,6 +214,5 @@ def extract_translatable_content():
     
     return results
 
-
 if __name__ == "__main__":
     extract_translatable_content()

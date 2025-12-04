@@ -8,7 +8,6 @@ from db.connection import get_db_connection
 from core.config import PAGE_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, INSTAGRAM_BUSINESS_ID
 from utils.logger import log_info, log_error
 
-
 async def send_instagram_reminder(client_id: str, message: str) -> bool:
     """Отправить напоминание в Instagram"""
     if not PAGE_ACCESS_TOKEN:
@@ -44,7 +43,6 @@ async def send_instagram_reminder(client_id: str, message: str) -> bool:
         log_error(f"Error sending Instagram reminder: {e}", "reminders")
         return False
 
-
 async def send_telegram_reminder(client_id: str, message: str) -> bool:
     """Отправить напоминание в Telegram"""
     if not TELEGRAM_BOT_TOKEN:
@@ -60,7 +58,7 @@ async def send_telegram_reminder(client_id: str, message: str) -> bool:
 
         c.execute("""
             SELECT telegram_chat_id FROM messenger_messages
-            WHERE client_id = ? AND messenger_type = 'telegram'
+            WHERE client_id = %s AND messenger_type = 'telegram'
             ORDER BY created_at DESC LIMIT 1
         """, (client_id,))
 
@@ -95,13 +93,11 @@ async def send_telegram_reminder(client_id: str, message: str) -> bool:
         log_error(f"Error sending Telegram reminder: {e}", "reminders")
         return False
 
-
 async def send_whatsapp_reminder(client_id: str, message: str) -> bool:
     """Отправить напоминание в WhatsApp"""
     # TODO: Реализовать отправку через WhatsApp Business API
     log_error("WhatsApp reminders not implemented yet", "reminders")
     return False
-
 
 def get_client_preferred_messenger(client_id: str) -> Optional[str]:
     """Получить предпочтительный мессенджер клиента"""
@@ -110,7 +106,7 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
 
     # Пытаемся получить из таблицы clients (если она существует)
     try:
-        c.execute("SELECT preferred_messenger FROM clients WHERE instagram_id = ?", (client_id,))
+        c.execute("SELECT preferred_messenger FROM clients WHERE instagram_id = %s", (client_id,))
         result = c.fetchone()
         conn.close()
 
@@ -132,7 +128,7 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
     c = conn.cursor()
 
     # Проверяем Instagram
-    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = ?", (client_id,))
+    c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = %s", (client_id,))
     if c.fetchone()[0] > 0:
         conn.close()
         return 'instagram'
@@ -141,7 +137,7 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
     c.execute("""
         SELECT messenger_type, MAX(created_at) as last_message
         FROM messenger_messages
-        WHERE client_id = ?
+        WHERE client_id = %s
         GROUP BY messenger_type
         ORDER BY last_message DESC
         LIMIT 1
@@ -154,7 +150,6 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
         return result[0]
 
     return 'instagram'  # По умолчанию
-
 
 async def send_reminder_via_preferred_messenger(
     client_id: str,
@@ -236,7 +231,6 @@ async def send_reminder_via_preferred_messenger(
         "error": error_message
     }
 
-
 async def send_reminders_for_upcoming_bookings(hours_before: int = 24) -> List[Dict[str, Any]]:
     """
     Отправить напоминания для всех предстоящих записей
@@ -259,8 +253,8 @@ async def send_reminders_for_upcoming_bookings(hours_before: int = 24) -> List[D
         SELECT id, instagram_id, name, service_name, datetime, master
         FROM bookings
         WHERE status = 'pending'
-        AND datetime BETWEEN ? AND ?
-        AND datetime > ?
+        AND datetime BETWEEN %s AND %s
+        AND datetime > %s
     """, (
         now.isoformat(),
         reminder_time.isoformat(),
@@ -305,7 +299,6 @@ async def send_reminders_for_upcoming_bookings(hours_before: int = 24) -> List[D
 
     return results
 
-
 def save_reminder_log(
     booking_id: int,
     client_id: str,
@@ -336,7 +329,7 @@ def save_reminder_log(
         c.execute("""
             INSERT INTO reminder_logs
             (booking_id, client_id, messenger_type, status, error_message, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (booking_id, client_id, messenger_type, status, error_message,
               datetime.now().isoformat()))
 

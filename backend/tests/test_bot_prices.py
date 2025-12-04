@@ -72,7 +72,6 @@ def test_bot_masters_list():
     
     return all_passed
 
-
 def test_bot_slot_filtering():
     """Test that slot availability filters by user_services"""
     print("\n" + "="*60)
@@ -118,7 +117,6 @@ def test_bot_slot_filtering():
         print(f"   ❌ ERROR: Slots shown despite online booking being disabled!")
     
     print("\n" + "="*60)
-
 
 if __name__ == "__main__":
     print("\n🚀 Starting Bot Integration Tests\n")

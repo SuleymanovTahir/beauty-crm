@@ -82,7 +82,6 @@ def test_database_tables():
         print(traceback.format_exc())
         return False
 
-
 def test_notifications_endpoint():
     """Тестировать эндпоинт notifications/settings напрямую"""
     print("\n" + "=" * 70)
@@ -104,7 +103,6 @@ def test_notifications_endpoint():
         print(f"\n❌ ОШИБКА при вызове эндпоинта:")
         print(traceback.format_exc())
         return False
-
 
 def test_booking_reminder_endpoint():
     """Тестировать эндпоинт booking-reminder-settings напрямую"""
@@ -129,7 +127,6 @@ def test_booking_reminder_endpoint():
         print(f"\n❌ ОШИБКА при импорте эндпоинта:")
         print(traceback.format_exc())
         return False
-
 
 def test_http_request():
     """Тестировать через HTTP запрос"""
@@ -165,7 +162,6 @@ def test_http_request():
         print(f"\n❌ ОШИБКА при HTTP запросе:")
         print(traceback.format_exc())
         return False
-
 
 if __name__ == "__main__":
     print("\n" + "=" * 70)

@@ -7,7 +7,6 @@ from pathlib import Path
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-
 def migrate_gallery_schema(db_path=DATABASE_NAME):
     """Создать/обновить таблицу gallery_images"""
     log_info("🔧 Миграция схемы gallery_images...", "migration")
@@ -88,7 +87,6 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
     finally:
         conn.close()
 
-
 def add_show_on_public_page_to_users():
     """Добавить поле show_on_public_page в таблицу users"""
     log_info("🔧 Добавление поля show_on_public_page в users...", "migration")
@@ -126,7 +124,6 @@ def add_show_on_public_page_to_users():
         raise
     finally:
         conn.close()
-
 
 def import_gallery_images(db_path=DATABASE_NAME):
     """Импортировать изображения из папок в базу данных"""
@@ -199,7 +196,6 @@ def import_gallery_images(db_path=DATABASE_NAME):
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     migrate_gallery_schema()

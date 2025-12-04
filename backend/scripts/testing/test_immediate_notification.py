@@ -37,7 +37,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         # 1. Создаем/обновляем тестового клиента
         print("1️⃣ Создание тестового клиента...")
         c.execute("""
-            INSERT OR REPLACE INTO clients
+            INSERT INTO clients
             (instagram_id, username, name, phone, email, status, first_contact, last_contact)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (
@@ -142,7 +142,6 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         return False
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Создать запись для немедленного теста уведомлений')

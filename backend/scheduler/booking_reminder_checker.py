@@ -17,7 +17,6 @@ from db.settings import get_salon_settings
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
 
-
 def get_active_reminder_settings() -> List[Dict]:
     """Получить активные настройки напоминаний"""
     conn = get_db_connection()
@@ -57,7 +56,6 @@ def get_active_reminder_settings() -> List[Dict]:
     finally:
         conn.close()
 
-
 def get_bookings_needing_reminders() -> List[Dict]:
     """Получить записи, которым нужны напоминания"""
     conn = get_db_connection()
@@ -76,7 +74,7 @@ def get_bookings_needing_reminders() -> List[Dict]:
                 cl.email, cl.name as full_name, cl.phone as client_phone
             FROM bookings b
             LEFT JOIN clients cl ON b.instagram_id = cl.instagram_id
-            WHERE b.datetime >= ? AND b.datetime <= ?
+            WHERE b.datetime >= %s AND b.datetime <= %s
               AND b.status NOT IN ('cancelled', 'completed')
             ORDER BY b.datetime ASC
         """, (now.isoformat(), two_days_ahead.isoformat()))
@@ -90,7 +88,6 @@ def get_bookings_needing_reminders() -> List[Dict]:
     finally:
         conn.close()
 
-
 def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     """Проверить, было ли уже отправлено напоминание"""
     conn = get_db_connection()
@@ -99,7 +96,7 @@ def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     try:
         c.execute("""
             SELECT COUNT(*) FROM booking_reminders_sent
-            WHERE booking_id = ? AND reminder_setting_id = ? AND status = 'sent'
+            WHERE booking_id = %s AND reminder_setting_id = %s AND status = 'sent'
         """, (booking_id, reminder_setting_id))
 
         count = c.fetchone()[0]
@@ -108,7 +105,6 @@ def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     finally:
         conn.close()
 
-
 def mark_reminder_sent(booking_id: int, reminder_setting_id: int, status: str = 'sent', error_message: str = None):
     """Отметить напоминание как отправленное"""
     conn = get_db_connection()
@@ -116,16 +112,15 @@ def mark_reminder_sent(booking_id: int, reminder_setting_id: int, status: str = 
 
     try:
         c.execute("""
-            INSERT OR REPLACE INTO booking_reminders_sent
+            INSERT INTO booking_reminders_sent
             (booking_id, reminder_setting_id, sent_at, status, error_message)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (booking_id, reminder_setting_id, datetime.now().isoformat(), status, error_message))
 
         conn.commit()
 
     finally:
         conn.close()
-
 
 def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
     """Форматировать email-напоминание о записи"""
@@ -350,7 +345,6 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
 
     return plain, html
 
-
 async def send_booking_reminder(booking: Dict, reminder_setting: Dict, salon_settings: Dict):
     """Отправить напоминание о записи"""
     try:
@@ -387,7 +381,6 @@ async def send_booking_reminder(booking: Dict, reminder_setting: Dict, salon_set
         log_error(f"Ошибка отправки напоминания: {e}", "booking_reminders")
         mark_reminder_sent(booking['id'], reminder_setting['id'], status='failed', error_message=str(e))
         return False
-
 
 async def check_and_send_reminders():
     """Главная функция проверки и отправки напоминаний"""
@@ -451,7 +444,6 @@ async def check_and_send_reminders():
     except Exception as e:
         log_error(f"Ошибка в check_and_send_reminders: {e}", "booking_reminders")
 
-
 async def booking_reminder_loop():
     """Основной цикл планировщика напоминаний (async версия)"""
     log_info("🔔 Запущен планировщик email-напоминаний о записях", "booking_reminders")
@@ -473,14 +465,12 @@ async def booking_reminder_loop():
             traceback.print_exc()
             await asyncio.sleep(60)  # При ошибке ждем минуту
 
-
 def start_booking_reminder_checker():
     """Запустить планировщик email-напоминаний как фоновую задачу"""
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     # Это должно вызываться из async контекста (например, из FastAPI startup event)
     asyncio.create_task(booking_reminder_loop())
     log_info("✅ Планировщик email-напоминаний запущен (проверка каждые 10 минут)", "booking_reminders")
-
 
 if __name__ == "__main__":
     # Для ручного запуска

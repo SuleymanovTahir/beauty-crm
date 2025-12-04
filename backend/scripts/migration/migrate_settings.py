@@ -1,7 +1,7 @@
 """
 Migration script to transfer salon settings from SQLite to PostgreSQL.
 """
-import sqlite3
+
 import os
 import sys
 import psycopg2

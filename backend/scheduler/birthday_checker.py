@@ -9,7 +9,6 @@ from api.notifications import create_notification
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
 
-
 def get_upcoming_birthdays() -> List[Tuple]:
     """Получить предстоящие дни рождения"""
     conn = get_db_connection()
@@ -73,7 +72,6 @@ def get_upcoming_birthdays() -> List[Tuple]:
     
     return upcoming
 
-
 def check_if_notification_sent(user_id: int, notification_type: str, notification_date: str) -> bool:
     """Проверить, было ли уже отправлено уведомление"""
     conn = get_db_connection()
@@ -81,14 +79,13 @@ def check_if_notification_sent(user_id: int, notification_type: str, notificatio
     
     c.execute("""
         SELECT id FROM birthday_notifications
-        WHERE user_id = ? AND notification_type = ? AND notification_date = ? AND is_sent = 1
+        WHERE user_id = %s AND notification_type = %s AND notification_date = %s AND is_sent = 1
     """, (user_id, notification_type, notification_date))
     
     result = c.fetchone()
     conn.close()
     
     return result is not None
-
 
 def mark_notification_sent(user_id: int, notification_type: str, notification_date: str):
     """Отметить уведомление как отправленное"""
@@ -99,12 +96,11 @@ def mark_notification_sent(user_id: int, notification_type: str, notification_da
     
     c.execute("""
         INSERT INTO birthday_notifications (user_id, notification_type, notification_date, is_sent, sent_at)
-        VALUES (?, ?, ?, 1, ?)
+        VALUES (%s, %s, %s, 1, %s)
     """, (user_id, notification_type, notification_date, now))
     
     conn.commit()
     conn.close()
-
 
 def get_all_staff() -> List[Tuple]:
     """Получить всех сотрудников для уведомления (с email)"""
@@ -121,7 +117,6 @@ def get_all_staff() -> List[Tuple]:
     conn.close()
 
     return staff
-
 
 async def send_birthday_notifications():
     """Отправить уведомления о днях рождения"""
@@ -212,7 +207,6 @@ async def send_birthday_notifications():
     except Exception as e:
         log_error(f"Ошибка проверки дней рождения: {e}", "birthday_checker")
 
-
 async def birthday_checker_loop():
     """Основной цикл проверки дней рождения (async версия)"""
     if SHOW_SCHEDULER_START:
@@ -234,13 +228,11 @@ async def birthday_checker_loop():
             log_error(f"Ошибка в цикле проверки ДР: {e}", "birthday_checker")
             await asyncio.sleep(60)
 
-
 def start_birthday_checker():
     """Запустить проверку дней рождения как фоновую задачу"""
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     asyncio.create_task(birthday_checker_loop())
     log_info("✅ Планировщик дней рождения запущен", "birthday_checker")
-
 
 # ===== ПОЗДРАВЛЕНИЯ КЛИЕНТОВ =====
 
@@ -287,7 +279,6 @@ def get_client_birthdays_today() -> List[Tuple]:
 
     return birthday_clients
 
-
 def check_if_client_congratulated(instagram_id: str, date: str) -> bool:
     """Проверить, было ли отправлено поздравление клиенту"""
     conn = get_db_connection()
@@ -295,16 +286,15 @@ def check_if_client_congratulated(instagram_id: str, date: str) -> bool:
 
     c.execute("""
         SELECT id FROM client_notifications
-        WHERE client_instagram_id = ?
+        WHERE client_instagram_id = %s
           AND notification_type = 'birthday'
-          AND DATE(created_at) = ?
+          AND DATE(created_at) = %s
     """, (instagram_id, date))
 
     result = c.fetchone()
     conn.close()
 
     return result is not None
-
 
 async def send_birthday_congratulations():
     """Отправить поздравления клиентам с днем рождения"""
@@ -354,7 +344,7 @@ async def send_birthday_congratulations():
                 c.execute("""
                     INSERT INTO client_notifications
                     (client_instagram_id, client_email, notification_type, title, message, sent_at, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (
                     instagram_id,
                     email,
@@ -373,7 +363,6 @@ async def send_birthday_congratulations():
 
     except Exception as e:
         log_error(f"Ошибка в send_birthday_congratulations: {e}", "birthday_checker")
-
 
 async def client_birthday_checker_loop():
     """Основной цикл проверки дней рождения клиентов (async версия)"""
@@ -395,13 +384,11 @@ async def client_birthday_checker_loop():
             log_error(f"Ошибка в цикле поздравлений клиентов: {e}", "birthday_checker")
             await asyncio.sleep(60)
 
-
 def start_client_birthday_checker():
     """Запустить проверку дней рождения клиентов как фоновую задачу"""
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     asyncio.create_task(client_birthday_checker_loop())
     log_info("✅ Планировщик поздравлений клиентов запущен", "birthday_checker")
-
 
 # ===== SCHEDULER ДЛЯ ЗАПИСЕЙ =====
 
@@ -467,7 +454,6 @@ async def send_booking_reminders():
     except Exception as e:
         log_error(f"Error in send_booking_reminders: {e}", "scheduler")
 
-
 async def send_immediate_booking_reminders():
     """Send reminders for bookings that are less than or equal to 1 hour away.
     This function is called every 5 minutes to ensure newly created bookings are not missed.
@@ -531,7 +517,7 @@ async def check_rebooking_opportunities():
             try:
                 message = f"""Привет! Педикюр уже месяц 🦶
 
-Хотите записаться снова?"""
+Хотите записаться снова%s"""
                 
                 await send_message(instagram_id, message)
                 log_info(f"✅ Rebooking suggestion sent to {instagram_id}", "scheduler")
@@ -543,7 +529,6 @@ async def check_rebooking_opportunities():
                 
     except Exception as e:
         log_error(f"Error in check_rebooking_opportunities: {e}", "scheduler")
-
 
 async def booking_scheduler_loop():
     """Основной цикл scheduler для записей (async версия)"""
@@ -575,7 +560,6 @@ async def booking_scheduler_loop():
         except Exception as e:
             log_error(f"Ошибка в booking_scheduler_loop: {e}", "scheduler")
             await asyncio.sleep(60)
-
 
 def start_booking_scheduler():
     """Запустить scheduler записей как фоновую задачу"""

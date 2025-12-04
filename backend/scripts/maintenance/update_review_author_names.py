@@ -12,7 +12,6 @@ from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 from scripts.translations.translator import Translator
 
-
 def update_review_author_names():
     """Translate author names from Russian to all supported languages"""
     conn = get_db_connection()
@@ -74,7 +73,6 @@ def update_review_author_names():
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     log_info("🔄 Starting review author name translation...", "migration")

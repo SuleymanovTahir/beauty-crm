@@ -3,13 +3,12 @@ API endpoints для публичных данных сотрудников
 """
 from fastapi import APIRouter, Query
 from typing import Optional, List, Dict
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info
 
 router = APIRouter()
-
 
 @router.get("/public/employees")
 async def get_public_employees(
@@ -76,7 +75,6 @@ async def get_public_employees(
         return []
     finally:
         conn.close()
-
 
 @router.get("/public/salon-info")
 async def get_salon_info(

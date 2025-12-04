@@ -98,7 +98,6 @@ def setup_webhook(webhook_url: str):
 
     return True
 
-
 def remove_webhook():
     """Удалить webhook (для testing с polling)"""
     if not telegram_bot.token:
@@ -112,7 +111,6 @@ def remove_webhook():
     else:
         print(f"❌ Failed to remove webhook: {result.get('description')}")
         return False
-
 
 if __name__ == '__main__':
     print("\n🤖 Telegram Webhook Setup")

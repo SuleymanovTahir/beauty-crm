@@ -15,7 +15,6 @@ from utils.utils import require_auth
 
 router = APIRouter(tags=["Plans"])
 
-
 @router.get("/plans/my-plans")
 async def get_my_plans_api(session_token: Optional[str] = Cookie(None)):
     """Получить планы для текущего пользователя"""
@@ -25,7 +24,6 @@ async def get_my_plans_api(session_token: Optional[str] = Cookie(None)):
     
     plans = get_visible_plans(user.get("id"))
     return {"success": True, "plans": plans}
-
 
 @router.get("/plans/my-plan/{metric_type}")
 async def get_my_plan_for_metric(
@@ -45,7 +43,6 @@ async def get_my_plan_for_metric(
     else:
         return {"success": False, "message": "План не найден"}
 
-
 @router.get("/plans/role/{role_key}")
 async def get_role_plans_api(
     role_key: str,
@@ -64,7 +61,6 @@ async def get_role_plans_api(
     
     plans = get_plans_by_role(role_key, active_only)
     return {"success": True, "plans": plans}
-
 
 @router.post("/plans/role")
 async def create_role_plan_api(
@@ -128,7 +124,6 @@ async def create_role_plan_api(
             status_code=500
         )
 
-
 @router.post("/plans/individual")
 async def create_individual_plan_api(
     request: Request,
@@ -188,7 +183,6 @@ async def create_individual_plan_api(
             status_code=500
         )
 
-
 @router.get("/plans/{plan_id}/can-edit")
 async def check_can_edit_plan(
     plan_id: int,
@@ -201,7 +195,6 @@ async def check_can_edit_plan(
     
     can_edit = can_user_edit_plan(user.get("id"), plan_id)
     return {"success": True, "can_edit": can_edit}
-
 
 # Backward compatibility endpoints
 @router.get("/plans")
@@ -216,7 +209,6 @@ async def get_all_plans_api(
     
     plans = get_all_plans(active_only=active_only)
     return {"success": True, "plans": plans}
-
 
 @router.get("/plans/{metric_type}")
 async def get_plan_api(
@@ -234,7 +226,6 @@ async def get_plan_api(
         return {"success": True, "plan": plan}
     else:
         return {"success": False, "message": "План не найден"}
-
 
 @router.post("/plans")
 async def create_plan_api(
@@ -287,7 +278,6 @@ async def create_plan_api(
             status_code=500
         )
 
-
 @router.get("/plans/{metric_type}/progress")
 async def get_plan_progress_api(
     metric_type: str,
@@ -305,7 +295,6 @@ async def get_plan_progress_api(
         return {"success": True, "progress": progress}
     else:
         return {"success": False, "message": "План не найден"}
-
 
 @router.delete("/plans/{plan_id}")
 async def delete_plan_api(

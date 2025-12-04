@@ -4,7 +4,7 @@
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -13,7 +13,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Diagnostics"])
-
 
 @router.get("/diagnostics/full")
 async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
@@ -250,7 +249,6 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             "traceback": traceback.format_exc()
         }, status_code=500)
 
-
 def extract_section(text: str, marker: str) -> Optional[str]:
     """Извлечь секцию между маркером и следующей секцией"""
     try:
@@ -266,7 +264,6 @@ def extract_section(text: str, marker: str) -> Optional[str]:
         return text[start:next_section].strip()
     except:
         return None
-
 
 @router.get("/diagnostics/prompt-test")
 async def test_prompt_generation(

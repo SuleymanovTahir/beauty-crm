@@ -13,13 +13,12 @@ from db.employees import (
     get_employee_busy_slots
 )
 from utils.utils import require_auth
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Employees"])
-
 
 @router.get("/employees")
 async def list_employees(
@@ -45,8 +44,6 @@ async def list_employees(
             } for e in employees
         ]
     }
-
-
 
 # ===== EMPLOYEE SELF-SERVICE PROFILE ENDPOINTS =====
 
@@ -74,7 +71,7 @@ async def get_my_employee_profile(
             SELECT id, full_name, position, email, phone, birthday, 
                    is_service_provider, role, is_active
             FROM users
-            WHERE id = ?
+            WHERE id = %s
         """, (user["id"],))
 
         row = c.fetchone()
@@ -110,7 +107,6 @@ async def get_my_employee_profile(
         log_error(f"❌ [Profile] Traceback: {traceback.format_exc()}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.put("/employees/my-profile")
 async def update_my_employee_profile(
     request: Request,
@@ -139,17 +135,17 @@ async def update_my_employee_profile(
 
         for field in allowed_fields:
             if field in data:
-                update_fields.append(f"{field} = ?")
+                update_fields.append(f"{field} = %s")
                 update_values.append(data[field])
 
         if not update_fields:
             return JSONResponse({"error": "No fields to update"}, status_code=400)
 
         # Добавляем updated_at
-        update_fields.append("updated_at = datetime('now')")
+        update_fields.append("updated_at = NOW()")
         update_values.append(employee_id)
 
-        query = f"UPDATE employees SET {', '.join(update_fields)} WHERE id = ?"
+        query = f"UPDATE employees SET {', '.join(update_fields)} WHERE id = %s"
         c.execute(query, tuple(update_values))
 
         conn.commit()
@@ -161,7 +157,6 @@ async def update_my_employee_profile(
     except Exception as e:
         log_error(f"Error updating employee profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/employees/{employee_id}")
 
@@ -207,7 +202,6 @@ async def get_employee_detail(employee_id: int):
         ]
     }
 
-
 @router.post("/employees")
 async def create_employee_api(
     request: Request,
@@ -233,7 +227,6 @@ async def create_employee_api(
     
     return {"success": True, "employee_id": employee_id}
 
-
 @router.post("/employees/{employee_id}/update")
 async def update_employee_api(
     employee_id: int,
@@ -250,7 +243,6 @@ async def update_employee_api(
     
     return {"success": True}
 
-
 @router.delete("/employees/{employee_id}")
 async def delete_employee_api(
     employee_id: int,
@@ -266,7 +258,6 @@ async def delete_employee_api(
     if success:
         return {"success": True}
     return JSONResponse({"error": "Delete failed"}, status_code=400)
-
 
 @router.post("/employees/{employee_id}/services")
 async def add_service_to_employee(
@@ -288,7 +279,6 @@ async def add_service_to_employee(
         return {"success": True}
     return JSONResponse({"error": "Already exists"}, status_code=400)
 
-
 @router.delete("/employees/{employee_id}/services/{service_id}")
 async def remove_service_from_employee(
     employee_id: int,
@@ -303,7 +293,6 @@ async def remove_service_from_employee(
     remove_employee_service(employee_id, service_id)
     remove_employee_service(employee_id, service_id)
     return {"success": True}
-
 
 @router.put("/employees/{employee_id}/services/{service_id}")
 async def update_service_settings(
@@ -334,7 +323,6 @@ async def update_service_settings(
         return {"success": True}
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
-
 @router.post("/employees/{employee_id}/schedule")
 async def set_schedule(
     employee_id: int,
@@ -357,7 +345,6 @@ async def set_schedule(
     
     return {"success": True}
 
-
 @router.post("/employees/{employee_id}/reorder")
 async def reorder_employee(
     employee_id: int,
@@ -376,7 +363,7 @@ async def reorder_employee(
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE employees SET sort_order = ? WHERE id = ?", (new_order, employee_id))
+        c.execute("UPDATE employees SET sort_order = %s WHERE id = %s", (new_order, employee_id))
         conn.commit()
         return {"success": True}
     except Exception as e:
@@ -384,7 +371,6 @@ async def reorder_employee(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
-
 
 @router.get("/employees/available")
 async def get_available(
@@ -425,8 +411,8 @@ async def update_employee_birthday(
 
         c.execute("""
             UPDATE users
-            SET birthday = ?
-            WHERE id = ?
+            SET birthday = %s
+            WHERE id = %s
         """, (birthday, employee_id))
 
         conn.commit()
@@ -438,9 +424,6 @@ async def update_employee_birthday(
     except Exception as e:
         log_error(f"Error updating birthday: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
-
-
 
 # ===== SMART FILTERING ENDPOINTS =====
 
@@ -460,7 +443,6 @@ async def get_employees_for_service(service_id: int):
             } for e in employees
         ]
     }
-
 
 @router.get("/employees/{employee_id}/busy-slots")
 async def get_busy_slots(employee_id: int, date: str):

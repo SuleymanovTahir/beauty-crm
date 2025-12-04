@@ -8,7 +8,6 @@ from db.connection import get_db_connection
 from core.config import TELEGRAM_BOT_TOKEN
 from utils.logger import log_info, log_error
 
-
 async def send_telegram_notification(telegram_username: str, message: str, user_id: int = None) -> bool:
     """Отправить уведомление в Telegram"""
     if not TELEGRAM_BOT_TOKEN:
@@ -24,11 +23,11 @@ async def send_telegram_notification(telegram_username: str, message: str, user_
 
         # Проверяем, есть ли у нас сохраненный telegram_chat_id
         if user_id:
-            c.execute("SELECT telegram_chat_id FROM users WHERE id = ?", (user_id,))
+            c.execute("SELECT telegram_chat_id FROM users WHERE id = %s", (user_id,))
         else:
             c.execute("""
                 SELECT telegram_chat_id FROM users
-                WHERE telegram_username = ?
+                WHERE telegram_username = %s
             """, (telegram_username.replace('@', ''),))
 
         result = c.fetchone()
@@ -61,7 +60,6 @@ async def send_telegram_notification(telegram_username: str, message: str, user_
     except Exception as e:
         log_error(f"Error sending Telegram notification: {e}", "notifications")
         return False
-
 
 async def send_email_notification(email: str, subject: str, message: str) -> bool:
     """Отправить уведомление на email"""
@@ -113,7 +111,6 @@ async def send_email_notification(email: str, subject: str, message: str) -> boo
         log_error(f"Error sending email notification: {e}", "notifications")
         return False
 
-
 def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
     """Получить информацию о мастере по имени"""
     conn = get_db_connection()
@@ -125,7 +122,7 @@ def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
                notify_telegram, notify_email, notify_whatsapp,
                notify_on_new_booking, notify_on_booking_change, notify_on_booking_cancel
         FROM users
-        WHERE (LOWER(full_name) = LOWER(?) OR LOWER(username) = LOWER(?))
+        WHERE (LOWER(full_name) = LOWER(%s) OR LOWER(username) = LOWER(%s))
         AND role IN ('employee', 'admin', 'manager')
         AND is_active = 1
     """, (master_name, master_name))
@@ -152,7 +149,6 @@ def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
         "notify_on_booking_change": bool(result[12]) if len(result) > 12 and result[12] is not None else True,
         "notify_on_booking_cancel": bool(result[13]) if len(result) > 13 and result[13] is not None else True,
     }
-
 
 async def notify_master_about_booking(
     master_name: str,
@@ -266,7 +262,6 @@ async def notify_master_about_booking(
     log_info(f"Notification sent to master {master_name}: {results}", "notifications")
     return results
 
-
 def save_notification_log(
     master_id: int,
     booking_id: int,
@@ -298,7 +293,7 @@ def save_notification_log(
         c.execute("""
             INSERT INTO notification_logs
             (master_id, booking_id, notification_type, status, error_message, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (master_id, booking_id, notification_type, status, error_message,
               datetime.now().isoformat()))
 

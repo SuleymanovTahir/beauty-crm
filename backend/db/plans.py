@@ -7,7 +7,6 @@ from typing import Optional, Dict, Any, List
 from db.connection import get_db_connection
 from utils.logger import log_error
 
-
 def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -> Optional[Dict[str, Any]]:
     """
     Get plan for specific user with priority: individual → role (position) → global
@@ -137,7 +136,6 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
         log_error(f"Error getting plan for user: {e}", "plans")
         return None
 
-
 def set_role_plan(role_key: str, metric_type: str, target_value: float, 
                      period_type: str, start_date: str, end_date: str,
                      visible_to_roles: List[str] = None,
@@ -184,7 +182,6 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
         log_error(f"Error setting role plan: {e}", "plans")
         return None
 
-
 def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                        period_type: str, start_date: str, end_date: str,
                        created_by: int = None) -> Optional[int]:
@@ -224,7 +221,6 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
     except Exception as e:
         log_error(f"Error setting individual plan: {e}", "plans")
         return None
-
 
 def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
     """Get all plans visible to user based on their role"""
@@ -293,7 +289,6 @@ def get_visible_plans(user_id: int) -> List[Dict[str, Any]]:
         log_error(f"Error getting visible plans: {e}", "plans")
         return []
 
-
 def can_user_edit_plan(user_id: int, plan_id: int) -> bool:
     """Check if user can edit plan"""
     try:
@@ -347,7 +342,6 @@ def can_user_edit_plan(user_id: int, plan_id: int) -> bool:
         log_error(f"Error checking edit permission: {e}", "plans")
         return False
 
-
 def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str, Any]]:
     """Get all plans for a role"""
     try:
@@ -396,7 +390,6 @@ def get_plans_by_role(role_key: str, active_only: bool = True) -> List[Dict[str,
     except Exception as e:
         log_error(f"Error getting plans by role: {e}", "plans")
         return []
-
 
 # Keep existing functions for backward compatibility
 def get_plan(metric_type: str, period_type: str = None) -> Optional[Dict[str, Any]]:
@@ -447,7 +440,6 @@ def get_plan(metric_type: str, period_type: str = None) -> Optional[Dict[str, An
         log_error(f"Error getting plan: {e}", "plans")
         return None
 
-
 def set_plan(metric_type: str, target_value: float, period_type: str, 
              start_date: str, end_date: str, created_by: int = None) -> Optional[int]:
     """Create or update a global plan (backward compatibility)"""
@@ -483,7 +475,6 @@ def set_plan(metric_type: str, target_value: float, period_type: str,
         log_error(f"Error setting plan: {e}", "plans")
         return None
 
-
 def get_plan_progress(metric_type: str, current_value: float) -> Optional[Dict[str, Any]]:
     """Calculate progress toward plan (backward compatibility)"""
     plan = get_plan(metric_type)
@@ -511,7 +502,6 @@ def get_plan_progress(metric_type: str, current_value: float) -> Optional[Dict[s
         "status": status,
         "message": message
     }
-
 
 def get_all_plans(active_only: bool = True) -> list:
     """Get all plans (backward compatibility)"""
@@ -559,7 +549,6 @@ def get_all_plans(active_only: bool = True) -> list:
     except Exception as e:
         log_error(f"Error getting all plans: {e}", "plans")
         return []
-
 
 def delete_plan(plan_id: int) -> bool:
     """Soft delete a plan by deactivating it (backward compatibility)"""

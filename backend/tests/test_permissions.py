@@ -25,20 +25,17 @@ from core.config import (
 )
 from utils.logger import log_info, log_error
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
 
-
 def print_section(text):
     """Секция теста"""
     print("\n" + "-" * 80)
     print(f"  {text}")
     print("-" * 80)
-
 
 def test_roles_structure():
     """ТЕСТ 1: Проверка структуры ролей"""
@@ -73,7 +70,6 @@ def test_roles_structure():
         traceback.print_exc()
         return False
 
-
 def test_permission_descriptions():
     """ТЕСТ 2: Проверка описаний прав"""
     print_section("ТЕСТ 2: Описания прав")
@@ -106,7 +102,6 @@ def test_permission_descriptions():
         traceback.print_exc()
         return False
 
-
 def test_client_statuses():
     """ТЕСТ 3: Проверка статусов клиентов"""
     print_section("ТЕСТ 3: Статусы клиентов")
@@ -128,7 +123,6 @@ def test_client_statuses():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_has_permission_function():
     """ТЕСТ 4: Проверка функции has_permission()"""
@@ -174,7 +168,6 @@ def test_has_permission_function():
         traceback.print_exc()
         return False
 
-
 def test_can_manage_role_function():
     """ТЕСТ 5: Проверка функции can_manage_role()"""
     print_section("ТЕСТ 5: Функция can_manage_role()")
@@ -215,7 +208,6 @@ def test_can_manage_role_function():
         traceback.print_exc()
         return False
 
-
 def test_user_permissions_in_database():
     """ТЕСТ 6: Проверка прав пользователей в базе данных"""
     print_section("ТЕСТ 6: Права пользователей в БД")
@@ -249,7 +241,6 @@ def test_user_permissions_in_database():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_role_hierarchy():
     """ТЕСТ 7: Проверка иерархии ролей"""
@@ -290,7 +281,6 @@ def test_role_hierarchy():
         import traceback
         traceback.print_exc()
         return False
-
 
 def main():
     """Запуск всех тестов"""
@@ -348,7 +338,6 @@ def main():
     print("=" * 80 + "\n")
 
     return passed == total
-
 
 if __name__ == "__main__":
     success = main()

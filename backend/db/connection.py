@@ -13,22 +13,22 @@ _connection_pool = None
 class CursorWrapper:
     """
     Wrapper for psycopg2 cursor to emulate sqlite3 cursor behavior.
-    Translates '?' placeholders to '%s'.
+    Translates '%s' placeholders to '%s'.
     """
     def __init__(self, cursor):
         self._cursor = cursor
 
     def execute(self, query, params=None):
         if query:
-            # Simple replacement of ? with %s
-            # Note: This might be risky if ? is used in string literals, 
+            # Simple replacement of %s with %s
+            # Note: This might be risky if %s is used in string literals, 
             # but for this codebase it's likely fine as a migration step.
-            query = query.replace('?', '%s')
+            query = query.replace('%s', '%s')
         return self._cursor.execute(query, params)
 
     def executemany(self, query, params=None):
         if query:
-            query = query.replace('?', '%s')
+            query = query.replace('%s', '%s')
         return self._cursor.executemany(query, params)
 
     def __getattr__(self, name):
@@ -85,7 +85,6 @@ def get_db_connection():
     except Exception as e:
         log_error(f"Failed to connect to PostgreSQL: {e}", "db")
         raise
-
 
 def get_cursor(conn, dict_cursor=False):
     """

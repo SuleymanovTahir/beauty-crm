@@ -12,7 +12,6 @@ from utils.logger import log_info
 
 router = APIRouter()
 
-
 @router.get("/public/reviews")
 async def get_reviews(
     language: str = Query('ru', description="Language code (ru, en, ar, es, de, fr, hi, kk, pt)"),
@@ -28,7 +27,6 @@ async def get_reviews(
     reviews = get_active_reviews(language=language, limit=limit)
     return {"reviews": reviews}
 
-
 @router.get("/public/testimonials")
 async def get_testimonials(
     language: str = Query('ru', description="Language code"),
@@ -39,7 +37,6 @@ async def get_testimonials(
     """
     reviews = get_active_reviews(language=language, limit=limit)
     return {"reviews": reviews}
-
 
 @router.get("/public/faq")
 async def get_faq(
@@ -55,7 +52,6 @@ async def get_faq(
     log_info(f"API: Запрос FAQ на языке {language}", "api")
     faq = get_active_faq(language=language, category=category)
     return {"faq": faq}
-
 
 @router.get("/public/gallery")
 async def get_gallery(

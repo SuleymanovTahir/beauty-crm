@@ -10,7 +10,6 @@ from services.loyalty import LoyaltyService
 
 router = APIRouter(tags=["Loyalty"])
 
-
 @router.get("/loyalty/{client_id}")
 async def get_client_loyalty_api(
     client_id: str,
@@ -37,7 +36,6 @@ async def get_client_loyalty_api(
     except Exception as e:
         log_error(f"Error getting client loyalty: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/loyalty/{client_id}/earn")
 async def earn_points_api(
@@ -91,7 +89,6 @@ async def earn_points_api(
         log_error(f"Error earning points: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/loyalty/{client_id}/spend")
 async def spend_points_api(
     client_id: str,
@@ -141,7 +138,6 @@ async def spend_points_api(
         log_error(f"Error spending points: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/loyalty/{client_id}/history")
 async def get_transaction_history_api(
     client_id: str,
@@ -168,7 +164,6 @@ async def get_transaction_history_api(
         log_error(f"Error getting transaction history: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/loyalty/levels")
 async def get_loyalty_levels_api(
     session_token: Optional[str] = Cookie(None)
@@ -190,7 +185,6 @@ async def get_loyalty_levels_api(
     except Exception as e:
         log_error(f"Error getting loyalty levels: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/loyalty/{client_id}/calculate-discount")
 async def calculate_discount_api(

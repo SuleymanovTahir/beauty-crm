@@ -3,7 +3,6 @@ import httpx
 from typing import List, Dict, Optional
 from datetime import datetime, timedelta
 
-
 logger = logging.getLogger(__name__)
 
 class GoogleReviewsService:

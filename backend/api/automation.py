@@ -4,7 +4,7 @@ API Endpoints для автоматизации
 from fastapi import APIRouter, Query, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional, List, Dict, Any
-import sqlite3
+
 import json
 
 from core.config import DATABASE_NAME
@@ -13,7 +13,6 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Automation"])
-
 
 def create_automation_table():
     """Создать таблицу автоматизации"""
@@ -45,7 +44,6 @@ def create_automation_table():
     
     conn.commit()
     conn.close()
-
 
 @router.get("/automation/rules")
 async def get_automation_rules(session_token: Optional[str] = Cookie(None)):
@@ -90,7 +88,6 @@ async def get_automation_rules(session_token: Optional[str] = Cookie(None)):
     finally:
         conn.close()
 
-
 @router.post("/automation/rules")
 async def create_automation_rule(
     request: dict,
@@ -118,7 +115,7 @@ async def create_automation_rule(
         
         c.execute("""
             INSERT INTO automation_rules (name, description, trigger_type, trigger_conditions, actions)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (name, description, trigger_type, json.dumps(trigger_conditions), json.dumps(actions)))
         
         rule_id = c.lastrowid
@@ -135,7 +132,6 @@ async def create_automation_rule(
     except Exception as e:
         log_error(f"Error creating automation rule: {e}", "automation")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/automation/rules/{rule_id}")
 async def update_automation_rule(
@@ -160,14 +156,14 @@ async def update_automation_rule(
         for key, value in request.items():
             if key in ['trigger_conditions', 'actions']:
                 value = json.dumps(value)
-            updates.append(f"{key} = ?")
+            updates.append(f"{key} = %s")
             params.append(value)
         
-        updates.append("updated_at = ?")
+        updates.append("updated_at = %s")
         params.append(sqlite3.datetime.datetime.now().isoformat())
         params.append(rule_id)
         
-        query = f"UPDATE automation_rules SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE automation_rules SET {', '.join(updates)} WHERE id = %s"
         c.execute(query, params)
         
         if c.rowcount == 0:
@@ -183,7 +179,6 @@ async def update_automation_rule(
     except Exception as e:
         log_error(f"Error updating automation rule: {e}", "automation")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/automation/rules/{rule_id}")
 async def delete_automation_rule(
@@ -202,10 +197,10 @@ async def delete_automation_rule(
         c = conn.cursor()
         
         # Удаляем логи
-        c.execute("DELETE FROM automation_logs WHERE rule_id = ?", (rule_id,))
+        c.execute("DELETE FROM automation_logs WHERE rule_id = %s", (rule_id,))
         
         # Удаляем правило
-        c.execute("DELETE FROM automation_rules WHERE id = ?", (rule_id,))
+        c.execute("DELETE FROM automation_rules WHERE id = %s", (rule_id,))
         
         if c.rowcount == 0:
             conn.close()
@@ -220,7 +215,6 @@ async def delete_automation_rule(
     except Exception as e:
         log_error(f"Error deleting automation rule: {e}", "automation")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/automation/logs")
 async def get_automation_logs(
@@ -244,9 +238,9 @@ async def get_automation_logs(
                 SELECT id, rule_id, client_id, trigger_data, action_result, 
                        status, created_at
                 FROM automation_logs 
-                WHERE rule_id = ?
+                WHERE rule_id = %s
                 ORDER BY created_at DESC
-                LIMIT ?
+                LIMIT %s
             """, (rule_id, limit))
         else:
             c.execute("""
@@ -254,7 +248,7 @@ async def get_automation_logs(
                        status, created_at
                 FROM automation_logs 
                 ORDER BY created_at DESC
-                LIMIT ?
+                LIMIT %s
             """, (limit,))
         
         logs = c.fetchall()
@@ -278,7 +272,6 @@ async def get_automation_logs(
     finally:
         conn.close()
 
-
 def execute_automation_rule(rule_id: int, client_id: str, trigger_data: Dict[str, Any]):
     """Выполнить правило автоматизации"""
     create_automation_table()
@@ -291,7 +284,7 @@ def execute_automation_rule(rule_id: int, client_id: str, trigger_data: Dict[str
         c.execute("""
             SELECT trigger_type, trigger_conditions, actions, is_active
             FROM automation_rules 
-            WHERE id = ?
+            WHERE id = %s
         """, (rule_id,))
         
         rule = c.fetchone()
@@ -314,7 +307,7 @@ def execute_automation_rule(rule_id: int, client_id: str, trigger_data: Dict[str
         # Логируем результат
         c.execute("""
             INSERT INTO automation_logs (rule_id, client_id, trigger_data, action_result, status)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s)
         """, (rule_id, client_id, json.dumps(trigger_data), json.dumps(action_result), "success"))
         
         conn.commit()
@@ -326,7 +319,6 @@ def execute_automation_rule(rule_id: int, client_id: str, trigger_data: Dict[str
     except Exception as e:
         log_error(f"Error executing automation rule: {e}", "automation")
         return False
-
 
 def _check_trigger_conditions(trigger_type: str, conditions: Dict[str, Any], data: Dict[str, Any]) -> bool:
     """Проверить условия триггера"""
@@ -340,7 +332,6 @@ def _check_trigger_conditions(trigger_type: str, conditions: Dict[str, Any], dat
         return data.get("old_status") != data.get("new_status")
     
     return False
-
 
 def _execute_actions(actions: List[Dict[str, Any]], client_id: str, trigger_data: Dict[str, Any]) -> Dict[str, Any]:
     """Выполнить действия"""

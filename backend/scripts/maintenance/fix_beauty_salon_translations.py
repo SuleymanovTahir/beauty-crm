@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error
 
-
 # Glossary of beauty salon terms with correct translations
 # This ensures context-aware translations for beauty salon services
 BEAUTY_SALON_GLOSSARY = {
@@ -164,7 +163,6 @@ BEAUTY_SALON_GLOSSARY = {
     }
 }
 
-
 def fix_service_translations():
     """Fix incorrect service translations using beauty salon glossary"""
     conn = get_db_connection()
@@ -204,7 +202,6 @@ def fix_service_translations():
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     log_info("🔧 Starting beauty salon translation fixes...", "fix")

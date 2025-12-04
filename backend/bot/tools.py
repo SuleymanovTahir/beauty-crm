@@ -2,13 +2,12 @@
 """
 Инструменты для AI-бота - проверка доступности времени
 """
-import sqlite3
+
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from services.master_schedule import MasterScheduleService
-
 
 def get_available_time_slots(
     date: str,
@@ -118,7 +117,6 @@ def get_available_time_slots(
         
     finally:
         conn.close()
-
 
 def check_time_slot_available(
     date: str,

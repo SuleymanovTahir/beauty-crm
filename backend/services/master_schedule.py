@@ -1,14 +1,12 @@
 """
 Управление расписанием мастеров
 """
-import sqlite3
 from datetime import datetime, timedelta, time as dt_time
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.datetime_utils import get_current_time
-
 
 class MasterScheduleService:
     """Сервис управления расписанием мастеров"""

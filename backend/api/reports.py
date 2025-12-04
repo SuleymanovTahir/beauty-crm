@@ -4,7 +4,6 @@ API Endpoints для отчетов
 from fastapi import APIRouter, Query, Cookie, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional, List, Dict, Any
-import sqlite3
 import json
 import csv
 import io
@@ -16,7 +15,6 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Reports"])
-
 
 @router.get("/reports/sales")
 async def get_sales_report(
@@ -53,11 +51,11 @@ async def get_sales_report(
         params = []
         
         if date_from:
-            query += " AND DATE(b.datetime) >= ?"
+            query += " AND DATE(b.datetime) >=%s"
             params.append(date_from)
         
         if date_to:
-            query += " AND DATE(b.datetime) <= ?"
+            query += " AND DATE(b.datetime) <=%s"
             params.append(date_to)
         
         query += " ORDER BY b.datetime DESC"
@@ -145,7 +143,6 @@ async def get_sales_report(
         log_error(f"Error generating sales report: {e}", "reports")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/reports/clients")
 async def get_clients_report(
     status: Optional[str] = Query(None),
@@ -182,15 +179,15 @@ async def get_clients_report(
         params = []
         
         if status:
-            query += " AND c.status = ?"
+            query += " AND c.status =%s"
             params.append(status)
         
         if date_from:
-            query += " AND DATE(c.created_at) >= ?"
+            query += " AND DATE(c.created_at) >=%s"
             params.append(date_from)
         
         if date_to:
-            query += " AND DATE(c.created_at) <= ?"
+            query += " AND DATE(c.created_at) <=%s"
             params.append(date_to)
         
         query += " GROUP BY c.instagram_id ORDER BY c.created_at DESC"
@@ -276,7 +273,6 @@ async def get_clients_report(
         log_error(f"Error generating clients report: {e}", "reports")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/reports/performance")
 async def get_performance_report(
     period: int = Query(30),
@@ -299,7 +295,7 @@ async def get_performance_report(
         c.execute("""
             SELECT COUNT(*) 
             FROM clients 
-            WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?
+            WHERE DATE(created_at) >=%s AND DATE(created_at) <=%s
         """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
         new_clients = c.fetchone()[0]
         
@@ -307,7 +303,7 @@ async def get_performance_report(
         c.execute("""
             SELECT COUNT(*), SUM(revenue)
             FROM bookings 
-            WHERE DATE(datetime) >= ? AND DATE(datetime) <= ?
+            WHERE DATE(datetime) >=%s AND DATE(datetime) <=%s
         """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
         bookings_result = c.fetchone()
         total_bookings = bookings_result[0]
@@ -317,7 +313,7 @@ async def get_performance_report(
         c.execute("""
             SELECT COUNT(*) 
             FROM chat_history 
-            WHERE DATE(timestamp) >= ? AND DATE(timestamp) <= ?
+            WHERE DATE(timestamp) >=%s AND DATE(timestamp) <=%s
         """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
         total_messages = c.fetchone()[0]
         
@@ -325,7 +321,7 @@ async def get_performance_report(
         c.execute("""
             SELECT DATE(created_at) as date, COUNT(*) as count
             FROM clients 
-            WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?
+            WHERE DATE(created_at) >=%s AND DATE(created_at) <=%s
             GROUP BY DATE(created_at)
             ORDER BY date
         """, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
@@ -335,7 +331,7 @@ async def get_performance_report(
         c.execute("""
             SELECT service_name, COUNT(*) as count, SUM(revenue) as revenue
             FROM bookings 
-            WHERE DATE(datetime) >= ? AND DATE(datetime) <= ?
+            WHERE DATE(datetime) >=%s AND DATE(datetime) <=%s
             GROUP BY service_name
             ORDER BY count DESC
             LIMIT 10

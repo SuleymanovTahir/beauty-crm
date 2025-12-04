@@ -16,7 +16,6 @@ CONFIG_PATH = Path(__file__).parent.parent / "modules_config.json"
 # Кеш конфигурации
 _config_cache: Optional[Dict[str, Any]] = None
 
-
 def load_modules_config() -> Dict[str, Any]:
     """Загрузить конфигурацию модулей"""
     global _config_cache
@@ -37,13 +36,11 @@ def load_modules_config() -> Dict[str, Any]:
         log_error(f"Ошибка парсинга конфигурации модулей: {e}", "modules")
         return {"modules": {}}
 
-
 def reload_modules_config():
     """Перезагрузить конфигурацию модулей"""
     global _config_cache
     _config_cache = None
     return load_modules_config()
-
 
 def is_module_enabled(module_name: str) -> bool:
     """
@@ -64,7 +61,6 @@ def is_module_enabled(module_name: str) -> bool:
 
     return modules[module_name].get("enabled", False)
 
-
 def get_module_config(module_name: str) -> Dict[str, Any]:
     """
     Получить конфигурацию модуля
@@ -83,7 +79,6 @@ def get_module_config(module_name: str) -> Dict[str, Any]:
         return {}
 
     return modules[module_name]
-
 
 def get_module_setting(module_name: str, *keys: str, default: Any = None) -> Any:
     """
@@ -112,7 +107,6 @@ def get_module_setting(module_name: str, *keys: str, default: Any = None) -> Any
             return default
 
     return current
-
 
 def set_module_enabled(module_name: str, enabled: bool) -> bool:
     """
@@ -155,7 +149,6 @@ def set_module_enabled(module_name: str, enabled: bool) -> bool:
         log_error(f"Ошибка изменения статуса модуля '{module_name}': {e}", "modules")
         return False
 
-
 def get_enabled_modules() -> list:
     """Получить список включенных модулей"""
     config = load_modules_config()
@@ -165,7 +158,6 @@ def get_enabled_modules() -> list:
         name for name, cfg in modules.items()
         if cfg.get("enabled", False)
     ]
-
 
 def print_modules_status():
     """Вывести статус всех модулей"""
@@ -184,7 +176,6 @@ def print_modules_status():
         log_info(f"{status:12} | {name:15} | {description}", "modules")
 
     log_info("=" * 70, "modules")
-
 
 # Автозагрузка конфигурации при импорте
 load_modules_config()

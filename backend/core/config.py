@@ -124,8 +124,6 @@ INSTAGRAM_BUSINESS_ID = os.getenv("INSTAGRAM_BUSINESS_ID", "17841448618072548")
 SHOW_SCHEDULER_START = False  # Set to True to show the start log
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-
-
 # Get the backend directory (parent of core/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -136,7 +134,7 @@ DATABASE_TYPE = os.getenv("DATABASE_TYPE")
 if not DATABASE_TYPE:
     # Автоопределение: SQLite для разработки, PostgreSQL для продакшена
     if environment == "development":
-        DATABASE_TYPE = "sqlite"
+        DATABASE_TYPE = "postgresql"  # Changed from sqlite to postgresql to avoid legacy DB creation
     else:
         DATABASE_TYPE = "postgresql"
     print(f"✅ Автоопределение типа БД: {DATABASE_TYPE}")
@@ -158,7 +156,6 @@ else:
         'password': os.getenv('POSTGRES_PASSWORD', '')
     }
     print(f"   PostgreSQL Database: {POSTGRES_CONFIG['database']} @ {POSTGRES_CONFIG['host']}:{POSTGRES_CONFIG['port']}")
-
 
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 

@@ -12,9 +12,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_warning
 
-
-
-
 def init_database():
     """Создать базу данных и все таблицы"""
     conn = get_db_connection()
@@ -276,7 +273,6 @@ def init_database():
                   UNIQUE(booking_id, reminder_setting_id),
                   FOREIGN KEY (booking_id) REFERENCES bookings(id),
                   FOREIGN KEY (reminder_setting_id) REFERENCES booking_reminder_settings(id))''')
-
 
     # Миграция: добавить master в bookings
     try:

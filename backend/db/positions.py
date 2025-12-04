@@ -1,11 +1,10 @@
 """
 Функции для работы с должностями
 """
-import sqlite3
+
 from datetime import datetime
 from typing import Optional, List, Dict
 from db.connection import get_db_connection
-
 
 def get_all_positions(active_only=True):
     """
@@ -30,7 +29,6 @@ def get_all_positions(active_only=True):
     conn.close()
     return positions
 
-
 def get_position(position_id: int):
     """Получить должность по ID"""
     conn = get_db_connection()
@@ -43,7 +41,6 @@ def get_position(position_id: int):
 
     conn.close()
     return position
-
 
 def create_position(name: str, name_en: str = None, name_ar: str = None, 
                    name_fr: str = None, name_de: str = None,
@@ -69,7 +66,6 @@ def create_position(name: str, name_en: str = None, name_ar: str = None,
         return None
     finally:
         conn.close()
-
 
 def update_position(position_id: int, **kwargs):
     """Обновить должность"""
@@ -101,7 +97,6 @@ def update_position(position_id: int, **kwargs):
     conn.close()
     return True
 
-
 def delete_position(position_id: int):
     """
     Удалить должность (мягкое удаление - деактивация)
@@ -127,7 +122,6 @@ def delete_position(position_id: int):
     finally:
         conn.close()
 
-
 def hard_delete_position(position_id: int):
     """
     Полностью удалить должность из БД (использовать с осторожностью!)
@@ -151,7 +145,6 @@ def hard_delete_position(position_id: int):
         return False
     finally:
         conn.close()
-
 
 def get_employees_by_position(position_id: int):
     """Получить всех пользователей с определенной должностью"""

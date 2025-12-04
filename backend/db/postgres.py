@@ -10,7 +10,6 @@ from utils.logger import log_info, log_error
 # Connection pool для эффективного управления подключениями
 connection_pool = None
 
-
 def init_connection_pool():
     """Инициализировать пул подключений к PostgreSQL"""
     global connection_pool
@@ -31,7 +30,6 @@ def init_connection_pool():
         log_error(f"❌ Failed to initialize PostgreSQL connection pool: {e}", "postgres")
         return False
 
-
 def get_connection():
     """Получить подключение из пула"""
     global connection_pool
@@ -47,14 +45,12 @@ def get_connection():
         log_error(f"❌ Failed to get connection from pool: {e}", "postgres")
         raise
 
-
 def release_connection(conn):
     """Вернуть подключение в пул"""
     global connection_pool
     
     if connection_pool and conn:
         connection_pool.putconn(conn)
-
 
 def close_all_connections():
     """Закрыть все подключения в пуле"""
@@ -63,7 +59,6 @@ def close_all_connections():
     if connection_pool:
         connection_pool.closeall()
         log_info("✅ All PostgreSQL connections closed", "postgres")
-
 
 def execute_query(query, params=None, fetch=False, fetch_one=False):
     """
@@ -108,7 +103,6 @@ def execute_query(query, params=None, fetch=False, fetch_one=False):
             cursor.close()
         if conn:
             release_connection(conn)
-
 
 def test_connection():
     """Проверить подключение к PostgreSQL"""

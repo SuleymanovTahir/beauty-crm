@@ -52,7 +52,6 @@ def transliterate_to_russian(name: str) -> str:
 
     return result
 
-
 def transliterate_to_arabic(name: str) -> str:
     """
     Транслитерация имени на арабский язык
@@ -96,7 +95,6 @@ def transliterate_to_arabic(name: str) -> str:
 
     return result
 
-
 def auto_translate_name(name: str) -> dict:
     """
     Автоматически переводит имя на русский и арабский
@@ -111,7 +109,6 @@ def auto_translate_name(name: str) -> dict:
         'ru': transliterate_to_russian(name),
         'ar': transliterate_to_arabic(name)
     }
-
 
 if __name__ == "__main__":
     # Тестирование

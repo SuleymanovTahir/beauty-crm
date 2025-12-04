@@ -7,7 +7,6 @@
 from db.connection import get_db_connection
 from utils.logger import log_info, log_warning, log_error
 
-
 def remove_duplicate_employees():
     """
     Удалить дубликаты сотрудников.
@@ -104,7 +103,6 @@ def remove_duplicate_employees():
             "success": False,
             "error": str(e)
         }
-
 
 if __name__ == "__main__":
     result = remove_duplicate_employees()

@@ -6,7 +6,6 @@ from db.connection import get_db_connection
 from core.config import DATABASE_NAME
 from typing import List, Optional
 
-
 class TestDataCleaner:
     """Класс для очистки тестовых данных"""
     
@@ -232,7 +231,6 @@ class TestDataCleaner:
         
         return results
 
-
 def cleanup_after_test(test_users: Optional[List[str]] = None,
                       test_clients: Optional[List[str]] = None,
                       verbose: bool = True) -> bool:
@@ -273,7 +271,6 @@ def cleanup_after_test(test_users: Optional[List[str]] = None,
         if verbose:
             print(f"      ⚠️  Ошибка очистки: {e}")
         return False
-
 
 # Для обратной совместимости
 def cleanup_test_data(test_client_id: str = None, verbose: bool = True):

@@ -18,18 +18,15 @@ from services.master_schedule import MasterScheduleService
 from services.loyalty import LoyaltyService
 from services.auto_booking import AutoBookingService
 
-
 def print_section(title):
     """Печать заголовка секции"""
     print("\n" + "="*80)
     print(f"  {title}")
     print("="*80)
 
-
 def print_subsection(title):
     """Печать подзаголовка"""
     print(f"\n--- {title} ---")
-
 
 def test_analytics():
     """Тест 1: Dashboard с KPI и аналитикой"""
@@ -80,7 +77,6 @@ def test_analytics():
         import traceback
         traceback.print_exc()
         return False
-
 
 def test_master_schedule():
     """Тест 2: Расписание мастеров"""
@@ -153,7 +149,6 @@ def test_master_schedule():
             conn.close()
         except Exception:
             pass
-
 
 def test_loyalty_program():
     """Тест 3: Программа лояльности"""
@@ -238,7 +233,6 @@ def test_loyalty_program():
         traceback.print_exc()
         return False
 
-
 def test_auto_booking():
     """Тест 4: Автозаполнение окон"""
     print_section("ТЕСТ 4: Автозаполнение окон записи")
@@ -304,7 +298,6 @@ def test_auto_booking():
         traceback.print_exc()
         return False
 
-
 def main():
     """Запуск всех тестов"""
     print("\n" + "="*80)
@@ -352,7 +345,6 @@ def main():
         return True
     
     return False
-
 
 if __name__ == "__main__":
     main()

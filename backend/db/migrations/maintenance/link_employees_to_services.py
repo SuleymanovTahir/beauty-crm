@@ -64,7 +64,7 @@ def link_employees_to_services():
     # Вставляем связи
     for emp_id, svc_id in links:
         c.execute("""
-            INSERT OR IGNORE INTO employee_services (employee_id, service_id)
+            INSERT INTO employee_services (employee_id, service_id)
             VALUES (%s, %s)
         """, (emp_id, svc_id))
     
@@ -93,7 +93,6 @@ def link_employees_to_services():
     conn.close()
     
     return count > 0
-
 
 if __name__ == "__main__":
     print("=" * 70)

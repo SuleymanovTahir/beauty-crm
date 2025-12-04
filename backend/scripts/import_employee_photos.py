@@ -4,7 +4,6 @@ from db.connection import get_db_connection
 import sys
 from pathlib import Path
 
-
 # Add backend directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

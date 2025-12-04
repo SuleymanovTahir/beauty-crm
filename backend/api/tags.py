@@ -4,7 +4,6 @@ API Endpoints для тегов клиентов
 from fastapi import APIRouter, Query, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional, List
-import sqlite3
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -12,7 +11,6 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Tags"])
-
 
 def create_tags_table():
     """Создать таблицу тегов"""
@@ -38,7 +36,6 @@ def create_tags_table():
     
     conn.commit()
     conn.close()
-
 
 @router.get("/tags")
 async def get_tags(session_token: Optional[str] = Cookie(None)):
@@ -72,7 +69,6 @@ async def get_tags(session_token: Optional[str] = Cookie(None)):
     finally:
         conn.close()
 
-
 @router.post("/tags")
 async def create_tag(
     request: dict,
@@ -98,7 +94,7 @@ async def create_tag(
         
         c.execute("""
             INSERT INTO tags (name, color, description)
-            VALUES (?, ?, ?)
+            VALUES (%s,%s,%s)
         """, (name, color, description))
         
         tag_id = c.lastrowid
@@ -118,7 +114,6 @@ async def create_tag(
         log_error(f"Error creating tag: {e}", "tags")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.delete("/tags/{tag_id}")
 async def delete_tag(
     tag_id: int,
@@ -136,10 +131,10 @@ async def delete_tag(
         c = conn.cursor()
         
         # Удаляем связи с клиентами
-        c.execute("DELETE FROM client_tags WHERE tag_id = ?", (tag_id,))
+        c.execute("DELETE FROM client_tags WHERE tag_id =%s", (tag_id,))
         
         # Удаляем тег
-        c.execute("DELETE FROM tags WHERE id = ?", (tag_id,))
+        c.execute("DELETE FROM tags WHERE id =%s", (tag_id,))
         
         if c.rowcount == 0:
             conn.close()
@@ -154,7 +149,6 @@ async def delete_tag(
     except Exception as e:
         log_error(f"Error deleting tag: {e}", "tags")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/clients/{client_id}/tags")
 async def add_client_tag(
@@ -180,7 +174,7 @@ async def add_client_tag(
         
         c.execute("""
             INSERT INTO client_tags (client_id, tag_id)
-            VALUES (?, ?)
+            VALUES (%s,%s)
         """, (client_id, tag_id))
         
         conn.commit()
@@ -194,7 +188,6 @@ async def add_client_tag(
     except Exception as e:
         log_error(f"Error adding tag to client: {e}", "tags")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/clients/{client_id}/tags/{tag_id}")
 async def remove_client_tag(
@@ -215,7 +208,7 @@ async def remove_client_tag(
         
         c.execute("""
             DELETE FROM client_tags 
-            WHERE client_id = ? AND tag_id = ?
+            WHERE client_id =%s AND tag_id =%s
         """, (client_id, tag_id))
         
         if c.rowcount == 0:
@@ -231,7 +224,6 @@ async def remove_client_tag(
     except Exception as e:
         log_error(f"Error removing tag from client: {e}", "tags")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/clients/{client_id}/tags")
 async def get_client_tags(
@@ -253,7 +245,7 @@ async def get_client_tags(
             SELECT t.id, t.name, t.color, t.description
             FROM tags t
             JOIN client_tags ct ON t.id = ct.tag_id
-            WHERE ct.client_id = ?
+            WHERE ct.client_id =%s
             ORDER BY t.name
         """, (client_id,))
         

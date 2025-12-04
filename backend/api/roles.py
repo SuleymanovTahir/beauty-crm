@@ -15,7 +15,6 @@ from utils.logger import log_error
 
 router = APIRouter(tags=["Roles"])
 
-
 @router.get("/roles")
 async def list_roles(session_token: Optional[str] = Cookie(None)):
     """Получить все роли (с учетом иерархии)"""
@@ -58,7 +57,6 @@ async def list_roles(session_token: Optional[str] = Cookie(None)):
         "count": len(formatted_roles)
     }
 
-
 @router.post("/roles")
 async def create_role(
     request: Request,
@@ -88,7 +86,6 @@ async def create_role(
     else:
         return JSONResponse({"error": "Role already exists"}, status_code=400)
 
-
 @router.delete("/roles/{role_key}")
 async def delete_role(
     role_key: str,
@@ -108,7 +105,6 @@ async def delete_role(
         return JSONResponse({"error": "Cannot delete built-in roles"}, 
                           status_code=400)
 
-
 @router.get("/roles/{role_key}/permissions")
 async def get_role_permissions_api(
     role_key: str,
@@ -126,7 +122,6 @@ async def get_role_permissions_api(
         "permissions": permissions,
         "available_permissions": AVAILABLE_PERMISSIONS
     }
-
 
 @router.post("/roles/{role_key}/permissions")
 async def update_role_permissions_api(
@@ -150,7 +145,6 @@ async def update_role_permissions_api(
         return {"success": True, "message": "Permissions updated"}
     else:
         return JSONResponse({"error": "Update failed"}, status_code=400)
-
 
 @router.get("/roles/permissions/available")
 async def list_available_permissions(session_token: Optional[str] = Cookie(None)):

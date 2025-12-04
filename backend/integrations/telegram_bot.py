@@ -2,16 +2,15 @@
 Telegram Bot Integration
 Обработка сообщений от Telegram Bot API
 """
-import sqlite3
+from db.connection import get_db_connection
 import requests
 import json
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-from core.config import DATABASE_NAME, TELEGRAM_BOT_TOKEN
+from core.config import TELEGRAM_BOT_TOKEN
 from utils.logger import log_info, log_error
 from db.settings import get_salon_settings
-
 
 class TelegramBot:
     """Класс для работы с Telegram Bot API"""
@@ -33,12 +32,12 @@ class TelegramBot:
                 return
 
             # Fallback: загрузка из БД (для обратной совместимости)
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
             c.execute("""
                 SELECT api_token
                 FROM messenger_settings
-                WHERE messenger_type = 'telegram' AND is_enabled = 1
+                WHERE messenger_type = 'telegram' AND is_enabled = TRUE
             """)
             result = c.fetchone()
             conn.close()
@@ -194,7 +193,7 @@ class TelegramBot:
     def save_message(self, chat_id: int, message_id: int, from_user: Dict, text: str, sender_type: str):
         """Сохранить сообщение в БД"""
         try:
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
 
             # Используем chat_id как client_id для Telegram
@@ -203,14 +202,14 @@ class TelegramBot:
             c.execute("""
                 INSERT INTO messenger_messages
                 (messenger_type, client_id, external_message_id, sender_type, message_text, is_read, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (
                 'telegram',
                 client_id,
                 str(message_id),
                 sender_type,
                 text,
-                1 if sender_type == 'admin' else 0,
+                True if sender_type == 'admin' else False,
                 datetime.now().isoformat()
             ))
 
@@ -223,7 +222,7 @@ class TelegramBot:
     def get_or_create_client(self, chat_id: int, user: Dict) -> Optional[Dict]:
         """Получить или создать клиента в БД"""
         try:
-            conn = sqlite3.connect(DATABASE_NAME)
+            conn = get_db_connection()
             c = conn.cursor()
 
             client_id = f"telegram_{chat_id}"
@@ -233,7 +232,7 @@ class TelegramBot:
             full_name = f"{first_name} {last_name}".strip()
 
             # Проверяем есть ли клиент
-            c.execute("SELECT instagram_id, name FROM clients WHERE instagram_id = ?", (client_id,))
+            c.execute("SELECT instagram_id, name FROM clients WHERE instagram_id = %s", (client_id,))
             existing = c.fetchone()
 
             if existing:
@@ -243,7 +242,7 @@ class TelegramBot:
             # Создаем нового клиента
             c.execute("""
                 INSERT INTO clients (instagram_id, username, name, first_contact, last_contact, status)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """, (
                 client_id,
                 username or f"tg_{chat_id}",
@@ -262,10 +261,8 @@ class TelegramBot:
             log_error(f"Error creating Telegram client: {e}", "telegram")
             return None
 
-
 # Глобальный экземпляр бота
 telegram_bot = TelegramBot()
-
 
 async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Dict[str, Any]:
     """
