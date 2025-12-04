@@ -111,6 +111,7 @@ async def create_role_plan_api(
         period_type=period_type,
         start_date=start_date,
         end_date=end_date,
+        name=data.get("name"),
         visible_to_roles=visible_to_roles,
         can_edit_roles=can_edit_roles,
         created_by=user.get("id")
@@ -172,6 +173,7 @@ async def create_individual_plan_api(
         period_type=period_type,
         start_date=start_date,
         end_date=end_date,
+        name=data.get("name"),
         created_by=user.get("id")
     )
     
@@ -267,6 +269,7 @@ async def create_plan_api(
         period_type=period_type,
         start_date=start_date,
         end_date=end_date,
+        name=data.get("name"),
         created_by=user.get("id")
     )
     

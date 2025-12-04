@@ -1125,6 +1125,22 @@ export class ApiClient {
     }>('/api/subscriptions')
   }
 
+  async updateSubscription(type: string, isSubscribed: boolean, channels?: { email?: boolean; telegram?: boolean; instagram?: boolean }) {
+    const data: any = {
+      subscription_type: type,
+      is_subscribed: isSubscribed
+    };
+    if (channels) {
+      if (channels.email !== undefined) data.email_enabled = channels.email;
+      if (channels.telegram !== undefined) data.telegram_enabled = channels.telegram;
+      if (channels.instagram !== undefined) data.instagram_enabled = channels.instagram;
+    }
+    return this.request('/api/subscriptions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async previewBroadcast(data: {
     subscription_type: string;
     channels: string[];

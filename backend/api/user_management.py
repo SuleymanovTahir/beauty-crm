@@ -43,7 +43,9 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         c.execute("""
-            SELECT id, username, full_name, email, role, COALESCE(photo, photo_url) as photo
+            SELECT id, username, full_name, email, role, COALESCE(photo, photo_url) as photo,
+                   phone_number, instagram_link, whatsapp, telegram, position,
+                   birth_date, about_me, specialization, years_of_experience
             FROM users
             WHERE id = %s
         """, (user["id"],))
@@ -62,7 +64,16 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
                 "full_name": result[2],
                 "email": result[3],
                 "role": result[4],
-                "photo": result[5]
+                "photo": result[5],
+                "phone_number": result[6],
+                "instagram_link": result[7],
+                "whatsapp": result[8],
+                "telegram": result[9],
+                "position": result[10],
+                "birth_date": result[11],
+                "about_me": result[12],
+                "specialization": result[13],
+                "years_of_experience": result[14]
             }
         }
 

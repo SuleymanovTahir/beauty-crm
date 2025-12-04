@@ -273,28 +273,42 @@ async def delete_user_api(
     c = conn.cursor()
     c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
     target_user = c.fetchone()
-    conn.close()
-
     if not target_user:
+        conn.close()
         return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
-
-    target_role = target_user[0]
-
-    # Админ не может удалять директоров
-    if user["role"] == "admin" and target_role == "director":
-        return JSONResponse(
-            {"error": "Админ не может удалять директоров"},
-            status_code=403
-        )
-
-    success = delete_user(user_id)
-
-    if success:
-        log_activity(user["id"], "delete_user", "user", str(user_id),
-                    f"Deleted user with role: {target_role}")
-        return {"success": True, "message": "Пользователь удалён"}
-
-    return JSONResponse({"error": "Ошибка удаления"}, status_code=400)
+    
+    # Нельзя удалить admin или director, если ты не director
+    if target_user[0] in ['admin', 'director'] and user["role"] != 'director':
+        conn.close()
+        return JSONResponse({"error": "Недостаточно прав для удаления этого пользователя"}, status_code=403)
+    
+    try:
+        # Сначала удаляем связанные записи
+        # 1. Удаляем из activity_log
+        c.execute("DELETE FROM activity_log WHERE user_id = %s", (user_id,))
+        
+        # 2. Удаляем из notification_settings
+        c.execute("DELETE FROM notification_settings WHERE user_id = %s", (user_id,))
+        
+        # 3. Удаляем из user_subscriptions
+        c.execute("DELETE FROM user_subscriptions WHERE user_id = %s", (user_id,))
+        
+        # 4. Удаляем из user_services
+        c.execute("DELETE FROM user_services WHERE user_id = %s", (user_id,))
+        
+        # Теперь удаляем самого пользователя
+        c.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        
+        log_activity(user["id"], "delete_user", "user", str(user_id), f"User deleted")
+        
+        return {"success": True, "message": "Пользователь удален"}
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error deleting user {user_id}: {e}", "api")
+        return JSONResponse({"error": "Ошибка удаления"}, status_code=400)
+    finally:
+        conn.close()
 
 # После строки 286 (после функции update_user_profile)
 
@@ -657,12 +671,12 @@ async def update_user_notification_settings(
                 notify_on_booking_cancel = %s
             WHERE id = %s
         """, (
-            1 if data.get('notify_telegram', True) else 0,
-            1 if data.get('notify_email', True) else 0,
-            1 if data.get('notify_whatsapp', False) else 0,
-            1 if data.get('notify_on_new_booking', True) else 0,
-            1 if data.get('notify_on_booking_change', True) else 0,
-            1 if data.get('notify_on_booking_cancel', True) else 0,
+            True if data.get('notify_telegram', True) else False,
+            True if data.get('notify_email', True) else False,
+            True if data.get('notify_whatsapp', False) else False,
+            True if data.get('notify_on_new_booking', True) else False,
+            True if data.get('notify_on_booking_change', True) else False,
+            True if data.get('notify_on_booking_cancel', True) else False,
             user_id
         ))
 

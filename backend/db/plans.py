@@ -138,6 +138,7 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
 
 def set_role_plan(role_key: str, metric_type: str, target_value: float, 
                      period_type: str, start_date: str, end_date: str,
+                     name: str = None,
                      visible_to_roles: List[str] = None,
                      can_edit_roles: List[str] = None,
                      created_by: int = None) -> Optional[int]:
@@ -161,16 +162,21 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
         visible_json = json.dumps(visible_to_roles) if visible_to_roles else None
         can_edit_json = json.dumps(can_edit_roles) if can_edit_roles else None
         
+        # Generate name if not provided
+        if not name:
+            name = f"Plan for {role_key} - {metric_type}"
+
         c.execute("""
             INSERT INTO plans (
                 metric_type, target_value, period_type, 
                 start_date, end_date, created_by,
                 role_key, is_position_plan,
-                visible_to_positions, can_edit_positions
+                visible_to_positions, can_edit_positions,
+                name, role, price
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s, %s, %s, 0)
         """, (metric_type, target_value, period_type, start_date, end_date, 
-              created_by, role_key, visible_json, can_edit_json))
+              created_by, role_key, visible_json, can_edit_json, name, role_key))
         
         plan_id = c.lastrowid
         conn.commit()
@@ -184,6 +190,7 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
 
 def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                        period_type: str, start_date: str, end_date: str,
+                       name: str = None,
                        created_by: int = None) -> Optional[int]:
     """Create individual plan override for specific user"""
     try:
@@ -201,16 +208,20 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
               AND is_active = TRUE
         """, (datetime.now().isoformat(), user_id, metric_type, period_type))
         
+        # Generate name if not provided
+        if not name:
+            name = f"Individual Plan - {metric_type}"
+
         # Create new individual plan
         c.execute("""
             INSERT INTO plans (
                 metric_type, target_value, period_type, 
                 start_date, end_date, created_by,
-                user_id, is_individual_plan
+                user_id, is_individual_plan, name, role, price
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, 'individual', 0)
         """, (metric_type, target_value, period_type, start_date, end_date, 
-              created_by, user_id))
+              created_by, user_id, name))
         
         plan_id = c.lastrowid
         conn.commit()
@@ -441,7 +452,7 @@ def get_plan(metric_type: str, period_type: str = None) -> Optional[Dict[str, An
         return None
 
 def set_plan(metric_type: str, target_value: float, period_type: str, 
-             start_date: str, end_date: str, created_by: int = None) -> Optional[int]:
+             start_date: str, end_date: str, name: str = None, created_by: int = None) -> Optional[int]:
     """Create or update a global plan (backward compatibility)"""
     try:
         conn = get_db_connection()
@@ -458,12 +469,16 @@ def set_plan(metric_type: str, target_value: float, period_type: str,
               AND is_active = TRUE
         """, (datetime.now().isoformat(), metric_type, period_type))
         
+        # Generate name if not provided
+        if not name:
+            name = f"Global Plan - {metric_type}"
+
         # Create new plan
         c.execute("""
             INSERT INTO plans (metric_type, target_value, period_type, 
-                             start_date, end_date, created_by)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (metric_type, target_value, period_type, start_date, end_date, created_by))
+                             start_date, end_date, created_by, name, role, price)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 'global', 0)
+        """, (metric_type, target_value, period_type, start_date, end_date, created_by, name))
         
         plan_id = c.lastrowid
         conn.commit()

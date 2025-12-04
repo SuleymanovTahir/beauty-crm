@@ -58,11 +58,11 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id =%s
             """, (
-                1 if settings.emailNotifications else 0,
-                1 if settings.smsNotifications else 0,
-                1 if settings.bookingNotifications else 0,
-                1 if settings.chatNotifications else 0,
-                1 if settings.dailyReport else 0,
+                True if settings.emailNotifications else False,
+                True if settings.smsNotifications else False,
+                True if settings.bookingNotifications else False,
+                True if settings.chatNotifications else False,
+                True if settings.dailyReport else False,
                 settings.reportTime,
                 user_id
             ))
@@ -81,11 +81,11 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                 ) VALUES (%s,%s,%s,%s,%s,%s,%s)
             """, (
                 user_id,
-                1 if settings.emailNotifications else 0,
-                1 if settings.smsNotifications else 0,
-                1 if settings.bookingNotifications else 0,
-                1 if settings.chatNotifications else 0,
-                1 if settings.dailyReport else 0,
+                True if settings.emailNotifications else False,
+                True if settings.smsNotifications else False,
+                True if settings.bookingNotifications else False,
+                True if settings.chatNotifications else False,
+                True if settings.dailyReport else False,
                 settings.reportTime
             ))
             log_info(f"Notification settings created for user {user_id}", "settings")
@@ -134,11 +134,11 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                     ) VALUES (%s,%s,%s,%s,%s,%s,%s)
                 """, (
                     user_id,
-                    1 if settings.emailNotifications else 0,
-                    1 if settings.smsNotifications else 0,
-                    1 if settings.bookingNotifications else 0,
-                    1 if settings.chatNotifications else 0,
-                    1 if settings.dailyReport else 0,
+                    True if settings.emailNotifications else False,
+                    True if settings.smsNotifications else False,
+                    True if settings.bookingNotifications else False,
+                    True if settings.chatNotifications else False,
+                    True if settings.dailyReport else False,
                     settings.reportTime
                 ))
 

@@ -155,19 +155,24 @@ def extract_translatable_content():
                     
                     # Actually, let's instantiate Translator here. It uses cache so it should be fast for repeated runs.
                     # We'll do it only if we haven't already flagged this field as missing
-                    if not field_has_missing:
+                    # DISABLED for users table to prevent hanging on API calls
+                    if not field_has_missing and table_name != 'users':
                         # Lazy instantiation
                         if 'translator' not in locals():
                             from translator import Translator
                             translator = Translator(use_cache=True)
                         
-                        detected = translator.detect_language(source_value)
-                        # Only flag if detected is 'en' (reliable) and source is 'ru'
-                        if detected == 'en' and SOURCE_LANGUAGE == 'ru':
-                             print(f"    ⚠️  Language mismatch for {key}: detected '{detected}', expected '{SOURCE_LANGUAGE}'")
-                             field_has_missing = True
-                             # We don't increment total_missing here to avoid double counting if we re-run
-                             # But effectively this forces it into the output list
+                        try:
+                            detected = translator.detect_language(source_value)
+                            # Only flag if detected is 'en' (reliable) and source is 'ru'
+                            if detected == 'en' and SOURCE_LANGUAGE == 'ru':
+                                 print(f"    ⚠️  Language mismatch for {key}: detected '{detected}', expected '{SOURCE_LANGUAGE}'")
+                                 field_has_missing = True
+                                 # We don't increment total_missing here to avoid double counting if we re-run
+                                 # But effectively this forces it into the output list
+                        except Exception as e:
+                            # Skip detection errors silently
+                            pass
                     
                     # Only include field if it has missing translations
                     if field_has_missing:

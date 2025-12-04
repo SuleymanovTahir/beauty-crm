@@ -512,7 +512,7 @@ async def toggle_booking_reminder_setting(
             conn.close()
             return JSONResponse({"error": "Setting not found"}, status_code=404)
 
-        new_state = 0 if row[0] else 1
+        new_state = False if row[0] else True
 
         c.execute("UPDATE booking_reminder_settings SET is_enabled =%s WHERE id =%s",
                  (new_state, setting_id))

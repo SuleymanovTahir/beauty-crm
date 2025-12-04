@@ -112,31 +112,31 @@ async def update_user_subscription(
 
         # Строим SQL запрос динамически в зависимости от того, какие каналы обновляются
         update_fields = ["is_subscribed = %s", "updated_at = %s"]
-        update_values = [int(is_subscribed), datetime.now().isoformat()]
+        update_values = [is_subscribed, datetime.now().isoformat()]
 
         insert_fields = ["user_id", "subscription_type", "is_subscribed", "updated_at"]
-        insert_values = [user_id, sub_type, int(is_subscribed), datetime.now().isoformat()]
+        insert_values = [user_id, sub_type, is_subscribed, datetime.now().isoformat()]
         insert_placeholders = ["%s", "%s", "%s", "%s"]
 
         if subscription_update.email_enabled is not None:
             update_fields.append("email_enabled = %s")
-            update_values.append(int(subscription_update.email_enabled))
+            update_values.append(subscription_update.email_enabled)
             insert_fields.append("email_enabled")
-            insert_values.append(int(subscription_update.email_enabled))
+            insert_values.append(subscription_update.email_enabled)
             insert_placeholders.append("%s")
 
         if subscription_update.telegram_enabled is not None:
             update_fields.append("telegram_enabled = %s")
-            update_values.append(int(subscription_update.telegram_enabled))
+            update_values.append(subscription_update.telegram_enabled)
             insert_fields.append("telegram_enabled")
-            insert_values.append(int(subscription_update.telegram_enabled))
+            insert_values.append(subscription_update.telegram_enabled)
             insert_placeholders.append("%s")
 
         if subscription_update.instagram_enabled is not None:
             update_fields.append("instagram_enabled = %s")
-            update_values.append(int(subscription_update.instagram_enabled))
+            update_values.append(subscription_update.instagram_enabled)
             insert_fields.append("instagram_enabled")
-            insert_values.append(int(subscription_update.instagram_enabled))
+            insert_values.append(subscription_update.instagram_enabled)
             insert_placeholders.append("%s")
 
         # Обновляем или создаем подписку
@@ -188,9 +188,9 @@ async def update_multiple_subscriptions(
                 ON CONFLICT(user_id, subscription_type)
                 DO UPDATE SET is_subscribed = %s, updated_at = %s
             """, (
-                user_id, sub.subscription_type, int(sub.is_subscribed),
+                user_id, sub.subscription_type, sub.is_subscribed,
                 datetime.now().isoformat(),
-                int(sub.is_subscribed), datetime.now().isoformat()
+                sub.is_subscribed, datetime.now().isoformat()
             ))
 
         conn.commit()
@@ -248,8 +248,13 @@ async def delete_account(
         if input_password_hash != stored_password_hash:
             raise HTTPException(status_code=403, detail="Неверный пароль")
 
-        # Удаляем пользователя и все связанные данные
-        # SQLite автоматически удалит записи с ON DELETE CASCADE
+        # Удаляем связанные данные вручную (для PostgreSQL без CASCADE)
+        c.execute("DELETE FROM sessions WHERE user_id = %s", (user_id,))
+        c.execute("DELETE FROM user_subscriptions WHERE user_id = %s", (user_id,))
+        c.execute("DELETE FROM notification_settings WHERE user_id = %s", (user_id,))
+        c.execute("DELETE FROM activity_log WHERE user_id = %s", (user_id,))
+        
+        # Удаляем пользователя
         c.execute("DELETE FROM users WHERE id = %s", (user_id,))
 
         conn.commit()

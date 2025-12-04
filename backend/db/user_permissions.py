@@ -106,13 +106,13 @@ def grant_user_permission(
                 UPDATE user_permissions
                 SET granted = %s, granted_by = %s, granted_at = CURRENT_TIMESTAMP, notes = %s
                 WHERE user_id = %s AND permission_key = %s
-            """, (1 if granted else 0, granted_by, notes, user_id, permission_key))
+            """, (True if granted else False, granted_by, notes, user_id, permission_key))
         else:
             # Создаём новую запись
             c.execute("""
                 INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, notes)
                 VALUES (%s, %s, %s, %s, %s)
-            """, (user_id, permission_key, 1 if granted else 0, granted_by, notes))
+            """, (user_id, permission_key, True if granted else False, granted_by, notes))
         
         conn.commit()
         action = "granted" if granted else "revoked"
@@ -151,7 +151,7 @@ def bulk_update_user_permissions(
                     granted = excluded.granted,
                     granted_by = excluded.granted_by,
                     granted_at = CURRENT_TIMESTAMP
-            """, (user_id, perm_key, 1 if granted else 0, granted_by))
+            """, (user_id, perm_key, True if granted else False, granted_by))
         
         conn.commit()
         log_info(f"✅ Bulk updated {len(permissions)} permissions for user {user_id}", "permissions")

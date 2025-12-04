@@ -155,7 +155,7 @@ async def update_review(review_id: int, review: ReviewUpdate):
         
         if review.is_active is not None:
             updates.append("is_active =%s")
-            params.append(1 if review.is_active else 0)
+            params.append(True if review.is_active else False)
         
         if review.display_order is not None:
             updates.append("display_order =%s")
@@ -206,7 +206,7 @@ async def toggle_review(review_id: int):
         if not row:
             raise HTTPException(status_code=404, detail="Отзыв не найден")
         
-        new_status = 0 if row[0] else 1
+        new_status = False if row[0] else True
         c.execute("UPDATE public_reviews SET is_active =%s WHERE id =%s", (new_status, review_id))
         conn.commit()
         
@@ -327,7 +327,7 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
             
         if banner.is_active is not None:
             updates.append("is_active =%s")
-            params.append(1 if banner.is_active else 0)
+            params.append(True if banner.is_active else False)
             
         if banner.bg_pos_desktop_x is not None:
             updates.append("bg_pos_desktop_x =%s")
