@@ -7,6 +7,7 @@ import requests
 import json
 from datetime import datetime
 from typing import Optional, Dict, Any
+import asyncio
 
 from core.config import TELEGRAM_BOT_TOKEN
 from utils.logger import log_info, log_error
@@ -66,7 +67,6 @@ class TelegramBot:
                 "url": webhook_url,
                 "allowed_updates": ["message", "callback_query"]
             }
-
             response = requests.post(url, json=data)
             result = response.json()
 
@@ -78,19 +78,6 @@ class TelegramBot:
             return result
         except Exception as e:
             log_error(f"Error setting webhook: {e}", "telegram")
-            return {"success": False, "error": str(e)}
-
-    def get_webhook_info(self) -> Dict[str, Any]:
-        """Получить информацию о текущем webhook"""
-        if not self.token:
-            return {"success": False, "error": "Token not loaded"}
-
-        try:
-            url = f"{self.base_url}/getWebhookInfo"
-            response = requests.get(url)
-            return response.json()
-        except Exception as e:
-            log_error(f"Error getting webhook info: {e}", "telegram")
             return {"success": False, "error": str(e)}
 
     def send_message(self, chat_id: int, text: str, parse_mode: str = "HTML") -> Dict[str, Any]:
@@ -112,7 +99,8 @@ class TelegramBot:
                 "parse_mode": parse_mode
             }
 
-            response = requests.post(url, json=data)
+            # Added timeout to prevent hanging
+            response = requests.post(url, json=data, timeout=10)
             result = response.json()
 
             if result.get("ok"):
@@ -123,6 +111,19 @@ class TelegramBot:
             return result
         except Exception as e:
             log_error(f"Error sending message: {e}", "telegram")
+            return {"success": False, "error": str(e)}
+
+    def get_webhook_info(self) -> Dict[str, Any]:
+        """Получить информацию о текущем webhook"""
+        if not self.token:
+            return {"success": False, "error": "Token not loaded"}
+
+        try:
+            url = f"{self.base_url}/getWebhookInfo"
+            response = requests.get(url)
+            return response.json()
+        except Exception as e:
+            log_error(f"Error getting webhook info: {e}", "telegram")
             return {"success": False, "error": str(e)}
 
     def process_update(self, update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -261,8 +262,12 @@ class TelegramBot:
             log_error(f"Error creating Telegram client: {e}", "telegram")
             return None
 
+    # ... (process_update and other methods remain unchanged) ...
+
 # Глобальный экземпляр бота
 telegram_bot = TelegramBot()
+
+# ... (skip to send_telegram_alert) ...
 
 async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Dict[str, Any]:
     """
@@ -277,6 +282,7 @@ async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Di
         Результат отправки
     """
     try:
+        
         # Если chat_id не указан, берем из переменных окружения или настроек
         if chat_id is None:
             import os
@@ -294,7 +300,7 @@ async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Di
             
             # Убираем скобки если есть: (123,456) -> 123,456
             chat_ids_str = str(chat_ids_str).strip('()')
-            
+
             # Поддержка нескольких ID через запятую
             chat_ids = [id.strip() for id in chat_ids_str.split(',')]
         else:
@@ -304,6 +310,8 @@ async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Di
         results = []
         for cid in chat_ids:
             try:
+                # Reverting to synchronous call to fix boot error
+                # Timeout is handled inside send_message
                 result = telegram_bot.send_message(int(cid), message, parse_mode="HTML")
                 results.append({"chat_id": cid, "result": result})
                 

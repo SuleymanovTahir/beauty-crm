@@ -1403,9 +1403,23 @@ def init_database():
         import shutil
         import os
         
-        source_dir = "/Users/tahir/Desktop/beauty-crm/frontend/public_landing/styles/M le Diamant  портфолио/Сотрудники"
-        target_dir = "static/uploads/images"
+        # Determine project root and potential paths
+        # __file__ = backend/db/init.py
+        # dirname = backend/db
+        # dirname = backend
+        # dirname = project_root
+        backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        project_root = os.path.dirname(backend_dir)
         
+        # Универсальный путь, который работает везде, где сохранена структура проекта
+        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "M le Diamant  портфолио", "Сотрудники")
+        
+        target_dir = os.path.join(backend_dir, "static", "uploads", "images")
+        
+        if not os.path.exists(source_dir):
+            log_warning(f"⚠️ Папка с фото не найдена: {source_dir}", "db")
+            return {}
+
         if not os.path.exists(target_dir):
             os.makedirs(target_dir, exist_ok=True)
             

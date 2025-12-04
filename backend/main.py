@@ -492,7 +492,7 @@ async def startup_event():
     # drop_database()
     # from db.migrations.run_all_migrations import run_all_migrations
     # run_all_migrations()  # Пересоздать после удаления
-    
+
     # ================================
     # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
     # ================================
@@ -523,7 +523,9 @@ async def startup_event():
     # log_info("🧪 Запуск всех тестов...", "startup")
     # run_all_tests()
 
- 
+    # run_all_migrations()
+    # await run_all_fixes()
+    # run_all_tests()
 
     # Инициализация бота
     bot = get_bot()
