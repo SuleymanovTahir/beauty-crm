@@ -52,7 +52,9 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
             query += f" LIMIT {limit}"
         
         cursor.execute(query)
-        reviews = [dict(row) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        reviews = [dict(zip(columns, row)) for row in rows]
         
         log_info(f"Получено {len(reviews)} отзывов на языке {language}", "db")
         return reviews
@@ -103,7 +105,9 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
         query += " ORDER BY display_order DESC, created_at DESC"
         
         cursor.execute(query)
-        faq = [dict(row) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        faq = [dict(zip(columns, row)) for row in rows]
         
         log_info(f"Получено {len(faq)} FAQ на языке {language}", "db")
         return faq
@@ -163,7 +167,9 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
             query += f" LIMIT {limit}"
         
         cursor.execute(query, params)
-        gallery = [dict(row) for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        gallery = [dict(zip(columns, row)) for row in rows]
         
         log_info(f"Получено {len(gallery)} элементов галереи", "db")
         return gallery

@@ -53,17 +53,20 @@ async def get_public_employees(
         """
         
         cursor.execute(query)
+        rows = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
         employees = []
         
-        for row in cursor.fetchall():
+        for row in rows:
+            row_dict = dict(zip(columns, row))
             employees.append({
-                "id": row["id"],
-                "name": row["full_name"],
-                "role": row["position"] or "Специалист",
-                "specialty": row["bio"] or "",
-                "image": row["photo"] or "/static/avatars/default_female.webp",
-                "experience": row["experience"] or "",
-                "instagram": row["instagram"] or ""
+                "id": row_dict["id"],
+                "name": row_dict["full_name"],
+                "role": row_dict["position"] or "Специалист",
+                "specialty": row_dict["bio"] or "",
+                "image": row_dict["photo"] or "/static/avatars/default_female.webp",
+                "experience": row_dict["experience"] or "",
+                "instagram": row_dict["instagram"] or ""
             })
         
         log_info(f"Получено {len(employees)} сотрудников на языке {language}", "api")
@@ -125,24 +128,26 @@ async def get_salon_info(
         row = cursor.fetchone()
         
         if row:
+            columns = [desc[0] for desc in cursor.description]
+            row_dict = dict(zip(columns, row))
             return {
-                "name": row["name"],
-                "address": row["address"],
-                "main_location": row["main_location"],
-                "google_maps_embed_url": row["google_maps"],  # Map to frontend expected key
-                "google_maps": row["google_maps"],
-                "hours": row["hours"],
-                "hours_weekdays": row["hours_weekdays"],
-                "hours_weekends": row["hours_weekends"],
-                "phone": row["phone"],
-                "email": row["email"],
-                "instagram": row["instagram"],
-                "whatsapp": row["whatsapp"],
-                "booking_url": row["booking_url"],
-                "city": row["city"],
-                "country": row["country"],
-                "timezone_offset": row["timezone_offset"],
-                "currency": row["currency"]
+                "name": row_dict["name"],
+                "address": row_dict["address"],
+                "main_location": row_dict["main_location"],
+                "google_maps_embed_url": row_dict["google_maps"],  # Map to frontend expected key
+                "google_maps": row_dict["google_maps"],
+                "hours": row_dict["hours"],
+                "hours_weekdays": row_dict["hours_weekdays"],
+                "hours_weekends": row_dict["hours_weekends"],
+                "phone": row_dict["phone"],
+                "email": row_dict["email"],
+                "instagram": row_dict["instagram"],
+                "whatsapp": row_dict["whatsapp"],
+                "booking_url": row_dict["booking_url"],
+                "city": row_dict["city"],
+                "country": row_dict["country"],
+                "timezone_offset": row_dict["timezone_offset"],
+                "currency": row_dict["currency"]
             }
         else:
             return {}
