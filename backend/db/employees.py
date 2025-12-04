@@ -210,11 +210,11 @@ def update_employee_service(employee_id: int, service_id: int,
         
     if is_online_booking_enabled is not None:
         updates.append("is_online_booking_enabled = %s")
-        params.append(1 if is_online_booking_enabled else 0)
+        params.append(True if is_online_booking_enabled else False)
         
     if is_calendar_enabled is not None:
         updates.append("is_calendar_enabled = %s")
-        params.append(1 if is_calendar_enabled else 0)
+        params.append(True if is_calendar_enabled else False)
 
     if price_min is not None:
         updates.append("price_min = %s")
@@ -268,8 +268,8 @@ def add_employee_service(employee_id: int, service_id: int,
             (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled, price_min, price_max)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (employee_id, service_id, price, duration, 
-              1 if is_online_booking_enabled else 0, 
-              1 if is_calendar_enabled else 0,
+              True if is_online_booking_enabled else False, 
+              True if is_calendar_enabled else False,
               price_min, price_max))
     else:
         c.execute("INSERT INTO user_services (user_id, service_id) VALUES (%s, %s)", 

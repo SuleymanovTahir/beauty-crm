@@ -529,10 +529,10 @@ export default function Messages() {
                   )}
 
                   <div className="relative flex-shrink-0">
-                    {messages.find(m => m.id === message.id)?.profile_pic ? (
+                    {message.profile_pic ? (
                       <>
                         <img
-                          src={messages.find(m => m.id === message.id)?.profile_pic || ''}
+                          src={message.profile_pic || ''}
                           alt={`${message.display_name} profile picture`}
                           className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                           crossOrigin="anonymous"

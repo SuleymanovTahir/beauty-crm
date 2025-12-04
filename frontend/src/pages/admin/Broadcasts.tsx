@@ -18,6 +18,7 @@ interface BroadcastForm {
   subject: string;
   message: string;
   target_role?: string;
+  user_ids?: number[];
 }
 
 interface PreviewData {
@@ -45,6 +46,7 @@ export default function Broadcasts() {
     subject: '',
     message: '',
     target_role: '',
+    user_ids: [],
   });
 
   const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
@@ -53,10 +55,13 @@ export default function Broadcasts() {
   const [sending, setSending] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   useEffect(() => {
     loadSubscriptions();
     loadHistory();
+    loadUsers();
   }, []);
 
   const loadSubscriptions = async () => {
@@ -80,11 +85,44 @@ export default function Broadcasts() {
     }
   };
 
+  const loadUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      console.log('🔍 Loading users for broadcast selection...');
+      const response = await api.getUsers();
+      console.log('✅ Users response:', response);
+      const usersArray = Array.isArray(response) ? response : (response?.users || []);
+      console.log('✅ Users array:', usersArray);
+      setUsers(usersArray);
+    } catch (err) {
+      console.error('❌ Error loading users:', err);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
   const handleChannelToggle = (channel: string) => {
     if (form.channels.includes(channel)) {
       setForm({ ...form, channels: form.channels.filter(c => c !== channel) });
     } else {
       setForm({ ...form, channels: [...form.channels, channel] });
+    }
+  };
+
+  const handleUserToggle = (userId: number) => {
+    const currentIds = form.user_ids || [];
+    if (currentIds.includes(userId)) {
+      setForm({ ...form, user_ids: currentIds.filter(id => id !== userId) });
+    } else {
+      setForm({ ...form, user_ids: [...currentIds, userId] });
+    }
+  };
+
+  const handleSelectAllUsers = () => {
+    if ((form.user_ids || []).length === users.length) {
+      setForm({ ...form, user_ids: [] });
+    } else {
+      setForm({ ...form, user_ids: users.map(u => u.id) });
     }
   };
 
@@ -138,6 +176,7 @@ export default function Broadcasts() {
         subject: '',
         message: '',
         target_role: '',
+        user_ids: [],
       });
       setPreview(null);
 
@@ -223,11 +262,10 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('email')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                        form.channels.includes('email')
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('email')
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        }`}
                     >
                       <Mail className="w-5 h-5" />
                       Email
@@ -236,11 +274,10 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('telegram')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                        form.channels.includes('telegram')
-                          ? 'border-green-500 bg-green-50 text-green-700'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('telegram')
+                        ? 'border-green-500 bg-green-50 text-green-700'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        }`}
                     >
                       <MessageCircle className="w-5 h-5" />
                       Telegram
@@ -249,16 +286,68 @@ export default function Broadcasts() {
                     <button
                       type="button"
                       onClick={() => handleChannelToggle('instagram')}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                        form.channels.includes('instagram')
-                          ? 'border-purple-500 bg-purple-50 text-purple-700'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${form.channels.includes('instagram')
+                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        }`}
                     >
                       <Instagram className="w-5 h-5" />
                       Instagram
                     </button>
                   </div>
+                </div>
+
+                {/* User Selection */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-3 block">
+                    Выбор получателей
+                  </Label>
+                  <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                    <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={(form.user_ids || []).length === users.length && users.length > 0}
+                          onChange={handleSelectAllUsers}
+                          className="w-4 h-4 text-pink-600 rounded"
+                        />
+                        <span className="text-sm font-medium text-gray-700">
+                          Выбрать всех ({users.length})
+                        </span>
+                      </label>
+                      <span className="text-xs text-gray-500">
+                        Выбрано: {(form.user_ids || []).length}
+                      </span>
+                    </div>
+                    {loadingUsers ? (
+                      <div className="flex justify-center py-4">
+                        <Loader className="w-5 h-5 animate-spin text-pink-600" />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {users.map((user) => (
+                          <label
+                            key={user.id}
+                            className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={(form.user_ids || []).includes(user.id)}
+                              onChange={() => handleUserToggle(user.id)}
+                              className="w-4 h-4 text-pink-600 rounded"
+                            />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                              <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам
+                  </p>
                 </div>
 
                 {/* Target Role (optional) */}
@@ -330,7 +419,7 @@ export default function Broadcasts() {
 
                   <Button
                     onClick={handleSend}
-                    disabled={sending || !preview}
+                    disabled={sending}
                     className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
                   >
                     {sending ? (

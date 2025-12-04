@@ -21,6 +21,7 @@ class BroadcastRequest(BaseModel):
     subject: str
     message: str
     target_role: Optional[str] = None  # Если None - все пользователи
+    user_ids: Optional[List[int]] = None  # Конкретные ID пользователей для отправки
 
 class BroadcastPreviewResponse(BaseModel):
     """Предпросмотр получателей рассылки"""
@@ -46,13 +47,12 @@ async def preview_broadcast(
 
         # Базовый запрос для получения подписчиков
         query = """
-            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username, u.role
+            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_chat_id, NULL AS instagram_link, u.role
             FROM users u
             INNER JOIN user_subscriptions s ON u.id = s.user_id
             WHERE s.subscription_type = %s
             AND s.is_subscribed = TRUE
             AND u.is_active = TRUE
-            AND u.email_verified = TRUE
         """
         params = [broadcast.subscription_type]
 
@@ -60,6 +60,12 @@ async def preview_broadcast(
         if broadcast.target_role:
             query += " AND u.role = %s"
             params.append(broadcast.target_role)
+        
+        # Фильтр по конкретным пользователям если указаны
+        if broadcast.user_ids:
+            placeholders = ','.join(['%s'] * len(broadcast.user_ids))
+            query += f" AND u.id IN ({placeholders})"
+            params.extend(broadcast.user_ids)
 
         c.execute(query, params)
         all_users = c.fetchall()
@@ -69,7 +75,7 @@ async def preview_broadcast(
         users_by_channel = {"email": [], "telegram": [], "instagram": []}
 
         for user in all_users:
-            user_id, username, full_name, email, telegram_id, instagram_username, role = user
+            user_id, username, full_name, email, telegram_chat_id, instagram_link, role = user
 
             # Проверяем каналы для этого пользователя
             c.execute("""
@@ -98,16 +104,16 @@ async def preview_broadcast(
                     users_by_channel["email"].append({**user_info, "contact": email})
 
             # Telegram
-            if "telegram" in broadcast.channels and telegram_enabled and telegram_id:
+            if "telegram" in broadcast.channels and telegram_enabled and telegram_chat_id:
                 by_channel["telegram"] += 1
                 if len(users_by_channel["telegram"]) < 5:
-                    users_by_channel["telegram"].append({**user_info, "contact": telegram_id})
+                    users_by_channel["telegram"].append({**user_info, "contact": telegram_chat_id})
 
             # Instagram
-            if "instagram" in broadcast.channels and instagram_enabled and instagram_username:
+            if "instagram" in broadcast.channels and instagram_enabled and instagram_link:
                 by_channel["instagram"] += 1
                 if len(users_by_channel["instagram"]) < 5:
-                    users_by_channel["instagram"].append({**user_info, "contact": instagram_username})
+                    users_by_channel["instagram"].append({**user_info, "contact": instagram_link})
 
         conn.close()
 

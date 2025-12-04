@@ -80,7 +80,7 @@ async def add_gallery_image(
             data.get('title', ''),
             data.get('description', ''),
             data.get('sort_order', 0),
-            1 if data.get('is_visible', True) else 0
+            True if data.get('is_visible', True) else False
         ))
         
         image_id = c.lastrowid
@@ -128,7 +128,7 @@ async def update_gallery_image(
         
         if 'is_visible' in data:
             updates.append("is_visible = %s")
-            params.append(1 if data['is_visible'] else 0)
+            params.append(True if data['is_visible'] else False)
 
         if 'image_path' in data:
             updates.append("image_path = %s")

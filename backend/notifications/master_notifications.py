@@ -255,7 +255,7 @@ async def notify_master_about_booking(
             results["telegram"] = task_results[0] if not isinstance(task_results[0], Exception) else False
 
         if master.get("email"):
-            email_idx = 1 if master.get("telegram_username") else 0
+            email_idx = True if master.get("telegram_username") else False
             if len(task_results) > email_idx:
                 results["email"] = task_results[email_idx] if not isinstance(task_results[email_idx], Exception) else False
 

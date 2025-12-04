@@ -429,19 +429,19 @@ async def save_notification_settings(request: Request):
                 params.append(True if data.get('bookingNotifications', True) else False)
                 
             if 'chat_notifications' in columns:
-                update_fields.append("chat_notifications =%s")
-                params.append(True if data.get('chatNotifications', True) else False)
+                update_fields.append("chat_notifications = %s")
+                params.append(1 if data.get('chatNotifications', True) else 0)
                 
             if 'daily_report' in columns:
-                update_fields.append("daily_report =%s")
-                params.append(True if data.get('dailyReport', True) else False)
+                update_fields.append("daily_report = %s")
+                params.append(1 if data.get('dailyReport', True) else 0)
                 
             if 'report_time' in columns:
-                update_fields.append("report_time =%s")
+                update_fields.append("report_time = %s")
                 params.append(data.get('reportTime', '09:00'))
                 
             if 'birthday_reminders' in columns:
-                update_fields.append("birthday_reminders =%s")
+                update_fields.append("birthday_reminders = %s")
                 params.append(True if data.get('birthdayReminders', True) else False)
                 
             if 'birthday_days_advance' in columns:
@@ -478,8 +478,8 @@ async def save_notification_settings(request: Request):
                 True if data.get('emailNotifications', True) else False,
                 True if data.get('smsNotifications', False) else False,
                 True if data.get('bookingNotifications', True) else False,
-                True if data.get('chatNotifications', True) else False,
-                True if data.get('dailyReport', True) else False,
+                1 if data.get('chatNotifications', True) else 0,
+                1 if data.get('dailyReport', True) else 0,
                 data.get('reportTime', '09:00'),
                 True if data.get('birthdayReminders', True) else False,
                 int(data.get('birthdayDaysAdvance', 7))

@@ -141,7 +141,7 @@ def update_service(service_id, **kwargs):
             value = '|'.join(value)
         elif key == 'is_active':
             # Преобразуем is_active в число (0 или 1)
-            value = 1 if value in [True, 1, '1', 'true', 'True'] else 0
+            value = True if value in [True, 1, '1', 'true', 'True'] else False
         updates.append(f"{key} = %s")
         params.append(value)
     
@@ -355,7 +355,7 @@ def toggle_service_active_status(service_id):
             raise ValueError("Service not found")
         
         current_status = result[0]
-        new_status = 1 if current_status == 0 else 0
+        new_status = True if current_status == 0 else False
         
         # Логируем
         from logger import log_info

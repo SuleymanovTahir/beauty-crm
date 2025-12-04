@@ -127,8 +127,8 @@ async def add_user_service(
              is_online_booking_enabled, is_calendar_enabled)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (user_id, service_id, price, price_min, price_max, duration,
-              1 if is_online_booking_enabled else 0,
-              1 if is_calendar_enabled else 0))
+              True if is_online_booking_enabled else False,
+              True if is_calendar_enabled else False))
         
         conn.commit()
         conn.close()
@@ -180,11 +180,11 @@ async def update_user_service(
         
         if "is_online_booking_enabled" in data:
             updates.append("is_online_booking_enabled = %s")
-            params.append(1 if data["is_online_booking_enabled"] else 0)
+            params.append(True if data["is_online_booking_enabled"] else False)
         
         if "is_calendar_enabled" in data:
             updates.append("is_calendar_enabled = %s")
-            params.append(1 if data["is_calendar_enabled"] else 0)
+            params.append(True if data["is_calendar_enabled"] else False)
         
         if not updates:
             conn.close()

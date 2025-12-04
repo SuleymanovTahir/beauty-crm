@@ -221,15 +221,28 @@ export default function Bookings() {
 
         if (period === 'today') {
           matchesDate = bookingDate.toDateString() === now.toDateString();
-        } else if (period === 'week') {
-          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        } else if (period === '7') {
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          weekAgo.setHours(0, 0, 0, 0);
           matchesDate = bookingDate >= weekAgo;
-        } else if (period === 'month') {
-          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        } else if (period === '30') {
+          const monthAgo = new Date();
+          monthAgo.setDate(monthAgo.getDate() - 30);
+          monthAgo.setHours(0, 0, 0, 0);
           matchesDate = bookingDate >= monthAgo;
+        } else if (period === '90') {
+          const threeMonthsAgo = new Date();
+          threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
+          threeMonthsAgo.setHours(0, 0, 0, 0);
+          matchesDate = bookingDate >= threeMonthsAgo;
         } else if (period === 'custom' && dateFrom && dateTo) {
           const from = new Date(dateFrom);
+          from.setHours(0, 0, 0, 0);
+
           const to = new Date(dateTo);
+          to.setHours(23, 59, 59, 999); // ✅ Include the entire end day
+
           matchesDate = bookingDate >= from && bookingDate <= to;
         }
       }

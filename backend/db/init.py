@@ -27,7 +27,7 @@ def init_database():
               name TEXT,
               first_contact TEXT,
               last_contact TEXT,
-              total_messages BOOLEAN DEFAULT FALSE,
+              total_messages INTEGER DEFAULT 0,
               labels TEXT,
               status TEXT DEFAULT 'new',
               lifetime_value REAL DEFAULT 0,
@@ -550,6 +550,7 @@ def init_database():
         booking_notifications BOOLEAN DEFAULT TRUE,
         birthday_reminders BOOLEAN DEFAULT TRUE,
         birthday_days_advance INTEGER DEFAULT 7,
+        UNIQUE(user_id),
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     

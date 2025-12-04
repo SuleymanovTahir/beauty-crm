@@ -135,9 +135,9 @@ export default function Users() {
 
   useEffect(() => {
     const filtered = users.filter(user =>
-      user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      (user.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.email || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredUsers(filtered);
   }, [searchTerm, users]);

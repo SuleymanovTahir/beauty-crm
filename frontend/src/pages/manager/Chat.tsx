@@ -297,6 +297,22 @@ export default function Chat() {
     }
   };
 
+  const getImageUrl = (msg: Message) => {
+    if (msg.message.startsWith('http')) {
+      if (msg.message.includes('zrok.io')) {
+        try {
+          const url = new URL(msg.message);
+          const filePath = url.pathname;
+          return `${import.meta.env.VITE_API_URL}${filePath}`;
+        } catch (e) {
+          return msg.message;
+        }
+      }
+      return msg.message;
+    }
+    return `${import.meta.env.VITE_API_URL}${msg.message}`;
+  };
+
   const handleSendMessage = async () => {
     if ((!message.trim() && attachedFiles.length === 0) || !selectedClient) return;
 
@@ -934,17 +950,7 @@ export default function Chat() {
                           {msg.type === 'image' ? (
                             <div className="relative group">
                               <img
-                                src={(() => {
-                                  if (msg.message.startsWith('http')) {
-                                    if (msg.message.includes('zrok.io')) {
-                                      const url = new URL(msg.message);
-                                      const filePath = url.pathname;
-                                      return `${import.meta.env.VITE_API_URL}${filePath}`;
-                                    }
-                                    return msg.message;
-                                  }
-                                  return `${import.meta.env.VITE_API_URL}${msg.message}`;
-                                })()}
+                                src={getImageUrl(msg)}
                                 alt={`Image from ${msg.sender === 'client' ? selectedClient?.display_name : 'manager'}`}
                                 loading="lazy"
                                 className="w-full h-auto max-h-72 object-cover cursor-pointer hover:opacity-90 transition-opacity rounded-t-2xl"

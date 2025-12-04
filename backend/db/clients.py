@@ -209,7 +209,7 @@ def pin_client(instagram_id: str, pinned: bool = True):
     c = conn.cursor()
     
     c.execute("UPDATE clients SET is_pinned = %s WHERE instagram_id = %s",
-              (1 if pinned else 0, instagram_id))
+              (True if pinned else False, instagram_id))
     
     conn.commit()
     conn.close()
