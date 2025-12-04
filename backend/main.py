@@ -463,10 +463,9 @@ async def startup_event():
     # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
     # ================================
     # Запускаются все миграции при каждом старте (идемпотентны)
-    # from db.migrations.run_all_migrations import run_all_migrations
-    # log_info("🔧 Запуск миграций...", "startup")
-    # run_all_migrations()
-    
+    from db.migrations.run_all_migrations import run_all_migrations
+    log_info("🔧 Запуск миграций...", "startup")
+    run_all_migrations()
  
     try:
         # Plans table is now handled by schema_other.py

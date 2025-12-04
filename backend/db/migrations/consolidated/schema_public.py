@@ -40,7 +40,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 subtitle_pt TEXT,
                 image_url TEXT,
                 link_url TEXT,
-                display_order BOOLEAN DEFAULT FALSE,
+                display_order INTEGER DEFAULT 0,
                 is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
@@ -90,7 +90,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 text_kk TEXT,
                 text_pt TEXT,
                 avatar_url TEXT,
-                display_order BOOLEAN DEFAULT FALSE,
+                display_order INTEGER DEFAULT 0,
                 is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 
@@ -149,7 +149,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 answer_en TEXT,
                 answer_ar TEXT,
                 category TEXT DEFAULT 'general',
-                display_order BOOLEAN DEFAULT FALSE,
+                display_order INTEGER DEFAULT 0,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -167,7 +167,7 @@ def migrate_public_schema(db_path="salon_bot.db"):
                 description_en TEXT,
                 description_ar TEXT,
                 category TEXT DEFAULT 'works',
-                display_order BOOLEAN DEFAULT FALSE,
+                display_order INTEGER DEFAULT 0,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)

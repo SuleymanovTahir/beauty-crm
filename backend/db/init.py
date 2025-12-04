@@ -150,6 +150,8 @@ def init_database():
         address TEXT,
         address_ar TEXT,
         google_maps TEXT,
+        google_place_id TEXT,
+        google_api_key TEXT,
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
@@ -173,6 +175,13 @@ def init_database():
         prepayment_required BOOLEAN DEFAULT FALSE,
         parking_info TEXT,
         wifi_available BOOLEAN DEFAULT TRUE,
+        latitude REAL,
+        longitude REAL,
+        logo_url TEXT,
+        base_url TEXT,
+        google_analytics_id TEXT,
+        facebook_pixel_id TEXT,
+        promo_end_date TEXT,
         updated_at TEXT,
         main_location TEXT,
         main_location_ru TEXT,
@@ -571,6 +580,9 @@ def init_database():
         discount_percent REAL DEFAULT 0,
         points_multiplier REAL DEFAULT 1.0,
         benefits TEXT,
+        icon TEXT,
+        color TEXT,
+        is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
     
@@ -585,7 +597,7 @@ def init_database():
         ]
         for level in loyalty_levels_data:
             c.execute("""
-                INSERT INTO loyalty_levels (name, min_points, discount_percentage, points_multiplier, perks, icon, color, is_active, created_at)
+                INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits, icon, color, is_active, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, NOW())
             """, (level["name"], level["min_points"], level["discount_percentage"], level["points_multiplier"], level["perks"], level["icon"], level["color"]))
         log_info(f"✅ Создано {len(loyalty_levels_data)} уровней лояльности", "db")
@@ -712,6 +724,7 @@ def init_database():
         
         # Полный контент настроек
         bot_settings_data = {
+            'id': 1,
             'bot_name': "M.Le Diamant Assistant",
             'personality_traits': "Обаятельная, уверенная, харизматичная, экспертная",
             'greeting_message': 'Добро пожаловать в {SALON_NAME}!',
@@ -990,7 +1003,7 @@ def init_database():
         text_pt TEXT,
         avatar_url TEXT,
         is_active BOOLEAN DEFAULT TRUE,
-        display_order BOOLEAN DEFAULT FALSE,
+        display_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         employee_name TEXT,
         employee_name_ru TEXT,
@@ -1057,14 +1070,14 @@ def init_database():
         answer_pt TEXT,
         category TEXT,
         is_active BOOLEAN DEFAULT TRUE,
-        display_order BOOLEAN DEFAULT FALSE,
+        display_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
 
     # Таблица предпочтений клиентов
     c.execute('''CREATE TABLE IF NOT EXISTS client_preferences (
         id SERIAL PRIMARY KEY,
-        client_id INTEGER NOT NULL,
+        client_id TEXT NOT NULL,
         preferred_master INTEGER,
         preferred_service INTEGER,
         preferred_day_of_week INTEGER,
