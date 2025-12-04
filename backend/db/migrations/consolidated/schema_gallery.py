@@ -28,7 +28,7 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
                     image_path TEXT NOT NULL,
                     title TEXT,
                     description TEXT,
-                    sort_order BOOLEAN DEFAULT FALSE,
+                    sort_order INTEGER DEFAULT 0,
                     is_visible BOOLEAN DEFAULT TRUE,
                     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -67,7 +67,7 @@ def migrate_gallery_schema(db_path=DATABASE_NAME):
                 if 'description' in missing_columns:
                     c.execute("ALTER TABLE gallery_images ADD COLUMN description TEXT")
                 if 'sort_order' in missing_columns:
-                    c.execute("ALTER TABLE gallery_images ADD COLUMN sort_order BOOLEAN DEFAULT FALSE")
+                    c.execute("ALTER TABLE gallery_images ADD COLUMN sort_order INTEGER DEFAULT 0")
                 if 'is_visible' in missing_columns:
                     c.execute("ALTER TABLE gallery_images ADD COLUMN is_visible BOOLEAN DEFAULT TRUE")
                 if 'created_at' in missing_columns:
@@ -110,7 +110,7 @@ def add_show_on_public_page_to_users():
             log_info("✅ Колонка show_on_public_page уже существует", "migration")
         
         if 'public_page_order' not in existing_columns:
-            c.execute("ALTER TABLE users ADD COLUMN public_page_order BOOLEAN DEFAULT FALSE")
+            c.execute("ALTER TABLE users ADD COLUMN public_page_order INTEGER DEFAULT 0")
             log_info("✅ Колонка public_page_order добавлена", "migration")
         else:
             log_info("✅ Колонка public_page_order уже существует", "migration")
