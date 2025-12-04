@@ -49,7 +49,6 @@ TRANSLATIONS = {
     "close": {"en": "Close", "ar": "إغلاق"},
 }
 
-
 def find_all_json_files(base_path: Path, lang: str) -> list:
     """Найти все JSON файлы для языка"""
     lang_path = base_path / lang
@@ -67,7 +66,6 @@ def find_all_json_files(base_path: Path, lang: str) -> list:
 
     return json_files
 
-
 def load_json(file_path: Path) -> Dict[str, Any]:
     """Загрузить JSON файл"""
     try:
@@ -79,13 +77,11 @@ def load_json(file_path: Path) -> Dict[str, Any]:
         print(f"⚠️  Ошибка JSON в {file_path}")
         return {}
 
-
 def save_json(file_path: Path, data: Dict[str, Any]):
     """Сохранить JSON файл"""
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
 
 def translate_value(key: str, value: str, target_lang: str) -> str:
     """
@@ -105,7 +101,6 @@ def translate_value(key: str, value: str, target_lang: str) -> str:
         return value
 
     return value
-
 
 def sync_translations(base_path: Path):
     """Синхронизировать переводы между языками"""
@@ -168,7 +163,6 @@ def sync_translations(base_path: Path):
             print(f"  ✅ AR: актуально ({len(ar_data)} ключей)")
 
     print("\n✅ Синхронизация завершена!")
-
 
 if __name__ == "__main__":
     base_path = Path(__file__).parent / "frontend" / "src" / "locales"

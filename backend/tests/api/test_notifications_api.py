@@ -84,7 +84,6 @@ def test_database_tables():
         print(traceback.format_exc())
         return False
 
-
 def test_notifications_endpoint():
     """Тестировать эндпоинт notifications/settings напрямую"""
     print("\n" + "=" * 70)
@@ -106,7 +105,6 @@ def test_notifications_endpoint():
         print(f"\n❌ ОШИБКА при вызове эндпоинта:")
         print(traceback.format_exc())
         return False
-
 
 def test_booking_reminder_endpoint():
     """Тестировать эндпоинт booking-reminder-settings напрямую"""
@@ -132,7 +130,6 @@ def test_booking_reminder_endpoint():
         print(traceback.format_exc())
         return False
 
-
 def test_http_request():
     """Тест HTTP запроса к API (пропускается при старте сервера)"""
     print("\n" + "=" * 70)
@@ -143,7 +140,6 @@ def test_http_request():
     print("\n⏭️  HTTP тест пропущен (сервер запускается)")
     print("   Для полного тестирования запустите: python3 tests/api/test_notifications_api.py")
     return True
-
 
 if __name__ == "__main__":
     print("\n" + "=" * 70)

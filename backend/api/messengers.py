@@ -4,7 +4,7 @@ API Endpoints для управления мессенджерами
 from fastapi import APIRouter, Cookie, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional, List
-import sqlite3
+
 import json
 
 from core.config import DATABASE_NAME
@@ -13,7 +13,6 @@ from utils.utils import require_auth
 from utils.logger import log_error, log_info
 
 router = APIRouter(tags=["Messengers"])
-
 
 @router.get("/messengers/settings")
 async def get_messenger_settings(
@@ -66,7 +65,6 @@ async def get_messenger_settings(
     finally:
         conn.close()
 
-
 @router.get("/messengers/enabled")
 async def get_enabled_messengers(
     session_token: Optional[str] = Cookie(None)
@@ -110,7 +108,6 @@ async def get_enabled_messengers(
     finally:
         conn.close()
 
-
 @router.put("/messengers/settings/{messenger_type}")
 async def update_messenger_setting(
     messenger_type: str,
@@ -132,7 +129,7 @@ async def update_messenger_setting(
 
     try:
         # Получаем текущие настройки
-        c.execute("SELECT id FROM messenger_settings WHERE messenger_type = ?", (messenger_type,))
+        c.execute("SELECT id FROM messenger_settings WHERE messenger_type = %s", (messenger_type,))
         if not c.fetchone():
             return JSONResponse({"error": "Messenger not found"}, status_code=404)
 
@@ -141,19 +138,19 @@ async def update_messenger_setting(
         params = []
 
         if 'is_enabled' in request:
-            updates.append("is_enabled = ?")
+            updates.append("is_enabled = %s")
             params.append(1 if request['is_enabled'] else 0)
 
         if 'api_token' in request:
-            updates.append("api_token = ?")
+            updates.append("api_token = %s")
             params.append(request['api_token'])
 
         if 'webhook_url' in request:
-            updates.append("webhook_url = ?")
+            updates.append("webhook_url = %s")
             params.append(request['webhook_url'])
 
         if 'config_json' in request:
-            updates.append("config_json = ?")
+            updates.append("config_json = %s")
             params.append(json.dumps(request['config_json']) if isinstance(request['config_json'], dict) else request['config_json'])
 
         if not updates:
@@ -162,7 +159,7 @@ async def update_messenger_setting(
         updates.append("updated_at = CURRENT_TIMESTAMP")
         params.append(messenger_type)
 
-        query = f"UPDATE messenger_settings SET {', '.join(updates)} WHERE messenger_type = ?"
+        query = f"UPDATE messenger_settings SET {', '.join(updates)} WHERE messenger_type = %s"
         c.execute(query, params)
 
         conn.commit()
@@ -178,7 +175,6 @@ async def update_messenger_setting(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
-
 
 @router.get("/messengers/{messenger_type}/messages")
 async def get_messenger_messages(
@@ -205,9 +201,9 @@ async def get_messenger_messages(
                     c.username as client_username
                 FROM messenger_messages m
                 LEFT JOIN clients c ON m.client_id = c.instagram_id
-                WHERE m.messenger_type = ? AND m.client_id = ?
+                WHERE m.messenger_type = %s AND m.client_id = %s
                 ORDER BY m.created_at DESC
-                LIMIT ?
+                LIMIT %s
             """, (messenger_type, client_id, limit))
         else:
             c.execute("""
@@ -217,9 +213,9 @@ async def get_messenger_messages(
                     c.username as client_username
                 FROM messenger_messages m
                 LEFT JOIN clients c ON m.client_id = c.instagram_id
-                WHERE m.messenger_type = ?
+                WHERE m.messenger_type = %s
                 ORDER BY m.created_at DESC
-                LIMIT ?
+                LIMIT %s
             """, (messenger_type, limit))
 
         messages = []
@@ -243,7 +239,6 @@ async def get_messenger_messages(
     finally:
         conn.close()
 
-
 @router.post("/messengers/{messenger_type}/messages")
 async def send_messenger_message(
     messenger_type: str,
@@ -266,7 +261,7 @@ async def send_messenger_message(
 
     try:
         # Проверяем что мессенджер включен
-        c.execute("SELECT is_enabled FROM messenger_settings WHERE messenger_type = ?", (messenger_type,))
+        c.execute("SELECT is_enabled FROM messenger_settings WHERE messenger_type = %s", (messenger_type,))
         row = c.fetchone()
         if not row or not row[0]:
             return JSONResponse({"error": f"{messenger_type} is not enabled"}, status_code=400)
@@ -275,7 +270,7 @@ async def send_messenger_message(
         c.execute("""
             INSERT INTO messenger_messages
             (messenger_type, client_id, sender_type, message_text, is_read)
-            VALUES (?, ?, 'admin', ?, 1)
+            VALUES (%s, %s, 'admin', %s, 1)
         """, (messenger_type, client_id, message_text))
 
         message_id = c.lastrowid
@@ -300,7 +295,6 @@ async def send_messenger_message(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
-
 
 @router.get("/messengers/unread-count")
 async def get_unread_messages_count(

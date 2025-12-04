@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
-import sqlite3
+
 import os
 
 from core.config import DATABASE_NAME
@@ -16,7 +16,6 @@ from utils.datetime_utils import get_current_time, get_salon_timezone
 from zoneinfo import ZoneInfo
 
 router = APIRouter(tags=["Notifications"])
-
 
 def create_notifications_table():
     """Создать таблицу уведомлений"""
@@ -39,7 +38,6 @@ def create_notifications_table():
     conn.commit()
     conn.close()
 
-
 @router.get("/notifications")
 async def get_notifications(
     unread_only: bool = Query(False),
@@ -61,17 +59,17 @@ async def get_notifications(
             c.execute("""
                 SELECT id, title, message, type, is_read, created_at, action_url
                 FROM notifications 
-                WHERE user_id = ? AND is_read = FALSE
+                WHERE user_id =%s AND is_read = FALSE
                 ORDER BY created_at DESC
-                LIMIT ?
+                LIMIT%s
             """, (user["id"], limit))
         else:
             c.execute("""
                 SELECT id, title, message, type, is_read, created_at, action_url
                 FROM notifications 
-                WHERE user_id = ?
+                WHERE user_id =%s
                 ORDER BY created_at DESC
-                LIMIT ?
+                LIMIT%s
             """, (user["id"], limit))
         
         notifications = c.fetchall()
@@ -95,7 +93,6 @@ async def get_notifications(
     finally:
         conn.close()
 
-
 @router.post("/notifications/{notification_id}/read")
 async def mark_notification_read(
     notification_id: int,
@@ -114,8 +111,8 @@ async def mark_notification_read(
         
         c.execute("""
             UPDATE notifications 
-            SET is_read = TRUE, read_at = ?
-            WHERE id = ? AND user_id = ?
+            SET is_read = TRUE, read_at =%s
+            WHERE id =%s AND user_id =%s
         """, (get_current_time().isoformat(), notification_id, user["id"]))
         
         if c.rowcount == 0:
@@ -130,7 +127,6 @@ async def mark_notification_read(
     except Exception as e:
         log_error(f"Error marking notification as read: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/notifications/read-all")
 async def mark_all_notifications_read(
@@ -149,8 +145,8 @@ async def mark_all_notifications_read(
         
         c.execute("""
             UPDATE notifications 
-            SET is_read = TRUE, read_at = ?
-            WHERE user_id = ? AND is_read = FALSE
+            SET is_read = TRUE, read_at =%s
+            WHERE user_id =%s AND is_read = FALSE
         """, (get_current_time().isoformat(), user["id"]))
         
         updated_count = c.rowcount
@@ -165,7 +161,6 @@ async def mark_all_notifications_read(
     except Exception as e:
         log_error(f"Error marking all notifications as read: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/notifications/unread-count")
 async def get_unread_count(
@@ -185,7 +180,7 @@ async def get_unread_count(
         c.execute("""
             SELECT COUNT(*) 
             FROM notifications 
-            WHERE user_id = ? AND is_read = FALSE
+            WHERE user_id =%s AND is_read = FALSE
         """, (user["id"],))
         
         count = c.fetchone()[0]
@@ -196,7 +191,6 @@ async def get_unread_count(
     except Exception as e:
         log_error(f"Error getting unread count: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 def create_notification(user_id: str, title: str, message: str, 
                        notification_type: str = "info", action_url: str = None):
@@ -209,7 +203,7 @@ def create_notification(user_id: str, title: str, message: str,
         
         c.execute("""
             INSERT INTO notifications (user_id, title, message, type, action_url)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s)
         """, (user_id, title, message, notification_type, action_url))
         
         conn.commit()
@@ -221,7 +215,6 @@ def create_notification(user_id: str, title: str, message: str,
     except Exception as e:
         log_error(f"Error creating notification: {e}", "notifications")
         return False
-
 
 # ===== #16 - АВТОПРЕДЛОЖЕНИЕ ПОВТОРНОЙ ЗАПИСИ =====
 
@@ -254,7 +247,6 @@ async def send_rebooking_notification(client_id: str, service_name: str, last_da
         log_error(f"Error sending rebooking notification: {e}", "notifications")
         return False
 
-
 # ===== #17 - УВЕДОМЛЕНИЕ ИЗ ЛИСТА ОЖИДАНИЯ =====
 
 async def notify_waitlist_slot_available(client_id: str, service: str, date: str, time: str):
@@ -278,7 +270,6 @@ async def notify_waitlist_slot_available(client_id: str, service: str, date: str
     except Exception as e:
         log_error(f"Error sending waitlist notification: {e}", "notifications")
         return False
-
 
 # ===== #30 - УВЕДОМЛЕНИЕ О СРОЧНОЙ ЗАПИСИ =====
 
@@ -310,7 +301,6 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
     except Exception as e:
         log_error(f"Error sending urgent notification: {e}", "notifications")
         return False
-
 
 # ===== НАСТРОЙКИ УВЕДОМЛЕНИЙ =====
 
@@ -389,7 +379,6 @@ async def get_notification_settings_api():
         log_error(f"Traceback: {traceback.format_exc()}", "notifications")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/notifications/settings")
 async def save_notification_settings(request: Request):
     """
@@ -408,7 +397,7 @@ async def save_notification_settings(request: Request):
         # Проверяем есть ли уже настройки
         c.execute("""
             SELECT id FROM notification_settings
-            WHERE user_id = ?
+            WHERE user_id =%s
         """, (user_id,))
         existing = c.fetchone()
 
@@ -428,35 +417,35 @@ async def save_notification_settings(request: Request):
             params = []
             
             if 'email_notifications' in columns:
-                update_fields.append("email_notifications = ?")
+                update_fields.append("email_notifications =%s")
                 params.append(1 if data.get('emailNotifications', True) else 0)
                 
             if 'sms_notifications' in columns:
-                update_fields.append("sms_notifications = ?")
+                update_fields.append("sms_notifications =%s")
                 params.append(1 if data.get('smsNotifications', False) else 0)
                 
             if 'booking_notifications' in columns:
-                update_fields.append("booking_notifications = ?")
+                update_fields.append("booking_notifications =%s")
                 params.append(1 if data.get('bookingNotifications', True) else 0)
                 
             if 'chat_notifications' in columns:
-                update_fields.append("chat_notifications = ?")
+                update_fields.append("chat_notifications =%s")
                 params.append(1 if data.get('chatNotifications', True) else 0)
                 
             if 'daily_report' in columns:
-                update_fields.append("daily_report = ?")
+                update_fields.append("daily_report =%s")
                 params.append(1 if data.get('dailyReport', True) else 0)
                 
             if 'report_time' in columns:
-                update_fields.append("report_time = ?")
+                update_fields.append("report_time =%s")
                 params.append(data.get('reportTime', '09:00'))
                 
             if 'birthday_reminders' in columns:
-                update_fields.append("birthday_reminders = ?")
+                update_fields.append("birthday_reminders =%s")
                 params.append(1 if data.get('birthdayReminders', True) else 0)
                 
             if 'birthday_days_advance' in columns:
-                update_fields.append("birthday_days_advance = ?")
+                update_fields.append("birthday_days_advance =%s")
                 params.append(int(data.get('birthdayDaysAdvance', 7)))
                 
             update_fields.append("updated_at = CURRENT_TIMESTAMP")
@@ -465,7 +454,7 @@ async def save_notification_settings(request: Request):
             sql = f"""
                 UPDATE notification_settings
                 SET {', '.join(update_fields)}
-                WHERE user_id = ?
+                WHERE user_id =%s
             """
             
             c.execute(sql, params)
@@ -483,7 +472,7 @@ async def save_notification_settings(request: Request):
                     report_time,
                     birthday_reminders,
                     birthday_days_advance
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """, (
                 user_id,
                 1 if data.get('emailNotifications', True) else 0,
@@ -510,7 +499,6 @@ async def save_notification_settings(request: Request):
         import traceback
         log_error(traceback.format_exc(), "notifications")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # ===== НАПОМИНАНИЯ И РАССЫЛКИ =====
 
@@ -544,7 +532,7 @@ async def send_manual_reminder(
             c.execute("""
                 SELECT name, service_name, datetime, master
                 FROM bookings
-                WHERE id = ? AND instagram_id = ?
+                WHERE id =%s AND instagram_id =%s
             """, (booking_id, client_id))
         else:
             # Берем ближайшую будущую запись
@@ -552,7 +540,7 @@ async def send_manual_reminder(
             c.execute("""
                 SELECT name, service_name, datetime, master
                 FROM bookings
-                WHERE instagram_id = ? AND datetime > ?
+                WHERE instagram_id =%s AND datetime >%s
                 ORDER BY datetime ASC LIMIT 1
             """, (client_id, current_time_str))
 
@@ -593,7 +581,6 @@ async def send_manual_reminder(
     except Exception as e:
         log_error(f"Error sending manual reminder: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/notifications/reminders/send-batch")
 async def send_batch_reminders(
@@ -643,7 +630,6 @@ async def send_batch_reminders(
         log_error(f"Error sending batch reminders: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/notifications/broadcast")
 async def send_broadcast_message(
     request: Request,
@@ -682,7 +668,7 @@ async def send_broadcast_message(
             c.execute("""
                 SELECT DISTINCT instagram_id, name
                 FROM bookings
-                WHERE datetime > ?
+                WHERE datetime >%s
             """, (cutoff_date,))
         elif client_filter == 'vip':
             # VIP клиенты (более 5 записей)

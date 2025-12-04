@@ -18,7 +18,6 @@ from utils.logger import log_info, log_error
 
 router = APIRouter()
 
-
 class PositionCreate(BaseModel):
     name: str
     name_en: Optional[str] = None
@@ -27,7 +26,6 @@ class PositionCreate(BaseModel):
     name_de: Optional[str] = None
     description: Optional[str] = None
     sort_order: int = 0
-
 
 class PositionUpdate(BaseModel):
     name: Optional[str] = None
@@ -38,7 +36,6 @@ class PositionUpdate(BaseModel):
     description: Optional[str] = None
     sort_order: Optional[int] = None
     is_active: Optional[int] = None
-
 
 @router.get("/positions")
 async def list_positions(
@@ -52,7 +49,6 @@ async def list_positions(
     except Exception as e:
         log_error(f"Error fetching positions: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/positions/{position_id}")
 async def get_position_detail(
@@ -75,7 +71,6 @@ async def get_position_detail(
     except Exception as e:
         log_error(f"Error fetching position: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/positions")
 async def create_new_position(
@@ -113,7 +108,6 @@ async def create_new_position(
     except Exception as e:
         log_error(f"Error creating position: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.put("/positions/{position_id}")
 async def update_position_data(
@@ -154,7 +148,6 @@ async def update_position_data(
     except Exception as e:
         log_error(f"Error updating position: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.delete("/positions/{position_id}")
 async def delete_position_endpoint(
@@ -198,7 +191,6 @@ async def delete_position_endpoint(
     except Exception as e:
         log_error(f"Error deleting position: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/positions/{position_id}/employees")
 async def get_position_employees(

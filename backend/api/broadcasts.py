@@ -4,7 +4,7 @@ API для массовых рассылок
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-import sqlite3
+
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -14,7 +14,6 @@ from utils.logger import log_info, log_error
 
 router = APIRouter()
 
-
 class BroadcastRequest(BaseModel):
     """Модель запроса на отправку рассылки"""
     subscription_type: str  # promotions, news, appointments, etc.
@@ -23,13 +22,11 @@ class BroadcastRequest(BaseModel):
     message: str
     target_role: Optional[str] = None  # Если None - все пользователи
 
-
 class BroadcastPreviewResponse(BaseModel):
     """Предпросмотр получателей рассылки"""
     total_users: int
     by_channel: dict
     users_sample: List[dict]
-
 
 @router.post("/broadcasts/preview", response_model=BroadcastPreviewResponse)
 async def preview_broadcast(
@@ -52,7 +49,7 @@ async def preview_broadcast(
             SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username, u.role
             FROM users u
             INNER JOIN user_subscriptions s ON u.id = s.user_id
-            WHERE s.subscription_type = ?
+            WHERE s.subscription_type = %s
             AND s.is_subscribed = 1
             AND u.is_active = TRUE
             AND u.email_verified = 1
@@ -61,7 +58,7 @@ async def preview_broadcast(
 
         # Фильтр по роли если указан
         if broadcast.target_role:
-            query += " AND u.role = ?"
+            query += " AND u.role = %s"
             params.append(broadcast.target_role)
 
         c.execute(query, params)
@@ -78,7 +75,7 @@ async def preview_broadcast(
             c.execute("""
                 SELECT email_enabled, telegram_enabled, instagram_enabled
                 FROM user_subscriptions
-                WHERE user_id = ? AND subscription_type = ?
+                WHERE user_id = %s AND subscription_type = %s
             """, (user_id, broadcast.subscription_type))
 
             channels_data = c.fetchone()
@@ -132,7 +129,6 @@ async def preview_broadcast(
         log_error(f"Ошибка предпросмотра рассылки: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/broadcasts/send")
 async def send_broadcast(
     broadcast: BroadcastRequest,
@@ -154,7 +150,7 @@ async def send_broadcast(
             SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username
             FROM users u
             INNER JOIN user_subscriptions s ON u.id = s.user_id
-            WHERE s.subscription_type = ?
+            WHERE s.subscription_type = %s
             AND s.is_subscribed = 1
             AND u.is_active = TRUE
             AND u.email_verified = 1
@@ -162,7 +158,7 @@ async def send_broadcast(
         params = [broadcast.subscription_type]
 
         if broadcast.target_role:
-            query += " AND u.role = ?"
+            query += " AND u.role = %s"
             params.append(broadcast.target_role)
 
         c.execute(query, params)
@@ -181,7 +177,7 @@ async def send_broadcast(
             c.execute("""
                 SELECT email_enabled, telegram_enabled, instagram_enabled
                 FROM user_subscriptions
-                WHERE user_id = ? AND subscription_type = ?
+                WHERE user_id = %s AND subscription_type = %s
             """, (user_id, broadcast.subscription_type))
 
             channels_data = c.fetchone()
@@ -195,7 +191,7 @@ async def send_broadcast(
                 try:
                     from utils.email import send_broadcast_email
                     # Добавляем unsubscribe ссылку
-                    unsubscribe_link = f"/unsubscribe?user={user_id}&type={broadcast.subscription_type}&channel=email"
+                    unsubscribe_link = f"/unsubscribe%suser={user_id}&type={broadcast.subscription_type}&channel=email"
                     send_broadcast_email(email, broadcast.subject, broadcast.message, full_name, unsubscribe_link)
                     results["email"]["sent"] += 1
                 except Exception as e:
@@ -233,7 +229,7 @@ async def send_broadcast(
             INSERT INTO broadcast_history
             (sender_id, subscription_type, channels, subject, message, target_role,
              total_sent, results, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             current_user['id'],
             broadcast.subscription_type,
@@ -260,7 +256,6 @@ async def send_broadcast(
     except Exception as e:
         log_error(f"Ошибка отправки рассылки: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/broadcasts/history")
 async def get_broadcast_history(
@@ -302,7 +297,6 @@ async def get_broadcast_history(
         log_error(f"Ошибка получения истории: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/unsubscribe/{user_id}/{subscription_type}/{channel}")
 async def unsubscribe_from_channel(
     user_id: int,
@@ -320,8 +314,8 @@ async def unsubscribe_from_channel(
         channel_field = f"{channel}_enabled"
         c.execute(f"""
             UPDATE user_subscriptions
-            SET {channel_field} = 0, updated_at = ?
-            WHERE user_id = ? AND subscription_type = ?
+            SET {channel_field} = 0, updated_at = %s
+            WHERE user_id = %s AND subscription_type = %s
         """, (datetime.now().isoformat(), user_id, subscription_type))
 
         conn.commit()

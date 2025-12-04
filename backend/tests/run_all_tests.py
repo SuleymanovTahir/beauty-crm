@@ -10,13 +10,11 @@ from datetime import datetime
 # Добавляем путь к backend для импортов
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
     print(f"  {text}")
     print("=" * 80)
-
 
 def print_test_file(file_name, description=""):
     """Вывод информации о запускаемом тесте"""
@@ -24,7 +22,6 @@ def print_test_file(file_name, description=""):
     if description:
         print(f"   {description}")
     print("-" * 80)
-
 
 def run_all_tests():
     """Запуск всех тестов проекта"""
@@ -328,8 +325,6 @@ def run_all_tests():
         traceback.print_exc()
         results.append(("api/test_notifications_api.py - API уведомлений", False))
 
-
-
     # ========================================================================
     # 14. Schedule API Tests
     # ========================================================================
@@ -479,7 +474,6 @@ def run_all_tests():
     # print("=" * 80 + "\n")
 
     # return passed == total
-
 
 if __name__ == "__main__":
     try:

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Cookie, Query, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from pydantic import BaseModel
-import sqlite3
+
 from psycopg2.extras import RealDictCursor
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -146,7 +146,6 @@ async def delete_time_off_by_id(id: int):
 
 # --- Existing Endpoints (Master Name based) ---
 
-
 @router.post("/schedule/{master_name}/working-hours")
 async def set_working_hours_api(
     master_name: str,
@@ -196,7 +195,6 @@ async def set_working_hours_api(
         log_error(f"Error setting working hours: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/schedule/{master_name}/working-hours")
 async def get_working_hours_api(
     master_name: str,
@@ -220,7 +218,6 @@ async def get_working_hours_api(
     except Exception as e:
         log_error(f"Error getting working hours: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/schedule/{master_name}/time-off")
 async def add_time_off_api(
@@ -274,7 +271,6 @@ async def add_time_off_api(
         log_error(f"Error adding time off: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/schedule/{master_name}/time-off")
 async def get_time_off_api(
     master_name: str,
@@ -305,7 +301,6 @@ async def get_time_off_api(
         log_error(f"Error getting time off: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.delete("/schedule/time-off/{time_off_id}")
 async def remove_time_off_api(
     time_off_id: int,
@@ -331,7 +326,6 @@ async def remove_time_off_api(
     except Exception as e:
         log_error(f"Error removing time off: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/schedule/{master_name}/available-slots")
 async def get_available_slots_api(
@@ -365,7 +359,6 @@ async def get_available_slots_api(
         log_error(f"Error getting available slots: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/schedule/available-slots")
 async def get_all_masters_availability_api(
     date: str = Query(..., description="Date (YYYY-MM-DD)"),
@@ -389,7 +382,6 @@ async def get_all_masters_availability_api(
     except Exception as e:
         log_error(f"Error getting all masters availability: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/schedule/{master_name}/check-availability")
 async def check_availability_api(

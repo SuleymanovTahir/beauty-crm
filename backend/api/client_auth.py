@@ -3,7 +3,7 @@ API для клиентской авторизации и личного каб�
 """
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-import sqlite3
+
 import hashlib
 import secrets
 from datetime import datetime, timedelta
@@ -16,7 +16,6 @@ from email.mime.multipart import MIMEMultipart
 
 router = APIRouter(prefix="/client", tags=["Client Auth"])
 
-
 # ============================================================================
 # MODELS
 # ============================================================================
@@ -28,20 +27,16 @@ class ClientRegister(BaseModel):
     phone: Optional[str] = None
     birthday: Optional[str] = None  # YYYY-MM-DD
 
-
 class ClientLogin(BaseModel):
     email: str
     password: str
 
-
 class PasswordResetRequest(BaseModel):
     email: str
-
 
 class PasswordReset(BaseModel):
     token: str
     new_password: str
-
 
 # ============================================================================
 # HELPERS
@@ -51,11 +46,9 @@ def hash_password(password: str) -> str:
     """Хэшировать пароль"""
     return hashlib.sha256(password.encode()).hexdigest()
 
-
 def generate_token() -> str:
     """Генерировать токен для восстановления пароля"""
     return secrets.token_urlsafe(32)
-
 
 def get_client_by_email(email: str):
     """Получить клиента по email"""
@@ -66,13 +59,12 @@ def get_client_by_email(email: str):
         SELECT instagram_id, email, password_hash, name, phone, birthday,
                created_at, last_login, is_verified
         FROM clients
-        WHERE email = ?
+        WHERE email = %s
     """, (email,))
 
     client = c.fetchone()
     conn.close()
     return client
-
 
 def send_reset_email(email: str, token: str):
     """
@@ -98,7 +90,6 @@ def send_reset_email(email: str, token: str):
     # server.send_message(msg)
     # server.quit()
 
-
 # ============================================================================
 # ENDPOINTS
 # ============================================================================
@@ -111,7 +102,7 @@ async def register_client(data: ClientRegister):
 
     try:
         # Проверяем, существует ли уже клиент с таким email
-        c.execute("SELECT email FROM clients WHERE email = ?", (data.email,))
+        c.execute("SELECT email FROM clients WHERE email = %s", (data.email,))
         if c.fetchone():
             raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
 
@@ -128,7 +119,7 @@ async def register_client(data: ClientRegister):
             INSERT INTO clients
             (instagram_id, email, password_hash, name, phone, birthday,
              created_at, first_contact, last_contact, status, labels)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             instagram_id,
             data.email,
@@ -159,7 +150,6 @@ async def register_client(data: ClientRegister):
     finally:
         conn.close()
 
-
 @router.post("/login")
 async def login_client(data: ClientLogin):
     """Вход клиента"""
@@ -177,7 +167,7 @@ async def login_client(data: ClientLogin):
     # Обновляем last_login
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("UPDATE clients SET last_login = ? WHERE email = ?",
+    c.execute("UPDATE clients SET last_login = %s WHERE email = %s",
               (datetime.now().isoformat(), email))
     conn.commit()
     conn.close()
@@ -197,7 +187,6 @@ async def login_client(data: ClientLogin):
         }
     }
 
-
 @router.post("/request-password-reset")
 async def request_password_reset(data: PasswordResetRequest):
     """Запрос на восстановление пароля"""
@@ -216,7 +205,7 @@ async def request_password_reset(data: PasswordResetRequest):
 
     c.execute("""
         INSERT INTO password_reset_tokens (client_email, token, created_at, expires_at)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
     """, (data.email, token, datetime.now().isoformat(), expires_at))
 
     conn.commit()
@@ -226,7 +215,6 @@ async def request_password_reset(data: PasswordResetRequest):
     send_reset_email(data.email, token)
 
     return {"success": True, "message": "Если email существует, на него отправлена ссылка"}
-
 
 @router.post("/reset-password")
 async def reset_password(data: PasswordReset):
@@ -239,7 +227,7 @@ async def reset_password(data: PasswordReset):
         c.execute("""
             SELECT client_email, expires_at, used
             FROM password_reset_tokens
-            WHERE token = ?
+            WHERE token = %s
         """, (data.token,))
 
         token_data = c.fetchone()
@@ -257,11 +245,11 @@ async def reset_password(data: PasswordReset):
 
         # Обновляем пароль
         password_hash = hash_password(data.new_password)
-        c.execute("UPDATE clients SET password_hash = ? WHERE email = ?",
+        c.execute("UPDATE clients SET password_hash = %s WHERE email = %s",
                   (password_hash, client_email))
 
         # Помечаем токен как использованный
-        c.execute("UPDATE password_reset_tokens SET used = 1 WHERE token = ?",
+        c.execute("UPDATE password_reset_tokens SET used = 1 WHERE token = %s",
                   (data.token,))
 
         conn.commit()
@@ -276,7 +264,6 @@ async def reset_password(data: PasswordReset):
     finally:
         conn.close()
 
-
 @router.get("/my-bookings")
 async def get_client_bookings(client_id: str):
     """Получить историю записей клиента"""
@@ -287,7 +274,7 @@ async def get_client_bookings(client_id: str):
         SELECT id, service_name, datetime, status, created_at, completed_at,
                revenue, notes
         FROM bookings
-        WHERE instagram_id = ?
+        WHERE instagram_id = %s
         ORDER BY datetime DESC
     """, (client_id,))
 
@@ -307,7 +294,6 @@ async def get_client_bookings(client_id: str):
     conn.close()
     return {"bookings": bookings}
 
-
 @router.get("/my-notifications")
 async def get_client_notifications(client_id: str, unread_only: bool = False):
     """Получить уведомления клиента"""
@@ -317,7 +303,7 @@ async def get_client_notifications(client_id: str, unread_only: bool = False):
     query = """
         SELECT id, notification_type, title, message, sent_at, read_at, created_at
         FROM client_notifications
-        WHERE client_instagram_id = ?
+        WHERE client_instagram_id = %s
     """
 
     if unread_only:
@@ -342,7 +328,6 @@ async def get_client_notifications(client_id: str, unread_only: bool = False):
     conn.close()
     return {"notifications": notifications}
 
-
 @router.post("/notifications/{notification_id}/mark-read")
 async def mark_notification_read(notification_id: int):
     """Отметить уведомление как прочитанное"""
@@ -351,8 +336,8 @@ async def mark_notification_read(notification_id: int):
 
     c.execute("""
         UPDATE client_notifications
-        SET read_at = ?
-        WHERE id = ?
+        SET read_at = %s
+        WHERE id = %s
     """, (datetime.now().isoformat(), notification_id))
 
     conn.commit()

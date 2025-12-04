@@ -10,7 +10,6 @@ from utils.utils import require_auth, get_total_unread
 
 router = APIRouter(tags=["Analytics"])
 
-
 @router.get("/dashboard")
 async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     """Получить данные дашборда"""
@@ -29,7 +28,6 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
         "unread_count": get_total_unread()
     }
 
-
 @router.get("/analytics")
 async def get_analytics_api(
     period: int = Query(30),
@@ -47,7 +45,6 @@ async def get_analytics_api(
     else:
         return get_analytics_data(days=period)
 
-
 @router.get("/funnel")
 async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     """Получить данные воронки продаж"""
@@ -56,7 +53,6 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return get_funnel_data()
-
 
 @router.get("/stats")
 async def get_stats_api(
@@ -69,7 +65,6 @@ async def get_stats_api(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     return get_stats(comparison_period=comparison_period)
-
 
 @router.get("/advanced-analytics")
 async def get_advanced_analytics(
@@ -86,7 +81,6 @@ async def get_advanced_analytics(
     from db.analytics import get_advanced_analytics_data
     return get_advanced_analytics_data(period, date_from, date_to)
 
-
 @router.get("/client-insights")
 async def get_client_insights(
     client_id: str = Query(...),
@@ -99,7 +93,6 @@ async def get_client_insights(
     
     from db.analytics import get_client_insights_data
     return get_client_insights_data(client_id)
-
 
 @router.get("/performance-metrics")
 async def get_performance_metrics(

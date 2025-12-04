@@ -9,7 +9,6 @@ def validate_phone_number(phone: str) -> bool:
     is_valid, _ = validate_phone_detailed(phone)
     return is_valid
 
-
 def validate_phone_detailed(phone: str) -> tuple[bool, str]:
     """
     Validate phone number format with detailed error messages.

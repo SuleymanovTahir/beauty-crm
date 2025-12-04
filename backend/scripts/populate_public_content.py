@@ -102,7 +102,6 @@ FAQ_ITEMS = [
     },
 ]
 
-
 async def populate_reviews():
     """Заполнить базу отзывами с переводами"""
     log_info("⭐ Заполнение отзывов с переводами...", "populate")
@@ -155,7 +154,6 @@ async def populate_reviews():
         conn.rollback()
     finally:
         conn.close()
-
 
 async def populate_faq():
     """Заполнить базу FAQ с переводами"""
@@ -220,7 +218,6 @@ async def populate_faq():
         conn.rollback()
     finally:
         conn.close()
-
 
 async def populate_employees():
     """Заполнить базу сотрудниками с фото и переводами"""
@@ -389,7 +386,6 @@ async def populate_employees():
     finally:
         conn.close()
 
-
 def update_employee_schema():
     """Обновить схему сотрудников для переводов"""
     log_info("👥 Обновление схемы сотрудников...", "populate")
@@ -437,8 +433,6 @@ def update_employee_schema():
         conn.rollback()
     finally:
         conn.close()
-
-
 
 async def populate_all():
     """Run all population tasks"""

@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional, List
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 

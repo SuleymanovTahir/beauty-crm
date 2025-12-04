@@ -11,8 +11,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
 sys.path.insert(0, backend_dir)
 
-
-
 def remove_deprecated_employee_tables():
     """Удалить устаревшие таблицы employees и employee_salary_settings"""
     print("🔧 Удаление устаревших таблиц employees...")
@@ -84,7 +82,6 @@ def remove_deprecated_employee_tables():
         return False
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     success = remove_deprecated_employee_tables()

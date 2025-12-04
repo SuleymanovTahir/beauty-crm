@@ -3,13 +3,12 @@
 
 Вычисляет метрики для Dashboard
 """
-import sqlite3
+
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-
 
 class AnalyticsService:
     """Сервис для вычисления метрик и аналитики"""

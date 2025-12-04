@@ -23,7 +23,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.config import DATABASE_NAME
 
-
 class Colors:
     """ANSI цвета для вывода"""
     RED = '\033[91m'
@@ -36,7 +35,6 @@ class Colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
-
 
 class TestResult:
     """Результат теста"""
@@ -60,7 +58,6 @@ class TestResult:
         self.error = error
         if details:
             self.details.extend(details)
-
 
 class ComprehensiveTest:
     """Комплексное тестирование всей системы"""
@@ -716,7 +713,7 @@ class ComprehensiveTest:
             found_positions = []
 
             for pos_name in required_positions:
-                cursor.execute("SELECT * FROM positions WHERE name = ?", (pos_name,))
+                cursor.execute("SELECT * FROM positions WHERE name = %s", (pos_name,))
                 pos = cursor.fetchone()
 
                 if pos:
@@ -1014,7 +1011,6 @@ class ComprehensiveTest:
             print(Colors.END)
             return False
 
-
 def run_comprehensive_test() -> bool:
     """Запуск комплексного тестирования"""
     try:
@@ -1024,7 +1020,6 @@ def run_comprehensive_test() -> bool:
         print(f"{Colors.RED}❌ КРИТИЧЕСКАЯ ОШИБКА: {str(e)}{Colors.END}")
         print(f"{Colors.RED}Traceback:\n{traceback.format_exc()}{Colors.END}")
         return False
-
 
 if __name__ == "__main__":
     success = run_comprehensive_test()

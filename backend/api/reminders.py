@@ -5,7 +5,6 @@ from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
-import sqlite3
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -15,7 +14,6 @@ from utils.datetime_utils import get_current_time, get_salon_timezone
 from zoneinfo import ZoneInfo
 
 router = APIRouter(tags=["Reminders"])
-
 
 def create_reminders_table():
     """Создать таблицу напоминаний"""
@@ -38,7 +36,6 @@ def create_reminders_table():
     
     conn.commit()
     conn.close()
-
 
 @router.get("/reminders")
 async def get_reminders(
@@ -64,7 +61,7 @@ async def get_reminders(
                        r.created_at, r.completed_at
                 FROM reminders r
                 LEFT JOIN clients c ON r.client_id = c.instagram_id
-                WHERE r.client_id = ?
+                WHERE r.client_id =%s
                 ORDER BY r.reminder_date ASC
             """, (client_id,))
         elif upcoming:
@@ -76,7 +73,7 @@ async def get_reminders(
                        r.created_at, r.completed_at
                 FROM reminders r
                 LEFT JOIN clients c ON r.client_id = c.instagram_id
-                WHERE r.reminder_date <= ? AND r.is_completed = 0
+                WHERE r.reminder_date <=%s AND r.is_completed = 0
                 ORDER BY r.reminder_date ASC
             """, (end_date,))
         else:
@@ -114,7 +111,6 @@ async def get_reminders(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
-
 
 @router.post("/reminders")
 async def create_reminder(
@@ -158,7 +154,7 @@ async def create_reminder(
         c.execute("""
             INSERT INTO reminders (client_id, title, description, reminder_date, 
                                  reminder_type, created_by)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s,%s)
         """, (client_id, title, description, reminder_date, reminder_type, user["username"]))
         
         reminder_id = c.lastrowid
@@ -176,7 +172,6 @@ async def create_reminder(
     except Exception as e:
         log_error(f"Error creating reminder: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/reminders/{reminder_id}/complete")
 async def complete_reminder(
@@ -196,8 +191,8 @@ async def complete_reminder(
         
         c.execute("""
             UPDATE reminders 
-            SET is_completed = 1, completed_at = ?
-            WHERE id = ?
+            SET is_completed = 1, completed_at =%s
+            WHERE id =%s
         """, (get_current_time().isoformat(), reminder_id))
         
         if c.rowcount == 0:
@@ -218,7 +213,6 @@ async def complete_reminder(
         log_error(f"Error completing reminder: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.delete("/reminders/{reminder_id}")
 async def delete_reminder(
     reminder_id: int,
@@ -235,7 +229,7 @@ async def delete_reminder(
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
+        c.execute("DELETE FROM reminders WHERE id =%s", (reminder_id,))
         
         if c.rowcount == 0:
             conn.close()
@@ -254,7 +248,6 @@ async def delete_reminder(
     except Exception as e:
         log_error(f"Error deleting reminder: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/reminders/upcoming")
 async def get_upcoming_reminders(
@@ -278,7 +271,7 @@ async def get_upcoming_reminders(
                    r.reminder_date, r.reminder_type, r.is_completed
             FROM reminders r
             LEFT JOIN clients c ON r.client_id = c.instagram_id
-            WHERE r.reminder_date <= ? AND r.is_completed = 0
+            WHERE r.reminder_date <=%s AND r.is_completed = 0
             ORDER BY r.reminder_date ASC
         """, (end_date,))
         
@@ -306,7 +299,6 @@ async def get_upcoming_reminders(
     finally:
         conn.close()
 
-
 # ============================================================================
 # BOOKING REMINDER SETTINGS
 # ============================================================================
@@ -328,7 +320,6 @@ def create_booking_reminder_settings_table():
 
     conn.commit()
     conn.close()
-
 
 @router.get("/booking-reminder-settings")
 async def get_booking_reminder_settings(
@@ -373,7 +364,6 @@ async def get_booking_reminder_settings(
     finally:
         conn.close()
 
-
 @router.post("/booking-reminder-settings")
 async def create_booking_reminder_setting(
     request: Request,
@@ -407,7 +397,7 @@ async def create_booking_reminder_setting(
         c.execute("""
             INSERT INTO booking_reminder_settings (name, days_before, hours_before,
                                                    notification_type, is_enabled)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s)
         """, (name, days_before, hours_before, notification_type, 1 if is_enabled else 0))
 
         setting_id = c.lastrowid
@@ -425,7 +415,6 @@ async def create_booking_reminder_setting(
     except Exception as e:
         log_error(f"Error creating booking reminder setting: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/booking-reminder-settings/{setting_id}")
 async def update_booking_reminder_setting(
@@ -446,7 +435,7 @@ async def update_booking_reminder_setting(
         c = conn.cursor()
 
         # Проверяем существование
-        c.execute("SELECT id FROM booking_reminder_settings WHERE id = ?", (setting_id,))
+        c.execute("SELECT id FROM booking_reminder_settings WHERE id =%s", (setting_id,))
         if not c.fetchone():
             conn.close()
             return JSONResponse({"error": "Setting not found"}, status_code=404)
@@ -462,19 +451,19 @@ async def update_booking_reminder_setting(
         params = []
 
         if name is not None:
-            updates.append("name = ?")
+            updates.append("name =%s")
             params.append(name)
         if days_before is not None:
-            updates.append("days_before = ?")
+            updates.append("days_before =%s")
             params.append(days_before)
         if hours_before is not None:
-            updates.append("hours_before = ?")
+            updates.append("hours_before =%s")
             params.append(hours_before)
         if notification_type is not None:
-            updates.append("notification_type = ?")
+            updates.append("notification_type =%s")
             params.append(notification_type)
         if is_enabled is not None:
-            updates.append("is_enabled = ?")
+            updates.append("is_enabled =%s")
             params.append(1 if is_enabled else 0)
 
         if not updates:
@@ -482,7 +471,7 @@ async def update_booking_reminder_setting(
             return JSONResponse({"error": "No fields to update"}, status_code=400)
 
         params.append(setting_id)
-        query = f"UPDATE booking_reminder_settings SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE booking_reminder_settings SET {', '.join(updates)} WHERE id =%s"
 
         c.execute(query, params)
         conn.commit()
@@ -498,7 +487,6 @@ async def update_booking_reminder_setting(
     except Exception as e:
         log_error(f"Error updating booking reminder setting: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/booking-reminder-settings/{setting_id}/toggle")
 async def toggle_booking_reminder_setting(
@@ -517,7 +505,7 @@ async def toggle_booking_reminder_setting(
         c = conn.cursor()
 
         # Получаем текущее состояние
-        c.execute("SELECT is_enabled FROM booking_reminder_settings WHERE id = ?", (setting_id,))
+        c.execute("SELECT is_enabled FROM booking_reminder_settings WHERE id =%s", (setting_id,))
         row = c.fetchone()
 
         if not row:
@@ -526,7 +514,7 @@ async def toggle_booking_reminder_setting(
 
         new_state = 0 if row[0] else 1
 
-        c.execute("UPDATE booking_reminder_settings SET is_enabled = ? WHERE id = ?",
+        c.execute("UPDATE booking_reminder_settings SET is_enabled =%s WHERE id =%s",
                  (new_state, setting_id))
         conn.commit()
         conn.close()
@@ -544,7 +532,6 @@ async def toggle_booking_reminder_setting(
         log_error(f"Error toggling booking reminder setting: {e}", "reminders")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.delete("/booking-reminder-settings/{setting_id}")
 async def delete_booking_reminder_setting(
     setting_id: int,
@@ -561,7 +548,7 @@ async def delete_booking_reminder_setting(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("DELETE FROM booking_reminder_settings WHERE id = ?", (setting_id,))
+        c.execute("DELETE FROM booking_reminder_settings WHERE id =%s", (setting_id,))
 
         if c.rowcount == 0:
             conn.close()

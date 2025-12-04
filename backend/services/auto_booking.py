@@ -6,7 +6,6 @@
 - Предпочтений клиентов
 - Загрузки мастеров
 """
-import sqlite3
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
@@ -14,7 +13,6 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from services.master_schedule import MasterScheduleService
 from services.smart_assistant import SmartAssistant
-
 
 class AutoBookingService:
     """Сервис автоматического заполнения окон"""
@@ -61,11 +59,11 @@ class AutoBookingService:
                     SELECT DISTINCT c.instagram_id, c.name, c.phone, MAX(b.datetime) as last_visit
                     FROM clients c
                     LEFT JOIN bookings b ON c.instagram_id = b.instagram_id
-                    WHERE b.master = ? OR b.master IS NULL
-                    GROUP BY c.instagram_id
-                    HAVING last_visit IS NULL OR
-                           julianday('now') - julianday(last_visit) >= ?
-                    ORDER BY last_visit ASC NULLS LAST
+                    WHERE b.master = %s OR b.master IS NULL
+                    GROUP BY c.instagram_id, c.name, c.phone
+                    HAVING MAX(b.datetime) IS NULL OR
+                           EXTRACT(EPOCH FROM (NOW() - MAX(b.datetime)))/86400 >= %s
+                    ORDER BY MAX(b.datetime) ASC NULLS LAST
                     LIMIT 20
                 """, (master, min_days_since_visit))
 

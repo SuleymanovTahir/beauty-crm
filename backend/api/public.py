@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timedelta
-import sqlite3
+
 from db.settings import get_salon_settings
 from db.services import get_all_services
 from db.employees import get_all_employees
@@ -14,7 +14,6 @@ from db.connection import get_db_connection
 from services.reviews import reviews_service
 
 router = APIRouter(tags=["Public"])
-
 
 # ============================================================================
 # MODELS
@@ -30,12 +29,10 @@ class BookingCreate(BaseModel):
     email: Optional[str] = None
     notes: Optional[str] = None
 
-
 class ContactForm(BaseModel):
     name: str
     email: Optional[str] = None
     message: str
-
 
 @router.post("/send-message")
 async def send_contact_message(form: ContactForm):
@@ -125,10 +122,6 @@ async def send_contact_message(form: ContactForm):
         # This outer except catches unexpected errors.
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
-
-
-
 @router.get("/services")
 async def get_public_services():
     """Публичный список активных услуг"""
@@ -179,10 +172,6 @@ async def get_public_services():
             "description_pt": s[33] if len(s) > 33 else None
         } for s in services
     ]
-
-
-
-
 
 @router.get("/available-slots")
 async def get_available_slots(
@@ -236,7 +225,6 @@ async def get_available_slots(
 
     return {"date": date, "slots": slots}
 
-
 def check_slot_availability(date: str, time: str, employee_id: Optional[int] = None) -> bool:
     """Проверить доступность слота"""
     conn = get_db_connection()
@@ -250,22 +238,19 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
         # Проверяем для конкретного сотрудника
         c.execute("""
             SELECT COUNT(*) FROM bookings
-            WHERE datetime = ? AND employee_id = ? AND status NOT IN ('cancelled', 'no_show')
+            WHERE datetime =%s AND employee_id =%s AND status NOT IN ('cancelled', 'no_show')
         """, (datetime_str, employee_id))
     else:
         # Проверяем общую занятость
         c.execute("""
             SELECT COUNT(*) FROM bookings
-            WHERE datetime = ? AND status NOT IN ('cancelled', 'no_show')
+            WHERE datetime =%s AND status NOT IN ('cancelled', 'no_show')
         """, (datetime_str,))
 
     count = c.fetchone()[0]
     conn.close()
 
     return count == 0
-
-
-
 
 # ... (create_booking is unchanged) ...
 
@@ -281,7 +266,7 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
         FROM salon_news
         WHERE is_active = TRUE
         ORDER BY published_at DESC
-        LIMIT ?
+        LIMIT%s
     """, (limit,))
 
     from core.config import BASE_URL
@@ -315,13 +300,6 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
 
     conn.close()
     return {"news": news}
-
-
-
-
-
-
-
 
 @router.get("/banners")
 async def get_public_banners():

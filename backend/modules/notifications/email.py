@@ -8,12 +8,10 @@ from typing import List, Optional
 from modules import get_module_config
 from utils.logger import log_info, log_error
 
-
 def get_smtp_config() -> dict:
     """Получить SMTP конфигурацию"""
     config = get_module_config('notifications')
     return config.get('channels', {}).get('email', {})
-
 
 async def send_email_notification(
     recipients: List[str],
@@ -74,7 +72,6 @@ async def send_email_notification(
     except Exception as e:
         log_error(f"Ошибка отправки email: {e}", "notifications.email")
         return False
-
 
 def format_new_booking_email(booking_data: dict, salon_data: dict) -> tuple[str, str]:
     """

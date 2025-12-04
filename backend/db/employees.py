@@ -3,12 +3,10 @@
 DEPRECATED: This module is a compatibility wrapper around users table.
 All employee data is now stored in users table with is_service_provider = TRUE.
 """
-import sqlite3
 from datetime import datetime
 from typing import Optional, List
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
@@ -29,7 +27,6 @@ def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female')
         return '/static/avatars/default_male.webp'
     else:  # female or other or None
         return '/static/avatars/default_female.webp'
-
 
 def get_all_employees(active_only=True, service_providers_only=False):
     """
@@ -75,7 +72,6 @@ def get_all_employees(active_only=True, service_providers_only=False):
     conn.close()
     return employees
 
-
 def get_employee(employee_id: int):
     """Получить сотрудника по ID (из users)"""
     conn = get_db_connection()
@@ -86,7 +82,6 @@ def get_employee(employee_id: int):
     
     conn.close()
     return employee
-
 
 def create_employee(full_name: str, position: str = None, experience: str = None,
                    photo: str = None, bio: str = None, phone: str = None,
@@ -101,14 +96,14 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     username = full_name.lower().replace(" ", "_")
     
     # Check if username exists
-    c.execute("SELECT id FROM users WHERE username = ?", (username,))
+    c.execute("SELECT id FROM users WHERE username = %s", (username,))
     if c.fetchone():
         username = f"{username}_{int(datetime.now().timestamp())}"
     
     c.execute("""INSERT INTO users 
                  (username, password_hash, full_name, position, experience, photo, bio, 
                   phone, email, instagram_employee, is_service_provider, role, created_at)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'employee', ?)""",
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, 'employee', %s)""",
               (username, "placeholder_hash", full_name, position, experience, photo, bio, 
                phone, email, instagram, now))
     
@@ -117,7 +112,6 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     conn.close()
     
     return employee_id
-
 
 def update_employee(employee_id: int, **kwargs):
     """Обновить сотрудника (в users)"""
@@ -134,7 +128,7 @@ def update_employee(employee_id: int, **kwargs):
     
     for key, value in kwargs.items():
         mapped_key = field_mapping.get(key, key)
-        updates.append(f"{mapped_key} = ?")
+        updates.append(f"{mapped_key} = %s")
         params.append(value)
     
     params.append(employee_id)
@@ -145,7 +139,6 @@ def update_employee(employee_id: int, **kwargs):
     conn.commit()
     conn.close()
     return True
-
 
 def delete_employee(employee_id: int):
     """Удалить сотрудника (деактивировать в users)"""
@@ -161,7 +154,6 @@ def delete_employee(employee_id: int):
     conn.close()
     
     return affected > 0
-
 
 # ===== СПЕЦИАЛИЗАЦИИ =====
 
@@ -185,17 +177,16 @@ def get_employee_services(employee_id: int):
                             us.is_calendar_enabled, us.price_min, us.price_max
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ? AND s.is_active = TRUE""", (employee_id,))
+                     WHERE us.user_id = %s AND s.is_active = TRUE""", (employee_id,))
     else:
         c.execute("""SELECT s.*, NULL, NULL, 1, 1, NULL, NULL
                      FROM services s
                      JOIN user_services us ON s.id = us.service_id
-                     WHERE us.user_id = ? AND s.is_active = TRUE""", (employee_id,))
+                     WHERE us.user_id = %s AND s.is_active = TRUE""", (employee_id,))
     
     services = c.fetchall()
     conn.close()
     return services
-
 
 def update_employee_service(employee_id: int, service_id: int, 
                            price: float = None, duration: int = None,
@@ -210,27 +201,27 @@ def update_employee_service(employee_id: int, service_id: int,
     params = []
     
     if price is not None:
-        updates.append("price = ?")
+        updates.append("price = %s")
         params.append(price)
     
     if duration is not None:
-        updates.append("duration = ?")
+        updates.append("duration = %s")
         params.append(duration)
         
     if is_online_booking_enabled is not None:
-        updates.append("is_online_booking_enabled = ?")
+        updates.append("is_online_booking_enabled = %s")
         params.append(1 if is_online_booking_enabled else 0)
         
     if is_calendar_enabled is not None:
-        updates.append("is_calendar_enabled = ?")
+        updates.append("is_calendar_enabled = %s")
         params.append(1 if is_calendar_enabled else 0)
 
     if price_min is not None:
-        updates.append("price_min = ?")
+        updates.append("price_min = %s")
         params.append(price_min)
 
     if price_max is not None:
-        updates.append("price_max = ?")
+        updates.append("price_max = %s")
         params.append(price_max)
         
     if not updates:
@@ -240,7 +231,7 @@ def update_employee_service(employee_id: int, service_id: int,
     params.append(employee_id)
     params.append(service_id)
     
-    query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = ? AND service_id = ?"
+    query = f"UPDATE user_services SET {', '.join(updates)} WHERE user_id = %s AND service_id = %s"
     
     try:
         c.execute(query, params)
@@ -251,7 +242,6 @@ def update_employee_service(employee_id: int, service_id: int,
         
     conn.close()
     return success
-
 
 def add_employee_service(employee_id: int, service_id: int, 
                         price: float = None, duration: int = None,
@@ -274,21 +264,20 @@ def add_employee_service(employee_id: int, service_id: int,
     
     if has_settings:
         c.execute("""
-            INSERT OR IGNORE INTO user_services 
+            INSERT INTO user_services 
             (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled, price_min, price_max)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (employee_id, service_id, price, duration, 
               1 if is_online_booking_enabled else 0, 
               1 if is_calendar_enabled else 0,
               price_min, price_max))
     else:
-        c.execute("INSERT OR IGNORE INTO user_services (user_id, service_id) VALUES (?, ?)", 
+        c.execute("INSERT INTO user_services (user_id, service_id) VALUES (%s, %s)", 
                  (employee_id, service_id))
         
     conn.commit()
     conn.close()
     return True
-
 
 def remove_employee_service(employee_id: int, service_id: int):
     """Удалить специализацию у сотрудника (из user_services)"""
@@ -296,13 +285,12 @@ def remove_employee_service(employee_id: int, service_id: int):
     c = conn.cursor()
     
     c.execute("""DELETE FROM user_services 
-                 WHERE user_id = ? AND service_id = ?""",
+                 WHERE user_id = %s AND service_id = %s""",
               (employee_id, service_id))
     
     conn.commit()
     conn.close()
     return True
-
 
 def get_employees_by_service(service_id: int):
     """
@@ -341,7 +329,6 @@ def get_employees_by_service(service_id: int):
     conn.close()
     return employees
 
-
 # ===== РАСПИСАНИЕ =====
 
 def get_employee_schedule(employee_id: int):
@@ -350,13 +337,12 @@ def get_employee_schedule(employee_id: int):
     c = conn.cursor()
     
     c.execute("""SELECT * FROM user_schedule 
-                 WHERE user_id = ? AND is_active = TRUE
+                 WHERE user_id = %s AND is_active = TRUE
                  ORDER BY day_of_week""", (employee_id,))
     
     schedule = c.fetchall()
     conn.close()
     return schedule
-
 
 def set_employee_schedule(employee_id: int, day_of_week: int, 
                          start_time: str, end_time: str):
@@ -366,19 +352,18 @@ def set_employee_schedule(employee_id: int, day_of_week: int,
     
     # Удаляем старое расписание для этого дня
     c.execute("""DELETE FROM user_schedule 
-                 WHERE user_id = ? AND day_of_week = ?""",
+                 WHERE user_id = %s AND day_of_week = %s""",
               (employee_id, day_of_week))
     
     # Добавляем новое
     c.execute("""INSERT INTO user_schedule 
                  (user_id, day_of_week, start_time, end_time)
-                 VALUES (?, ?, ?, ?)""",
+                 VALUES (%s, %s, %s, %s)""",
               (employee_id, day_of_week, start_time, end_time))
     
     conn.commit()
     conn.close()
     return True
-
 
 def get_available_employees(service_id: int, date_time: str):
     """
@@ -404,19 +389,18 @@ def get_available_employees(service_id: int, date_time: str):
         WHERE us.service_id = %s
         AND u.is_active = TRUE
         AND u.is_service_provider = TRUE
-        AND sch.day_of_week = ?
-        AND sch.start_time <= ?
-        AND sch.end_time >= ?
+        AND sch.day_of_week = %s
+        AND sch.start_time <= %s
+        AND sch.end_time >= %s
         AND u.id NOT IN (
             SELECT user_id FROM user_time_off
-            WHERE date(?) BETWEEN date(date_from) AND date(date_to)
+            WHERE DATE(%s) BETWEEN DATE(date_from) AND DATE(date_to)
         )
     """, (service_id, day_of_week, time_str, time_str, date_time))
 
     employees = c.fetchall()
     conn.close()
     return employees
-
 
 def get_employee_busy_slots(employee_id: int, date: str):
     """
@@ -439,9 +423,9 @@ def get_employee_busy_slots(employee_id: int, date: str):
         SELECT b.id, b.datetime, s.duration, s.name
         FROM bookings b
         LEFT JOIN services s ON b.service_name = s.name
-        WHERE b.master = ?
+        WHERE b.master = %s
         AND b.status NOT IN ('cancelled', 'no-show')
-        AND date(b.datetime) = date(?)
+        AND DATE(b.datetime) = DATE(%s)
     """, (full_name, date))
 
     bookings = c.fetchall()
@@ -471,7 +455,7 @@ def get_employee_busy_slots(employee_id: int, date: str):
                     end = start + timedelta(hours=hours, minutes=minutes)
                 else:
                     # По умолчанию 1 час
-                    end = start + timedelta(hours = TRUE)
+                    end = start + timedelta(hours=1)
 
                 busy_slots.append({
                     'booking_id': booking_id,

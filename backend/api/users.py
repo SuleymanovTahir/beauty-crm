@@ -4,7 +4,7 @@ API Endpoints для работы с пользователями
 from fastapi import APIRouter, Request, Cookie,Depends
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
+
 import hashlib
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
@@ -14,7 +14,6 @@ from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Users"])
-
 
 @router.post("/users")
 async def create_user_api(
@@ -50,7 +49,7 @@ async def create_user_api(
 
     try:
         # Проверяем что логин не занят
-        c.execute("SELECT id FROM users WHERE username = ?", (username,))
+        c.execute("SELECT id FROM users WHERE username = %s", (username,))
         if c.fetchone():
             conn.close()
             return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
@@ -62,7 +61,7 @@ async def create_user_api(
 
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, role, position, created_at, is_active)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, 1)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, 1)""",
                   (username, password_hash, full_name, email, role, position, now))
         conn.commit()
         user_id = c.lastrowid
@@ -87,10 +86,6 @@ async def create_user_api(
         log_error(f"Error creating user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
-
-
-
 @router.get("/users/{user_id}")
 async def get_user_by_id(
     user_id: int,
@@ -112,7 +107,7 @@ async def get_user_by_id(
                 phone, bio, photo, is_active, is_service_provider,
                 position_ru, position_ar, created_at
             FROM users
-            WHERE id = ?
+            WHERE id = %s
         """, (user_id,))
 
         row = c.fetchone()
@@ -143,7 +138,6 @@ async def get_user_by_id(
     except Exception as e:
         log_error(f"Error fetching user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/users")
 async def get_users(current_user: dict = Depends(get_current_user)):
@@ -214,7 +208,7 @@ async def approve_user(
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE users SET is_active = TRUE WHERE id = ?", (user_id,))
+        c.execute("UPDATE users SET is_active = TRUE WHERE id = %s", (user_id,))
         conn.commit()
         
         if c.rowcount > 0:
@@ -231,7 +225,6 @@ async def approve_user(
         log_error(f"Error approving user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/users/{user_id}/reject")
 async def reject_user(
     user_id: int,
@@ -246,7 +239,7 @@ async def reject_user(
     c = conn.cursor()
     
     try:
-        c.execute("DELETE FROM users WHERE id = ? AND is_active = FALSE", (user_id,))
+        c.execute("DELETE FROM users WHERE id = %s AND is_active = FALSE", (user_id,))
         conn.commit()
         
         if c.rowcount > 0:
@@ -262,7 +255,6 @@ async def reject_user(
         conn.close()
         log_error(f"Error rejecting user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/users/{user_id}/delete")
 async def delete_user_api(
@@ -280,7 +272,7 @@ async def delete_user_api(
     # Проверяем роль удаляемого пользователя
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT role FROM users WHERE id = ?", (user_id,))
+    c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
     target_user = c.fetchone()
     conn.close()
 
@@ -304,7 +296,6 @@ async def delete_user_api(
         return {"success": True, "message": "Пользователь удалён"}
 
     return JSONResponse({"error": "Ошибка удаления"}, status_code=400)
-
 
 # После строки 286 (после функции update_user_profile)
 
@@ -353,7 +344,7 @@ async def update_user_role(
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE users SET role = ? WHERE id = ?", (new_role, user_id))
+        c.execute("UPDATE users SET role = %s WHERE id = %s", (new_role, user_id))
         conn.commit()
         
         if c.rowcount > 0:
@@ -374,8 +365,6 @@ async def update_user_role(
         log_error(f"Error updating user role: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
-
 @router.get("/users/{user_id}/profile")
 async def get_user_profile(
     user_id: int,
@@ -394,7 +383,7 @@ async def get_user_profile(
     c = conn.cursor()
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
-                 FROM users WHERE id = ?""", (user_id,))
+                 FROM users WHERE id = %s""", (user_id,))
     
     result = c.fetchone()
     conn.close()
@@ -413,7 +402,6 @@ async def get_user_profile(
         "photo": result[7]
     }
 
-
 @router.get("/users/by-username/{username}/profile")
 async def get_user_profile_by_username(
     username: str,
@@ -428,7 +416,7 @@ async def get_user_profile_by_username(
     c = conn.cursor()
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo
-                 FROM users WHERE username = ?""", (username,))
+                 FROM users WHERE username = %s""", (username,))
     
     result = c.fetchone()
     conn.close()
@@ -450,7 +438,6 @@ async def get_user_profile_by_username(
         "last_login": result[6],
         "photo": result[7]
     }
-
 
 @router.post("/users/{user_id}/change-password")
 async def change_user_password(
@@ -490,7 +477,7 @@ async def change_user_password(
                     status_code=400
                 )
             old_password_hash = hashlib.sha256(old_password.encode()).hexdigest()
-            c.execute("SELECT id FROM users WHERE id = ? AND password_hash = ?",
+            c.execute("SELECT id FROM users WHERE id = %s AND password_hash = %s",
                      (user_id, old_password_hash))
             if not c.fetchone():
                 conn.close()
@@ -501,7 +488,7 @@ async def change_user_password(
         
         # Меняем пароль
         new_password_hash = hashlib.sha256(new_password.encode()).hexdigest()
-        c.execute("UPDATE users SET password_hash = ? WHERE id = ?", 
+        c.execute("UPDATE users SET password_hash = %s WHERE id = %s", 
                  (new_password_hash, user_id))
         conn.commit()
         
@@ -516,7 +503,6 @@ async def change_user_password(
         conn.close()
         log_error(f"Error changing password: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/users/{user_id}/update-profile")
 async def update_user_profile(
@@ -556,7 +542,7 @@ async def update_user_profile(
 
     try:
         # Проверяем что логин не занят
-        c.execute("SELECT id FROM users WHERE username = ? AND id != ?",
+        c.execute("SELECT id FROM users WHERE username = %s AND id != %s",
                  (username, user_id))
         if c.fetchone():
             conn.close()
@@ -570,13 +556,13 @@ async def update_user_profile(
         
         if photo is not None:
              c.execute("""UPDATE users
-                    SET username = ?, full_name = ?, email = ?, position = ?, photo = ?
-                    WHERE id = ?""",
+                    SET username = %s, full_name = %s, email = %s, position = %s, photo = %s
+                    WHERE id = %s""",
                  (username, full_name, email, position, photo, user_id))
         else:
             c.execute("""UPDATE users
-                        SET username = ?, full_name = ?, email = ?, position = ?
-                        WHERE id = ?""",
+                        SET username = %s, full_name = %s, email = %s, position = %s
+                        WHERE id = %s""",
                     (username, full_name, email, position, user_id))
         conn.commit()
         
@@ -591,7 +577,6 @@ async def update_user_profile(
         conn.close()
         log_error(f"Error updating profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/users/{user_id}/notification-settings")
 async def get_user_notification_settings(
@@ -616,7 +601,7 @@ async def get_user_notification_settings(
                    notify_on_new_booking, notify_on_booking_change, notify_on_booking_cancel,
                    telegram_chat_id, email, phone
             FROM users
-            WHERE id = ?
+            WHERE id = %s
         """, (user_id,))
 
         result = c.fetchone()
@@ -640,7 +625,6 @@ async def get_user_notification_settings(
     except Exception as e:
         log_error(f"Error getting notification settings: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/users/{user_id}/notification-settings")
 async def update_user_notification_settings(
@@ -666,13 +650,13 @@ async def update_user_notification_settings(
         # Обновляем настройки
         c.execute("""
             UPDATE users
-            SET notify_telegram = ?,
-                notify_email = ?,
-                notify_whatsapp = ?,
-                notify_on_new_booking = ?,
-                notify_on_booking_change = ?,
-                notify_on_booking_cancel = ?
-            WHERE id = ?
+            SET notify_telegram = %s,
+                notify_email = %s,
+                notify_whatsapp = %s,
+                notify_on_new_booking = %s,
+                notify_on_booking_change = %s,
+                notify_on_booking_cancel = %s
+            WHERE id = %s
         """, (
             1 if data.get('notify_telegram', True) else 0,
             1 if data.get('notify_email', True) else 0,

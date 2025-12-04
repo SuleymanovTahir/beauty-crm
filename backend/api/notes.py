@@ -4,7 +4,6 @@ API для заметок клиентов
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -12,7 +11,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Notes"])
-
 
 @router.get("/clients/{client_id}/notes")
 async def get_client_notes(
@@ -32,7 +30,7 @@ async def get_client_notes(
             SELECT n.id, n.note_text, n.created_at, u.full_name
             FROM client_notes n
             LEFT JOIN users u ON n.created_by = u.id
-            WHERE n.client_id = ?
+            WHERE n.client_id = %s
             ORDER BY n.created_at DESC
         """, (client_id,))
 
@@ -52,7 +50,6 @@ async def get_client_notes(
     except Exception as e:
         log_error(f"Error getting notes: {e}", "notes")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/clients/{client_id}/notes")
 async def add_client_note(
@@ -77,7 +74,7 @@ async def add_client_note(
         
         c.execute("""
             INSERT INTO client_notes (client_id, note_text, created_by)
-            VALUES (?, ?, ?)
+            VALUES (%s, %s, %s)
         """, (client_id, note_text, user["id"]))
         
         conn.commit()
@@ -90,7 +87,6 @@ async def add_client_note(
     except Exception as e:
         log_error(f"Error adding note: {e}", "notes")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/clients/{client_id}/notes/{note_id}")
 async def delete_client_note(
@@ -107,7 +103,7 @@ async def delete_client_note(
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("DELETE FROM client_notes WHERE id = ? AND client_id = ?", 
+        c.execute("DELETE FROM client_notes WHERE id = %s AND client_id = %s", 
                  (note_id, client_id))
         
         conn.commit()
@@ -119,7 +115,6 @@ async def delete_client_note(
     except Exception as e:
         log_error(f"Error deleting note: {e}", "notes")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/clients/{client_id}/notes/{note_id}")
 async def update_client_note(
@@ -146,7 +141,7 @@ async def update_client_note(
         # Проверяем что заметка принадлежит этому клиенту
         c.execute("""
             SELECT created_by FROM client_notes 
-            WHERE id = ? AND client_id = ?
+            WHERE id = %s AND client_id = %s
         """, (note_id, client_id))
         
         result = c.fetchone()
@@ -157,8 +152,8 @@ async def update_client_note(
         # Обновляем заметку
         c.execute("""
             UPDATE client_notes 
-            SET note_text = ?
-            WHERE id = ? AND client_id = ?
+            SET note_text = %s
+            WHERE id = %s AND client_id = %s
         """, (note_text, note_id, client_id))
         
         conn.commit()

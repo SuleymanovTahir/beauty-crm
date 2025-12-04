@@ -10,7 +10,6 @@ from services.auto_booking import AutoBookingService
 
 router = APIRouter(tags=["AutoBooking"])
 
-
 @router.get("/auto-booking/suggestions")
 async def get_auto_booking_suggestions_api(
     date: str = Query(..., description="Date (YYYY-MM-DD)"),
@@ -55,7 +54,6 @@ async def get_auto_booking_suggestions_api(
         log_error(f"Error getting auto-booking suggestions: {e}", "auto_booking")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/auto-booking/underutilized-slots")
 async def get_underutilized_slots_api(
     date_start: str = Query(..., description="Start date (YYYY-MM-DD)"),
@@ -90,7 +88,6 @@ async def get_underutilized_slots_api(
     except Exception as e:
         log_error(f"Error getting underutilized slots: {e}", "auto_booking")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/auto-booking/daily-suggestions/{date}")
 async def get_daily_auto_suggestions_api(

@@ -5,7 +5,6 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Optional
 
-
 def get_salon_timezone() -> str:
     """
     Получить timezone салона из настроек
@@ -20,7 +19,6 @@ def get_salon_timezone() -> str:
     except Exception:
         # Fallback на Dubai если не удалось получить настройки
         return 'Asia/Dubai'
-
 
 def get_current_time(timezone: Optional[str] = None) -> datetime:
     """
@@ -42,7 +40,6 @@ def get_current_time(timezone: Optional[str] = None) -> datetime:
         # Fallback на UTC если timezone некорректный
         return datetime.now(ZoneInfo('UTC'))
 
-
 def format_time_for_display(dt: Optional[datetime] = None) -> str:
     """
     Форматировать время для отображения
@@ -57,7 +54,6 @@ def format_time_for_display(dt: Optional[datetime] = None) -> str:
         dt = get_current_time()
     return dt.strftime('%H:%M')
 
-
 def format_date_for_display(dt: Optional[datetime] = None) -> str:
     """
     Форматировать дату для отображения
@@ -71,7 +67,6 @@ def format_date_for_display(dt: Optional[datetime] = None) -> str:
     if dt is None:
         dt = get_current_time()
     return dt.strftime('%Y-%m-%d')
-
 
 def format_datetime_for_display(dt: Optional[datetime] = None) -> str:
     """

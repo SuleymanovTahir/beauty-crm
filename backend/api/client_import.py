@@ -9,12 +9,11 @@ from datetime import datetime
 from typing import Dict, List, Any
 from utils.logger import log_info, log_error
 from db.clients import get_or_create_client, update_client_info
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 router = APIRouter()
-
 
 def normalize_column_name(col: str) -> str:
     """Normalize column names to match database fields"""
@@ -90,7 +89,6 @@ def normalize_column_name(col: str) -> str:
     
     return mappings.get(col_lower, col_lower)
 
-
 def parse_date(date_str: Any) -> str:
     """Parse date from various formats to ISO 8601"""
     if pd.isna(date_str) or not date_str:
@@ -120,7 +118,6 @@ def parse_date(date_str: Any) -> str:
             
     return None
 
-
 def parse_currency(value: Any) -> float:
     """Parse currency string to float"""
     if pd.isna(value) or not value:
@@ -140,7 +137,6 @@ def parse_currency(value: Any) -> float:
         return float(clean_val)
     except ValueError:
         return 0.0
-
 
 def validate_phone(phone: str) -> str:
     """Validate and normalize phone number"""
@@ -164,9 +160,6 @@ def validate_phone(phone: str) -> str:
     
     return phone_clean
 
-
-
-
 def find_existing_client(phone: str = None, email: str = None, instagram_id: str = None) -> dict:
     """
     Find existing client by phone, email, or Instagram ID
@@ -182,21 +175,21 @@ def find_existing_client(phone: str = None, email: str = None, instagram_id: str
     try:
         # Search by phone (check if phone is in JSON array)
         if phone:
-            c.execute("SELECT * FROM clients WHERE phone LIKE ?", (f'%{phone}%',))
+            c.execute("SELECT * FROM clients WHERE phone LIKE %s", (f'%{phone}%',))
             result = c.fetchone()
             if result:
                 return dict(result)
         
         # Search by email
         if email:
-            c.execute("SELECT * FROM clients WHERE LOWER(username) = LOWER(?)", (email,))
+            c.execute("SELECT * FROM clients WHERE LOWER(username) = LOWER(%s)", (email,))
             result = c.fetchone()
             if result:
                 return dict(result)
         
         # Search by Instagram ID
         if instagram_id:
-            c.execute("SELECT * FROM clients WHERE instagram_id = ?", (instagram_id,))
+            c.execute("SELECT * FROM clients WHERE instagram_id = %s", (instagram_id,))
             result = c.fetchone()
             if result:
                 return dict(result)
@@ -204,7 +197,6 @@ def find_existing_client(phone: str = None, email: str = None, instagram_id: str
         return None
     finally:
         conn.close()
-
 
 def merge_phone_numbers(existing_phones: str, new_phone: str) -> str:
     """
@@ -226,7 +218,6 @@ def merge_phone_numbers(existing_phones: str, new_phone: str) -> str:
         phones.append(new_phone)
     
     return json.dumps(phones)
-
 
 def merge_client_fields(existing: dict, new_data: dict) -> tuple:
     """
@@ -260,7 +251,6 @@ def merge_client_fields(existing: dict, new_data: dict) -> tuple:
             changed_fields.append('phone')
     
     return updated, changed_fields
-
 
 def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -301,11 +291,11 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
             c = conn.cursor()
             
             # Build UPDATE query dynamically
-            set_clause = ', '.join([f"{field} = ?" for field in updated_data.keys()])
+            set_clause = ', '.join([f"{field} = %s" for field in updated_data.keys()])
             values = list(updated_data.values()) + [existing['instagram_id']]
             
             c.execute(
-                f"UPDATE clients SET {set_clause} WHERE instagram_id = ?",
+                f"UPDATE clients SET {set_clause} WHERE instagram_id = %s",
                 values
             )
             
@@ -338,7 +328,7 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
                 (instagram_id, username, phone, name, first_contact, last_contact, 
                  total_messages, labels, status, detected_language, notes,
                  email, card_number, discount, total_visits, total_spend, gender, birthday)
-                VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 instagram_id,
                 client_data.get('username', ''),
@@ -378,8 +368,6 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
             'error': str(e),
             'data': client_data
         }
-
-
 
 @router.post("/clients/import")
 async def import_clients(file: UploadFile = File(...)):
@@ -496,8 +484,6 @@ async def import_clients(file: UploadFile = File(...)):
 
             if idx < 5:
                 log_info(f"✨ Row {idx+1} Parsed: {client_data}", "import")
-
-
 
             # Merge or create client
             result = merge_or_create_client(client_data)

@@ -83,7 +83,7 @@ try:
 
     for level in levels:
         c.execute("""
-            INSERT OR IGNORE INTO loyalty_levels
+            INSERT INTO loyalty_levels
             (level_name, min_points, discount_percent, points_multiplier, special_perks, created_at)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (*level, now))

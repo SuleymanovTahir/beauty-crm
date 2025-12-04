@@ -14,12 +14,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 # Тестовая база данных
 TEST_DB = 'test_salon.db'
 
-
 @pytest.fixture(scope="session")
 def test_db_path():
     """Путь к тестовой базе данных"""
     return TEST_DB
-
 
 @pytest.fixture(scope="function")
 def clean_database(test_db_path):
@@ -134,7 +132,6 @@ def clean_database(test_db_path):
     if os.path.exists(test_db_path):
         os.remove(test_db_path)
 
-
 @pytest.fixture
 def db_connection(clean_database):
     """Подключение к тестовой базе данных"""
@@ -142,7 +139,6 @@ def db_connection(clean_database):
     conn.row_factory = sqlite3.Row
     yield conn
     conn.close()
-
 
 @pytest.fixture
 def sample_user(db_connection):
@@ -170,7 +166,6 @@ def sample_user(db_connection):
         "role": "admin"
     }
 
-
 @pytest.fixture
 def sample_client(db_connection):
     """Создает тестового клиента"""
@@ -179,7 +174,7 @@ def sample_client(db_connection):
     cursor = db_connection.cursor()
     cursor.execute("""
         INSERT INTO clients (name, phone, email, instagram_id, created_at)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s)
     """, ("John Doe", "+971501234567", "john@example.com", "john_doe", now))
 
     db_connection.commit()
@@ -193,7 +188,6 @@ def sample_client(db_connection):
         "instagram_id": "john_doe"
     }
 
-
 @pytest.fixture
 def sample_employee(db_connection):
     """Создает тестового сотрудника"""
@@ -202,7 +196,7 @@ def sample_employee(db_connection):
     cursor = db_connection.cursor()
     cursor.execute("""
         INSERT INTO employees (full_name, position, phone, email, is_active, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, ("Maria Smith", "Hair Stylist", "+971509876543", "maria@salon.com", 1, now, now))
 
     db_connection.commit()
@@ -216,7 +210,6 @@ def sample_employee(db_connection):
         "email": "maria@salon.com"
     }
 
-
 @pytest.fixture
 def sample_service(db_connection):
     """Создает тестовую услугу"""
@@ -225,7 +218,7 @@ def sample_service(db_connection):
     cursor = db_connection.cursor()
     cursor.execute("""
         INSERT INTO services (name, name_en, category, price, duration, is_active, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, ("Стрижка", "Haircut", "Hair", 150.0, 60, 1, now))
 
     db_connection.commit()
@@ -240,7 +233,6 @@ def sample_service(db_connection):
         "duration": 60
     }
 
-
 @pytest.fixture
 def sample_position(db_connection):
     """Создает тестовую должность"""
@@ -249,7 +241,7 @@ def sample_position(db_connection):
     cursor = db_connection.cursor()
     cursor.execute("""
         INSERT INTO positions (name, name_en, description, is_active, sort_order, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, ("Hair Stylist", "Hair Stylist", "Hair specialist", 1, 1, now, now))
 
     db_connection.commit()
@@ -261,7 +253,6 @@ def sample_position(db_connection):
         "name_en": "Hair Stylist",
         "description": "Hair specialist"
     }
-
 
 def pytest_configure(config):
     """Pytest конфигурация"""

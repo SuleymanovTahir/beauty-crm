@@ -16,7 +16,6 @@ from db.settings import get_salon_settings
 from modules.notifications.email import format_new_booking_email
 from scheduler.booking_reminder_checker import format_booking_reminder_email
 
-
 async def test_new_booking_notification():
     """Тест уведомления о новой записи"""
     print("=" * 70)
@@ -68,7 +67,6 @@ async def test_new_booking_notification():
         print("   - FROM_EMAIL (или SMTP_FROM)")
         return False
 
-
 async def test_booking_reminder_notification():
     """Тест напоминания о записи"""
     print("\n" + "=" * 70)
@@ -119,7 +117,6 @@ async def test_booking_reminder_notification():
         print("\n❌ ОШИБКА ОТПРАВКИ НАПОМИНАНИЯ")
         return False
 
-
 async def main():
     """Главная функция тестирования"""
     print("\n" + "=" * 70)
@@ -161,7 +158,6 @@ async def main():
     print("=" * 70)
 
     return passed == total
-
 
 if __name__ == "__main__":
     success = asyncio.run(main())

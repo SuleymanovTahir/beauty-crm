@@ -4,7 +4,7 @@ API для управления галереей (портфолио и фото
 from fastapi import APIRouter, Request, Cookie, UploadFile, File
 from fastapi.responses import JSONResponse
 from typing import Optional, List
-import sqlite3
+
 import os
 from pathlib import Path
 from core.config import DATABASE_NAME
@@ -13,7 +13,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Gallery"])
-
 
 @router.get("/gallery/{category}")
 async def get_gallery_images(
@@ -28,7 +27,7 @@ async def get_gallery_images(
         conn = get_db_connection()
         c = conn.cursor()
         
-        query = "SELECT id, image_path, title, description, sort_order, is_visible FROM gallery_images WHERE category = ?"
+        query = "SELECT id, image_path, title, description, sort_order, is_visible FROM gallery_images WHERE category = %s"
         params = [category]
         
         if visible_only:
@@ -56,7 +55,6 @@ async def get_gallery_images(
         log_error(f"Error getting gallery images: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/gallery")
 async def add_gallery_image(
     request: Request,
@@ -75,7 +73,7 @@ async def add_gallery_image(
         
         c.execute("""
             INSERT INTO gallery_images (category, image_path, title, description, sort_order, is_visible)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """, (
             data.get('category'),
             data.get('image_path'),
@@ -95,7 +93,6 @@ async def add_gallery_image(
     except Exception as e:
         log_error(f"Error adding gallery image: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.put("/gallery/{image_id}")
 async def update_gallery_image(
@@ -118,30 +115,30 @@ async def update_gallery_image(
         params = []
         
         if 'title' in data:
-            updates.append("title = ?")
+            updates.append("title = %s")
             params.append(data['title'])
         
         if 'description' in data:
-            updates.append("description = ?")
+            updates.append("description = %s")
             params.append(data['description'])
         
         if 'sort_order' in data:
-            updates.append("sort_order = ?")
+            updates.append("sort_order = %s")
             params.append(data['sort_order'])
         
         if 'is_visible' in data:
-            updates.append("is_visible = ?")
+            updates.append("is_visible = %s")
             params.append(1 if data['is_visible'] else 0)
 
         if 'image_path' in data:
-            updates.append("image_path = ?")
+            updates.append("image_path = %s")
             params.append(data['image_path'])
         
         if updates:
             updates.append("updated_at = CURRENT_TIMESTAMP")
             params.append(image_id)
             
-            query = f"UPDATE gallery_images SET {', '.join(updates)} WHERE id = ?"
+            query = f"UPDATE gallery_images SET {', '.join(updates)} WHERE id = %s"
             c.execute(query, params)
             conn.commit()
         
@@ -153,7 +150,6 @@ async def update_gallery_image(
     except Exception as e:
         log_error(f"Error updating gallery image: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/gallery/{image_id}")
 async def delete_gallery_image(
@@ -172,12 +168,12 @@ async def delete_gallery_image(
         c = conn.cursor()
         
         # Получаем путь к файлу
-        c.execute("SELECT image_path FROM gallery_images WHERE id = ?", (image_id,))
+        c.execute("SELECT image_path FROM gallery_images WHERE id = %s", (image_id,))
         row = c.fetchone()
         
         if row:
             # Удаляем из БД
-            c.execute("DELETE FROM gallery_images WHERE id = ?", (image_id,))
+            c.execute("DELETE FROM gallery_images WHERE id = %s", (image_id,))
             conn.commit()
             
             # Удаляем файл с диска
@@ -193,7 +189,6 @@ async def delete_gallery_image(
     except Exception as e:
         log_error(f"Error deleting gallery image: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/gallery/upload")
 async def upload_gallery_image(
@@ -226,13 +221,13 @@ async def upload_gallery_image(
         c = conn.cursor()
         
         # Get max sort_order
-        c.execute("SELECT MAX(sort_order) FROM gallery_images WHERE category = ?", (category,))
+        c.execute("SELECT MAX(sort_order) FROM gallery_images WHERE category = %s", (category,))
         row = c.fetchone()
         max_order = row[0] if row and row[0] is not None else 0
         
         c.execute("""
             INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-            VALUES (?, ?, ?, ?, 1)
+            VALUES (%s, %s, %s, %s, 1)
         """, (category, image_path, file.filename, max_order + 1))
         
         image_id = c.lastrowid
@@ -246,7 +241,6 @@ async def upload_gallery_image(
         log_error(f"Error uploading gallery image: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/gallery/settings/display")
 async def get_gallery_settings():
     """Получить настройки отображения галереи"""
@@ -259,7 +253,6 @@ async def get_gallery_settings():
         }
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/gallery/settings/display")
 async def update_gallery_settings(
@@ -291,11 +284,11 @@ async def update_gallery_settings(
         params = []
         
         if 'gallery_count' in data:
-            updates.append("gallery_display_count = ?")
+            updates.append("gallery_display_count = %s")
             params.append(data['gallery_count'])
             
         if 'portfolio_count' in data:
-            updates.append("portfolio_display_count = ?")
+            updates.append("portfolio_display_count = %s")
             params.append(data['portfolio_count'])
             
         if updates:
@@ -305,7 +298,7 @@ async def update_gallery_settings(
                 c.execute(f"UPDATE salon_settings SET {', '.join(updates)}", params)
             else:
                 # Insert default row
-                c.execute("INSERT INTO salon_settings (gallery_display_count, portfolio_display_count) VALUES (?, ?)", 
+                c.execute("INSERT INTO salon_settings (gallery_display_count, portfolio_display_count) VALUES (%s, %s)", 
                           (data.get('gallery_count', 6), data.get('portfolio_count', 6)))
             
             conn.commit()

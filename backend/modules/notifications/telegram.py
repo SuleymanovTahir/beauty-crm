@@ -6,12 +6,10 @@ from typing import List, Optional
 from modules import get_module_config
 from utils.logger import log_info, log_error
 
-
 def get_telegram_config() -> dict:
     """Получить Telegram конфигурацию"""
     config = get_module_config('notifications')
     return config.get('channels', {}).get('telegram', {})
-
 
 async def send_telegram_notification(
     recipients: List[str],
@@ -71,7 +69,6 @@ async def send_telegram_notification(
 
     return success
 
-
 def format_new_booking_telegram(booking_data: dict, salon_data: dict) -> str:
     """
     Форматировать сообщение для Telegram о новой записи
@@ -106,7 +103,6 @@ def format_new_booking_telegram(booking_data: dict, salon_data: dict) -> str:
     message += f"\n---\n{salon_data.get('name', 'Салон красоты')}"
 
     return message
-
 
 def format_booking_cancelled_telegram(booking_data: dict, salon_data: dict) -> str:
     """Форматировать сообщение об отмене записи"""

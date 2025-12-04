@@ -4,7 +4,6 @@ API для управления статусами
 from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
-import sqlite3
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -12,7 +11,6 @@ from utils.utils import require_auth
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Statuses"])
-
 
 @router.get("/statuses/client")
 async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
@@ -79,7 +77,6 @@ async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error getting statuses: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/statuses/client")
 async def create_client_status(
     request: Request,
@@ -125,7 +122,6 @@ async def create_client_status(
         log_error(f"Error creating status: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.delete("/statuses/client/{status_key}")
 async def delete_client_status(
     status_key: str,
@@ -162,7 +158,6 @@ async def delete_client_status(
     except Exception as e:
         log_error(f"Error deleting status: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/statuses/booking")
 async def get_booking_statuses(session_token: Optional[str] = Cookie(None)):
@@ -223,7 +218,6 @@ async def get_booking_statuses(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         log_error(f"Error getting booking statuses: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/statuses/booking")
 async def create_booking_status(

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-import sqlite3
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -36,7 +35,7 @@ async def calculate_payroll(request: PayrollRequest):
 
     try:
         # 1. Get employee details (to verify existence and maybe get custom rate later)
-        c.execute("SELECT full_name FROM users WHERE id = ?", (request.employee_id,))
+        c.execute("SELECT full_name FROM users WHERE id =%s", (request.employee_id,))
         employee = c.fetchone()
         if not employee:
             raise HTTPException(status_code=404, detail="Employee not found")
@@ -49,9 +48,9 @@ async def calculate_payroll(request: PayrollRequest):
         query = """
             SELECT COUNT(*), SUM(revenue)
             FROM bookings
-            WHERE master = ?
+            WHERE master =%s
             AND status IN ('completed', 'paid', 'confirmed') 
-            AND date(datetime) BETWEEN date(?) AND date(?)
+            AND DATE(datetime) BETWEEN DATE(%s) AND DATE(%s)
         """
         
         # Note: 'confirmed' is included for testing purposes if 'completed' is not used yet,

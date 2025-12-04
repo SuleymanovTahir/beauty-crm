@@ -4,7 +4,7 @@ API endpoints для управления публичным контентом
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List
-import sqlite3
+
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from services.translation_service import translate_to_all_languages
@@ -86,7 +86,7 @@ async def create_review(review: ReviewCreate):
         c.execute("""
             INSERT INTO public_reviews 
             (author_name, rating, text_ru, text_en, text_ar, text_de, text_es, text_fr, text_hi, text_kk, text_pt, avatar_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             review.author_name,
             review.rating,
@@ -123,19 +123,19 @@ async def update_review(review_id: int, review: ReviewUpdate):
         params = []
         
         if review.author_name is not None:
-            updates.append("author_name = ?")
+            updates.append("author_name =%s")
             params.append(review.author_name)
         
         if review.rating is not None:
-            updates.append("rating = ?")
+            updates.append("rating =%s")
             params.append(review.rating)
         
         if review.text_ru is not None:
             # Если текст изменился, переводим заново
             translations = await translate_to_all_languages(review.text_ru)
             updates.extend([
-                "text_ru = ?", "text_en = ?", "text_ar = ?", "text_de = ?",
-                "text_es = ?", "text_fr = ?", "text_hi = ?", "text_kk = ?", "text_pt = ?"
+                "text_ru =%s", "text_en =%s", "text_ar =%s", "text_de =%s",
+                "text_es =%s", "text_fr =%s", "text_hi =%s", "text_kk =%s", "text_pt =%s"
             ])
             params.extend([
                 review.text_ru,
@@ -150,21 +150,21 @@ async def update_review(review_id: int, review: ReviewUpdate):
             ])
         
         if review.avatar_url is not None:
-            updates.append("avatar_url = ?")
+            updates.append("avatar_url =%s")
             params.append(review.avatar_url)
         
         if review.is_active is not None:
-            updates.append("is_active = ?")
+            updates.append("is_active =%s")
             params.append(1 if review.is_active else 0)
         
         if review.display_order is not None:
-            updates.append("display_order = ?")
+            updates.append("display_order =%s")
             params.append(review.display_order)
         
         if not updates:
             return {"success": True, "message": "Нечего обновлять"}
         
-        query = f"UPDATE public_reviews SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE public_reviews SET {', '.join(updates)} WHERE id =%s"
         params.append(review_id)
         
         c.execute(query, params)
@@ -184,7 +184,7 @@ async def delete_review(review_id: int):
     c = conn.cursor()
     
     try:
-        c.execute("DELETE FROM public_reviews WHERE id = ?", (review_id,))
+        c.execute("DELETE FROM public_reviews WHERE id =%s", (review_id,))
         conn.commit()
         return {"success": True, "message": "Отзыв удален"}
     except Exception as e:
@@ -200,14 +200,14 @@ async def toggle_review(review_id: int):
     c = conn.cursor()
     
     try:
-        c.execute("SELECT is_active FROM public_reviews WHERE id = ?", (review_id,))
+        c.execute("SELECT is_active FROM public_reviews WHERE id =%s", (review_id,))
         row = c.fetchone()
         
         if not row:
             raise HTTPException(status_code=404, detail="Отзыв не найден")
         
         new_status = 0 if row[0] else 1
-        c.execute("UPDATE public_reviews SET is_active = ? WHERE id = ?", (new_status, review_id))
+        c.execute("UPDATE public_reviews SET is_active =%s WHERE id =%s", (new_status, review_id))
         conn.commit()
         
         return {"success": True, "is_active": bool(new_status)}
@@ -251,7 +251,7 @@ async def create_banner(banner: BannerCreate):
         c.execute("""
             INSERT INTO public_banners 
             (title_ru, title_en, title_ar, subtitle_ru, subtitle_en, subtitle_ar, image_url, link_url, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y, is_flipped_horizontal, is_flipped_vertical)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             banner.title_ru,
             translations_title.get('en', ''),
@@ -305,58 +305,58 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
         
         if banner.title_ru is not None:
             translations = await translate_to_all_languages(banner.title_ru)
-            updates.extend(["title_ru = ?", "title_en = ?", "title_ar = ?"])
+            updates.extend(["title_ru =%s", "title_en =%s", "title_ar =%s"])
             params.extend([banner.title_ru, translations.get('en', ''), translations.get('ar', '')])
             
         if banner.subtitle_ru is not None:
             translations = await translate_to_all_languages(banner.subtitle_ru)
-            updates.extend(["subtitle_ru = ?", "subtitle_en = ?", "subtitle_ar = ?"])
+            updates.extend(["subtitle_ru =%s", "subtitle_en =%s", "subtitle_ar =%s"])
             params.extend([banner.subtitle_ru, translations.get('en', ''), translations.get('ar', '')])
             
         if banner.image_url is not None:
-            updates.append("image_url = ?")
+            updates.append("image_url =%s")
             params.append(banner.image_url)
             
         if banner.link_url is not None:
-            updates.append("link_url = ?")
+            updates.append("link_url =%s")
             params.append(banner.link_url)
             
         if banner.display_order is not None:
-            updates.append("display_order = ?")
+            updates.append("display_order =%s")
             params.append(banner.display_order)
             
         if banner.is_active is not None:
-            updates.append("is_active = ?")
+            updates.append("is_active =%s")
             params.append(1 if banner.is_active else 0)
             
         if banner.bg_pos_desktop_x is not None:
-            updates.append("bg_pos_desktop_x = ?")
+            updates.append("bg_pos_desktop_x =%s")
             params.append(banner.bg_pos_desktop_x)
             
         if banner.bg_pos_desktop_y is not None:
-            updates.append("bg_pos_desktop_y = ?")
+            updates.append("bg_pos_desktop_y =%s")
             params.append(banner.bg_pos_desktop_y)
             
         if banner.bg_pos_mobile_x is not None:
-            updates.append("bg_pos_mobile_x = ?")
+            updates.append("bg_pos_mobile_x =%s")
             params.append(banner.bg_pos_mobile_x)
             
         if banner.bg_pos_mobile_y is not None:
-            updates.append("bg_pos_mobile_y = ?")
+            updates.append("bg_pos_mobile_y =%s")
             params.append(banner.bg_pos_mobile_y)
 
         if banner.is_flipped_horizontal is not None:
-            updates.append("is_flipped_horizontal = ?")
+            updates.append("is_flipped_horizontal =%s")
             params.append(banner.is_flipped_horizontal)
 
         if banner.is_flipped_vertical is not None:
-            updates.append("is_flipped_vertical = ?")
+            updates.append("is_flipped_vertical =%s")
             params.append(banner.is_flipped_vertical)
             
         if not updates:
             return {"success": True, "message": "Нечего обновлять"}
             
-        query = f"UPDATE public_banners SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE public_banners SET {', '.join(updates)} WHERE id =%s"
         params.append(banner_id)
         
         c.execute(query, params)
@@ -381,7 +381,7 @@ async def delete_banner(banner_id: int):
     
     try:
         # Получаем URL изображения перед удалением
-        c.execute("SELECT image_url FROM public_banners WHERE id = ?", (banner_id,))
+        c.execute("SELECT image_url FROM public_banners WHERE id =%s", (banner_id,))
         row = c.fetchone()
         
         if row and row['image_url']:
@@ -403,7 +403,7 @@ async def delete_banner(banner_id: int):
                         log_warning(f"Failed to delete file {file_path}: {e}", "api")
         
         # Удаляем запись из базы данных
-        c.execute("DELETE FROM public_banners WHERE id = ?", (banner_id,))
+        c.execute("DELETE FROM public_banners WHERE id =%s", (banner_id,))
         conn.commit()
         return {"success": True, "message": "Баннер и файл удалены"}
     except Exception as e:
@@ -442,7 +442,7 @@ async def create_faq(faq: FAQCreate):
         c.execute("""
             INSERT INTO public_faq 
             (question_ru, question_en, question_ar, answer_ru, answer_en, answer_ar, category)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s,%s,%s)
         """, (
             faq.question_ru,
             translations_q.get('en', ''),
@@ -481,26 +481,26 @@ async def update_faq(faq_id: int, faq: FAQUpdate):
         
         if faq.question_ru is not None:
             translations = await translate_to_all_languages(faq.question_ru)
-            updates.extend(["question_ru = ?", "question_en = ?", "question_ar = ?"])
+            updates.extend(["question_ru =%s", "question_en =%s", "question_ar =%s"])
             params.extend([faq.question_ru, translations.get('en', ''), translations.get('ar', '')])
             
         if faq.answer_ru is not None:
             translations = await translate_to_all_languages(faq.answer_ru)
-            updates.extend(["answer_ru = ?", "answer_en = ?", "answer_ar = ?"])
+            updates.extend(["answer_ru =%s", "answer_en =%s", "answer_ar =%s"])
             params.extend([faq.answer_ru, translations.get('en', ''), translations.get('ar', '')])
             
         if faq.category is not None:
-            updates.append("category = ?")
+            updates.append("category =%s")
             params.append(faq.category)
             
         if faq.display_order is not None:
-            updates.append("display_order = ?")
+            updates.append("display_order =%s")
             params.append(faq.display_order)
             
         if not updates:
             return {"success": True, "message": "Нечего обновлять"}
             
-        query = f"UPDATE public_faq SET {', '.join(updates)} WHERE id = ?"
+        query = f"UPDATE public_faq SET {', '.join(updates)} WHERE id =%s"
         params.append(faq_id)
         
         c.execute(query, params)
@@ -520,7 +520,7 @@ async def delete_faq(faq_id: int):
     c = conn.cursor()
     
     try:
-        c.execute("DELETE FROM public_faq WHERE id = ?", (faq_id,))
+        c.execute("DELETE FROM public_faq WHERE id =%s", (faq_id,))
         conn.commit()
         return {"success": True, "message": "FAQ удален"}
     except Exception as e:
@@ -564,7 +564,7 @@ async def create_gallery_item(item: GalleryCreate):
         c.execute("""
             INSERT INTO public_gallery 
             (image_url, title_ru, title_en, title_ar, description_ru, description_en, description_ar, category)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             item.image_url,
             item.title_ru,

@@ -5,7 +5,6 @@ All schema changes for users table in one place
 from db.connection import get_db_connection
 from datetime import datetime
 
-
 def migrate_users_schema(db_path="salon_bot.db"):
     """
     Apply all users table schema changes
@@ -83,7 +82,6 @@ def migrate_users_schema(db_path="salon_bot.db"):
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     migrate_users_schema()

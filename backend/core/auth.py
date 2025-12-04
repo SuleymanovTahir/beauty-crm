@@ -6,9 +6,6 @@ from fastapi import APIRouter, Form, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
-import sqlite3
-
-
 
 from db import (
     verify_user, create_session, delete_session,
@@ -20,7 +17,6 @@ from utils.utils import require_auth
 
 router = APIRouter(tags=["Auth"])
 
-
 # ===== MIDDLEWARE =====
 
 def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
@@ -30,10 +26,7 @@ def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
         return None
     return user
 
-
 # ===== АВТОРИЗАЦИЯ =====
-
-
 
 @router.post("/login")
 async def api_login(username: str = Form(...), password: str = Form(...)):
@@ -60,7 +53,7 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         # ЗАКОММЕНТИРОВАНО: Проверка email верификации и активации
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT is_active, email_verified, email FROM users WHERE id = ?", (user["id"],))
+        c.execute("SELECT is_active, email_verified, email FROM users WHERE id = %s", (user["id"],))
         result = c.fetchone()
         conn.close()
 
@@ -130,7 +123,6 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
         log_error(f"Error in api_login: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/logout")
 async def logout_api(session_token: Optional[str] = Cookie(None)):
     """API: Logout"""
@@ -145,7 +137,6 @@ async def logout_api(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         log_error(f"Error in logout: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 # ===== РЕГИСТРАЦИЯ =====
 
@@ -191,7 +182,7 @@ async def api_register(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT id FROM users WHERE username = ?", (username,))
+        c.execute("SELECT id FROM users WHERE username = %s", (username,))
         if c.fetchone():
             conn.close()
             return JSONResponse(
@@ -199,7 +190,7 @@ async def api_register(
                 status_code=400
             )
 
-        c.execute("SELECT id FROM users WHERE email = ?", (email,))
+        c.execute("SELECT id FROM users WHERE email = %s", (email,))
         if c.fetchone():
             conn.close()
             return JSONResponse(
@@ -258,7 +249,7 @@ async def api_register(
                      (username, password_hash, full_name, email, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
                       email_verification_token, privacy_accepted, privacy_accepted_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   (username, password_hash, full_name, email, role, position, now,
                    1 if auto_verify else 0,  # is_active
                    1 if auto_verify else 0,  # email_verified
@@ -272,13 +263,13 @@ async def api_register(
         if role in ['employee', 'manager', 'director', 'admin']:
             c.execute("""INSERT INTO employees
                          (full_name, position, email, phone, is_active, created_at, updated_at)
-                         VALUES (?, ?, ?, '', 1, ?, ?)""",
+                         VALUES (%s, %s, %s, '', 1, %s, %s)""",
                       (full_name, position or role, email, now, now))
 
             employee_id = c.lastrowid
 
             # Связываем пользователя с записью employee
-            c.execute("UPDATE users SET assigned_employee_id = ? WHERE id = ?",
+            c.execute("UPDATE users SET assigned_employee_id = %s WHERE id = %s",
                       (employee_id, user_id))
 
         # Если пользователь подписался на рассылку, создаем подписки
@@ -287,7 +278,7 @@ async def api_register(
             for sub_type in CLIENT_SUBSCRIPTION_TYPES.keys():
                 c.execute("""INSERT INTO user_subscriptions
                              (user_id, subscription_type, is_subscribed, created_at, updated_at)
-                             VALUES (?, ?, 1, ?, ?)""",
+                             VALUES (%s, %s, 1, %s, %s)""",
                           (user_id, sub_type, now, now))
 
         conn.commit()
@@ -320,7 +311,7 @@ async def api_register(
         import os
         if not email_sent and os.getenv("ENVIRONMENT") != "production":
             log_warning(f"SMTP not configured - showing verification link in response", "auth")
-            verification_url = f"http://localhost:5173/verify-email?token={verification_token}"
+            verification_url = f"http://localhost:5173/verify-email%stoken={verification_token}"
             response_data["verification_url"] = verification_url
             response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для подтверждения: {verification_url}"
 
@@ -338,7 +329,6 @@ async def api_register(
         log_error(f"Error in api_register: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/verify-email")
 async def verify_email(
     email: str = Form(...),
@@ -355,7 +345,7 @@ async def verify_email(
         c.execute("""
             SELECT id, full_name, verification_code_expires, email_verified
             FROM users
-            WHERE email = ? AND verification_code = ?
+            WHERE email = %s AND verification_code = %s
         """, (email, code))
 
         result = c.fetchone()
@@ -389,7 +379,7 @@ async def verify_email(
         c.execute("""
             UPDATE users
             SET email_verified = 1, verification_code = NULL, verification_code_expires = NULL
-            WHERE id = ?
+            WHERE id = %s
         """, (user_id,))
 
         conn.commit()
@@ -406,7 +396,6 @@ async def verify_email(
         log_error(f"Error in verify_email: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.post("/resend-verification")
 async def resend_verification(email: str = Form(...)):
     """API: Повторная отправка кода верификации"""
@@ -417,7 +406,7 @@ async def resend_verification(email: str = Form(...)):
         c.execute("""
             SELECT id, full_name, email_verified
             FROM users
-            WHERE email = ?
+            WHERE email = %s
         """, (email,))
 
         result = c.fetchone()
@@ -447,8 +436,8 @@ async def resend_verification(email: str = Form(...)):
         # Обновляем код в БД
         c.execute("""
             UPDATE users
-            SET verification_code = ?, verification_code_expires = ?
-            WHERE id = ?
+            SET verification_code = %s, verification_code_expires = %s
+            WHERE id = %s
         """, (verification_code, code_expires, user_id))
 
         conn.commit()
@@ -474,7 +463,6 @@ async def resend_verification(email: str = Form(...)):
         log_error(f"Error in resend_verification: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/verify-email-token")
 async def verify_email_token(token: str):
     """API: Подтверждение email по токену и автоматический вход"""
@@ -486,7 +474,7 @@ async def verify_email_token(token: str):
         c.execute("""
             SELECT id, username, full_name, email, role, email_verified
             FROM users
-            WHERE email_verification_token = ?
+            WHERE email_verification_token = %s
         """, (token,))
 
         result = c.fetchone()
@@ -513,7 +501,7 @@ async def verify_email_token(token: str):
                     email_verification_token = NULL,
                     verification_code = NULL,
                     verification_code_expires = NULL
-                WHERE id = ?
+                WHERE id = %s
             """, (user_id,))
 
             conn.commit()
@@ -553,7 +541,6 @@ async def verify_email_token(token: str):
     except Exception as e:
         log_error(f"Error in verify_email_token: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 # ===== СПРАВОЧНИКИ =====
 
@@ -604,7 +591,7 @@ async def get_positions():
             for position in default_positions:
                 c.execute("""INSERT INTO positions
                              (name, name_en, name_ar, description, sort_order, is_active, created_at, updated_at)
-                             VALUES (?, ?, ?, ?, ?, 1, ?, ?)""",
+                             VALUES (%s, %s, %s, %s, %s, 1, %s, %s)""",
                           (position[0], position[1], position[2], position[3], position[4], now, now))
 
             conn.commit()
@@ -635,7 +622,6 @@ async def get_positions():
         log_error(f"Error in get_positions: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 # ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
 
 @router.post("/forgot-password")
@@ -648,7 +634,7 @@ async def forgot_password(email: str = Form(...)):
         c = conn.cursor()
 
         # Проверяем существует ли пользователь с таким email
-        c.execute("SELECT id, username, full_name FROM users WHERE email = ?", (email,))
+        c.execute("SELECT id, username, full_name FROM users WHERE email = %s", (email,))
         user = c.fetchone()
 
         if not user:
@@ -670,8 +656,8 @@ async def forgot_password(email: str = Form(...)):
         # Сохраняем токен в БД
         c.execute("""
             UPDATE users
-            SET password_reset_token = ?, password_reset_expires = ?
-            WHERE id = ?
+            SET password_reset_token = %s, password_reset_expires = %s
+            WHERE id = %s
         """, (reset_token, expires_at, user_id))
 
         conn.commit()
@@ -692,7 +678,7 @@ async def forgot_password(email: str = Form(...)):
             log_warning(f"SMTP not configured - showing reset token in response", "auth")
             response_data["reset_token"] = reset_token
             response_data["reset_url"] = f"http://localhost:5173/reset-password?token={reset_token}"
-            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: http://localhost:5173/reset-password?token={reset_token}"
+            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: http://localhost:5173/reset-password%stoken={reset_token}"
 
         log_info(f"Password reset token generated for user {username} (ID: {user_id})", "auth")
 
@@ -701,7 +687,6 @@ async def forgot_password(email: str = Form(...)):
     except Exception as e:
         log_error(f"Error in forgot_password: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/reset-password")
 async def reset_password(
@@ -722,7 +707,7 @@ async def reset_password(
         c.execute("""
             SELECT id, username, password_reset_expires
             FROM users
-            WHERE password_reset_token = ?
+            WHERE password_reset_token = %s
         """, (token,))
 
         user = c.fetchone()
@@ -753,8 +738,8 @@ async def reset_password(
         # Обновляем пароль и удаляем токен
         c.execute("""
             UPDATE users
-            SET password_hash = ?, password_reset_token = NULL, password_reset_expires = NULL
-            WHERE id = ?
+            SET password_hash = %s, password_reset_token = NULL, password_reset_expires = NULL
+            WHERE id = %s
         """, (password_hash, user_id))
 
         conn.commit()
@@ -770,8 +755,6 @@ async def reset_password(
     except Exception as e:
         log_error(f"Error in reset_password: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)
-
-
 
 class DeleteAccountRequest(BaseModel):
     password: str

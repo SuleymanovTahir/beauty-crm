@@ -10,7 +10,6 @@ from services.analytics import AnalyticsService
 
 router = APIRouter(tags=["Dashboard"])
 
-
 @router.get("/dashboard/kpi")
 async def get_dashboard_kpi(
     period: str = Query("month", description="Period: today, week, month, year, custom"),
@@ -51,7 +50,6 @@ async def get_dashboard_kpi(
     except Exception as e:
         log_error(f"Error getting dashboard KPI: {e}", "dashboard")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/dashboard/master-stats/{master_name}")
 async def get_master_stats(

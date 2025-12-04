@@ -33,7 +33,6 @@ router = APIRouter(tags=["Webhooks"])
 _processed_messages = {}  # {mid: timestamp}
 _DEDUP_WINDOW = 300
 
-
 async def fetch_username_from_api(user_id: str) -> tuple:
     """Попытка получить username из Instagram API"""
     try:
@@ -71,7 +70,6 @@ async def fetch_username_from_api(user_id: str) -> tuple:
         log_error(f"❌ Ошибка получения username: {e}", "webhook", exc_info=True)
         return "", "", ""
 
-
 async def extract_username_from_webhook(messaging_event: dict) -> str:
     """Извлечь username из webhook payload"""
     try:
@@ -91,7 +89,6 @@ async def extract_username_from_webhook(messaging_event: dict) -> str:
         log_error(f"❌ Ошибка извлечения username из webhook: {e}", "webhook")
     
     return ""
-
 
 @router.get("/webhook")
 async def verify_webhook(request: Request):
@@ -117,7 +114,6 @@ async def verify_webhook(request: Request):
     except Exception as e:
         log_error(f"Ошибка в verify_webhook: {e}", "webhook")
         raise
-
 
 async def get_instagram_scoped_id(sender_id: str) -> str:
     """
@@ -153,8 +149,6 @@ async def get_instagram_scoped_id(sender_id: str) -> str:
         log_warning(f"⚠️ Не удалось получить IGSID: {e}", "webhook")
     
     return sender_id
-
-
 
 async def process_message_background(messaging_event: dict):
     """
@@ -556,7 +550,7 @@ async def process_message_background(messaging_event: dict):
                     booking_datetime = f"{booking_data['date']} {booking_data['time']}:00"
                     
                     # ✅ ПРОВЕРКА НА ДУБЛИКАТЫ: Проверяем существует ли уже такая запись
-                    import sqlite3
+
                     from core.config import DATABASE_NAME
                     from db.connection import get_db_connection
                     from datetime import datetime as dt_now, timedelta
@@ -621,7 +615,6 @@ async def process_message_background(messaging_event: dict):
                     logger.error(f"❌ Failed to save booking: {save_error}")
                     import traceback
                     logger.error(traceback.format_exc())
-
 
                 # Удаляем команду из ответа перед отправкой клиенту
                 ai_response = re.sub(
@@ -740,7 +733,6 @@ async def process_message_background(messaging_event: dict):
                 except Exception as e:
                     logger.error(f"❌ Error processing booking change: {e}")
 
-
             save_message(
                 sender_id,
                 ai_response,
@@ -760,7 +752,6 @@ async def process_message_background(messaging_event: dict):
         logger.error(f"❌ Background task error: {e}")
         import traceback
         logger.error(traceback.format_exc())
-
 
 @router.post("/webhook")
 async def handle_webhook(request: Request, background_tasks: BackgroundTasks):

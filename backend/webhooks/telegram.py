@@ -11,7 +11,6 @@ from utils.logger import log_info, log_error, log_warning
 
 router = APIRouter(tags=["Telegram Webhook"])
 
-
 @router.post("/webhooks/telegram")
 async def handle_telegram_webhook(request: Request):
     """
@@ -49,7 +48,6 @@ async def handle_telegram_webhook(request: Request):
         log_error(f"❌ Error processing Telegram webhook: {e}", "telegram_webhook", exc_info=True)
         # Telegram требует 200 OK даже при ошибке, чтобы не переотправлять обновления
         return {"ok": True}
-
 
 @router.get("/webhooks/telegram/test")
 async def test_telegram_webhook():
@@ -97,7 +95,6 @@ async def test_telegram_webhook():
             "status": "error",
             "message": f"Error: {str(e)}"
         }
-
 
 @router.get("/webhooks/telegram/info")
 async def get_telegram_webhook_info():

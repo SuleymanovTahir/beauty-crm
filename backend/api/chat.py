@@ -17,14 +17,13 @@ from utils.logger import log_error,log_info,log_warning
 from services.conversation_context import ConversationContext
 from core.config import BASE_URL
 
-
 router = APIRouter(tags=["Chat"])
 
 _processing_suggestions = set()
 
 def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
     """Получить историю чата по типу мессенджера"""
-    import sqlite3
+
     from core.config import DATABASE_NAME
     from db.connection import get_db_connection
 
@@ -36,8 +35,8 @@ def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram'
         # Для Instagram используем старую таблицу chat_history
         c.execute("""SELECT message, sender, timestamp, message_type, id
                      FROM chat_history
-                     WHERE instagram_id = ?
-                     ORDER BY timestamp DESC LIMIT ?""",
+                     WHERE instagram_id = %s
+                     ORDER BY timestamp DESC LIMIT %s""",
                   (client_id, limit))
     else:
         # Для других мессенджеров используем messenger_messages
@@ -45,15 +44,14 @@ def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram'
             SELECT message_text, sender_type, created_at,
                    COALESCE(attachments_json, 'text'), id
             FROM messenger_messages
-            WHERE client_id = ? AND messenger_type = ?
-            ORDER BY created_at DESC LIMIT ?
+            WHERE client_id = %s AND messenger_type = %s
+            ORDER BY created_at DESC LIMIT %s
         """, (client_id, messenger_type, limit))
 
     messages = c.fetchall()
     conn.close()
 
     return list(reversed(messages))
-
 
 @router.get("/chat/messages")
 async def get_chat_messages(
@@ -88,7 +86,6 @@ async def get_chat_messages(
         ],
         "messenger": messenger
     }
-
 
 @router.post("/chat/send")
 async def send_chat_message(
@@ -341,7 +338,6 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     
     return {"count": get_total_unread()}
 
-
 @router.get("/chat/unread/{client_id}")
 async def get_client_unread_count(
     client_id: str,
@@ -354,7 +350,6 @@ async def get_client_unread_count(
     
     count = get_unread_messages_count(client_id)
     return {"client_id": client_id, "unread_count": count}
-
 
 @router.post("/chat/ask-bot")
 async def ask_bot_advice(
@@ -426,8 +421,6 @@ async def ask_bot_advice(
     except Exception as e:
         log_error(f"Error generating bot advice: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
-
 
 # НОВЫЙ ENDPOINT: Предложение ответа от бота (режим "ассистент")
 @router.post("/chat/bot-suggest")
@@ -523,7 +516,6 @@ async def get_bot_suggestion(
         if request_key:
             _processing_suggestions.discard(request_key)
 
-
 # НОВЫЙ ENDPOINT: Изменить режим бота для клиента
 # НОВЫЙ ENDPOINT: Изменить режим бота для клиента
 @router.post("/clients/{client_id}/bot-mode")
@@ -553,7 +545,6 @@ async def update_client_bot_mode_api(
     except Exception as e:
         log_error(f"Error updating bot mode: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 # ========================================
 # CONVERSATION CONTEXT ENDPOINTS
@@ -599,7 +590,6 @@ async def get_conversation_context_api(
     except Exception as e:
         log_error(f"Error getting conversation context: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.post("/chat/{client_id}/context")
 async def save_conversation_context_api(
@@ -647,7 +637,6 @@ async def save_conversation_context_api(
         log_error(f"Error saving conversation context: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.put("/chat/{client_id}/context/{context_type}")
 async def update_conversation_context_api(
     client_id: str,
@@ -691,7 +680,6 @@ async def update_conversation_context_api(
     except Exception as e:
         log_error(f"Error updating conversation context: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.delete("/chat/{client_id}/context")
 async def clear_conversation_context_api(

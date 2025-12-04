@@ -3,14 +3,13 @@
 
 Сохраняет состояние многоступенчатых диалогов между клиентом и ботом
 """
-import sqlite3
+
 import json
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-
 
 class ConversationContext:
     """Управление контекстом диалога с клиентом"""
@@ -45,14 +44,14 @@ class ConversationContext:
             # Удаляем старый контекст этого типа
             c.execute("""
                 DELETE FROM conversation_context
-                WHERE client_id = ? AND context_type = ?
+                WHERE client_id = %s AND context_type = %s
             """, (self.client_id, context_type))
 
             # Сохраняем новый контекст
             c.execute("""
                 INSERT INTO conversation_context
                 (client_id, context_type, context_data, created_at, expires_at)
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s)
             """, (
                 self.client_id,
                 context_type,
@@ -91,8 +90,8 @@ class ConversationContext:
             c.execute("""
                 SELECT context_data, expires_at, created_at
                 FROM conversation_context
-                WHERE client_id = ? AND context_type = ?
-                AND expires_at > ?
+                WHERE client_id = %s AND context_type = %s
+                AND expires_at > %s
                 ORDER BY created_at DESC
                 LIMIT 1
             """, (self.client_id, context_type, now))
@@ -131,7 +130,7 @@ class ConversationContext:
             c.execute("""
                 SELECT context_type, context_data, expires_at, created_at
                 FROM conversation_context
-                WHERE client_id = ? AND expires_at > ?
+                WHERE client_id = %s AND expires_at > %s
                 ORDER BY created_at DESC
             """, (self.client_id, now))
 
@@ -170,12 +169,12 @@ class ConversationContext:
             if context_type:
                 c.execute("""
                     DELETE FROM conversation_context
-                    WHERE client_id = ? AND context_type = ?
+                    WHERE client_id = %s AND context_type = %s
                 """, (self.client_id, context_type))
             else:
                 c.execute("""
                     DELETE FROM conversation_context
-                    WHERE client_id = ?
+                    WHERE client_id = %s
                 """, (self.client_id,))
 
             conn.commit()
@@ -244,7 +243,6 @@ class ConversationContext:
         """
         return self.get_context(context_type) is not None
 
-
 def cleanup_expired_contexts() -> int:
     """
     Удалить истекшие контексты (вызывать периодически через cron)
@@ -260,7 +258,7 @@ def cleanup_expired_contexts() -> int:
 
         c.execute("""
             DELETE FROM conversation_context
-            WHERE expires_at <= ?
+            WHERE expires_at <= %s
         """, (now,))
 
         deleted_count = c.rowcount
@@ -277,7 +275,6 @@ def cleanup_expired_contexts() -> int:
         return 0
     finally:
         conn.close()
-
 
 # Примеры использования:
 
@@ -329,7 +326,6 @@ def example_booking_flow():
     # 5. Запись завершена - удаляем контекст
     context.clear_context("booking_in_progress")
 
-
 def example_waiting_for_confirmation():
     """Пример ожидания подтверждения от клиента"""
 
@@ -339,7 +335,7 @@ def example_waiting_for_confirmation():
     context.save_context(
         context_type="awaiting_confirmation",
         context_data={
-            "question": "Записать вас на маникюр 25 ноября в 15:00?",
+            "question": "Записать вас на маникюр 25 ноября в 15:00%s",
             "booking_details": {
                 "service": "Маникюр",
                 "master": "Jennifer",

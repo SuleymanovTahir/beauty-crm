@@ -8,7 +8,6 @@
 from db.connection import get_db_connection
 from utils.logger import log_info, log_warning, log_error
 
-
 def remove_master_schedule_table():
     """
     Удалить устаревшую таблицу master_schedule.
@@ -57,7 +56,6 @@ def remove_master_schedule_table():
             "success": False,
             "error": str(e)
         }
-
 
 if __name__ == "__main__":
     result = remove_master_schedule_table()

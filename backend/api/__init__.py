@@ -16,7 +16,6 @@ from .uploads import router as uploads_router
 from .employees import router as employees_router
 from api.diagnostics import router as diagnostics_router
 
-
 # Главный роутер API
 router = APIRouter(tags=["API"])
 

@@ -7,7 +7,6 @@ from typing import Optional
 from datetime import datetime
 import csv
 import io
-import sqlite3
 
 from db import get_all_bookings, get_analytics_data
 from db.settings import get_salon_settings
@@ -39,7 +38,6 @@ except ImportError:
     log_warning("openpyxl не установлен. Экспорт в Excel недоступен.", "export")
 
 router = APIRouter(tags=["Export"])
-
 
 # ===== ФУНКЦИИ ЭКСПОРТА КЛИЕНТОВ =====
 
@@ -97,7 +95,6 @@ def export_clients_csv(clients):
     
     output.seek(0)
     return output.getvalue().encode('utf-8')
-
 
 def export_clients_pdf(clients):
     """Экспорт клиентов в PDF"""
@@ -165,7 +162,6 @@ def export_clients_pdf(clients):
     doc.build(elements)
     buffer.seek(0)
     return buffer.getvalue()
-
 
 def export_clients_excel(clients):
     """Экспорт клиентов в Excel"""
@@ -243,7 +239,6 @@ def export_clients_excel(clients):
     buffer.seek(0)
     return buffer.getvalue()
 
-
 # ===== ФУНКЦИИ ЭКСПОРТА ЗАПИСЕЙ =====
 
 def export_bookings_csv(bookings):
@@ -262,7 +257,6 @@ def export_bookings_csv(bookings):
     
     output.seek(0)
     return output.getvalue().encode('utf-8')
-
 
 def export_bookings_pdf(bookings):
     """Экспорт записей в PDF"""
@@ -327,7 +321,6 @@ def export_bookings_pdf(bookings):
     buffer.seek(0)
     return buffer.getvalue()
 
-
 def export_bookings_excel(bookings):
     """Экспорт записей в Excel"""
     if not EXCEL_AVAILABLE:
@@ -371,7 +364,6 @@ def export_bookings_excel(bookings):
     wb.save(buffer)
     buffer.seek(0)
     return buffer.getvalue()
-
 
 # ===== ФУНКЦИИ ЭКСПОРТА ВСЕХ ДАННЫХ =====
 
@@ -436,7 +428,6 @@ def export_full_data_csv():
     conn.close()
     output.seek(0)
     return output.getvalue().encode('utf-8')
-
 
 def export_full_data_excel():
     """Экспорт всех данных в Excel с отдельными листами"""
@@ -538,7 +529,6 @@ def export_full_data_excel():
     buffer.seek(0)
     return buffer.getvalue()
 
-
 # ===== ENDPOINTS =====
 
 @router.get("/export/clients")
@@ -564,7 +554,7 @@ async def export_clients(
                      newsletter_agreed, personal_data_agreed, total_spend, paid_amount, 
                      birthday, email
                      FROM clients 
-                     WHERE first_contact >= ? AND first_contact <= ?
+                     WHERE first_contact >= %s AND first_contact <= %s
                      ORDER BY is_pinned DESC, last_contact DESC""",
                   (date_from, date_to))
     else:
@@ -604,7 +594,6 @@ async def export_clients(
     except Exception as e:
         log_error(f"Export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/export/bookings")
 async def export_bookings(
@@ -660,7 +649,6 @@ async def export_bookings(
     except Exception as e:
         log_error(f"Export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/export/analytics")
 async def export_analytics(
@@ -736,7 +724,6 @@ async def export_analytics(
         log_error(f"Export analytics error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/export/messages")
 async def export_messages(
     client_id: str = Query(None),
@@ -762,11 +749,11 @@ async def export_messages(
     conditions = []
     
     if client_id:
-        conditions.append("m.instagram_id = ?")
+        conditions.append("m.instagram_id = %s")
         params.append(client_id)
     
     if date_from and date_to:
-        conditions.append("m.created_at >= ? AND m.created_at <= ?")
+        conditions.append("m.created_at >= %s AND m.created_at <= %s")
         params.extend([date_from, date_to])
     
     if conditions:
@@ -857,7 +844,6 @@ async def export_messages(
         log_error(f"Export messages error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
 @router.get("/export/full-data")
 async def export_full_data(
     format: str = Query("csv"),
@@ -888,7 +874,6 @@ async def export_full_data(
     except Exception as e:
         log_error(f"Full data export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
-
 
 @router.get("/export/bookings/template")
 async def download_import_template(

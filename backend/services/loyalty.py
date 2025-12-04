@@ -3,14 +3,13 @@
 
 Начисление баллов, уровни, скидки
 """
-import sqlite3
+
 import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-
 
 class LoyaltyService:
     """Сервис программы лояльности"""

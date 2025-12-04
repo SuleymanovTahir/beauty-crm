@@ -1,12 +1,11 @@
 """
 Функции для аналитики
 """
-import sqlite3
+
 from datetime import datetime, timedelta
 
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
-
 
 def get_stats(comparison_period: str = "7days"):
     """
@@ -275,7 +274,6 @@ def get_stats(comparison_period: str = "7days"):
         "comparison_context": context
     }
 
-
 def get_analytics_data(days=30, date_from=None, date_to=None):
     """Получить данные для аналитики с периодом"""
     conn = get_db_connection()
@@ -355,7 +353,6 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         "avg_response_time": round(avg_response, 2) if avg_response else 0
     }
 
-
 def get_funnel_data():
     """Получить данные воронки продаж"""
     conn = get_db_connection()
@@ -396,7 +393,6 @@ def get_funnel_data():
             "booked_to_completed": round((completed / booked * 100) if booked > 0 else 0, 2)
         }
     }
-
 
 def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     """Получить расширенную аналитику"""
@@ -505,7 +501,6 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
         ]
     }
 
-
 def get_client_insights_data(client_id):
     """Получить инсайты по конкретному клиенту"""
     conn = get_db_connection()
@@ -609,7 +604,6 @@ def get_client_insights_data(client_id):
             } for b in bookings
         ]
     }
-
 
 def get_performance_metrics_data(period=30):
     """Получить метрики производительности"""

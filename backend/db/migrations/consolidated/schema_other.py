@@ -4,7 +4,6 @@ All schema changes for other tables (notifications, chat, permissions, etc.)
 """
 from db.connection import get_db_connection
 
-
 def migrate_other_schema(db_path="salon_bot.db"):
     """
     Apply all other table schema changes
@@ -187,7 +186,6 @@ def migrate_other_schema(db_path="salon_bot.db"):
         raise
     finally:
         conn.close()
-
 
 if __name__ == "__main__":
     migrate_other_schema()

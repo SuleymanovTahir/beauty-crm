@@ -4,7 +4,7 @@ API для управления подписками пользователей
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
-import sqlite3
+
 from datetime import datetime
 
 from core.config import DATABASE_NAME
@@ -15,7 +15,6 @@ from utils.logger import log_info, log_error
 
 router = APIRouter()
 
-
 class SubscriptionUpdate(BaseModel):
     """Модель для обновления подписки"""
     subscription_type: str
@@ -24,12 +23,10 @@ class SubscriptionUpdate(BaseModel):
     telegram_enabled: Optional[bool] = None
     instagram_enabled: Optional[bool] = None
 
-
 class UserSubscriptionsResponse(BaseModel):
     """Модель ответа с подписками пользователя"""
     subscriptions: dict
     available_types: dict
-
 
 @router.get("/subscriptions", response_model=UserSubscriptionsResponse)
 async def get_user_subscriptions(current_user: dict = Depends(get_current_user)):
@@ -91,7 +88,6 @@ async def get_user_subscriptions(current_user: dict = Depends(get_current_user))
     except Exception as e:
         log_error(f"Ошибка получения подписок: {e}", "subscriptions")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/subscriptions")
 async def update_user_subscription(
@@ -166,7 +162,6 @@ async def update_user_subscription(
         log_error(f"Ошибка обновления подписки: {e}", "subscriptions")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.post("/subscriptions/bulk")
 async def update_multiple_subscriptions(
     subscriptions: List[SubscriptionUpdate],
@@ -209,12 +204,10 @@ async def update_multiple_subscriptions(
         log_error(f"Ошибка массового обновления подписок: {e}", "subscriptions")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 class DeleteAccountRequest(BaseModel):
     """Модель запроса на удаление аккаунта"""
     password: str
     confirm: bool = False
-
 
 @router.post("/account/delete")
 async def delete_account(

@@ -70,7 +70,6 @@ def test_booking_reminder_settings_table():
         print(traceback.format_exc())
         return False
 
-
 def test_reminders_api_direct():
     """Тестировать API функции напрямую"""
     print("\n" + "=" * 70)
@@ -102,7 +101,6 @@ def test_reminders_api_direct():
         print(f"\n❌ ОШИБКА при тестировании API:")
         print(traceback.format_exc())
         return False
-
 
 def test_reminders_http():
     """Тестировать через HTTP запросы"""
@@ -142,7 +140,6 @@ def test_reminders_http():
         print(f"\n❌ ОШИБКА при HTTP запросе:")
         print(traceback.format_exc())
         return False
-
 
 def test_toggle_reminder():
     """Тестировать включение/выключение напоминания"""
@@ -197,7 +194,6 @@ def test_toggle_reminder():
         print(f"\n❌ ОШИБКА при тестировании переключения:")
         print(traceback.format_exc())
         return False
-
 
 if __name__ == "__main__":
     print("\n" + "=" * 70)

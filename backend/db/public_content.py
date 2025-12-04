@@ -1,12 +1,11 @@
 """
 Модуль для работы с публичным контентом (отзывы, FAQ, галерея)
 """
-import sqlite3
+
 from typing import List, Dict, Optional
 from datetime import datetime
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-
 
 def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> List[Dict]:
     """
@@ -65,7 +64,6 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
     finally:
         conn.close()
 
-
 def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List[Dict]:
     """
     Получить активные FAQ на указанном языке
@@ -117,7 +115,6 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
         return []
     finally:
         conn.close()
-
 
 def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
     """
@@ -180,7 +177,6 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
     finally:
         conn.close()
 
-
 def add_review(data: Dict) -> Optional[int]:
     """
     Добавить новый отзыв
@@ -239,7 +235,6 @@ def add_review(data: Dict) -> Optional[int]:
     finally:
         conn.close()
 
-
 def add_faq(data: Dict) -> Optional[int]:
     """
     Добавить новый FAQ
@@ -283,7 +278,6 @@ def add_faq(data: Dict) -> Optional[int]:
         return None
     finally:
         conn.close()
-
 
 def add_gallery_item(data: Dict) -> Optional[int]:
     """

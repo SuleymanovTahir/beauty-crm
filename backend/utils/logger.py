@@ -55,31 +55,25 @@ def setup_logger(name: str = "crm", log_file: str = "app.log") -> logging.Logger
     
     return logger
 
-
 # Создаём глобальный экземпляр логгера
 logger = setup_logger()
-
 
 # Вспомогательные функции для быстрого логирования
 def log_info(message: str, module: str = "main"):
     """Логирует INFO сообщение"""
     logger.info(f"[{module}] {message}")
 
-
 def log_error(message: str, module: str = "main", exc_info: bool = False):
     """Логирует ERROR сообщение"""
     logger.error(f"[{module}] {message}", exc_info=exc_info)
-
 
 def log_warning(message: str, module: str = "main"):
     """Логирует WARNING сообщение"""
     logger.warning(f"[{module}] {message}")
 
-
 def log_debug(message: str, module: str = "main"):
     """Логирует DEBUG сообщение"""
     logger.debug(f"[{module}] {message}")
-
 
 # logger.py - дополнение
 def send_telegram_alert(message):
@@ -96,7 +90,6 @@ def send_telegram_alert(message):
 def log_critical(message, module, exc_info=True):
     logger.critical(f"[{module}] {message}", exc_info=exc_info)
     send_telegram_alert(f"🚨 CRITICAL: {message}")
-
 
 # Декоратор для логирования функций
 def log_function_call(func):
@@ -129,7 +122,6 @@ def log_function_call(func):
             raise
     
     return wrapper
-
 
 # Экспортируем всё необходимое
 __all__ = [

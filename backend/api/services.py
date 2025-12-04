@@ -18,7 +18,6 @@ from db.connection import get_db_connection
 
 router = APIRouter(tags=["Services"])
 
-
 @router.get("/services")
 @router.get("/services")
 async def list_services(
@@ -73,7 +72,6 @@ async def list_services(
         "count": len(services)
     }
 
-
 @router.get("/services/{service_key}/price")
 async def get_service_price(
     service_key: str,
@@ -96,7 +94,6 @@ async def get_service_price(
         "price": service[5] if len(service) > 5 else 0,
         "currency": service[6] if len(service) > 6 else "AED"
     }
-
 
 @router.post("/services")
 async def create_service_api(
@@ -137,7 +134,6 @@ async def create_service_api(
         log_error(f"Error creating service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/services/{service_id}/update")
 async def update_service_api(
     service_id: int,
@@ -163,7 +159,6 @@ async def update_service_api(
         log_error(f"Error updating service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 # backend/api/services.py - ПОЛНОСТЬЮ ЗАМЕНИТЕ функцию toggle_service_status
 
 @router.post("/services/{service_id}/toggle-status")
@@ -177,7 +172,7 @@ async def toggle_service_status(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        import sqlite3
+
         from core.config import DATABASE_NAME
         from datetime import datetime
         
@@ -188,7 +183,7 @@ async def toggle_service_status(
         c = conn.cursor()
         
         # Получаем текущий статус
-        c.execute("SELECT is_active FROM services WHERE id = ?", (service_id,))
+        c.execute("SELECT is_active FROM services WHERE id = %s", (service_id,))
         result = c.fetchone()
         
         if not result:
@@ -203,7 +198,7 @@ async def toggle_service_status(
         
         # Обновляем напрямую
         c.execute(
-            "UPDATE services SET is_active = ?, updated_at = ? WHERE id = ?",
+            "UPDATE services SET is_active = %s, updated_at = %s WHERE id = %s",
             (new_status_int, datetime.now().isoformat(), service_id)
         )
         
@@ -214,7 +209,7 @@ async def toggle_service_status(
         conn.commit()
         
         # Проверяем результат
-        c.execute("SELECT is_active FROM services WHERE id = ?", (service_id,))
+        c.execute("SELECT is_active FROM services WHERE id = %s", (service_id,))
         updated = c.fetchone()
         final_status = bool(updated[0]) if updated else None
         
@@ -253,7 +248,6 @@ async def delete_service_api(
     except Exception as e:
         log_error(f"Error deleting service: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
-
 
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
 
@@ -296,7 +290,6 @@ async def list_special_packages(
         "count": len(packages)
     }
 
-
 @router.post("/services/special-packages")
 async def create_special_package_api(
     request: Request,
@@ -337,7 +330,6 @@ async def create_special_package_api(
         log_error(f"Error creating package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
-
 @router.post("/services/special-packages/{package_id}")
 async def update_special_package_api(
     package_id: int,
@@ -359,7 +351,6 @@ async def update_special_package_api(
     except Exception as e:
         log_error(f"Error updating package: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
-
 
 @router.delete("/services/special-packages/{package_id}")
 async def delete_special_package_api(

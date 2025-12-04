@@ -12,7 +12,6 @@ from pathlib import Path
 
 from config import CACHE_DIR, LANGUAGES
 
-
 class Translator:
     def __init__(self, use_cache=True):
         self.use_cache = use_cache
@@ -274,7 +273,6 @@ class Translator:
             
         return "".join(result)
 
-
 if __name__ == "__main__":
     # Test translation
     translator = Translator()
@@ -285,5 +283,4 @@ if __name__ == "__main__":
     for lang in ["en", "ar", "es"]:
         translated = translator.translate(test_text, "ru", lang)
         print(f"  {lang}: {translated}")
-
 
