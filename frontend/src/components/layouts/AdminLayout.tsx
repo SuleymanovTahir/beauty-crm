@@ -109,7 +109,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       { icon: Calendar, label: t('menu.calendar'), path: '/admin/calendar', requirePermission: () => permissions.canViewAllCalendars },
       { icon: UserCog, label: t('menu.users'), path: '/admin/users', requirePermission: () => permissions.canViewAllUsers },
       { icon: Globe, label: t('menu.public_content'), path: '/admin/public-content', requirePermission: () => permissions.canViewSettings },
-      { icon: MapPinned, label: 'Посетители', path: '/admin/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
+      { icon: MapPinned, label: t('menu.visitors'), path: '/admin/visitor-analytics', requirePermission: () => permissions.canViewAnalytics },
       { icon: Settings, label: t('menu.settings'), path: '/admin/settings', requirePermission: () => permissions.canViewSettings },
       { icon: Bot, label: t('menu.bot_settings'), path: '/admin/bot-settings', requirePermission: () => permissions.canViewBotSettings },
     ];

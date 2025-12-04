@@ -1,0 +1,4 @@
+{
+  "telegram_manager_chat_id": "Chat-ID des Telegram-Managers",
+  "telegram_chat_id_hint": "Chat-ID, um Benachrichtigungen über negative Bewertungen zu erhalten"
+}

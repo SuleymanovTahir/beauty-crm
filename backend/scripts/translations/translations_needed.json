@@ -3,18 +3,6 @@
     {
       "id": 8,
       "fields": {
-        "text_ru": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "key": "public_reviews.8.text_ru.d04583b6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Sarah Jenkins",
           "key": "public_reviews.8.author_name.ff715865",
@@ -32,18 +20,6 @@
     {
       "id": 10,
       "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "key": "public_reviews.10.text_ru.784d2781",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Maria Gonzalez",
           "key": "public_reviews.10.author_name.653816a6",
@@ -61,18 +37,6 @@
     {
       "id": 11,
       "fields": {
-        "text_ru": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "key": "public_reviews.11.text_ru.33473c5f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.11.author_name.f26d4aa2",
@@ -107,11 +71,96 @@
       }
     },
     {
+      "id": 9,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.9.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.11.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
       "id": 6,
       "fields": {
         "duration": {
           "ru": "1h",
           "key": "services.6.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.12.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.15.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.17.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -158,62 +207,11 @@
       }
     },
     {
-      "id": 9,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.9.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
       "id": 10,
       "fields": {
         "duration": {
           "ru": "1h",
           "key": "services.10.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.11.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 12,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.12.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -243,45 +241,11 @@
       }
     },
     {
-      "id": 15,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.15.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
       "id": 16,
       "fields": {
         "duration": {
           "ru": "1h",
           "key": "services.16.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.17.duration.7c68645d",
           "en": "1h",
           "ar": "1 ساعة",
           "es": "1h",
@@ -582,119 +546,6 @@
   ],
   "public_banners": [
     {
-      "id": 1,
-      "fields": {
-        "title_en": {
-          "ru": "Beauty and Elegance",
-          "key": "public_banners.1.title_en.4eca14ce",
-          "en": "Beauty and Elegance",
-          "ar": "الجمال والأناقة",
-          "es": "Belleza y elegancia",
-          "de": "Schönheit und Eleganz",
-          "fr": "Beauté et élégance",
-          "hi": "सुंदरता और सुंदरता",
-          "kk": "Сұлулық және әсемдік",
-          "pt": "Beleza e Elegância"
-        },
-        "title_pt": {
-          "ru": "Beleza e Elegância",
-          "key": "public_banners.1.title_pt.790f3478",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_en": {
-          "ru": "Professional Beauty Services",
-          "key": "public_banners.1.subtitle_en.86f36861",
-          "en": "Professional Beauty Services",
-          "ar": "خدمات التجميل المهنية",
-          "es": "Servicios de belleza profesionales",
-          "de": "Professionelle Schönheitsdienstleistungen",
-          "fr": "Services de beauté professionnels",
-          "hi": "व्यावसायिक सौंदर्य सेवाएँ",
-          "kk": "Кәсіби сұлулық қызметтері",
-          "pt": "Serviços profissionais de beleza"
-        },
-        "subtitle_de": {
-          "ru": "Professionelle Schönheitsdienstleistungen",
-          "key": "public_banners.1.subtitle_de.efd7871a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_es": {
-          "ru": "Servicios de belleza profesionales",
-          "key": "public_banners.1.subtitle_es.a46878ed",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_fr": {
-          "ru": "Services de beauté professionnels",
-          "key": "public_banners.1.subtitle_fr.e04f3c6c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_hi": {
-          "ru": "व्यावसायिक सौंदर्य सेवाएँ",
-          "key": "public_banners.1.subtitle_hi.1363e658",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_kk": {
-          "ru": "Кәсіби сұлулық қызметтері",
-          "key": "public_banners.1.subtitle_kk.e0321a2d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_pt": {
-          "ru": "Serviços profissionais de beleza",
-          "key": "public_banners.1.subtitle_pt.aaf0dc0d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
       "id": 2,
       "fields": {
         "title_en": {
@@ -720,6 +571,47 @@
           "hi": "सभी सैलून सेवाओं पर",
           "kk": "Барлық салон қызметтерінде",
           "pt": "Em todos os serviços de salão"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "fields": {
+        "title_en": {
+          "ru": "Beauty and Elegance",
+          "key": "public_banners.1.title_en.4eca14ce",
+          "en": "Beauty and Elegance",
+          "ar": "الجمال والأناقة",
+          "es": "Belleza y elegancia",
+          "de": "Schönheit und Eleganz",
+          "fr": "Beauté et élégance",
+          "hi": "सुंदरता और सुंदरता",
+          "kk": "Сұлулық және әсемдік",
+          "pt": "Beleza e Elegância"
+        },
+        "subtitle_en": {
+          "ru": "Professional beauty services",
+          "key": "public_banners.1.subtitle_en.7a86f62c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_es": {
+          "ru": "Servicios de belleza profesionales.",
+          "key": "public_banners.1.subtitle_es.f52f443a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
         }
       }
     }

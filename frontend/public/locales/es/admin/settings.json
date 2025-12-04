@@ -1,0 +1,4 @@
+{
+  "telegram_manager_chat_id": "ID de chat del administrador de Telegram",
+  "telegram_chat_id_hint": "ID de chat para recibir notificaciones sobre reseñas negativas"
+}

@@ -27,6 +27,7 @@ const namespaces = [
   'admin/settings',
   'admin/specialpackages',
   'admin/users',
+  'admin/VisitorAnalytics',
   'manager/chat',
   'manager/dashboard',
   'manager/funnel',
