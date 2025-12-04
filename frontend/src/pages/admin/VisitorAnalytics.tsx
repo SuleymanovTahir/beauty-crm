@@ -6,6 +6,7 @@ import { visitorApi } from '../../services/visitorApi';
 import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PeriodFilter } from '../../components/shared/PeriodFilter';
+import { useTranslation } from 'react-i18next';
 
 interface Visitor {
     ip_hash: string;
@@ -154,6 +155,7 @@ const getCountryFlag = (countryName: string): string => {
 };
 
 export default function VisitorAnalytics() {
+    const { t } = useTranslation('admin/VisitorAnalytics');
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
     const [countryBreakdown, setCountryBreakdown] = useState<any[]>([]);
@@ -214,7 +216,7 @@ export default function VisitorAnalytics() {
             setCurrentPage(1);
         } catch (error) {
             console.error('Error loading visitor data:', error);
-            toast.error('Ошибка загрузки данных посетителей');
+            toast.error(t('error_loading'));
         } finally {
             setLoading(false);
         }
@@ -230,11 +232,11 @@ export default function VisitorAnalytics() {
 
     const handleApplyCustomDates = () => {
         if (!dateFrom || !dateTo) {
-            toast.error('Выберите обе даты');
+            toast.error(t('select_both_dates'));
             return;
         }
         if (dateFrom > dateTo) {
-            toast.error('Неверный диапазон дат');
+            toast.error(t('invalid_date_range'));
             return;
         }
         loadData();
@@ -255,10 +257,10 @@ export default function VisitorAnalytics() {
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
 
-            toast.success('Файл успешно загружен');
+            toast.success(t('file_downloaded'));
         } catch (err) {
             console.error('Export error:', err);
-            toast.error('Ошибка экспорта');
+            toast.error(t('export_failed'));
         } finally {
             setExporting(false);
         }
@@ -269,7 +271,7 @@ export default function VisitorAnalytics() {
             <div className="p-4 md:p-8 flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center gap-4">
                     <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-                    <p className="text-base text-gray-600">Загрузка аналитики посетителей...</p>
+                    <p className="text-base text-gray-600">{t('loading')}</p>
                 </div>
             </div>
         );
@@ -352,10 +354,10 @@ export default function VisitorAnalytics() {
             <div className="mb-6 md:mb-8">
                 <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
                     <MapPin className="w-8 h-8 text-pink-600" />
-                    <span>Аналитика посетителей</span>
+                    <span>{t('title')}</span>
                 </h1>
                 <p className="text-sm md:text-base text-gray-600">
-                    Геолокация и поведение посетителей сайта
+                    {t('subtitle')}
                 </p>
             </div>
 
@@ -374,13 +376,13 @@ export default function VisitorAnalytics() {
 
                     {period === 'custom' && (
                         <Button onClick={handleApplyCustomDates} className="bg-pink-600 hover:bg-pink-700 w-full sm:w-auto">
-                            Применить
+                            {t('apply')}
                         </Button>
                     )}
 
                     <Button variant="outline" onClick={loadData} className="md:ml-auto">
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Обновить
+                        {t('refresh')}
                     </Button>
                     <Button
                         onClick={handleExportCSV}
@@ -388,7 +390,7 @@ export default function VisitorAnalytics() {
                         className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
                     >
                         <Download className="w-4 h-4" />
-                        {exporting ? 'Экспорт...' : 'Экспорт CSV'}
+                        {exporting ? t('exporting') : t('export_csv')}
                     </Button>
                 </div>
             </div>
@@ -399,9 +401,9 @@ export default function VisitorAnalytics() {
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {locationBreakdown?.total || 0}
                     </h3>
-                    <p className="text-xs md:text-sm text-gray-600 mb-2">Всего посетителей</p>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{t('total_visitors')}</p>
                     <div className="text-xs md:text-sm text-pink-600">
-                        За период
+                        {t('for_period')}
                     </div>
                 </div>
 
@@ -409,9 +411,9 @@ export default function VisitorAnalytics() {
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {conversionRate}%
                     </h3>
-                    <p className="text-xs md:text-sm text-gray-600 mb-2">Местные (≤50км)</p>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{t('local_visitors')}</p>
                     <div className="text-xs md:text-sm text-green-600">
-                        {locationBreakdown?.local || 0} посетителей
+                        {locationBreakdown?.local || 0} {t('visitors_count')}
                     </div>
                 </div>
 
@@ -419,9 +421,9 @@ export default function VisitorAnalytics() {
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {countryBreakdown.length}
                     </h3>
-                    <p className="text-xs md:text-sm text-gray-600 mb-2">Стран</p>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{t('countries')}</p>
                     <div className="text-xs md:text-sm text-blue-600">
-                        Географический охват
+                        {t('geographic_reach')}
                     </div>
                 </div>
 
@@ -429,9 +431,9 @@ export default function VisitorAnalytics() {
                     <h3 className="text-2xl md:text-3xl text-gray-900 mb-2">
                         {cityBreakdown.length}
                     </h3>
-                    <p className="text-xs md:text-sm text-gray-600 mb-2">Городов</p>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{t('cities')}</p>
                     <div className="text-xs md:text-sm text-purple-600">
-                        Уникальные локации
+                        {t('unique_locations')}
                     </div>
                 </div>
             </div>
@@ -441,7 +443,7 @@ export default function VisitorAnalytics() {
                 {/* Distance Distribution */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <div className="flex flex-col gap-4 mb-6">
-                        <h2 className="text-xl text-gray-900">Распределение по расстоянию</h2>
+                        <h2 className="text-xl text-gray-900">{t('distance_distribution')}</h2>
                         <div className="flex gap-2 items-center flex-wrap">
                             <select
                                 value={showCustomDistance ? 'custom' : distanceTo}
@@ -463,11 +465,11 @@ export default function VisitorAnalytics() {
                                 <option value="20">До 20 км</option>
                                 <option value="50">До 50 км</option>
                                 <option value="100">До 100 км</option>
-                                <option value="custom">Свой диапазон...</option>
+                                <option value="custom">{t('custom_range')}</option>
                             </select>
                             {showCustomDistance && (
                                 <div className="flex gap-2 items-center">
-                                    <span className="text-sm text-gray-600">От:</span>
+                                    <span className="text-sm text-gray-600">{t('from')}:</span>
                                     <input
                                         type="number"
                                         min="0"
@@ -477,7 +479,7 @@ export default function VisitorAnalytics() {
                                         onChange={(e) => setDistanceFrom(e.target.value)}
                                         className="w-16 px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                                     />
-                                    <span className="text-sm text-gray-600">До:</span>
+                                    <span className="text-sm text-gray-600">{t('to')}:</span>
                                     <input
                                         type="number"
                                         min="1"
@@ -487,7 +489,7 @@ export default function VisitorAnalytics() {
                                         onChange={(e) => setDistanceTo(e.target.value)}
                                         className="w-16 px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
                                     />
-                                    <span className="text-sm text-gray-600">км</span>
+                                    <span className="text-sm text-gray-600">{t('km')}</span>
                                     <Button
                                         size="sm"
                                         onClick={() => {
@@ -497,7 +499,7 @@ export default function VisitorAnalytics() {
                                                 setShowCustomDistance(false);
                                                 loadData();
                                             } else {
-                                                toast.error('Проверьте диапазон (0-1000км, "До" > "От")');
+                                                toast.error(t('check_range'));
                                             }
                                         }}
                                     >
@@ -519,7 +521,7 @@ export default function VisitorAnalytics() {
                             />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
-                            <Bar dataKey="value" name="Посетители" radius={[8, 8, 0, 0]}>
+                            <Bar dataKey="value" name={t('visitors')} radius={[8, 8, 0, 0]}>
                                 {distanceChartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
@@ -530,8 +532,8 @@ export default function VisitorAnalytics() {
 
                 {/* Visitor Trend */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl text-gray-900 mb-2">Тренд посещений</h2>
-                    <p className="text-sm text-gray-600 mb-4">Динамика посещений по дням</p>
+                    <h2 className="text-xl text-gray-900 mb-2">{t('visitor_trend')}</h2>
+                    <p className="text-sm text-gray-600 mb-4">{t('trend_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={trendChartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -542,7 +544,7 @@ export default function VisitorAnalytics() {
                             <Line
                                 type="monotone"
                                 dataKey="visitors"
-                                name="Посетители"
+                                name={t('visitors')}
                                 stroke="#ec4899"
                                 strokeWidth={2}
                                 dot={{ fill: '#ec4899' }}
@@ -553,14 +555,14 @@ export default function VisitorAnalytics() {
 
                 {/* Top Cities */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl text-gray-900 mb-6">Топ городов</h2>
+                    <h2 className="text-xl text-gray-900 mb-6">{t('top_cities')}</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={cityChartData} layout="vertical">
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                             <XAxis type="number" tick={{ fontSize: 12 }} />
                             <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
                             <Tooltip />
-                            <Bar dataKey="visitors" name="Посетители" radius={[0, 4, 4, 0]}>
+                            <Bar dataKey="visitors" name={t('visitors')} radius={[0, 4, 4, 0]}>
                                 {cityChartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
@@ -571,7 +573,7 @@ export default function VisitorAnalytics() {
 
                 {/* Country Distribution with Flags */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl text-gray-900 mb-6">Распределение по странам</h2>
+                    <h2 className="text-xl text-gray-900 mb-6">{t('country_distribution')}</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                             <Pie
@@ -594,8 +596,8 @@ export default function VisitorAnalytics() {
 
                 {/* Landing Sections */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl text-gray-900 mb-2">Секции лендинга</h2>
-                    <p className="text-sm text-gray-600 mb-4">Популярные разделы страницы</p>
+                    <h2 className="text-xl text-gray-900 mb-2">{t('landing_sections')}</h2>
+                    <p className="text-sm text-gray-600 mb-4">{t('sections_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={sectionsChartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -608,7 +610,7 @@ export default function VisitorAnalytics() {
                             />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
-                            <Bar dataKey="visitors" name="Посетители" radius={[8, 8, 0, 0]}>
+                            <Bar dataKey="visitors" name={t('visitors')} radius={[8, 8, 0, 0]}>
                                 {sectionsChartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
@@ -619,8 +621,8 @@ export default function VisitorAnalytics() {
 
                 {/* Peak Hours */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h2 className="text-xl text-gray-900 mb-2">Пиковые часы</h2>
-                    <p className="text-sm text-gray-600 mb-4">Активность по времени суток</p>
+                    <h2 className="text-xl text-gray-900 mb-2">{t('peak_hours')}</h2>
+                    <p className="text-sm text-gray-600 mb-4">{t('peak_hours_subtitle')}</p>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={hoursChartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -633,7 +635,7 @@ export default function VisitorAnalytics() {
                             />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
-                            <Bar dataKey="visitors" name="Посетители" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="visitors" name={t('visitors')} fill="#f59e0b" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -642,19 +644,19 @@ export default function VisitorAnalytics() {
             {/* Visitors Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-4 md:p-6 border-b border-gray-200 flex justify-between items-center">
-                    <h2 className="text-xl text-gray-900">Последние посетители</h2>
+                    <h2 className="text-xl text-gray-900">{t('latest_visitors')}</h2>
                     <div className="text-sm text-gray-600">
-                        Показано {startIndex + 1}-{Math.min(endIndex, visitors.length)} из {visitors.length}
+                        {t('showing')} {startIndex + 1}-{Math.min(endIndex, visitors.length)} {t('of')} {visitors.length}
                     </div>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600">Город</th>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600">Страна</th>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600">Расстояние</th>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600">Время посещения</th>
+                                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('city')}</th>
+                                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('country')}</th>
+                                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('distance')}</th>
+                                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('visit_time')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -691,10 +693,10 @@ export default function VisitorAnalytics() {
                             disabled={currentPage === 1}
                         >
                             <ChevronLeft className="w-4 h-4 mr-1" />
-                            Назад
+                            {t('prev')}
                         </Button>
                         <span className="text-sm text-gray-600">
-                            Страница {currentPage} из {totalPages}
+                            {t('page')} {currentPage} {t('of')} {totalPages}
                         </span>
                         <Button
                             variant="outline"
@@ -702,7 +704,7 @@ export default function VisitorAnalytics() {
                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                             disabled={currentPage === totalPages}
                         >
-                            Вперед
+                            {t('next')}
                             <ChevronRight className="w-4 h-4 ml-1" />
                         </Button>
                     </div>

@@ -1,4 +1,4 @@
 {
-    "telegram_manager_chat_id": "معرف دردشة مدير تيليجرام",
-    "telegram_chat_id_hint": "معرف الدردشة لتلقي تنبيهات التعليقات السلبية"
+  "telegram_manager_chat_id": "معرف دردشة مدير تيليجرام",
+  "telegram_chat_id_hint": "معرف الدردشة لتلقي تنبيهات التعليقات السلبية"
 }

@@ -1,0 +1,4 @@
+{
+  "telegram_manager_chat_id": "ID de discussion du gestionnaire de télégrammes",
+  "telegram_chat_id_hint": "ID de chat pour recevoir des notifications sur les avis négatifs"
+}

@@ -1,0 +1,4 @@
+{
+  "telegram_manager_chat_id": "ID de bate-papo do gerenciador de telegrama",
+  "telegram_chat_id_hint": "ID do bate-papo para receber notificações sobre avaliações negativas"
+}

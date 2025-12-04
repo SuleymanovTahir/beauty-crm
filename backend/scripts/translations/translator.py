@@ -1,6 +1,7 @@
 """
 Universal translator using Google Translate HTTP API (free, no library needed)
 Falls back to simple copy if translation fails
+Uses LibreTranslate for short phrases (≤10 chars) to avoid context issues
 """
 
 import json
@@ -11,6 +12,14 @@ from typing import List, Dict, Optional
 from pathlib import Path
 
 from config import CACHE_DIR, LANGUAGES
+
+# Import LibreTranslate for short phrases
+try:
+    from beauty_translator import get_translator as get_libre_translator
+    LIBRE_AVAILABLE = True
+except ImportError:
+    LIBRE_AVAILABLE = False
+    print("⚠️  LibreTranslate not available, using Google Translate for all text")
 
 class Translator:
     def __init__(self, use_cache=True):
@@ -181,12 +190,14 @@ class Translator:
     def translate(self, text: str, source: str, target: str, use_context: bool = False) -> str:
         """
         Translate text from source language to target language
+        Uses LibreTranslate for short phrases (≤10 chars) to avoid Google's context issues
+        Uses Google Translate for longer text
         
         Args:
             text: Text to translate
             source: Source language code (e.g., 'ru')
             target: Target language code (e.g., 'en')
-            use_context: Whether to inject context
+            use_context: Whether to inject context (only for Google Translate)
             
         Returns:
             Translated text, or original text if translation fails
@@ -206,7 +217,24 @@ class Translator:
         if cached:
             return cached
         
-        # Translate using Google Translate HTTP API
+        # Determine which translator to use based on text length
+        text_length = len(text.strip())
+        use_libre = LIBRE_AVAILABLE and text_length <= 10
+        
+        if use_libre:
+            # Use LibreTranslate for short phrases to avoid context issues
+            try:
+                libre = get_libre_translator()
+                translated = libre.translate(text, source, target)
+                if translated and translated != text:
+                    self._save_to_cache(text + cache_key_suffix, source, target, translated)
+                    time.sleep(0.1)  # Small delay
+                    return translated
+                # If LibreTranslate fails, fall through to Google Translate
+            except Exception as e:
+                print(f"  ⚠️  LibreTranslate error, falling back to Google: {e}")
+        
+        # Use Google Translate for longer text or if LibreTranslate failed
         translated = self._translate_via_http(text, source, target, use_context=use_context)
         self._save_to_cache(text + cache_key_suffix, source, target, translated)
         
