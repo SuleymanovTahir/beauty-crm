@@ -50,7 +50,7 @@ async def get_user_subscriptions(current_user: dict = Depends(get_current_user))
         c.execute("""
             SELECT subscription_type, is_subscribed, email_enabled, telegram_enabled, instagram_enabled
             FROM user_subscriptions
-            WHERE user_id = ?
+            WHERE user_id = %s
         """, (user_id,))
 
         user_subscriptions = {}
@@ -68,9 +68,10 @@ async def get_user_subscriptions(current_user: dict = Depends(get_current_user))
         if not user_subscriptions:
             for sub_type in available_types.keys():
                 c.execute("""
-                    INSERT OR IGNORE INTO user_subscriptions
+                    INSERT INTO user_subscriptions
                     (user_id, subscription_type, is_subscribed, email_enabled, telegram_enabled, instagram_enabled)
-                    VALUES (?, ?, 1, 1, 1, 1)
+                    VALUES (%s, %s, TRUE, TRUE, TRUE, TRUE)
+                    ON CONFLICT (user_id, subscription_type) DO NOTHING
                 """, (user_id, sub_type))
                 user_subscriptions[sub_type] = {
                     "is_subscribed": True,
@@ -114,33 +115,33 @@ async def update_user_subscription(
         c = conn.cursor()
 
         # Строим SQL запрос динамически в зависимости от того, какие каналы обновляются
-        update_fields = ["is_subscribed = ?", "updated_at = ?"]
+        update_fields = ["is_subscribed = %s", "updated_at = %s"]
         update_values = [int(is_subscribed), datetime.now().isoformat()]
 
         insert_fields = ["user_id", "subscription_type", "is_subscribed", "updated_at"]
         insert_values = [user_id, sub_type, int(is_subscribed), datetime.now().isoformat()]
-        insert_placeholders = ["?", "?", "?", "?"]
+        insert_placeholders = ["%s", "%s", "%s", "%s"]
 
         if subscription_update.email_enabled is not None:
-            update_fields.append("email_enabled = ?")
+            update_fields.append("email_enabled = %s")
             update_values.append(int(subscription_update.email_enabled))
             insert_fields.append("email_enabled")
             insert_values.append(int(subscription_update.email_enabled))
-            insert_placeholders.append("?")
+            insert_placeholders.append("%s")
 
         if subscription_update.telegram_enabled is not None:
-            update_fields.append("telegram_enabled = ?")
+            update_fields.append("telegram_enabled = %s")
             update_values.append(int(subscription_update.telegram_enabled))
             insert_fields.append("telegram_enabled")
             insert_values.append(int(subscription_update.telegram_enabled))
-            insert_placeholders.append("?")
+            insert_placeholders.append("%s")
 
         if subscription_update.instagram_enabled is not None:
-            update_fields.append("instagram_enabled = ?")
+            update_fields.append("instagram_enabled = %s")
             update_values.append(int(subscription_update.instagram_enabled))
             insert_fields.append("instagram_enabled")
             insert_values.append(int(subscription_update.instagram_enabled))
-            insert_placeholders.append("?")
+            insert_placeholders.append("%s")
 
         # Обновляем или создаем подписку
         c.execute(f"""
@@ -188,9 +189,9 @@ async def update_multiple_subscriptions(
             c.execute("""
                 INSERT INTO user_subscriptions
                 (user_id, subscription_type, is_subscribed, updated_at)
-                VALUES (?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s)
                 ON CONFLICT(user_id, subscription_type)
-                DO UPDATE SET is_subscribed = ?, updated_at = ?
+                DO UPDATE SET is_subscribed = %s, updated_at = %s
             """, (
                 user_id, sub.subscription_type, int(sub.is_subscribed),
                 datetime.now().isoformat(),
@@ -242,7 +243,7 @@ async def delete_account(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT password_hash FROM users WHERE id = ?", (user_id,))
+        c.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
@@ -256,7 +257,7 @@ async def delete_account(
 
         # Удаляем пользователя и все связанные данные
         # SQLite автоматически удалит записи с ON DELETE CASCADE
-        c.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        c.execute("DELETE FROM users WHERE id = %s", (user_id,))
 
         conn.commit()
         conn.close()

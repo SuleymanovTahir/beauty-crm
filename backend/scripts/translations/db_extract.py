@@ -4,14 +4,16 @@ Extract translatable content from database
 Identifies all text fields that need translation and checks against JSON files
 """
 
-from db.connection import get_db_connection
 import json
 import sys
 import os
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add backend directory to path
+backend_dir = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(backend_dir))
+
+from db.connection import get_db_connection
 
 from config import (
     TRANSLATION_CONFIG, 
@@ -21,7 +23,7 @@ from config import (
     EXTRACT_OUTPUT
 )
 
-FRONTEND_LOCALES_DIR = Path(__file__).parent.parent.parent.parent / "frontend" / "src" / "locales"
+FRONTEND_LOCALES_DIR = backend_dir.parent / "frontend" / "src" / "locales"
 
 def load_existing_translations():
     """Load existing dynamic.json files for all languages"""
@@ -49,8 +51,8 @@ def extract_translatable_content():
     """
     print("🔍 Extracting translatable content from database...")
     
-    conn = sqlite3.connect(DATABASE_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
+    conn.row_factory = True # Enable DictCursor for dict(row) support
     cursor = conn.cursor()
     
     existing_translations = load_existing_translations()
@@ -181,7 +183,9 @@ def extract_translatable_content():
             else:
                 print(f"  ✅ All translations complete!")
         
-        except sqlite3.OperationalError as e:
+
+        
+        except Exception as e:
             print(f"  ⚠️  Error: {e}")
             print(f"  💡 Hint: Check table/column names in config")
     

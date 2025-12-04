@@ -258,6 +258,7 @@ async def delete_service_api(
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
 
 @router.get("/services/special-packages")
+@router.get("/special-packages")
 async def list_special_packages(
     active_only: bool = Query(True),
     session_token: Optional[str] = Cookie(None)

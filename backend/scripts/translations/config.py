@@ -12,22 +12,22 @@ TRANSLATION_CONFIG = {
     "users": {
         "id_field": "id",
         "fields": ["full_name", "position", "bio"],
-        "where": "is_service_provider = 1 AND is_active = 1"
+        "where": "is_service_provider = TRUE AND is_active = TRUE"
     },
     "public_reviews": {
         "id_field": "id",
         "fields": ["text_ru", "author_name"],
-        "where": "is_active = 1"
+        "where": "is_active = TRUE"
     },
     "public_faq": {
         "id_field": "id",
         "fields": ["question_ru", "answer_ru"],
-        "where": "is_active = 1"
+        "where": "is_active = TRUE"
     },
     "services": {
         "id_field": "id",
         "fields": ["name_ru", "description_ru", "duration"],
-        "where": "is_active = 1"
+        "where": "is_active = TRUE"
     },
     "salon_settings": {
         "id_field": "id",
@@ -38,7 +38,7 @@ TRANSLATION_CONFIG = {
         "id_field": "id",
         "fields": ["title_ru", "title_en", "title_ar", "title_de", "title_es", "title_fr", "title_hi", "title_kk", "title_pt",
                    "subtitle_ru", "subtitle_en", "subtitle_ar", "subtitle_de", "subtitle_es", "subtitle_fr", "subtitle_hi", "subtitle_kk", "subtitle_pt"],
-        "where": "is_active = 1"
+        "where": "is_active = TRUE"
     }
 }
 

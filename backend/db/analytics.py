@@ -336,7 +336,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         )
         SELECT 
             AVG(
-                (julianday(next_timestamp) - julianday(timestamp)) * 24 * 60
+                EXTRACT(EPOCH FROM (next_timestamp::TIMESTAMP - timestamp::TIMESTAMP)) / 60
             ) as avg_minutes
         FROM client_messages
         WHERE next_sender = 'bot'
@@ -561,8 +561,8 @@ def get_client_insights_data(client_id):
         SELECT 
             AVG(CASE 
                 WHEN sender = 'client' AND LAG(sender) OVER (ORDER BY created_at) = 'bot' 
-                THEN julianday(created_at) - julianday(LAG(created_at) OVER (ORDER BY created_at))
-                END) * 24 * 60 as avg_response_time_minutes
+                THEN EXTRACT(EPOCH FROM (created_at::TIMESTAMP - LAG(created_at::TIMESTAMP) OVER (ORDER BY created_at))) / 60
+                END) as avg_response_time_minutes
         FROM messages 
         WHERE instagram_id = %s
     """, (client_id,))
@@ -671,8 +671,8 @@ def get_performance_metrics_data(period=30):
     # Время ответа (приблизительно)
     c.execute("""
         SELECT AVG(
-            julianday(created_at) - julianday(LAG(created_at) OVER (ORDER BY created_at))
-        ) * 24 * 60
+            EXTRACT(EPOCH FROM (created_at::TIMESTAMP - LAG(created_at::TIMESTAMP) OVER (ORDER BY created_at))) / 60
+        )
         FROM messages 
         WHERE created_at >= %s AND sender = 'bot'
     """, (start_date,))
