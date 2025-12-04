@@ -312,9 +312,9 @@ def get_visitor_trend(start_date: Optional[datetime] = None, end_date: Optional[
     conn.close()
     return trend
 
-def get_popular_pages(start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[Dict]:
+def get_landing_sections(start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[Dict]:
     """
-    Get most visited pages
+    Get most visited landing page sections (from URL anchors)
     """
     conn = get_db_connection()
     c = conn.cursor()
@@ -334,30 +334,85 @@ def get_popular_pages(start_date: Optional[datetime] = None, end_date: Optional[
         query += " AND visited_at <= %s"
         params.append(end_date)
     
-    query += " GROUP BY page_url ORDER BY count DESC LIMIT 10"
+    query += " GROUP BY page_url ORDER BY count DESC"
     
     c.execute(query, params)
     
-    total = 0
-    pages = []
+    # Extract sections from URLs and group
+    sections_count = {}
     for row in c.fetchall():
-        count = row[1]
-        total += count
-        # Extract page name from URL
         url = row[0]
-        page_name = url.split('/')[-1] or 'Главная'
-        if '?' in page_name:
-            page_name = page_name.split('?')[0]
+        count = row[1]
         
-        pages.append({
-            'page': page_name,
-            'url': url,
-            'count': count
-        })
-    
-    # Calculate percentages
-    for page in pages:
-        page['percentage'] = round((page['count'] / total * 100) if total > 0 else 0, 1)
+        # Extract section from URL anchor (e.g., /#services -> services)
+        section = 'hero'  # default
+        if '#' in url:
+            section = url.split('#')[-1].split('?')[0] or 'hero'
+        elif url.endswith('/'):
+            section = 'hero'
+        
+        # Normalize section names
+        section = section.lower().strip()
+        if not section or section == '/':
+            section = 'hero'
+        
+        sections_count[section] = sections_count.get(section, 0) + count
     
     conn.close()
-    return pages
+    
+    # Convert to list and calculate percentages
+    total = sum(sections_count.values())
+    sections = []
+    for section, count in sorted(sections_count.items(), key=lambda x: x[1], reverse=True):
+        sections.append({
+            'section': section.capitalize(),
+            'count': count,
+            'percentage': round((count / total * 100) if total > 0 else 0, 1)
+        })
+    
+    return sections[:10]  # Top 10 sections
+
+def get_peak_hours(start_date: Optional[datetime] = None, end_date: Optional[datetime] = None) -> List[Dict]:
+    """
+    Get visitor distribution by hour of day
+    """
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    query = """
+        SELECT EXTRACT(HOUR FROM visited_at) as hour, COUNT(*) as count
+        FROM visitor_tracking
+        WHERE visited_at IS NOT NULL
+    """
+    params = []
+    
+    if start_date:
+        query += " AND visited_at >= %s"
+        params.append(start_date)
+    
+    if end_date:
+        query += " AND visited_at <= %s"
+        params.append(end_date)
+    
+    query += " GROUP BY EXTRACT(HOUR FROM visited_at) ORDER BY hour ASC"
+    
+    c.execute(query, params)
+    
+    # Create full 24-hour array
+    hours_data = {i: 0 for i in range(24)}
+    for row in c.fetchall():
+        hour = int(row[0]) if row[0] is not None else 0
+        count = row[1]
+        hours_data[hour] = count
+    
+    conn.close()
+    
+    # Convert to list
+    peak_hours = []
+    for hour in range(24):
+        peak_hours.append({
+            'hour': f'{hour:02d}:00',
+            'count': hours_data[hour]
+        })
+    
+    return peak_hours
