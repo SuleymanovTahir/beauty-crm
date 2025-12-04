@@ -1,11 +1,530 @@
 {
+  "services": [
+    {
+      "id": 14,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.14.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.9.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.11.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.6.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.12.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.15.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.17.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.7.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.8.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.10.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.13.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.16.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.20.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.22.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.29.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.36.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.40.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.42.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.43.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "duration": {
+          "ru": "30мин",
+          "key": "services.44.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.45.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.46.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.47.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.48.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1 час",
+          "key": "services.49.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "fields": {
+        "duration": {
+          "ru": "Услуги салона красоты 1ч 30мин",
+          "key": "services.50.duration.d7cc86dd",
+          "en": "1h 30min",
+          "ar": "ساعة و30 دقيقة",
+          "es": "1h 30min",
+          "de": "1 Stunde 30 Minuten",
+          "fr": "Service salon de beauté 1h 30min",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा 30 मिनट",
+          "kk": "1 сағат 30мин",
+          "pt": "1h 30min",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "duration": {
+          "ru": "30мин",
+          "key": "services.52.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min",
+          "detected_language": "en"
+        }
+      }
+    }
+  ],
+  "salon_settings": [
+    {
+      "id": 1,
+      "fields": {
+        "city": {
+          "ru": "Dubai",
+          "key": "salon_settings.1.city.23b998b1",
+          "en": "Dubai",
+          "ar": "Dubai",
+          "es": "Dubai",
+          "de": "Dubai",
+          "fr": "Dubai",
+          "hi": "Dubai",
+          "kk": "Dubai",
+          "pt": "Dubai"
+        },
+        "country": {
+          "ru": "UAE",
+          "key": "salon_settings.1.country.b6ae56d2",
+          "en": "UAE",
+          "ar": "UAE",
+          "es": "UAE",
+          "de": "UAE",
+          "fr": "UAE",
+          "hi": "UAE",
+          "kk": "UAE",
+          "pt": "UAE"
+        }
+      }
+    }
+  ],
   "public_banners": [
     {
       "id": 1,
       "fields": {
-        "title_ru": {
+        "title_en": {
           "ru": "Красота и элегантность",
-          "key": "public_banners.1.title_ru.58c8c66e",
+          "key": "public_banners.1.title_en.4687a10a",
           "en": "Beauty and elegance",
           "ar": "الجمال والأناقة",
           "es": "Belleza y elegancia",
@@ -14,11 +533,11 @@
           "hi": "सुंदरता और सुंदरता",
           "kk": "Сұлулық және әсемдік",
           "pt": "Beleza e elegância",
-          "detected_language": "ru"
+          "detected_language": "en"
         },
-        "subtitle_ru": {
+        "subtitle_en": {
           "ru": "Профессиональные косметические услуги",
-          "key": "public_banners.1.subtitle_ru.9eb6e5d7",
+          "key": "public_banners.1.subtitle_en.95ee795f",
           "en": "Professional cosmetic services",
           "ar": "خدمات التجميل المهنية",
           "es": "Servicios de cosmética profesional.",
@@ -27,7 +546,155 @@
           "hi": "पेशेवर कॉस्मेटिक सेवाएँ",
           "kk": "Кәсіби косметикалық қызметтер",
           "pt": "Serviços cosméticos profissionais",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "title_en": {
+          "ru": "Скидки до 50%",
+          "key": "public_banners.2.title_en.8898447c",
+          "en": "Discounts of up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos de hasta el 50%",
+          "de": "Rabatte von bis zu 50 %",
+          "fr": "Des réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%",
+          "detected_language": "en"
+        },
+        "title_de": {
+          "ru": "Скидки до 50%",
+          "key": "public_banners.2.title_de.09819cde",
+          "en": "Discounts of up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos de hasta el 50%",
+          "de": "Rabatte von bis zu 50 %",
+          "fr": "Des réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%",
+          "detected_language": "de"
+        },
+        "title_es": {
+          "ru": "Скидки до 50%",
+          "key": "public_banners.2.title_es.c7c5e0b2",
+          "en": "Discounts up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos de hasta el 50%",
+          "de": "Rabatte bis zu 50 %",
+          "fr": "Réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%",
+          "detected_language": "es"
+        },
+        "title_fr": {
+          "ru": "Скидки до 50%",
+          "key": "public_banners.2.title_fr.9b372647",
+          "en": "Discounts of up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos de hasta el 50%",
+          "de": "Rabatte von bis zu 50 %",
+          "fr": "Des réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%",
+          "detected_language": "fr"
+        },
+        "subtitle_ru": {
+          "ru": "Во всех услугах салона",
+          "key": "public_banners.2.subtitle_ru.4f919a80",
+          "en": "In all salon services",
+          "ar": "في كافة خدمات الصالون",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen",
+          "fr": "Dans tous les services du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão",
           "detected_language": "ru"
+        },
+        "subtitle_en": {
+          "ru": "Во всех услугах салона",
+          "key": "public_banners.2.subtitle_en.0e1c38ec",
+          "en": "In all salon services",
+          "ar": "في كافة خدمات الصالون",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen",
+          "fr": "Dans tous les services du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão",
+          "detected_language": "en"
+        },
+        "subtitle_ar": {
+          "ru": "Во всех услугах салона",
+          "key": "public_banners.2.subtitle_ar.67b62ed1",
+          "en": "In all salon services",
+          "ar": "في كافة خدمات الصالون",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen",
+          "fr": "Dans tous les services du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão",
+          "detected_language": "ar"
+        },
+        "subtitle_de": {
+          "ru": "Во всех услугах салона",
+          "key": "public_banners.2.subtitle_de.3004d5ec",
+          "en": "In all salon services",
+          "ar": "في كافة خدمات الصالون",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen",
+          "fr": "Dans tous les services du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão",
+          "detected_language": "de"
+        },
+        "subtitle_es": {
+          "ru": "Во всех услугах салона.",
+          "key": "public_banners.2.subtitle_es.770f8cd2",
+          "en": "In all salon services.",
+          "ar": "في كافة خدمات الصالون.",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen.",
+          "fr": "Dans tous les services du salon.",
+          "hi": "सभी सैलून सेवाओं में.",
+          "kk": "Барлық салон қызметтерінде.",
+          "pt": "Em todos os serviços de salão.",
+          "detected_language": "es"
+        },
+        "subtitle_fr": {
+          "ru": "Во всех услугах салона",
+          "key": "public_banners.2.subtitle_fr.ea96461e",
+          "en": "In all salon services",
+          "ar": "في كافة خدمات الصالون",
+          "es": "En todos los servicios del salón.",
+          "de": "In allen Salondienstleistungen",
+          "fr": "Dans tous les services du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão",
+          "detected_language": "fr"
+        },
+        "subtitle_hi": {
+          "ru": "Все услуги салона",
+          "key": "public_banners.2.subtitle_hi.992b815d",
+          "en": "All salon services",
+          "ar": "جميع خدمات الصالون",
+          "es": "Todos los servicios del salón",
+          "de": "Alle Salondienstleistungen",
+          "fr": "Toutes les prestations du salon",
+          "hi": "सभी सैलून सेवाओं में",
+          "kk": "Барлық салон қызметтері",
+          "pt": "Todos os serviços de salão",
+          "detected_language": "hi"
         }
       }
     }
