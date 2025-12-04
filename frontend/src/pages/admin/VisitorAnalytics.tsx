@@ -19,6 +19,140 @@ interface Visitor {
 
 const COLORS = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#14b8a6'];
 
+// Country code to flag emoji mapping
+const getCountryFlag = (countryName: string): string => {
+    const countryToCode: Record<string, string> = {
+        'United Arab Emirates': 'AE',
+        'UAE': 'AE',
+        'Russia': 'RU',
+        'United States': 'US',
+        'USA': 'US',
+        'United Kingdom': 'GB',
+        'UK': 'GB',
+        'India': 'IN',
+        'Pakistan': 'PK',
+        'China': 'CN',
+        'Saudi Arabia': 'SA',
+        'Egypt': 'EG',
+        'Turkey': 'TR',
+        'Germany': 'DE',
+        'France': 'FR',
+        'Italy': 'IT',
+        'Spain': 'ES',
+        'Canada': 'CA',
+        'Australia': 'AU',
+        'Brazil': 'BR',
+        'Japan': 'JP',
+        'South Korea': 'KR',
+        'Mexico': 'MX',
+        'Indonesia': 'ID',
+        'Philippines': 'PH',
+        'Vietnam': 'VN',
+        'Thailand': 'TH',
+        'Malaysia': 'MY',
+        'Singapore': 'SG',
+        'Kazakhstan': 'KZ',
+        'Uzbekistan': 'UZ',
+        'Ukraine': 'UA',
+        'Poland': 'PL',
+        'Netherlands': 'NL',
+        'Belgium': 'BE',
+        'Sweden': 'SE',
+        'Norway': 'NO',
+        'Denmark': 'DK',
+        'Finland': 'FI',
+        'Switzerland': 'CH',
+        'Austria': 'AT',
+        'Portugal': 'PT',
+        'Greece': 'GR',
+        'Czech Republic': 'CZ',
+        'Romania': 'RO',
+        'Hungary': 'HU',
+        'Bulgaria': 'BG',
+        'Serbia': 'RS',
+        'Croatia': 'HR',
+        'Slovakia': 'SK',
+        'Slovenia': 'SI',
+        'Lithuania': 'LT',
+        'Latvia': 'LV',
+        'Estonia': 'EE',
+        'Ireland': 'IE',
+        'New Zealand': 'NZ',
+        'South Africa': 'ZA',
+        'Nigeria': 'NG',
+        'Kenya': 'KE',
+        'Morocco': 'MA',
+        'Algeria': 'DZ',
+        'Tunisia': 'TN',
+        'Lebanon': 'LB',
+        'Jordan': 'JO',
+        'Iraq': 'IQ',
+        'Iran': 'IR',
+        'Israel': 'IL',
+        'Kuwait': 'KW',
+        'Bahrain': 'BH',
+        'Qatar': 'QA',
+        'Oman': 'OM',
+        'Yemen': 'YE',
+        'Syria': 'SY',
+        'Afghanistan': 'AF',
+        'Bangladesh': 'BD',
+        'Sri Lanka': 'LK',
+        'Nepal': 'NP',
+        'Myanmar': 'MM',
+        'Cambodia': 'KH',
+        'Laos': 'LA',
+        'Mongolia': 'MN',
+        'Taiwan': 'TW',
+        'Hong Kong': 'HK',
+        'Macau': 'MO',
+        'Argentina': 'AR',
+        'Chile': 'CL',
+        'Colombia': 'CO',
+        'Peru': 'PE',
+        'Venezuela': 'VE',
+        'Ecuador': 'EC',
+        'Bolivia': 'BO',
+        'Paraguay': 'PY',
+        'Uruguay': 'UY',
+        'Costa Rica': 'CR',
+        'Panama': 'PA',
+        'Cuba': 'CU',
+        'Dominican Republic': 'DO',
+        'Jamaica': 'JM',
+        'Trinidad and Tobago': 'TT',
+        'Bahamas': 'BS',
+        'Barbados': 'BB',
+        'Iceland': 'IS',
+        'Luxembourg': 'LU',
+        'Malta': 'MT',
+        'Cyprus': 'CY',
+        'Georgia': 'GE',
+        'Armenia': 'AM',
+        'Azerbaijan': 'AZ',
+        'Turkmenistan': 'TM',
+        'Kyrgyzstan': 'KG',
+        'Tajikistan': 'TJ',
+        'Belarus': 'BY',
+        'Moldova': 'MD',
+        'Albania': 'AL',
+        'North Macedonia': 'MK',
+        'Bosnia and Herzegovina': 'BA',
+        'Montenegro': 'ME',
+        'Kosovo': 'XK'
+    };
+
+    const code = countryToCode[countryName];
+    if (!code) return '🌍';
+
+    // Convert country code to flag emoji
+    const codePoints = code
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+};
+
 export default function VisitorAnalytics() {
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
@@ -26,7 +160,8 @@ export default function VisitorAnalytics() {
     const [cityBreakdown, setCityBreakdown] = useState<any[]>([]);
     const [distanceBreakdown, setDistanceBreakdown] = useState<any>(null);
     const [visitorTrend, setVisitorTrend] = useState<any[]>([]);
-    const [popularPages, setPopularPages] = useState<any[]>([]);
+    const [landingSections, setLandingSections] = useState<any[]>([]);
+    const [peakHours, setPeakHours] = useState<any[]>([]);
 
     // Period filter states
     const [period, setPeriod] = useState('7');
@@ -57,14 +192,15 @@ export default function VisitorAnalytics() {
             const periodValue = period === 'today' ? 'day' : period === '7' ? 'week' : period === '30' ? 'month' : 'week';
             const maxDist = Number(distanceTo);
 
-            const [visitorsData, locationData, countryData, cityData, distanceData, trendData, pagesData] = await Promise.all([
+            const [visitorsData, locationData, countryData, cityData, distanceData, trendData, sectionsData, hoursData] = await Promise.all([
                 visitorApi.getVisitors(periodValue),
                 visitorApi.getLocationBreakdown(periodValue),
                 visitorApi.getCountryBreakdown(periodValue),
                 visitorApi.getCityBreakdown(periodValue),
                 visitorApi.getDistanceBreakdown(periodValue, maxDist),
                 visitorApi.getVisitorTrend(periodValue),
-                visitorApi.getPopularPages(periodValue)
+                visitorApi.getLandingSections(periodValue),
+                visitorApi.getPeakHours(periodValue)
             ]);
 
             setVisitors(visitorsData.visitors || []);
@@ -73,8 +209,9 @@ export default function VisitorAnalytics() {
             setCityBreakdown(cityData.cities || []);
             setDistanceBreakdown(distanceData.distribution);
             setVisitorTrend(trendData.trend || []);
-            setPopularPages(pagesData.pages || []);
-            setCurrentPage(1); // Reset to first page
+            setLandingSections(sectionsData.sections || []);
+            setPeakHours(hoursData.hours || []);
+            setCurrentPage(1);
         } catch (error) {
             console.error('Error loading visitor data:', error);
             toast.error('Ошибка загрузки данных посетителей');
@@ -136,9 +273,9 @@ export default function VisitorAnalytics() {
                 </div>
             </div>
         );
-    }
+    };
 
-    // Prepare chart data - dynamic based on distance range
+    // Prepare chart data
     const getDistanceRanges = () => {
         const maxDist = Number(distanceTo);
         if (maxDist <= 5) {
@@ -178,7 +315,7 @@ export default function VisitorAnalytics() {
     }));
 
     const countryPieData = countryBreakdown.slice(0, 6).map((country) => ({
-        name: country.country,
+        name: `${getCountryFlag(country.country)} ${country.country}`,
         value: country.count,
         percentage: country.percentage
     }));
@@ -188,10 +325,15 @@ export default function VisitorAnalytics() {
         visitors: item.count
     }));
 
-    const pagesChartData = popularPages.slice(0, 8).map((page, index) => ({
-        name: page.page.length > 20 ? page.page.substring(0, 20) + '...' : page.page,
-        visitors: page.count,
+    const sectionsChartData = landingSections.slice(0, 8).map((section, index) => ({
+        name: section.section,
+        visitors: section.count,
         fill: COLORS[index % COLORS.length]
+    }));
+
+    const hoursChartData = peakHours.map(item => ({
+        hour: item.hour,
+        visitors: item.count
     }));
 
     const conversionRate = locationBreakdown?.total > 0
@@ -296,7 +438,7 @@ export default function VisitorAnalytics() {
 
             {/* Charts Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
-                {/* Distance Distribution with FROM-TO selector */}
+                {/* Distance Distribution */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <div className="flex flex-col gap-4 mb-6">
                         <h2 className="text-xl text-gray-900">Распределение по расстоянию</h2>
@@ -376,14 +518,7 @@ export default function VisitorAnalytics() {
                                 height={80}
                             />
                             <YAxis tick={{ fontSize: 12 }} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px',
-                                    padding: '8px 12px'
-                                }}
-                            />
+                            <Tooltip />
                             <Bar dataKey="value" name="Посетители" radius={[8, 8, 0, 0]}>
                                 {distanceChartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -393,7 +528,7 @@ export default function VisitorAnalytics() {
                     </ResponsiveContainer>
                 </div>
 
-                {/* Visitor Trend Over Time */}
+                {/* Visitor Trend */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 className="text-xl text-gray-900 mb-2">Тренд посещений</h2>
                     <p className="text-sm text-gray-600 mb-4">Динамика посещений по дням</p>
@@ -434,7 +569,7 @@ export default function VisitorAnalytics() {
                     </ResponsiveContainer>
                 </div>
 
-                {/* Country Distribution */}
+                {/* Country Distribution with Flags */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <h2 className="text-xl text-gray-900 mb-6">Распределение по странам</h2>
                     <ResponsiveContainer width="100%" height={300}>
@@ -457,33 +592,54 @@ export default function VisitorAnalytics() {
                     </ResponsiveContainer>
                 </div>
 
-                {/* Popular Pages */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
-                    <h2 className="text-xl text-gray-900 mb-2">Популярные страницы</h2>
-                    <p className="text-sm text-gray-600 mb-4">Самые посещаемые страницы сайта</p>
+                {/* Landing Sections */}
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 className="text-xl text-gray-900 mb-2">Секции лендинга</h2>
+                    <p className="text-sm text-gray-600 mb-4">Популярные разделы страницы</p>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={pagesChartData}>
+                        <BarChart data={sectionsChartData}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                             <XAxis
                                 dataKey="name"
                                 tick={{ fontSize: 11 }}
                                 angle={-45}
                                 textAnchor="end"
-                                height={100}
+                                height={80}
                             />
                             <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
                             <Bar dataKey="visitors" name="Посетители" radius={[8, 8, 0, 0]}>
-                                {pagesChartData.map((entry, index) => (
+                                {sectionsChartData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
                             </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
+
+                {/* Peak Hours */}
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 className="text-xl text-gray-900 mb-2">Пиковые часы</h2>
+                    <p className="text-sm text-gray-600 mb-4">Активность по времени суток</p>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={hoursChartData}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis
+                                dataKey="hour"
+                                tick={{ fontSize: 10 }}
+                                angle={-45}
+                                textAnchor="end"
+                                height={60}
+                            />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip />
+                            <Bar dataKey="visitors" name="Посетители" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
-            {/* Visitors Table with Pagination */}
+            {/* Visitors Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-4 md:p-6 border-b border-gray-200 flex justify-between items-center">
                     <h2 className="text-xl text-gray-900">Последние посетители</h2>
@@ -505,7 +661,9 @@ export default function VisitorAnalytics() {
                             {currentVisitors.map((visitor, index) => (
                                 <tr key={index} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 text-sm text-gray-900">{visitor.city || '-'}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{visitor.country || '-'}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        {visitor.country ? `${getCountryFlag(visitor.country)} ${visitor.country}` : '-'}
+                                    </td>
                                     <td className="px-6 py-4 text-sm">
                                         {visitor.distance_km ? (
                                             <span className={visitor.is_local ? 'text-green-600 font-medium' : 'text-blue-600'}>
@@ -523,7 +681,7 @@ export default function VisitorAnalytics() {
                     </table>
                 </div>
 
-                {/* Pagination Controls */}
+                {/* Pagination */}
                 {totalPages > 1 && (
                     <div className="p-4 border-t border-gray-200 flex items-center justify-between">
                         <Button

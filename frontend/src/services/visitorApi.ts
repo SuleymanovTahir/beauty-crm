@@ -65,12 +65,21 @@ export const visitorApi = {
         return response.json();
     },
 
-    async getPopularPages(period: string = 'week') {
+    async getLandingSections(period: string = 'week') {
         const response = await fetch(
-            `${API_URL}/api/analytics/visitors/popular-pages?period=${period}`,
+            `${API_URL}/api/analytics/visitors/landing-sections?period=${period}`,
             { credentials: 'include' }
         );
-        if (!response.ok) throw new Error('Failed to load popular pages');
+        if (!response.ok) throw new Error('Failed to load landing sections');
+        return response.json();
+    },
+
+    async getPeakHours(period: string = 'week') {
+        const response = await fetch(
+            `${API_URL}/api/analytics/visitors/peak-hours?period=${period}`,
+            { credentials: 'include' }
+        );
+        if (!response.ok) throw new Error('Failed to load peak hours');
         return response.json();
     }
 };

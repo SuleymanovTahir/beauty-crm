@@ -25,3 +25,4 @@ charset-normalizer
 certifi
 urllib3
 psycopg2-binary
+country-flag-icons

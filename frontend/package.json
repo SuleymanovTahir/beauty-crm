@@ -32,6 +32,7 @@
     "class-variance-authority": "*",
     "clsx": "*",
     "cmdk": "*",
+    "country-flag-icons": "^1.6.4",
     "embla-carousel-react": "*",
     "i18next": "*",
     "i18next-browser-languagedetector": "*",
@@ -52,17 +53,17 @@
     "vaul": "*"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "*",
     "@types/node": "*",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
     "@vitejs/plugin-react-swc": "*",
     "autoprefixer": "*",
-    "postcss": "*",
-    "tailwindcss": "*",
-    "@tailwindcss/postcss": "*",
     "i18next-parser": "^9.3.0",
     "patch-package": "*",
+    "postcss": "*",
+    "tailwindcss": "*",
     "terser": "*",
     "typescript": "*",
     "vite": "*"
