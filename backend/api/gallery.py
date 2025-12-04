@@ -249,7 +249,9 @@ async def get_gallery_settings():
         settings = get_salon_settings()
         return {
             "gallery_count": settings.get("gallery_display_count", 6),
-            "portfolio_count": settings.get("portfolio_display_count", 6)
+            "portfolio_count": settings.get("portfolio_display_count", 6),
+            "services_count": settings.get("services_display_count", 6),
+            "faces_count": settings.get("faces_display_count", 6)
         }
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -290,6 +292,14 @@ async def update_gallery_settings(
         if 'portfolio_count' in data:
             updates.append("portfolio_display_count = %s")
             params.append(data['portfolio_count'])
+
+        if 'services_count' in data:
+            updates.append("services_display_count = %s")
+            params.append(data['services_count'])
+
+        if 'faces_count' in data:
+            updates.append("faces_display_count = %s")
+            params.append(data['faces_count'])
             
         if updates:
             # Check if row exists
@@ -298,8 +308,8 @@ async def update_gallery_settings(
                 c.execute(f"UPDATE salon_settings SET {', '.join(updates)}", params)
             else:
                 # Insert default row
-                c.execute("INSERT INTO salon_settings (gallery_display_count, portfolio_display_count) VALUES (%s, %s)", 
-                          (data.get('gallery_count', 6), data.get('portfolio_count', 6)))
+                c.execute("INSERT INTO salon_settings (gallery_display_count, portfolio_display_count, services_display_count, faces_display_count) VALUES (%s, %s, %s, %s)", 
+                          (data.get('gallery_count', 6), data.get('portfolio_count', 6), data.get('services_count', 6), data.get('faces_count', 6)))
             
             conn.commit()
             
@@ -318,8 +328,16 @@ async def update_gallery_settings(
                          c.execute("ALTER TABLE salon_settings ADD COLUMN gallery_display_count INTEGER DEFAULT 6")
                      except: pass
                  if 'portfolio_count' in data:
+                      try:
+                          c.execute("ALTER TABLE salon_settings ADD COLUMN portfolio_display_count INTEGER DEFAULT 6")
+                      except: pass
+                 if 'services_count' in data:
                      try:
-                         c.execute("ALTER TABLE salon_settings ADD COLUMN portfolio_display_count INTEGER DEFAULT 6")
+                         c.execute("ALTER TABLE salon_settings ADD COLUMN services_display_count INTEGER DEFAULT 6")
+                     except: pass
+                 if 'faces_count' in data:
+                     try:
+                         c.execute("ALTER TABLE salon_settings ADD COLUMN faces_display_count INTEGER DEFAULT 6")
                      except: pass
                  conn.commit()
                  conn.close()

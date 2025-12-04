@@ -30,10 +30,11 @@ export default function GalleryTab() {
     const [portfolioImages, setPortfolioImages] = useState<GalleryImage[]>([]);
     const [salonImages, setSalonImages] = useState<GalleryImage[]>([]);
     const [servicesImages, setServicesImages] = useState<GalleryImage[]>([]);
+    const [facesImages, setFacesImages] = useState<GalleryImage[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('portfolio');
     const [showSettings, setShowSettings] = useState(false);
-    const [displaySettings, setDisplaySettings] = useState({ gallery_count: 6, portfolio_count: 6, services_count: 6 });
+    const [displaySettings, setDisplaySettings] = useState({ gallery_count: 6, portfolio_count: 6, services_count: 6, faces_count: 6 });
 
     // Edit State
     const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
@@ -72,15 +73,17 @@ export default function GalleryTab() {
     const loadGallery = async () => {
         try {
             setLoading(true);
-            const [portfolio, salon, services] = await Promise.all([
+            const [portfolio, salon, services, faces] = await Promise.all([
                 galleryApi.getImages('portfolio', false),
                 galleryApi.getImages('salon', false),
-                galleryApi.getImages('services', false)
+                galleryApi.getImages('services', false),
+                galleryApi.getImages('faces', false)
             ]);
 
             setPortfolioImages(portfolio.images || []);
             setSalonImages(salon.images || []);
             setServicesImages(services.images || []);
+            setFacesImages(faces.images || []);
 
         } catch (error) {
             console.error('Error loading gallery:', error);
@@ -100,6 +103,7 @@ export default function GalleryTab() {
         if (activeTab === 'portfolio') setPortfolioImages(updateState);
         else if (activeTab === 'salon') setSalonImages(updateState);
         else if (activeTab === 'services') setServicesImages(updateState);
+        else if (activeTab === 'faces') setFacesImages(updateState);
 
         try {
             await galleryApi.updateImage(image.id, { is_visible: nextIsVisible });
@@ -121,6 +125,7 @@ export default function GalleryTab() {
             if (activeTab === 'portfolio') setPortfolioImages(filterState);
             else if (activeTab === 'salon') setSalonImages(filterState);
             else if (activeTab === 'services') setServicesImages(filterState);
+            else if (activeTab === 'faces') setFacesImages(filterState);
 
         } catch (error) {
             toast.error('Ошибка удаления');
@@ -448,6 +453,17 @@ export default function GalleryTab() {
                                 onChange={(e) => setDisplaySettings({ ...displaySettings, services_count: parseInt(e.target.value) || 6 })}
                             />
                         </div>
+                        <div>
+                            <Label htmlFor="faces-count">Количество фото в Лицах</Label>
+                            <Input
+                                id="faces-count"
+                                type="number"
+                                min="1"
+                                max="50"
+                                value={displaySettings.faces_count || 6}
+                                onChange={(e) => setDisplaySettings({ ...displaySettings, faces_count: parseInt(e.target.value) || 6 })}
+                            />
+                        </div>
                         <div className="flex items-end">
                             <Button onClick={saveSettings} className="w-full">
                                 <Save className="w-4 h-4 mr-2" />
@@ -471,6 +487,9 @@ export default function GalleryTab() {
                     </TabsTrigger>
                     <TabsTrigger value="services">
                         Услуги ({servicesImages.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="faces">
+                        Лица ({facesImages.length})
                     </TabsTrigger>
                 </TabsList>
 
@@ -553,6 +572,33 @@ export default function GalleryTab() {
                         </div>
                     </div>
                     {renderGalleryGrid(servicesImages, setServicesImages, 'services')}
+                </TabsContent>
+
+                <TabsContent value="faces">
+                    <div className="mb-4">
+                        <div className="mb-4">
+                            <input
+                                id="faces-upload"
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={(e) => {
+                                    const files = Array.from(e.target.files || []);
+                                    files.forEach(file => handleUpload('faces', file));
+                                    e.target.value = '';
+                                }}
+                            />
+                            <Label
+                                htmlFor="faces-upload"
+                                className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                            >
+                                <Upload className="w-4 h-4 mr-2" />
+                                Загрузить фото
+                            </Label>
+                        </div>
+                    </div>
+                    {renderGalleryGrid(facesImages, setFacesImages, 'faces')}
                 </TabsContent>
             </Tabs>
         </div>

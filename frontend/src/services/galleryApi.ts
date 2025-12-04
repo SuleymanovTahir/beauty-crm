@@ -52,7 +52,7 @@ export const galleryApi = {
         return response.json();
     },
 
-    async saveSettings(data: { gallery_count?: number; portfolio_count?: number }) {
+    async saveSettings(data: { gallery_count?: number; portfolio_count?: number; services_count?: number; faces_count?: number }) {
         const response = await fetch(`${API_URL}/api/gallery/settings/display`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

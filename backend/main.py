@@ -97,6 +97,7 @@ from api.payroll import router as payroll_router
 from api.feedback import router as feedback_router
 from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
+from api.visitor_analytics import router as visitor_analytics_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -165,6 +166,7 @@ app.include_router(proxy_router, prefix="/api")   # для прокси изоб
 app.include_router(internal_chat_router)
 app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)
 app.include_router(seo_metadata_router)  # для SEO метаданных (/api/public/seo-metadata)
+app.include_router(visitor_analytics_router, prefix="/api")  # для аналитики посетителей
 
 # ===== MIDDLEWARE =====
 
@@ -192,6 +194,22 @@ async def log_requests(request: Request, call_next):
         process_time = time.time() - start_time
         log_info(f"📤 {request.method} {request.url.path} → {response.status_code} ({process_time:.2f}s)", 
                 "middleware")
+        
+        # Track visitors to public pages
+        if request.url.path.startswith("/public") or request.url.path == "/":
+            try:
+                from db.visitor_tracking import track_visitor
+                ip = request.client.host
+                user_agent = request.headers.get("user-agent", "")
+                page_url = str(request.url)
+                
+                # Track asynchronously to not block response
+                import asyncio
+                asyncio.create_task(asyncio.to_thread(track_visitor, ip, user_agent, page_url))
+            except Exception as e:
+                # Don't fail the request if tracking fails
+                log_error(f"Visitor tracking error: {e}", "middleware")
+        
         return response
     except Exception as e:
         log_error(f"❌ ОШИБКА: {request.method} {request.url.path}", "middleware", 
@@ -501,7 +519,9 @@ async def startup_event():
     # log_info("🔧 Запуск всех исправлений...", "startup")
     # await run_all_fixes()
 
-
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests()
 
  
 

@@ -26,6 +26,7 @@ const PlansManagement = React.lazy(() => import('./pages/admin/PlansManagement')
 const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
 const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
 const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
+const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
 
 const ManagerLayout = React.lazy(() => import('./components/layouts/ManagerLayout'));
 const ManagerDashboard = React.lazy(() => import('./pages/manager/Dashboard'));
@@ -222,6 +223,7 @@ export default function App() {
                 <Route path="settings" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="public-content" element={<PublicContent />} />
+                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
