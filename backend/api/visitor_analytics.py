@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime, timedelta
-from db.visitor_tracking import get_visitor_stats, get_location_distribution, get_country_distribution, get_city_distribution, get_distance_distribution, get_visitor_trend, get_popular_pages
+from db.visitor_tracking import get_visitor_stats, get_location_distribution, get_country_distribution, get_city_distribution, get_distance_distribution, get_visitor_trend, get_landing_sections, get_peak_hours
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
 from fastapi.responses import StreamingResponse
@@ -272,12 +272,12 @@ async def get_trend(
         log_error(f"Error getting visitor trend: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@router.get("/analytics/visitors/popular-pages")
-async def get_pages(
+@router.get("/analytics/visitors/landing-sections")
+async def get_sections(
     period: str = "week",
     session_token: Optional[str] = Cookie(None)
 ):
-    """Get most popular pages"""
+    """Get most visited landing sections"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -294,13 +294,46 @@ async def get_pages(
         else:
             start_date = end_date - timedelta(weeks=1)
         
-        pages = get_popular_pages(start_date, end_date)
+        sections = get_landing_sections(start_date, end_date)
         
         return {
             "success": True,
-            "pages": pages
+            "sections": sections
         }
         
     except Exception as e:
-        log_error(f"Error getting popular pages: {e}", "api")
+        log_error(f"Error getting landing sections: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/analytics/visitors/peak-hours")
+async def get_hours(
+    period: str = "week",
+    session_token: Optional[str] = Cookie(None)
+):
+    """Get peak hours of visitor activity"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    try:
+        # Calculate date range
+        end_date = datetime.now()
+        if period == "day":
+            start_date = end_date - timedelta(days=1)
+        elif period == "week":
+            start_date = end_date - timedelta(weeks=1)
+        elif period == "month":
+            start_date = end_date - timedelta(days=30)
+        else:
+            start_date = end_date - timedelta(weeks=1)
+        
+        hours = get_peak_hours(start_date, end_date)
+        
+        return {
+            "success": True,
+            "hours": hours
+        }
+        
+    except Exception as e:
+        log_error(f"Error getting peak hours: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)

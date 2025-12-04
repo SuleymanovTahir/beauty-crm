@@ -1,40 +1,11 @@
 {
   "public_reviews": [
     {
-      "id": 7,
-      "fields": {
-        "text_ru": {
-          "ru": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.",
-          "key": "public_reviews.7.text_ru.941dc55e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "author_name": {
-          "ru": "Anna Petrova",
-          "key": "public_reviews.7.author_name.73217063",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
       "id": 8,
       "fields": {
         "text_ru": {
-          "ru": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
-          "key": "public_reviews.8.text_ru.6f00ad70",
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.8.text_ru.d04583b6",
           "en": null,
           "ar": null,
           "es": null,
@@ -47,43 +18,14 @@
         "author_name": {
           "ru": "Sarah Jenkins",
           "key": "public_reviews.8.author_name.ff715865",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 9,
-      "fields": {
-        "text_ru": {
-          "ru": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!",
-          "key": "public_reviews.9.text_ru.9b9eb8cb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "author_name": {
-          "ru": "Elena Smirnova",
-          "key": "public_reviews.9.author_name.cafa8492",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
         }
       }
     },
@@ -91,8 +33,8 @@
       "id": 10,
       "fields": {
         "text_ru": {
-          "ru": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "key": "public_reviews.10.text_ru.f38138da",
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.10.text_ru.784d2781",
           "en": null,
           "ar": null,
           "es": null,
@@ -105,14 +47,14 @@
         "author_name": {
           "ru": "Maria Gonzalez",
           "key": "public_reviews.10.author_name.653816a6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
         }
       }
     },
@@ -120,8 +62,8 @@
       "id": 11,
       "fields": {
         "text_ru": {
-          "ru": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
-          "key": "public_reviews.11.text_ru.ae85e84b",
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.11.text_ru.33473c5f",
           "en": null,
           "ar": null,
           "es": null,
@@ -134,364 +76,14 @@
         "author_name": {
           "ru": "Fatima Al-Sayed",
           "key": "public_reviews.11.author_name.f26d4aa2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    }
-  ],
-  "public_faq": [
-    {
-      "id": 13,
-      "fields": {
-        "question_ru": {
-          "ru": "Как записаться на процедуру",
-          "key": "public_faq.13.question_ru.ca37a34b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Вы можете записаться на процедуру через форму на нашем сайте, позвонив по телефону, или написав нам в Instagram. Мы свяжемся с вами для подтверждения записи.",
-          "key": "public_faq.13.answer_ru.0aebd2fd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 14,
-      "fields": {
-        "question_ru": {
-          "ru": "Какие способы оплаты вы принимаете",
-          "key": "public_faq.14.question_ru.0db37e23",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги.",
-          "key": "public_faq.14.answer_ru.c07c855f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "question_ru": {
-          "ru": "Могу ли я отменить или перенести запись",
-          "key": "public_faq.15.question_ru.e2d9683f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
-          "key": "public_faq.15.answer_ru.6efb24d6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 16,
-      "fields": {
-        "question_ru": {
-          "ru": "Какие материалы вы используете",
-          "key": "public_faq.16.question_ru.04ca7970",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
-          "key": "public_faq.16.answer_ru.9989a917",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "question_ru": {
-          "ru": "Есть ли у ваших мастеров сертификаты",
-          "key": "public_faq.17.question_ru.10e5389c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.",
-          "key": "public_faq.17.answer_ru.c33e5756",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 18,
-      "fields": {
-        "question_ru": {
-          "ru": "Нужна ли подготовка перед процедурой",
-          "key": "public_faq.18.question_ru.4a091b3c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.",
-          "key": "public_faq.18.answer_ru.c6e12dad",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "question_ru": {
-          "ru": "Есть ли противопоказания к процедурам",
-          "key": "public_faq.19.question_ru.6d37eadc",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
-          "key": "public_faq.19.answer_ru.a2d7b11d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 20,
-      "fields": {
-        "question_ru": {
-          "ru": "Предоставляете ли вы гарантию на услуги",
-          "key": "public_faq.20.question_ru.53c63ea4",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
-          "key": "public_faq.20.answer_ru.5480ef0d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 21,
-      "fields": {
-        "question_ru": {
-          "ru": "Есть ли у вас программа лояльности",
-          "key": "public_faq.21.question_ru.40eab490",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
-          "key": "public_faq.21.answer_ru.caa87ffe",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 22,
-      "fields": {
-        "question_ru": {
-          "ru": "Работаете ли вы в выходные",
-          "key": "public_faq.22.question_ru.09fd8154",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, мы работаем 7 дней в неделю.",
-          "key": "public_faq.22.answer_ru.652dc0a6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 23,
-      "fields": {
-        "question_ru": {
-          "ru": "Можно ли подарить сертификат на услуги",
-          "key": "public_faq.23.question_ru.bcc59516",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
-          "key": "public_faq.23.answer_ru.3ae65684",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 24,
-      "fields": {
-        "question_ru": {
-          "ru": "Где находится ваш салон",
-          "key": "public_faq.24.question_ru.2cc640a7",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "answer_ru": {
-          "ru": "Мы находимся в центре Дубая. Подробную информацию о том, как добраться, вы можете найти на странице Контакты.",
-          "key": "public_faq.24.answer_ru.62473075",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Саид",
+          "pt": "Fátima Al-Sayed"
         }
       }
     }
@@ -992,18 +584,6 @@
     {
       "id": 1,
       "fields": {
-        "title_ru": {
-          "ru": "Красота и Элегантность",
-          "key": "public_banners.1.title_ru.0b52ad71",
-          "en": "Beauty and Elegance",
-          "ar": "الجمال والأناقة",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "title_en": {
           "ru": "Beauty and Elegance",
           "key": "public_banners.1.title_en.4eca14ce",
@@ -1016,11 +596,11 @@
           "kk": "Сұлулық және әсемдік",
           "pt": "Beleza e Elegância"
         },
-        "subtitle_ru": {
-          "ru": "Профессиональные услуги красоты",
-          "key": "public_banners.1.subtitle_ru.a02f5b36",
-          "en": "Professional beauty services",
-          "ar": "خدمات التجميل المهنية",
+        "title_pt": {
+          "ru": "Beleza e Elegância",
+          "key": "public_banners.1.title_pt.790f3478",
+          "en": null,
+          "ar": null,
           "es": null,
           "de": null,
           "fr": null,
@@ -1039,17 +619,12 @@
           "hi": "व्यावसायिक सौंदर्य सेवाएँ",
           "kk": "Кәсіби сұлулық қызметтері",
           "pt": "Serviços profissionais de beleza"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "title_ru": {
-          "ru": "Скидки до 50%",
-          "key": "public_banners.2.title_ru.816f4b30",
-          "en": "Discounts up to 50%",
-          "ar": "خصومات تصل إلى 50%",
+        },
+        "subtitle_de": {
+          "ru": "Professionelle Schönheitsdienstleistungen",
+          "key": "public_banners.1.subtitle_de.efd7871a",
+          "en": null,
+          "ar": null,
           "es": null,
           "de": null,
           "fr": null,
@@ -1057,6 +632,71 @@
           "kk": null,
           "pt": null
         },
+        "subtitle_es": {
+          "ru": "Servicios de belleza profesionales",
+          "key": "public_banners.1.subtitle_es.a46878ed",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_fr": {
+          "ru": "Services de beauté professionnels",
+          "key": "public_banners.1.subtitle_fr.e04f3c6c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_hi": {
+          "ru": "व्यावसायिक सौंदर्य सेवाएँ",
+          "key": "public_banners.1.subtitle_hi.1363e658",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_kk": {
+          "ru": "Кәсіби сұлулық қызметтері",
+          "key": "public_banners.1.subtitle_kk.e0321a2d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "subtitle_pt": {
+          "ru": "Serviços profissionais de beleza",
+          "key": "public_banners.1.subtitle_pt.aaf0dc0d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
         "title_en": {
           "ru": "Discounts up to 50%",
           "key": "public_banners.2.title_en.82e81214",
@@ -1068,18 +708,6 @@
           "hi": "50% तक की छूट",
           "kk": "50% дейін жеңілдіктер",
           "pt": "Descontos de até 50%"
-        },
-        "subtitle_ru": {
-          "ru": "На все услуги салона",
-          "key": "public_banners.2.subtitle_ru.f9d0958e",
-          "en": "For all salon services",
-          "ar": "لجميع خدمات الصالون",
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
         },
         "subtitle_en": {
           "ru": "On all salon services",
