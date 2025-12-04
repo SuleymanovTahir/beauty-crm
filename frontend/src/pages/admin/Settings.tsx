@@ -1837,7 +1837,7 @@ export default function AdminSettings() {
                       {/* User Selection */}
                       <div>
                         <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                          {t('settings:select_recipients') || 'Выбор получателей'}
+                          {t('settings:select_recipients')}
                         </Label>
                         <div className="relative">
                           <button
@@ -1852,8 +1852,8 @@ export default function AdminSettings() {
                               return (
                                 <span className="text-sm text-gray-700">
                                   {(broadcastForm.user_ids || []).length === 0
-                                    ? (t('settings:all_subscribed_users') || 'Все подписчики')
-                                    : `${t('settings:selected') || 'Выбрано'}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length}`}
+                                    ? t('settings:all_subscribed_users')
+                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length}`}
                                 </span>
                               );
                             })()}
@@ -1881,7 +1881,7 @@ export default function AdminSettings() {
                                       className="w-4 h-4 text-pink-600 rounded"
                                     />
                                     <span className="text-sm font-medium text-gray-700">
-                                      {t('settings:select_all') || 'Выбрать всех'} ({filteredUsers.length})
+                                      {t('settings:select_all')} ({filteredUsers.length})
                                     </span>
                                   </label>
                                 </div>
@@ -1892,7 +1892,7 @@ export default function AdminSettings() {
                                     </div>
                                   ) : filteredUsers.length === 0 ? (
                                     <div className="flex justify-center py-8 text-gray-500 text-sm">
-                                      {t('settings:no_users_for_role') || 'Нет пользователей с выбранной ролью'}
+                                      {t('settings:no_users_for_role')}
                                     </div>
                                   ) : (
                                     <div className="p-2">
@@ -1922,7 +1922,7 @@ export default function AdminSettings() {
                                     onClick={() => setUserDropdownOpen(false)}
                                     className="w-full px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-lg transition-colors"
                                   >
-                                    {t('settings:done') || 'Готово'}
+                                    {t('settings:done')}
                                   </button>
                                 </div>
                               </div>
@@ -1930,7 +1930,7 @@ export default function AdminSettings() {
                           })()}
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
-                          {t('settings:recipients_hint') || 'Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам'}
+                          {t('settings:recipients_hint')}
                         </p>
                       </div>
 

@@ -727,10 +727,10 @@ def init_database():
         now = datetime.now().isoformat()
         c.execute("""INSERT INTO salon_settings 
                      (id, name, address, google_maps, hours, hours_ru, hours_ar,
-                      booking_url, phone, bot_name, bot_name_en, bot_name_ar,
+                      booking_url, phone, email, instagram, whatsapp, bot_name, bot_name_en, bot_name_ar,
                       city, country, timezone, currency, 
                       latitude, longitude, logo_url, base_url, updated_at)
-                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   ("M.Le Diamant Beauty Lounge",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
@@ -739,6 +739,9 @@ def init_database():
                    "يوميًا 10:30 - 21:30",
                    "https://n1314037.alteg.io",
                    "+971526961100",
+                   "mladiamontuae@gmail.com",  # email
+                   "www.instagram.com/mlediamant/",  # instagram
+                   "+971526961100",  # whatsapp
                    "M.Le Diamant Assistant",
                    "M.Le Diamant Assistant",
                    "مساعد M.Le Diamant",
