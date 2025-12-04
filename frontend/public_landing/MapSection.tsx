@@ -46,7 +46,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('phone') || "Телефон"}
                   </h3>
-                  <a href={`tel:${salonInfo?.phone}`} className="text-foreground hover:underline text-sm sm:text-base">
+                  <a href={`tel:${salonInfo?.phone}`} className="text-xs sm:text-sm text-foreground/70 leading-snug hover:underline">
                     {salonInfo?.phone || "+971 54 247 8604"}
                   </a>
                 </div>
@@ -63,7 +63,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                   <h3 className="text-sm sm:text-base font-semibold text-[var(--heading)] mb-1">
                     {t('email') || "Email"}
                   </h3>
-                  <a href={`mailto:${salonInfo?.email}`} className="text-foreground hover:underline text-sm sm:text-base break-all">
+                  <a href={`mailto:${salonInfo?.email}`} className="text-xs sm:text-sm text-foreground/70 leading-snug hover:underline break-all">
                     {salonInfo?.email || "info@salon.ru"}
                   </a>
                 </div>
@@ -98,7 +98,7 @@ export function MapSection({ salonInfo }: MapSectionProps) {
                     {t('workingHours') || "Часы работы"}
                   </h3>
                   <p className="text-xs sm:text-sm text-foreground/70 leading-snug">
-                    {t('monSun') || "Понедельник - Воскресенье"}: <span className="text-foreground font-medium">{salonInfo?.hours || "10:30 - 21:30"}</span>
+                    {t('monSun') || "Пн-Вс"}: {t('daily') || "Ежедневно"} {salonInfo?.hours || "10:30 - 21:30"}
                   </p>
                 </div>
               </div>
@@ -123,7 +123,11 @@ export function MapSection({ salonInfo }: MapSectionProps) {
 
           <div className="w-full h-[500px] lg:h-auto lg:min-h-[600px] rounded-xl overflow-hidden shadow-lg bg-gray-200 border border-border/50">
             <iframe
-              src={salonInfo?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d231543.89654711885!2d55.04788838369384!3d25.07619619999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f17!3m3!1m2!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2s!4v1234567890123"}
+              src={salonInfo?.google_maps ?
+                (salonInfo.google_maps.includes('maps.app.goo.gl') ?
+                  `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1!2d55.13!3d25.08!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6ca7b1e1e1e1%3A0x1e1e1e1e1e1e1e1e!2sShop%2013%2C%20Amwaj%203%20Plaza%20Level%2C%20JBR%2C%20Dubai!5e0!3m2!1sen!2sae!4v1733334000000`
+                  : salonInfo.google_maps)
+                : "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d231543.89654711885!2d55.04788838369384!3d25.07619619999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f17!3m3!1m2!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2s!4v1234567890123"}
               width="100%"
               height="100%"
               style={{ border: 0 }}
