@@ -155,7 +155,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex items-center gap-4">
               {salonInfo?.instagram && (
                 <a
-                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
+                  href={salonInfo.instagram?.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram?.replace(/^(https?:\/\/)?(www\.)?/, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:text-primary/80 transition-colors"
@@ -261,7 +261,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex justify-center gap-6 py-4 border-t border-border/50">
               {salonInfo?.instagram && (
                 <a
-                  href={salonInfo.instagram.startsWith('http') ? salonInfo.instagram : `https://instagram.com/${salonInfo.instagram.replace('@', '').replace('https://instagram.com/', '')}`}
+                  href={salonInfo.instagram?.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram?.replace(/^(https?:\/\/)?(www\.)?/, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:text-primary/80 transition-colors"

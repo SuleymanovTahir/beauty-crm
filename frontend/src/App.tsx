@@ -42,24 +42,24 @@ const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'))
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
 
 const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
-const PriceList = React.lazy(() => import('./pages/public/PriceList'));
-const Success = React.lazy(() => import('./pages/public/Success'));
-const About = React.lazy(() => import('./pages/public/About'));
-const Contacts = React.lazy(() => import('./pages/public/Contacts'));
-const Cooperation = React.lazy(() => import('./pages/public/Cooperation'));
-const FAQ = React.lazy(() => import('./pages/public/FAQ'));
+// const Success = React.lazy(() => import('./pages/public/Success'));
+// const About = React.lazy(() => import('./pages/public/About'));
+// const Contacts = React.lazy(() => import('./pages/public/Contacts'));
+// const Cooperation = React.lazy(() => import('./pages/public/Cooperation'));
+// const FAQ = React.lazy(() => import('./pages/public/FAQ'));
 const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
-const UserCabinet = React.lazy(() => import('./pages/public/UserCabinet'));
-const DataDeletion = React.lazy(() => import('./pages/public/DataDeletion'));
-const Booking = React.lazy(() => import('./pages/public/Booking'));
-const ClientCabinet = React.lazy(() => import('./pages/public/ClientCabinet'));
-const RateUs = React.lazy(() => import('./pages/public/RateUs'));
+// const UserCabinet = React.lazy(() => import('./pages/public/UserCabinet'));
+// const DataDeletion = React.lazy(() => import('./pages/public/DataDeletion'));
+// const Booking = React.lazy(() => import('./pages/public/Booking'));
+// const ClientCabinet = React.lazy(() => import('./pages/public/ClientCabinet'));
+// const RateUs = React.lazy(() => import('./pages/public/RateUs'));
 
 // New Public Landing Pages
 import { LandingPage } from '../public_landing/pages/LandingPage';
 import { PrivacyPolicy as PrivacyPolicyNew } from '../public_landing/pages/public_landing__PrivacyPolicy';
 import { TermsOfUse as TermsOfUseNew } from '../public_landing/pages/public_landing__TermsOfUse';
 import { ServiceDetail } from '../public_landing/pages/ServiceDetail';
+import { DataDeletion } from '../public_landing/pages/DataDeletion';
 
 const Login = React.lazy(() => import('./pages/auth/Login'));
 const Register = React.lazy(() => import('./pages/auth/Register'));
@@ -327,17 +327,14 @@ export default function App() {
                 <Route path="/service/:category" element={<ServiceDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+                <Route path="/data-deletion" element={<DataDeletion />} />
               </Route>
 
-              {/* Public Routes using PublicLayout */}
-              <Route element={<PublicLayout />}>
-                {/* <Route index element={<Home />} /> */}
-                <Route path="price-list" element={<PriceList />} />
+              {/* Public Routes using PublicLayout - COMMENTED OUT: files don't exist */}
+              {/* <Route element={<PublicLayout />}>
                 <Route path="booking" element={<Booking />} />
                 <Route path="client/cabinet" element={<ClientCabinet />} />
                 <Route path="success" element={<Success />} />
-                {/* <Route path="terms" element={<Terms />} /> */}
-                {/* <Route path="privacy-policy" element={<PrivacyPolicy />} /> */}
                 <Route path="about" element={<About />} />
                 <Route path="contacts" element={<Contacts />} />
                 <Route path="cooperation" element={<Cooperation />} />
@@ -357,7 +354,7 @@ export default function App() {
                     )
                   }
                 />
-              </Route>
+              </Route> */}
 
               {/* Redirect to home by default */}
               <Route path="*" element={<Navigate to="/" replace />} />
