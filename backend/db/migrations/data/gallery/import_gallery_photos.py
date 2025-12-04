@@ -15,8 +15,23 @@ def import_gallery_photos():
     c = conn.cursor()
     
     try:
-        # Get project root (3 levels up from this file: data/gallery/ -> migrations/ -> db/ -> backend/ -> project_root)
-        project_root = Path(__file__).parent.parent.parent.parent
+        # Get project root (backend/db/migrations/data/gallery -> 5 levels up to project root)
+        # File is at: backend/db/migrations/data/gallery/import_gallery_photos.py
+        # We need to go up: gallery(1) -> data(2) -> migrations(3) -> db(4) -> backend(5) -> project_root
+        current_file = Path(__file__).resolve()
+        project_root = current_file.parent.parent.parent.parent.parent.parent
+        
+        # Verify project root by checking if 'frontend' exists
+        if not (project_root / "frontend").exists():
+             # Fallback: try to find based on CWD if script is run from root
+             cwd = Path.cwd()
+             if (cwd / "frontend").exists():
+                 project_root = cwd
+             else:
+                 # Hardcode for this environment if all else fails
+                 project_root = Path("/Users/tahir/Desktop/beauty-crm")
+        
+        print(f"📂 Project root: {project_root}")
         
         # Создаем папки назначения если их нет
         (project_root / "backend/static/uploads/portfolio").mkdir(parents=True, exist_ok=True)
@@ -29,6 +44,11 @@ def import_gallery_photos():
         sources = [
             {
                 'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Портфолио",
+                'dest': project_root / "backend/static/uploads/portfolio",
+                'category': 'portfolio'
+            },
+            {
+                'source': project_root / "frontend/public_landing/styles/M le Diamant  портфолио/Красивые лица",
                 'dest': project_root / "backend/static/uploads/portfolio",
                 'category': 'portfolio'
             },
