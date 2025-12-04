@@ -100,12 +100,16 @@ export default function AdminSettings() {
     subject: '',
     message: '',
     target_role: '',
+    user_ids: [] as number[],
   });
   const [broadcastPreview, setBroadcastPreview] = useState<any>(null);
   const [loadingBroadcastPreview, setLoadingBroadcastPreview] = useState(false);
   const [sendingBroadcast, setSendingBroadcast] = useState(false);
   const [broadcastHistory, setBroadcastHistory] = useState<any[]>([]);
   const [loadingBroadcastHistory, setLoadingBroadcastHistory] = useState(false);
+  const [broadcastUsers, setBroadcastUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
+  const [loadingBroadcastUsers, setLoadingBroadcastUsers] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Roles state
   const [roles, setRoles] = useState<Array<{ key: string; name: string; level: number }>>([]);
@@ -167,6 +171,7 @@ export default function AdminSettings() {
     loadBroadcastHistory();
     loadBookingReminderSettings();
     loadMessengerSettings();
+    loadBroadcastUsers();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -633,6 +638,22 @@ export default function AdminSettings() {
     }
   };
 
+  const loadBroadcastUsers = async () => {
+    try {
+      setLoadingBroadcastUsers(true);
+      console.log('🔍 Loading users for broadcast selection...');
+      const response = await api.getUsers();
+      console.log('✅ Users response:', response);
+      const usersArray = Array.isArray(response) ? response : (response?.users || []);
+      console.log('✅ Users array:', usersArray);
+      setBroadcastUsers(usersArray);
+    } catch (err) {
+      console.error('❌ Error loading broadcast users:', err);
+    } finally {
+      setLoadingBroadcastUsers(false);
+    }
+  };
+
   const loadBookingReminderSettings = async () => {
     try {
       setLoadingReminderSettings(true);
@@ -744,6 +765,23 @@ export default function AdminSettings() {
     }
   };
 
+  const handleBroadcastUserToggle = (userId: number) => {
+    const currentIds = broadcastForm.user_ids || [];
+    if (currentIds.includes(userId)) {
+      setBroadcastForm({ ...broadcastForm, user_ids: currentIds.filter(id => id !== userId) });
+    } else {
+      setBroadcastForm({ ...broadcastForm, user_ids: [...currentIds, userId] });
+    }
+  };
+
+  const handleSelectAllBroadcastUsers = () => {
+    if ((broadcastForm.user_ids || []).length === broadcastUsers.length) {
+      setBroadcastForm({ ...broadcastForm, user_ids: [] });
+    } else {
+      setBroadcastForm({ ...broadcastForm, user_ids: broadcastUsers.map(u => u.id) });
+    }
+  };
+
   const handleBroadcastChannelToggle = (channel: string) => {
     if (broadcastForm.channels.includes(channel)) {
       setBroadcastForm({ ...broadcastForm, channels: broadcastForm.channels.filter(c => c !== channel) });
@@ -802,6 +840,7 @@ export default function AdminSettings() {
         subject: '',
         message: '',
         target_role: '',
+        user_ids: [],
       });
       setBroadcastPreview(null);
 
@@ -1778,7 +1817,9 @@ export default function AdminSettings() {
                         <Label htmlFor="target_role">{t('settings:target_role_optional')}</Label>
                         <Select
                           value={broadcastForm.target_role}
-                          onValueChange={(value) => setBroadcastForm({ ...broadcastForm, target_role: value })}
+                          onValueChange={(value) => {
+                            setBroadcastForm({ ...broadcastForm, target_role: value, user_ids: [] });
+                          }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder={t('settings:placeholder_all_users')} />
@@ -1791,6 +1832,106 @@ export default function AdminSettings() {
                             <SelectItem value="client">{t('settings:clients')}</SelectItem>
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      {/* User Selection */}
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                          {t('settings:select_recipients') || 'Выбор получателей'}
+                        </Label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                            className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
+                          >
+                            {(() => {
+                              const filteredUsers = broadcastUsers.filter(u =>
+                                !broadcastForm.target_role || broadcastForm.target_role === 'all' || u.role === broadcastForm.target_role
+                              );
+                              return (
+                                <span className="text-sm text-gray-700">
+                                  {(broadcastForm.user_ids || []).length === 0
+                                    ? (t('settings:all_subscribed_users') || 'Все подписчики')
+                                    : `${t('settings:selected') || 'Выбрано'}: ${(broadcastForm.user_ids || []).length} из ${filteredUsers.length}`}
+                                </span>
+                              );
+                            })()}
+                            <Users className="w-4 h-4 text-gray-500" />
+                          </button>
+
+                          {userDropdownOpen && (() => {
+                            const filteredUsers = broadcastUsers.filter(u =>
+                              !broadcastForm.target_role || broadcastForm.target_role === 'all' || u.role === broadcastForm.target_role
+                            );
+                            return (
+                              <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                <div className="p-3 border-b border-gray-200">
+                                  <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                      type="checkbox"
+                                      checked={(broadcastForm.user_ids || []).length === filteredUsers.length && filteredUsers.length > 0}
+                                      onChange={() => {
+                                        if ((broadcastForm.user_ids || []).length === filteredUsers.length) {
+                                          setBroadcastForm({ ...broadcastForm, user_ids: [] });
+                                        } else {
+                                          setBroadcastForm({ ...broadcastForm, user_ids: filteredUsers.map(u => u.id) });
+                                        }
+                                      }}
+                                      className="w-4 h-4 text-pink-600 rounded"
+                                    />
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {t('settings:select_all') || 'Выбрать всех'} ({filteredUsers.length})
+                                    </span>
+                                  </label>
+                                </div>
+                                <div className="max-h-64 overflow-y-auto">
+                                  {loadingBroadcastUsers ? (
+                                    <div className="flex justify-center py-8">
+                                      <Loader className="w-5 h-5 animate-spin text-pink-600" />
+                                    </div>
+                                  ) : filteredUsers.length === 0 ? (
+                                    <div className="flex justify-center py-8 text-gray-500 text-sm">
+                                      {t('settings:no_users_for_role') || 'Нет пользователей с выбранной ролью'}
+                                    </div>
+                                  ) : (
+                                    <div className="p-2">
+                                      {filteredUsers.map((user) => (
+                                        <label
+                                          key={user.id}
+                                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
+                                        >
+                                          <input
+                                            type="checkbox"
+                                            checked={(broadcastForm.user_ids || []).includes(user.id)}
+                                            onChange={() => handleBroadcastUserToggle(user.id)}
+                                            className="w-4 h-4 text-pink-600 rounded"
+                                          />
+                                          <div className="flex-1">
+                                            <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                            <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
+                                          </div>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="p-3 border-t border-gray-200 bg-gray-50">
+                                  <button
+                                    type="button"
+                                    onClick={() => setUserDropdownOpen(false)}
+                                    className="w-full px-4 py-2 text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 rounded-lg transition-colors"
+                                  >
+                                    {t('settings:done') || 'Готово'}
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          {t('settings:recipients_hint') || 'Выберите конкретных получателей или оставьте пустым для отправки всем подписчикам'}
+                        </p>
                       </div>
 
                       {/* Subject */}

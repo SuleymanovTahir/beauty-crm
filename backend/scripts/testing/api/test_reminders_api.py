@@ -162,7 +162,7 @@ def test_toggle_reminder():
         print(f"   Текущее состояние: {'Включено' if current_state else 'Выключено'}")
 
         # Переключаем состояние
-        new_state = 0 if current_state else 1
+        new_state = False if current_state else True
         c.execute("UPDATE booking_reminder_settings SET is_enabled = %s WHERE id = %s", (new_state, reminder_id))
         conn.commit()
 
@@ -225,4 +225,4 @@ if __name__ == "__main__":
 
     print(f"\nПройдено: {passed}/{total}")
 
-    sys.exit(0 if passed == total else 1)
+    sys.exit(False if passed == total else True)

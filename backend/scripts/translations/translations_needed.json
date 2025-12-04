@@ -1,2010 +1,461 @@
 {
-  "users": [
-    {
-      "id": 2,
-      "fields": {
-        "full_name": {
-          "ru": "SIMO",
-          "key": "users.2.full_name.3bfe88dd",
-          "en": "SIMO",
-          "ar": "سيمو",
-          "es": "SIMO",
-          "de": "SIMO",
-          "fr": "SIMO",
-          "hi": "ब्यूटी सैलून सेवा सिमो",
-          "kk": "Simo",
-          "pt": "SIMO"
-        },
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.2.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "position": {
-          "ru": "Hair Stylist",
-          "key": "users.3.position.18612649",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro"
-        }
-      }
-    },
-    {
-      "id": 4,
-      "fields": {
-        "full_name": {
-          "ru": "LYAZZAT",
-          "key": "users.4.full_name.cff5b0c9",
-          "en": "LYAZZAT",
-          "ar": "ليازات",
-          "es": "LYAZZAT",
-          "de": "LYAZZAT",
-          "fr": "LYAZZAT",
-          "hi": "ब्यूटी सैलून सेवा LYAZZAT",
-          "kk": "Ляззат",
-          "pt": "LYAZZAT"
-        },
-        "position": {
-          "ru": "Nail Master",
-          "key": "users.4.position.1c34eb1b",
-          "en": "Nail Master",
-          "ar": "سيد الأظافر",
-          "es": "Maestro de uñas",
-          "de": "Nagelmeister",
-          "fr": "Maître des Ongles",
-          "hi": "नेल मास्टर",
-          "kk": "Тырнақ шебері",
-          "pt": "Mestre de unhas"
-        }
-      }
-    },
-    {
-      "id": 5,
-      "fields": {
-        "position": {
-          "ru": "Nail/Waxing",
-          "key": "users.5.position.0e33fa6b",
-          "en": "Nail/Waxing",
-          "ar": "الأظافر/إزالة الشعر بالشمع",
-          "es": "Uñas/Depilación",
-          "de": "Schönheitssalonservice Nägel/Wachsen",
-          "fr": "Service institut de beauté Onglerie/Epilation",
-          "hi": "ब्यूटी सैलून सेवा नेल/वैक्सिंग",
-          "kk": "Тырнақ / балауыз",
-          "pt": "Unhas/Depilação"
-        }
-      }
-    },
-    {
-      "id": 6,
-      "fields": {
-        "full_name": {
-          "ru": "JENNIFER",
-          "key": "users.6.full_name.da883156",
-          "en": "JENNIFER",
-          "ar": "جينيفر",
-          "es": "JENNIFER",
-          "de": "JENNIFER",
-          "fr": "JENNIFER",
-          "hi": "ब्यूटी सैलून सेवा जेनिफर",
-          "kk": "Дженнифер",
-          "pt": "JENNIFER"
-        },
-        "position": {
-          "ru": "Nail Master/Massages",
-          "key": "users.6.position.d68a2270",
-          "en": "Nail Master/Massages",
-          "ar": "ماجستير الأظافر/التدليك",
-          "es": "Maestro de uñas/Masajes",
-          "de": "Nagelmeister/Massagen",
-          "fr": "Maître des Ongles/Massages",
-          "hi": "नेल मास्टर/मालिश",
-          "kk": "Тырнақ қожайыны / массаж",
-          "pt": "Mestre de unhas/massagens"
-        }
-      }
-    },
-    {
-      "id": 7,
-      "fields": {
-        "position": {
-          "ru": "Director",
-          "key": "users.7.position.7c5ba892",
-          "en": "Director",
-          "ar": "المدير",
-          "es": "Directora",
-          "de": "Schönheitssalonservice Direktor",
-          "fr": "Service salon de beauté Directrice",
-          "hi": "ब्यूटी सैलून सेवा निदेशक",
-          "kk": "Директордың директоры",
-          "pt": "Diretor"
-        }
-      }
-    }
-  ],
   "services": [
     {
       "id": 14,
       "fields": {
-        "name_ru": {
-          "ru": "Подмышки",
-          "key": "services.14.name_ru.4da5bc5b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция подмышек",
-          "key": "services.14.description_ru.3186a3c3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.14.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 1,
-      "fields": {
-        "name_ru": {
-          "ru": "Перманентный макияж губ",
-          "key": "services.1.name_ru.0988ebc3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Стойкий цвет губ",
-          "key": "services.1.description_ru.2c7149ec",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "name_ru": {
-          "ru": "Перманентный макияж бровей",
-          "key": "services.2.name_ru.e14e4ffc",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Микроблейдинг или пудровые брови",
-          "key": "services.2.description_ru.d9f305a2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "name_ru": {
-          "ru": "Межресничная стрелка",
-          "key": "services.3.name_ru.faaa31cf",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Подчеркивание линии роста ресниц",
-          "key": "services.3.description_ru.b4db8982",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 4,
-      "fields": {
-        "name_ru": {
-          "ru": "Подводка для глаз",
-          "key": "services.4.name_ru.b6beadab",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Перманентная подводка глаз",
-          "key": "services.4.description_ru.3dea7e3c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 5,
-      "fields": {
-        "name_ru": {
-          "ru": "Коррекция перманентного макияжа",
-          "key": "services.5.name_ru.58ddfb6f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Коррекция существующего перманента",
-          "key": "services.5.description_ru.c816bc6a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 6,
       "fields": {
-        "name_ru": {
-          "ru": "Глубокое бикини",
-          "key": "services.6.name_ru.7945c923",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция зоны бикини",
-          "key": "services.6.description_ru.568f1503",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.6.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 7,
       "fields": {
-        "name_ru": {
-          "ru": "Линия бикини",
-          "key": "services.7.name_ru.5c761657",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция по линии бикини",
-          "key": "services.7.description_ru.078dcd37",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.7.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 8,
       "fields": {
-        "name_ru": {
-          "ru": "Бразильское бикини",
-          "key": "services.8.name_ru.cd80affa",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Бразильская эпиляция бикини",
-          "key": "services.8.description_ru.199d9108",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.8.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 9,
       "fields": {
-        "name_ru": {
-          "ru": "Ноги полностью",
-          "key": "services.9.name_ru.3b3453b2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция ног",
-          "key": "services.9.description_ru.0ccc7a02",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.9.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 10,
       "fields": {
-        "name_ru": {
-          "ru": "Ноги до колен",
-          "key": "services.10.name_ru.65796548",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция ног до колен",
-          "key": "services.10.description_ru.3bad9c89",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.10.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 11,
       "fields": {
-        "name_ru": {
-          "ru": "Руки полностью",
-          "key": "services.11.name_ru.fac91d90",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция рук",
-          "key": "services.11.description_ru.7168d5eb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.11.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 12,
       "fields": {
-        "name_ru": {
-          "ru": "Руки до локтя",
-          "key": "services.12.name_ru.7fb86af9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция рук до локтя",
-          "key": "services.12.description_ru.e9cb16e1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.12.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 13,
       "fields": {
-        "name_ru": {
-          "ru": "Эпиляция всего тела",
-          "key": "services.13.name_ru.7b40c2d8",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция тела",
-          "key": "services.13.description_ru.187ce3b9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.13.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 15,
       "fields": {
-        "name_ru": {
-          "ru": "Лицо полностью",
-          "key": "services.15.name_ru.c6f390eb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полная эпиляция лица",
-          "key": "services.15.description_ru.67086220",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.15.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 16,
       "fields": {
-        "name_ru": {
-          "ru": "Верхняя губа",
-          "key": "services.16.name_ru.9a3255a9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция верхней губы",
-          "key": "services.16.description_ru.c364dec1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.16.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 17,
       "fields": {
-        "name_ru": {
-          "ru": "Подбородок",
-          "key": "services.17.name_ru.d2c6f434",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Эпиляция подбородка",
-          "key": "services.17.description_ru.3e342887",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.17.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 18,
-      "fields": {
-        "name_ru": {
-          "ru": "Ровный срез кончиков",
-          "key": "services.18.name_ru.d588be99",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Простой срез без мытья",
-          "key": "services.18.description_ru.6a0312d4",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "name_ru": {
-          "ru": "Стрижка + Укладка",
-          "key": "services.19.name_ru.68ef3fa2",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная стрижка с укладкой",
-          "key": "services.19.description_ru.5d2597e1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 20,
       "fields": {
-        "name_ru": {
-          "ru": "Укладка",
-          "key": "services.20.name_ru.3fd3ef81",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная укладка волос",
-          "key": "services.20.description_ru.7cbd9728",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.20.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 21,
-      "fields": {
-        "name_ru": {
-          "ru": "Детская стрижка",
-          "key": "services.21.name_ru.fe5b249b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Стрижка для детей",
-          "key": "services.21.description_ru.aaee775a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 22,
       "fields": {
-        "name_ru": {
-          "ru": "Окрашивание корней + Укладка",
-          "key": "services.22.name_ru.34258f73",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Окрашивание корней с укладкой",
-          "key": "services.22.description_ru.2ad52607",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.22.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 23,
-      "fields": {
-        "name_ru": {
-          "ru": "Осветление корней + Укладка",
-          "key": "services.23.name_ru.3caf9ba3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Осветление корней с укладкой",
-          "key": "services.23.description_ru.785f83b1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 24,
-      "fields": {
-        "name_ru": {
-          "ru": "Тонирование + Укладка",
-          "key": "services.24.name_ru.60be0b49",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Тонирование волос с укладкой",
-          "key": "services.24.description_ru.837dbffc",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 25,
-      "fields": {
-        "name_ru": {
-          "ru": "Окрашивание в один тон + Укладка",
-          "key": "services.25.name_ru.841add1a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Полное окрашивание с укладкой",
-          "key": "services.25.description_ru.d5d8904e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "2h",
-          "key": "services.25.duration.2bdde03f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 26,
-      "fields": {
-        "name_ru": {
-          "ru": "Балаяж",
-          "key": "services.26.name_ru.abc5305a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Техника балаяж",
-          "key": "services.26.description_ru.0d9921e5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "2h",
-          "key": "services.26.duration.2bdde03f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 27,
-      "fields": {
-        "name_ru": {
-          "ru": "Омбре/Шатуш/Аиртач",
-          "key": "services.27.name_ru.dffc4fe7",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Техники градиентного окрашивания",
-          "key": "services.27.description_ru.596e8006",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "duration": {
-          "ru": "2h",
-          "key": "services.27.duration.2bdde03f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 28,
-      "fields": {
-        "name_ru": {
-          "ru": "Выход из черного",
-          "key": "services.28.name_ru.1b90012d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Коррекция цвета из темного",
-          "key": "services.28.description_ru.32fb73b4",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 29,
       "fields": {
-        "name_ru": {
-          "ru": "Натуральный уход",
-          "key": "services.29.name_ru.04259ed1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Натуральный уход за волосами",
-          "key": "services.29.description_ru.2777cc29",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.29.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 30,
-      "fields": {
-        "name_ru": {
-          "ru": "Наращивание волос за капсулу",
-          "key": "services.30.name_ru.ab1edd95",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание за капсулу",
-          "key": "services.30.description_ru.7295515b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 31,
-      "fields": {
-        "name_ru": {
-          "ru": "Классический объем ресниц",
-          "key": "services.31.name_ru.d85c8406",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Натуральное наращивание ресниц",
-          "key": "services.31.description_ru.1cb01f28",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 32,
-      "fields": {
-        "name_ru": {
-          "ru": "2D объем ресниц",
-          "key": "services.32.name_ru.6dc0aef0",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание 2D",
-          "key": "services.32.description_ru.b4b7781e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 33,
-      "fields": {
-        "name_ru": {
-          "ru": "3D объем ресниц",
-          "key": "services.33.name_ru.3276ee2f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Наращивание 3D",
-          "key": "services.33.description_ru.9088ab16",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 34,
-      "fields": {
-        "name_ru": {
-          "ru": "4-5D объем (Мега)",
-          "key": "services.34.name_ru.b156e5fd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Мега объем ресниц",
-          "key": "services.34.description_ru.0a54c5b1",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 35,
-      "fields": {
-        "name_ru": {
-          "ru": "ML завиток / Стиль Ким",
-          "key": "services.35.name_ru.c64091d8",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Специальный изгиб",
-          "key": "services.35.description_ru.cc8b3435",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 36,
       "fields": {
-        "name_ru": {
-          "ru": "Снятие ресниц",
-          "key": "services.36.name_ru.89cf60fb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Безопасное снятие",
-          "key": "services.36.description_ru.4610f41a",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.36.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 37,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование бровей",
-          "key": "services.37.name_ru.c66b6652",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Ламинирование бровей",
-          "key": "services.37.description_ru.c66b6652",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 38,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование ресниц",
-          "key": "services.38.name_ru.6a9d6c82",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Ламинирование ресниц",
-          "key": "services.38.description_ru.6a9d6c82",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 39,
-      "fields": {
-        "name_ru": {
-          "ru": "Ламинирование бровей и ресниц",
-          "key": "services.39.name_ru.429e7def",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Комбо ламинирование",
-          "key": "services.39.description_ru.c37d7e65",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 40,
       "fields": {
-        "name_ru": {
-          "ru": "Окрашивание бровей",
-          "key": "services.40.name_ru.b0898877",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональное окрашивание",
-          "key": "services.40.description_ru.fcb57901",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.40.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 41,
-      "fields": {
-        "name_ru": {
-          "ru": "Оформление бровей",
-          "key": "services.41.name_ru.221b64b3",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональное оформление",
-          "key": "services.41.description_ru.dd9e95fb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 42,
       "fields": {
-        "name_ru": {
-          "ru": "Глубокая чистка лица",
-          "key": "services.42.name_ru.f5d3906b",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Профессиональная глубокая чистка",
-          "key": "services.42.description_ru.964e86eb",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.42.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 43,
       "fields": {
-        "name_ru": {
-          "ru": "Медицинская чистка для проблемной кожи",
-          "key": "services.43.name_ru.a6e366dc",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Медицинская чистка",
-          "key": "services.43.description_ru.1340aaab",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.43.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 44,
       "fields": {
-        "name_ru": {
-          "ru": "Подтягивающий массаж лица с маской",
-          "key": "services.44.name_ru.01f63d74",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Подтягивающий массаж",
-          "key": "services.44.description_ru.da76e7a6",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "30min",
           "key": "services.44.duration.0d3f22e5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min"
         }
       }
     },
     {
       "id": 45,
       "fields": {
-        "name_ru": {
-          "ru": "Пилинг",
-          "key": "services.45.name_ru.349ad56c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Химический пилинг",
-          "key": "services.45.description_ru.8dea543f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.45.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 46,
       "fields": {
-        "name_ru": {
-          "ru": "Маникюр без покрытия",
-          "key": "services.46.name_ru.9ce5aa82",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Базовый маникюр",
-          "key": "services.46.description_ru.0079cd02",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.46.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 47,
       "fields": {
-        "name_ru": {
-          "ru": "Спа маникюр",
-          "key": "services.47.name_ru.8deff1c9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Спа маникюр",
-          "key": "services.47.description_ru.8deff1c9",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.47.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 48,
       "fields": {
-        "name_ru": {
-          "ru": "Маникюр с обычным покрытием",
-          "key": "services.48.name_ru.7d31de2e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр с обычным лаком",
-          "key": "services.48.description_ru.b2902707",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.48.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 49,
       "fields": {
-        "name_ru": {
-          "ru": "Маникюр гель-лак",
-          "key": "services.49.name_ru.14c0870e",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр с гель-лаком",
-          "key": "services.49.description_ru.eb95d49c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h",
           "key": "services.49.duration.7c68645d",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
         }
       }
     },
     {
       "id": 50,
       "fields": {
-        "name_ru": {
-          "ru": "Японский маникюр",
-          "key": "services.50.name_ru.4fec55b5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Японский маникюр",
-          "key": "services.50.description_ru.4fec55b5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "1h 30min",
           "key": "services.50.duration.d7cc86dd",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        }
-      }
-    },
-    {
-      "id": 51,
-      "fields": {
-        "name_ru": {
-          "ru": "Детский маникюр",
-          "key": "services.51.name_ru.d83a8c76",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Маникюр для детей",
-          "key": "services.51.description_ru.650bd84f",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "1h 30min",
+          "ar": "ساعة و30 دقيقة",
+          "es": "1h 30min",
+          "de": "1 Stunde 30 Minuten",
+          "fr": "Service salon de beauté 1h 30min",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा 30 मिनट",
+          "kk": "1 сағат 30мин",
+          "pt": "1h 30min"
         }
       }
     },
     {
       "id": 52,
       "fields": {
-        "name_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.name_ru.9e0c18fa",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "description_ru": {
-          "ru": "Смена обычного лака",
-          "key": "services.52.description_ru.9e0c18fa",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
         "duration": {
           "ru": "30min",
           "key": "services.52.duration.0d3f22e5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min"
         }
       }
     }
@@ -2047,8 +498,8 @@
         "title_ru": {
           "ru": "Красота и Элегантность",
           "key": "public_banners.1.title_ru.0b52ad71",
-          "en": null,
-          "ar": null,
+          "en": "Beauty and Elegance",
+          "ar": "الجمال والأناقة",
           "es": null,
           "de": null,
           "fr": null,
@@ -2059,32 +510,20 @@
         "title_en": {
           "ru": "Beauty and Elegance",
           "key": "public_banners.1.title_en.4eca14ce",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_ar": {
-          "ru": "الجمال والأناقة",
-          "key": "public_banners.1.title_ar.bdaf5f2c",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Beauty and Elegance",
+          "ar": "الجمال والأناقة",
+          "es": "Belleza y elegancia",
+          "de": "Schönheit und Eleganz",
+          "fr": "Beauté et élégance",
+          "hi": "सुंदरता और सुंदरता",
+          "kk": "Сұлулық және әсемдік",
+          "pt": "Beleza e Elegância"
         },
         "subtitle_ru": {
           "ru": "Профессиональные услуги красоты",
           "key": "public_banners.1.subtitle_ru.a02f5b36",
-          "en": null,
-          "ar": null,
+          "en": "Professional beauty services",
+          "ar": "خدمات التجميل المهنية",
           "es": null,
           "de": null,
           "fr": null,
@@ -2095,26 +534,14 @@
         "subtitle_en": {
           "ru": "Professional Beauty Services",
           "key": "public_banners.1.subtitle_en.86f36861",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_ar": {
-          "ru": "خدمات تجميل احترافية",
-          "key": "public_banners.1.subtitle_ar.51c2ed04",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Professional Beauty Services",
+          "ar": "خدمات التجميل المهنية",
+          "es": "Servicios de belleza profesionales",
+          "de": "Professionelle Schönheitsdienstleistungen",
+          "fr": "Services de beauté professionnels",
+          "hi": "व्यावसायिक सौंदर्य सेवाएँ",
+          "kk": "Кәсіби сұлулық қызметтері",
+          "pt": "Serviços profissionais de beleza"
         }
       }
     },
@@ -2124,8 +551,8 @@
         "title_ru": {
           "ru": "Скидки до 50%",
           "key": "public_banners.2.title_ru.816f4b30",
-          "en": null,
-          "ar": null,
+          "en": "Discounts up to 50%",
+          "ar": "خصومات تصل إلى 50%",
           "es": null,
           "de": null,
           "fr": null,
@@ -2136,32 +563,20 @@
         "title_en": {
           "ru": "Discounts up to 50%",
           "key": "public_banners.2.title_en.82e81214",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "title_ar": {
-          "ru": "خصومات تصل إلى 50٪",
-          "key": "public_banners.2.title_ar.64bde1b5",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "Discounts up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos hasta el 50%",
+          "de": "Rabatte bis zu 50 %",
+          "fr": "Réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%"
         },
         "subtitle_ru": {
           "ru": "На все услуги салона",
           "key": "public_banners.2.subtitle_ru.f9d0958e",
-          "en": null,
-          "ar": null,
+          "en": "For all salon services",
+          "ar": "لجميع خدمات الصالون",
           "es": null,
           "de": null,
           "fr": null,
@@ -2172,26 +587,14 @@
         "subtitle_en": {
           "ru": "On all salon services",
           "key": "public_banners.2.subtitle_en.7f804704",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
-        },
-        "subtitle_ar": {
-          "ru": "على جميع خدمات الصالون",
-          "key": "public_banners.2.subtitle_ar.557e4a61",
-          "en": null,
-          "ar": null,
-          "es": null,
-          "de": null,
-          "fr": null,
-          "hi": null,
-          "kk": null,
-          "pt": null
+          "en": "On all salon services",
+          "ar": "على جميع خدمات الصالون",
+          "es": "En todos los servicios del salón",
+          "de": "Auf alle Salondienstleistungen",
+          "fr": "Sur tous les services du salon",
+          "hi": "सभी सैलून सेवाओं पर",
+          "kk": "Барлық салон қызметтерінде",
+          "pt": "Em todos os serviços de salão"
         }
       }
     }

@@ -192,7 +192,7 @@ async def toggle_service_status(
         
         current_status = bool(result[0])
         new_status = not current_status
-        new_status_int = 1 if new_status else 0
+        new_status_int = True if new_status else False
         
         log_info(f"🔄 API: Toggling service {service_id}: {current_status} → {new_status}", "api")
         

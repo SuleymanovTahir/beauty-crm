@@ -75,7 +75,7 @@ async def update_user_schedule(
                 entry["day_of_week"],
                 entry["start_time"],
                 entry["end_time"],
-                1 if entry.get("is_active", True) else 0
+                True if entry.get("is_active", True) else False
             ))
         
         conn.commit()

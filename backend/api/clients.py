@@ -409,12 +409,15 @@ async def pin_client_api(
         "message": "Pinned" if not is_pinned else "Unpinned"
     }
 
-@router.post("/clients/{client_id}/delete")
+@router.post("/clients/{client_id:path}/delete")
 async def delete_client_api(
     client_id: str,
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить клиента"""
+    from urllib.parse import unquote
+    client_id = unquote(client_id)  # Decode URL-encoded characters
+    
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "manager", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -430,7 +433,7 @@ async def delete_client_api(
                               status_code=404)
     except Exception as e:
         log_error(f"Error deleting client: {e}", "api")
-        return JSONResponse({"error": str(e)}, status_code=400)
+        return JSONResponse({" error": str(e)}, status_code=400)
 
 @router.get("/search")
 async def search_clients(

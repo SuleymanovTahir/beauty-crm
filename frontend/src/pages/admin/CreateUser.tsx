@@ -210,14 +210,14 @@ export default function CreateUser() {
               <Label htmlFor="position">{t('position_label')}</Label>
               <Select
                 value={formData.position_id?.toString() || ""}
-                onValueChange={(value: string) => setFormData({ ...formData, position_id: value ? parseInt(value) : null })}
+                onValueChange={(value: string) => setFormData({ ...formData, position_id: (value && value !== "none") ? parseInt(value) : null })}
                 disabled={loading}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t('position_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">{t('position_none')}</SelectItem>
+                  <SelectItem value="none">{t('position_none')}</SelectItem>
                   {positions.map((pos) => (
                     <SelectItem key={pos.id} value={pos.id.toString()}>
                       {pos.name}

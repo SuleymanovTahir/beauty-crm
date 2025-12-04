@@ -34,14 +34,15 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         
         # ===== 1. ПРОВЕРКА БАЗЫ ДАННЫХ =====
         
-        # Таблица employees
-        c.execute("SELECT COUNT(*) FROM employees WHERE is_active = TRUE")
+        # Таблица users (service providers)
+        c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = TRUE AND is_active = TRUE")
         active_employees = c.fetchone()[0]
         
         c.execute("""
-            SELECT id, full_name, position, is_active, sort_order
-            FROM employees 
-            ORDER BY sort_order
+            SELECT id, full_name, position, is_active
+            FROM users 
+            WHERE is_service_provider = TRUE
+            ORDER BY full_name
             LIMIT 5
         """)
         sample_employees = c.fetchall()
@@ -53,33 +54,32 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
                     "id": emp[0],
                     "name": emp[1],
                     "position": emp[2],
-                    "is_active": emp[3],
-                    "sort_order": emp[4]
+                    "is_active": emp[3]
                 }
                 for emp in sample_employees
             ]
         }
         
-        # Таблица employee_services
+        # Таблица user_services
         c.execute("""
             SELECT COUNT(*) 
-            FROM employee_services es
-            JOIN employees e ON es.employee_id = e.id
-            WHERE e.is_active = TRUE
+            FROM user_services us
+            JOIN users u ON us.user_id = u.id
+            WHERE u.is_active = TRUE AND u.is_service_provider = TRUE
         """)
         active_links = c.fetchone()[0]
         
         c.execute("""
-            SELECT e.full_name, s.name, s.name_ru
-            FROM employee_services es
-            JOIN employees e ON es.employee_id = e.id
-            JOIN services s ON es.service_id = s.id
-            WHERE e.is_active = TRUE
+            SELECT u.full_name, s.name, s.name_ru
+            FROM user_services us
+            JOIN users u ON us.user_id = u.id
+            JOIN services s ON us.service_id = s.id
+            WHERE u.is_active = TRUE AND u.is_service_provider = TRUE
             LIMIT 10
         """)
         sample_links = c.fetchall()
         
-        result["database"]["employee_services"] = {
+        result["database"]["user_services"] = {
             "total_links": active_links,
             "sample": [
                 {
@@ -146,14 +146,12 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         has_services_block = "УСЛУГИ САЛОНА" in system_prompt or "SERVICES" in system_prompt
         
         # Считаем упоминания
-        c.execute("SELECT full_name, name_ru FROM employees WHERE is_active = TRUE")
+        c.execute("SELECT full_name FROM users WHERE is_active = TRUE AND is_service_provider = TRUE")
         active_masters = c.fetchall()
         
         master_mentions = 0
-        for eng_name, ru_name in active_masters:
-            if eng_name and eng_name in system_prompt:
-                master_mentions += 1
-            if ru_name and ru_name in system_prompt:
+        for (name,) in active_masters:
+            if name and name in system_prompt:
                 master_mentions += 1
         
         service_mentions = system_prompt.count("Manicure") + system_prompt.count("маникюр")
@@ -222,7 +220,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             issues.append("❌ КРИТИЧНО: В таблице services нет активных услуг!")
         
         if active_links == 0:
-            issues.append("❌ КРИТИЧНО: Таблица employee_services пуста - мастера не привязаны к услугам!")
+            issues.append("❌ КРИТИЧНО: Таблица user_services пуста - мастера не привязаны к услугам!")
         
         if not has_masters_block:
             issues.append("⚠️ В промпте отсутствует блок 'ДОСТУПНЫЕ МАСТЕРА'")

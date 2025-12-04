@@ -767,10 +767,10 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
                         (role_key, permission_key, can_view, can_create, can_edit, can_delete)
                         VALUES (%s, %s, %s, %s, %s, %s)""",
                       (role_key, perm_key,
-                       1 if perms.get('can_view') else 0,
-                       1 if perms.get('can_create') else 0,
-                       1 if perms.get('can_edit') else 0,
-                       1 if perms.get('can_delete') else 0))
+                       True if perms.get('can_view') else False,
+                       True if perms.get('can_create') else False,
+                       True if perms.get('can_edit') else False,
+                       True if perms.get('can_delete') else False))
 
         conn.commit()
         log_info(f"✅ Права роли '{role_key}' обновлены", "database")
@@ -832,7 +832,7 @@ def update_bot_globally_enabled(enabled: bool):
         UPDATE salon_settings 
         SET bot_globally_enabled = %s
         WHERE id = 1
-    """, (1 if enabled else 0,))
+    """, (True if enabled else False,))
 
     conn.commit()
     conn.close()
