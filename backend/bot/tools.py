@@ -64,15 +64,15 @@ def get_available_time_slots(
                 SELECT DISTINCT u.id, u.full_name
                 FROM users u
                 JOIN user_services us ON u.id = us.user_id
-                WHERE u.is_active = 1 
-                  AND u.is_service_provider = 1
+                WHERE u.is_active = TRUE 
+                  AND u.is_service_provider = TRUE
                   AND us.service_id = %s
-                  AND us.is_online_booking_enabled = 1
+                  AND us.is_online_booking_enabled = TRUE
             """, (service_id,))
             potential_masters = c.fetchall()
         else:
             # Fallback: все активные мастера
-            c.execute("SELECT id, full_name FROM users WHERE is_active = 1 AND is_service_provider = 1")
+            c.execute("SELECT id, full_name FROM users WHERE is_active = TRUE AND is_service_provider = TRUE")
             potential_masters = c.fetchall()
 
         # Фильтр по имени если указано

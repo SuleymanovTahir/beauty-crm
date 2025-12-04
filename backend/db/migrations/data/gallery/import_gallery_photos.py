@@ -71,7 +71,7 @@ def import_gallery_photos():
                     if not c.fetchone():
                         c.execute("""
                             INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                            VALUES (%s, %s, %s, %s, 1)
+                            VALUES (%s, %s, %s, %s, TRUE)
                         """, (category, image_path, img_file.stem, idx))
                         imported_count += 1
                         print(f"  ✅ Импортировано в БД: {img_file.name}")

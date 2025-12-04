@@ -73,7 +73,7 @@ async def get_reminders(
                        r.created_at, r.completed_at
                 FROM reminders r
                 LEFT JOIN clients c ON r.client_id = c.instagram_id
-                WHERE r.reminder_date <=%s AND r.is_completed = 0
+                WHERE r.reminder_date <=%s AND r.is_completed = FALSE
                 ORDER BY r.reminder_date ASC
             """, (end_date,))
         else:
@@ -191,7 +191,7 @@ async def complete_reminder(
         
         c.execute("""
             UPDATE reminders 
-            SET is_completed = 1, completed_at =%s
+            SET is_completed = TRUE, completed_at =%s
             WHERE id =%s
         """, (get_current_time().isoformat(), reminder_id))
         
@@ -271,7 +271,7 @@ async def get_upcoming_reminders(
                    r.reminder_date, r.reminder_type, r.is_completed
             FROM reminders r
             LEFT JOIN clients c ON r.client_id = c.instagram_id
-            WHERE r.reminder_date <=%s AND r.is_completed = 0
+            WHERE r.reminder_date <=%s AND r.is_completed = FALSE
             ORDER BY r.reminder_date ASC
         """, (end_date,))
         
@@ -398,7 +398,7 @@ async def create_booking_reminder_setting(
             INSERT INTO booking_reminder_settings (name, days_before, hours_before,
                                                    notification_type, is_enabled)
             VALUES (%s,%s,%s,%s,%s)
-        """, (name, days_before, hours_before, notification_type, 1 if is_enabled else 0))
+        """, (name, days_before, hours_before, notification_type, True if is_enabled else False))
 
         setting_id = c.lastrowid
         conn.commit()
@@ -464,7 +464,7 @@ async def update_booking_reminder_setting(
             params.append(notification_type)
         if is_enabled is not None:
             updates.append("is_enabled =%s")
-            params.append(1 if is_enabled else 0)
+            params.append(True if is_enabled else False)
 
         if not updates:
             conn.close()

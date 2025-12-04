@@ -5,6 +5,7 @@
 """
 from db.connection import get_db_connection
 import re
+import psycopg2
 
 DATABASE_NAME = "salon_bot.db"
 
@@ -49,7 +50,7 @@ def fix_localhost_urls():
                         print(f"   Исправлено: {url} → {relative_path}")
                         total_fixed += 1
             
-        except sqlite3.OperationalError as e:
+        except psycopg2.OperationalError as e:
             print(f"⚠️  Таблица {table} или колонка {column} не существует: {e}")
             continue
     

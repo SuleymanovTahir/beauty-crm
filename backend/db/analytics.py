@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
+import psycopg2
 
 def get_stats(comparison_period: str = "7days"):
     """
@@ -59,7 +60,7 @@ def get_stats(comparison_period: str = "7days"):
     try:
         c.execute("SELECT SUM(revenue) FROM bookings WHERE status='completed'")
         total_revenue = c.fetchone()[0] or 0
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         total_revenue = 0
     
     try:
@@ -80,7 +81,7 @@ def get_stats(comparison_period: str = "7days"):
         c.execute("SELECT COUNT(DISTINCT instagram_id) FROM bookings WHERE created_at >= %s", (active_threshold,))
         active_clients = c.fetchone()[0]
 
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         new_clients = total_clients
         leads = 0
         customers = 0
@@ -132,7 +133,7 @@ def get_stats(comparison_period: str = "7days"):
             WHERE status='completed' AND created_at >= %s AND created_at < %s
         """, (previous_period_start, previous_period_end))
         prev_revenue = c.fetchone()[0] or 0
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         prev_revenue = 0
     
     # === ТЕКУЩИЙ ПЕРИОД (новые данные) ===
@@ -178,7 +179,7 @@ def get_stats(comparison_period: str = "7days"):
             WHERE status='completed' AND created_at >= %s
         """, (period_start,))
         current_revenue = c.fetchone()[0] or 0
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         current_revenue = 0
     
     conn.close()

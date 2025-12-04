@@ -101,11 +101,11 @@ from api.seo_metadata import router as seo_metadata_router
 # Создаём директории для загрузок
 ensure_upload_directories()
 
-# Получаем настройки салона
-salon = get_salon_settings()
+# Получаем настройки салона ПОСЛЕ миграций (будет инициализировано в startup_event)
+salon = None
 
 # Инициализация FastAPI
-app = FastAPI(title=f"💎 {salon['name']} CRM")
+app = FastAPI(title="💎 Beauty CRM")
 
 # Подключение статики и шаблонов
 # Подключение статики и шаблонов
@@ -372,7 +372,7 @@ async def get_diagnostics():
         if os.getenv('DATABASE_TYPE') == 'postgresql':
             c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
         else:
-            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
         tables = [row[0] for row in c.fetchall()]
         
         for table in tables:
@@ -389,7 +389,7 @@ async def get_diagnostics():
                     c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='bot_settings'")
                     columns = [col[0] for col in c.fetchall()]
                 else:
-                    c.execute("PRAGMA table_info(bot_settings)")
+                    c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='bot_settings'")
                     columns = [col[1] for col in c.fetchall()]
                 diagnostics["bot_settings"] = dict(zip(columns, row))
         
@@ -399,7 +399,7 @@ async def get_diagnostics():
             if 'users' in tables:
                  c.execute("SELECT full_name, position, is_active FROM users WHERE is_service_provider = TRUE ORDER BY sort_order")
             else:
-                 c.execute("SELECT full_name, position, is_active FROM employees WHERE is_active = 1") # Fallback for old table
+                 c.execute("SELECT full_name, position, is_active FROM employees WHERE is_active = TRUE") # Fallback for old table
 
             diagnostics["employees"] = [
                 {"name": row[0], "position": row[1], "active": bool(row[2])}
@@ -453,19 +453,35 @@ async def startup_event():
     log_info("🚀 Запуск CRM системы...", "startup")
 
     # ================================
-    # ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ
-    # ================================
-    log_info("🗄️  Инициализация базы данных...", "startup")
-    init_database()
-    log_info("✅ База данных инициализирована", "startup")
-
-    # ================================
     # ЦЕНТРАЛИЗОВАННЫЕ МИГРАЦИИ
     # ================================
     # Запускаются все миграции при каждом старте (идемпотентны)
-    from db.migrations.run_all_migrations import run_all_migrations
-    log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()
+    # Внутри run_all_migrations() происходит:
+    # 1. Создание БД если не существует (recreate_database)
+    # 2. Инициализация базовых таблиц (init_database)
+    # 3. Все консолидированные миграции
+    # from db.migrations.run_all_migrations import run_all_migrations
+    # log_info("🔧 Запуск миграций...", "startup")
+    # run_all_migrations()
+    
+    # ================================
+    # УДАЛЕНИЕ БАЗЫ ДАННЫХ (ОПЦИОНАЛЬНО)
+    # ================================
+    # Раскомментируй для полного удаления и пересоздания БД
+    # ВНИМАНИЕ: Это удалит ВСЕ данные!
+    # from scripts.maintenance.recreate_database import drop_database
+    # log_info("⚠️  Удаление базы данных...", "startup")
+    # drop_database()
+    # from db.migrations.run_all_migrations import run_all_migrations
+    # run_all_migrations()  # Пересоздать после удаления
+    
+    # ================================
+    # ПОЛУЧЕНИЕ НАСТРОЕК САЛОНА
+    # ================================
+    # Получаем настройки ПОСЛЕ миграций
+    global salon
+    salon = get_salon_settings()
+    log_info(f"✅ Настройки загружены: {salon['name']}", "startup")
  
     try:
         # Plans table is now handled by schema_other.py
@@ -553,7 +569,7 @@ if __name__ == "__main__":
             if os.getenv('DATABASE_TYPE') == 'postgresql':
                 c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
             else:
-                c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+                c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
             tables = [row[0] for row in c.fetchall()]
             log_info(f"📋 Таблиц в БД: {len(tables)}", "diagnostics")
             for table in tables:
@@ -570,7 +586,7 @@ if __name__ == "__main__":
                     c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='bot_settings'")
                     columns = [col[0] for col in c.fetchall()]
                 else:
-                    c.execute("PRAGMA table_info(bot_settings)")
+                    c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='bot_settings'")
                     columns = [col[1] for col in c.fetchall()]
                 log_info(f"   Колонок: {len(columns)}", "diagnostics")
 

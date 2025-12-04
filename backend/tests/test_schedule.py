@@ -10,6 +10,9 @@ from pathlib import Path
 backend_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(backend_dir))
 
+from tests.config import get_test_config
+TEST_CONFIG = get_test_config()
+
 from main import app
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -66,9 +69,12 @@ def test_update_schedule(data):
     print("   Testing PUT schedule...", end=" ")
     user_id = data['user_id']
     
+    work_start = TEST_CONFIG['work_start_weekday']
+    work_end = TEST_CONFIG['work_end_weekday']
+    
     new_schedule = [
-        {"day_of_week": 0, "start_time": "09:00", "end_time": "18:00", "is_working": True},
-        {"day_of_week": 1, "start_time": "09:00", "end_time": "18:00", "is_working": True},
+        {"day_of_week": 0, "start_time": work_start, "end_time": work_end, "is_working": True},
+        {"day_of_week": 1, "start_time": work_start, "end_time": work_end, "is_working": True},
         {"day_of_week": 2, "start_time": "00:00", "end_time": "00:00", "is_working": False}
     ]
     
@@ -85,7 +91,7 @@ def test_update_schedule(data):
     monday = next((d for d in schedule if d['day_of_week'] == 0), None)
     wednesday = next((d for d in schedule if d['day_of_week'] == 2), None)
     
-    if not monday or monday['start_time'] != "09:00" or not monday['is_working']:
+    if not monday or monday['start_time'] != work_start or not monday['is_working']:
         print("FAILED (Monday update incorrect)")
         return False
         

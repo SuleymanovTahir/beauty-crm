@@ -28,7 +28,7 @@ def review_service_translations():
     cursor.execute("""
         SELECT id, name, name_ru, name_en, name_ar, name_es, name_de, name_fr, name_hi, name_kk, name_pt
         FROM services
-        WHERE is_active = 1
+        WHERE is_active = TRUE
         ORDER BY category, name
     """)
     
@@ -66,7 +66,7 @@ def review_banner_translations():
     cursor.execute("""
         SELECT id, title_ru, title_en, title_ar, subtitle_ru, subtitle_en, subtitle_ar
         FROM public_banners
-        WHERE is_active = 1
+        WHERE is_active = TRUE
     """)
     
     banners = cursor.fetchall()
@@ -107,7 +107,7 @@ def export_translations_to_csv():
         cursor.execute("""
             SELECT id, name, name_ru, name_en, name_ar, name_es, name_de, name_fr, name_hi, name_kk, name_pt
             FROM services
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY name
         """)
         

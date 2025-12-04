@@ -13,6 +13,9 @@ from datetime import datetime, timedelta
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+from tests.config import get_test_config
+TEST_CONFIG = get_test_config()
+
 from services.analytics import AnalyticsService
 from services.master_schedule import MasterScheduleService
 from services.loyalty import LoyaltyService
@@ -103,10 +106,12 @@ def test_master_schedule():
 
         # Тест 2.1: Установка рабочих часов
         print_subsection("Установка рабочих часов")
-        # Устанавливаем: Пн-Пт, 09:00-18:00
+        # Устанавливаем: Пн-Пт из конфига
+        work_start = TEST_CONFIG['work_start_weekday']
+        work_end = TEST_CONFIG['work_end_weekday']
         for day in range(5):
-            schedule.set_working_hours(test_master, day, "09:00", "18:00")
-        print("✅ Рабочие часы установлены (Пн-Пт, 09:00-18:00)")
+            schedule.set_working_hours(test_master, day, work_start, work_end)
+        print(f"✅ Рабочие часы установлены (Пн-Пт, {work_start}-{work_end})")
 
         # Тест 2.4: Получение доступных слотов
         today = datetime.now().strftime('%Y-%m-%d')
@@ -118,8 +123,9 @@ def test_master_schedule():
 
         # Тест 2.5: Проверка доступности
         print_subsection("Проверка доступности")
-        is_available = schedule.is_master_available(test_master, today, "14:00")
-        print(f"   Доступен ли мастер сегодня в 14:00: {'✅ Да' if is_available else '❌ Нет'}")
+        test_time = TEST_CONFIG['test_time_afternoon']
+        is_available = schedule.is_master_available(test_master, today, test_time)
+        print(f"   Доступен ли мастер сегодня в {test_time}: {'✅ Да' if is_available else '❌ Нет'}")
 
         # Тест 2.6: Доступность всех мастеров
         print_subsection("Доступность всех мастеров")

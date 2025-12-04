@@ -13,7 +13,10 @@ from datetime import datetime, timedelta
 import asyncio
 
 # Добавляем путь к backend
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from tests.config import get_test_config
+TEST_CONFIG = get_test_config()
 
 from core.config import DATABASE_NAME
 
@@ -32,7 +35,7 @@ def print_section(text):
 def test_broadcast_email_setup():
     """
     ТЕСТ 1: Настройка рассылки на email
-    Создаем тестового пользователя с email ii3391609@gmail.com
+    # Создаем тестового пользователя с email из конфига
     """
     print_section("ТЕСТ 1: Настройка акционной рассылки на Email")
 
@@ -69,7 +72,7 @@ def test_broadcast_email_setup():
             print("   ✅ Таблица создана")
 
         # 2. Проверяем наличие тестового пользователя
-        test_email = "ii3391609@gmail.com"
+        test_email = TEST_CONFIG['test_email']
         c.execute("SELECT id, username, full_name FROM users WHERE email = %s", (test_email,))
         user = c.fetchone()
 

@@ -21,7 +21,6 @@ async def get_user_salary_settings(user_id: int, current_user: dict = Depends(ge
     """Получить настройки зарплаты для конкретного пользователя"""
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         c.execute("""
@@ -107,7 +106,6 @@ async def calculate_salary(
 
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         # Получить настройки зарплаты
@@ -120,6 +118,10 @@ async def calculate_salary(
         if not settings:
             return JSONResponse({"error": "Salary settings not found"}, status_code=404)
 
+        # Get column names for settings
+        settings_columns = [desc[0] for desc in c.description]
+        settings_dict = dict(zip(settings_columns, settings))
+
         # Получить выполненные услуги за период
         c.execute("""
             SELECT COUNT(*) as count, SUM(b.price) as revenue
@@ -130,26 +132,26 @@ async def calculate_salary(
         """, (user_id, period_start, period_end))
         services = c.fetchone()
 
-        services_completed = services["count"] or 0
-        services_revenue = services["revenue"] or 0
+        services_completed = services[0] or 0
+        services_revenue = services[1] or 0
 
         # Расчет зарплаты
         base_salary = 0
         commission_amount = 0
 
-        if settings["salary_type"] == "hourly":
+        if settings_dict["salary_type"] == "hourly":
             # Предполагаем 8 часов в день
             days = (datetime.fromisoformat(period_end) - datetime.fromisoformat(period_start)).days
             hours_worked = days * 8
-            base_salary = hours_worked * settings["hourly_rate"]
-        elif settings["salary_type"] == "monthly":
-            base_salary = settings["monthly_rate"]
-        elif settings["salary_type"] == "commission":
+            base_salary = hours_worked * settings_dict["hourly_rate"]
+        elif settings_dict["salary_type"] == "monthly":
+            base_salary = settings_dict["monthly_rate"]
+        elif settings_dict["salary_type"] == "commission":
             base_salary = 0
-            commission_amount = services_revenue * (settings["commission_rate"] / 100)
-        elif settings["salary_type"] == "mixed":
-            base_salary = settings["monthly_rate"]
-            commission_amount = services_revenue * (settings["commission_rate"] / 100)
+            commission_amount = services_revenue * (settings_dict["commission_rate"] / 100)
+        elif settings_dict["salary_type"] == "mixed":
+            base_salary = settings_dict["monthly_rate"]
+            commission_amount = services_revenue * (settings_dict["commission_rate"] / 100)
 
         total_salary = base_salary + commission_amount
 
@@ -192,7 +194,6 @@ async def get_salary_calculations(current_user: dict = Depends(get_current_user)
     """Получить все расчеты зарплаты"""
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         c.execute("""
@@ -207,7 +208,8 @@ async def get_salary_calculations(current_user: dict = Depends(get_current_user)
             LIMIT 100
         """)
 
-        calculations = [dict(row) for row in c.fetchall()]
+        columns = [desc[0] for desc in c.description]
+        calculations = [dict(zip(columns, row)) for row in c.fetchall()]
         conn.close()
 
         return {"calculations": calculations}

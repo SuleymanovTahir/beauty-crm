@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional
 
 from db.connection import get_db_connection
+import psycopg2
 
 # ===== УСЛУГИ =====
 
@@ -123,7 +124,7 @@ def create_service(service_key, name, name_ru, price, currency, category,
         conn.commit()
         conn.close()
         return True
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         conn.close()
         return False
 
@@ -281,7 +282,7 @@ def create_special_package(name, name_ru, original_price, special_price, currenc
         package_id = c.lastrowid
         conn.close()
         return package_id
-    except sqlite3.IntegrityError as e:
+    except psycopg2.IntegrityError as e:
         conn.close()
         print(f"Ошибка создания пакета: {e}")
         return None

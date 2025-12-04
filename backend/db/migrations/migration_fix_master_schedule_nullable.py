@@ -23,7 +23,7 @@ try:
     print("🔧 Fixing master_schedule table to allow NULL times...")
 
     # Проверяем существует ли таблица
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='master_schedule'")
+    c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='master_schedule'")
     if c.fetchone():
         print("📋 Backing up existing data...")
 

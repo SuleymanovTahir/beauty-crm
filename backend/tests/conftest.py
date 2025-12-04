@@ -27,7 +27,7 @@ def clean_database(test_db_path):
         os.remove(test_db_path)
 
     # Создаем новую
-    conn = sqlite3.connect(test_db_path)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Создаем базовые таблицы
@@ -135,8 +135,7 @@ def clean_database(test_db_path):
 @pytest.fixture
 def db_connection(clean_database):
     """Подключение к тестовой базе данных"""
-    conn = sqlite3.connect(clean_database)
-    conn.row_factory = sqlite3.Row
+    conn = get_db_connection()
     yield conn
     conn.close()
 

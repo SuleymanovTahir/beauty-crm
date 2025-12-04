@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
 Тест отправки email уведомлений о новой записи
-Отправляет тестовое уведомление на ii3391609@gmail.com
+Отправляет тестовое уведомление на тестовый email из конфига
 """
 import sys
 import os
 import asyncio
 from datetime import datetime, timedelta
 
-# Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from tests.config import get_test_config
+TEST_CONFIG = get_test_config()
 
 from utils.email import send_email_async
 from db.settings import get_salon_settings
@@ -39,7 +41,8 @@ async def test_new_booking_notification():
     plain_text, html_text = format_new_booking_email(booking_data, salon_data)
 
     print("\n📧 Отправка email...")
-    print(f"   Кому: ii3391609@gmail.com")
+    test_email = TEST_CONFIG['test_email']
+    print(f"   Кому: {test_email}")
     print(f"   Тема: 🎉 Новая запись онлайн!")
     print(f"   Клиент: {booking_data['client_name']}")
     print(f"   Услуга: {booking_data['service']}")
@@ -47,7 +50,7 @@ async def test_new_booking_notification():
 
     # Отправляем email
     success = await send_email_async(
-        recipients=['ii3391609@gmail.com'],
+        recipients=[test_email],
         subject=f"🎉 Новая запись онлайн! - {salon_data.get('name', 'Салон')}",
         message=plain_text,
         html=html_text
@@ -55,7 +58,7 @@ async def test_new_booking_notification():
 
     if success:
         print("\n✅ EMAIL УСПЕШНО ОТПРАВЛЕН!")
-        print(f"   Проверьте почту ii3391609@gmail.com")
+        print(f"   Проверьте почту {test_email}")
         return True
     else:
         print("\n❌ ОШИБКА ОТПРАВКИ EMAIL")
@@ -79,7 +82,7 @@ async def test_booking_reminder_notification():
         'id': 999,
         'full_name': 'Genrih',
         'name': 'Genrih',
-        'email': 'ii3391609@gmail.com',
+        'email': test_email,
         'phone': '+77056054308',
         'service_name': 'Массаж (ног/стоп/рук) 40 мин',
         'master': 'Анна Иванова',
@@ -150,7 +153,7 @@ async def main():
 
     if passed == total:
         print("\n🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ!")
-        print(f"   Проверьте почту ii3391609@gmail.com")
+        print(f"   Проверьте почту {test_email}")
     else:
         print("\n⚠️  НЕКОТОРЫЕ ТЕСТЫ НЕ ПРОШЛИ")
         print("   Проверьте настройки SMTP в .env файле")

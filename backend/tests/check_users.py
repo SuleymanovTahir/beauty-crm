@@ -16,7 +16,7 @@ if not os.path.exists(db_path):
     exit(1)
 
 try:
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
 
     # Проверяем существует ли таблица users

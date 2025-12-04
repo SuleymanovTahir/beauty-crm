@@ -13,7 +13,7 @@ from core.config import DATABASE_NAME as DB_PATH
 
 def check_employees():
     """Проверить существующих сотрудников"""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
 
     print("=" * 80)

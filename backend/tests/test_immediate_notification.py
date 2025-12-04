@@ -13,15 +13,21 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.config import DATABASE_NAME
+from tests.config import get_test_config
 
-def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahead: float = 0.05):
+TEST_CONFIG = get_test_config()
+
+def create_immediate_test_booking(email: str = None, hours_ahead: float = 0.05):
     """
     Создать тестовую запись, которая даст напоминание прямо сейчас
 
     Args:
-        email: Email для уведомлений
+        email: Email для уведомлений (из конфига если None)
         hours_ahead: Через сколько часов запись (по умолчанию 0.05 = 3 минуты)
     """
+    if email is None:
+        email = TEST_CONFIG['test_email']
+    test_phone = TEST_CONFIG['test_phone']
     print("=" * 80)
     print("🔔 ТЕСТ НЕМЕДЛЕННЫХ УВЕДОМЛЕНИЙ")
     print("=" * 80)
@@ -44,7 +50,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
             'test_immediate_notification',
             '@test_notification',
             'Test Notification Client',
-            '+971501234567',
+            test_phone,
             email,
             'customer',
             datetime.now().isoformat(),
@@ -66,7 +72,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         """, (
             booking_time.isoformat(),
             'Test Notification Client',
-            '+971501234567',
+            test_phone,
             'Тестовая услуга (напоминание)',
             'Тестовый мастер',
             'pending',
@@ -145,8 +151,8 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Создать запись для немедленного теста уведомлений')
-    parser.add_argument('--email', type=str, default='ii3391609@gmail.com',
-                        help='Email для уведомлений (по умолчанию: ii3391609@gmail.com)')
+    parser.add_argument('--email', type=str, default=TEST_CONFIG['test_email'],
+                        help=f"Email для уведомлений (по умолчанию: {TEST_CONFIG['test_email']})")
     parser.add_argument('--hours', type=float, default=2.083,
                         help='Через сколько часов запись (по умолчанию: 2.083 = 2ч 5мин)')
 

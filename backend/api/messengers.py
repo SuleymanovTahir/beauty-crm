@@ -24,7 +24,6 @@ async def get_messenger_settings(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     try:
@@ -44,9 +43,10 @@ async def get_messenger_settings(
                 END
         """)
 
+        columns = [desc[0] for desc in c.description]
         settings = []
         for row in c.fetchall():
-            row_dict = dict(row)
+            row_dict = dict(zip(columns, row))
             # Скрываем токены в списке (показываем только наличие)
             if row_dict['api_token']:
                 row_dict['has_token'] = True
@@ -139,7 +139,7 @@ async def update_messenger_setting(
 
         if 'is_enabled' in request:
             updates.append("is_enabled = %s")
-            params.append(1 if request['is_enabled'] else 0)
+            params.append(True if request['is_enabled'] else False)
 
         if 'api_token' in request:
             updates.append("api_token = %s")
@@ -189,7 +189,6 @@ async def get_messenger_messages(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     try:
@@ -218,9 +217,10 @@ async def get_messenger_messages(
                 LIMIT %s
             """, (messenger_type, limit))
 
+        columns = [desc[0] for desc in c.description]
         messages = []
         for row in c.fetchall():
-            msg_dict = dict(row)
+            msg_dict = dict(zip(columns, row))
             # Парсим JSON если есть
             if msg_dict.get('attachments_json'):
                 try:
@@ -270,7 +270,7 @@ async def send_messenger_message(
         c.execute("""
             INSERT INTO messenger_messages
             (messenger_type, client_id, sender_type, message_text, is_read)
-            VALUES (%s, %s, 'admin', %s, 1)
+            VALUES (%s, %s, 'admin', %s, TRUE)
         """, (messenger_type, client_id, message_text))
 
         message_id = c.lastrowid

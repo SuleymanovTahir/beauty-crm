@@ -54,7 +54,7 @@ def seed_public_content(db_path=DATABASE_NAME):
         if not c.fetchone():
             c.execute("""
                 INSERT INTO public_reviews (author_name, rating, text_ru, avatar_url, display_order, is_active)
-                VALUES (%s, %s, %s, %s, %s, 1)
+                VALUES (%s, %s, %s, %s, %s, TRUE)
             ON CONFLICT DO NOTHING
     """, (author, rating, text, avatar, i))
 

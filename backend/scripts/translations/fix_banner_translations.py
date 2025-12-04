@@ -32,7 +32,7 @@ def fix_banner_translations():
     translator.save_cache_to_disk()
     
     # Обновляем базу данных
-    conn = sqlite3.connect(DATABASE_PATH)
+    conn = get_db_connection()
     c = conn.cursor()
     
     for lang in LANGUAGES:

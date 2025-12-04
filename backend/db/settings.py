@@ -25,7 +25,7 @@ def get_salon_settings() -> dict:
             row_dict = dict(zip(columns, result))
             return {
                 "id": row_dict.get("id", 1),
-                "name": row_dict.get("name", "M.Le Diamant Beauty Lounge"),
+                "name": row_dict.get("name"),
                 "name_ar": row_dict.get("name_ar"),
                 "address": row_dict.get("address", ""),
                 "address_ar": row_dict.get("address_ar"),
@@ -83,7 +83,7 @@ def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     return {
         "id": 1,
-        "name": "M.Le Diamant Beauty Lounge",
+        "name": "M.Le Diamant Beauty Lounge",  # Fallback only
         "name_ar": None,
         "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
         "address_ar": None,
@@ -94,8 +94,8 @@ def _get_default_salon_settings() -> dict:
         "hours_weekdays": "10:30 - 21:30",
         "hours_weekends": "10:30 - 21:30",
         "booking_url": "https://n1314037.alteg.io",
-        "phone": "+971526961100",
-        "email": "mladiamontuae@gmail.com",
+        "phone": "+971526961100",  # Fallback only
+        "email": "mladiamontuae@gmail.com",  # Fallback only
         "instagram": "https://www.instagram.com/mlediamant/",
         "whatsapp": None,
         "bot_name": "M.Le Diamant Assistant",
@@ -212,7 +212,7 @@ def get_bot_settings() -> dict:
             # ✅ Создаём словарь result вместо прямого return
             result_dict = {
                 "id": row_dict.get("id"),
-                "bot_name": row_dict.get("bot_name", "M.Le Diamant Assistant"),
+                "bot_name": row_dict.get("bot_name"),
                 "personality_traits": row_dict.get("personality_traits", ""),
                 "greeting_message": row_dict.get("greeting_message", ""),
                 "farewell_message": row_dict.get("farewell_message", ""),
@@ -311,7 +311,7 @@ def get_bot_settings() -> dict:
 def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
     """Заменить плейсхолдеры в настройках бота на реальные значения"""
     replacements = {
-        '{SALON_NAME}': salon_settings.get('name', 'M.Le Diamant Beauty Lounge'),
+        '{SALON_NAME}': salon_settings.get('name') or 'Salon',
         '{CURRENCY}': salon_settings.get('currency', 'AED'),
         '{LOCATION}': f"{salon_settings.get('city', 'Dubai')}, {salon_settings.get('address', '')}".strip(', '),
         '{CITY}': salon_settings.get('city', 'Dubai'),

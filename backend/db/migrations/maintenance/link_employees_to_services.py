@@ -9,7 +9,7 @@ def link_employees_to_services():
     c = conn.cursor()
     
     # Проверяем что таблица существует
-    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_services'")
+    c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='employee_services'")
     if not c.fetchone():
         print("❌ Таблица employee_services не существует!")
         conn.close()

@@ -410,7 +410,7 @@ async def save_notification_settings(request: Request):
                 c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='notification_settings'")
                 columns = [row[0] for row in c.fetchall()]
             else:
-                c.execute("PRAGMA table_info(notification_settings)")
+                c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='notification_settings'")
                 columns = [row[1] for row in c.fetchall()]
             
             update_fields = []
@@ -418,23 +418,23 @@ async def save_notification_settings(request: Request):
             
             if 'email_notifications' in columns:
                 update_fields.append("email_notifications =%s")
-                params.append(1 if data.get('emailNotifications', True) else 0)
+                params.append(True if data.get('emailNotifications', True) else False)
                 
             if 'sms_notifications' in columns:
                 update_fields.append("sms_notifications =%s")
-                params.append(1 if data.get('smsNotifications', False) else 0)
+                params.append(True if data.get('smsNotifications', False) else False)
                 
             if 'booking_notifications' in columns:
                 update_fields.append("booking_notifications =%s")
-                params.append(1 if data.get('bookingNotifications', True) else 0)
+                params.append(True if data.get('bookingNotifications', True) else False)
                 
             if 'chat_notifications' in columns:
                 update_fields.append("chat_notifications =%s")
-                params.append(1 if data.get('chatNotifications', True) else 0)
+                params.append(True if data.get('chatNotifications', True) else False)
                 
             if 'daily_report' in columns:
                 update_fields.append("daily_report =%s")
-                params.append(1 if data.get('dailyReport', True) else 0)
+                params.append(True if data.get('dailyReport', True) else False)
                 
             if 'report_time' in columns:
                 update_fields.append("report_time =%s")
@@ -442,7 +442,7 @@ async def save_notification_settings(request: Request):
                 
             if 'birthday_reminders' in columns:
                 update_fields.append("birthday_reminders =%s")
-                params.append(1 if data.get('birthdayReminders', True) else 0)
+                params.append(True if data.get('birthdayReminders', True) else False)
                 
             if 'birthday_days_advance' in columns:
                 update_fields.append("birthday_days_advance =%s")
@@ -475,13 +475,13 @@ async def save_notification_settings(request: Request):
                 ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """, (
                 user_id,
-                1 if data.get('emailNotifications', True) else 0,
-                1 if data.get('smsNotifications', False) else 0,
-                1 if data.get('bookingNotifications', True) else 0,
-                1 if data.get('chatNotifications', True) else 0,
-                1 if data.get('dailyReport', True) else 0,
+                True if data.get('emailNotifications', True) else False,
+                True if data.get('smsNotifications', False) else False,
+                True if data.get('bookingNotifications', True) else False,
+                True if data.get('chatNotifications', True) else False,
+                True if data.get('dailyReport', True) else False,
                 data.get('reportTime', '09:00'),
-                1 if data.get('birthdayReminders', True) else 0,
+                True if data.get('birthdayReminders', True) else False,
                 int(data.get('birthdayDaysAdvance', 7))
             ))
             log_info(f"Notification settings created for user {user_id}", "notifications")

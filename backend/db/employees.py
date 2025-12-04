@@ -55,9 +55,9 @@ def get_all_employees(active_only=True, service_providers_only=False):
     
     if active_only:
         query += " AND is_active = TRUE"
-        # Для публичных страниц показываем только тех, у кого show_on_public_page = 1
+        # Для публичных страниц показываем только тех, у кого show_on_public_page = TRUE
         if 'show_on_public_page' in columns:
-            query += " AND show_on_public_page = 1"
+            query += " AND show_on_public_page = TRUE"
     
     # Сортировка: сначала по public_page_order (DESC), потом по имени
     if 'public_page_order' in columns:
@@ -103,7 +103,7 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     c.execute("""INSERT INTO users 
                  (username, password_hash, full_name, position, experience, photo, bio, 
                   phone, email, instagram_employee, is_service_provider, role, created_at)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, 'employee', %s)""",
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'employee', %s)""",
               (username, "placeholder_hash", full_name, position, experience, photo, bio, 
                phone, email, instagram, now))
     

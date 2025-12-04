@@ -72,7 +72,7 @@ def fix_notification_settings_table():
                 INSERT INTO notification_settings
                 (user_id, email_notifications, sms_notifications, booking_notifications,
                  chat_notifications, daily_report, report_time)
-                VALUES (%s, %s, %s, %s, 1, 1, '09:00')
+                VALUES (%s, %s, %s, %s, TRUE, TRUE, '09:00')
             """, (row[1], row[2], row[3], row[4]))
         print("  ✅ Данные мигрированы")
 

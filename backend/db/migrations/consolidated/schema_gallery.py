@@ -152,7 +152,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (%s, %s, %s, %s, 1)
+                    VALUES (%s, %s, %s, %s, TRUE)
                 ''', ('portfolio', image_path, title, idx))
             log_info(f"✅ Импортировано {len(portfolio_images)} portfolio изображений", "migration")
         
@@ -165,7 +165,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (%s, %s, %s, %s, 1)
+                    VALUES (%s, %s, %s, %s, TRUE)
                 ''', ('salon', image_path, title, idx))
             log_info(f"✅ Импортировано {len(salon_images)} salon изображений", "migration")
         
@@ -178,7 +178,7 @@ def import_gallery_images(db_path=DATABASE_NAME):
                 title = img_file.stem
                 c.execute('''
                     INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-                    VALUES (%s, %s, %s, %s, 1)
+                    VALUES (%s, %s, %s, %s, TRUE)
                 ''', ('services', image_path, title, idx))
             log_info(f"✅ Импортировано {len(services_images)} services изображений", "migration")
         

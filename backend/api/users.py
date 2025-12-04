@@ -12,6 +12,7 @@ from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
+import psycopg2
 
 router = APIRouter(tags=["Users"])
 
@@ -61,7 +62,7 @@ async def create_user_api(
 
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, role, position, created_at, is_active)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, 1)""",
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)""",
                   (username, password_hash, full_name, email, role, position, now))
         conn.commit()
         user_id = c.lastrowid
@@ -76,7 +77,7 @@ async def create_user_api(
             "user_id": user_id
         }
         
-    except sqlite3.IntegrityError as e:
+    except psycopg2.IntegrityError as e:
         conn.close()
         log_error(f"Error creating user (IntegrityError): {e}", "api")
         return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
@@ -98,7 +99,6 @@ async def get_user_by_id(
 
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
         c.execute("""
@@ -117,20 +117,20 @@ async def get_user_by_id(
             return JSONResponse({"error": "User not found"}, status_code=404)
 
         user_data = {
-            "id": row["id"],
-            "username": row["username"],
-            "full_name": row["full_name"],
-            "email": row["email"],
-            "role": row["role"],
-            "position": row["position"],
-            "phone": row["phone"],
-            "bio": row["bio"],
-            "photo": row["photo"],
-            "is_active": bool(row["is_active"]),
-            "is_service_provider": bool(row["is_service_provider"]),
-            "position_ru": row["position_ru"],
-            "position_ar": row["position_ar"],
-            "created_at": row["created_at"]
+            "id": row[0],
+            "username": row[1],
+            "full_name": row[2],
+            "email": row[3],
+            "role": row[4],
+            "position": row[5],
+            "phone": row[6],
+            "bio": row[7],
+            "photo": row[8],
+            "is_active": bool(row[9]),
+            "is_service_provider": bool(row[10]),
+            "position_ru": row[11],
+            "position_ar": row[12],
+            "created_at": row[13]
         }
 
         return user_data
@@ -144,7 +144,6 @@ async def get_users(current_user: dict = Depends(get_current_user)):
     """Получить всех пользователей"""
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row  # ✅ ВАЖНО для dict
         c = conn.cursor()
 
         # Query users directly (employees table is consolidated)
@@ -162,26 +161,26 @@ async def get_users(current_user: dict = Depends(get_current_user)):
 
         users = []
         for row in c.fetchall():
-            # Use position from users table
-            position_display = row["position"]
+            # Use position from users table (index 5)
+            position_display = row[5]
             
             # Construct position object if needed or just use text
             # For now, we'll just use the text position
             
             user_data = {
-                "id": row["id"],
-                "username": row["username"],
-                "full_name": row["full_name"],
-                "email": row["email"],
-                "role": row["role"],
+                "id": row[0],
+                "username": row[1],
+                "full_name": row[2],
+                "email": row[3],
+                "role": row[4],
                 "position": position_display,
                 "position_id": None, # Legacy field
-                "employee_id": row["employee_id"],
-                "created_at": row["created_at"],
-                "is_active": row["is_active"],
-                "position_ru": row["position_ru"],
-                "position_ar": row["position_ar"],
-                "photo": row["photo"]
+                "employee_id": row[8],
+                "created_at": row[6],
+                "is_active": row[7],
+                "position_ru": row[9],
+                "position_ar": row[10],
+                "photo": row[11]
             }
 
             users.append(user_data)
