@@ -19,7 +19,6 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         List[Dict]: Список отзывов
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
@@ -76,7 +75,6 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
         List[Dict]: Список вопросов и ответов
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
@@ -128,7 +126,6 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         List[Dict]: Список элементов галереи
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:

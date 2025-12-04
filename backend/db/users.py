@@ -7,6 +7,7 @@ import hashlib
 import secrets
 
 from db.connection import get_db_connection
+import psycopg2
 
 def get_all_users():
     """Получить всех пользователей"""
@@ -39,7 +40,7 @@ def create_user(username: str, password: str, full_name: str = None,
         user_id = c.lastrowid
         conn.close()
         return user_id
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         conn.close()
         return None
 

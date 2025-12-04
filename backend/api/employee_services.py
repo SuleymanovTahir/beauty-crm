@@ -21,7 +21,6 @@ async def get_user_services(
     """Получить все услуги сотрудника с настройками"""
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
         
         # Get assigned services
@@ -41,17 +40,17 @@ async def get_user_services(
         assigned_services = []
         for row in c.fetchall():
             assigned_services.append({
-                "id": row["id"],
-                "name": row["name"],
-                "name_ru": row["name_ru"],
-                "name_ar": row["name_ar"],
-                "category": row["category"],
-                "price": row["price"],
-                "price_min": row["price_min"],
-                "price_max": row["price_max"],
-                "duration": row["duration"],
-                "is_online_booking_enabled": bool(row["is_online_booking_enabled"]),
-                "is_calendar_enabled": bool(row["is_calendar_enabled"])
+                "id": row[0],
+                "name": row[1],
+                "name_ru": row[2],
+                "name_ar": row[3],
+                "category": row[4],
+                "price": row[5],
+                "price_min": row[6],
+                "price_max": row[7],
+                "duration": row[8],
+                "is_online_booking_enabled": bool(row[9]),
+                "is_calendar_enabled": bool(row[10])
             })
         
         # Get all available services (entire catalog)
@@ -67,14 +66,14 @@ async def get_user_services(
         
         for row in c.fetchall():
             all_services.append({
-                "id": row["id"],
-                "name": row["name"],
-                "name_ru": row["name_ru"],
-                "name_ar": row["name_ar"],
-                "category": row["category"],
-                "default_price": row["price"],
-                "default_duration": row["duration"],
-                "is_assigned": row["id"] in assigned_ids
+                "id": row[0],
+                "name": row[1],
+                "name_ru": row[2],
+                "name_ar": row[3],
+                "category": row[4],
+                "default_price": row[5],
+                "default_duration": row[6],
+                "is_assigned": row[0] in assigned_ids
             })
         
         conn.close()

@@ -20,7 +20,7 @@ c = conn.cursor()
 
 try:
     # Проверяем, существует ли уже это поле
-    c.execute("PRAGMA table_info(clients)")
+    c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='clients'")
     columns = [col[1] for col in c.fetchall()]
 
     if 'preferred_messenger' not in columns:

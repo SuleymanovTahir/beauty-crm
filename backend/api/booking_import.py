@@ -138,7 +138,6 @@ def find_or_create_client(name: str, phone: str = None) -> str:
     Returns instagram_id
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:
@@ -164,7 +163,7 @@ def find_or_create_client(name: str, phone: str = None) -> str:
         c.execute("""
             INSERT INTO clients 
             (instagram_id, name, phone, status, labels, total_messages, detected_language)
-            VALUES (%s, %s, %s, 'new', 'Imported', 0, 'ru')
+            VALUES (%s, %s, %s, 'new', 'Imported', FALSE, 'ru')
         """, (instagram_id, name, phone_json))
         
         conn.commit()

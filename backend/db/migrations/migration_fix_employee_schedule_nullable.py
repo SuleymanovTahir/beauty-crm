@@ -24,7 +24,7 @@ def migrate():
         print("🔧 Fixing employee_schedule table to allow NULL times...")
 
         # Проверяем существует ли таблица
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_schedule'")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='employee_schedule'")
         if not c.fetchone():
             print("⚠️ Table employee_schedule not found!")
             return

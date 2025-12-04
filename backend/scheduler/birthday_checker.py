@@ -96,7 +96,7 @@ def mark_notification_sent(user_id: int, notification_type: str, notification_da
     
     c.execute("""
         INSERT INTO birthday_notifications (user_id, notification_type, notification_date, is_sent, sent_at)
-        VALUES (%s, %s, %s, 1, %s)
+        VALUES (%s, %s, %s, TRUE, %s)
     """, (user_id, notification_type, notification_date, now))
     
     conn.commit()
@@ -400,8 +400,8 @@ async def send_booking_reminders():
     import asyncio
     
     salon_settings = get_salon_settings()
-    salon_name = salon_settings.get('name', 'M.Le Diamant Beauty Lounge')
-    salon_address = salon_settings.get('address', 'JBR, Dubai')
+    salon_name = salon_settings.get('name')
+    salon_address = salon_settings.get('address')
     
     try:
         # За 24 часа
@@ -475,8 +475,8 @@ async def send_immediate_booking_reminders():
                 # Build message
                 from db.settings import get_salon_settings
                 salon_settings = get_salon_settings()
-                salon_name = salon_settings.get('name', 'M.Le Diamant Beauty Lounge')
-                salon_address = salon_settings.get('address', 'JBR, Dubai')
+                salon_name = salon_settings.get('name')
+                salon_address = salon_settings.get('address')
                 
                 message = f"🔔 Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')} 💅\n{f'Mастер: {master}' if master else ''}\n\nАдрес: {salon_name}, {salon_address}\nЖдём вас! 💎"
                 await send_message(instagram_id, message)

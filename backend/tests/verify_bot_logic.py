@@ -11,7 +11,6 @@ from bot.tools import get_available_time_slots
 
 def get_db_connection():
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     return conn
 
 def verify_bot_logic():
@@ -43,18 +42,18 @@ def verify_bot_logic():
     if not schedule_exists:
         print(f"   Creating schedule for Mestan for day {day_of_week}...")
         c.execute("""INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                     VALUES (%s, %s, '10:00', '20:00', 1)""", (mestan_id, day_of_week))
+                     VALUES (%s, %s, '10:00', '20:00', TRUE)""", (mestan_id, day_of_week))
     else:
         # Ensure it is active and has hours
         c.execute("""UPDATE user_schedule 
-                     SET is_active = 1, start_time = '10:00', end_time = '20:00'
+                     SET is_active = TRUE, start_time = '10:00', end_time = '20:00'
                      WHERE user_id = %s AND day_of_week = %s""", (mestan_id, day_of_week))
         
     conn.commit()
 
     # Enable online booking
     c.execute("""UPDATE user_services 
-                 SET is_online_booking_enabled = 1 
+                 SET is_online_booking_enabled = TRUE 
                  WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()
@@ -70,10 +69,10 @@ def verify_bot_logic():
         SELECT DISTINCT u.full_name
         FROM users u
         JOIN user_services us ON u.id = us.user_id
-        WHERE u.is_active = 1 
-          AND u.is_service_provider = 1
+        WHERE u.is_active = TRUE 
+          AND u.is_service_provider = TRUE
           AND us.service_id = %s
-          AND us.is_online_booking_enabled = 1
+          AND us.is_online_booking_enabled = TRUE
     """, (service_id,))
     masters = c.fetchall()
     print(f"   DEBUG: Potential Masters for service {service_id}: {[m[0] for m in masters]}")
@@ -99,7 +98,7 @@ def verify_bot_logic():
 
     # 3. Disable online booking
     c.execute("""UPDATE user_services 
-                 SET is_online_booking_enabled = 0 
+                 SET is_online_booking_enabled = FALSE 
                  WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()
@@ -117,7 +116,7 @@ def verify_bot_logic():
 
     # 5. Cleanup (Re-enable)
     c.execute("""UPDATE user_services 
-                 SET is_online_booking_enabled = 1 
+                 SET is_online_booking_enabled = TRUE 
                  WHERE user_id = %s AND service_id = %s""", 
               (mestan_id, service_id))
     conn.commit()

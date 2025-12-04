@@ -38,6 +38,21 @@ def run_all_migrations():
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"База данных: {DATABASE_NAME}")
 
+    # ========================================================================
+    # СОЗДАНИЕ БАЗЫ ДАННЫХ ЕСЛИ НЕ СУЩЕСТВУЕТ
+    # ========================================================================
+    print_header("ПРОВЕРКА И СОЗДАНИЕ БАЗЫ ДАННЫХ")
+    try:
+        from scripts.maintenance.recreate_database import recreate_database
+        recreate_database()
+        print("✅ База данных проверена/создана")
+    except Exception as e:
+        print(f"❌ КРИТИЧЕСКАЯ ОШИБКА при создании БД: {e}")
+        import traceback
+        traceback.print_exc()
+        print("\n⚠️  Невозможно продолжить без базы данных!")
+        return False
+
     results = {}
 
     # ========================================================================
@@ -50,6 +65,8 @@ def run_all_migrations():
         print("✅ Базовые таблицы инициализированы")
     except Exception as e:
         print(f"❌ Ошибка инициализации: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
     # ========================================================================

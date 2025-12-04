@@ -124,7 +124,7 @@ def get_master_info(master_name: str) -> Optional[Dict[str, Any]]:
         FROM users
         WHERE (LOWER(full_name) = LOWER(%s) OR LOWER(username) = LOWER(%s))
         AND role IN ('employee', 'admin', 'manager')
-        AND is_active = 1
+        AND is_active = TRUE
     """, (master_name, master_name))
 
     result = c.fetchone()

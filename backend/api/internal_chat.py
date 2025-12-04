@@ -69,7 +69,7 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
         c = conn.cursor()
         c.execute("""
             UPDATE internal_chat
-            SET email_sent = 1, email_sent_at = %s
+            SET email_sent = TRUE, email_sent_at = %s
             WHERE to_user_id = %s AND from_user_id = (
                 SELECT id FROM users WHERE full_name = %s
             )

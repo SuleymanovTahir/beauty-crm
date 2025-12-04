@@ -70,7 +70,7 @@ def get_plan_for_user(user_id: int, metric_type: str, period_type: str = None) -
                 WHERE role_key = %s 
                   AND metric_type = %s
                   AND is_active = TRUE
-                  AND is_position_plan = 1
+                  AND is_position_plan = TRUE
                   AND start_date <= %s
                   AND end_date >= %s
             """
@@ -153,7 +153,7 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
             WHERE role_key = %s 
               AND metric_type = %s
               AND period_type = %s
-              AND is_position_plan = 1
+              AND is_position_plan = TRUE
               AND is_active = TRUE
         """, (datetime.now().isoformat(), role_key, metric_type, period_type))
         
@@ -168,7 +168,7 @@ def set_role_plan(role_key: str, metric_type: str, target_value: float,
                 role_key, is_position_plan,
                 visible_to_positions, can_edit_positions
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, 1, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)
         """, (metric_type, target_value, period_type, start_date, end_date, 
               created_by, role_key, visible_json, can_edit_json))
         
@@ -208,7 +208,7 @@ def set_individual_plan(user_id: int, metric_type: str, target_value: float,
                 start_date, end_date, created_by,
                 user_id, is_individual_plan
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, 1)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)
         """, (metric_type, target_value, period_type, start_date, end_date, 
               created_by, user_id))
         

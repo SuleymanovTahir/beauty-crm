@@ -1,11 +1,12 @@
 import os
+from db.connection import get_db_connection
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'salon_bot.db')
 
 def create_public_content_tables():
     """Создание таблиц для управления публичным контентом"""
     print(f"Creating public content tables in {DB_PATH}...")
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     cursor = conn.cursor()
 
     try:

@@ -13,6 +13,9 @@ import traceback
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+from tests.config import get_test_config
+TEST_CONFIG = get_test_config()
+
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 80)
@@ -97,7 +100,7 @@ def test_database():
         if os.getenv('DATABASE_TYPE') == 'postgresql':
             c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
         else:
-            c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public'")
         
         existing_tables = [row[0] for row in c.fetchall()]
 
@@ -182,7 +185,9 @@ def test_new_features():
             # MasterScheduleService likely expects a name string based on previous usage, 
             # but we should check if it was updated to use user_id.
             # Assuming it still takes a name for now, but internally looks up in users table.
-            success = schedule.set_working_hours(test_master, 0, "09:00", "18:00")
+            work_start = TEST_CONFIG['work_start_weekday']
+            work_end = TEST_CONFIG['work_end_weekday']
+            success = schedule.set_working_hours(test_master, 0, work_start, work_end)
 
             if success:
                 print(f"   ✅ Расписание работает")

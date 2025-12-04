@@ -305,7 +305,6 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
 async def get_public_banners():
     """Получить активные баннеры для главной страницы"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:

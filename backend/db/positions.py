@@ -5,6 +5,7 @@
 from datetime import datetime
 from typing import Optional, List, Dict
 from db.connection import get_db_connection
+import psycopg2
 
 def get_all_positions(active_only=True):
     """
@@ -14,7 +15,6 @@ def get_all_positions(active_only=True):
         active_only: Только активные должности
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     query = "SELECT * FROM positions WHERE 1=1"
@@ -25,19 +25,23 @@ def get_all_positions(active_only=True):
     query += " ORDER BY sort_order, name"
 
     c.execute(query)
-    positions = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    positions = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
     return positions
 
 def get_position(position_id: int):
     """Получить должность по ID"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     c.execute("SELECT * FROM positions WHERE id = %s", (position_id,))
     row = c.fetchone()
-    position = dict(row) if row else None
+    if row:
+        columns = [desc[0] for desc in c.description]
+        position = dict(zip(columns, row))
+    else:
+        position = None
 
     conn.close()
     return position
@@ -61,7 +65,7 @@ def create_position(name: str, name_en: str = None, name_ar: str = None,
         position_id = c.fetchone()[0]
         conn.commit()
         return position_id
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         # Должность с таким именем уже существует
         return None
     finally:
@@ -149,11 +153,11 @@ def hard_delete_position(position_id: int):
 def get_employees_by_position(position_id: int):
     """Получить всех пользователей с определенной должностью"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     c.execute("SELECT * FROM users WHERE position_id = %s AND is_active = TRUE", (position_id,))
-    employees = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    employees = [dict(zip(columns, row)) for row in c.fetchall()]
 
     conn.close()
     return employees

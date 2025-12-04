@@ -100,7 +100,7 @@ class ComprehensiveTest:
         if result.data:
             print(f"      {Colors.MAGENTA}📊 Данные: {json.dumps(result.data, ensure_ascii=False, indent=8)}{Colors.END}")
 
-    def connect_db(self) -> sqlite3.Connection:
+    def connect_db(self) -> Any:
         """Подключение к базе данных"""
         if not os.path.exists(self.db_path):
             raise FileNotFoundError(f"❌ База данных не найдена: {self.db_path}")
@@ -108,8 +108,7 @@ class ComprehensiveTest:
         if os.path.getsize(self.db_path) == 0:
             raise ValueError(f"❌ База данных пустая (0 байт): {self.db_path}")
 
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
+        conn = get_db_connection()
         return conn
 
     # ========================================================================
@@ -163,7 +162,7 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            cursor.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public'")
             existing_tables = {row['name'] for row in cursor.fetchall()}
 
             missing_tables = set(required_tables) - existing_tables
@@ -204,7 +203,7 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("PRAGMA table_info(users)")
+            cursor.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='users'")
             columns_info = cursor.fetchall()
             existing_columns = {row['name'] for row in columns_info}
 
@@ -481,7 +480,7 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT COUNT(*) as count FROM employees WHERE is_active = 1")
+            cursor.execute("SELECT COUNT(*) as count FROM employees WHERE is_active = TRUE")
             count = cursor.fetchone()['count']
 
             if count == 0:
@@ -493,7 +492,7 @@ class ComprehensiveTest:
                 cursor.execute("""
                     SELECT id, full_name, position, phone, email
                     FROM employees
-                    WHERE is_active = 1
+                    WHERE is_active = TRUE
                     ORDER BY sort_order
                 """)
                 employees = cursor.fetchall()
@@ -530,7 +529,7 @@ class ComprehensiveTest:
             cursor.execute("""
                 SELECT id, full_name, position, phone, email
                 FROM employees
-                WHERE is_active = 1
+                WHERE is_active = TRUE
             """)
             employees = cursor.fetchall()
 
@@ -593,7 +592,7 @@ class ComprehensiveTest:
             cursor.execute("""
                 SELECT id, full_name, position
                 FROM employees
-                WHERE is_active = 1
+                WHERE is_active = TRUE
             """)
             employees = cursor.fetchall()
 
@@ -664,7 +663,7 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT COUNT(*) as count FROM positions WHERE is_active = 1")
+            cursor.execute("SELECT COUNT(*) as count FROM positions WHERE is_active = TRUE")
             count = cursor.fetchone()['count']
 
             if count == 0:
@@ -675,7 +674,7 @@ class ComprehensiveTest:
                 cursor.execute("""
                     SELECT id, name, name_en, name_ar
                     FROM positions
-                    WHERE is_active = 1
+                    WHERE is_active = TRUE
                     ORDER BY sort_order
                 """)
                 positions = cursor.fetchall()
@@ -813,7 +812,7 @@ class ComprehensiveTest:
             conn = self.connect_db()
             cursor = conn.cursor()
 
-            cursor.execute("SELECT COUNT(*) as count FROM services WHERE is_active = 1")
+            cursor.execute("SELECT COUNT(*) as count FROM services WHERE is_active = TRUE")
             count = cursor.fetchone()['count']
 
             if count == 0:
@@ -824,7 +823,7 @@ class ComprehensiveTest:
                 cursor.execute("""
                     SELECT category, COUNT(*) as count
                     FROM services
-                    WHERE is_active = 1
+                    WHERE is_active = TRUE
                     GROUP BY category
                 """)
                 categories = cursor.fetchall()

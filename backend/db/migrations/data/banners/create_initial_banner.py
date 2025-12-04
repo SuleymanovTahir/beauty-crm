@@ -1,8 +1,9 @@
 from pathlib import Path
+from db.connection import get_db_connection
 
 def create_initial_banner(db_path="salon_bot.db"):
     """Create initial banner with hero image"""
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     c = conn.cursor()
     
     try:

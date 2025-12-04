@@ -6,6 +6,7 @@ from fastapi import APIRouter, Form, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
+import psycopg2
 
 from db import (
     verify_user, create_session, delete_session,
@@ -232,7 +233,7 @@ async def api_register(
         """
         # Проверяем, существуют ли уже активные и верифицированные директора
         # Тестовые/неактивные пользователи не считаются
-        c.execute("SELECT COUNT(*) FROM users WHERE role = 'director' AND is_active = 1 AND email_verified = 1")
+        c.execute("SELECT COUNT(*) FROM users WHERE role = 'director' AND is_active = TRUE AND email_verified = TRUE")
         active_verified_directors = c.fetchone()[0]
         is_first_director = (active_verified_directors == 0)
 
@@ -241,6 +242,7 @@ async def api_register(
         # Тестовые боты не мешают, т.к. они либо не активны, либо не верифицированы
         auto_verify = is_first_director and role == 'director'
         """
+
 
         # Добавляем privacy_accepted и privacy_accepted_at
         privacy_accepted_at = now if privacy_accepted else None
@@ -251,19 +253,20 @@ async def api_register(
                       email_verification_token, privacy_accepted, privacy_accepted_at)
                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   (username, password_hash, full_name, email, role, position, now,
-                   1 if auto_verify else 0,  # is_active
-                   1 if auto_verify else 0,  # email_verified
+                   True if auto_verify else False,  # is_active
+                   True if auto_verify else False,  # email_verified
                    verification_code, code_expires,
                    verification_token,
                    int(privacy_accepted), privacy_accepted_at))
 
         user_id = c.lastrowid
 
+
         # Создаем запись в таблице employees для сотрудников
         if role in ['employee', 'manager', 'director', 'admin']:
             c.execute("""INSERT INTO employees
                          (full_name, position, email, phone, is_active, created_at, updated_at)
-                         VALUES (%s, %s, %s, '', 1, %s, %s)""",
+                         VALUES (%s, %s, %s, '', TRUE, %s, %s)""",
                       (full_name, position or role, email, now, now))
 
             employee_id = c.lastrowid
@@ -278,7 +281,7 @@ async def api_register(
             for sub_type in CLIENT_SUBSCRIPTION_TYPES.keys():
                 c.execute("""INSERT INTO user_subscriptions
                              (user_id, subscription_type, is_subscribed, created_at, updated_at)
-                             VALUES (%s, %s, 1, %s, %s)""",
+                             VALUES (%s, %s, TRUE, %s, %s)""",
                           (user_id, sub_type, now, now))
 
         conn.commit()
@@ -319,7 +322,7 @@ async def api_register(
 
         return response_data
 
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         log_error(f"Registration failed: username {username} already exists", "auth")
         return JSONResponse(
             {"error": "Пользователь с таким логином уже существует"},
@@ -378,7 +381,7 @@ async def verify_email(
         # Подтверждаем email
         c.execute("""
             UPDATE users
-            SET email_verified = 1, verification_code = NULL, verification_code_expires = NULL
+            SET email_verified = TRUE, verification_code = NULL, verification_code_expires = NULL
             WHERE id = %s
         """, (user_id,))
 
@@ -496,8 +499,8 @@ async def verify_email_token(token: str):
             # Подтверждаем email и активируем пользователя
             c.execute("""
                 UPDATE users
-                SET email_verified = 1,
-                    is_active = 1,
+                SET email_verified = TRUE,
+                    is_active = TRUE,
                     email_verification_token = NULL,
                     verification_code = NULL,
                     verification_code_expires = NULL
@@ -558,7 +561,7 @@ async def get_positions():
             name_en TEXT,
             name_ar TEXT,
             description TEXT,
-            is_active INTEGER DEFAULT 1,
+            is_active BOOLEAN DEFAULT TRUE,
             sort_order INTEGER DEFAULT 0,
             created_at TEXT,
             updated_at TEXT
@@ -591,7 +594,7 @@ async def get_positions():
             for position in default_positions:
                 c.execute("""INSERT INTO positions
                              (name, name_en, name_ar, description, sort_order, is_active, created_at, updated_at)
-                             VALUES (%s, %s, %s, %s, %s, 1, %s, %s)""",
+                             VALUES (%s, %s, %s, %s, %s, TRUE, %s, %s)""",
                           (position[0], position[1], position[2], position[3], position[4], now, now))
 
             conn.commit()
@@ -600,7 +603,7 @@ async def get_positions():
         c.execute("""
             SELECT id, name, name_en, name_ar, description
             FROM positions
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY sort_order, name
         """)
 

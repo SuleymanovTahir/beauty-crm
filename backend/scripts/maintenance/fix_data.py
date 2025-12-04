@@ -99,10 +99,20 @@ def check_bot_settings():
     print(f"\n=== Важные поля ===")
     for field in important_fields:
         value = data.get(field, '')
-        length = len(value) if value else 0
-        status = "✅" if length > 10 else "❌"
+        # Проверка на реально пустое значение
+        is_empty = (value is None or 
+                   (isinstance(value, str) and len(value.strip()) == 0) or
+                   (isinstance(value, str) and value.strip() in ['...', '…']))
+        
+        if is_empty:
+            status = "❌"
+            length = 0
+        else:
+            status = "✅"
+            length = len(value) if value else 0
+            
         print(f"{status} {field}: {length} символов")
-        if value and len(value) < 100:
+        if value and not is_empty and len(value) < 100:
             print(f"   Значение: {value[:100]}")
 
     conn.close()

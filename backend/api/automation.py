@@ -160,7 +160,7 @@ async def update_automation_rule(
             params.append(value)
         
         updates.append("updated_at = %s")
-        params.append(sqlite3.datetime.datetime.now().isoformat())
+        params.append(datetime.datetime.now().isoformat())
         params.append(rule_id)
         
         query = f"UPDATE automation_rules SET {', '.join(updates)} WHERE id = %s"

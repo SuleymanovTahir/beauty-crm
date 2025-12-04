@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 
 from db.connection import get_db_connection
+import psycopg2
 
 from core.config import (
     DATABASE_NAME, ROLES, CLIENT_STATUSES,
@@ -124,7 +125,7 @@ async def get_user_permissions(
             },
             "custom_permissions": custom_permissions
         }
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
 
@@ -196,7 +197,7 @@ async def update_user_role(
             "new_role": new_role
         }
 
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
 
@@ -254,7 +255,7 @@ async def update_user_custom_permissions(
             "updated_permissions": permissions
         }
 
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")
 
@@ -331,6 +332,6 @@ async def get_all_users_with_permissions(
             "count": len(users)
         }
 
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         log_error(f"Database error: {e}", "api")
         raise HTTPException(status_code=500, detail="Database error")

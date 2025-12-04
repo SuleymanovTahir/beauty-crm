@@ -59,7 +59,6 @@ def get_active_reminder_settings() -> List[Dict]:
 def get_bookings_needing_reminders() -> List[Dict]:
     """Получить записи, которым нужны напоминания"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     try:
@@ -80,8 +79,10 @@ def get_bookings_needing_reminders() -> List[Dict]:
         """, (now.isoformat(), two_days_ahead.isoformat()))
 
         bookings = []
+        columns = ['id', 'datetime', 'name', 'phone', 'service_name', 'master', 'notes', 
+                   'instagram_id', 'email', 'full_name', 'client_phone']
         for row in c.fetchall():
-            bookings.append(dict(row))
+            bookings.append(dict(zip(columns, row)))
 
         return bookings
 
@@ -139,9 +140,9 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
         date_str = booking_datetime.split('T')[0] if 'T' in booking_datetime else booking_datetime
         time_str = booking_datetime.split('T')[1][:5] if 'T' in booking_datetime else ''
 
-    salon_name = salon_settings.get('name', 'M.Le Diamant Beauty Lounge')
-    salon_address = salon_settings.get('address', 'JBR, Dubai')
-    salon_phone = salon_settings.get('phone', '+971 52 696 1100')
+    salon_name = salon_settings.get('name')
+    salon_address = salon_settings.get('address')
+    salon_phone = salon_settings.get('phone')
     google_maps = salon_settings.get('google_maps', 'https://maps.app.goo.gl/Puh5X1bNEjWPiToz6')
 
     # Plain text версия

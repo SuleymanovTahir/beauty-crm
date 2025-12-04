@@ -146,6 +146,10 @@ def check_alt_attributes():
     
     return len(issues)
 
+def optimize_seo():
+    """Alias for main() - для совместимости с run_all_fixes"""
+    main()
+
 def main():
     """Run all SEO optimizations"""
     log_info("🚀 Starting SEO Optimization Suite", "seo")

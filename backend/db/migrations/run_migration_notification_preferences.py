@@ -20,7 +20,7 @@ c = conn.cursor()
 
 try:
     # Проверяем, какие поля уже существуют
-    c.execute("PRAGMA table_info(users)")
+    c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='users'")
     columns = [col[1] for col in c.fetchall()]
 
     fields_to_add = [

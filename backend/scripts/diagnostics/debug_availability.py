@@ -29,7 +29,7 @@ def debug_availability():
 
     # 1. Check Masters
     print("\n--- Masters ---")
-    c.execute("SELECT id, full_name, is_active, is_service_provider FROM users WHERE is_service_provider = 1")
+    c.execute("SELECT id, full_name, is_active, is_service_provider FROM users WHERE is_service_provider = TRUE")
     masters = c.fetchall()
     for m in masters:
         print(f"ID: {m[0]}, Name: {m[1]}, Active: {m[2]}, Provider: {m[3]}")
@@ -72,7 +72,7 @@ def debug_availability():
     if s_row:
         print(f"  Selected Service: ID={s_row[0]}, Name={s_row[1]}, Duration={s_row[2]}")
         # Check masters for THIS service
-        c.execute("SELECT user_id FROM user_services WHERE service_id = %s AND is_online_booking_enabled = 1", (s_row[0],))
+        c.execute("SELECT user_id FROM user_services WHERE service_id = %s AND is_online_booking_enabled = TRUE", (s_row[0],))
         masters_with_service = c.fetchall()
         print(f"  Masters with this service enabled: {masters_with_service}")
     else:
@@ -93,7 +93,7 @@ def debug_availability():
     print("\n--- Direct Service Debug ---")
     service = MasterScheduleService()
     # Try with first master found
-    c.execute("SELECT full_name FROM users WHERE is_service_provider = 1 LIMIT 1")
+    c.execute("SELECT full_name FROM users WHERE is_service_provider = TRUE LIMIT 1")
     m_name = c.fetchone()[0]
     print(f"Testing with master: {m_name}")
     

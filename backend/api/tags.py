@@ -9,6 +9,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+import psycopg2
 
 router = APIRouter(tags=["Tags"])
 
@@ -108,7 +109,7 @@ async def create_tag(
             "message": "Tag created successfully"
         }
         
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         return JSONResponse({"error": "Tag with this name already exists"}, status_code=400)
     except Exception as e:
         log_error(f"Error creating tag: {e}", "tags")
@@ -183,7 +184,7 @@ async def add_client_tag(
         log_info(f"Tag {tag_id} added to client {client_id}", "tags")
         return {"success": True, "message": "Tag added to client"}
         
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         return JSONResponse({"error": "Client already has this tag"}, status_code=400)
     except Exception as e:
         log_error(f"Error adding tag to client: {e}", "tags")

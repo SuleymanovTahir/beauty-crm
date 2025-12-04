@@ -5,6 +5,7 @@
 from db.connection import get_db_connection
 import sys
 import os
+import psycopg2
 
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -63,7 +64,7 @@ def check_database():
                 print("✅ Все пользователи имеют email")
         else:
             print("❌ Пользователи не найдены")
-    except sqlite3.OperationalError as e:
+    except psycopg2.OperationalError as e:
         print(f"⚠️  Ошибка при проверке пользователей: {e}")
 
     # 2. Проверка сотрудников
@@ -74,7 +75,7 @@ def check_database():
         c.execute("""
             SELECT id, full_name, phone, email, birthday
             FROM employees
-            WHERE is_active = 1
+            WHERE is_active = TRUE
             ORDER BY id
         """)
         employees = c.fetchall()
@@ -94,7 +95,7 @@ def check_database():
             print(f"С датой рождения: {employees_with_birthday}")
         else:
             print("⚠️  Активные сотрудники не найдены")
-    except sqlite3.OperationalError as e:
+    except psycopg2.OperationalError as e:
         print(f"⚠️  Ошибка при проверке сотрудников: {e}")
 
     # 3. Проверка настроек бота
@@ -139,7 +140,7 @@ def check_database():
         else:
             print("✅ Все критические поля заполнены")
 
-    except sqlite3.OperationalError as e:
+    except psycopg2.OperationalError as e:
         print(f"⚠️  Ошибка при проверке настроек бота: {e}")
 
     # 4. Проверка таблиц миграций
@@ -157,7 +158,7 @@ def check_database():
     missing_tables = []
 
     for table in critical_tables:
-        c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}'")
+        c.execute(f"SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='{table}'")
         if c.fetchone():
             # Получаем количество записей
             c.execute(f"SELECT COUNT(*) FROM {table}")

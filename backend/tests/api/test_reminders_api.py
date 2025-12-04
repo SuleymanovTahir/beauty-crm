@@ -60,7 +60,7 @@ def test_booking_reminder_settings_table():
             print("\n📝 Настройки напоминаний:")
             for row in rows:
                 enabled = "✅ Включено" if row[4] else "❌ Выключено"  # is_enabled
-                print(f"  {row[0]:2d}. {row[1]:30s} | {row[2]:2d} дн. {row[3]:2d} ч. | {row[5]:6s} | {enabled}")
+                print(f"  {row[0]:2d}. {row[1]:30s} | {row[2]:2d} дн. {row[3]:2d} ч. | {str(row[5]):6s} | {enabled}")
 
         conn.close()
         return True
@@ -165,7 +165,7 @@ def test_toggle_reminder():
         print(f"   Текущее состояние: {'Включено' if current_state else 'Выключено'}")
 
         # Переключаем состояние
-        new_state = 0 if current_state else 1
+        new_state = False if current_state else True
         c.execute("UPDATE booking_reminder_settings SET is_enabled = %s WHERE id = %s", (new_state, reminder_id))
         conn.commit()
 
