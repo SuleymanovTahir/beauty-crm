@@ -22,7 +22,6 @@ async def get_public_employees(
     log_info(f"API: Запрос сотрудников на языке {language}", "api")
     
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
@@ -86,7 +85,6 @@ async def get_salon_info(
     - **language**: Код языка
     """
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:

@@ -50,9 +50,9 @@ async def preview_broadcast(
             FROM users u
             INNER JOIN user_subscriptions s ON u.id = s.user_id
             WHERE s.subscription_type = %s
-            AND s.is_subscribed = 1
+            AND s.is_subscribed = TRUE
             AND u.is_active = TRUE
-            AND u.email_verified = 1
+            AND u.email_verified = TRUE
         """
         params = [broadcast.subscription_type]
 
@@ -151,9 +151,9 @@ async def send_broadcast(
             FROM users u
             INNER JOIN user_subscriptions s ON u.id = s.user_id
             WHERE s.subscription_type = %s
-            AND s.is_subscribed = 1
+            AND s.is_subscribed = TRUE
             AND u.is_active = TRUE
-            AND u.email_verified = 1
+            AND u.email_verified = TRUE
         """
         params = [broadcast.subscription_type]
 

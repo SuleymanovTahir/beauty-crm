@@ -828,7 +828,7 @@ def seed_data():
     
     # Load actual master IDs from database
     master_ids = {}
-    c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = 1")
+    c.execute("SELECT id, full_name, position FROM users WHERE is_service_provider = TRUE")
     employees = c.fetchall()
     for row in employees:
         actual_name = row['full_name']
@@ -844,7 +844,7 @@ def seed_data():
     print("-" * 70)
 
     # Проверяем есть ли уже услуги
-    c.execute("SELECT COUNT(*) FROM services WHERE is_active = 1")
+    c.execute("SELECT COUNT(*) FROM services WHERE is_active = TRUE")
     if c.fetchone()[0] > 0:
         print("⚠️  Услуги уже существуют, очищаю...")
         c.execute("DELETE FROM services")
@@ -857,7 +857,7 @@ def seed_data():
         c.execute("""
             INSERT INTO services (service_key, name, name_ru, name_en, name_ar, category, price, min_price, max_price,
                                   currency, description, description_ru, description_en, benefits, duration, is_active, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)
         """, (service['key'], service['name'], service['name_ru'], service['name'], service['name_ar'],
               service['category'], service['price'], service['min_price'], service['max_price'],
               service['currency'], service['description'], service['description_ru'], service['description'], benefits_str, service['duration'], now, now))
@@ -925,7 +925,7 @@ def seed_data():
                         try:
                             c.execute("""
                                 INSERT INTO user_services (user_id, service_id, is_online_booking_enabled)
-                                VALUES (%s, %s, 1)
+                                VALUES (%s, %s, TRUE)
                             """, (user_id, service_ids[key]))
                             assigned_count += 1
                         except Exception:
@@ -944,7 +944,7 @@ def seed_data():
         for day in range(6):  # 0=Пн, 5=Сб
             c.execute("""
                 INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                VALUES (%s, %s, '10:00', '21:00', 1)
+                VALUES (%s, %s, '10:00', '21:00', TRUE)
             """, (master_id, day))
         print(f"✅ {master_name}: Пн-Сб 10:00-21:00")
 

@@ -20,7 +20,7 @@ def remove_master_schedule_table():
         log_info("🗑️  Начало миграции: удаление устаревшей таблицы master_schedule", "migration")
         
         # Проверяем, существует ли таблица
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='master_schedule'")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='master_schedule'")
         
         if c.fetchone():
             # Проверяем, есть ли данные

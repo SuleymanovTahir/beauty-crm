@@ -215,7 +215,7 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
         c.execute("""
             SELECT id, username, full_name, email, role, created_at, email_verified, photo
             FROM users
-            WHERE approved = 0 AND is_active = TRUE
+            WHERE approved = FALSE AND is_active = TRUE
             ORDER BY created_at DESC
         """)
 
@@ -273,7 +273,7 @@ async def approve_user(
         # Одобряем пользователя (is_active = TRUE)
         c.execute("""
             UPDATE users
-            SET approved = 1, is_active = TRUE, approved_by = %s, approved_at = NOW()
+            SET approved = TRUE, is_active = TRUE, approved_by = %s, approved_at = NOW()
             WHERE id = %s
         """, (user["id"], user_id))
 
@@ -318,7 +318,7 @@ async def reject_user(
         # Деактивируем пользователя
         c.execute("""
             UPDATE users
-            SET is_active = FALSE, approved = 0
+            SET is_active = FALSE, approved = FALSE
             WHERE id = %s
         """, (user_id,))
 

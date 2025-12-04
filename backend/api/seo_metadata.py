@@ -44,12 +44,12 @@ async def get_seo_metadata():
         # Build metadata
         metadata = {
             # Basic Info
-            "salon_name": salon.get('name', 'M.Le Diamant Beauty Lounge'),
-            "phone": salon.get('phone', '+971526961100'),
-            "email": salon.get('email', ''),
-            "address": salon.get('address', 'Dubai'),
-            "city": salon.get('city', 'Dubai'),
-            "country": salon.get('country', 'UAE'),
+            "salon_name": salon.get('name'),
+            "phone": salon.get('phone'),
+            "email": salon.get('email'),
+            "address": salon.get('address'),
+            "city": salon.get('city'),
+            "country": salon.get('country'),
             
             # Social Media
             "instagram": instagram_url,
@@ -70,13 +70,13 @@ async def get_seo_metadata():
             "longitude": salon.get('longitude', 55.2708),
             
             # SEO Title & Description
-            "seo_title": f"{salon.get('name', 'M.Le Diamant Beauty Lounge')} - Premium Beauty Salon {salon.get('city', 'Dubai')}",
-            "seo_description": f"Experience luxury beauty services at {salon.get('name', 'M.Le Diamant Beauty Lounge')}. Expert manicure, spa treatments, and personalized care in a premium atmosphere. Book online today!",
+            "seo_title": f"{salon.get('name') or 'Beauty Salon'} - Premium Beauty Salon {salon.get('city', 'Dubai')}",
+            "seo_description": f"Experience luxury beauty services at {salon.get('name') or 'our salon'}. Expert manicure, spa treatments, and personalized care in a premium atmosphere. Book online today!",
             
             # Schema.org Data
             "schema": {
-                "name": salon.get('name', 'M.Le Diamant Beauty Lounge'),
-                "telephone": salon.get('phone', '+971526961100'),
+                "name": salon.get('name') or 'Beauty Salon',
+                "telephone": salon.get('phone'),
                 "address": {
                     "streetAddress": salon.get('address', 'Dubai'),
                     "addressLocality": salon.get('city', 'Dubai'),
@@ -102,8 +102,8 @@ async def get_seo_metadata():
         return JSONResponse(
             content={
                 "error": str(e),
-                "salon_name": "M.Le Diamant Beauty Lounge",
-                "phone": "+971526961100",
+                "salon_name": "Beauty Salon",
+                "phone": salon.get('phone', ''),
                 "city": "Dubai",
                 "base_url": "https://mlediamant.com"
             },

@@ -12,7 +12,7 @@ _connection_pool = None
 
 class CursorWrapper:
     """
-    Wrapper for psycopg2 cursor to emulate sqlite3 cursor behavior.
+    Wrapper for psycopg2 cursor to provide consistent interface.
     Translates '%s' placeholders to '%s'.
     """
     def __init__(self, cursor):
@@ -39,7 +39,7 @@ class CursorWrapper:
 
 class ConnectionWrapper:
     """
-    Wrapper for psycopg2 connection to emulate sqlite3 connection behavior.
+    Wrapper for psycopg2 connection to provide consistent interface.
     Allows setting row_factory (which enables DictCursor) and delegates other methods.
     """
     def __init__(self, conn):
@@ -47,7 +47,7 @@ class ConnectionWrapper:
         self.row_factory = None
 
     def cursor(self, cursor_factory=None):
-        # If row_factory is set (usually to sqlite3.Row), use DictCursor
+        # If row_factory is set, use DictCursor
         # DictCursor supports both index access (row[0]) and key access (row['col'])
         if self.row_factory or cursor_factory:
             cursor = self._conn.cursor(cursor_factory=cursor_factory or DictCursor)

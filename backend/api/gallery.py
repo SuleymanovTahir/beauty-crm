@@ -227,7 +227,7 @@ async def upload_gallery_image(
         
         c.execute("""
             INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-            VALUES (%s, %s, %s, %s, 1)
+            VALUES (%s, %s, %s, %s, TRUE)
         """, (category, image_path, file.filename, max_order + 1))
         
         image_id = c.lastrowid

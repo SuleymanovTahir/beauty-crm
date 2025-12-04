@@ -169,7 +169,6 @@ def find_existing_client(phone: str = None, email: str = None, instagram_id: str
         return None
     
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:
@@ -328,7 +327,7 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
                 (instagram_id, username, phone, name, first_contact, last_contact, 
                  total_messages, labels, status, detected_language, notes,
                  email, card_number, discount, total_visits, total_spend, gender, birthday)
-                VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, FALSE, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 instagram_id,
                 client_data.get('username', ''),

@@ -62,7 +62,7 @@ class AutoBookingService:
                     WHERE b.master = %s OR b.master IS NULL
                     GROUP BY c.instagram_id, c.name, c.phone
                     HAVING MAX(b.datetime) IS NULL OR
-                           EXTRACT(EPOCH FROM (NOW() - MAX(b.datetime)))/86400 >= %s
+                           EXTRACT(EPOCH FROM (NOW() - MAX(b.datetime::TIMESTAMP)))/86400 >= %s
                     ORDER BY MAX(b.datetime) ASC NULLS LAST
                     LIMIT 20
                 """, (master, min_days_since_visit))

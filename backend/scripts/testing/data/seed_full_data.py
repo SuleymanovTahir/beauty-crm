@@ -67,10 +67,10 @@ def seed_bookings(conn, client_ids):
     c = conn.cursor()
     
     # Получаем мастеров и услуги
-    c.execute("SELECT full_name FROM employees WHERE is_active = 1")
+    c.execute("SELECT full_name FROM employees WHERE is_active = TRUE")
     masters = [row[0] for row in c.fetchall()]
     
-    c.execute("SELECT name FROM services WHERE is_active = 1")
+    c.execute("SELECT name FROM services WHERE is_active = TRUE")
     services = [row[0] for row in c.fetchall()]
     
     if not masters or not services:

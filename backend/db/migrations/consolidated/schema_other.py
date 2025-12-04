@@ -66,11 +66,18 @@ def migrate_other_schema(db_path="salon_bot.db"):
         c.execute("""
             CREATE TABLE IF NOT EXISTS broadcast_history (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
+                sender_id INTEGER NOT NULL,
                 message TEXT NOT NULL,
-                recipients_count BOOLEAN DEFAULT FALSE,
+                subscription_type TEXT,
+                channels TEXT,
+                subject TEXT,
+                target_role TEXT,
+                recipients_count INTEGER DEFAULT 0,
+                total_sent INTEGER DEFAULT 0,
+                results TEXT,
                 sent_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id)
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (sender_id) REFERENCES users(id)
             )
         """)
         print("  ✅ broadcast_history table ensured")
@@ -103,6 +110,7 @@ def migrate_other_schema(db_path="salon_bot.db"):
                 name_fr TEXT,
                 name_de TEXT,
                 description TEXT,
+                is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -114,10 +122,23 @@ def migrate_other_schema(db_path="salon_bot.db"):
                 id SERIAL PRIMARY KEY,
                 name TEXT NOT NULL,
                 role TEXT NOT NULL,
+                metric_type TEXT DEFAULT 'revenue',
+                target_value REAL,
+                period_type TEXT DEFAULT 'monthly',
+                start_date TEXT,
+                end_date TEXT,
+                created_by INTEGER,
+                role_key TEXT,
+                user_id INTEGER,
+                visible_to_positions TEXT,
+                can_edit_positions TEXT,
+                is_position_plan BOOLEAN DEFAULT FALSE,
+                is_individual_plan BOOLEAN DEFAULT FALSE,
                 price REAL NOT NULL,
                 features TEXT,
                 is_active BOOLEAN DEFAULT TRUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT,
                 UNIQUE(name, role)
             )
         """)

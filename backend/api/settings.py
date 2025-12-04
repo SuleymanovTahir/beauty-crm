@@ -12,6 +12,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
+import psycopg2
 
 router = APIRouter()
 
@@ -97,7 +98,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
             "message": "Настройки сохранены"
         }
 
-    except sqlite3.OperationalError as e:
+    except psycopg2.OperationalError as e:
         # Таблица не существует - создадим её
         if "no such table" in str(e).lower():
             log_info("Creating notification_settings table", "settings")
@@ -206,7 +207,7 @@ async def get_notification_settings():
                 "reportTime": "09:00"
             }
 
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         # Таблица не существует - возвращаем настройки по умолчанию
         return {
             "emailNotifications": True,
@@ -307,7 +308,7 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         return FileResponse(
             path=backup_path,
             filename=backup_filename,
-            media_type='application/x-sqlite3',
+            media_type='application/octet-stream',
             headers={
                 "Content-Disposition": f"attachment; filename={backup_filename}"
             }

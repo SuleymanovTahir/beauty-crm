@@ -20,13 +20,13 @@ def remove_deprecated_employee_tables():
     
     try:
         # Проверяем существование таблиц
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employees'")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='employees'")
         employees_exists = c.fetchone() is not None
         
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_salary_settings'")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='employee_salary_settings'")
         salary_exists = c.fetchone() is not None
         
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='employee_unavailability'")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' AND tablename='employee_unavailability'")
         unavailability_exists = c.fetchone() is not None
         
         if employees_exists:

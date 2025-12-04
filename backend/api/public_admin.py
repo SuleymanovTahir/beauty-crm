@@ -60,7 +60,6 @@ class GalleryCreate(BaseModel):
 async def get_all_reviews():
     """Получить все отзывы (для админки)"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     c.execute("""
@@ -68,7 +67,8 @@ async def get_all_reviews():
         ORDER BY display_order ASC, created_at DESC
     """)
     
-    reviews = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    reviews = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
     
     return {"reviews": reviews}
@@ -227,11 +227,11 @@ async def toggle_review(review_id: int):
 async def get_all_banners():
     """Получить все баннеры"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     c.execute("SELECT * FROM public_banners ORDER BY display_order ASC")
-    banners = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    banners = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
     
     return {"banners": banners}
@@ -376,7 +376,6 @@ async def delete_banner(banner_id: int):
     from pathlib import Path
     
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     try:
@@ -384,8 +383,8 @@ async def delete_banner(banner_id: int):
         c.execute("SELECT image_url FROM public_banners WHERE id =%s", (banner_id,))
         row = c.fetchone()
         
-        if row and row['image_url']:
-            image_url = row['image_url']
+        if row and row[0]:
+            image_url = row[0]
             # Проверяем, что это локальный файл (начинается с /static/)
             if image_url.startswith('/static/'):
                 # Преобразуем URL в путь к файлу
@@ -420,11 +419,11 @@ async def delete_banner(banner_id: int):
 async def get_all_faq():
     """Получить все FAQ"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     c.execute("SELECT * FROM public_faq ORDER BY category, display_order ASC")
-    faq = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    faq = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
     
     return {"faq": faq}
@@ -537,11 +536,11 @@ async def delete_faq(faq_id: int):
 async def get_all_gallery():
     """Получить всю галерею"""
     conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
     c.execute("SELECT * FROM public_gallery ORDER BY category, display_order ASC")
-    gallery = [dict(row) for row in c.fetchall()]
+    columns = [desc[0] for desc in c.description]
+    gallery = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
     
     return {"gallery": gallery}

@@ -6,6 +6,7 @@ from typing import Optional
 import re
 from utils.logger import log_info,log_error
 from db.connection import get_db_connection
+import psycopg2
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
@@ -75,7 +76,7 @@ def get_all_clients():
                      profile_pic, notes, is_pinned,
                      total_spend, total_visits, discount, card_number, gender
                      FROM clients ORDER BY is_pinned DESC, last_contact DESC""")
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         # Fallback для старой версии БД
         c.execute("""SELECT instagram_id, username, phone, name, first_contact, 
                      last_contact, total_messages, labels, 'new' as status, 
@@ -116,7 +117,7 @@ def get_or_create_client(instagram_id: str, username: str = None):
         c.execute("""INSERT INTO clients 
                      (instagram_id, username, first_contact, last_contact, 
                       total_messages, labels, status, detected_language)
-                     VALUES (%s, %s, %s, %s, 0, %s, %s, %s)""",
+                     VALUES (%s, %s, %s, %s, FALSE, %s, %s, %s)""",
                   (instagram_id, username, now, now, "Новый клиент", "new", "ru"))
         conn.commit()
         print(f"✨ Новый клиент: {instagram_id}")

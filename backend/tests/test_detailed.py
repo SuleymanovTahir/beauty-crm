@@ -14,6 +14,12 @@ import json
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+# Импорт конфигурации тестов
+from tests.config import get_test_config
+
+# Получаем конфигурацию
+TEST_CONFIG = get_test_config()
+
 def print_header(text):
     """Красивый заголовок"""
     print("\n" + "=" * 100)
@@ -93,7 +99,7 @@ def test_database_detailed():
         if os.getenv('DATABASE_TYPE') == 'postgresql':
             c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
         else:
-            c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+            c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
         all_tables = [row[0] for row in c.fetchall()]
         print_success(f"Найдено таблиц: {len(all_tables)}")
         print_data("Список таблиц", all_tables)
@@ -367,12 +373,14 @@ def test_master_schedule_detailed():
             return False
 
         # Шаг 2: Установка рабочих часов (понедельник-пятница)
-        print_step(2, 9, "Установка рабочих часов (ПН-ПТ: 09:00-18:00)")
+        work_start = TEST_CONFIG['work_start_weekday']
+        work_end = TEST_CONFIG['work_end_weekday']
+        print_step(2, 9, f"Установка рабочих часов (ПН-ПТ: {work_start}-{work_end})")
         try:
             for day in range(5):  # 0-4 = ПН-ПТ
-                result = schedule.set_working_hours(test_master, day, "09:00", "18:00")
+                result = schedule.set_working_hours(test_master, day, work_start, work_end)
                 if result:
-                    print_success(f"День {day} (ПН-ПТ): 09:00-18:00")
+                    print_success(f"День {day} (ПН-ПТ): {work_start}-{work_end}")
                 else:
                     print_error(f"День {day}: не удалось установить")
         except Exception as e:
@@ -381,11 +389,13 @@ def test_master_schedule_detailed():
             return False
 
         # Шаг 3: Установка сокращенного дня (суббота)
-        print_step(3, 9, "Установка сокращенного дня (СБ: 10:00-14:00)")
+        sat_start = TEST_CONFIG['work_start_saturday']
+        sat_end = TEST_CONFIG['work_end_saturday']
+        print_step(3, 9, f"Установка сокращенного дня (СБ: {sat_start}-{sat_end})")
         try:
-            result = schedule.set_working_hours(test_master, 5, "10:00", "14:00")
+            result = schedule.set_working_hours(test_master, 5, sat_start, sat_end)
             if result:
-                print_success("Суббота: 10:00-14:00")
+                print_success(f"Суббота: {sat_start}-{sat_end}")
             else:
                 print_error("Не удалось установить субботу")
         except Exception as e:
@@ -453,13 +463,14 @@ def test_master_schedule_detailed():
             traceback.print_exc()
 
         # Шаг 8: Проверка доступности
-        print_step(8, 9, "Проверка доступности в конкретное время (10:00)")
+        test_time = TEST_CONFIG['test_time_morning']
+        print_step(8, 9, f"Проверка доступности в конкретное время ({test_time})")
         try:
-            is_available = schedule.is_master_available(test_master, test_date, "10:00")
+            is_available = schedule.is_master_available(test_master, test_date, test_time)
             if is_available:
-                print_success(f"{test_master} доступен {test_date} в 10:00")
+                print_success(f"{test_master} доступен {test_date} в {test_time}")
             else:
-                print_warning(f"{test_master} НЕ доступен {test_date} в 10:00")
+                print_warning(f"{test_master} НЕ доступен {test_date} в {test_time}")
         except Exception as e:
             print_error(f"Ошибка проверки доступности: {e}")
             traceback.print_exc()

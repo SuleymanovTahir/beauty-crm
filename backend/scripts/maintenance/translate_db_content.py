@@ -247,7 +247,7 @@ def main():
         return
         
     print(f"🔌 Подключение к БД: {DB_PATH}")
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db_connection()
     
     try:
         translate_reviews(conn)

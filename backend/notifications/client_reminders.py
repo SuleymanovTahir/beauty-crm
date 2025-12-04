@@ -7,6 +7,7 @@ import asyncio
 from db.connection import get_db_connection
 from core.config import PAGE_ACCESS_TOKEN, TELEGRAM_BOT_TOKEN, INSTAGRAM_BUSINESS_ID
 from utils.logger import log_info, log_error
+import psycopg2
 
 async def send_instagram_reminder(client_id: str, message: str) -> bool:
     """Отправить напоминание в Instagram"""
@@ -113,7 +114,7 @@ def get_client_preferred_messenger(client_id: str) -> Optional[str]:
         if result and result[0]:
             return result[0]
 
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         # Таблица clients не существует или нет поля preferred_messenger
         pass
     finally:

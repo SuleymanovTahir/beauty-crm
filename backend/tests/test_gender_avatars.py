@@ -48,7 +48,7 @@ def test_employee_genders():
     c.execute("""
         SELECT full_name, gender 
         FROM users 
-        WHERE is_service_provider = 1 OR role = 'admin'
+        WHERE is_service_provider = TRUE OR role = 'admin'
         ORDER BY full_name
     """)
     

@@ -19,7 +19,6 @@ async def get_user_schedule(
     """Получить расписание сотрудника"""
     try:
         conn = get_db_connection()
-        conn.row_factory = sqlite3.Row
         c = conn.cursor()
         
         c.execute("""

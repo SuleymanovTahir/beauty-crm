@@ -23,7 +23,7 @@ def test_database_tables():
         c = conn.cursor()
 
         # Получаем список таблиц
-        c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
         tables = [row[0] for row in c.fetchall()]
 
         print(f"\n📋 Всего таблиц: {len(tables)}")

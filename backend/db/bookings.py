@@ -6,6 +6,7 @@ from typing import List, Optional, Dict, Tuple
 
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
+import psycopg2
 
 def get_all_bookings():
     """Получить все записи"""
@@ -16,7 +17,7 @@ def get_all_bookings():
         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
                      name, status, created_at, revenue, master
                      FROM bookings ORDER BY created_at DESC""")
-    except sqlite3.OperationalError:
+    except psycopg2.OperationalError:
         # Fallback для старой схемы без master
         try:
             c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
