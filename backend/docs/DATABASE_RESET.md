@@ -63,7 +63,29 @@ createdb beauty_crm
 
 ---
 
-### 3️⃣ Создание Таблиц (Миграции)
+### 3️⃣ Предоставление Прав Пользователю
+
+После пересоздания базы данных нужно предоставить права пользователю `beauty_crm_user`.
+
+```bash
+python3 scripts/maintenance/grant_db_permissions.py
+```
+
+**Что делает скрипт:**
+- Создает пользователя `beauty_crm_user` (если не существует)
+- Предоставляет все права на базу данных
+- Предоставляет права на схему `public`
+- Предоставляет права на таблицы и последовательности
+- Устанавливает права по умолчанию для будущих объектов
+
+**Ожидаемый результат:**
+```
+✅ Все права успешно предоставлены пользователю 'beauty_crm_user'!
+```
+
+---
+
+### 4️⃣ Создание Таблиц (Миграции)
 
 Запуск из Python REPL или скрипта:
 
@@ -91,7 +113,7 @@ python3 -c "from db.migrations.run_all_migrations import run_all_migrations; run
 
 ---
 
-### 4️⃣ Применение Фиксов (Асинхронно)
+### 5️⃣ Применение Фиксов (Асинхронно)
 
 ```python
 # Из Python консоли с async context
@@ -118,7 +140,7 @@ python3 -c "import asyncio; from main import run_all_fixes; asyncio.run(run_all_
 
 ---
 
-### 5️⃣ Запуск Тестов
+### 6️⃣ Запуск Тестов
 
 ```bash
 # Запуск всех тестов
@@ -177,6 +199,7 @@ python3
 cd /Users/tahir/Desktop/beauty-crm/backend && \
 source venv/bin/activate && \
 python3 scripts/maintenance/recreate_database.py && \
+python3 scripts/maintenance/grant_db_permissions.py && \
 python3 -c "from db.migrations.run_all_migrations import run_all_migrations; run_all_migrations()" && \
 python3 -c "import asyncio; from main import run_all_fixes; asyncio.run(run_all_fixes())" && \
 python3 -c "from tests.run_all_tests import run_all_tests; run_all_tests()"

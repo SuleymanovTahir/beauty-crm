@@ -3,6 +3,8 @@
 """
 
 from datetime import datetime
+import psycopg2
+from psycopg2 import errors as pg_errors
 
 from db.connection import get_db_connection
 from utils.logger import log_error, log_warning, log_info
@@ -64,8 +66,11 @@ def get_salon_settings() -> dict:
                 "⚠️ Настройки салона пусты, используются дефолты", "database")
             return _get_default_salon_settings()
 
-    except sqlite3.OperationalError as e:
+    except pg_errors.UndefinedTable as e:
         log_error(f"❌ Таблица salon_settings не существует: {e}", "database")
+        return _get_default_salon_settings()
+    except psycopg2.OperationalError as e:
+        log_error(f"❌ Ошибка подключения к БД: {e}", "database")
         return _get_default_salon_settings()
     except Exception as e:
         log_error(
@@ -288,8 +293,11 @@ def get_bot_settings() -> dict:
                 "⚠️ Настройки бота пусты, используются дефолты", "database")
             return _get_default_bot_settings()
 
-    except sqlite3.OperationalError as e:
+    except pg_errors.UndefinedTable as e:
         log_error(f"❌ Таблица bot_settings не существует: {e}", "database")
+        return _get_default_bot_settings()
+    except psycopg2.OperationalError as e:
+        log_error(f"❌ Ошибка подключения к БД: {e}", "database")
         return _get_default_bot_settings()
     except Exception as e:
         log_error(
@@ -484,7 +492,7 @@ def get_custom_statuses() -> list:
     try:
         c.execute("SELECT * FROM custom_statuses ORDER BY created_at DESC")
         return c.fetchall()
-    except sqlite3.OperationalError:
+    except (pg_errors.UndefinedTable, psycopg2.OperationalError):
         log_warning("⚠️ Таблица custom_statuses не существует", "database")
         return []
     finally:
@@ -505,7 +513,7 @@ def create_custom_status(status_key: str, status_label: str, status_color: str,
         conn.commit()
         log_info(f"✅ Статус '{status_key}' создан", "database")
         return True
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         log_error(f"❌ Статус '{status_key}' уже существует", "database")
         return False
     except Exception as e:
@@ -646,7 +654,7 @@ def get_all_roles() -> list:
                 'role_description': role[2],
                 'is_builtin': False
             })
-    except sqlite3.OperationalError:
+    except (pg_errors.UndefinedTable, psycopg2.OperationalError):
         log_warning("⚠️ Таблица custom_roles не существует", "database")
     finally:
         conn.close()
@@ -672,7 +680,7 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
         conn.commit()
         log_info(f"✅ Кастомная роль '{role_key}' создана", "database")
         return True
-    except sqlite3.IntegrityError:
+    except psycopg2.IntegrityError:
         log_error(f"❌ Роль '{role_key}' уже существует", "database")
         return False
     except Exception as e:
@@ -736,7 +744,7 @@ def get_role_permissions(role_key: str) -> dict:
             }
 
         return permissions
-    except sqlite3.OperationalError:
+    except (pg_errors.UndefinedTable, psycopg2.OperationalError):
         log_warning("⚠️ Таблица role_permissions не существует", "database")
         return {}
     finally:
