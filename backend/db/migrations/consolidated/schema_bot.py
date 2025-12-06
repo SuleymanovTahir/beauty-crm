@@ -34,6 +34,19 @@ def migrate_bot_schema(db_path="salon_bot.db"):
             'booking_data_collection': 'TEXT',
             'booking_time_logic': 'TEXT',
             'pre_booking_data_collection': 'TEXT',
+            'response_style': "TEXT DEFAULT 'adaptive'",
+            # Abandoned Booking Settings
+            'abandoned_cart_enabled': 'BOOLEAN DEFAULT TRUE',
+            'abandoned_cart_delay': 'INTEGER DEFAULT 30',  # minutes
+            'abandoned_cart_message': 'TEXT',
+            # Feedback Settings
+            'post_visit_feedback_enabled': 'BOOLEAN DEFAULT TRUE',
+            'post_visit_delay': 'INTEGER DEFAULT 24',      # hours
+            'post_visit_feedback_message': 'TEXT',
+            # Return Client (Retention) Settings
+            'return_client_reminder_enabled': 'BOOLEAN DEFAULT FALSE',
+            'return_client_delay': 'INTEGER DEFAULT 45',   # days
+            'return_client_message': 'TEXT',
         }
         
         # Add missing columns

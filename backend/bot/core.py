@@ -151,6 +151,31 @@ class SalonBot:
             supported_langs = bot_settings.get('languages_supported', 'ru,en,ar')
             print(f"🗂️ Supported langs from DB: {supported_langs}")
 
+            # ✅ АВТООПРЕДЕЛЕНИЕ ЯЗЫКА из сообщения
+            def detect_message_language(text: str) -> str:
+                """Простое определение языка по характерным символам/словам"""
+                text_lower = text.lower()
+                
+                # Арабский - по символам
+                if any('\u0600' <= c <= '\u06FF' for c in text):
+                    return 'ar'
+                
+                # Русский - по кириллице
+                if any('\u0400' <= c <= '\u04FF' for c in text):
+                    return 'ru'
+                
+                # Английский - по ключевым словам
+                english_words = ['hello', 'hi', 'how', 'want', 'book', 'appointment', 'please', 'thanks', 'when', 'what', 'price']
+                if any(word in text_lower for word in english_words):
+                    return 'en'
+                
+                return None  # Не удалось определить
+            
+            detected_lang = detect_message_language(user_message)
+            if detected_lang and detected_lang != client_language:
+                print(f"🔄 Language auto-detected: {detected_lang} (was: {client_language})")
+                client_language = detected_lang
+
             # Проверяем соответствие языка клиента поддерживаемым
             client_lang_matches = client_language in supported_langs.split(',')
             print(f"✅ Client lang matches: {client_lang_matches}")
@@ -184,8 +209,92 @@ class SalonBot:
                 
                 if recommendations:
                     additional_context += f"- Рекомендуемые услуги: {', '.join(recommendations)}\n"
+                
+                # ✅ #31 - POST-VISIT FOLLOW-UP (1-5 дней после визита)
+                if client_stats.get('last_visit_date'):
+                    try:
+                        from datetime import datetime as dt_class
+                        last_visit = dt_class.strptime(client_stats['last_visit_date'], '%Y-%m-%d').date()
+                        today = get_current_time().date()
+                        days_since_visit = (today - last_visit).days
+                        
+                        if 1 <= days_since_visit <= 5:
+                            last_service = client_stats.get('last_service', 'процедуру')
+                            additional_context += f"""
+🌟 КЛИЕНТ БЫЛ У НАС {days_since_visit} ДН. НАЗАД ({last_service})!
+
+⚠️ ЭТО ИДЕАЛЬНЫЙ МОМЕНТ ДЛЯ FOLLOW-UP:
+1. Спроси как понравился результат: "Как вам {last_service}? Всё устроило?"
+2. Предложи оставить отзыв: "Будем рады вашему отзыву в Google/Instagram!"
+3. Предложи следующую запись: "Кстати, можем сразу запланировать следующий визит?"
+
+💡 НЕ БУДЬ НАВЯЗЧИВОЙ - это дружеский follow-up, не продажа!
+"""
+                    except Exception as e:
+                        print(f"⚠️ Error calculating days since visit: {e}")
+                
+                # ✅ #33 - ПРОВЕРКА ДНЯ РОЖДЕНИЯ (скидка ±7 дней)
+                try:
+                    from db.clients import get_client_by_id
+                    client_data = get_client_by_id(instagram_id)
+                    if client_data:
+                        birthday = client_data[10] if len(client_data) > 10 else None  # birthday field
+                        if birthday:
+                            from datetime import datetime as dt_class
+                            today = get_current_time().date()
+                            
+                            # Парсим дату рождения
+                            if isinstance(birthday, str):
+                                try:
+                                    bday = dt_class.strptime(birthday, '%Y-%m-%d').date()
+                                except:
+                                    bday = None
+                            else:
+                                bday = birthday
+                            
+                            if bday:
+                                # Сравниваем только день и месяц
+                                this_year_bday = bday.replace(year=today.year)
+                                days_to_bday = (this_year_bday - today).days
+                                
+                                if -3 <= days_to_bday <= 7:  # 3 дня после или 7 дней до
+                                    additional_context += f"""
+🎂 СКОРО ДЕНЬ РОЖДЕНИЯ КЛИЕНТА! (через {days_to_bday} дней)
+
+⚠️ ОБЯЗАТЕЛЬНО ПОЗДРАВЬ И ПРЕДЛОЖИ СКИДКУ:
+"С наступающим днём рождения! 🎉 У нас для вас подарок — скидка 15% на любую услугу! Действует неделю. Записать вас?"
+
+💡 Если ДР уже прошёл (до 3 дней назад) - тоже поздравь!
+"""
+                except Exception as e:
+                    print(f"⚠️ Error checking birthday: {e}")
+                
+                # ✅ #34 - РЕФЕРАЛЬНАЯ ПРОГРАММА (для новых клиентов)
+                if not client_stats['is_returning']:
+                    pass # Referral program prompt removed to avoid aggressive greeting
             except Exception as e:
                 print(f"⚠️ Error fetching client stats: {e}")
+
+            # ========================================
+            # ✅ ПРЕДПОЧТЕНИЯ КЛИЕНТА (SmartAssistant)
+            # ========================================
+            try:
+                smart_assistant = SmartAssistant(instagram_id)
+                if smart_assistant.preferences:
+                    prefs = smart_assistant.preferences
+                    pref_master = prefs.get('preferred_master')
+                    pref_service = prefs.get('preferred_service')
+                    
+                    if pref_master or pref_service:
+                        additional_context += f"\n🧠 ПРЕДПОЧТЕНИЯ КЛИЕНТА (помни и используй!):\n"
+                        if pref_master:
+                            additional_context += f"- Любимый мастер: {pref_master}\n"
+                        if pref_service:
+                            additional_context += f"- Любимая услуга: {pref_service}\n"
+                        additional_context += "💡 СОВЕТ: Предложи записаться к любимому мастеру/на любимую услугу!\n"
+                        additional_context += f'   Пример: "Записать вас к {pref_master or "вашему мастеру"} на {pref_service or "привычную услугу"}?"\n'
+            except Exception as e:
+                print(f"⚠️ Error loading client preferences: {e}")
 
             # ✅ #4 - Незавершённая запись
             if context_flags.get('has_incomplete_booking'):
@@ -223,6 +332,174 @@ class SalonBot:
 
     Менеджер УЖЕ получил уведомление.
     """
+
+            # ✅ #28 - Групповая запись (2-4 человека)
+            group_keywords = ['с подругой', 'с другом', 'вдвоём', 'вдвоем', 'втроём', 'втроем', 
+                              'нас двое', 'нас трое', 'нас 2', 'нас 3', 'на двоих', 'на троих',
+                              'with friend', 'together', 'both of us', 'two of us']
+            is_group = any(kw in user_message.lower() for kw in group_keywords)
+            
+            if is_group and not context_flags.get('is_corporate'):
+                additional_context += """
+    👭 ГРУППОВАЯ ЗАПИСЬ (2-4 человека)!
+    
+    ⚠️ ВАЖНО:
+    1. Уточни количество человек: "Сколько вас будет?"
+    2. Уточни услуги для каждого: "Обе на маникюр или разные услуги?"
+    3. Предложи ПАРАЛЛЕЛЬНЫЕ слоты (к разным мастерам одновременно)
+       ИЛИ ПОСЛЕДОВАТЕЛЬНЫЕ (к одному мастеру подряд)
+    
+    💡 ПРИМЕР ОТВЕТА:
+    "Отлично, вдвоём! 😊 Могу записать вас параллельно:
+    • Вы к Гуле на 15:00
+    • Подруга к Ляззат на 15:00
+    Или хотите к одному мастеру подряд?"
+    """
+
+            # ✅ #30 - Детектор фрустрации и эскалация к менеджеру
+            frustration_keywords = ['человек', 'менеджер', 'оператор', 'живой', 'недоволен', 'недовольна',
+                                    'ужас', 'кошмар', 'возмутительно', 'верните деньги', 'жалоба',
+                                    'не понимаешь', 'не понимаете', 'человека позови', 'настоящий человек',
+                                    'speak to human', 'manager please', 'real person', 'complaint']
+            is_frustrated = any(kw in user_message.lower() for kw in frustration_keywords)
+            
+            if is_frustrated:
+                additional_context += """
+    😤 КЛИЕНТ РАССТРОЕН / ПРОСИТ МЕНЕДЖЕРА!
+    
+    ⚠️ ТВОЯ ЗАДАЧА - ДЕЭСКАЛАЦИЯ:
+    1. Признай проблему: "Понимаю, это неприятно"
+    2. Покажи заботу: "Сейчас передам ваш вопрос менеджеру"
+    3. Дай конкретику: "Менеджер свяжется с вами в течение 15 минут"
+    
+    💡 ПРИМЕР: "Понимаю вас! Передаю ваш вопрос менеджеру прямо сейчас — он свяжется с вами в ближайшее время. Извините за неудобства!"
+    
+    ❌ НЕ СПОРЬ и НЕ ОПРАВДЫВАЙСЯ!
+    """
+                
+                # Fetch client details for enriched notification
+                client_name = "Неизвестный"
+                client_username = ""
+                client_phone = ""
+                
+                try:
+                    from db.clients import get_client_by_id
+                    client_data = get_client_by_id(instagram_id)
+                    if client_data:
+                        # 0:id, 1:username, 2:phone, 3:name
+                        client_username = client_data[1] or ""
+                        client_phone = client_data[2] or "Не указан"
+                        client_name = client_data[3] or client_username or "Без имени"
+                except Exception as e:
+                    print(f"⚠️ Error fetching client details: {e}")
+
+                # Determine platform and profile link
+                platform_icon = "❓"
+                profile_link = "Не найден"
+                platform_name = "Unknown"
+
+                if instagram_id.startswith("telegram_"):
+                    platform_icon = "✈️"
+                    platform_name = "Telegram"
+                    tg_id = instagram_id.replace("telegram_", "")
+                    if client_username:
+                         profile_link = f"https://t.me/{client_username.replace('@', '')}"
+                    else:
+                         profile_link = f"tg://user?id={tg_id}"
+                
+                elif instagram_id.startswith("whatsapp_"):
+                    platform_icon = "💚"
+                    platform_name = "WhatsApp"
+                    if client_phone and client_phone != "Не указан":
+                        clean_phone = client_phone.replace('+', '').replace(' ', '').replace('-', '')
+                        profile_link = f"https://wa.me/{clean_phone}"
+                    else:
+                        profile_link = "Нет номера"
+                
+                else:
+                    # Instagram
+                    platform_icon = "📸"
+                    platform_name = "Instagram"
+                    if client_username:
+                        profile_link = f"https://instagram.com/{client_username}"
+                    else:
+                        profile_link = f"https://instagram.com/{instagram_id}"
+
+                # Text for notifications
+                alert_header = f"{platform_icon} <b>ТРЕБУЕТСЯ МЕНЕДЖЕР</b>"
+                client_info_text = f"""
+<b>Клиент:</b> {client_name}
+<b>Никнейм:</b> {client_username or '-'}
+<b>Телефон:</b> {client_phone}
+<b>Ссылка:</b> <a href="{profile_link}">{profile_link}</a>
+"""
+                
+                # Уведомляем менеджеров
+                try:
+                    from api.notifications import create_notification
+                    from db.users import get_all_users
+                    
+                    users = get_all_users()
+                    managers = [u for u in users if u[4] in ['admin', 'manager', 'director']]
+                    
+                    for manager in managers:
+                        create_notification(
+                            user_id=str(manager[0]),
+                            title="😤 КЛИЕНТ НЕДОВОЛЕН",
+                            message=f"{client_name} ({platform_name}): {user_message[:100]}",
+                            notification_type="urgent",
+                            action_url=f"/admin/chat?client_id={instagram_id}"
+                        )
+                        
+                        # Email notification
+                        manager_email = manager[2]  # email field
+                        if manager_email:
+                            try:
+                                from utils.email import send_email_async
+                                await send_email_async(
+                                    recipients=[manager_email],
+                                    subject=f"🔥 СРОЧНО: Клиент требует менеджера ({client_name})",
+                                    message=f"""
+                                    Внимание! Клиент требует связи с менеджером.
+                                    
+                                    Имя: {client_name}
+                                    Платформа: {platform_name}
+                                    Телефон: {client_phone}
+                                    Ссылка: {profile_link}
+                                    
+                                    Последнее сообщение: "{user_message}"
+                                    
+                                    Перейти в чат CRM: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                                    """,
+                                    html=f"""
+                                    <h2>🔥 Клиент требует внимания!</h2>
+                                    <p><strong>Клиент:</strong> {client_name} ({platform_name})</p>
+                                    <p><strong>Телефон:</strong> {client_phone}</p>
+                                    <p><strong>Ссылка:</strong> <a href="{profile_link}" style="color: #1a73e8;">{profile_link}</a></p>
+                                    <hr>
+                                    <p><strong>Сообщение:</strong> "{user_message}"</p>
+                                    <p><a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Перейти в чат CRM</a></p>
+                                    """
+                                )
+                                print(f"📧 Escalation email sent to {manager_email}")
+                            except Exception as e:
+                                print(f"❌ Error sending email to {manager_email}: {e}")
+                                
+                    # Telegram notification (Broadcast to group/channel)
+                    from integrations.telegram_bot import send_telegram_alert
+                    await send_telegram_alert(
+                        message=f"""
+{alert_header}
+
+{client_info_text}
+<b>Сообщение:</b> <i>"{user_message}"</i>
+
+<a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}">👉 ОТВЕТИТЬ В CRM</a>
+"""
+                    )
+                    print(f"⚠️ Escalation notification sent to {len(managers)} managers")
+                except Exception as e:
+                    print(f"❌ Error sending escalation notification: {e}")
 
             # ========================================
             # ✅ ПРОВЕРКА ДОСТУПНОСТИ ВРЕМЕНИ В БД
@@ -530,27 +807,63 @@ class SalonBot:
 
                     alternatives = check_result['alternatives']
                     if alternatives:
-                        alt_text = "\n".join([
-                            f"  • {slot['time']} у {slot['master']}"
-                            for slot in alternatives[:3]
-                        ])
+                        # 🧠 SMART SUGGESTION LOGIC
+                        # Find the closest slot to requested_time
+                        from datetime import datetime as dt_class
+                        
+                        try:
+                            req_dt = dt_class.strptime(requested_time, "%H:%M")
+                            best_slot = None
+                            min_diff = 999999
+                            
+                            for slot in alternatives:
+                                slot_dt = dt_class.strptime(slot['time'], "%H:%M")
+                                diff = abs((slot_dt - req_dt).total_seconds())
+                                if diff < min_diff:
+                                    min_diff = diff
+                                    best_slot = slot
+                            
+                            if best_slot:
+                                alt_time = best_slot['time']
+                                alt_master = best_slot['master']
+                                
+                                additional_context += f"""
 
-                        additional_context += f"""
-
-    🚫 ВРЕМЯ {requested_time} ЗАНЯТО (проверено в БД)!
-
-    Доступные альтернативы:
-    {alt_text}
-
-    ⚠️ СКАЖИ КЛИЕНТУ:
-    "Время {requested_time} уже занято. Могу предложить: {alternatives[0]['time']} у {alternatives[0]['master']}. Подходит?"
-
-    НЕ ГОВОРИ ЧТО {requested_time} СВОБОДНО - ЭТО НЕПРАВДА!"""
+    🚫 ВРЕМЯ {requested_time} УЖЕ ЗАНЯТО!
+    
+    🧠 Я НАШЕЛ БЛИЖАЙШЕЕ СВОБОДНОЕ ОКНО: {alt_time} (мастер {alt_master})
+    
+    ⚠️ ТВОЯ ЗАДАЧА - БЫТЬ "УМНЫМ АССИСТЕНТОМ" (ПРИНИМАЙ РЕШЕНИЕ ЗА КЛИЕНТА):
+    НЕ СПРАШИВАЙ "Когда вам удобно?".
+    
+    СКАЖИ УТВЕРДИТЕЛЬНО И РЕШИТЕЛЬНО:
+    "На {requested_time} уже есть запись, но я нашла для вас окошко рядом - в {alt_time} к мастеру {alt_master}! Записываю вас на это время?"
+    
+    (Будь настойчива - клиент хочет, чтобы за него решили!)"""
+                            else:
+                                # Fallback if calc fails
+                                alt_text = "\n".join([f"• {s['time']}" for s in alternatives[:3]])
+                                additional_context += f"""
+    🚫 ВРЕМЯ {requested_time} ЗАНЯТО! Есть: {alt_text}. Предложи ближайшее!"""
+                        except Exception as e:
+                            print(f"Error finding best slot: {e}")
+                            alt_text = "\n".join([f"• {s['time']}" for s in alternatives[:3]])
+                            additional_context += f"""
+    🚫 ВРЕМЯ {requested_time} ЗАНЯТО! Есть: {alt_text}. Предложи любое из них!"""
+                            
                     else:
                         additional_context += f"""
-
     🚫 ВРЕМЯ {requested_time} ЗАНЯТО И НЕТ АЛЬТЕРНАТИВ НА {target_date}!
-    Предложи другую дату!"""
+    
+    ⚠️ ПРЕДЛОЖИ WAITLIST (Лист ожидания):
+    "К сожалению, на {target_date} всё занято. Но могу добавить вас в лист ожидания - 
+    если кто-то отменит запись, сразу напишу вам! Хотите?"
+    
+    ИЛИ предложи другую дату/"ближайшие дни".
+    """
+                    
+                    # Prevent AI from saying checking time is available
+                    additional_context += "\n⚠️ НЕ ГОВОРИ ЧТО ЭТО ВРЕМЯ СВОБОДНО!"
                 else:
                     print(f"✅ Time {requested_time} is available")
 
@@ -614,29 +927,37 @@ class SalonBot:
             import traceback
             traceback.print_exc()
 
-            # Fallback ответ
-            fallback_messages = {
-                'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",
-                'en': "Sorry, I'm overloaded with requests 🤖 Our manager will respond soon! 💎",
-                'ar': "عذرًا، أنا محمل بالطلبات 🤖 سيرد عليك مديرنا قريبًا! 💎"
-            }
-            return fallback_messages.get(client_language, fallback_messages['ru'])
+            # Fallback ответ - простое сообщение (AI недоступен)
+            fallback = "Our manager will respond soon! 💎" if client_language == 'en' else "Наш менеджер скоро ответит! 💎"
+            return fallback
 
     async def _generate_via_proxy(self, prompt: str, max_retries: int = 4) -> str:
         """Генерация через Gemini REST API с прокси и retry механизмом"""
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 
-        max_chars = self.bot_settings.get('max_message_chars', 300)
+        max_chars = self.bot_settings.get('max_message_chars', 400)
     
-        # ✅ Увеличиваем лимит токенов для генерации, чтобы бот мог закончить мысль
-        # Даже если мы просим 300 символов, даем запас до 600, чтобы не обрывать на полуслове
-        safe_max_chars = max(max_chars * 2, 600)
-        max_tokens = int(safe_max_chars / 2.5)
+        # ✅ ПРОИЗВОЛЬНАЯ ДЛИНА ОТВЕТА
+        # Мы убрали жесткое ограничение по символам.
+        # Gemini сам решит, какой длины должен быть ответ.
+        
+        max_tokens = 1000 # Достаточно для длинных ответов
 
         prompt_with_limit = f"""{prompt}
 
-⚠️ КРИТИЧЕСКИ ВАЖНО: Твой ответ должен быть КРАТКИМ и ЛАКОНИЧНЫМ (до {max_chars} символов).
-Пиши ёмко, без воды.
+⚠️ ВАЖНО ПРО СТИЛЬ ОТВЕТА (ADAPTIVE CONCISENESS):
+
+1. **ДЛЯ ЗАПИСИ (Booking Mode)**:
+   - Если клиент выбирает время/дату -> отвечай КРАТКО.
+   - "На завтра есть 10:00 и 14:00. Что выберете?"
+   - Не пиши лишних слов.
+
+2. **ДЛЯ ОПИСАНИЯ (Info Mode)**:
+   - Если клиент спрашивает "что такое японский маникюр?" или "кто мастер?" -> отвечай ПОДРОБНО.
+   - Расскажи детали, преимущества, почему это круто.
+   - Тут можно писать длинно.
+
+3. **ВСЕГДА ЗАКАНЧИВАЙ ВОПРОСОМ!**
 """
 
         payload = {
@@ -733,13 +1054,9 @@ class SalonBot:
         raise Exception("All retry attempts exhausted")
 
     def _get_fallback_response(self, language: str = 'ru') -> str:
-        """Резервный ответ при ошибке"""
-        responses = {
-            'ru': "Извините, я сейчас перегружен запросами 🤖 Наш менеджер скоро вам ответит! 💎",
-            'en': "Sorry, I'm overloaded with requests 🤖 Our manager will reply soon! 💎",
-            'ar': "عذراً، أنا محمل بالطلبات 🤖 سيرد عليك مديرنا قريباً! 💎"
-        }
-        return responses.get(language, responses['ru'])
+        """Резервный ответ при ошибке (синхронный контекст - без AI)"""
+        # Простой fallback без AI (синхронный метод)
+        return "Our manager will respond soon! 💎" if language == 'en' else "Наш менеджер скоро ответит! 💎"
 
     def should_greet(self, history: List[Tuple]) -> bool:
         """

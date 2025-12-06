@@ -15,7 +15,7 @@ def save_message(instagram_id: str, message: str, sender: str,
     c.execute("""
         SELECT id FROM chat_history 
         WHERE instagram_id = %s AND message = %s AND sender = %s
-        AND timestamp > NOW() - INTERVAL '10 seconds'
+        AND timestamp::timestamp > NOW() - INTERVAL '10 seconds'
         LIMIT 1
     """, (instagram_id, message, sender))
     
@@ -30,9 +30,10 @@ def save_message(instagram_id: str, message: str, sender: str,
     
     c.execute("""INSERT INTO chat_history 
                  (instagram_id, message, sender, timestamp, language, is_read, message_type)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                 VALUES (%s, %s, %s, %s, %s, %s, %s)
+                 RETURNING id""",
               (instagram_id, message, sender, now, language, is_read, message_type))
-    message_id = c.lastrowid
+    message_id = c.fetchone()[0]
     log_info(f"💾 Сообщение сохранено: ID={message_id}, sender={sender}, text={message[:30]}...", "db")
     
     conn.commit()

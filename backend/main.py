@@ -98,6 +98,7 @@ from api.feedback import router as feedback_router
 from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
 from api.visitor_analytics import router as visitor_analytics_router
+from api.analytics import router as analytics_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -167,6 +168,8 @@ app.include_router(internal_chat_router)
 app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)
 app.include_router(seo_metadata_router)  # для SEO метаданных (/api/public/seo-metadata)
 app.include_router(visitor_analytics_router, prefix="/api")  # для аналитики посетителей
+app.include_router(analytics_router, prefix="/api")  # для аналитики бота
+
 
 # ===== MIDDLEWARE =====
 
@@ -552,18 +555,55 @@ async def startup_event():
         
         scheduler = AsyncIOScheduler()
         
-        # Запускаем проверку каждые 30 минут
+        # Запускаем проверку instagram напоминаний каждые 30 минут
         scheduler.add_job(
             check_and_send_reminders,
             'interval',
             minutes=30,
             id='instagram_reminders'
         )
+
+        # ✅ Запуск проверки брошенных диалогов (каждые 10 минут)
+        from bot.reminders.abandoned import check_abandoned_bookings
+        scheduler.add_job(
+            check_abandoned_bookings,
+            'interval',
+            minutes=10,
+            id='abandoned_bookings'
+        )
+
+        # ✅ Запрос отзывов (каждый час)
+        from bot.reminders.feedback import check_visits_for_feedback
+        scheduler.add_job(
+            check_visits_for_feedback,
+            'interval',
+            minutes=60,
+            id='feedback_requests'
+        )
+
+        # ✅ Возвращение клиентов (раз в сутки в 11:00)
+        from bot.reminders.retention import check_client_retention
+        scheduler.add_job(
+            check_client_retention,
+            'cron',
+            hour=11,
+            minute=0,
+            id='retention_check'
+        )
+        
+        # ✅ Напоминания о записи через месседжер (каждые 30 минут)
+        from bot.reminders.appointments import check_appointment_reminders
+        scheduler.add_job(
+            check_appointment_reminders,
+            'interval',
+            minutes=30,
+            id='appointment_reminders'
+        )
         
         scheduler.start()
-        log_info("✅ Instagram reminders scheduler started (every 30 minutes)", "startup")
+        log_info("✅ Schedulers started: Instagram (30m), Abandoned (10m), Feedback (60m)", "startup")
         
-        log_info("✅ Планировщики запущены с async поддержкой (включая email-напоминания)", "startup")
+        log_info("✅ Планировщики запущены с async поддержкой", "startup")
 
 if __name__ == "__main__":
     import uvicorn
@@ -574,194 +614,7 @@ if __name__ == "__main__":
         port=8000,
         log_level="info"
     )
-    def diagnose_database():
-
     
-        try:
-            conn = get_db_connection()
-            c = conn.cursor()
 
-            log_info("=" * 70, "diagnostics")
-            log_info("🔍 ДИАГНОСТИКА БАЗЫ ДАННЫХ", "diagnostics")
-            log_info("=" * 70, "diagnostics")
 
-            # Таблицы
-            if os.getenv('DATABASE_TYPE') == 'postgresql':
-                c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name")
-            else:
-                c.execute("SELECT tabletablename FROM pg_tables WHERE schematablename='public' ORDER BY tablename")
-            tables = [row[0] for row in c.fetchall()]
-            log_info(f"📋 Таблиц в БД: {len(tables)}", "diagnostics")
-            for table in tables:
-                c.execute(f"SELECT COUNT(*) FROM {table}")
-                count = c.fetchone()[0]
-                log_info(f"   ✓ {table}: {count} записей", "diagnostics")
 
-            # bot_settings детально
-            if 'bot_settings' in tables:
-                log_info("", "diagnostics")
-                log_info("🤖 BOT_SETTINGS ДЕТАЛЬНО:", "diagnostics")
-
-                if os.getenv('DATABASE_TYPE') == 'postgresql':
-                    c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='bot_settings'")
-                    columns = [col[0] for col in c.fetchall()]
-                else:
-                    c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='bot_settings'")
-                    columns = [col[1] for col in c.fetchall()]
-                log_info(f"   Колонок: {len(columns)}", "diagnostics")
-
-                c.execute("SELECT COUNT(*) FROM bot_settings")
-                count = c.fetchone()[0]
-                log_info(f"   Записей: {count}", "diagnostics")
-
-                if count > 0:
-                    # Проверяем ключевые поля
-                    fields_to_check = [
-                        'bot_name', 'max_message_chars', 'personality_traits',
-                        'emoji_usage', 'objection_expensive', 'emotional_triggers'
-                    ]
-
-                    for field in fields_to_check:
-                        if field in columns:
-                            c.execute(f"SELECT {field} FROM bot_settings LIMIT 1")
-                            value = c.fetchone()[0]
-
-                            if value:
-                                preview = str(value)[:50] + "..." if len(str(value)) > 50 else str(value)
-                                log_info(f"   ✅ {field}: {preview}", "diagnostics")
-                            else:
-                                log_warning(f"   ⚠️  {field}: ПУСТО", "diagnostics")
-                        else:
-                            log_warning(f"   ❌ {field}: колонка отсутствует", "diagnostics")
-
-            # employees детально
-            if 'users' in tables:
-                log_info("", "diagnostics")
-                log_info("👥 EMPLOYEES ДЕТАЛЬНО:", "diagnostics")
-
-                c.execute("SELECT COUNT(*) FROM users WHERE is_service_provider = TRUE")
-                count = c.fetchone()[0]
-                log_info(f"   Записей: {count}", "diagnostics")
-
-                if count > 0:
-                    c.execute("SELECT full_name, position FROM users WHERE is_service_provider = TRUE ORDER BY sort_order")
-                    for i, row in enumerate(c.fetchall(), 1):
-                        log_info(f"   {i}. {row[0]} - {row[1]}", "diagnostics")
-                else:
-                    log_warning("   ⚠️  Таблица пуста! Запустите seed_employees", "diagnostics")
-            else:
-                log_warning("   ❌ Таблица users не создана!", "diagnostics")
-
-            log_info("=" * 70, "diagnostics")
-            log_info("✅ ДИАГНОСТИКА ЗАВЕРШЕНА", "diagnostics")
-            log_info("=" * 70, "diagnostics")
-
-            conn.close()
-
-        except Exception as e:
-            log_error(f"❌ Ошибка диагностики: {e}", "diagnostics")
-            import traceback
-            log_error(traceback.format_exc(), "diagnostics")
-
-# ============================================================================
-# POSITIONS API
-# ============================================================================
-
-@app.get("/api/positions")
-async def get_positions(active_only: bool = True):
-    """Получить список всех должностей"""
-    try:
-        from db.positions import get_all_positions
-        positions = get_all_positions(active_only=active_only)
-        return {"success": True, "positions": positions}
-    except Exception as e:
-        log_error(f"Error getting positions: {e}", "api")
-        return {"success": False, "error": str(e)}
-
-@app.get("/api/positions/{position_id}")
-async def get_position_by_id(position_id: int):
-    """Получить должность по ID"""
-    try:
-        from db.positions import get_position
-        position = get_position(position_id)
-        if position:
-            return {"success": True, "position": position}
-        else:
-            return {"success": False, "error": "Position not found"}
-    except Exception as e:
-        log_error(f"Error getting position: {e}", "api")
-        return {"success": False, "error": str(e)}
-
-@app.post("/api/positions")
-async def create_new_position(request: Request):
-    """Создать новую должность"""
-    try:
-        from db.positions import create_position
-        data = await request.json()
-
-        position_id = create_position(
-            name=data.get("name"),
-            name_en=data.get("name_en"),
-            name_ar=data.get("name_ar"),
-            description=data.get("description"),
-            sort_order=data.get("sort_order", 0)
-        )
-
-        if position_id:
-            return {"success": True, "position_id": position_id}
-        else:
-            return {"success": False, "error": "Position with this name already exists"}
-    except Exception as e:
-        log_error(f"Error creating position: {e}", "api")
-        return {"success": False, "error": str(e)}
-
-@app.put("/api/positions/{position_id}")
-async def update_position_by_id(position_id: int, request: Request):
-    """Обновить должность"""
-    try:
-        from db.positions import update_position
-        data = await request.json()
-
-        success = update_position(position_id, **data)
-
-        if success:
-            return {"success": True}
-        else:
-            return {"success": False, "error": "No fields to update"}
-    except Exception as e:
-        log_error(f"Error updating position: {e}", "api")
-        return {"success": False, "error": str(e)}
-
-@app.delete("/api/positions/{position_id}")
-async def delete_position_by_id(position_id: int, hard: bool = False):
-    """
-    Удалить должность
-    hard=False - мягкое удаление (деактивация)
-    hard=True - полное удаление из БД
-    """
-    try:
-        from db.positions import delete_position, hard_delete_position
-
-        if hard:
-            success = hard_delete_position(position_id)
-        else:
-            success = delete_position(position_id)
-
-        if success:
-            return {"success": True}
-        else:
-            return {"success": False, "error": "Failed to delete position"}
-    except Exception as e:
-        log_error(f"Error deleting position: {e}", "api")
-        return {"success": False, "error": str(e)}
-
-@app.get("/api/positions/{position_id}/employees")
-async def get_employees_by_position_id(position_id: int):
-    """Получить всех сотрудников с определенной должностью"""
-    try:
-        from db.positions import get_employees_by_position
-        employees = get_employees_by_position(position_id)
-        return {"success": True, "employees": employees}
-    except Exception as e:
-        log_error(f"Error getting employees by position: {e}", "api")
-        return {"success": False, "error": str(e)}

@@ -21,9 +21,14 @@ def get_location_from_ip(ip: str) -> Optional[Dict]:
     Returns: {latitude, longitude, city, country} or None if failed
     """
     # Skip localhost/private IPs
-    if ip in ['127.0.0.1', 'localhost'] or ip.startswith('192.168.') or ip.startswith('10.'):
-        log_info(f"Skipping geolocation for local IP: {ip}", "geolocation")
-        return None
+    if ip in ['127.0.0.1', 'localhost', '::1'] or ip.startswith('192.168.') or ip.startswith('10.'):
+        log_info(f"Using mock geolocation for local IP: {ip}", "geolocation")
+        return {
+            'latitude': SALON_LAT,
+            'longitude': SALON_LON,
+            'city': 'Localhost',
+            'country': 'Local Network'
+        }
     
     try:
         # Using ip-api.com (free, no API key needed, 45 req/min limit)

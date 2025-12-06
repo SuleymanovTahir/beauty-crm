@@ -387,19 +387,49 @@ def main():
 
     print("=" * 80 + "\n")
     
-    # Автоматическая очистка тестовых данных после всех тестов
-    if failed == 0:  # Только если все тесты прошли успешно
-        try:
-            from tests.test_cleanup import cleanup_after_test
-            print("\n" + "=" * 80)
-            print("  ОЧИСТКА ТЕСТОВЫХ ДАННЫХ")
-            print("=" * 80)
-            cleanup_after_test(verbose=True)
-        except Exception as e:
-            print(f"   ⚠️  Ошибка очистки: {e}")
-
     return failed == 0
 
+def cleanup_test_data_safe():
+    """Безопасная очистка тестовых данных для test_all.py"""
+    print("\n🧹 Очистка тестовых данных (test_all)...")
+    try:
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Список пользователей/клиентов создаваемых в этом файле
+        users_to_clean = ["test_user_123"]
+        masters_to_clean = ["Тест Мастер"]
+        
+        # 1. Очистка пользователей (сотрудников)
+        for master in masters_to_clean:
+            # Находим ID
+            c.execute("SELECT id FROM users WHERE full_name = %s", (master,))
+            row = c.fetchone()
+            if row:
+                user_id = row[0]
+                c.execute("DELETE FROM user_schedule WHERE user_id = %s", (user_id,))
+                c.execute("DELETE FROM user_time_off WHERE user_id = %s", (user_id,))
+                c.execute("DELETE FROM users WHERE id = %s", (user_id,))
+                print(f"✅ Сотрудник '{master}' удален")
+
+        # 2. Очистка клиентов
+        for client_id in users_to_clean:
+            c.execute("DELETE FROM conversations WHERE client_id = %s", (client_id,))
+            c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))
+            if c.rowcount > 0:
+                print(f"✅ Клиент '{client_id}' удален")
+
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"⚠️ Ошибка очистки в test_all: {e}")
+
 if __name__ == "__main__":
-    success = main()
+    success = False
+    try:
+        success = main()
+    finally:
+        cleanup_test_data_safe()
+        
     sys.exit(0 if success else 1)

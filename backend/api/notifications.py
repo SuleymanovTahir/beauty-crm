@@ -17,26 +17,8 @@ from zoneinfo import ZoneInfo
 
 router = APIRouter(tags=["Notifications"])
 
-def create_notifications_table():
-    """Создать таблицу уведомлений"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    c.execute('''CREATE TABLE IF NOT EXISTS notifications (
-        id SERIAL PRIMARY KEY,
-        user_id TEXT NOT NULL,
-        title TEXT NOT NULL,
-        message TEXT NOT NULL,
-        type TEXT DEFAULT 'info',
-        is_read INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        read_at TEXT,
-        action_url TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-    )''')
-    
-    conn.commit()
-    conn.close()
+# create_notifications_table removed (moved to db/init.py)
+
 
 @router.get("/notifications")
 async def get_notifications(
@@ -49,7 +31,7 @@ async def get_notifications(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    create_notifications_table()
+
     
     conn = get_db_connection()
     c = conn.cursor()
@@ -103,7 +85,7 @@ async def mark_notification_read(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    create_notifications_table()
+
     
     try:
         conn = get_db_connection()
@@ -137,7 +119,7 @@ async def mark_all_notifications_read(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    create_notifications_table()
+
     
     try:
         conn = get_db_connection()
@@ -171,7 +153,7 @@ async def get_unread_count(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    create_notifications_table()
+
     
     try:
         conn = get_db_connection()
@@ -195,7 +177,7 @@ async def get_unread_count(
 def create_notification(user_id: str, title: str, message: str, 
                        notification_type: str = "info", action_url: str = None):
     """Создать уведомление"""
-    create_notifications_table()
+
     
     try:
         conn = get_db_connection()

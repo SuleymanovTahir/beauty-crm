@@ -117,7 +117,7 @@ def get_or_create_client(instagram_id: str, username: str = None):
         c.execute("""INSERT INTO clients 
                      (instagram_id, username, first_contact, last_contact, 
                       total_messages, labels, status, detected_language)
-                     VALUES (%s, %s, %s, %s, FALSE, %s, %s, %s)""",
+                     VALUES (%s, %s, %s, %s, 0, %s, %s, %s)""",
                   (instagram_id, username, now, now, "Новый клиент", "new", "ru"))
         conn.commit()
         print(f"✨ Новый клиент: {instagram_id}")

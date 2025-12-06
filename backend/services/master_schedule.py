@@ -336,14 +336,18 @@ class MasterScheduleService:
             """, (user_id, day_of_week))
 
             schedule = c.fetchone()
+            
+            # ✅ DEFAULT SCHEDULE LOGIC
+            # If no schedule found in DB, use default salon hours (10:30 - 21:00)
             if not schedule:
-                return []
-
-            start_time_str, end_time_str = schedule
-
-            # Если время не установлено (выходной), слотов нет
-            if not start_time_str or not end_time_str:
-                return []
+                # Default hours can be fetched from settings in future, hardcoded for now as per request
+                start_time_str = "10:30"
+                end_time_str = "21:00"
+            else:
+                start_time_str, end_time_str = schedule
+                # Если время не установлено (выходной), слотов нет
+                if not start_time_str or not end_time_str:
+                    return []
 
             # Проверяем отпуска (на весь день или часть)
             day_start = f"{date} 00:00:00"

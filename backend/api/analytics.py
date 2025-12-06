@@ -106,3 +106,16 @@ async def get_performance_metrics(
     
     from db.analytics import get_performance_metrics_data
     return get_performance_metrics_data(period)
+
+@router.get("/bot-analytics")
+async def get_bot_analytics(
+    days: int = Query(30),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Получить аналитику эффективности бота"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    from db.bot_analytics import get_bot_analytics_summary
+    return get_bot_analytics_summary(days)
