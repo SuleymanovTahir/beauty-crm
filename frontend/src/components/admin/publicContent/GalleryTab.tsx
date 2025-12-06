@@ -371,6 +371,7 @@ export default function GalleryTab() {
                                     value={editForm.title}
                                     onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
                                     placeholder="Введите заголовок..."
+                                    className="px-3"
                                 />
                             </div>
 
@@ -429,6 +430,7 @@ export default function GalleryTab() {
                                 max="50"
                                 value={displaySettings.gallery_count}
                                 onChange={(e) => setDisplaySettings({ ...displaySettings, gallery_count: parseInt(e.target.value) || 6 })}
+                                className="px-3"
                             />
                         </div>
                         <div>
@@ -440,6 +442,7 @@ export default function GalleryTab() {
                                 max="50"
                                 value={displaySettings.portfolio_count}
                                 onChange={(e) => setDisplaySettings({ ...displaySettings, portfolio_count: parseInt(e.target.value) || 6 })}
+                                className="px-3"
                             />
                         </div>
                         <div>
@@ -451,6 +454,7 @@ export default function GalleryTab() {
                                 max="50"
                                 value={displaySettings.services_count}
                                 onChange={(e) => setDisplaySettings({ ...displaySettings, services_count: parseInt(e.target.value) || 6 })}
+                                className="px-3"
                             />
                         </div>
                         <div>
@@ -462,6 +466,7 @@ export default function GalleryTab() {
                                 max="50"
                                 value={displaySettings.faces_count || 6}
                                 onChange={(e) => setDisplaySettings({ ...displaySettings, faces_count: parseInt(e.target.value) || 6 })}
+                                className="px-3"
                             />
                         </div>
                         <div className="flex items-end">

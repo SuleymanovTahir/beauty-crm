@@ -1951,6 +1951,7 @@ export default function AdminSettings() {
                           value={broadcastForm.subject}
                           onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
                           placeholder={t('settings:placeholder_special_offer')}
+                          className="px-3"
                         />
                       </div>
 
@@ -2326,6 +2327,7 @@ export default function AdminSettings() {
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
                     placeholder={t('enter_password')}
+                    className="px-3"
                   />
                 </div>
 
@@ -2338,6 +2340,7 @@ export default function AdminSettings() {
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     placeholder="DELETE"
+                    className="px-3"
                   />
                 </div>
 
