@@ -169,6 +169,7 @@ export default function FAQTab() {
                                     value={formData.question_ru}
                                     onChange={(e) => setFormData({ ...formData, question_ru: e.target.value })}
                                     required
+                                    className="px-3"
                                 />
                             </div>
 
@@ -185,9 +186,22 @@ export default function FAQTab() {
                             <div>
                                 <label className="block text-sm font-medium mb-1">{t('category')}</label>
                                 <select
-                                    className="w-full border rounded px-3 py-2"
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.5rem 2.5rem 0.5rem 0.75rem',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '0.5rem',
+                                        fontSize: '0.875rem',
+                                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'right 0.75rem center',
+                                        backgroundSize: '16px 16px',
+                                        appearance: 'none',
+                                        WebkitAppearance: 'none',
+                                        MozAppearance: 'none'
+                                    }}
                                 >
                                     <option value="general">General</option>
                                     <option value="services">Services</option>
