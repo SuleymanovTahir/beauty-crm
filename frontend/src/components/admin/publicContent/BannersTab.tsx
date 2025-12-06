@@ -342,7 +342,7 @@ export default function BannersTab() {
                                 max="60"
                                 value={rotationInterval}
                                 onChange={(e) => setRotationInterval(parseInt(e.target.value) || 5)}
-                                className="w-full"
+                                className="w-full px-3"
                             />
                         </div>
                     </div>
@@ -354,7 +354,7 @@ export default function BannersTab() {
                             type="datetime-local"
                             value={promoEndDate}
                             onChange={(e) => setPromoEndDate(e.target.value)}
-                            className="w-full"
+                            className="w-full px-3"
                         />
                         <p className="text-xs text-gray-500">
                             Если дата в будущем, на главной странице появится таймер обратного отсчета.
@@ -397,36 +397,37 @@ export default function BannersTab() {
                                 </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <Label htmlFor="title">Заголовок (RU)</Label>
-                                            <Input
-                                                id="title"
-                                                value={formData.title_ru}
-                                                onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
-                                                required
-                                                placeholder="Например: Скидка 20% на все услуги"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="subtitle">Подзаголовок (RU)</Label>
-                                            <Input
-                                                id="subtitle"
-                                                value={formData.subtitle_ru}
-                                                onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
-                                                placeholder="Например: Только до конца месяца"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Label htmlFor="link">Ссылка при клике (опционально)</Label>
-                                            <Input
-                                                id="link"
-                                                value={formData.link_url}
-                                                onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
-                                                placeholder="/services"
-                                            />
-                                        </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <Label htmlFor="title">Заголовок (RU)</Label>
+                                        <Input
+                                            id="title"
+                                            value={formData.title_ru}
+                                            onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
+                                            required
+                                            placeholder="Например: Скидка 20% на все услуги"
+                                            className="px-3"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="subtitle">Подзаголовок (RU)</Label>
+                                        <Input
+                                            id="subtitle"
+                                            value={formData.subtitle_ru}
+                                            onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
+                                            placeholder="Например: Только до конца месяца"
+                                            className="px-3"
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="link">Ссылка при клике (опционально)</Label>
+                                        <Input
+                                            id="link"
+                                            value={formData.link_url}
+                                            onChange={(e) => setFormData({ ...formData, link_url: e.target.value })}
+                                            placeholder="/services"
+                                            className="px-3"
+                                        />
                                     </div>
 
                                     <div className="space-y-2">
@@ -441,15 +442,19 @@ export default function BannersTab() {
                                                     value={formData.image_url}
                                                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                                                     placeholder="https://example.com/image.jpg"
+                                                    className="pl-3 pr-3"
                                                 />
                                             </TabsContent>
                                             <TabsContent value="file" className="mt-2">
-                                                <Label
-                                                    htmlFor="banner-file-upload"
-                                                    className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full"
+                                                    onClick={() => document.getElementById('banner-file-upload')?.click()}
+                                                    disabled={uploading}
                                                 >
                                                     {uploading ? 'Загрузка...' : 'Выбрать файл'}
-                                                </Label>
+                                                </Button>
                                                 <input
                                                     id="banner-file-upload"
                                                     type="file"

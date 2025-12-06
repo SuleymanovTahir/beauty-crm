@@ -54,23 +54,20 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
   const getStyles = () => {
     if (variant === 'filter' || variant === 'table') {
       return {
-        className: `text-sm font-medium border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 transition-colors`,
+        className: '',
         style: {
+          padding: '0.5rem 2.5rem 0.5rem 0.75rem',
+          border: '1px solid #d1d5db',
+          borderRadius: '0.5rem',
+          fontSize: '0.875rem',
           minWidth: variant === 'table' ? '120px' : '140px',
-          padding: variant === 'table' ? '0.25rem 2rem 0.25rem 0.75rem' : '0.5rem 2rem 0.5rem 1rem',
-          borderRadius: '9999px',
-          cursor: 'pointer',
-          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b7280' d='M4 6l4 4 4-4z'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 0.5rem center',
-          backgroundSize: '1.5em 1.5em',
+          backgroundPosition: 'right 0.75rem center',
+          backgroundSize: '16px 16px',
           appearance: 'none',
-          backgroundColor: 'transparent',
-          fontSize: variant === 'table' ? '0.75rem' : '0.875rem',
-          fontWeight: '500',
-          lineHeight: '1.25rem',
-          border: 'none',
-          outline: 'none'
+          WebkitAppearance: 'none',
+          MozAppearance: 'none'
         } as any
       };
     }
