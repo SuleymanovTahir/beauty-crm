@@ -10,9 +10,31 @@ from datetime import datetime, timedelta
 def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
     """
     Track a visitor by IP address with geolocation
+    Deduplicates visits from the same IP within 10 seconds
     Returns True if successfully tracked, False otherwise
     """
     try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Check if this IP was already tracked in the last 10 seconds
+        # This prevents duplicate records from simultaneous API calls
+        # but allows tracking section transitions (hero -> services -> gallery)
+        c.execute("""
+            SELECT id FROM visitor_tracking 
+            WHERE ip_address = %s 
+            AND visited_at > NOW() - INTERVAL '10 seconds'
+            LIMIT 1
+        """, (ip,))
+        
+        recent_visit = c.fetchone()
+        
+        if recent_visit:
+            # Already tracked recently, skip
+            conn.close()
+            log_info(f"Skipping duplicate visit from {ip} (tracked within last 10 sec)", "visitor_tracking")
+            return False
+        
         # Get location data
         location_data = get_visitor_location_data(ip)
         
@@ -27,9 +49,6 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
                 'distance_km': None,
                 'is_local': None
             }
-        
-        conn = get_db_connection()
-        c = conn.cursor()
         
         c.execute("""
             INSERT INTO visitor_tracking 
@@ -50,6 +69,7 @@ def track_visitor(ip: str, user_agent: str, page_url: str) -> bool:
         
         conn.commit()
         conn.close()
+        log_info(f"Tracked new visitor from {ip} ({location_data.get('city', 'Unknown')})", "visitor_tracking")
         return True
         
     except Exception as e:
