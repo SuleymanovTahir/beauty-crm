@@ -80,6 +80,7 @@ def run_all_migrations():
         migrate_services_schema,
         migrate_clients_schema,
         migrate_bot_schema,
+        migrate_bot_analytics_schema,
         migrate_salon_schema,
         migrate_other_schema,
         migrate_gallery_schema,
@@ -112,6 +113,11 @@ def run_all_migrations():
         migrate_bot_schema,
         "Все изменения таблицы bot_settings"
     )
+
+    results["consolidated/bot_analytics"] = run_migration_function(
+        migrate_bot_analytics_schema,
+        "Все изменения таблицы bot_analytics"
+    )
     
     results["consolidated/salon"] = run_migration_function(
         migrate_salon_schema,
@@ -132,6 +138,46 @@ def run_all_migrations():
         migrate_public_schema,
         "Все изменения публичных таблиц (banners, reviews, faq, gallery)"
     )
+
+    # ========================================================================
+    # MIGRATION: CLIENT PREFERENCES & CONVERSATION CONTEXT
+    # ========================================================================
+    try:
+        from db.migrations.run_migration_client_preferences import conn as pref_conn
+        # Script executes on import, so we just check connection or define a wrapper if needed.
+        # However, the script is designed to run on import/execution. 
+        # Better approach: import the file logic or run it safely.
+        # Given the script structure (runs on execution), we should probably treat it like the others if possible,
+        # but it doesn't expose a single function cleanly. 
+        # Let's use run_command style or better: modify the script to be importable, 
+        # BUT for now I will use the subprocess approach OR better, import it inside a try/catch.
+        
+        # Actually, the file `run_migration_client_preferences.py` RUNS code on module level.
+        # It creates tables directly.
+        pass 
+    except Exception as e:
+        pass
+
+    # Better: Use subprocess to run it to avoid module-level execution weirdness during import if cached
+    import subprocess
+    print_header("МИГРАЦИЯ: ПРЕДПОЧТЕНИЯ И КОНТЕКСТ")
+    try:
+        # Use sys.executable to ensure we use the same python interpreter
+        result = subprocess.run(
+            [sys.executable, "db/migrations/run_migration_client_preferences.py"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            print("✅ Миграция предпочтений выполнена успешно")
+            results["migrations/client_preferences"] = True
+        else:
+            print(f"❌ Ошибка в миграции предпочтений:\n{result.stderr}")
+            results["migrations/client_preferences"] = False
+    except Exception as e:
+        print(f"❌ Ошибка запуска миграции предпочтений: {e}")
+        results["migrations/client_preferences"] = False
     
     # Add show_on_public_page to users (part of gallery feature)
     try:

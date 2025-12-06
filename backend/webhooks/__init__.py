@@ -275,6 +275,45 @@ async def process_message_background(messaging_event: dict):
             
             return
         
+        # ✅ #29 - ОБРАБОТКА ГОЛОСОВЫХ СООБЩЕНИЙ
+        attachments = message_data.get("attachments", [])
+        has_voice = any(att.get("type") in ["audio", "voice"] for att in attachments)
+        
+        if has_voice and not message_text:
+            log_info(f"🎤 Voice message received from {sender_id}, responding with text request", "webhook")
+            
+            # Определяем язык клиента
+            client_language = get_client_language(sender_id) or 'ru'
+            
+            # ✅ AI генерирует ответ на языке клиента
+            from bot.ai_responses import generate_ai_response
+            response = await generate_ai_response('voice_response', client_language)
+            
+            # Сохраняем уведомление о голосовом
+            save_message(sender_id, "[VOICE MESSAGE]", "client", message_type="audio")
+            save_message(sender_id, response, "bot", message_type="text")
+            
+            await send_message(sender_id, response)
+            return
+        
+        # ✅ #32 - ОБРАБОТКА ФОТО/ИЗОБРАЖЕНИЙ
+        has_image = any(att.get("type") == "image" for att in attachments)
+        
+        if has_image and not message_text:
+            log_info(f"📸 Image received from {sender_id}, asking for text description", "webhook")
+            
+            client_language = get_client_language(sender_id) or 'ru'
+            
+            # ✅ AI генерирует ответ на языке клиента
+            from bot.ai_responses import generate_ai_response
+            response = await generate_ai_response('photo_response', client_language)
+            
+            save_message(sender_id, "[IMAGE]", "client", message_type="image")
+            save_message(sender_id, response, "bot", message_type="text")
+            
+            await send_message(sender_id, response)
+            return
+        
         # ✅ ОБРАБОТКА ТЕКСТОВЫХ СООБЩЕНИЙ ОТ КЛИЕНТА
         if not message_text:
             log_info(f"⚠️ Пустое сообщение от {sender_id}, пропускаем", "webhook")
@@ -352,6 +391,17 @@ async def process_message_background(messaging_event: dict):
             )
             log_info(f"💾 Сообщение сохранено в БД: {message_text[:30]}...", "webhook")
             
+            # ✅ ОБРАБОТКА ОТЗЫВОВ (если ждем ответ)
+            try:
+                from bot.feedback_handler import handle_feedback_response
+                is_feedback_handled = await handle_feedback_response(sender_id, message_text)
+                if is_feedback_handled:
+                    log_info("✅ Feedback handled successfully, skipping bot response", "webhook")
+                    return
+            except Exception as fh_err:
+                log_error(f"⚠️ Feedback handler error: {fh_err}", "webhook")
+            
+            
             # ✅ #5 - Отслеживание интереса к услугам
             services_keywords = {
                 'Manicure': ['маникюр', 'manicure', 'мани', 'ногти', 'nail'],
@@ -388,6 +438,13 @@ async def process_message_background(messaging_event: dict):
             except Exception as lang_check_error:
                 log_error(f"⚠️ Language check failed: {lang_check_error}, using 'ru'", "webhook")
                 client_language = 'ru'  
+            
+            # ✅ #35 - ТРЕКИНГ АНАЛИТИКИ БОТА
+            try:
+                from db.bot_analytics import start_bot_session
+                start_bot_session(sender_id, client_language)
+            except Exception as analytics_err:
+                log_error(f"⚠️ Analytics tracking error: {analytics_err}", "webhook")
                          
             salon = get_salon_settings()
             bot_globally_enabled = salon.get('bot_globally_enabled', 1)
@@ -607,6 +664,13 @@ async def process_message_background(messaging_event: dict):
                                 master=booking_data.get('master')
                             )
                             logger.info(f"✅ Booking saved successfully: {booking_data['service']} at {booking_datetime}")
+                            
+                            # ✅ Трекинг: запись создана
+                            try:
+                                from db.bot_analytics import end_bot_session
+                                end_bot_session(sender_id, 'booking_created')
+                            except:
+                                pass
                         
                         # ✅ ОЧИЩАЕМ ПРОГРЕСС ПОСЛЕ УСПЕШНОЙ ЗАПИСИ
                         clear_booking_progress(sender_id)

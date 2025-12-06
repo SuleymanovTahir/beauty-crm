@@ -453,7 +453,18 @@ def update_bot_settings(data: dict) -> bool:
             'manager_consultation_prompt': 'manager_consultation_prompt',
             'booking_time_logic': 'booking_time_logic',
             'booking_data_collection': 'booking_data_collection',
+            'booking_data_collection': 'booking_data_collection',
             'booking_availability_instructions': 'booking_availability_instructions',
+            # Reminder Settings
+            'abandoned_cart_enabled': 'abandoned_cart_enabled',
+            'abandoned_cart_delay': 'abandoned_cart_delay',
+            'abandoned_cart_message': 'abandoned_cart_message',
+            'post_visit_feedback_enabled': 'post_visit_feedback_enabled',
+            'post_visit_delay': 'post_visit_delay',
+            'post_visit_feedback_message': 'post_visit_feedback_message',
+            'return_client_reminder_enabled': 'return_client_reminder_enabled',
+            'return_client_delay': 'return_client_delay',
+            'return_client_message': 'return_client_message',
         }
 
         for data_key, db_column in field_mapping.items():

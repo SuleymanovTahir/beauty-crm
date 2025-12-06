@@ -21,7 +21,8 @@ import {
   ChevronDown,
   Target,
   Globe,
-  MapPinned
+  MapPinned,
+  Bell
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -40,6 +41,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showChatSubmenu, setShowChatSubmenu] = useState(false);
   const [enabledMessengers, setEnabledMessengers] = useState<Array<{ type: string; name: string }>>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifCount, setNotifCount] = useState(0);
+  const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
   // Используем централизованную систему прав
   const permissions = usePermissions(user?.role || 'employee');
@@ -47,7 +51,9 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
   useEffect(() => {
     loadUnreadCount();
     loadEnabledMessengers();
+    loadNotifications();
     const unreadInterval = setInterval(loadUnreadCount, 10000);
+    const notifInterval = setInterval(loadNotifications, 30000);
 
     // Слушаем событие обновления мессенджеров
     const handleMessengersUpdate = () => {
@@ -57,6 +63,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
     return () => {
       clearInterval(unreadInterval);
+      clearInterval(notifInterval);
       window.removeEventListener('messengers-updated', handleMessengersUpdate);
     };
   }, []);
@@ -72,10 +79,29 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
   const loadUnreadCount = async () => {
     try {
-      const data = await api.getUnreadCount();
-      setUnreadCount(data.count || 0);
-    } catch (err) {
-      console.error('Failed to load unread count:', err);
+      const data = await api.getTotalUnread();
+      setUnreadCount(data.total || 0);
+    } catch (error) {
+      console.error('Error loading unread count:', error);
+    }
+  };
+
+  const loadNotifications = async () => {
+    try {
+      const data = await api.get('/notifications?unread_only=true&limit=10');
+      setNotifications(data.notifications || []);
+      setNotifCount(data.notifications?.length || 0);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  };
+
+  const markNotificationRead = async (id: number) => {
+    try {
+      await api.post(`/notifications/${id}/read`, {});
+      loadNotifications();
+    } catch (error) {
+      console.error('Error marking notification read:', error);
     }
   };
 
@@ -137,6 +163,59 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
       >
         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
+
+      {/* Notification Bell - Fixed Top Right (Only on Dashboard) */}
+      {location.pathname === '/admin/dashboard' && (
+        <div className="fixed top-4 right-4 z-50">
+          <button
+            onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+            className="relative p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition-colors"
+          >
+            <Bell size={24} className={notifCount > 0 ? 'text-orange-500' : 'text-gray-600'} />
+            {notifCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                {notifCount > 9 ? '9+' : notifCount}
+              </span>
+            )}
+          </button>
+
+          {/* Notification Dropdown */}
+          {showNotifDropdown && (
+            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 max-h-96 overflow-y-auto">
+              <div className="p-3 border-b border-gray-100 flex justify-between items-center">
+                <span className="font-semibold text-gray-900">🔔 Уведомления</span>
+                <button onClick={() => setShowNotifDropdown(false)} className="text-gray-400 hover:text-gray-600">
+                  <X size={16} />
+                </button>
+              </div>
+              {notifications.length === 0 ? (
+                <div className="p-4 text-center text-gray-500 text-sm">
+                  Нет новых уведомлений
+                </div>
+              ) : (
+                notifications.map((notif: any) => (
+                  <div
+                    key={notif.id}
+                    className={`p-3 border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${notif.type === 'urgent' ? 'bg-red-50' : ''
+                      }`}
+                    onClick={() => {
+                      markNotificationRead(notif.id);
+                      if (notif.action_url) navigate(notif.action_url);
+                      setShowNotifDropdown(false);
+                    }}
+                  >
+                    <div className="font-medium text-sm text-gray-900">{notif.title}</div>
+                    <div className="text-xs text-gray-600 mt-1 line-clamp-2">{notif.message}</div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      {new Date(notif.created_at).toLocaleString()}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Sidebar */}
       <aside

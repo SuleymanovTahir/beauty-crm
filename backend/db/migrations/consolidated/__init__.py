@@ -14,6 +14,7 @@ from .schema_gallery import (
     import_gallery_images,
 )
 from .schema_public import migrate_public_schema
+from .schema_bot_analytics import migrate_bot_analytics_schema
 
 __all__ = [
     # Users
@@ -26,6 +27,7 @@ __all__ = [
     'migrate_clients_schema',
     # Bot
     'migrate_bot_schema',
+    'migrate_bot_analytics_schema',
     # Salon
     'migrate_salon_schema',
     # Other

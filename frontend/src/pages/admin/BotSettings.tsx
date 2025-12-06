@@ -6,9 +6,11 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useTranslation } from 'react-i18next';
-import { Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle } from 'lucide-react';
+import { Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle, Bell } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { BarChart3 } from 'lucide-react';
+import BotAnalyticsWidget from '../../components/admin/BotAnalyticsWidget';
 
 interface BotSettings {
   bot_name: string;
@@ -24,6 +26,7 @@ interface BotSettings {
   communication_style: string;
   max_message_chars: number;
   max_message_length?: number;
+  response_style: string;
   emoji_usage: string;
   booking_time_logic: string;
   booking_data_collection: string;
@@ -57,9 +60,19 @@ interface BotSettings {
   pre_booking_data_collection: string;
   manager_consultation_prompt: string;
   booking_availability_instructions: string;
+  // Reminder Settings
+  abandoned_cart_enabled?: boolean;
+  abandoned_cart_delay?: number;
+  abandoned_cart_message?: string;
+  post_visit_feedback_enabled?: boolean;
+  post_visit_delay?: number;
+  post_visit_feedback_message?: string;
+  return_client_reminder_enabled?: boolean;
+  return_client_delay?: number;
+  return_client_message?: string;
 }
 
-type TabType = 'general' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
+type TabType = 'general' | 'notifications' | 'analytics' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
 
 
 
@@ -86,6 +99,7 @@ export default function BotSettings() {
     upsell_techniques: '',
     communication_style: '',
     max_message_chars: 0,
+    response_style: 'adaptive',
     emoji_usage: '',
     languages_supported: '',
     objection_expensive: '',
@@ -119,6 +133,15 @@ export default function BotSettings() {
     booking_time_logic: '',
     booking_data_collection: '',
     booking_availability_instructions: '',
+    abandoned_cart_enabled: true,
+    abandoned_cart_delay: 30,
+    abandoned_cart_message: '',
+    post_visit_feedback_enabled: true,
+    post_visit_delay: 24,
+    post_visit_feedback_message: '',
+    return_client_reminder_enabled: false,
+    return_client_delay: 45,
+    return_client_message: '',
   });
 
   useEffect(() => {
@@ -149,6 +172,7 @@ export default function BotSettings() {
         upsell_techniques: botData.upsell_techniques || '',
         communication_style: botData.communication_style || '',
         max_message_chars: botData.max_message_chars || 300,
+        response_style: botData.response_style || 'adaptive',
         emoji_usage: botData.emoji_usage || '',
         languages_supported: botData.languages_supported || 'ru,en,ar',
         objection_expensive: botData.objection_expensive || '',
@@ -182,6 +206,17 @@ export default function BotSettings() {
         booking_time_logic: botData.booking_time_logic || '',
         booking_data_collection: botData.booking_data_collection || '',
         booking_availability_instructions: botData.booking_availability_instructions || '',
+
+        // Reminder Settings
+        abandoned_cart_enabled: botData.abandoned_cart_enabled ?? true,
+        abandoned_cart_delay: botData.abandoned_cart_delay || 30,
+        abandoned_cart_message: botData.abandoned_cart_message || '',
+        post_visit_feedback_enabled: botData.post_visit_feedback_enabled ?? true,
+        post_visit_delay: botData.post_visit_delay || 24,
+        post_visit_feedback_message: botData.post_visit_feedback_message || '',
+        return_client_reminder_enabled: botData.return_client_reminder_enabled ?? false,
+        return_client_delay: botData.return_client_delay || 45,
+        return_client_message: botData.return_client_message || '',
       });
     } catch (err) {
       console.error('❌ Error loading settings:', err);
@@ -212,6 +247,8 @@ export default function BotSettings() {
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
     { id: 'general', label: t('tabs.general'), icon: <Bot size={18} /> },
+    { id: 'notifications', label: 'Уведомления', icon: <Bell size={18} /> },
+    { id: 'analytics', label: 'Аналитика', icon: <BarChart3 size={18} /> },
     { id: 'personality', label: t('tabs.personality'), icon: <Sparkles size={18} /> },
     { id: 'pricing', label: t('tabs.pricing'), icon: <DollarSign size={18} /> },
     { id: 'objections', label: t('tabs.objections'), icon: <MessageCircle size={18} /> },
@@ -327,31 +364,94 @@ export default function BotSettings() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.5rem' }}>
-                {t('max_message_length')}
+              <label style={{ display: 'block', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
+                🎯 {t('response_style') || 'Стиль ответов бота'}
               </label>
-              <input
-                type="number"
-                min="100"
-                max="2000"
-                step="50"
-                value={settings.max_message_chars || 0}
-                onChange={(e) => setSettings({ ...settings, max_message_chars: parseInt(e.target.value) })}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.95rem',
-                  boxSizing: 'border-box'
-                }}
-              />
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                {t('recommended_length')}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                {/* Concise / Деловой */}
+                <div
+                  onClick={() => setSettings({ ...settings, response_style: 'concise' })}
+                  style={{
+                    padding: '1.25rem',
+                    border: settings.response_style === 'concise' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    cursor: 'pointer',
+                    backgroundColor: settings.response_style === 'concise' ? '#f5f3ff' : '#fff',
+                    textAlign: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚡</div>
+                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                    Кратко
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    Чётко и по делу
+                  </div>
+                </div>
+
+                {/* Adaptive / Умный */}
+                <div
+                  onClick={() => setSettings({ ...settings, response_style: 'adaptive' })}
+                  style={{
+                    padding: '1.25rem',
+                    border: settings.response_style === 'adaptive' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    cursor: 'pointer',
+                    backgroundColor: settings.response_style === 'adaptive' ? '#f5f3ff' : '#fff',
+                    textAlign: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🧠</div>
+                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                    Средне
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    Золотая середина
+                  </div>
+                </div>
+
+                {/* Detailed / Дружелюбный */}
+                <div
+                  onClick={() => setSettings({ ...settings, response_style: 'detailed' })}
+                  style={{
+                    padding: '1.25rem',
+                    border: settings.response_style === 'detailed' ? '2px solid #8b5cf6' : '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    cursor: 'pointer',
+                    backgroundColor: settings.response_style === 'detailed' ? '#f5f3ff' : '#fff',
+                    textAlign: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💬</div>
+                  <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                    Длинно
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    Подробные ответы с заботой
+                  </div>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem' }}>
+                • <strong>Деловой</strong>: 2-3 предложения, сразу к делу
                 <br />
-                <strong>{t('strict_limit_warning')}</strong>
+                • <strong>Умный</strong>: Коротко при записи, подробно при вопросах
+                <br />
+                • <strong>Дружелюбный</strong>: Всегда подробно, со списками и рекомендациями
               </p>
             </div>
+          </div>
+        )}
+
+        {/* ANALYTICS TAB */}
+        {activeTab === 'analytics' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
+              📊 Аналитика работы бота
+            </h2>
+            <BotAnalyticsWidget />
           </div>
         )}
 
@@ -1301,6 +1401,139 @@ export default function BotSettings() {
                 {t('real_dialogues_for_training')}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* NOTIFICATIONS TAB */}
+        {activeTab === 'notifications' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
+              🔔 Настройка уведомлений и напоминаний
+            </h2>
+
+            {/* 1. Abandoned Cart */}
+            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
+                  ⏳ Брошенная запись (Abandoned Recovery)
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={settings.abandoned_cart_enabled}
+                    onChange={(e) => setSettings({ ...settings, abandoned_cart_enabled: e.target.checked })}
+                    style={{ width: '1.25rem', height: '1.25rem' }}
+                  />
+                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (минуты)</label>
+                  <input
+                    type="number"
+                    value={settings.abandoned_cart_delay}
+                    onChange={(e) => setSettings({ ...settings, abandoned_cart_delay: parseInt(e.target.value) || 30 })}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Через сколько времени писать, если клиент замолчал.</p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <textarea
+                    value={settings.abandoned_cart_message}
+                    onChange={(e) => setSettings({ ...settings, abandoned_cart_message: e.target.value })}
+                    placeholder="Если пусто, используется стандартный текст на языке клиента."
+                    rows={3}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Feedback Request */}
+            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
+                  ⭐️ Сбор отзывов (Feedback Request)
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={settings.post_visit_feedback_enabled}
+                    onChange={(e) => setSettings({ ...settings, post_visit_feedback_enabled: e.target.checked })}
+                    style={{ width: '1.25rem', height: '1.25rem' }}
+                  />
+                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (часы)</label>
+                  <input
+                    type="number"
+                    value={settings.post_visit_delay}
+                    onChange={(e) => setSettings({ ...settings, post_visit_delay: parseInt(e.target.value) || 24 })}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Через сколько часов после визита просить отзыв.</p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <textarea
+                    value={settings.post_visit_feedback_message}
+                    onChange={(e) => setSettings({ ...settings, post_visit_feedback_message: e.target.value })}
+                    placeholder="Если пусто, используется стандартный текст на языке клиента."
+                    rows={3}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Retention */}
+            <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb', opacity: 0.7 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
+                  🔄 Возвращение клиентов (Retention) <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>Beta</span>
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="checkbox"
+                    checked={settings.return_client_reminder_enabled}
+                    onChange={(e) => setSettings({ ...settings, return_client_reminder_enabled: e.target.checked })}
+                    style={{ width: '1.25rem', height: '1.25rem' }}
+                  />
+                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (дни)</label>
+                  <input
+                    type="number"
+                    value={settings.return_client_delay}
+                    onChange={(e) => setSettings({ ...settings, return_client_delay: parseInt(e.target.value) || 45 })}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Если клиент не был в салоне X дней.</p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <textarea
+                    value={settings.return_client_message}
+                    onChange={(e) => setSettings({ ...settings, return_client_message: e.target.value })}
+                    placeholder="Привет! Давно не виделись..."
+                    rows={3}
+                    style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
       </div>

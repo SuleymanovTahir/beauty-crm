@@ -669,7 +669,11 @@ export class ApiClient {
 
   // ===== UNREAD COUNT =====
   async getUnreadCount() {
-    return this.request<any>('/api/unread-count')
+    return this.request<any>('/api/notifications/unread-count')
+  }
+
+  async getTotalUnread() {
+    return this.request<{ unread_count: number }>('/api/notifications/unread-count').then(data => ({ total: data.unread_count }))
   }
 
   // ===== BOT SETTINGS =====

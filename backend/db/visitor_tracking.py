@@ -84,7 +84,7 @@ def get_visitor_stats(start_date: Optional[datetime] = None, end_date: Optional[
     c = conn.cursor()
     
     query = """
-        SELECT ip_hash, city, country, distance_km, is_local, page_url, visited_at
+        SELECT ip_hash, city, country, distance_km, is_local, page_url, visited_at, ip_address
         FROM visitor_tracking
         WHERE 1=1
     """
@@ -111,7 +111,8 @@ def get_visitor_stats(start_date: Optional[datetime] = None, end_date: Optional[
             'distance_km': row[3],
             'is_local': row[4],
             'page_url': row[5],
-            'visited_at': row[6].isoformat() if row[6] else None
+            'visited_at': row[6].isoformat() if row[6] else None,
+            'ip_address': row[7]
         })
     
     conn.close()

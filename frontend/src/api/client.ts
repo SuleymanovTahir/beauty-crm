@@ -155,6 +155,9 @@ export const apiClient = {
   getFunnel: () =>
     apiCall('/api/funnel'),
 
+  getBotAnalytics: (days: number = 30) =>
+    apiCall(`/api/bot-analytics?days=${days}`),
+
   // ===== EXPORT =====
   exportClients: (format: string = 'csv') =>
     apiCall(`/api/export/clients?format=${format}`),

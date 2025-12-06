@@ -72,6 +72,7 @@ def init_database():
         max_message_length INTEGER DEFAULT 4,
         emoji_usage TEXT,
         languages_supported TEXT DEFAULT 'ru,en,ar',
+        response_style TEXT DEFAULT 'adaptive',
         objection_handling TEXT,
         negative_handling TEXT,
         safety_guidelines TEXT,
@@ -135,7 +136,8 @@ def init_database():
         'booking_time_logic': 'TEXT',
         'pre_booking_data_collection': 'TEXT',
         'bot_mode': "TEXT DEFAULT 'sales'",
-        'temperature': 'REAL DEFAULT 0.7'
+        'temperature': 'REAL DEFAULT 0.7',
+        'response_style': "TEXT DEFAULT 'adaptive'"
     }
 
     for column_name, column_type in migrations_needed.items():
@@ -349,6 +351,31 @@ def init_database():
                   interaction_type TEXT,
                   timestamp TEXT,
                   metadata TEXT)''')
+
+    # ✅ Таблица аналитики бота (трекинг эффективности)
+    c.execute('''CREATE TABLE IF NOT EXISTS bot_analytics
+                 (id SERIAL PRIMARY KEY,
+                  instagram_id TEXT NOT NULL,
+                  session_started TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  session_ended TIMESTAMP,
+                  messages_count INTEGER DEFAULT 0,
+                  outcome TEXT DEFAULT 'in_progress',
+                  escalated_to_manager BOOLEAN DEFAULT FALSE,
+                  booking_created BOOLEAN DEFAULT FALSE,
+                  booking_id INTEGER,
+                  cancellation_requested BOOLEAN DEFAULT FALSE,
+                  language_detected TEXT,
+                  FOREIGN KEY (instagram_id) REFERENCES clients(instagram_id))''')
+
+    # ✅ Таблица рефералов (кто кого привёл)
+    c.execute('''CREATE TABLE IF NOT EXISTS client_referrals
+                 (id SERIAL PRIMARY KEY,
+                  referrer_id TEXT NOT NULL,
+                  referred_id TEXT NOT NULL,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  bonus_given BOOLEAN DEFAULT FALSE,
+                  FOREIGN KEY (referrer_id) REFERENCES clients(instagram_id),
+                  FOREIGN KEY (referred_id) REFERENCES clients(instagram_id))''')
 
     # Таблица истории переписки
     c.execute('''CREATE TABLE IF NOT EXISTS conversations
@@ -583,6 +610,64 @@ def init_database():
     for col, col_type in notif_migrations.items():
         if col not in notif_columns:
             c.execute(f"ALTER TABLE notification_settings ADD COLUMN {col} {col_type}")
+            
+    # ✅ Таблица уведомлений (сарих уведомлений)
+    c.execute('''CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        type TEXT DEFAULT 'info',
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        read_at TEXT,
+        action_url TEXT,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )''')
+    
+    # Миграция: убедиться что таблица notifications правильная
+    try:
+        c.execute("SELECT data_type FROM information_schema.columns WHERE table_name='notifications' AND column_name='user_id'")
+        row = c.fetchone()
+        if row and row[0].lower() == 'text':
+             # Если user_id TEXT (старая версия), нужно конвертировать или дропнуть (дропнуть проще так как это просто уведомления)
+             log_warning("⚠️ Таблица notifications имеет неправильный тип user_id (TEXT). Пересоздание...", "db")
+             c.execute("DROP TABLE notifications")
+             c.execute('''CREATE TABLE notifications (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                type TEXT DEFAULT 'info',
+                is_read BOOLEAN DEFAULT FALSE,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                read_at TEXT,
+                action_url TEXT,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )''')
+    except Exception as e:
+        log_warning(f"Ошибка проверки notifications: {e}", "db")
+
+    # Миграция: добавить отсутствующие колонки в bot_analytics
+    try:
+        c.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='bot_analytics'
+        """)
+        analytics_columns = [row[0] for row in c.fetchall()]
+    except:
+        analytics_columns = []
+        
+    ba_migrations = {
+        'context': 'TEXT',
+        'reminder_sent': 'BOOLEAN DEFAULT FALSE',
+        'last_message_at': 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+    }
+    
+    for col, col_type in ba_migrations.items():
+        if col not in analytics_columns:
+            c.execute(f"ALTER TABLE bot_analytics ADD COLUMN {col} {col_type}")
     
     # Таблица расписания сотрудников
     c.execute('''CREATE TABLE IF NOT EXISTS user_schedule (

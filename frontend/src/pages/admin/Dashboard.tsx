@@ -39,6 +39,7 @@ export default function AdminDashboard() {
   const { t, i18n } = useTranslation(['admin/dashboard', 'common']);
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
+  const [botAnalytics, setBotAnalytics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,13 +53,15 @@ export default function AdminDashboard() {
       setError(null);
 
       // Load real data
-      const [statsData, bookingsData, clientsData] = await Promise.all([
+      const [statsData, bookingsData, clientsData, botData] = await Promise.all([
         api.getStats(),
         api.getBookings(),
-        api.getClients(), // Fetch clients for photos
+        api.getClients(),
+        api.get('/bot-analytics?days=30').catch(() => null),
       ]);
 
       setStats(statsData);
+      if (botData) setBotAnalytics(botData);
 
       // Take last 3 bookings and enrich with client data
       if (bookingsData.bookings) {
@@ -341,6 +344,40 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Bot Analytics Widget */}
+      {botAnalytics && botAnalytics.total_sessions > 0 && (
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-sm p-4 md:p-6 mb-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg md:text-xl font-semibold">🤖 AI Бот Аналитика</h2>
+            <span className="text-sm opacity-80">За 30 дней</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white/10 rounded-lg p-3">
+              <p className="text-xs opacity-80">Конверсия</p>
+              <p className="text-2xl font-bold">{botAnalytics.conversion_rate}%</p>
+              <p className="text-xs opacity-70">{botAnalytics.bookings_created} записей</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-3">
+              <p className="text-xs opacity-80">Сессий</p>
+              <p className="text-2xl font-bold">{botAnalytics.total_sessions}</p>
+              <p className="text-xs opacity-70">~{botAnalytics.avg_messages_per_session} сообщ.</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-3">
+              <p className="text-xs opacity-80">Эскалаций</p>
+              <p className="text-2xl font-bold">{botAnalytics.escalations}</p>
+              <p className="text-xs opacity-70">→ менеджеру</p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-3">
+              <p className="text-xs opacity-80">Пиковые часы</p>
+              <p className="text-lg font-bold">
+                {botAnalytics.popular_hours?.slice(0, 3).map((h: any) => `${h.hour}:00`).join(', ') || '—'}
+              </p>
+              <p className="text-xs opacity-70">топ активность</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
