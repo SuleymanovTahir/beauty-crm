@@ -32,6 +32,8 @@ def migrate_clients_schema(db_path="salon_bot.db"):
             'birthday': 'TEXT',
             'gender': 'TEXT',
             'source': 'TEXT',
+            'language': 'TEXT DEFAULT \'ru\'',
+            'last_retention_reminder_at': 'TIMESTAMP',  # To track retention ping
         }
         
         # Add missing columns

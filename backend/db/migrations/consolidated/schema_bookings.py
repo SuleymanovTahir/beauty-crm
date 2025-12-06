@@ -32,6 +32,9 @@ def migrate_bookings_schema(db_path="salon_bot.db"):
             'reminder_sent_24h': 'BOOLEAN DEFAULT FALSE',
             'reminder_sent_2h': 'BOOLEAN DEFAULT FALSE',
             'reminder_sent_at': 'TEXT',
+            'feedback_requested': 'BOOLEAN DEFAULT FALSE',
+            'feedback_rating': 'INTEGER',
+            'feedback_comment': 'TEXT',
         }
         
         # Add missing columns

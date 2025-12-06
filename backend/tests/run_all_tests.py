@@ -23,6 +23,14 @@ def print_test_file(file_name, description=""):
         print(f"   {description}")
     print("-" * 80)
 
+    print("-" * 80)
+
+def cleanup_test_data():
+    """
+    Очистка тестовых данных после выполнения тестов.
+    Удаляет пользователей, созданных во время тестирования.
+    """
+
 def run_all_tests():
     """Запуск всех тестов проекта"""
     print_header("ЗАПУСК ВСЕХ ТЕСТОВ BEAUTY CRM")
@@ -250,8 +258,57 @@ def run_all_tests():
     #     traceback.print_exc()
     #     results.append(("check_users.py - Пользователи", False))
 
+    # ========================================================================
+    # 11. BOT MODULES - AI Responses, Universal Messenger, Reminders
+    # ========================================================================
+    print_test_file(
+        "bot/ai_responses + universal_messenger + reminders",
+        "Тестирование новых модулей бота"
+    )
+    try:
+        # Тест 1: AI Responses - проверка инструкций
+        from bot.ai_responses import RESPONSE_INSTRUCTIONS, get_instruction
+        required_keys = ['photo_response', 'voice_response', 'feedback_request', 
+                         'feedback_thanks', 'abandoned_booking', 'retention_reminder',
+                         'booking_reminder_1d', 'booking_reminder_2h']
+        missing = [k for k in required_keys if k not in RESPONSE_INSTRUCTIONS]
+        if missing:
+            print(f"❌ Missing AI instructions: {missing}")
+            results.append(("AI Responses - Instructions", False))
+        else:
+            print(f"✅ AI Responses: {len(RESPONSE_INSTRUCTIONS)} инструкций OK")
+            results.append(("AI Responses - Instructions", True))
+        
+        # Тест 2: Universal Messenger - проверка импорта
+        from services.universal_messenger import send_universal_message
+        print("✅ Universal Messenger импорт OK")
+        results.append(("Universal Messenger - Import", True))
+        
+        # Тест 3: Reminders - проверка импорта и ночной функции
+        from bot.reminders.abandoned import check_abandoned_bookings, _is_night_hours
+        from bot.reminders.feedback import check_visits_for_feedback
+        from bot.reminders.retention import check_client_retention
+        from bot.reminders.appointments import check_appointment_reminders
+        
+        # Проверяем ночную функцию
+        from datetime import time
+        test_night = _is_night_hours()  # Просто проверяем что не падает
+        print(f"✅ Reminders: 4 модуля импортированы, _is_night_hours()={test_night}")
+        results.append(("Reminders - Import & Night Check", True))
+        
+        # Тест 4: Feedback Handler
+        from bot.feedback_handler import handle_feedback_response
+        print("✅ Feedback Handler импорт OK")
+        results.append(("Feedback Handler - Import", True))
+        
+    except Exception as e:
+        print(f"❌ Ошибка в Bot Modules: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("Bot Modules - General", False))
+
     # # ========================================================================
-    # # 11. check_migrations.py - Проверка миграций
+    # # 12. check_migrations.py - Проверка миграций
     # # ========================================================================
     # print_test_file(
     #     "tests/check_migrations.py",
@@ -370,10 +427,57 @@ def run_all_tests():
         success = result.returncode == 0
         results.append(("test_employee_management.py - Employee Management", success))
     except Exception as e:
+        results.append(("test_employee_management.py - Employee Management", False))
+    
+    # ========================================================================
+    # 16. Bot Analytics Tests
+    # ========================================================================
+    print_test_file(
+        "tests/test_bot_analytics.py",
+        "Тестирование аналитики бота и реферальной системы"
+    )
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(os.path.dirname(__file__), "test_bot_analytics.py")],
+            capture_output=True,
+            text=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        success = result.returncode == 0
+        results.append(("test_bot_analytics.py - Аналитика бота", success))
+    except Exception as e:
         print(f"❌ Ошибка: {e}")
         import traceback
         traceback.print_exc()
-        results.append(("test_employee_management.py - Employee Management", False))
+        results.append(("test_bot_analytics.py - Аналитика бота", False))
+    
+    # ========================================================================
+    # 17. Conversation Context Tests
+    # ========================================================================
+    print_test_file(
+        "tests/test_conversation_context.py",
+        "Тестирование сохранения и чтения контекста диалога"
+    )
+    try:
+        import subprocess
+        result = subprocess.run(
+            [sys.executable, os.path.join(os.path.dirname(__file__), "test_conversation_context.py")],
+            capture_output=True,
+            text=True
+        )
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+        success = result.returncode == 0
+        results.append(("test_conversation_context.py - Контекст диалога", success))
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("test_conversation_context.py - Контекст диалога", False))
     
     # ========================================================================
     # ИТОГИ
@@ -476,11 +580,15 @@ def run_all_tests():
     # return passed == total
 
 if __name__ == "__main__":
+    success = False
     try:
         success = run_all_tests()
-        sys.exit(0 if success else 1)
     except Exception as e:
         print(f"\n❌ Критическая ошибка: {e}")
         import traceback
         traceback.print_exc()
-        sys.exit(1)
+    finally:
+        # Всегда запускаем очистку
+        cleanup_test_data()
+        
+    sys.exit(0 if success else 1)

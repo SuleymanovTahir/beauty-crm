@@ -16,6 +16,7 @@ interface Visitor {
     is_local: boolean;
     page_url: string;
     visited_at: string;
+    ip_address?: string;
 }
 
 const COLORS = ['#ec4899', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#14b8a6'];
@@ -653,6 +654,7 @@ export default function VisitorAnalytics() {
                     <table className="w-full">
                         <thead className="bg-gray-50">
                             <tr>
+                                <th className="px-6 py-4 text-left text-sm text-gray-600">{t('ip_address')}</th>
                                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('city')}</th>
                                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('country')}</th>
                                 <th className="px-6 py-4 text-left text-sm text-gray-600">{t('distance')}</th>
@@ -662,6 +664,7 @@ export default function VisitorAnalytics() {
                         <tbody className="divide-y divide-gray-200">
                             {currentVisitors.map((visitor, index) => (
                                 <tr key={index} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 text-sm text-gray-500 font-mono">{visitor.ip_address || '-'}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{visitor.city || '-'}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {visitor.country ? `${getCountryFlag(visitor.country)} ${visitor.country}` : '-'}
