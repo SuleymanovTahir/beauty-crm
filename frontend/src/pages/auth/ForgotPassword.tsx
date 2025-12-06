@@ -7,10 +7,12 @@ import { Label } from "../../components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
+import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth/forgotpassword');
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -20,7 +22,7 @@ export default function ForgotPassword() {
     e.preventDefault();
 
     if (!email) {
-      setError("Введите ваш email");
+      setError(t('error_enter_email'));
       return;
     }
 
@@ -32,13 +34,13 @@ export default function ForgotPassword() {
 
       if (response.success) {
         setSent(true);
-        toast.success("Письмо с инструкциями отправлено на ваш email");
+        toast.success(t('email_sent'));
       } else {
-        setError(response.error || "Ошибка при отправке письма");
-        toast.error(response.error || "Ошибка при отправке письма");
+        setError(response.error || t('error_sending'));
+        toast.error(response.error || t('error_sending'));
       }
     } catch (err: any) {
-      const message = err instanceof Error ? err.message : "Ошибка при отправке письма";
+      const message = err instanceof Error ? err.message : t('error_sending');
       setError(message);
       toast.error(message);
       console.error("Forgot password error:", err);
@@ -60,18 +62,18 @@ export default function ForgotPassword() {
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl text-gray-900 mb-2">Письмо отправлено!</h1>
-            <p className="text-gray-600">Проверьте вашу почту</p>
+            <h1 className="text-4xl text-gray-900 mb-2">{t('success_title')}</h1>
+            <p className="text-gray-600">{t('success_subtitle')}</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <p className="text-gray-700 mb-6">
-              Мы отправили инструкции по восстановлению пароля на <strong>{email}</strong>.
-              Пожалуйста, проверьте вашу почту и следуйте инструкциям.
+              {t('success_message_part1')} <strong>{email}</strong>.
+              {t('success_message_part2')}
             </p>
 
             <p className="text-sm text-gray-500 mb-6">
-              Если письмо не пришло, проверьте папку "Спам" или попробуйте снова.
+              {t('success_hint')}
             </p>
 
             <div className="space-y-3">
@@ -79,7 +81,7 @@ export default function ForgotPassword() {
                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
                 onClick={() => navigate("/login")}
               >
-                Вернуться к входу
+                {t('back_to_login')}
               </Button>
 
               <Button
@@ -90,7 +92,7 @@ export default function ForgotPassword() {
                   setEmail("");
                 }}
               >
-                Отправить еще раз
+                {t('resend_button')}
               </Button>
             </div>
           </div>
@@ -111,8 +113,8 @@ export default function ForgotPassword() {
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
             <Mail className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl text-gray-900 mb-2">Забыли пароль?</h1>
-          <p className="text-gray-600">Введите ваш email для восстановления</p>
+          <h1 className="text-4xl text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -124,7 +126,7 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email_label')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -134,12 +136,12 @@ export default function ForgotPassword() {
                   disabled={loading}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="pl-10"
+                  placeholder={t('email_placeholder')}
+                  className="pl-10 pr-3"
                 />
               </div>
               <p className="text-sm text-gray-500 mt-2">
-                Мы отправим вам ссылку для сброса пароля
+                {t('email_hint')}
               </p>
             </div>
 
@@ -152,10 +154,10 @@ export default function ForgotPassword() {
               {loading ? (
                 <>
                   <Loader className="w-4 h-4 animate-spin mr-2" />
-                  Отправка...
+                  {t('sending')}
                 </>
               ) : (
-                "Отправить инструкции"
+                t('send_button')
               )}
             </Button>
           </form>
@@ -168,7 +170,7 @@ export default function ForgotPassword() {
               disabled={loading}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Вернуться к входу
+              {t('back_to_login')}
             </Button>
           </div>
         </div>

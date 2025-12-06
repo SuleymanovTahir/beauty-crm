@@ -1,17 +1,15 @@
 import os
 from db.connection import get_db_connection
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'salon_bot.db')
-
-def create_public_content_tables():
+def create_tables():
     """Создание таблиц для управления публичным контентом"""
-    print(f"Creating public content tables in {DB_PATH}...")
+    print(f"Creating public content tables...")
     conn = get_db_connection()
-    cursor = conn.cursor()
+    c = conn.cursor()
 
     try:
         # Таблица отзывов
-        cursor.execute("""
+        c.execute("""
             CREATE TABLE IF NOT EXISTS public_reviews (
                 id SERIAL PRIMARY KEY,
                 author_name TEXT NOT NULL,

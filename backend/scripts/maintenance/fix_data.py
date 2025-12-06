@@ -775,7 +775,20 @@ def fix_all_data():
         
         fix_services_english_translations()
         cleanup_reviews_translations()
+        fix_services_english_translations()
+        cleanup_reviews_translations()
         cleanup_faq_translations()
+
+        print("\n" + "="*50)
+        print("Синхронизация услуг мастеров...")
+        print("="*50)
+        try:
+            from scripts.maintenance.fix_master_data import fix_master_data
+            fix_master_data()
+        except ImportError:
+            print("⚠️ Скрипт scripts.maintenance.fix_master_data не найден")
+        except Exception as e:
+            print(f"⚠️ Ошибка при синхронизации услуг мастеров: {e}")
 
         print("\n✅ Проверка завершена!")
 

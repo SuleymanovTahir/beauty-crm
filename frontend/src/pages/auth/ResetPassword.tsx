@@ -132,7 +132,7 @@ export default function ResetPassword() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Минимум 6 символов"
-                  className="pl-10"
+                  className="pl-10 pr-3"
                   minLength={6}
                 />
               </div>
@@ -150,7 +150,7 @@ export default function ResetPassword() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Повторите пароль"
-                  className="pl-10"
+                  className="pl-10 pr-3"
                   minLength={6}
                 />
               </div>

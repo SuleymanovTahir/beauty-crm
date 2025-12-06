@@ -213,11 +213,12 @@ async def export_visitor_analytics(
         writer = csv.writer(output)
         
         # Header
-        writer.writerow(['Город', 'Страна', 'Расстояние (км)', 'Местный', 'Время посещения'])
+        writer.writerow(['IP адрес', 'Город', 'Страна', 'Расстояние (км)', 'Местный', 'Время посещения'])
         
         # Data
         for visitor in visitors:
             writer.writerow([
+                visitor.get('ip_address', '-'),
                 visitor.get('city', '-'),
                 visitor.get('country', '-'),
                 visitor.get('distance_km', '-'),

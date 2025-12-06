@@ -118,9 +118,8 @@ def translate_content():
                          #      should_translate = True
                     
                     if should_translate:
-                        # Determine if we should use context injection
-                        # Only use for services table to avoid issues with names
-                        use_context = (table_name == 'services')
+                        # Use context injection NO MORE - user requested removal for all fields
+                        use_context = False
                         
                         # Special handling for names (transliteration)
                         if table_name == 'users' and field_name == 'full_name':

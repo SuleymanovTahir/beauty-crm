@@ -45,5 +45,17 @@
   "verification_title": "ईमेल पुष्टिकरण",
   "verify_button": "पुष्टि करना",
   "verifying": "परीक्षा...",
-  "your_code": "आपका कोड:"
+  "your_code": "आपका कोड:",
+  "role_label": "भूमिका *",
+  "position_label": "नौकरी का शीर्षक*",
+  "role_employee": "कर्मचारी",
+  "role_manager": "प्रबंधक",
+  "role_admin": "प्रशासक",
+  "role_director": "निदेशक",
+  "role_sales": "बिक्री",
+  "role_marketer": "पदोन्नति",
+  "role_hint": "सिस्टम में अपनी भूमिका चुनें",
+  "position_placeholder": "एक पद चुनें",
+  "position_hint": "अपनी स्थिति चुनें",
+  "error_unknown": "अज्ञात त्रुटि"
 }

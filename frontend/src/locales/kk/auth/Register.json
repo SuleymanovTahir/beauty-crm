@@ -45,5 +45,17 @@
   "verification_title": "Электрондық поштаны растау",
   "verify_button": "Растау",
   "verifying": "Емтихан ...",
-  "your_code": "Сіздің кодыңыз:"
+  "your_code": "Сіздің кодыңыз:",
+  "role_label": "Рөлі *",
+  "position_label": "Қызмет атауы *",
+  "role_employee": "Қызметкер",
+  "role_manager": "Басқарушы",
+  "role_admin": "Ікімші",
+  "role_director": "Директор",
+  "role_sales": "Сату",
+  "role_marketer": "Жоғарылату",
+  "role_hint": "Жүйедегі рөліңізді таңдаңыз",
+  "position_placeholder": "Позицияны таңдаңыз",
+  "position_hint": "Орын таңдаңыз",
+  "error_unknown": "Белгісіз қате"
 }

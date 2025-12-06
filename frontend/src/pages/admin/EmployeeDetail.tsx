@@ -1,9 +1,10 @@
+
 // /frontend/src/pages/admin/EmployeeDetail.tsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, Edit, Search } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -153,7 +154,7 @@ export default function EmployeeDetail() {
                             placeholder={t('search_team_member', 'Search team member')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-9 text-sm"
+                            className="pl-12 text-sm"
                         />
                     </div>
                 </div>

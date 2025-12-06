@@ -45,5 +45,17 @@
   "verification_title": "Confirmação por e-mail",
   "verify_button": "Confirmar",
   "verifying": "Exame...",
-  "your_code": "Seu código:"
+  "your_code": "Seu código:",
+  "role_label": "Papel *",
+  "position_label": "Cargo *",
+  "role_employee": "Funcionário",
+  "role_manager": "Gerente",
+  "role_admin": "Administrador",
+  "role_director": "Diretor",
+  "role_sales": "Vendas",
+  "role_marketer": "Promoção",
+  "role_hint": "Selecione sua função no sistema",
+  "position_placeholder": "Selecione uma posição",
+  "position_hint": "Selecione sua posição",
+  "error_unknown": "Erro desconhecido"
 }

@@ -263,7 +263,54 @@ def test_real_employees_have_services(conn):
     
     print(f"PASSED ({count}/7 employees have services)")
     return True
-
+# ...
+def test_role_assignment(conn):
+    """Regression Test: Ensure Sync Logic assigns default services based on role"""
+    print("   Testing Role-Based Service Assignment...", end=" ")
+    cursor = conn.cursor()
+    
+    # 1. Create a test user with a specific role
+    test_role_user = 'test_role_assign_user'
+    cursor.execute("""
+        INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider, position, email)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
+    """, (test_role_user, 'hash', 'Test Role User', 'employee', True, True, 'Nail Master', 'role@test.com'))
+    user_id = cursor.fetchone()[0]
+    conn.commit()
+    
+    try:
+        # 2. Run the fix script logic (importing the function directly)
+        from scripts.maintenance.fix_master_data import fix_master_data
+        
+        # Capture stdout to avoid clutter
+        import io
+        from contextlib import redirect_stdout
+        
+        f = io.StringIO()
+        with redirect_stdout(f):
+            fix_master_data()
+            
+        # 3. Verify services were assigned
+        # Expecting services from the "Nail Master" template (Lyazzat's services)
+        cursor.execute("SELECT COUNT(*) FROM user_services WHERE user_id = %s", (user_id,))
+        count = cursor.fetchone()[0]
+        
+        if count > 0:
+            print(f"PASSED (Assigned {count} services for 'Nail Master')")
+            return True
+        else:
+            print(f"FAILED (No services assigned for 'Nail Master')")
+            return False
+            
+    except Exception as e:
+        print(f"FAILED (Error: {e})")
+        return False
+    finally:
+        # Cleanup
+        cursor.execute("DELETE FROM user_services WHERE user_id = %s", (user_id,))
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
 # ==================== MAIN TEST RUNNER ====================
 
 def main():
@@ -299,7 +346,11 @@ def main():
             test_add_user_service(data, conn),
             test_update_user_service(data, conn),
             test_delete_user_service(data, conn),
+            test_add_user_service(data, conn),
+            test_update_user_service(data, conn),
+            test_delete_user_service(data, conn),
             test_add_user_schedule(data, conn),
+            test_role_assignment(conn),
         ]
         
         all_results = structure_tests + crud_tests
