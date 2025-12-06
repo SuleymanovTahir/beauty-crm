@@ -196,7 +196,7 @@ async def log_requests(request: Request, call_next):
                 "middleware")
         
         # Track visitors to public pages
-        if request.url.path.startswith("/public") or request.url.path == "/":
+        if request.url.path.startswith("/api/public") or request.url.path == "/":
             try:
                 from db.visitor_tracking import track_visitor
                 ip = request.client.host
