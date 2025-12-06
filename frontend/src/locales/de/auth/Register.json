@@ -45,5 +45,17 @@
   "verification_title": "E-Mail-Bestätigung",
   "verify_button": "Bestätigen",
   "verifying": "Prüfung...",
-  "your_code": "Ihr Code:"
+  "your_code": "Ihr Code:",
+  "role_label": "Rolle *",
+  "position_label": "Berufsbezeichnung *",
+  "role_employee": "Mitarbeiter",
+  "role_manager": "Manager",
+  "role_admin": "Administrator",
+  "role_director": "Direktor",
+  "role_sales": "Verkäufe",
+  "role_marketer": "Förderung",
+  "role_hint": "Wählen Sie Ihre Rolle im System aus",
+  "position_placeholder": "Wählen Sie eine Position aus",
+  "position_hint": "Wählen Sie Ihre Position aus",
+  "error_unknown": "Unbekannter Fehler"
 }

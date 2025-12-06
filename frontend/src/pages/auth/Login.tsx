@@ -137,7 +137,7 @@ export default function Login() {
                     setCredentials({ ...credentials, username: e.target.value })
                   }
                   placeholder={t('login:enter_login')}
-                  className="pl-10 h-11"
+                  className="pl-10 pr-3 h-11"
                 />
               </div>
             </div>
@@ -156,7 +156,7 @@ export default function Login() {
                     setCredentials({ ...credentials, password: e.target.value })
                   }
                   placeholder={t('login:enter_password')}
-                  className="pl-10 h-11"
+                  className="pl-10 pr-3 h-11"
                 />
               </div>
             </div>

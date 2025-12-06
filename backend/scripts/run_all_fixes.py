@@ -1,10 +1,13 @@
 import asyncio
 import os
 import sys
-from utils.logger import log_info, log_error
 
 # Add backend directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+    
+from utils.logger import log_info, log_error
 
 async def main():
     """

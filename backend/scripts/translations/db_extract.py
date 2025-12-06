@@ -29,8 +29,7 @@ def load_existing_translations():
     """Load existing dynamic.json files for all languages"""
     translations = {}
     for lang in LANGUAGES:
-        if lang == SOURCE_LANGUAGE:
-            continue
+        # Don't skip source language, we need to check if keys exist there too
             
         file_path = FRONTEND_LOCALES_DIR / lang / "dynamic.json"
         if file_path.exists():
@@ -108,10 +107,14 @@ def extract_translatable_content():
                     
                     field_has_missing = False
                     
-                    # Check translations in JSON files
                     for lang in LANGUAGES:
+                        # We also check SOURCE_LANGUAGE to ensure source file has the key
                         if lang == SOURCE_LANGUAGE:
+                            existing_val = existing_translations.get(lang, {}).get(key)
+                            if not existing_val:
+                                field_has_missing = True
                             continue
+
                         
                         # Check if key exists in existing translations
                         existing_val = existing_translations.get(lang, {}).get(key)

@@ -44,7 +44,7 @@ def sync_translations():
 
     # Organize translations by language
     # Structure: { lang: { key: value } }
-    updates_by_lang = {lang: {} for lang in LANGUAGES if lang != SOURCE_LANGUAGE}
+    updates_by_lang = {lang: {} for lang in LANGUAGES}
     
     total_updates = 0
     
@@ -60,7 +60,7 @@ def sync_translations():
                     key = f"{table_name}.{record_id}.{field_name}"
                 
                 for lang, value in translations.items():
-                    if lang == SOURCE_LANGUAGE or lang == 'key' or lang == 'detected_language':
+                    if lang == 'key' or lang == 'detected_language':
                         continue
                         
                     if value:

@@ -45,5 +45,17 @@
   "verification_title": "تأكيد البريد الإلكتروني",
   "verify_button": "يتأكد",
   "verifying": "فحص...",
-  "your_code": "الرمز الخاص بك:"
+  "your_code": "الرمز الخاص بك:",
+  "role_label": "دور *",
+  "position_label": "مسمى وظيفي *",
+  "role_employee": "موظف",
+  "role_manager": "مدير",
+  "role_admin": "المسؤول",
+  "role_director": "مخرج",
+  "role_sales": "مبيعات",
+  "role_marketer": "ترقية",
+  "role_hint": "حدد دورك في النظام",
+  "position_placeholder": "حدد موقفا",
+  "position_hint": "حدد موقعك",
+  "error_unknown": "خطأ غير معروف"
 }
