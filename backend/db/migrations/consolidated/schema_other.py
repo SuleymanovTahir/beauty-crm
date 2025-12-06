@@ -196,6 +196,30 @@ def migrate_other_schema(db_path="salon_bot.db"):
     """, (messenger_type, display_name, is_enabled))
         print("  ✅ default messenger settings ensured")
         
+        # Create visitor_tracking table if not exists
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS visitor_tracking (
+                id SERIAL PRIMARY KEY,
+                ip_address VARCHAR(45),
+                ip_hash VARCHAR(64),
+                latitude REAL,
+                longitude REAL,
+                city VARCHAR(100),
+                country VARCHAR(100),
+                distance_km REAL,
+                is_local BOOLEAN,
+                user_agent TEXT,
+                page_url TEXT,
+                visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Create indexes for better query performance
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_visited_at ON visitor_tracking(visited_at)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_country ON visitor_tracking(country)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_visitor_is_local ON visitor_tracking(is_local)")
+        print("  ✅ visitor_tracking table ensured")
+        
         print("\n✅ All other tables ensured")
         
         conn.commit()
