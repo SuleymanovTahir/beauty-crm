@@ -45,5 +45,17 @@
   "verification_title": "Подтверждение Email",
   "verify_button": "Подтвердить",
   "verifying": "Проверка...",
-  "your_code": "Ваш код:"
+  "your_code": "Ваш код:",
+  "role_label": "Роль *",
+  "position_label": "Должность *",
+  "role_employee": "Сотрудник",
+  "role_manager": "Менеджер",
+  "role_admin": "Администратор",
+  "role_director": "Директор",
+  "role_sales": "Продажи",
+  "role_marketer": "Продвижение",
+  "role_hint": "Выберите вашу роль в системе",
+  "position_placeholder": "Выберите должность",
+  "position_hint": "Выберите вашу должность",
+  "error_unknown": "Неизвестная ошибка"
 }

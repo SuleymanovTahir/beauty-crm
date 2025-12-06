@@ -4054,3 +4054,10 @@ body.menu-open {
   opacity: 1 !important; /* Prevent transparency changes */
   border-color: var(--primary) !important;
 }
+
+/* Active Tab Styling */
+[data-slot="tabs-trigger"][data-state="active"] {
+  background-color: rgb(219 39 119) !important; /* pink-600 */
+  color: white !important;
+  font-weight: 600 !important;
+}

@@ -335,7 +335,7 @@ export default function Register() {
                     setFormData({ ...formData, full_name: e.target.value })
                   }
                   placeholder={t('full_name_placeholder')}
-                  className="pl-10"
+                  className="pl-10 pr-3"
                 />
               </div>
             </div>
@@ -353,7 +353,7 @@ export default function Register() {
                     setFormData({ ...formData, username: e.target.value })
                   }
                   placeholder={t('username_placeholder')}
-                  className="pl-10"
+                  className="pl-10 pr-3"
                 />
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function Register() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder={t('email_placeholder')}
-                  className="pl-10"
+                  className="pl-10 pr-3"
                 />
               </div>
               <p className="text-sm text-gray-500 mt-1">
@@ -381,7 +381,7 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="role">Роль *</Label>
+              <Label htmlFor="role">{t('role_label')}</Label>
               <select
                 id="role"
                 required
@@ -392,20 +392,20 @@ export default function Register() {
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               >
-                <option value="employee">Сотрудник</option>
-                <option value="manager">Менеджер</option>
-                <option value="admin">Администратор</option>
-                <option value="director">Директор</option>
-                <option value="sales">Продажи</option>
-                <option value="marketer">Продвижение</option>
+                <option value="employee">{t('role_employee')}</option>
+                <option value="manager">{t('role_manager')}</option>
+                <option value="admin">{t('role_admin')}</option>
+                <option value="director">{t('role_director')}</option>
+                <option value="sales">{t('role_sales')}</option>
+                <option value="marketer">{t('role_marketer')}</option>
               </select>
               <p className="text-sm text-gray-500 mt-1">
-                Выберите вашу роль в системе
+                {t('role_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="position">Должность *</Label>
+              <Label htmlFor="position">{t('position_label')}</Label>
               <select
                 id="position"
                 required
@@ -416,7 +416,7 @@ export default function Register() {
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               >
-                <option value="">Выберите должность</option>
+                <option value="">{t('position_placeholder')}</option>
                 {positions.map((pos) => (
                   <option key={pos.id} value={pos.name}>
                     {pos.name}
@@ -424,7 +424,7 @@ export default function Register() {
                 ))}
               </select>
               <p className="text-sm text-gray-500 mt-1">
-                Выберите вашу должность
+                {t('position_hint')}
               </p>
             </div>
 
@@ -442,7 +442,7 @@ export default function Register() {
                     setFormData({ ...formData, password: e.target.value })
                   }
                   placeholder={t('password_placeholder')}
-                  className="pl-10"
+                  className="pl-10 pr-3"
                 />
               </div>
             </div>
@@ -461,7 +461,7 @@ export default function Register() {
                     setFormData({ ...formData, confirmPassword: e.target.value })
                   }
                   placeholder={t('confirm_password_placeholder')}
-                  className="pl-10"
+                  className="pl-10 pr-3"
                 />
               </div>
             </div>

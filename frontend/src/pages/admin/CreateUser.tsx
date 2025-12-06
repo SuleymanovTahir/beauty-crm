@@ -1,6 +1,5 @@
-// /frontend/src/pages/admin/CreateUser.tsx
 import React, { useState, useEffect } from 'react';
-import { UserPlus, ArrowLeft, Loader } from 'lucide-react';
+import { UserPlus, ArrowLeft, Loader, Check, ChevronsUpDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,10 @@ import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../../components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
+import { cn } from '../../lib/utils';
+import { Badge } from '../../components/ui/badge';
 
 export default function CreateUser() {
   const navigate = useNavigate();
@@ -19,10 +22,12 @@ export default function CreateUser() {
     email: '',
     password: '',
     role: 'employee',
-    position_id: null as number | null
+    position: '' // String for backend
   });
   const [loading, setLoading] = useState(false);
   const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
+  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+  const [openCombobox, setOpenCombobox] = useState(false);
 
   useEffect(() => {
     loadPositions();
@@ -35,6 +40,16 @@ export default function CreateUser() {
     } catch (err) {
       console.error('Error loading positions:', err);
     }
+  };
+
+  const togglePosition = (positionName: string) => {
+    setSelectedPositions(prev => {
+      if (prev.includes(positionName)) {
+        return prev.filter(p => p !== positionName);
+      } else {
+        return [...prev, positionName];
+      }
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -69,6 +84,12 @@ export default function CreateUser() {
     try {
       setLoading(true);
 
+      // Prepare data with combined positions
+      const submitData = {
+        ...formData,
+        position: selectedPositions.join(' / ')
+      };
+
       const response = await fetch(
         `${(window as any).VITE_API_URL || 'http://localhost:8000'}/api/users`,
         {
@@ -77,7 +98,7 @@ export default function CreateUser() {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify(formData)
+          body: JSON.stringify(submitData)
         }
       );
 
@@ -88,7 +109,14 @@ export default function CreateUser() {
       }
 
       toast.success(t('user_created'));
-      navigate('/admin/users');
+
+      // Redirect to the new user's detail page, Services tab
+      if (result.user_id) {
+        navigate(`/admin/users/${result.user_id}?tab=services`);
+      } else {
+        navigate('/admin/users');
+      }
+
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_creating');
       toast.error(`${t('error')}: ${message}`);
@@ -208,25 +236,64 @@ export default function CreateUser() {
 
             <div>
               <Label htmlFor="position">{t('position_label')}</Label>
-              <Select
-                value={formData.position_id?.toString() || ""}
-                onValueChange={(value: string) => setFormData({ ...formData, position_id: (value && value !== "none") ? parseInt(value) : null })}
-                disabled={loading}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('position_placeholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t('position_none')}</SelectItem>
-                  {positions.map((pos) => (
-                    <SelectItem key={pos.id} value={pos.id.toString()}>
-                      {pos.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={openCombobox} onOpenChange={setOpenCombobox}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openCombobox}
+                    className="w-full justify-between"
+                  >
+                    {selectedPositions.length > 0
+                      ? selectedPositions.join(", ")
+                      : t('position_placeholder')}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[400px] p-0">
+                  <Command>
+                    <CommandInput placeholder={t('search_position', 'Search position...')} />
+                    <CommandList>
+                      <CommandEmpty>{t('no_position_found', 'No position found.')}</CommandEmpty>
+                      <CommandGroup>
+                        {positions.map((position) => (
+                          <CommandItem
+                            key={position.id}
+                            value={position.name}
+                            onSelect={() => {
+                              togglePosition(position.name);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedPositions.includes(position.name) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {position.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {selectedPositions.map(pos => (
+                  <Badge key={pos} variant="secondary" className="text-xs">
+                    {pos}
+                    <button
+                      type="button"
+                      className="ml-1 hover:text-red-500"
+                      onClick={() => togglePosition(pos)}
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
               <p className="text-sm text-gray-500 mt-1">
-                {t('position_hint')}
+                {t('position_hint', 'Select one or more positions')}
               </p>
             </div>
 
@@ -243,7 +310,7 @@ export default function CreateUser() {
               ) : (
                 <>
                   <UserPlus className="w-4 h-4 mr-2" />
-                  {t('create_user')}
+                  {t('create_and_assign_services', 'Create User & Assign Services')}
                 </>
               )}
             </Button>

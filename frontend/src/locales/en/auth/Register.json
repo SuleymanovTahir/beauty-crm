@@ -45,5 +45,17 @@
   "verification_title": "Email Confirmation",
   "verify_button": "Confirm",
   "verifying": "Examination...",
-  "your_code": "Your code:"
+  "your_code": "Your code:",
+  "role_label": "Role *",
+  "position_label": "Job title *",
+  "role_employee": "Employee",
+  "role_manager": "Manager",
+  "role_admin": "Administrator",
+  "role_director": "Director",
+  "role_sales": "Sales",
+  "role_marketer": "Promotion",
+  "role_hint": "Select your role in the system",
+  "position_placeholder": "Select a position",
+  "position_hint": "Select your position",
+  "error_unknown": "Unknown error"
 }

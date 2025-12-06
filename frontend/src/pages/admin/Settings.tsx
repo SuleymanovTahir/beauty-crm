@@ -971,6 +971,7 @@ export default function AdminSettings() {
                       value={generalSettings.salonName}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, salonName: e.target.value })}
                       required
+                      className="px-3"
                     />
                   </div>
 
@@ -1001,6 +1002,7 @@ export default function AdminSettings() {
                       id="city"
                       value={generalSettings.city}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
+                      className="px-3"
                     />
                   </div>
 
@@ -1011,6 +1013,7 @@ export default function AdminSettings() {
                       type="tel"
                       value={generalSettings.phone}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, phone: e.target.value })}
+                      className="px-3"
                     />
                   </div>
                 </div>
@@ -1021,6 +1024,7 @@ export default function AdminSettings() {
                     id="address"
                     value={generalSettings.address}
                     onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })}
+                    className="px-3"
                   />
                 </div>
 
@@ -1032,6 +1036,7 @@ export default function AdminSettings() {
                       type="email"
                       value={generalSettings.email}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
+                      className="px-3"
                     />
                   </div>
 
@@ -1042,6 +1047,7 @@ export default function AdminSettings() {
                       value={generalSettings.instagram}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, instagram: e.target.value })}
                       placeholder="@username"
+                      className="px-3"
                     />
                   </div>
 
@@ -1052,6 +1058,7 @@ export default function AdminSettings() {
                       value={generalSettings.telegram_manager_chat_id}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, telegram_manager_chat_id: e.target.value })}
                       placeholder="-1001234567890"
+                      className="px-3"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       {t('settings:telegram_chat_id_hint', 'ID чата для получения уведомлений о негативных отзывах')}
@@ -1070,6 +1077,7 @@ export default function AdminSettings() {
                         working_hours: { ...generalSettings.working_hours, weekdays: e.target.value }
                       })}
                       placeholder="9:00 - 21:00"
+                      className="px-3"
                     />
                   </div>
 
@@ -1083,6 +1091,7 @@ export default function AdminSettings() {
                         working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
                       })}
                       placeholder="10:30 - 21:00"
+                      className="px-3"
                     />
                   </div>
                 </div>

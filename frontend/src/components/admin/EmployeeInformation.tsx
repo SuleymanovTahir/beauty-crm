@@ -270,7 +270,8 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 id="username"
                                 value={form.username}
                                 onChange={(e) => setForm({ ...form, username: e.target.value })}
-                                className="pl-14 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="username"
                             />
                         </div>
                     </div>
@@ -285,7 +286,8 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 id="full_name"
                                 value={form.full_name}
                                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-                                className="pl-14 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="John Doe"
                             />
                         </div>
                     </div>
@@ -301,7 +303,8 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 type="email"
                                 value={form.email}
                                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                className="pl-14 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="email@example.com"
                             />
                         </div>
                     </div>
@@ -329,7 +332,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 type="tel"
                                 value={form.phone_number}
                                 onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="+971 50 123 4567"
                             />
                         </div>
@@ -344,7 +347,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                             type="date"
                             value={form.birth_date}
                             onChange={(e) => setForm({ ...form, birth_date: e.target.value })}
-                            className="h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                            className="h-12 px-3 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                         />
                     </div>
 
@@ -359,7 +362,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                     id="instagram_link"
                                     value={form.instagram_link}
                                     onChange={(e) => setForm({ ...form, instagram_link: e.target.value })}
-                                    className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                     placeholder="@username"
                                 />
                             </div>
@@ -370,7 +373,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                     id="whatsapp"
                                     value={form.whatsapp}
                                     onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                                    className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                     placeholder="+971501234567"
                                 />
                             </div>
@@ -381,7 +384,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                     id="telegram"
                                     value={form.telegram}
                                     onChange={(e) => setForm({ ...form, telegram: e.target.value })}
-                                    className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                    className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                     placeholder="@username"
                                 />
                             </div>
@@ -410,7 +413,8 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 id="position"
                                 value={form.position}
                                 onChange={(e) => setForm({ ...form, position: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="Hairstylist"
                             />
                         </div>
                     </div>
@@ -427,7 +431,8 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 min="0"
                                 value={form.years_of_experience}
                                 onChange={(e) => setForm({ ...form, years_of_experience: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="5"
                             />
                         </div>
                     </div>
@@ -442,7 +447,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 id="specialization"
                                 value={form.specialization}
                                 onChange={(e) => setForm({ ...form, specialization: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder={t('specialization_placeholder', 'e.g., Nail Art, Massage Therapy')}
                             />
                         </div>
@@ -489,7 +494,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 type="password"
                                 value={form.current_password}
                                 onChange={(e) => setForm({ ...form, current_password: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                             />
                         </div>
                     </div>
@@ -505,7 +510,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 type="password"
                                 value={form.new_password}
                                 onChange={(e) => setForm({ ...form, new_password: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                             />
                         </div>
                     </div>
@@ -521,7 +526,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 type="password"
                                 value={form.confirm_password}
                                 onChange={(e) => setForm({ ...form, confirm_password: e.target.value })}
-                                className="pl-16 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                             />
                         </div>
                     </div>
