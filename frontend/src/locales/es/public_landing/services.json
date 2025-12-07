@@ -261,16 +261,6 @@
       "duration": "",
       "category": "hair"
     },
-    "blowdry": {
-      "name": "tendido",
-      "description": "Peinado profesional",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
     "key_hair_style": {
       "name": "tendido",
       "description": "un peinado",
@@ -279,6 +269,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "hair"
+    },
+    "blowdry": {
+      "name": "tendido",
+      "description": "Peinado profesional",
+      "price": 125.0,
+      "min_price": 100.0,
+      "max_price": 150.0,
+      "currency": "AED",
+      "duration": "1h",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -739,7 +739,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "maquillaje_permanente"
+      "category": "permanent_makeup"
     },
     "lashliner": {
       "name": "flecha interciliar",
@@ -749,7 +749,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "maquillaje_permanente"
+      "category": "permanent_makeup"
     },
     "permanent_brows": {
       "name": "Maquillaje permanente de cejas",
@@ -759,7 +759,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "maquillaje_permanente"
+      "category": "permanent_makeup"
     },
     "permanent_lips": {
       "name": "Maquillaje permanente de labios",
@@ -769,7 +769,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "maquillaje_permanente"
+      "category": "permanent_makeup"
     },
     "eyeliner": {
       "name": "Lápiz de ojos",
@@ -779,7 +779,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "maquillaje_permanente"
+      "category": "permanent_makeup"
     },
     "key_promotion_overlay_manicure": {
       "name": "manicura promocional",

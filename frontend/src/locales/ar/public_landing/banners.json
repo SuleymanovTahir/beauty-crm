@@ -1,8 +1,8 @@
 {
   "items": [
     {
-      "title": "Красота и элегантность",
-      "subtitle": "Профессиональные косметические услуги.",
+      "title": "الجمال والأناقة",
+      "subtitle": "خدمات التجميل المهنية.",
       "image_url": "/static/uploads/faces/banner2.webp",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,
@@ -13,8 +13,8 @@
       "is_flipped_vertical": false
     },
     {
-      "title": "Скидки до 50%",
-      "subtitle": "На все услуги салона",
+      "title": "خصومات تصل إلى 50%",
+      "subtitle": "على جميع خدمات الصالون",
       "image_url": "/static/uploads/faces/Мароканская баня.webp",
       "link_url": "/services",
       "bg_pos_desktop_x": 50,

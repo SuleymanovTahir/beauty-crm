@@ -296,5 +296,6 @@
   "subscription_training": "Educación y formación",
   "subscription_training_desc": "Información sobre capacitaciones y oportunidades de aprendizaje.",
   "subscription_client_bookings": "Nuevos registros de clientes",
-  "subscription_client_bookings_desc": "Notificaciones sobre nuevas publicaciones para ti"
+  "subscription_client_bookings_desc": "Notificaciones sobre nuevas publicaciones para ti",
+  "reminder_label": "Recordatorio para"
 }
