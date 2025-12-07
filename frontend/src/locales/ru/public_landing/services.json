@@ -261,16 +261,6 @@
       "duration": "",
       "category": "hair"
     },
-    "key_hair_style": {
-      "name": "Укладка",
-      "description": "Прическа",
-      "price": 225.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "60",
-      "category": "hair"
-    },
     "blowdry": {
       "name": "Укладка",
       "description": "Профессиональная укладка волос",
@@ -279,6 +269,16 @@
       "max_price": 150.0,
       "currency": "AED",
       "duration": "1h",
+      "category": "hair"
+    },
+    "key_hair_style": {
+      "name": "Укладка",
+      "description": "Прическа",
+      "price": 225.0,
+      "min_price": null,
+      "max_price": null,
+      "currency": "AED",
+      "duration": "60",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -322,7 +322,7 @@
       "category": "lashes"
     },
     "ml_curl": {
-      "name": "ML завиток / Стиль Ким",
+      "name": "ML локон / Стиль Ким",
       "description": "Специальный изгиб",
       "price": 30.0,
       "min_price": null,
@@ -682,8 +682,8 @@
       "category": "nails"
     },
     "spa_manicure": {
-      "name": "Спа маникюр",
-      "description": "Спа маникюр",
+      "name": "Спа-маникюр",
+      "description": "Спа-маникюр",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -961,16 +961,6 @@
       "duration": "60",
       "category": "waxing"
     },
-    "full_body": {
-      "name": "Эпиляция всего тела",
-      "description": "Полная эпиляция тела",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
     "key_full_body": {
       "name": "Эпиляция всего тела",
       "description": "Полное тело",
@@ -979,6 +969,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "waxing"
+    },
+    "full_body": {
+      "name": "Эпиляция всего тела",
+      "description": "Полная эпиляция тела",
+      "price": 400.0,
+      "min_price": null,
+      "max_price": null,
+      "currency": "AED",
+      "duration": "1h",
       "category": "waxing"
     },
     "key_under_arms": {

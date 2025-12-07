@@ -12,8 +12,8 @@
   },
   "items": {
     "brow_lamination": {
-      "name": "Ламинирование бровей",
-      "description": "Ламинирование бровей",
+      "name": "Stratification des sourcils",
+      "description": "Stratification des sourcils",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -22,8 +22,8 @@
       "category": "brows"
     },
     "combo_lamination": {
-      "name": "Ламинирование бровей и ресниц",
-      "description": "Комбо ламинирование",
+      "name": "Stratification des sourcils et des cils",
+      "description": "Stratification combinée",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -32,8 +32,8 @@
       "category": "brows"
     },
     "brow_coloring": {
-      "name": "Окрашивание бровей",
-      "description": "Профессиональное окрашивание",
+      "name": "Teinture des sourcils",
+      "description": "Coloration professionnelle",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -42,8 +42,8 @@
       "category": "brows"
     },
     "brow_shaping": {
-      "name": "Оформление бровей",
-      "description": "Профессиональное оформление",
+      "name": "Mise en forme des sourcils",
+      "description": "Conception professionnelle",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -52,8 +52,8 @@
       "category": "brows"
     },
     "deep_facial_cleaning": {
-      "name": "Глубокая чистка лица",
-      "description": "Профессиональная глубокая чистка",
+      "name": "Nettoyage du visage en profondeur",
+      "description": "Nettoyage en profondeur professionnel",
       "price": 400.0,
       "min_price": null,
       "max_price": null,
@@ -62,8 +62,8 @@
       "category": "facial"
     },
     "medical_facial": {
-      "name": "Медицинская чистка для проблемной кожи",
-      "description": "Медицинская чистка",
+      "name": "Nettoyage médical pour peaux à problèmes",
+      "description": "Nettoyage médical",
       "price": 450.0,
       "min_price": null,
       "max_price": null,
@@ -72,8 +72,8 @@
       "category": "facial"
     },
     "peeling": {
-      "name": "Пилинг",
-      "description": "Химический пилинг",
+      "name": "Peeling",
+      "description": "Peeling chimique",
       "price": 350.0,
       "min_price": 300.0,
       "max_price": 400.0,
@@ -82,8 +82,8 @@
       "category": "facial"
     },
     "face_lift_massage": {
-      "name": "Подтягивающий массаж лица с маской",
-      "description": "Подтягивающий массаж",
+      "name": "Massage du visage raffermissant avec masque",
+      "description": "Massage raffermissant",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -92,8 +92,8 @@
       "category": "facial"
     },
     "balayage": {
-      "name": "Балаяж",
-      "description": "Техника балаяж",
+      "name": "Balayage",
+      "description": "Technique de balayage",
       "price": 950.0,
       "min_price": 700.0,
       "max_price": 1200.0,
@@ -102,8 +102,8 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "Выход из черного",
-      "description": "Коррекция цвета из темного",
+      "name": "Sortir du noir",
+      "description": "Correction des couleurs depuis l'obscurité",
       "price": 1800.0,
       "min_price": 1300.0,
       "max_price": 2300.0,
@@ -112,8 +112,8 @@
       "category": "hair"
     },
     "baby_cut": {
-      "name": "Детская стрижка",
-      "description": "Стрижка для детей",
+      "name": "Coupe de cheveux pour enfants",
+      "description": "Coupe de cheveux pour les enfants",
       "price": 70.0,
       "min_price": 60.0,
       "max_price": 80.0,
@@ -123,7 +123,7 @@
     },
     "key_hair_wash": {
       "name": "Lavage des cheveux",
-      "description": "Мытье волос",
+      "description": "Lavage des cheveux",
       "price": 60.0,
       "min_price": null,
       "max_price": null,
@@ -133,7 +133,7 @@
     },
     "key_hair_extensions_1_can": {
       "name": "Extensions de cheveux (1 capsule)",
-      "description": "Наращивание волос (1 банка)",
+      "description": "Extensions de cheveux (1 pot)",
       "price": 10.0,
       "min_price": null,
       "max_price": null,
@@ -142,8 +142,8 @@
       "category": "hair"
     },
     "hair_extension_capsule": {
-      "name": "Наращивание волос за капсулу",
-      "description": "Наращивание за капсулу",
+      "name": "Extensions de cheveux par capsule",
+      "description": "Extension par capsule",
       "price": 11.0,
       "min_price": 10.0,
       "max_price": 12.0,
@@ -152,8 +152,8 @@
       "category": "hair"
     },
     "natural_treatment": {
-      "name": "Натуральный уход",
-      "description": "Натуральный уход за волосами",
+      "name": "Soins naturels",
+      "description": "Soins capillaires naturels",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -162,8 +162,8 @@
       "category": "hair"
     },
     "full_color": {
-      "name": "Окрашивание в один тон + Укладка",
-      "description": "Полное окрашивание с укладкой",
+      "name": "Coloration un ton + Stylisme",
+      "description": "Coloration complète avec style",
       "price": 425.0,
       "min_price": 350.0,
       "max_price": 500.0,
@@ -172,8 +172,8 @@
       "category": "hair"
     },
     "roots_color": {
-      "name": "Окрашивание корней + Укладка",
-      "description": "Окрашивание корней с укладкой",
+      "name": "Coloration des racines + Coiffage",
+      "description": "Coloration des racines avec coiffage",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -182,8 +182,8 @@
       "category": "hair"
     },
     "ombre": {
-      "name": "Омбре/Шатуш/Аиртач",
-      "description": "Техники градиентного окрашивания",
+      "name": "Ombre/Shatush/Airtach",
+      "description": "Techniques de coloration dégradée",
       "price": 1250.0,
       "min_price": 1000.0,
       "max_price": 1500.0,
@@ -192,8 +192,8 @@
       "category": "hair"
     },
     "roots_bleach": {
-      "name": "Осветление корней + Укладка",
-      "description": "Осветление корней с укладкой",
+      "name": "Éclaircissement des racines + coiffage",
+      "description": "Éclaircissement des racines avec coiffage",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -212,8 +212,8 @@
       "category": "hair"
     },
     "hair_trim": {
-      "name": "Ровный срез кончиков",
-      "description": "Простой срез без мытья",
+      "name": "Même les extrémités coupées",
+      "description": "Découpe facile sans lavage",
       "price": 90.0,
       "min_price": 80.0,
       "max_price": 100.0,
@@ -223,7 +223,7 @@
     },
     "key_hair_extension_only_removal": {
       "name": "Enlever les extensions de cheveux",
-      "description": "Наращивание волос (только удаление)",
+      "description": "Extensions de cheveux (épilation seulement)",
       "price": 1500.0,
       "min_price": null,
       "max_price": null,
@@ -242,8 +242,8 @@
       "category": "hair"
     },
     "hair_cut_blowdry": {
-      "name": "Стрижка + Укладка",
-      "description": "Профессиональная стрижка с укладкой",
+      "name": "Coupe de cheveux + Stylisme",
+      "description": "Coupe de cheveux professionnelle avec stylisme",
       "price": 275.0,
       "min_price": 250.0,
       "max_price": 300.0,
@@ -252,13 +252,23 @@
       "category": "hair"
     },
     "toner_blowdry": {
-      "name": "Тонирование + Укладка",
-      "description": "Тонирование волос с укладкой",
+      "name": "Tonifiant + Coiffant",
+      "description": "Teinture des cheveux avec coiffage",
       "price": 375.0,
       "min_price": 300.0,
       "max_price": 450.0,
       "currency": "AED",
       "duration": "",
+      "category": "hair"
+    },
+    "blowdry": {
+      "name": "Pose",
+      "description": "Coiffure professionnelle",
+      "price": 125.0,
+      "min_price": 100.0,
+      "max_price": 150.0,
+      "currency": "AED",
+      "duration": "1h",
       "category": "hair"
     },
     "key_hair_style": {
@@ -269,16 +279,6 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
-      "category": "hair"
-    },
-    "blowdry": {
-      "name": "Укладка",
-      "description": "Профессиональная укладка волос",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -292,8 +292,8 @@
       "category": "hair"
     },
     "2d_volume": {
-      "name": "2D объем ресниц",
-      "description": "Наращивание 2D",
+      "name": "Volume des cils 2D",
+      "description": "Extension 2D",
       "price": 230.0,
       "min_price": null,
       "max_price": null,
@@ -302,8 +302,8 @@
       "category": "lashes"
     },
     "3d_volume": {
-      "name": "3D объем ресниц",
-      "description": "Наращивание 3D",
+      "name": "Volume des cils 3D",
+      "description": "Extension 3D",
       "price": 260.0,
       "min_price": null,
       "max_price": null,
@@ -312,8 +312,8 @@
       "category": "lashes"
     },
     "mega_volume": {
-      "name": "4-5D объем (Мега)",
-      "description": "Мега объем ресниц",
+      "name": "Volume 4-5D (Méga)",
+      "description": "Cils méga volume",
       "price": 290.0,
       "min_price": null,
       "max_price": null,
@@ -323,7 +323,7 @@
     },
     "ml_curl": {
       "name": "Boucle ML / Style Kim",
-      "description": "Специальный изгиб",
+      "description": "Courbure spéciale",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -332,8 +332,8 @@
       "category": "lashes"
     },
     "classic_volume": {
-      "name": "Классический объем ресниц",
-      "description": "Натуральное наращивание ресниц",
+      "name": "Volume des cils classique",
+      "description": "Extensions de cils naturels",
       "price": 180.0,
       "min_price": null,
       "max_price": null,
@@ -342,8 +342,8 @@
       "category": "lashes"
     },
     "lash_lamination": {
-      "name": "Ламинирование ресниц",
-      "description": "Ламинирование ресниц",
+      "name": "Stratification des cils",
+      "description": "Stratification des cils",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -352,8 +352,8 @@
       "category": "lashes"
     },
     "remove_lashes": {
-      "name": "Снятие ресниц",
-      "description": "Безопасное снятие",
+      "name": "Enlever les cils",
+      "description": "Retrait en toute sécurité",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -393,7 +393,7 @@
     },
     "key_moroccan_bath_loofa": {
       "name": "Bain marocain avec luffa",
-      "description": "Сервиз: Марокканская ванна с люфой.",
+      "description": "Service : Bain marocain avec luffa.",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -413,7 +413,7 @@
     },
     "key_head_40_min": {
       "name": "Massage de la tête",
-      "description": "Руководитель 40 мин.",
+      "description": "Chef 40 min.",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -423,7 +423,7 @@
     },
     "key_legfeet_hand_40_min": {
       "name": "Massage des pieds/mains",
-      "description": "Нога/стопа/рука 40 мин.",
+      "description": "Jambe/pied/bras 40 min.",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -433,7 +433,7 @@
     },
     "key_back_massage_510": {
       "name": "Massage du dos (cours)",
-      "description": "Массаж спины (5-10)",
+      "description": "Massage du dos (5-10)",
       "price": 540.0,
       "min_price": null,
       "max_price": null,
@@ -453,7 +453,7 @@
     },
     "key_neck__shoulder_30_min": {
       "name": "Massage du cou et des épaules",
-      "description": "Шея и плечи 30 мин.",
+      "description": "Cou et épaules 30 min.",
       "price": 165.0,
       "min_price": null,
       "max_price": null,
@@ -463,7 +463,7 @@
     },
     "key_sculpture_body_massage": {
       "name": "Massage-sculpture",
-      "description": "Скульптурный массаж тела.",
+      "description": "Massage sculptural du corps.",
       "price": 370.0,
       "min_price": null,
       "max_price": null,
@@ -492,8 +492,8 @@
       "category": "nails"
     },
     "baby_manicure": {
-      "name": "Детский маникюр",
-      "description": "Маникюр для детей",
+      "name": "Manucure pour enfants",
+      "description": "Manucure pour les enfants",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -523,7 +523,7 @@
     },
     "key_починка_1_ноготь": {
       "name": "Correction 1 ongle",
-      "description": "Коррекция одного ногтя",
+      "description": "Correction d'un ongle",
       "price": 35.0,
       "min_price": null,
       "max_price": null,
@@ -532,8 +532,8 @@
       "category": "nails"
     },
     "manicure_no_polish": {
-      "name": "Маникюр без покрытия",
-      "description": "Базовый маникюр",
+      "name": "Manucure sans revêtement",
+      "description": "Manucure de base",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -542,8 +542,8 @@
       "category": "nails"
     },
     "gelish_manicure": {
-      "name": "Маникюр гель-лак",
-      "description": "Маникюр с гель-лаком",
+      "name": "Vernis gel manucure",
+      "description": "Manucure avec vernis gel",
       "price": 130.0,
       "min_price": null,
       "max_price": null,
@@ -552,8 +552,8 @@
       "category": "nails"
     },
     "manicure_normal": {
-      "name": "Маникюр с обычным покрытием",
-      "description": "Маникюр с обычным лаком",
+      "name": "Manucure avec finition régulière",
+      "description": "Manucure avec vernis régulier",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -563,7 +563,7 @@
     },
     "key_накладные_ногти": {
       "name": "Faux ongles",
-      "description": "Накладные ногти",
+      "description": "Faux ongles",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -583,7 +583,7 @@
     },
     "key_gel_extension": {
       "name": "Extensions en gel",
-      "description": "Наращивание гелем",
+      "description": "Extensions en gel",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -593,7 +593,7 @@
     },
     "key_pedicure_gel": {
       "name": "Pédicure avec vernis gel",
-      "description": "Гель для педикюра",
+      "description": "Gel pédicure",
       "price": 160.0,
       "min_price": null,
       "max_price": null,
@@ -623,7 +623,7 @@
     },
     "key_gel_overlay": {
       "name": "Revêtement en gel",
-      "description": "Наложение геля",
+      "description": "Application de gels",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -633,7 +633,7 @@
     },
     "key_change_gel": {
       "name": "Changer le vernis gel",
-      "description": "Замена геля",
+      "description": "Remplacer le gel",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -642,8 +642,8 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "Смена обычного лака",
-      "description": "Смена обычного лака",
+      "name": "Changer le vernis ordinaire",
+      "description": "Changer le vernis ordinaire",
       "price": 65.0,
       "min_price": 40.0,
       "max_price": 90.0,
@@ -682,8 +682,8 @@
       "category": "nails"
     },
     "spa_manicure": {
-      "name": "Спа маникюр",
-      "description": "Спа маникюр",
+      "name": "Manucure spa",
+      "description": "Manucure spa",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -722,8 +722,8 @@
       "category": "nails"
     },
     "japanese_manicure": {
-      "name": "Японский маникюр",
-      "description": "Японский маникюр",
+      "name": "Manucure japonaise",
+      "description": "Manucure japonaise",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -732,8 +732,8 @@
       "category": "nails"
     },
     "permanent_correction": {
-      "name": "Коррекция перманентного макияжа",
-      "description": "Коррекция существующего перманента",
+      "name": "Correction permanente du maquillage",
+      "description": "Correction d'un permanent existant",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -742,8 +742,8 @@
       "category": "maquillage_permanent"
     },
     "lashliner": {
-      "name": "Межресничная стрелка",
-      "description": "Подчеркивание линии роста ресниц",
+      "name": "Flèche interciliaire",
+      "description": "Mettre en valeur la ligne des cils",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -752,8 +752,8 @@
       "category": "maquillage_permanent"
     },
     "permanent_brows": {
-      "name": "Перманентный макияж бровей",
-      "description": "Микроблейдинг или пудровые брови",
+      "name": "Maquillage permanent des sourcils",
+      "description": "Microblading ou sourcils en poudre",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
@@ -762,8 +762,8 @@
       "category": "maquillage_permanent"
     },
     "permanent_lips": {
-      "name": "Перманентный макияж губ",
-      "description": "Стойкий цвет губ",
+      "name": "Maquillage permanent des lèvres",
+      "description": "Couleur des lèvres longue tenue",
       "price": 1200.0,
       "min_price": null,
       "max_price": null,
@@ -772,8 +772,8 @@
       "category": "maquillage_permanent"
     },
     "eyeliner": {
-      "name": "Подводка для глаз",
-      "description": "Перманентная подводка глаз",
+      "name": "Eye-liner",
+      "description": "Eye-liner permanent",
       "price": 1000.0,
       "min_price": null,
       "max_price": null,
@@ -783,7 +783,7 @@
     },
     "key_promotion_overlay_manicure": {
       "name": "Manucure promotionnelle",
-      "description": "Акция накладной маникюр",
+      "description": "Promotion : fausse manucure",
       "price": 145.0,
       "min_price": null,
       "max_price": null,
@@ -823,7 +823,7 @@
     },
     "key_blow_dry_packages_5": {
       "name": "Pack de coiffure (5 pcs.)",
-      "description": "Пакеты для сушки феном 5",
+      "description": "Sacs de brushing 5",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -842,8 +842,8 @@
       "category": "waxing"
     },
     "brazilian": {
-      "name": "Бразильское бикини",
-      "description": "Бразильская эпиляция бикини",
+      "name": "Bikini brésilien",
+      "description": "Epilation brésilienne du bikini",
       "price": 120.0,
       "min_price": null,
       "max_price": null,
@@ -852,8 +852,8 @@
       "category": "waxing"
     },
     "upper_lips": {
-      "name": "Верхняя губа",
-      "description": "Эпиляция верхней губы",
+      "name": "Lèvre supérieure",
+      "description": "Épilation de la lèvre supérieure",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -862,8 +862,8 @@
       "category": "waxing"
     },
     "full_bikini": {
-      "name": "Глубокое бикини",
-      "description": "Полная эпиляция зоны бикини",
+      "name": "Bikini profond",
+      "description": "Epilation complète de la zone du bikini",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -872,8 +872,8 @@
       "category": "waxing"
     },
     "bikini_line": {
-      "name": "Линия бикини",
-      "description": "Эпиляция по линии бикини",
+      "name": "Ligne de bikini",
+      "description": "Épilation le long de la ligne du bikini",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -882,8 +882,8 @@
       "category": "waxing"
     },
     "full_face": {
-      "name": "Лицо полностью",
-      "description": "Полная эпиляция лица",
+      "name": "Visage complet",
+      "description": "Epilation complète du visage",
       "price": 90.0,
       "min_price": null,
       "max_price": null,
@@ -892,8 +892,8 @@
       "category": "waxing"
     },
     "half_legs": {
-      "name": "Ноги до колен",
-      "description": "Эпиляция ног до колен",
+      "name": "Jambes jusqu'aux genoux",
+      "description": "Epilation des jambes jusqu'aux genoux",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -902,8 +902,8 @@
       "category": "waxing"
     },
     "full_legs": {
-      "name": "Ноги полностью",
-      "description": "Полная эпиляция ног",
+      "name": "Jambes pleines",
+      "description": "Épilation complète des jambes",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -912,8 +912,8 @@
       "category": "waxing"
     },
     "chin": {
-      "name": "Подбородок",
-      "description": "Эпиляция подбородка",
+      "name": "Menton",
+      "description": "Épilation du menton",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -922,8 +922,8 @@
       "category": "waxing"
     },
     "underarms": {
-      "name": "Подмышки",
-      "description": "Эпиляция подмышек",
+      "name": "Aisselles",
+      "description": "Épilation des aisselles",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -932,8 +932,8 @@
       "category": "waxing"
     },
     "half_arms": {
-      "name": "Руки до локтя",
-      "description": "Эпиляция рук до локтя",
+      "name": "Les mains jusqu'au coude",
+      "description": "Epilation des bras jusqu'au coude",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -942,8 +942,8 @@
       "category": "waxing"
     },
     "full_arms": {
-      "name": "Руки полностью",
-      "description": "Полная эпиляция рук",
+      "name": "Les mains pleines",
+      "description": "Epilation complète du bras",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -961,16 +961,6 @@
       "duration": "60",
       "category": "waxing"
     },
-    "full_body": {
-      "name": "Эпиляция всего тела",
-      "description": "Полная эпиляция тела",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
     "key_full_body": {
       "name": "Épilation complète du corps",
       "description": "Corps entier",
@@ -979,6 +969,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "waxing"
+    },
+    "full_body": {
+      "name": "Épilation complète du corps",
+      "description": "Épilation complète du corps",
+      "price": 400.0,
+      "min_price": null,
+      "max_price": null,
+      "currency": "AED",
+      "duration": "1h",
       "category": "waxing"
     },
     "key_under_arms": {

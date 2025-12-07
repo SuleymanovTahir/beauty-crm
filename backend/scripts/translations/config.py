@@ -36,8 +36,7 @@ TRANSLATION_CONFIG = {
     },
     "public_banners": {
         "id_field": "id",
-        "fields": ["title_ru", "title_en", "title_ar", "title_de", "title_es", "title_fr", "title_hi", "title_kk", "title_pt",
-                   "subtitle_ru", "subtitle_en", "subtitle_ar", "subtitle_de", "subtitle_es", "subtitle_fr", "subtitle_hi", "subtitle_kk", "subtitle_pt"],
+        "fields": ["title_ru", "subtitle_ru"],
         "where": "is_active = TRUE"
     }
 }
@@ -54,7 +53,9 @@ TRANSLATE_OUTPUT = "scripts/translations/translations_completed.json"
 
 # Fields that should NEVER be translated (technical fields, proper nouns, etc.)
 SKIP_TRANSLATION_FIELDS = {
-    "salon_settings": ["city", "country"]  # Proper nouns should not be translated
+    "salon_settings": ["city", "country"],  # Proper nouns should not be translated
+    "public_reviews": ["author_name"],  # Names are proper nouns
+    "services": ["duration"]  # Duration format like "1h", "30min" should not be translated
 }
 
 # Patterns that indicate content should not be translated

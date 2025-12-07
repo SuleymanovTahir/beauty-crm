@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { apiClient } from '../../api/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface BotAnalyticsData {
     summary: {
@@ -32,6 +33,7 @@ interface BotAnalyticsData {
 }
 
 const BotAnalyticsWidget: React.FC = () => {
+    const { t } = useTranslation('admin/botsettings');
     const [data, setData] = useState<BotAnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -61,27 +63,47 @@ const BotAnalyticsWidget: React.FC = () => {
 
     const COLORS = ['#8884d8', '#00C49F', '#FFBB28', '#FF8042', '#FF4444'];
     const OUTCOME_NAMES: Record<string, string> = {
-        'in_progress': 'В процессе',
-        'booking_created': 'Запись создана',
-        'consultation_only': 'Консультация',
-        'escalated': 'Эскалация',
-        'abandoned': 'Брошено'
+        'in_progress': t('analytics.outcome_in_progress', 'In Progress'),
+        'booking_created': t('analytics.outcome_booking_created', 'Booking Created'),
+        'consultation_only': t('analytics.outcome_consultation', 'Consultation'),
+        'escalated': t('analytics.outcome_escalated', 'Escalated'),
+        'abandoned': t('analytics.outcome_abandoned', 'Abandoned')
     };
 
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <StatsCard title="Диалогов всего" value={data.summary.total_sessions} subValue={`+${data.summary.sessions_last_7d} за неделю`} Icon="💬" />
-                <StatsCard title="Конверсия в запись" value={`${data.summary.conversion_rate}%`} subValue={`${data.summary.bookings_created} записей`} Icon="✅" />
-                <StatsCard title="Эскалации менеджеру" value={data.summary.escalated_to_manager} subValue="Требует внимания" Icon="👨‍💻" />
-                <StatsCard title="Сообщений в диалоге" value={data.summary.messages_avg} subValue="Среднее число" Icon="📊" />
+                <StatsCard
+                    title={t('analytics.total_dialogs', 'Total Dialogs')}
+                    value={data.summary.total_sessions}
+                    subValue={`+${data.summary.sessions_last_7d} ${t('analytics.this_week', 'this week')}`}
+                    Icon="💬"
+                />
+                <StatsCard
+                    title={t('analytics.conversion_to_booking', 'Conversion to Booking')}
+                    value={`${data.summary.conversion_rate}%`}
+                    subValue={`${data.summary.bookings_created} ${t('analytics.bookings', 'bookings')}`}
+                    Icon="✅"
+                />
+                <StatsCard
+                    title={t('analytics.escalations', 'Manager Escalations')}
+                    value={data.summary.escalated_to_manager}
+                    subValue={t('analytics.needs_attention', 'Needs attention')}
+                    Icon="👨‍💻"
+                />
+                <StatsCard
+                    title={t('analytics.messages_per_dialog', 'Messages per Dialog')}
+                    value={data.summary.messages_avg}
+                    subValue={t('analytics.average', 'Average')}
+                    Icon="📊"
+                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Активность за 30 дней</CardTitle>
-                        <CardDescription>Количество диалогов и записей</CardDescription>
+                        <CardTitle>{t('analytics.activity_30_days', 'Activity 30 Days')}</CardTitle>
+                        <CardDescription>{t('analytics.dialogs_and_bookings_count', 'Dialogs and bookings count')}</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
@@ -100,8 +122,8 @@ const BotAnalyticsWidget: React.FC = () => {
                                 <XAxis dataKey="date" tickFormatter={(str) => str.slice(5)} />
                                 <YAxis />
                                 <Tooltip />
-                                <Area type="monotone" dataKey="sessions" name="Диалоги" stroke="#8884d8" fillOpacity={1} fill="url(#colorSessions)" />
-                                <Area type="monotone" dataKey="bookings" name="Записи" stroke="#82ca9d" fillOpacity={1} fill="url(#colorBookings)" />
+                                <Area type="monotone" dataKey="sessions" name={t('analytics.dialogs', 'Dialogs')} stroke="#8884d8" fillOpacity={1} fill="url(#colorSessions)" />
+                                <Area type="monotone" dataKey="bookings" name={t('analytics.bookings', 'Bookings')} stroke="#82ca9d" fillOpacity={1} fill="url(#colorBookings)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -109,8 +131,8 @@ const BotAnalyticsWidget: React.FC = () => {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Исходы диалогов</CardTitle>
-                        <CardDescription>Чем заканчиваются разговоры с ботом</CardDescription>
+                        <CardTitle>{t('analytics.dialog_outcomes', 'Dialog Outcomes')}</CardTitle>
+                        <CardDescription>{t('analytics.how_conversations_end', 'How conversations with bot end')}</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64 flex justify-center">
                         <ResponsiveContainer width="100%" height="100%">
@@ -152,3 +174,4 @@ const StatsCard = ({ title, value, subValue, Icon }: any) => (
 );
 
 export default BotAnalyticsWidget;
+

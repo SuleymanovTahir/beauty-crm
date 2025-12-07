@@ -21,7 +21,14 @@ interface FAQ {
 }
 
 export default function FAQTab() {
-    const { t } = useTranslation(['admin/PublicContent', 'common']);
+    const { t, i18n } = useTranslation(['admin/PublicContent', 'common']);
+    const currentLang = i18n.language?.split('-')[0] || 'en';
+
+    // Helper to get localized text with fallback to Russian
+    const getLocalizedText = (item: any, field: string): string => {
+        const langField = `${field}_${currentLang}`;
+        return item[langField] || item[`${field}_en`] || item[`${field}_ru`] || '';
+    };
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -116,12 +123,12 @@ export default function FAQTab() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <HelpCircle className="w-4 h-4 text-pink-500" />
-                                        <h3 className="font-semibold">{faq.question_ru}</h3>
+                                        <h3 className="font-semibold">{getLocalizedText(faq, 'question')}</h3>
                                         <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded capitalize">
                                             {faq.category}
                                         </span>
                                     </div>
-                                    <p className="text-gray-700 mb-2">{faq.answer_ru}</p>
+                                    <p className="text-gray-700 mb-2">{getLocalizedText(faq, 'answer')}</p>
                                     {(faq.question_en || faq.answer_en) && (
                                         <details className="text-sm text-gray-500">
                                             <summary className="cursor-pointer">{t('translations')}</summary>

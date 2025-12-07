@@ -1259,5 +1259,8 @@
   "public_reviews.1.author_name": "Anna Petrova",
   "public_reviews.3.text_ru": "I've been going here for manicures and pedicures for a year now. ",
   "public_reviews.3.author_name": "Elena Smirnova",
-  "public_reviews.4.text_ru": "Incredible service. "
+  "public_reviews.4.text_ru": "Incredible service. ",
+  "services.35.name_ru.9c97dfe1": "ML curl / Kim style",
+  "services.47.name_ru.b7551641": "Spa manicure",
+  "services.47.description_ru.b7551641": "Spa manicure"
 }

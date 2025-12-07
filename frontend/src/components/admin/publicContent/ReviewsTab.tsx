@@ -17,14 +17,27 @@ interface Review {
     text_ru: string;
     text_en?: string;
     text_ar?: string;
+    text_es?: string;
+    text_de?: string;
+    text_fr?: string;
+    text_pt?: string;
+    text_hi?: string;
+    text_kk?: string;
     avatar_url?: string;
     is_active: number;
     display_order: number;
     created_at: string;
 }
 
+// Helper to get localized text with fallback to Russian
+const getLocalizedText = (item: any, field: string, lang: string): string => {
+    const langField = `${field}_${lang}`;
+    return item[langField] || item[`${field}_en`] || item[`${field}_ru`] || '';
+};
+
 export default function ReviewsTab() {
-    const { t } = useTranslation(['admin/PublicContent', 'common']);
+    const { t, i18n } = useTranslation(['admin/PublicContent', 'common']);
+    const currentLang = i18n.language?.split('-')[0] || 'en';
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -84,7 +97,7 @@ export default function ReviewsTab() {
             setFormData({ ...formData, avatar_url: response.file_url });
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Ошибка загрузки файла');
+            alert(t('common:file_upload_error', 'File upload error'));
         } finally {
             setUploading(false);
             e.target.value = '';
@@ -163,7 +176,7 @@ export default function ReviewsTab() {
                                             <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">{t('hidden')}</span>
                                         )}
                                     </div>
-                                    <p className="text-gray-700 mb-2">{review.text_ru}</p>
+                                    <p className="text-gray-700 mb-2">{getLocalizedText(review, 'text', currentLang)}</p>
                                     {review.text_en && (
                                         <details className="text-sm text-gray-500">
                                             <summary className="cursor-pointer">{t('translations')}</summary>
@@ -267,8 +280,8 @@ export default function ReviewsTab() {
                                 </Label>
                                 <Tabs value={uploadTab} onValueChange={setUploadTab} className="w-full">
                                     <TabsList className="grid w-full grid-cols-2">
-                                        <TabsTrigger value="url">Ссылка</TabsTrigger>
-                                        <TabsTrigger value="file">Загрузить файл</TabsTrigger>
+                                        <TabsTrigger value="url">{t('common:url_link', 'URL')}</TabsTrigger>
+                                        <TabsTrigger value="file">{t('common:upload_file', 'Upload File')}</TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="url" className="mt-2">
                                         <Input
@@ -286,7 +299,7 @@ export default function ReviewsTab() {
                                             onClick={() => document.getElementById('review-file-upload')?.click()}
                                             disabled={uploading}
                                         >
-                                            {uploading ? 'Загрузка...' : 'Выбрать файл'}
+                                            {uploading ? t('common:uploading', 'Uploading...') : t('common:choose_file', 'Choose File')}
                                         </Button>
                                         <input
                                             id="review-file-upload"

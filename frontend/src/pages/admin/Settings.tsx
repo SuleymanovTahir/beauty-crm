@@ -1313,10 +1313,10 @@ export default function AdminSettings() {
                         <div className="flex items-center gap-3">
                           <Bell className={`w-5 h-5 ${setting.is_enabled ? 'text-pink-600' : 'text-gray-400'}`} />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{setting.name}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')}`}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')}`}
+                            </p>
                             <p className="text-xs text-gray-600">
-                              {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}
-                              {setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
                               {t('settings:before_booking')} · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
                             </p>
                           </div>
@@ -1668,8 +1668,8 @@ export default function AdminSettings() {
                       {/* Main Subscription Toggle */}
                       <div className="flex items-start justify-between p-4 bg-gray-50">
                         <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{info.name}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{info.description}</p>
+                          <h3 className="font-medium text-gray-900">{t(`settings:${info.name}`)}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{t(`settings:${info.description}`)}</p>
                         </div>
                         <Switch
                           checked={sub.is_subscribed}
