@@ -2347,7 +2347,8 @@ export default function AdminSettings() {
                 <Button
                   onClick={handleDeleteAccount}
                   disabled={deletingAccount || !deletePassword || deleteConfirmText !== 'DELETE'}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  variant="destructive"
+                  className="w-full disabled:opacity-100 disabled:bg-red-300"
                 >
                   {deletingAccount ? (
                     <>
