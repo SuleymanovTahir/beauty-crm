@@ -296,5 +296,6 @@
   "subscription_training": "Білім және оқыту",
   "subscription_training_desc": "Тренингтер және оқу мүмкіндіктері туралы ақпарат",
   "subscription_client_bookings": "Клиенттердің жаңа жазбалары",
-  "subscription_client_bookings_desc": "Сізге жаңа хабарламалар туралы хабарламалар"
+  "subscription_client_bookings_desc": "Сізге жаңа хабарламалар туралы хабарламалар",
+  "reminder_label": "Еске салу"
 }

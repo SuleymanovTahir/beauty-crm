@@ -261,16 +261,6 @@
       "duration": "",
       "category": "hair"
     },
-    "blowdry": {
-      "name": "बिछाना",
-      "description": "पेशेवर हेयर स्टाइलिंग",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "hair"
-    },
     "key_hair_style": {
       "name": "बिछाना",
       "description": "एक केश",
@@ -279,6 +269,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "hair"
+    },
+    "blowdry": {
+      "name": "बिछाना",
+      "description": "पेशेवर हेयर स्टाइलिंग",
+      "price": 125.0,
+      "min_price": 100.0,
+      "max_price": 150.0,
+      "currency": "AED",
+      "duration": "1h",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -739,7 +739,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "स्थायी_मेकअप"
+      "category": "permanent_makeup"
     },
     "lashliner": {
       "name": "अंतर्वर्ती तीर",
@@ -749,7 +749,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "स्थायी_मेकअप"
+      "category": "permanent_makeup"
     },
     "permanent_brows": {
       "name": "स्थायी भौं मेकअप",
@@ -759,7 +759,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "स्थायी_मेकअप"
+      "category": "permanent_makeup"
     },
     "permanent_lips": {
       "name": "स्थायी होंठ मेकअप",
@@ -769,7 +769,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "स्थायी_मेकअप"
+      "category": "permanent_makeup"
     },
     "eyeliner": {
       "name": "आईलाइनर",
@@ -779,7 +779,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "स्थायी_मेकअप"
+      "category": "permanent_makeup"
     },
     "key_promotion_overlay_manicure": {
       "name": "प्रोमोशनल मैनीक्योर",

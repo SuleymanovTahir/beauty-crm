@@ -296,5 +296,6 @@
   "subscription_training": "शिक्षण और प्रशिक्षण",
   "subscription_training_desc": "प्रशिक्षण और सीखने के अवसरों के बारे में जानकारी",
   "subscription_client_bookings": "नए ग्राहक रिकॉर्ड",
-  "subscription_client_bookings_desc": "आपके लिए नई पोस्ट के बारे में सूचनाएं"
+  "subscription_client_bookings_desc": "आपके लिए नई पोस्ट के बारे में सूचनाएं",
+  "reminder_label": "के लिए अनुस्मारक"
 }

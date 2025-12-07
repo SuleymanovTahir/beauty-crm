@@ -296,5 +296,6 @@
   "subscription_training": "التعليم والتدريب",
   "subscription_training_desc": "معلومات حول التدريبات وفرص التعلم",
   "subscription_client_bookings": "سجلات العملاء الجدد",
-  "subscription_client_bookings_desc": "إشعارات حول المشاركات الجديدة لك"
+  "subscription_client_bookings_desc": "إشعارات حول المشاركات الجديدة لك",
+  "reminder_label": "تذكير ل"
 }

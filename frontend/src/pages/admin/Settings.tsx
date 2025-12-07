@@ -964,7 +964,7 @@ export default function AdminSettings() {
             ) : (
               <form onSubmit={handleSaveGeneral} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="salonName">{t('settings:salon_name')} *</Label>
                     <Input
                       id="salonName"
@@ -975,7 +975,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="language">{t('settings:system_language')}</Label>
                     <Select
                       value={generalSettings.language}
@@ -996,7 +996,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="city">{t('settings:city')}</Label>
                     <Input
                       id="city"
@@ -1006,7 +1006,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="phone">{t('settings:phone')}</Label>
                     <Input
                       id="phone"
@@ -1018,7 +1018,7 @@ export default function AdminSettings() {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="address">{t('settings:address')}</Label>
                   <Input
                     id="address"
@@ -1029,7 +1029,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="email">{t('settings:email')}</Label>
                     <Input
                       id="email"
@@ -1040,7 +1040,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="instagram">{t('settings:instagram')}</Label>
                     <Input
                       id="instagram"
@@ -1051,7 +1051,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="telegram_chat_id">{t('settings:telegram_manager_chat_id', 'Telegram Manager Chat ID')}</Label>
                     <Input
                       id="telegram_chat_id"
@@ -1067,7 +1067,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="weekdays">{t('settings:weekdays_hours')}</Label>
                     <Input
                       id="weekdays"
@@ -1081,7 +1081,7 @@ export default function AdminSettings() {
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="weekends">{t('settings:weekends_hours')}</Label>
                     <Input
                       id="weekends"
@@ -1103,7 +1103,7 @@ export default function AdminSettings() {
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="city">{t('settings:city', 'Город')}</Label>
                       <Input
                         id="city"
@@ -1113,7 +1113,7 @@ export default function AdminSettings() {
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="currency">{t('settings:currency', 'Валюта')}</Label>
                       <Select
                         value={generalSettings.currency}
@@ -1132,7 +1132,7 @@ export default function AdminSettings() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="timezone_offset">{t('settings:timezone_offset', 'Часовой пояс')}</Label>
                       <Select
                         value={generalSettings.timezone_offset}
@@ -1156,7 +1156,7 @@ export default function AdminSettings() {
                       </Select>
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor="birthday_discount">{t('settings:birthday_discount', 'Скидка на день рождения')}</Label>
                       <Input
                         id="birthday_discount"
@@ -1760,7 +1760,7 @@ export default function AdminSettings() {
 
                     <div className="space-y-6">
                       {/* Subscription Type */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="subscription_type">{t('settings:subscription_type')} *</Label>
                         <Select
                           value={broadcastForm.subscription_type}
@@ -1780,7 +1780,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Channels */}
-                      <div>
+                      <div className="space-y-2">
                         <Label>{t('settings:sending_channels')} *</Label>
                         <div className="flex gap-4 mt-2">
                           <button
@@ -1822,7 +1822,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Target Role (optional) */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="target_role">{t('settings:target_role_optional')}</Label>
                         <Select
                           value={broadcastForm.target_role}
@@ -1844,7 +1844,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* User Selection */}
-                      <div>
+                      <div className="space-y-2">
                         <Label className="text-sm font-medium text-gray-700 mb-2 block">
                           {t('settings:select_recipients')}
                         </Label>
@@ -1944,7 +1944,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Subject */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="subject">{t('settings:subject_email')} *</Label>
                         <Input
                           id="subject"
@@ -1956,7 +1956,7 @@ export default function AdminSettings() {
                       </div>
 
                       {/* Message */}
-                      <div>
+                      <div className="space-y-2">
                         <Label htmlFor="message">{t('settings:message')} *</Label>
                         <Textarea
                           id="message"
@@ -2319,7 +2319,7 @@ export default function AdminSettings() {
               </p>
 
               <div className="space-y-4 max-w-md">
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="deletePassword">{t('your_password')} *</Label>
                   <Input
                     id="deletePassword"
@@ -2331,7 +2331,7 @@ export default function AdminSettings() {
                   />
                 </div>
 
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="deleteConfirm">
                     {t('type_delete_to_confirm_label')}
                   </Label>

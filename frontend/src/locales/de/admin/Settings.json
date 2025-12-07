@@ -296,5 +296,6 @@
   "subscription_training": "Schul-und Berufsbildung",
   "subscription_training_desc": "Informationen zu Schulungen und Lernmöglichkeiten",
   "subscription_client_bookings": "Neue Kundenrekorde",
-  "subscription_client_bookings_desc": "Benachrichtigungen über neue Beiträge für Sie"
+  "subscription_client_bookings_desc": "Benachrichtigungen über neue Beiträge für Sie",
+  "reminder_label": "Erinnerung für"
 }
