@@ -204,6 +204,17 @@ def run_all_migrations():
         print(f"⚠️  Ошибка при заполнении данными: {e}")
 
     # ========================================================================
+    # CLEAN SERVICE TRANSLATIONS
+    # ========================================================================
+    print_header("ОЧИСТКА ПЕРЕВОДОВ УСЛУГ")
+    try:
+        from scripts.maintenance.clean_all_service_translations import clean_all_service_translations
+        clean_all_service_translations()
+        print("✅ Переводы услуг очищены")
+    except Exception as e:
+        print(f"⚠️  Ошибка при очистке переводов: {e}")
+
+    # ========================================================================
     # SEEDING PUBLIC CONTENT (FAQ & REVIEWS)
     # ========================================================================
     print_header("ЗАПОЛНЕНИЕ ПУБЛИЧНОГО КОНТЕНТА (FAQ & REVIEWS)")

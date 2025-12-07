@@ -52,14 +52,14 @@
   },
   "services": {
     "items": [
-      "Permanent eyebrow makeup",
-      "Manicure",
-      "Pedicure",
-      "Facial massage",
-      "Eyelash extensions",
-      "Haircut and styling",
-      "Hair coloring",
-      "Facial cleansing"
+      "Перманентный макияж бровей",
+      "Маникюр",
+      "Педикюр",
+      "Массаж лица",
+      "Наращивание ресниц",
+      "Стрижка и укладка",
+      "Окрашивание волос",
+      "Чистка лица"
     ]
   },
   "team": {

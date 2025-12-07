@@ -9,22 +9,34 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export function ServiceDetail() {
-    const { t, i18n } = useTranslation(['public_landing', 'common']);
+    const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
     const language = i18n.language;
     const { category } = useParams();
     const navigate = useNavigate();
     const [salonInfo, setSalonInfo] = useState<any>({});
-    const [services, setServices] = useState<any[]>([]);
     const [masters, setMasters] = useState<any[]>([]);
+
+    // Load services from i18n locale files instead of API
+    const servicesData = t('items', { returnObjects: true, ns: 'public_landing/services' }) as Record<string, any> || {};
+
+    // Convert services object to array
+    const services = Object.entries(servicesData).map(([key, service]: [string, any]) => ({
+        id: key,
+        service_key: key,
+        name: service.name || '',
+        description: service.description || '',
+        price: service.price || service.min_price || 0,
+        min_price: service.min_price,
+        max_price: service.max_price,
+        duration: service.duration || '',
+        category: service.category || 'other',
+        currency: service.currency || 'AED'
+    }));
 
     useEffect(() => {
         apiClient.getSalonInfo()
             .then(setSalonInfo)
             .catch(err => console.error('Error loading salon info:', err));
-
-        apiClient.getPublicServices()
-            .then(setServices)
-            .catch(err => console.error('Error loading services:', err));
 
         // Load masters/employees
         fetch('/api/employees')
@@ -34,13 +46,13 @@ export function ServiceDetail() {
     }, []);
 
     // Filter services by category
-    const categoryServices = Array.isArray(services) ? services.filter(s => {
+    const categoryServices = services.filter(s => {
         const cat = s.category?.toLowerCase() || '';
-        if (category === 'nails') return cat.includes('маникюр') || cat.includes('педикюр') || cat.includes('manicure') || cat.includes('pedicure');
-        if (category === 'hair') return cat.includes('волос') || cat.includes('hair');
-        if (category === 'makeup') return cat.includes('макияж') || cat.includes('makeup') || cat.includes('косметолог');
+        if (category === 'nails') return cat.includes('nail') || cat.includes('тырнақ') || cat.includes('ногт') || cat.includes('manicure') || cat.includes('pedicure');
+        if (category === 'hair') return cat.includes('hair') || cat.includes('шаш') || cat.includes('волос');
+        if (category === 'makeup') return cat.includes('makeup') || cat.includes('макияж') || cat.includes('косметолог') || cat.includes('brow') || cat.includes('lash') || cat.includes('қас') || cat.includes('кірпік');
         return false;
-    }) : [];
+    });
 
     const getCategoryInfo = () => {
         switch (category) {
@@ -96,7 +108,7 @@ export function ServiceDetail() {
                                 onClick={scrollToBooking}
                                 className="px-12 py-4 bg-[#2d2d2d] text-white rounded-full hover:bg-[#1a1a1a] transition-colors"
                             >
-                                {t('bookNow')}
+                                {t('bookNow', { ns: 'public_landing' })}
                             </button>
                         </div>
                         <div className="relative h-[500px] rounded-3xl overflow-hidden">
@@ -111,7 +123,7 @@ export function ServiceDetail() {
                     {/* Services & Pricing */}
                     {categoryServices.length > 0 && (
                         <div className="bg-white rounded-3xl p-8 lg:p-12 mb-12">
-                            <h2 className="text-3xl text-[#2d2d2d] mb-8">{t('ourServices')}</h2>
+                            <h2 className="text-3xl text-[#2d2d2d] mb-8">{t('ourServices', { ns: 'public_landing' })}</h2>
                             <div className="space-y-6">
                                 {categoryServices.map((service, index) => (
                                     <div

@@ -55,6 +55,7 @@
   "price_response_template": "Plantilla de respuesta de precio",
   "real_dialogues_for_training": "Diálogos reales para aprender",
   "recommended_length": "Se recomiendan entre 200 y 400 caracteres. Cuanto menos, más cortas serán las respuestas del robot.",
+  "response_style": "",
   "safety_and_ethics": "Seguridad y Ética",
   "safety_rules": "Reglas de seguridad",
   "save_all": "Guardar todo",

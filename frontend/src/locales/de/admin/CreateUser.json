@@ -1,5 +1,6 @@
 {
   "back_to_users": "Zurück zu den Benutzern",
+  "create_and_assign_services": "Create User & Assign Services",
   "create_user": "Erstellen Sie einen Benutzer",
   "creating": "Schaffung...",
   "email_hint": "Optional. Um Ihr Passwort wiederherzustellen",
@@ -10,6 +11,7 @@
   "full_name_label": "Vollständiger Name *",
   "full_name_placeholder": "Iwanow Iwan Iwanowitsch",
   "full_name_required": "Name erforderlich",
+  "no_position_found": "No position found.",
   "password_hint": "Mindestens 6 Zeichen",
   "password_label": "Passwort *",
   "password_min_length": "Das Passwort muss mindestens 6 Zeichen lang sein",
@@ -30,6 +32,7 @@
   "role_manager_desc": "Akten- und Kundenverwaltung",
   "role_marketer": "Vermarkter",
   "role_sales": "Verkäufe",
+  "search_position": "Search position...",
   "title": "Einen Benutzer erstellen",
   "user_created": "Benutzer erfolgreich erstellt",
   "username_hint": "Mindestens 3 Zeichen. Wird zur Anmeldung verwendet",

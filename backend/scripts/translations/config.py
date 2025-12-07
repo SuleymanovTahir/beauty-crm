@@ -16,7 +16,7 @@ TRANSLATION_CONFIG = {
     },
     "public_reviews": {
         "id_field": "id",
-        "fields": ["text_ru", "author_name"],
+        "fields": ["text_ru", "author_name", "employee_name", "employee_position"],
         "where": "is_active = TRUE"
     },
     "public_faq": {
