@@ -13,6 +13,30 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from scripts.testing.data.seed_test_data import SERVICES_DATA
 
+def validate_service_translations(service):
+    """Validate service has proper translations to avoid auto-translation errors"""
+    warnings = []
+    
+    # Check Russian translation exists
+    if not service.get('name_ru'):
+        warnings.append(f"⚠️  {service['name']}: missing name_ru (will auto-translate)")
+    
+    # Check for suspicious patterns that indicate bad auto-translation
+    suspicious_patterns = {
+        'под оружием': 'under arms mistranslation',
+        'руководитель': 'head mistranslation', 
+        'стоун': 'stone mistranslation',
+        'бразильский$': 'brazilian without context',
+    }
+    
+    if service.get('name_ru'):
+        import re
+        for pattern, issue in suspicious_patterns.items():
+            if re.search(pattern, service['name_ru'].lower()):
+                warnings.append(f"⚠️  {service['name']}: suspicious '{service['name_ru']}' ({issue})")
+    
+    return warnings
+
 def seed_production_data():
     conn = get_db_connection()
     c = conn.cursor()
@@ -24,7 +48,13 @@ def seed_production_data():
         log_info("   📦 Seeding Services...", "seeding")
         
         added_services = 0
+        validation_warnings = []
+        
         for s in SERVICES_DATA:
+            # Validate translations
+            warnings = validate_service_translations(s)
+            validation_warnings.extend(warnings)
+            
             # Check if exists
             c.execute("SELECT id FROM services WHERE service_key = %s", (s['key'],))
             if not c.fetchone():
@@ -53,6 +83,14 @@ def seed_production_data():
                 added_services += 1
         
         log_info(f"   ✅ Added {added_services} new services", "seeding")
+        
+        # Show validation warnings
+        if validation_warnings:
+            log_info(f"\n   ⚠️  Translation warnings ({len(validation_warnings)}):", "seeding")
+            for warning in validation_warnings[:10]:  # Show first 10
+                log_info(f"      {warning}", "seeding")
+            if len(validation_warnings) > 10:
+                log_info(f"      ... and {len(validation_warnings) - 10} more", "seeding")
 
         # 2. Seed Banners
         log_info("   🖼 Seeding Banners...", "seeding")

@@ -13,7 +13,7 @@ import LanguageSwitcher from "../../components/LanguageSwitcher";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { t } = useTranslation('auth/Register');
+  const { t } = useTranslation('auth/register');
   const [formData, setFormData] = useState({
     username: "",
     password: "",

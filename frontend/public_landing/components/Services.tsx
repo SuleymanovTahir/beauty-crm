@@ -2,45 +2,47 @@
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../src/components/ui/tabs";
 import { Button } from "../../src/components/ui/button";
-import { apiClient } from "../../src/api/client";
 import { useTranslation } from "react-i18next";
 import { Hand, Scissors, Sparkles, Heart, Gift } from "lucide-react";
 
-interface Service {
-  id: number;
-  name: string;
-  price: number;
-  duration: number;
-  category: string;
-  description?: string;
-  currency?: string;
-  name_ru?: string;
-  description_ru?: string;
-  [key: string]: any;
-}
+
 
 export function Services() {
-  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
-  const [services, setServices] = useState<Service[]>([]);
+  const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
   const [loading, setLoading] = useState(true);
 
+  // Load services from i18n locale files instead of API
+  const servicesData = t('items', { returnObjects: true, ns: 'public_landing/services' }) as Record<string, any> || {};
+
   useEffect(() => {
-    apiClient.getPublicServices()
-      .then((data: any) => {
-        setServices(Array.isArray(data) ? data : []);
-      })
-      .catch(err => console.error('Error loading services:', err))
-      .finally(() => setLoading(false));
-  }, [t]);
+    // Simulate loading delay for smooth transition
+    const timer = setTimeout(() => setLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, [i18n.language]);
+
+  // Convert services object to array
+  const services = Object.entries(servicesData).map(([key, service]: [string, any]) => ({
+    id: key,
+    service_key: key,
+    name: service.name || '',
+    description: service.description || '',
+    price: service.price || service.min_price || 0,
+    min_price: service.min_price,
+    max_price: service.max_price,
+    duration: service.duration || '',
+    category: service.category || 'other',
+    currency: service.currency || 'AED'
+  }));
 
   // Helper to categorize services
   const getCategory = (serviceCategory: string | null | undefined) => {
     const cat = (serviceCategory || '')?.toLowerCase();
-    if (cat.includes('маникюр') || cat.includes('педикюр') || cat.includes('manicure') || cat.includes('pedicure') || cat.includes('nails') || cat.includes('nail')) return 'nails';
-    if (cat.includes('волос') || cat.includes('hair') || cat.includes('стриж') || cat.includes('cut') || cat.includes('color') || cat.includes('окрашивание')) return 'hair';
-    if (cat.includes('макияж') || cat.includes('makeup') || cat.includes('бров') || cat.includes('brow') || cat.includes('ресниц') || cat.includes('lash')) return 'makeup';
-    if (cat.includes('косметолог') || cat.includes('cosmetolog') || cat.includes('face') || cat.includes('лицо') || cat.includes('beauty')) return 'beauty';
-    return 'other'; // New category for unmatched items
+    if (cat.includes('nail') || cat.includes('тырнақ') || cat.includes('ногт') || cat.includes('manicure') || cat.includes('pedicure')) return 'nails';
+    if (cat.includes('hair') || cat.includes('шаш') || cat.includes('волос') || cat.includes('стриж') || cat.includes('cut') || cat.includes('color')) return 'hair';
+    if (cat.includes('brow') || cat.includes('lash') || cat.includes('қас') || cat.includes('кірпік') || cat.includes('бров') || cat.includes('ресниц') || cat.includes('permanent')) return 'makeup';
+    if (cat.includes('face') || cat.includes('бет') || cat.includes('лицо') || cat.includes('массаж') || cat.includes('massage') || cat.includes('wax') || cat.includes('балауыз')) return 'beauty';
+    if (cat.includes('promo') || cat.includes('промо') || cat.includes('акция')) return 'promo';
+    return 'other';
   };
 
   const groupedServices = services.reduce((acc, service) => {
@@ -48,16 +50,16 @@ export function Services() {
     if (!acc[category]) acc[category] = [];
     acc[category].push(service);
     return acc;
-  }, {} as Record<string, Service[]>);
+  }, {} as Record<string, typeof services>);
 
   // Translation mapping for tabs
   const getTabLabel = (value: string) => {
     switch (value) {
-      case 'nails': return t('nails') || "Nails";
-      case 'hair': return t('hair') || "Hair";
-      case 'makeup': return t('brows') || "Brows & Lashes";
-      case 'beauty': return t('cosmetology') || "Cosmetology";
-      case 'other': return t('otherServices') || "Other Services";
+      case 'nails': return t('nails', { ns: 'public_landing' }) || "Nails";
+      case 'hair': return t('hair', { ns: 'public_landing' }) || "Hair";
+      case 'makeup': return t('brows', { ns: 'public_landing' }) || "Brows & Lashes";
+      case 'beauty': return t('cosmetology', { ns: 'public_landing' }) || "Cosmetology";
+      case 'other': return t('otherServices', { ns: 'public_landing' }) || "Other Services";
       default: return value;
     }
   };
@@ -85,13 +87,13 @@ export function Services() {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-            {t('servicesTag') || "Our Services"}
+            {t('servicesTag', { ns: 'public_landing' }) || "Our Services"}
           </p>
           <h2 className="text-4xl sm:text-5xl mb-6 text-[var(--heading)]">
-            {t('servicesTitle') || "Choose Your Service"}
+            {t('servicesTitle', { ns: 'public_landing' }) || "Choose Your Service"}
           </h2>
           <p className="text-lg text-foreground/70">
-            {t('servicesDesc') || "We offer a wide range of premium beauty services."}
+            {t('servicesDesc', { ns: 'public_landing' }) || "We offer a wide range of premium beauty services."}
           </p>
         </div>
 
@@ -119,47 +121,40 @@ export function Services() {
           {Object.entries(groupedServices).map(([category, categoryServices]) => (
             <TabsContent key={category} value={category} className="mt-0">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                {categoryServices.map((service, index) => {
-                  // Use API provided localized fields
-                  const currentLang = i18n.language;
-                  const localizedName = service[`name_${currentLang}`] || service.name;
-                  const localizedDescription = service[`description_${currentLang}`] || service.description;
-                  const localizedDuration = service[`duration_${currentLang}`] || service.duration;
+                {categoryServices.map((service, index) => (
+                  <div
+                    key={index}
+                    className="group bg-card border border-border/50 rounded-2xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300"
+                  >
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2">
+                      {service.name}
+                    </h3>
 
-                  return (
-                    <div
-                      key={index}
-                      className="group bg-card border border-border/50 rounded-2xl p-4 sm:p-5 hover:shadow-lg transition-all duration-300"
-                    >
-                      <h3 className="text-base sm:text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2">
-                        {localizedName}
-                      </h3>
+                    {service.description && (
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{service.description}</p>
+                    )}
 
-                      {localizedDescription && (
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{localizedDescription}</p>
-                      )}
-
-                      <div className="flex items-center justify-between mt-auto pt-2">
-                        {localizedDuration && (
-                          <span className="text-xs sm:text-sm text-muted-foreground">
-                            {(() => {
-                              const duration = String(localizedDuration).trim();
-                              // If it contains only digits, append 'min'
-                              if (/^\d+$/.test(duration)) {
-                                return `${duration} min`;
-                              }
-                              // Otherwise assume it's already formatted (contains letters, symbols, etc.)
-                              return duration;
-                            })()}
-                          </span>
-                        )}
-                        <span className="text-base sm:text-lg font-bold text-pink-600 ml-auto">
-                          {service.price} {service.currency || 'AED'}
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      {service.duration && (
+                        <span className="text-xs sm:text-sm text-muted-foreground">
+                          {(() => {
+                            const duration = String(service.duration).trim();
+                            if (/^\d+$/.test(duration)) {
+                              return `${duration} min`;
+                            }
+                            return duration;
+                          })()}
                         </span>
-                      </div>
+                      )}
+                      <span className="text-base sm:text-lg font-bold text-pink-600 ml-auto">
+                        {service.min_price && service.max_price ?
+                          `${service.min_price} — ${service.max_price}` :
+                          service.price
+                        } {service.currency}
+                      </span>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
 
               <div className="text-center mt-12">

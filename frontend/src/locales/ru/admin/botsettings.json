@@ -55,6 +55,7 @@
   "price_response_template": "Шаблон ответа на цены",
   "real_dialogues_for_training": "Реальные диалоги для обучения",
   "recommended_length": "Рекомендуется 200-400 символов. Чем меньше - тем короче ответы бота.",
+  "response_style": "",
   "safety_and_ethics": "Безопасность и этика",
   "safety_rules": "Правила безопасности",
   "save_all": "Сохранить все",

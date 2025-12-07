@@ -10,50 +10,42 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Calendar, Phone } from "lucide-react";
 
-interface FAQItem {
-    id: number;
-    question: string;
-    answer: string;
-    category: string;
-}
-
 export function FAQ() {
-    const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
-    const language = i18n.language;
-    const [faqs, setFaqs] = useState<FAQItem[]>([]);
-    const [salonPhone, setSalonPhone] = useState<string>("+971 XX XXX XXXX");
+    const { t, i18n } = useTranslation(['public_landing/faq', 'public_landing', 'common']);
     const [loading, setLoading] = useState(true);
+    // Updated default phone
+    const salonPhone = "+971 58 533 5555";
+
+    // Load FAQ from i18n locale files instead of API
+    const faqData = t('items', { returnObjects: true, ns: 'public_landing/faq' }) as Array<any> || [];
+
+    // Fallback if data is not an array (e.g. key failed to load)
+    const faqs = Array.isArray(faqData) ? faqData.map((item, index) => ({
+        id: index,
+        question: item.question || '',
+        answer: item.answer || '',
+        category: 'general'
+    })) : [];
 
     useEffect(() => {
-        const fetchData = async () => {
+        // Fetch salon info only, skipping FAQ API
+        const fetchSalonInfo = async () => {
             try {
-                const faqResponse = await fetch(`/api/public/faq?language=${language}`);
-                const faqData = await faqResponse.json();
-                const rawFaqs = Array.isArray(faqData) ? faqData : (faqData.faq || []);
+                // Simulate loading for smoother UX
+                setLoading(false);
 
-                // Use API provided localized fields
-                const mappedFaqs = rawFaqs.map((item: any) => ({
-                    ...item,
-                    question: item.question || item.question_ru || "",
-                    answer: item.answer || item.answer_ru || ""
-                }));
-
-                setFaqs(mappedFaqs);
-
-                const salonResponse = await fetch(`/api/public/salon-info?language=${language}`);
-                const salonData = await salonResponse.json();
-                if (salonData.phone) {
-                    setSalonPhone(salonData.phone);
-                }
+                // Optional: still fetch dynamic salon info like phone if needed
+                // const salonResponse = await fetch(`/api/public/salon-info?language=${i18n.language}`);
+                // const salonData = await salonResponse.json();
+                // if (salonData.phone) setSalonPhone(salonData.phone);
             } catch (error) {
-                console.error('Error loading FAQ:', error);
-            } finally {
+                console.error('Error loading salon info:', error);
                 setLoading(false);
             }
         };
 
-        fetchData();
-    }, [language, t]);
+        fetchSalonInfo();
+    }, [i18n.language]);
 
     if (loading) {
         return (
@@ -72,13 +64,13 @@ export function FAQ() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
                     <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-                        {t('faqTag', { defaultValue: 'FAQ' })}
+                        {t('faqTag', { ns: 'public_landing', defaultValue: 'FAQ' })}
                     </p>
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6 text-[var(--heading)]">
-                        {t('faqTitle', { defaultValue: 'Часто задаваемые вопросы' })}
+                        {t('faqTitle', { ns: 'public_landing', defaultValue: 'Часто задаваемые вопросы' })}
                     </h2>
                     <p className="text-base sm:text-lg text-foreground/70">
-                        {t('faqDesc', { defaultValue: 'Ответы на популярные вопросы наших клиентов' })}
+                        {t('faqDesc', { ns: 'public_landing', defaultValue: 'Ответы на популярные вопросы наших клиентов' })}
                     </p>
                 </div>
 
@@ -128,7 +120,7 @@ export function FAQ() {
                             className="w-full overflow-hidden px-4 hero-button-primary"
                         >
                             <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
-                            <span className="truncate">{t('bookNow', { defaultValue: "Записаться онлайн" })}</span>
+                            <span className="truncate">{t('bookNow', { ns: 'public_landing', defaultValue: "Записаться онлайн" })}</span>
                         </Button>
                     </div>
                 </div>

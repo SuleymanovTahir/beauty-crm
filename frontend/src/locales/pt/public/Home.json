@@ -52,14 +52,14 @@
   },
   "services": {
     "items": [
-      "Maquiagem permanente de sobrancelha",
-      "Manicure",
-      "Pedicure",
-      "Massagem facial",
-      "Extensões de cílios",
-      "Corte de cabelo e estilo",
-      "Coloração de cabelo",
-      "Limpeza facial"
+      "Перманентный макияж бровей",
+      "Маникюр",
+      "Педикюр",
+      "Массаж лица",
+      "Наращивание ресниц",
+      "Стрижка и укладка",
+      "Окрашивание волос",
+      "Чистка лица"
     ]
   },
   "team": {

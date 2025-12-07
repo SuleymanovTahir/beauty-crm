@@ -55,6 +55,7 @@
   "price_response_template": "मूल्य प्रतिक्रिया टेम्पलेट",
   "real_dialogues_for_training": "सीखने के लिए वास्तविक संवाद",
   "recommended_length": "200-400 वर्णों की अनुशंसा की जाती है. जितना कम होगा, बॉट की प्रतिक्रियाएँ उतनी ही कम होंगी।",
+  "response_style": "",
   "safety_and_ethics": "सुरक्षा और नैतिकता",
   "safety_rules": "सुरक्षा नियम",
   "save_all": "सब को सुरक्षित करें",

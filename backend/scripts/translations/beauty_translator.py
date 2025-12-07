@@ -10,7 +10,7 @@ from typing import Dict, Optional
 # Публичный API LibreTranslate
 LIBRETRANSLATE_URL = "https://libretranslate.com/translate"
 
-# Словарь терминов салона красоты (не переводим через API)
+# Словарь терминов салона красоты (двунаправленный: en<->ru)
 BEAUTY_SALON_TERMS = {
     # Длительность
     '15min': '15 мин',
@@ -28,7 +28,7 @@ BEAUTY_SALON_TERMS = {
     '3h 30min': '3 часа 30 мин',
     '4h': '4 часа',
     
-    # Услуги маникюра/педикюра
+    # Услуги маникюра/педикюра (en->ru)
     'manicure': 'маникюр',
     'pedicure': 'педикюр',
     'gel polish': 'гель-лак',
@@ -37,8 +37,10 @@ BEAUTY_SALON_TERMS = {
     'french manicure': 'французский маникюр',
     'spa manicure': 'SPA-маникюр',
     'spa pedicure': 'SPA-педикюр',
+    'nail correction': 'коррекция ногтя',
+    'nail repair': 'коррекция ногтя',
     
-    # Услуги для волос
+    # Услуги для волос (en->ru)
     'haircut': 'стрижка',
     'hair coloring': 'окрашивание волос',
     'hair styling': 'укладка волос',
@@ -49,7 +51,7 @@ BEAUTY_SALON_TERMS = {
     'ombre': 'омбре',
     'hair botox': 'ботокс для волос',
     
-    # Эпиляция/депиляция
+    # Эпиляция/депиляция (en->ru)
     'waxing': 'восковая эпиляция',
     'sugaring': 'шугаринг',
     'laser hair removal': 'лазерная эпиляция',
@@ -63,20 +65,20 @@ BEAUTY_SALON_TERMS = {
     'underarms': 'подмышки',
     'upper lip': 'верхняя губа',
     
-    # Брови/ресницы
+    # Брови/ресницы (en->ru)
     'eyebrow shaping': 'коррекция бровей',
     'eyebrow tinting': 'окрашивание бровей',
     'eyelash extensions': 'наращивание ресниц',
     'eyelash lift': 'ламинирование ресниц',
     'brow lamination': 'ламинирование бровей',
     
-    # Макияж
+    # Макияж (en->ru)
     'makeup': 'макияж',
     'bridal makeup': 'свадебный макияж',
     'evening makeup': 'вечерний макияж',
     'day makeup': 'дневной макияж',
     
-    # Косметология
+    # Косметология (en->ru)
     'facial': 'уход за лицом',
     'facial cleansing': 'чистка лица',
     'peeling': 'пилинг',
@@ -84,12 +86,29 @@ BEAUTY_SALON_TERMS = {
     'facial massage': 'массаж лица',
     'body massage': 'массаж тела',
     
-    # Общие термины
+    # Общие термины (en->ru)
     'booking': 'запись',
     'appointment': 'запись',
+    'post': 'запись',  # Исправление частой ошибки
+    'record': 'запись',  # Исправление частой ошибки
     'consultation': 'консультация',
     'master': 'мастер',
     'specialist': 'специалист',
+    'reminder': 'напоминание',
+    'reminders': 'напоминания',
+    
+    # Русские термины (ru->en) - для обратного перевода
+    'запись': 'booking',
+    'записи': 'bookings',
+    'записей': 'bookings',
+    'напоминание': 'reminder',
+    'напоминания': 'reminders',
+    'напоминаний': 'reminders',
+    'коррекция': 'correction',
+    'коррекция ногтя': 'nail correction',
+    'восстановление': 'restoration',
+    'восстановление ногтя': 'nail restoration',
+    # НЕ используем "починка" и "ремонт" для ногтей!
 }
 
 class BeautySalonTranslator:
@@ -113,33 +132,58 @@ class BeautySalonTranslator:
         """
         if not text or not text.strip():
             return text
+        
+        # Список исключений - не переводить эти термины
+        EXCLUSIONS = {
+            # Валюты
+            'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR',
+            # Технические термины
+            'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API',
+            # Коды и аббревиатуры
+            'UV', 'LED', '2D', '3D', '4D', '5D', 'ML',
+        }
+        
+        # Проверяем исключения (точное совпадение)
+        if text.strip().upper() in EXCLUSIONS:
+            return text
             
         # Проверяем кэш
         cache_key = f"{text}:{source}:{target}"
         if cache_key in self.cache:
             return self.cache[cache_key]
         
-        # Проверяем словарь терминов (только для en->ru)
-        if source == 'en' and target == 'ru':
-            text_lower = text.lower().strip()
-            if text_lower in BEAUTY_SALON_TERMS:
-                result = BEAUTY_SALON_TERMS[text_lower]
-                self.cache[cache_key] = result
-                return result
+        # Проверяем словарь терминов (работает для всех языковых пар)
+        text_lower = text.lower().strip()
+        if text_lower in BEAUTY_SALON_TERMS:
+            result = BEAUTY_SALON_TERMS[text_lower]
+            self.cache[cache_key] = result
+            return result
+        
+        # Универсальный контекст для всех языков
+        # Определяем контекстный префикс в зависимости от исходного языка
+        context_prefixes = {
+            'ru': '[Салон красоты]',
+            'en': '[Beauty salon]',
+            'ar': '[صالون تجميل]',
+            'es': '[Salón de belleza]',
+            'de': '[Schönheitssalon]',
+            'fr': '[Salon de beauté]',
+            'pt': '[Salão de beleza]',
+            'hi': '[सौंदर्य सैलून]',
+            'kk': '[Сұлулық салоны]',
+        }
         
         # Переводим через API с контекстом
         try:
-            # Добавляем контекст для лучшего перевода
+            # Добавляем контекст для коротких фраз (вероятно термины)
             context_text = text
-            if source == 'en' and len(text.split()) <= 3:
-                # Для коротких фраз добавляем контекст
-                context_text = f"beauty salon service: {text}"
+            add_context = len(text.split()) <= 5  # Короткие фразы до 5 слов
+            
+            if add_context and source in context_prefixes:
+                context_prefix = context_prefixes[source]
+                context_text = f"{context_prefix} {text}"
             
             self.request_count += 1
-            
-            # Небольшая задержка чтобы не превысить лимиты
-            if self.request_count % 5 == 0:
-                time.sleep(1)
             
             response = requests.post(LIBRETRANSLATE_URL, data={
                 'q': context_text,
@@ -153,14 +197,18 @@ class BeautySalonTranslator:
                 translated = result.get('translatedText', text)
                 
                 # Убираем добавленный контекст из результата
-                if context_text != text:
-                    # Убираем "услуга салона красоты:" и подобное
-                    translated = translated.replace('услуга салона красоты:', '').strip()
-                    translated = translated.replace('Услуга салона красоты:', '').strip()
-                    translated = translated.replace('beauty salon service:', '').strip()
+                if add_context:
+                    # Убираем все возможные варианты контекстного префикса
+                    for prefix in context_prefixes.values():
+                        translated = translated.replace(prefix, '').strip()
+                    # Убираем квадратные скобки если остались
+                    translated = translated.replace('[', '').replace(']', '').strip()
                 
                 self.cache[cache_key] = translated
                 return translated
+            elif response.status_code == 429:
+                # Rate limiting - просто возвращаем оригинал без вывода
+                return text
             else:
                 print(f"⚠️  API error {response.status_code} for: {text}")
                 return text

@@ -55,6 +55,7 @@
   "price_response_template": "Preisantwortvorlage",
   "real_dialogues_for_training": "Echte Dialoge zum Lernen",
   "recommended_length": "Empfohlen werden 200-400 Zeichen. Je weniger, desto kürzer sind die Antworten des Bots.",
+  "response_style": "",
   "safety_and_ethics": "Sicherheit und Ethik",
   "safety_rules": "Sicherheitsregeln",
   "save_all": "Alles speichern",
