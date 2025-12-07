@@ -17,7 +17,7 @@
   "all_time": "for all time",
   "allergies": "Allergies",
   "allRightsReserved": "All rights reserved.",
-  "back": "",
+  "back": "Back",
   "back_to_bookings": "Return to bookings",
   "back_to_clients": "Return to clients",
   "booking": "Booking",
@@ -317,5 +317,10 @@
   "visitSalon": "Visit Our Salon",
   "workingHours": "Working Hours",
   "yearsExperience": "years of experience",
-  "yourName": "Your Name"
+  "yourName": "Your Name",
+  "url_link": "Link",
+  "upload_file": "Upload File",
+  "uploading": "Uploading...",
+  "choose_file": "Choose File",
+  "file_upload_error": "File upload error"
 }

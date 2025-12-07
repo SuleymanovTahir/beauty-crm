@@ -1,253 +1,1344 @@
 {
-  "users": [
+  "public_reviews": [
     {
-      "id": 2,
+      "id": 5,
       "fields": {
-        "full_name": {
-          "ru": "Симо",
-          "en": "Simo",
-          "ar": "سيمو",
-          "es": "Simo",
-          "de": "Simo",
-          "fr": "Simo",
-          "hi": "सिमो",
-          "kk": "Симо",
-          "pt": "Simo",
-          "detected_language": "en"
-        },
-        "position": {
-          "ru": "Стилист-парикмахер",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro",
-          "detected_language": "en"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "full_name": {
-          "ru": "Большая Часть Этого",
-          "en": "Mestan",
-          "ar": "معظمها",
-          "es": "Mestan",
-          "de": "Mestan",
-          "fr": "Mestan",
-          "hi": "इसमें से अधिकांश",
-          "kk": "Оның Көпшілігі",
-          "pt": "Mestan",
-          "detected_language": "is"
-        },
-        "position": {
-          "ru": "Стилист-парикмахер",
-          "en": "Hair Stylist",
-          "ar": "مصفف الشعر",
-          "es": "estilista",
-          "de": "Friseur",
-          "fr": "Coiffeur",
-          "hi": "बालों की स्टाइल बनाने वाला",
-          "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro",
-          "detected_language": "en"
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "فاطمة السيد",
+          "es": "Fátima Al Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "फातिमा अल-सईद",
+          "kk": "Фатима әл-Саид",
+          "pt": "Fátima Al-Sayed"
         }
       }
     },
     {
       "id": 4,
       "fields": {
-        "full_name": {
-          "ru": "Ляззат",
-          "en": "Lyazzat",
-          "ar": "ليازات",
-          "es": "Lyazzat",
-          "de": "Lyazzat",
-          "fr": "Lyazzat",
-          "hi": "लयज़त",
-          "kk": "Ляззат",
-          "pt": "Lyazzat",
-          "detected_language": "en"
-        },
-        "position": {
-          "ru": "Мастер ногтевого сервиса",
-          "en": "Nail Master",
-          "ar": "سيد الأظافر",
-          "es": "Maestro de uñas",
-          "de": "Nagelmeister",
-          "fr": "Maître des Ongles",
-          "hi": "नेल मास्टर",
-          "kk": "Тырнақ шебері",
-          "pt": "Mestre de unhas",
-          "detected_language": "en"
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.4.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "ماريا جونزاليس",
+          "es": "María González",
+          "de": "Maria Gonzalez",
+          "fr": "Maria González",
+          "hi": "मारिया गोंजालेज",
+          "kk": "Мария Гонсалес",
+          "pt": "Maria González"
         }
       }
     },
     {
-      "id": 5,
+      "id": 2,
       "fields": {
-        "full_name": {
-          "ru": "Гуля",
-          "en": "Gulya",
-          "ar": "غوليا",
-          "es": "Gulya",
-          "de": "Gulya",
-          "fr": "Gulya",
-          "hi": "गुल्या",
-          "kk": "Гуля",
-          "pt": "Gulya",
-          "detected_language": "az"
-        },
-        "position": {
-          "ru": "Ногти/Вощение",
-          "en": "Nail/Waxing",
-          "ar": "الأظافر/الصبح",
-          "es": "Uñas/Cera",
-          "de": "Nägel/Wachsen",
-          "fr": "Ongle/Épilation",
-          "hi": "नाखून/वैक्सिंग",
-          "kk": "Тырнақ / балауыздау",
-          "pt": "Prego/Depilação",
-          "detected_language": "en"
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.2.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "سارة جنكينز",
+          "es": "Sara Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "सारा जेनकिंस",
+          "kk": "Сара Дженкинс",
+          "pt": "Sarah Jenkins"
+        }
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": 91,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.91.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
         }
       }
     },
     {
-      "id": 6,
+      "id": 82,
       "fields": {
-        "full_name": {
-          "ru": "Дженнифер",
-          "en": "Jennifer",
-          "ar": "جنيفر",
-          "es": "Jennifer",
-          "de": "Jennifer",
-          "fr": "Jennifer",
-          "hi": "जेनिफर",
-          "kk": "Дженнифер",
-          "pt": "Jennifer",
-          "detected_language": "en"
-        },
-        "position": {
-          "ru": "Мастер ногтевого сервиса/Массажи",
-          "en": "Nail Master/Massages",
-          "ar": "ماجستير الأظافر/التدليك",
-          "es": "Maestro de uñas/Masajes",
-          "de": "Nagelmeister/Massagen",
-          "fr": "Maître des Ongles/Massages",
-          "hi": "नेल मास्टर/मालिश",
-          "kk": "Тырнақ қожайыны / массаж",
-          "pt": "Mestre de unhas/massagens",
-          "detected_language": "en"
+        "duration": {
+          "ru": "60",
+          "key": "services.82.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 98,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.98.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.8.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.29.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 67,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.67.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 73,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.73.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.13.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.49.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.59.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "fields": {
+        "duration": {
+          "ru": "1h 30min",
+          "key": "services.50.duration.d7cc86dd",
+          "en": "1h 30min",
+          "ar": "ساعة و30 دقيقة",
+          "es": "1h 30min",
+          "de": "1 Stunde 30 Minuten",
+          "fr": "Service salon de beauté 1h 30min",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा 30 मिनट",
+          "kk": "1 сағат 30мин",
+          "pt": "1h 30min"
+        }
+      }
+    },
+    {
+      "id": 83,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.83.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
         }
       }
     },
     {
       "id": 7,
       "fields": {
-        "full_name": {
-          "ru": "Турсунай",
-          "en": "Tursunay",
-          "ar": "تورسوناي",
-          "es": "Tursunay",
-          "de": "Tursunay",
-          "fr": "Tursunay",
-          "hi": "तुरसुनाई",
-          "kk": "Турсунай",
-          "pt": "Tursunay",
-          "detected_language": "ky"
-        },
-        "position": {
-          "ru": "Директор",
-          "en": "Director",
-          "ar": "مخرج",
-          "es": "Director",
-          "de": "Direktor",
-          "fr": "Directeur",
-          "hi": "निदेशक",
-          "kk": "Директор",
-          "pt": "Diretor",
-          "detected_language": "en"
+        "duration": {
+          "ru": "1h",
+          "key": "services.7.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.10.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 96,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.96.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "duration": {
+          "ru": "30min",
+          "key": "services.44.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "duration": {
+          "ru": "30min",
+          "key": "services.52.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30 دقيقة",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
+          "kk": "30мин",
+          "pt": "30min"
+        }
+      }
+    },
+    {
+      "id": 90,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.90.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.46.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.12.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.6.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.22.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.47.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.42.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 79,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.79.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.43.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.48.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.53.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.58.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 56,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.56.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 68,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.68.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 74,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.74.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 81,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.81.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 84,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.84.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.14.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 57,
+      "fields": {
+        "duration": {
+          "ru": "180",
+          "key": "services.57.duration.045117b0",
+          "en": "180",
+          "ar": "180",
+          "es": "180",
+          "de": "180",
+          "fr": "180",
+          "hi": "180",
+          "kk": "180",
+          "pt": "180"
+        }
+      }
+    },
+    {
+      "id": 85,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.85.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 88,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.88.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 99,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.99.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.45.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 63,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.63.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 64,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.64.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 72,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.72.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 77,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.77.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 92,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.92.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.20.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.9.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 86,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.86.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 87,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.87.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 94,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.94.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 97,
+      "fields": {
+        "duration": {
+          "ru": "90",
+          "key": "services.97.duration.8613985e",
+          "en": "90",
+          "ar": "90",
+          "es": "90",
+          "de": "90",
+          "fr": "90",
+          "hi": "90",
+          "kk": "90",
+          "pt": "90"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.11.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.15.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.16.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.17.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.36.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "duration": {
+          "ru": "1h",
+          "key": "services.40.duration.7c68645d",
+          "en": "1h",
+          "ar": "1 ساعة",
+          "es": "1h",
+          "de": "1h",
+          "fr": "Service salon de beauté 1h",
+          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
+          "kk": "1 сағат",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 80,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.80.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 89,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.89.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 93,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.93.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 95,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.95.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.60.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.54.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 55,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.55.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 61,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.61.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 62,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.62.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 66,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.66.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 69,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.69.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 76,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.76.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 65,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.65.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 78,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.78.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 71,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.71.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 70,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.70.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 75,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.75.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
         }
       }
     }
   ],
-  "public_reviews": [
+  "salon_settings": [
     {
       "id": 1,
       "fields": {
-        "text_ru": {
-          "ru": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.",
-          "en": "Amazing salon! ",
-          "ar": "صالون مذهل! السادة محترفون حقيقيون. لقد قمت بعمل مكياج حواجب دائم، وكانت النتيجة فاقت كل التوقعات. طبيعية جدا وجميلة.",
-          "es": "Salón increíble! Los maestros son verdaderos profesionales. Me maquillé las cejas permanentemente, el resultado superó todas las expectativas. Muy natural y hermoso.",
-          "de": "Toller Salon! Die Meister sind wahre Profis. Ich habe ein permanentes Augenbrauen-Make-up gemacht, das Ergebnis hat alle Erwartungen übertroffen. Sehr natürlich und schön.",
-          "fr": "Salon incroyable ! Les maîtres sont de vrais professionnels. J'ai fait un maquillage permanent des sourcils, le résultat a dépassé toutes les attentes. Très naturel et beau.",
-          "hi": "अद्भुत सैलून! स्वामी सच्चे पेशेवर हैं। मैंने स्थायी भौं मेकअप किया, परिणाम सभी अपेक्षाओं से अधिक रहा। बहुत ही प्राकृतिक और सुंदर.",
-          "kk": "Таңқаларлық салон! Магистрлер - бұл нағыз мамандар. Мен қастардың тұрақты макияжын жасадым, нәтиже барлық күткеннен асып түсті. Өте табиғи және әдемі.",
-          "pt": "Salão incrível! Os mestres são verdadeiros profissionais. Fiz maquiagem definitiva nas sobrancelhas, o resultado superou todas as expectativas. Muito natural e bonito.",
-          "detected_language": "ru"
+        "city": {
+          "ru": "Dubai",
+          "key": "salon_settings.1.city.23b998b1",
+          "en": "Dubai",
+          "ar": "Dubai",
+          "es": "Dubai",
+          "de": "Dubai",
+          "fr": "Dubai",
+          "hi": "Dubai",
+          "kk": "Dubai",
+          "pt": "Dubai"
         },
-        "author_name": {
-          "ru": "Анна Петрова",
-          "en": "Anna Petrova",
-          "ar": "آنا بتروفا",
-          "es": "Anna Petrová",
-          "de": "Anna Petrowa",
-          "fr": "Anna Petrova",
-          "hi": "अन्ना पेत्रोवा",
-          "kk": "Анна Петрова",
-          "pt": "Ana Petrova",
-          "detected_language": "co"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "text_ru": {
-          "ru": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!",
-          "en": "I've been going here for manicures and pedicures for a year now. ",
-          "ar": "لقد كنت أذهب إلى هنا من أجل عمليات تجميل الأظافر والباديكير منذ عام الآن. دائما نظيفة تماما ومعقمة وعالية الجودة. أوصي به لجميع أصدقائي!",
-          "es": "Llevo un año yendo aquí para hacerme manicura y pedicura. Siempre perfectamente limpio, esterilizado y de gran calidad. ¡Se lo recomiendo a todos mis amigos!",
-          "de": "Ich gehe jetzt seit einem Jahr zur Maniküre und Pediküre hierher. Immer perfekt sauber, steril und hochwertig. Ich empfehle es allen meinen Freunden!",
-          "fr": "Cela fait maintenant un an que je vais ici pour des manucures et des pédicures. Toujours parfaitement propre, stérile et de haute qualité. Je le recommande à tous mes amis !",
-          "hi": "मैं पिछले एक साल से यहां मैनीक्योर और पेडीक्योर के लिए जा रही हूं। हमेशा पूरी तरह से साफ, कीटाणुरहित और उच्च गुणवत्ता वाला। मैं अपने सभी दोस्तों को इसकी अनुशंसा करता हूँ!",
-          "kk": "Мен мұнда қазір бір жылдан бері маникюрдер мен педикерлер үшін бара жатқанмын. Әрқашан таза, зарарсыздандырылған және жоғары сапалы. Мен оны барлық достарыма ұсынамын!",
-          "pt": "Há um ano que venho aqui fazer manicure e pedicure. Sempre perfeitamente limpo, estéril e de alta qualidade. Recomendo a todos os meus amigos!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Елена Смирнова",
-          "en": "Elena Smirnova",
-          "ar": "ايلينا سميرنوفا",
-          "es": "Elena Smirnova",
-          "de": "Elena Smirnova",
-          "fr": "Elena Smirnova",
-          "hi": "ऐलेना स्मिर्नोवा",
-          "kk": "Елена Смирнов",
-          "pt": "Elena Smirnova",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 4,
-      "fields": {
-        "text_ru": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Incredible service. ",
-          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
-          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
-          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
-          "kk": "Керемет қызмет. Менде бет әлпеті болды, терісі жарқырайды. Мен сенімді боламын!",
-          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
-          "detected_language": "es"
+        "country": {
+          "ru": "UAE",
+          "key": "salon_settings.1.country.b6ae56d2",
+          "en": "UAE",
+          "ar": "الإمارات العربية المتحدة",
+          "es": "Emiratos Árabes Unidos",
+          "de": "Vereinigte Arabische Emirate",
+          "fr": "Émirats arabes unis",
+          "hi": "संयुक्त अरब अमीरात",
+          "kk": ">",
+          "pt": "Emirados Árabes Unidos"
         }
       }
     }

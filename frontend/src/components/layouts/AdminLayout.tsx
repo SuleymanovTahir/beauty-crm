@@ -88,7 +88,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
   const loadNotifications = async () => {
     try {
-      const data = await api.get('/notifications?unread_only=true&limit=10');
+      const data = await api.getNotifications(true, 10);
       setNotifications(data.notifications || []);
       setNotifCount(data.notifications?.length || 0);
     } catch (error) {
@@ -98,7 +98,7 @@ export default function AdminLayout({ user, onLogout }: AdminLayoutProps) {
 
   const markNotificationRead = async (id: number) => {
     try {
-      await api.post(`/notifications/${id}/read`, {});
+      await api.markNotificationRead(id);
       loadNotifications();
     } catch (error) {
       console.error('Error marking notification read:', error);

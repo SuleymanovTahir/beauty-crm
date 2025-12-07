@@ -131,74 +131,99 @@ def get_bot_analytics_summary(days: int = 30) -> dict:
     c = conn.cursor()
     
     try:
-        # Общее количество сессий
-        c.execute("""
-            SELECT COUNT(*) FROM bot_analytics 
-            WHERE session_started > NOW() - INTERVAL '%s days'
-        """, (days,))
-        total_sessions = c.fetchone()[0]
+        # 1. Summary Stats
+        c.execute(f"""
+            SELECT 
+                COUNT(*) as total,
+                COUNT(CASE WHEN session_started > NOW() - INTERVAL '7 days' THEN 1 END) as last_7d,
+                AVG(messages_count) as avg_msg,
+                COUNT(CASE WHEN booking_created = TRUE THEN 1 END) as bookings,
+                COUNT(CASE WHEN escalated_to_manager = TRUE THEN 1 END) as escalations,
+                COUNT(CASE WHEN cancellation_requested = TRUE THEN 1 END) as cancellations
+            FROM bot_analytics
+            WHERE session_started > NOW() - INTERVAL '{days} days'
+        """)
+        row = c.fetchone()
         
-        # Успешные записи
-        c.execute("""
-            SELECT COUNT(*) FROM bot_analytics 
-            WHERE booking_created = TRUE
-              AND session_started > NOW() - INTERVAL '%s days'
-        """, (days,))
-        bookings_created = c.fetchone()[0]
+        total_sessions = row[0] or 0
+        sessions_last_7d = row[1] or 0
+        avg_messages = float(row[2]) if row[2] else 0.0
+        bookings_created = row[3] or 0
+        escalations = row[4] or 0
+        cancellations = row[5] or 0
         
-        # Эскалации
-        c.execute("""
-            SELECT COUNT(*) FROM bot_analytics 
-            WHERE escalated_to_manager = TRUE
-              AND session_started > NOW() - INTERVAL '%s days'
-        """, (days,))
-        escalations = c.fetchone()[0]
-        
-        # Среднее кол-во сообщений
-        c.execute("""
-            SELECT AVG(messages_count) FROM bot_analytics 
-            WHERE outcome != 'in_progress'
-              AND session_started > NOW() - INTERVAL '%s days'
-        """, (days,))
-        avg_messages = c.fetchone()[0] or 0
-        
-        # Распределение по языкам
-        c.execute("""
-            SELECT language_detected, COUNT(*) FROM bot_analytics
-            WHERE session_started > NOW() - INTERVAL '%s days'
-              AND language_detected IS NOT NULL
-            GROUP BY language_detected
-        """, (days,))
-        languages = {row[0]: row[1] for row in c.fetchall()}
-        
-        # Конверсия (% записей от всех сессий)
         conversion_rate = (bookings_created / total_sessions * 100) if total_sessions > 0 else 0
         
-        # Популярные часы активности
-        c.execute("""
-            SELECT EXTRACT(HOUR FROM session_started) as hour, COUNT(*) as cnt
+        # 2. Daily Stats (Chart)
+        c.execute(f"""
+            SELECT 
+                TO_CHAR(session_started, 'YYYY-MM-DD') as date,
+                COUNT(*) as sessions,
+                COUNT(CASE WHEN booking_created = TRUE THEN 1 END) as bookings
             FROM bot_analytics
-            WHERE session_started > NOW() - INTERVAL '%s days'
-            GROUP BY hour
-            ORDER BY cnt DESC
-            LIMIT 5
-        """, (days,))
-        popular_hours = [{"hour": int(row[0]), "count": row[1]} for row in c.fetchall()]
+            WHERE session_started > NOW() - INTERVAL '{days} days'
+            GROUP BY 1
+            ORDER BY 1 ASC
+        """)
+        daily_stats = [
+            {"date": r[0], "sessions": r[1], "bookings": r[2]} 
+            for r in c.fetchall()
+        ]
+        
+        # 3. Outcomes Distribution (Pie Chart)
+        c.execute(f"""
+            SELECT outcome, COUNT(*)
+            FROM bot_analytics
+            WHERE session_started > NOW() - INTERVAL '{days} days'
+              AND outcome != 'in_progress'
+            GROUP BY outcome
+        """)
+        outcomes = [{"outcome": r[0], "count": r[1]} for r in c.fetchall()]
+        
+        # 4. Languages
+        c.execute(f"""
+            SELECT language_detected, COUNT(*) 
+            FROM bot_analytics
+            WHERE session_started > NOW() - INTERVAL '{days} days'
+              AND language_detected IS NOT NULL
+            GROUP BY language_detected
+            ORDER BY 2 DESC
+        """)
+        languages = [{"language": r[0], "count": r[1]} for r in c.fetchall()]
         
         return {
-            'period_days': days,
-            'total_sessions': total_sessions,
-            'bookings_created': bookings_created,
-            'escalations': escalations,
-            'avg_messages_per_session': round(avg_messages, 1),
-            'conversion_rate': round(conversion_rate, 1),
-            'languages': languages,
-            'popular_hours': popular_hours
+            "summary": {
+                "total_sessions": total_sessions,
+                "sessions_last_7d": sessions_last_7d,
+                "messages_total": int(avg_messages * total_sessions), # Approx
+                "messages_avg": round(avg_messages, 1),
+                "bookings_created": bookings_created,
+                "escalated_to_manager": escalations,
+                "cancellations": cancellations,
+                "conversion_rate": round(conversion_rate, 1)
+            },
+            "daily_stats": daily_stats,
+            "outcomes": outcomes,
+            "languages": languages
         }
         
     except Exception as e:
         log_error(f"Error getting analytics summary: {e}", "analytics")
-        return {}
+        return {
+            "summary": {
+                "total_sessions": 0,
+                "sessions_last_7d": 0,
+                "messages_total": 0,
+                "messages_avg": 0,
+                "bookings_created": 0,
+                "escalated_to_manager": 0,
+                "cancellations": 0,
+                "conversion_rate": 0
+            },
+            "daily_stats": [],
+            "outcomes": [],
+            "languages": []
+        }
     finally:
         conn.close()
 

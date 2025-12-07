@@ -27,7 +27,7 @@ def force_extract():
     output_data = {}
     total_missing = 0
     
-    tables_to_check = ['users', 'public_reviews']
+    tables_to_check = ['users', 'public_reviews', 'services', 'public_faq']
     
     for table in tables_to_check:
         print(f"\nScanning table: {table}")

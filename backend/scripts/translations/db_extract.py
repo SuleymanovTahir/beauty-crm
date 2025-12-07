@@ -20,7 +20,8 @@ from config import (
     LANGUAGES, 
     SOURCE_LANGUAGE, 
     DATABASE_PATH,
-    EXTRACT_OUTPUT
+    EXTRACT_OUTPUT,
+    SKIP_TRANSLATION_FIELDS
 )
 
 FRONTEND_LOCALES_DIR = backend_dir.parent / "frontend" / "src" / "locales"
@@ -66,7 +67,30 @@ def extract_translatable_content():
         where_clause = config.get("where", None)
         
         # Build SELECT query
-        query = f"SELECT {id_field}, {', '.join(fields)} FROM {table_name}"
+        # We need to fetch translation columns to check if they are empty/null
+        select_fields = [id_field]
+        for f in fields:
+            if f not in select_fields:
+                select_fields.append(f)
+                
+        # Add potential translation columns
+        for field in fields:
+            # Determine base name
+            base_name = field
+            if field.endswith(f"_{SOURCE_LANGUAGE}"):
+                base_name = field[:-len(SOURCE_LANGUAGE)-1]
+            
+            for lang in LANGUAGES:
+                if lang == SOURCE_LANGUAGE: continue
+                
+                # Construct target column name
+                target_col = f"{base_name}_{lang}"
+                
+                # We only add if not already in list (unlikely but safe)
+                if target_col not in select_fields:
+                    select_fields.append(target_col)
+                    
+        query = f"SELECT {', '.join(select_fields)} FROM {table_name}"
         if where_clause:
             query += f" WHERE {where_clause}"
         
@@ -123,20 +147,23 @@ def extract_translatable_content():
                         # We try to guess the target column name
                         target_col_name = None
                         
-                        # Case 1: Field has language suffix (e.g. title_ru -> title_en)
+                        base_name = field
                         if field.endswith(f"_{SOURCE_LANGUAGE}"):
-                            base_name = field[:-3]
-                            target_col_name = f"{base_name}_{lang}"
-                        # Case 2: Field is base name (e.g. description -> description_en)
-                        else:
-                            target_col_name = f"{field}_{lang}"
+                            base_name = field[:-len(SOURCE_LANGUAGE)-1]
+                            
+                        target_col_name = f"{base_name}_{lang}"
                             
                         # Check if this column exists in the row and is empty
                         db_val_missing = False
                         if target_col_name in row_dict:
                             val = row_dict[target_col_name]
-                            if not val or not str(val).strip():
+                            if val is None or str(val).strip() == "":
                                 db_val_missing = True
+                        else:
+                            # If column was not selected (maybe schema mismatch?), we assume missing
+                            # But if the column doesn't exist in DB, it will cause error later in sync?
+                            # For now, let's treat as missing if we can't find it
+                            db_val_missing = True
                         
                         if existing_val and not db_val_missing:
                             field_data[lang] = existing_val
@@ -159,7 +186,9 @@ def extract_translatable_content():
                     # Actually, let's instantiate Translator here. It uses cache so it should be fast for repeated runs.
                     # We'll do it only if we haven't already flagged this field as missing
                     # DISABLED for users table to prevent hanging on API calls
-                    if not field_has_missing and table_name != 'users':
+                    # ALSO skip fields in SKIP_TRANSLATION_FIELDS
+                    skip_fields = SKIP_TRANSLATION_FIELDS.get(table_name, [])
+                    if not field_has_missing and table_name != 'users' and field not in skip_fields:
                         # Lazy instantiation
                         if 'translator' not in locals():
                             from translator import Translator

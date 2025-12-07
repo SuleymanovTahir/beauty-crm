@@ -3,42 +3,43 @@
 """
 
 # Типы подписок для клиентов
+# Frontend will translate these keys via admin/settings.json
 CLIENT_SUBSCRIPTION_TYPES = {
     "promotions": {
-        "name": "Акции и специальные предложения",
-        "description": "Получайте уведомления о скидках и специальных предложениях"
+        "name": "subscription_promotions",
+        "description": "subscription_promotions_desc"
     },
     "news": {
-        "name": "Новости салона",
-        "description": "Будьте в курсе новостей и обновлений салона"
+        "name": "subscription_news",
+        "description": "subscription_news_desc"
     },
     "appointments": {
-        "name": "Напоминания о записях",
-        "description": "Получайте напоминания о ваших записях"
+        "name": "subscription_appointments",
+        "description": "subscription_appointments_desc"
     },
     "new_services": {
-        "name": "Новые услуги",
-        "description": "Узнавайте первыми о новых услугах и процедурах"
+        "name": "subscription_new_services",
+        "description": "subscription_new_services_desc"
     }
 }
 
 # Типы подписок для сотрудников
 STAFF_SUBSCRIPTION_TYPES = {
     "schedule_changes": {
-        "name": "Изменения в расписании",
-        "description": "Уведомления об изменениях в вашем рабочем расписании"
+        "name": "subscription_schedule_changes",
+        "description": "subscription_schedule_changes_desc"
     },
     "staff_news": {
-        "name": "Новости для персонала",
-        "description": "Важные новости и объявления для сотрудников"
+        "name": "subscription_staff_news",
+        "description": "subscription_staff_news_desc"
     },
     "training": {
-        "name": "Обучение и тренинги",
-        "description": "Информация о тренингах и возможностях обучения"
+        "name": "subscription_training",
+        "description": "subscription_training_desc"
     },
     "client_bookings": {
-        "name": "Новые записи клиентов",
-        "description": "Уведомления о новых записях к вам"
+        "name": "subscription_client_bookings",
+        "description": "subscription_client_bookings_desc"
     }
 }
 

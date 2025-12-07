@@ -247,8 +247,8 @@ export default function BotSettings() {
 
   const tabs: Array<{ id: TabType; label: string; icon: React.ReactNode }> = [
     { id: 'general', label: t('tabs.general'), icon: <Bot size={18} /> },
-    { id: 'notifications', label: 'Уведомления', icon: <Bell size={18} /> },
-    { id: 'analytics', label: 'Аналитика', icon: <BarChart3 size={18} /> },
+    { id: 'notifications', label: t('tab_notifications'), icon: <Bell size={18} /> },
+    { id: 'analytics', label: t('tab_analytics'), icon: <BarChart3 size={18} /> },
     { id: 'personality', label: t('tabs.personality'), icon: <Sparkles size={18} /> },
     { id: 'pricing', label: t('tabs.pricing'), icon: <DollarSign size={18} /> },
     { id: 'objections', label: t('tabs.objections'), icon: <MessageCircle size={18} /> },
@@ -383,10 +383,10 @@ export default function BotSettings() {
                 >
                   <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚡</div>
                   <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
-                    Кратко
+                    {t('style_concise')}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                    Чётко и по делу
+                    {t('style_concise_desc')}
                   </div>
                 </div>
 
@@ -405,10 +405,10 @@ export default function BotSettings() {
                 >
                   <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🧠</div>
                   <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
-                    Средне
+                    {t('style_adaptive')}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                    Золотая середина
+                    {t('style_adaptive_desc')}
                   </div>
                 </div>
 
@@ -427,19 +427,15 @@ export default function BotSettings() {
                 >
                   <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💬</div>
                   <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
-                    Длинно
+                    {t('style_detailed')}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                    Подробные ответы с заботой
+                    {t('style_detailed_desc')}
                   </div>
                 </div>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem' }}>
-                • <strong>Деловой</strong>: 2-3 предложения, сразу к делу
-                <br />
-                • <strong>Умный</strong>: Коротко при записи, подробно при вопросах
-                <br />
-                • <strong>Дружелюбный</strong>: Всегда подробно, со списками и рекомендациями
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem', whiteSpace: 'pre-line' }}>
+                {t('style_descriptions')}
               </p>
             </div>
           </div>
@@ -449,7 +445,7 @@ export default function BotSettings() {
         {activeTab === 'analytics' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827', marginBottom: '1rem' }}>
-              📊 Аналитика работы бота
+              📊 {t('bot_analytics_title')}
             </h2>
             <BotAnalyticsWidget />
           </div>
@@ -1408,14 +1404,14 @@ export default function BotSettings() {
         {activeTab === 'notifications' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#111827' }}>
-              🔔 Настройка уведомлений и напоминаний
+              🔔 {t('notifications_and_reminders_settings')}
             </h2>
 
             {/* 1. Abandoned Cart */}
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  ⏳ Брошенная запись (Abandoned Recovery)
+                  ⏳ {t('abandoned_cart')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1424,27 +1420,27 @@ export default function BotSettings() {
                     onChange={(e) => setSettings({ ...settings, abandoned_cart_enabled: e.target.checked })}
                     style={{ width: '1.25rem', height: '1.25rem' }}
                   />
-                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                  <span style={{ fontSize: '0.9rem' }}>{t('enabled')}</span>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (минуты)</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_minutes')}</label>
                   <input
                     type="number"
                     value={settings.abandoned_cart_delay}
                     onChange={(e) => setSettings({ ...settings, abandoned_cart_delay: parseInt(e.target.value) || 30 })}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Через сколько времени писать, если клиент замолчал.</p>
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('abandoned_cart_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
                   <textarea
                     value={settings.abandoned_cart_message}
                     onChange={(e) => setSettings({ ...settings, abandoned_cart_message: e.target.value })}
-                    placeholder="Если пусто, используется стандартный текст на языке клиента."
+                    placeholder={t('default_template_hint')}
                     rows={3}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
@@ -1456,7 +1452,7 @@ export default function BotSettings() {
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  ⭐️ Сбор отзывов (Feedback Request)
+                  ⭐️ {t('feedback_request')}
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1465,27 +1461,27 @@ export default function BotSettings() {
                     onChange={(e) => setSettings({ ...settings, post_visit_feedback_enabled: e.target.checked })}
                     style={{ width: '1.25rem', height: '1.25rem' }}
                   />
-                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                  <span style={{ fontSize: '0.9rem' }}>{t('enabled')}</span>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (часы)</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_hours')}</label>
                   <input
                     type="number"
                     value={settings.post_visit_delay}
                     onChange={(e) => setSettings({ ...settings, post_visit_delay: parseInt(e.target.value) || 24 })}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Через сколько часов после визита просить отзыв.</p>
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('feedback_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
                   <textarea
                     value={settings.post_visit_feedback_message}
                     onChange={(e) => setSettings({ ...settings, post_visit_feedback_message: e.target.value })}
-                    placeholder="Если пусто, используется стандартный текст на языке клиента."
+                    placeholder={t('default_template_hint')}
                     rows={3}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
@@ -1497,7 +1493,7 @@ export default function BotSettings() {
             <div style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.75rem', backgroundColor: '#f9fafb', opacity: 0.7 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1f2937' }}>
-                  🔄 Возвращение клиентов (Retention) <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>Beta</span>
+                  🔄 {t('client_retention')} <span style={{ fontSize: '0.7rem', backgroundColor: '#e5e7eb', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{t('beta')}</span>
                 </h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
@@ -1506,27 +1502,27 @@ export default function BotSettings() {
                     onChange={(e) => setSettings({ ...settings, return_client_reminder_enabled: e.target.checked })}
                     style={{ width: '1.25rem', height: '1.25rem' }}
                   />
-                  <span style={{ fontSize: '0.9rem' }}>Включено</span>
+                  <span style={{ fontSize: '0.9rem' }}>{t('enabled')}</span>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Задержка (дни)</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('delay_days')}</label>
                   <input
                     type="number"
                     value={settings.return_client_delay}
                     onChange={(e) => setSettings({ ...settings, return_client_delay: parseInt(e.target.value) || 45 })}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
-                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>Если клиент не был в салоне X дней.</p>
+                  <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>{t('retention_hint')}</p>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>Шаблон сообщения</label>
+                  <label style={{ display: 'block', fontWeight: '500', marginBottom: '0.5rem' }}>{t('message_template')}</label>
                   <textarea
                     value={settings.return_client_message}
                     onChange={(e) => setSettings({ ...settings, return_client_message: e.target.value })}
-                    placeholder="Привет! Давно не виделись..."
+                    placeholder={t('retention_placeholder')}
                     rows={3}
                     style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #d1d5db' }}
                   />
