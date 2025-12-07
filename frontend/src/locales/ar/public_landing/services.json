@@ -12,8 +12,8 @@
   },
   "items": {
     "brow_lamination": {
-      "name": "تلميع الحواجب",
-      "description": "Ламинирование бровей",
+      "name": "تصفيح الحواجب",
+      "description": "تصفيح الحاجب",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -22,8 +22,8 @@
       "category": "brows"
     },
     "combo_lamination": {
-      "name": "تلميع الحواجب والرموش",
-      "description": "Комбо ламинирование",
+      "name": "تصفيح الحواجب والرموش",
+      "description": "التصفيح التحرير والسرد",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -32,8 +32,8 @@
       "category": "brows"
     },
     "brow_coloring": {
-      "name": "صبغ الحواجب",
-      "description": "Профессиональное окрашивание",
+      "name": "تلوين الحواجب",
+      "description": "تلوين احترافي",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -43,7 +43,7 @@
     },
     "brow_shaping": {
       "name": "تشكيل الحواجب",
-      "description": "Профессиональное оформление",
+      "description": "تصميم احترافي",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -53,7 +53,7 @@
     },
     "deep_facial_cleaning": {
       "name": "تنظيف عميق للوجه",
-      "description": "Профессиональная глубокая чистка",
+      "description": "التنظيف العميق الاحترافي",
       "price": 400.0,
       "min_price": null,
       "max_price": null,
@@ -62,8 +62,8 @@
       "category": "facial"
     },
     "medical_facial": {
-      "name": "تنظيف طبي للبشرة",
-      "description": "Медицинская чистка",
+      "name": "التطهير الطبي للبشرة المشكلة",
+      "description": "التنظيف الطبي",
       "price": 450.0,
       "min_price": null,
       "max_price": null,
@@ -73,7 +73,7 @@
     },
     "peeling": {
       "name": "تقشير",
-      "description": "Химический пилинг",
+      "description": "التقشير الكيميائي",
       "price": 350.0,
       "min_price": 300.0,
       "max_price": 400.0,
@@ -82,8 +82,8 @@
       "category": "facial"
     },
     "face_lift_massage": {
-      "name": "مساج شد الوجه مع قناع",
-      "description": "Подтягивающий массаж",
+      "name": "ثبات تدليك الوجه بالقناع",
+      "description": "تدليك ثبات",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -92,8 +92,8 @@
       "category": "facial"
     },
     "balayage": {
-      "name": "باليياج",
-      "description": "Техника балаяж",
+      "name": "بالاياج",
+      "description": "تقنية البلاياج",
       "price": 950.0,
       "min_price": 700.0,
       "max_price": 1200.0,
@@ -102,8 +102,8 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "تفتيح الشعر",
-      "description": "Коррекция цвета из темного",
+      "name": "الخروج من الأسود",
+      "description": "تصحيح الألوان من الظلام",
       "price": 1800.0,
       "min_price": 1300.0,
       "max_price": 2300.0,
@@ -113,7 +113,7 @@
     },
     "baby_cut": {
       "name": "قص شعر الأطفال",
-      "description": "Стрижка для детей",
+      "description": "قص شعر للأطفال",
       "price": 70.0,
       "min_price": 60.0,
       "max_price": 80.0,
@@ -123,7 +123,7 @@
     },
     "key_hair_wash": {
       "name": "غسل الشعر",
-      "description": "Мытье волос",
+      "description": "غسل الشعر",
       "price": 60.0,
       "min_price": null,
       "max_price": null,
@@ -133,7 +133,7 @@
     },
     "key_hair_extensions_1_can": {
       "name": "وصلات الشعر (كبسولة واحدة)",
-      "description": "Наращивание волос (1 банка)",
+      "description": "وصلات الشعر (1 جرة)",
       "price": 10.0,
       "min_price": null,
       "max_price": null,
@@ -142,8 +142,8 @@
       "category": "hair"
     },
     "hair_extension_capsule": {
-      "name": "تمديد الشعر بالكيراتين",
-      "description": "Наращивание за капсулу",
+      "name": "وصلات شعر لكل كبسولة",
+      "description": "تمديد لكل كبسولة",
       "price": 11.0,
       "min_price": 10.0,
       "max_price": 12.0,
@@ -152,8 +152,8 @@
       "category": "hair"
     },
     "natural_treatment": {
-      "name": "علاج طبيعي",
-      "description": "Натуральный уход за волосами",
+      "name": "العناية الطبيعية",
+      "description": "العناية بالشعر الطبيعي",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -162,8 +162,8 @@
       "category": "hair"
     },
     "full_color": {
-      "name": "صبغ كامل وتسريح",
-      "description": "Полное окрашивание с укладкой",
+      "name": "تلوين لهجة واحدة + التصميم",
+      "description": "تلوين كامل مع التصميم",
       "price": 425.0,
       "min_price": 350.0,
       "max_price": 500.0,
@@ -172,8 +172,8 @@
       "category": "hair"
     },
     "roots_color": {
-      "name": "صبغ الجذور وتسريح",
-      "description": "Окрашивание корней с укладкой",
+      "name": "تلوين الجذر + التصميم",
+      "description": "تلوين الجذر مع التصميم",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -182,8 +182,8 @@
       "category": "hair"
     },
     "ombre": {
-      "name": "أومبري/شاتوش/إير تاتش",
-      "description": "Техники градиентного окрашивания",
+      "name": "أومبير/شاتوش/إيرتاش",
+      "description": "تقنيات التلوين المتدرج",
       "price": 1250.0,
       "min_price": 1000.0,
       "max_price": 1500.0,
@@ -192,8 +192,8 @@
       "category": "hair"
     },
     "roots_bleach": {
-      "name": "تفتيح الجذور وتسريح",
-      "description": "Осветление корней с укладкой",
+      "name": "تفتيح الجذور + التصفيف",
+      "description": "تفتيح الجذور مع التصفيف",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -212,8 +212,8 @@
       "category": "hair"
     },
     "hair_trim": {
-      "name": "قص الشعر بالماكينة",
-      "description": "Простой срез без мытья",
+      "name": "أطراف متساوية",
+      "description": "قطع سهل بدون غسل",
       "price": 90.0,
       "min_price": 80.0,
       "max_price": 100.0,
@@ -223,7 +223,7 @@
     },
     "key_hair_extension_only_removal": {
       "name": "إزالة وصلات الشعر",
-      "description": "Наращивание волос (только удаление)",
+      "description": "وصلات الشعر (إزالة فقط)",
       "price": 1500.0,
       "min_price": null,
       "max_price": null,
@@ -242,8 +242,8 @@
       "category": "hair"
     },
     "hair_cut_blowdry": {
-      "name": "قص وتسريح الشعر",
-      "description": "Профессиональная стрижка с укладкой",
+      "name": "قص شعر + تصفيف",
+      "description": "قصة شعر احترافية مع التصميم",
       "price": 275.0,
       "min_price": 250.0,
       "max_price": 300.0,
@@ -252,13 +252,23 @@
       "category": "hair"
     },
     "toner_blowdry": {
-      "name": "تونر وتسريح",
-      "description": "Тонирование волос с укладкой",
+      "name": "التنغيم + التصميم",
+      "description": "صبغ الشعر مع التصفيف",
       "price": 375.0,
       "min_price": 300.0,
       "max_price": 450.0,
       "currency": "AED",
       "duration": "",
+      "category": "hair"
+    },
+    "blowdry": {
+      "name": "التصميم",
+      "description": "تصفيف الشعر الاحترافي",
+      "price": 125.0,
+      "min_price": 100.0,
+      "max_price": 150.0,
+      "currency": "AED",
+      "duration": "1h",
       "category": "hair"
     },
     "key_hair_style": {
@@ -269,16 +279,6 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
-      "category": "hair"
-    },
-    "blowdry": {
-      "name": "تسريح الشعر",
-      "description": "Профессиональная укладка волос",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -292,8 +292,8 @@
       "category": "hair"
     },
     "2d_volume": {
-      "name": "رموش 2D",
-      "description": "Наращивание 2D",
+      "name": "حجم رموش ثنائي الأبعاد",
+      "description": "تمديد ثنائي الأبعاد",
       "price": 230.0,
       "min_price": null,
       "max_price": null,
@@ -302,8 +302,8 @@
       "category": "lashes"
     },
     "3d_volume": {
-      "name": "رموش 3D",
-      "description": "Наращивание 3D",
+      "name": "حجم رموش ثلاثي الأبعاد",
+      "description": "تمديد ثلاثي الأبعاد",
       "price": 260.0,
       "min_price": null,
       "max_price": null,
@@ -312,8 +312,8 @@
       "category": "lashes"
     },
     "mega_volume": {
-      "name": "رموش ميجا 4-5D",
-      "description": "Мега объем ресниц",
+      "name": "حجم 4-5D (ميجا)",
+      "description": "رموش ضخمة الحجم",
       "price": 290.0,
       "min_price": null,
       "max_price": null,
@@ -323,7 +323,7 @@
     },
     "ml_curl": {
       "name": "ML حليقة / أسلوب كيم",
-      "description": "Специальный изгиб",
+      "description": "الانحناء الخاص",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -332,8 +332,8 @@
       "category": "lashes"
     },
     "classic_volume": {
-      "name": "رموش كلاسيكية",
-      "description": "Натуральное наращивание ресниц",
+      "name": "حجم رموش كلاسيكي",
+      "description": "تطويل الرموش بشكل طبيعي",
       "price": 180.0,
       "min_price": null,
       "max_price": null,
@@ -342,8 +342,8 @@
       "category": "lashes"
     },
     "lash_lamination": {
-      "name": "تلميع الرموش",
-      "description": "Ламинирование ресниц",
+      "name": "تصفيح الرموش",
+      "description": "تصفيح الرموش",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -353,7 +353,7 @@
     },
     "remove_lashes": {
       "name": "إزالة الرموش",
-      "description": "Безопасное снятие",
+      "description": "إزالة آمنة",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -393,7 +393,7 @@
     },
     "key_moroccan_bath_loofa": {
       "name": "حمام مغربي باللوفة",
-      "description": "Сервиз: Марокканская ванна с люфой.",
+      "description": "الخدمة: حمام مغربي بالليفة.",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -413,7 +413,7 @@
     },
     "key_head_40_min": {
       "name": "تدليك الرأس",
-      "description": "Руководитель 40 мин.",
+      "description": "القائد 40 دقيقة.",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -423,7 +423,7 @@
     },
     "key_legfeet_hand_40_min": {
       "name": "تدليك القدم/اليد",
-      "description": "Нога/стопа/рука 40 мин.",
+      "description": "الساق/القدم/الذراع 40 دقيقة.",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -433,7 +433,7 @@
     },
     "key_back_massage_510": {
       "name": "تدليك الظهر (الدورة)",
-      "description": "Массаж спины (5-10)",
+      "description": "تدليك الظهر (5-10)",
       "price": 540.0,
       "min_price": null,
       "max_price": null,
@@ -453,7 +453,7 @@
     },
     "key_neck__shoulder_30_min": {
       "name": "تدليك الرقبة والكتف",
-      "description": "Шея и плечи 30 мин.",
+      "description": "الرقبة والكتفين 30 دقيقة.",
       "price": 165.0,
       "min_price": null,
       "max_price": null,
@@ -463,7 +463,7 @@
     },
     "key_sculpture_body_massage": {
       "name": "تدليك النحت",
-      "description": "Скульптурный массаж тела.",
+      "description": "تدليك الجسم النحتي.",
       "price": 370.0,
       "min_price": null,
       "max_price": null,
@@ -493,7 +493,7 @@
     },
     "baby_manicure": {
       "name": "مانيكير الأطفال",
-      "description": "Маникюр для детей",
+      "description": "مانيكير للأطفال",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -523,7 +523,7 @@
     },
     "key_починка_1_ноготь": {
       "name": "تصحيح 1 مسمار",
-      "description": "Коррекция одного ногтя",
+      "description": "تصحيح مسمار واحد",
       "price": 35.0,
       "min_price": null,
       "max_price": null,
@@ -533,7 +533,7 @@
     },
     "manicure_no_polish": {
       "name": "مانيكير بدون طلاء",
-      "description": "Базовый маникюр",
+      "description": "مانيكير أساسي",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -542,8 +542,8 @@
       "category": "nails"
     },
     "gelish_manicure": {
-      "name": "مانيكير جل",
-      "description": "Маникюр с гель-лаком",
+      "name": "طلاء جل للأظافر",
+      "description": "مانيكير مع طلاء هلام",
       "price": 130.0,
       "min_price": null,
       "max_price": null,
@@ -552,8 +552,8 @@
       "category": "nails"
     },
     "manicure_normal": {
-      "name": "مانيكير بطلاء عادي",
-      "description": "Маникюр с обычным лаком",
+      "name": "مانيكير مع لمسة نهائية عادية",
+      "description": "مانيكير مع طلاء عادي",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -563,7 +563,7 @@
     },
     "key_накладные_ногти": {
       "name": "الأظافر الزائفة",
-      "description": "Накладные ногти",
+      "description": "الأظافر الزائفة",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -583,7 +583,7 @@
     },
     "key_gel_extension": {
       "name": "ملحقات هلام",
-      "description": "Наращивание гелем",
+      "description": "ملحقات هلام",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -593,7 +593,7 @@
     },
     "key_pedicure_gel": {
       "name": "باديكير مع طلاء هلام",
-      "description": "Гель для педикюра",
+      "description": "جل باديكير",
       "price": 160.0,
       "min_price": null,
       "max_price": null,
@@ -623,7 +623,7 @@
     },
     "key_gel_overlay": {
       "name": "طلاء هلام",
-      "description": "Наложение геля",
+      "description": "تطبيق هلام",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -633,7 +633,7 @@
     },
     "key_change_gel": {
       "name": "تغيير جل البولندية",
-      "description": "Замена геля",
+      "description": "استبدال الجل",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -642,8 +642,8 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "تغيير الطلاء العادي",
-      "description": "Смена обычного лака",
+      "name": "تغيير طلاء الأظافر العادي",
+      "description": "تغيير الورنيش العادي",
       "price": 65.0,
       "min_price": 40.0,
       "max_price": 90.0,
@@ -682,8 +682,8 @@
       "category": "nails"
     },
     "spa_manicure": {
-      "name": "سبا مانيكير",
-      "description": "Спа маникюр",
+      "name": "مانيكير سبا",
+      "description": "مانيكير سبا",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -723,7 +723,7 @@
     },
     "japanese_manicure": {
       "name": "مانيكير ياباني",
-      "description": "Японский маникюр",
+      "description": "مانيكير ياباني",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -733,7 +733,7 @@
     },
     "permanent_correction": {
       "name": "تصحيح المكياج الدائم",
-      "description": "Коррекция существующего перманента",
+      "description": "تصحيح الدائم الموجود",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -742,8 +742,8 @@
       "category": "Permanent_makeup"
     },
     "lashliner": {
-      "name": "لاشلاينر",
-      "description": "Подчеркивание линии роста ресниц",
+      "name": "خط إنترلاش",
+      "description": "التأكيد على خط الرموش",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -752,8 +752,8 @@
       "category": "Permanent_makeup"
     },
     "permanent_brows": {
-      "name": "مكياج دائم للحواجب",
-      "description": "Микроблейдинг или пудровые брови",
+      "name": "مكياج حواجب دائم",
+      "description": "ميكروبليدنج أو بودرة الحواجب",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
@@ -762,8 +762,8 @@
       "category": "Permanent_makeup"
     },
     "permanent_lips": {
-      "name": "مكياج دائم للشفاه",
-      "description": "Стойкий цвет губ",
+      "name": "مكياج الشفاه الدائم",
+      "description": "لون شفاه يدوم طويلاً",
       "price": 1200.0,
       "min_price": null,
       "max_price": null,
@@ -773,7 +773,7 @@
     },
     "eyeliner": {
       "name": "كحل",
-      "description": "Перманентная подводка глаз",
+      "description": "كحل دائم",
       "price": 1000.0,
       "min_price": null,
       "max_price": null,
@@ -783,7 +783,7 @@
     },
     "key_promotion_overlay_manicure": {
       "name": "مانيكير الترويجية",
-      "description": "Акция накладной маникюр",
+      "description": "الترويج: مانيكير كاذبة",
       "price": 145.0,
       "min_price": null,
       "max_price": null,
@@ -823,7 +823,7 @@
     },
     "key_blow_dry_packages_5": {
       "name": "حزمة التصميم (5 قطع)",
-      "description": "Пакеты для сушки феном 5",
+      "description": "أكياس تجفيف بالنفخ 5",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -842,8 +842,8 @@
       "category": "waxing"
     },
     "brazilian": {
-      "name": "البرازيلي",
-      "description": "Бразильская эпиляция бикини",
+      "name": "بيكيني برازيلي",
+      "description": "إزالة شعر البيكيني البرازيلي",
       "price": 120.0,
       "min_price": null,
       "max_price": null,
@@ -853,7 +853,7 @@
     },
     "upper_lips": {
       "name": "الشفة العليا",
-      "description": "Эпиляция верхней губы",
+      "description": "إزالة الشعر من الشفة العليا",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -862,8 +862,8 @@
       "category": "waxing"
     },
     "full_bikini": {
-      "name": "البكيني الكامل",
-      "description": "Полная эпиляция зоны бикини",
+      "name": "بيكيني عميق",
+      "description": "إزالة الشعر بالكامل في منطقة البكيني",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -872,8 +872,8 @@
       "category": "waxing"
     },
     "bikini_line": {
-      "name": "خط البكيني",
-      "description": "Эпиляция по линии бикини",
+      "name": "خط بيكيني",
+      "description": "إزالة الشعر على طول خط البيكيني",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -882,8 +882,8 @@
       "category": "waxing"
     },
     "full_face": {
-      "name": "الوجه كاملاً",
-      "description": "Полная эпиляция лица",
+      "name": "وجه كامل",
+      "description": "إزالة شعر الوجه بالكامل",
       "price": 90.0,
       "min_price": null,
       "max_price": null,
@@ -892,8 +892,8 @@
       "category": "waxing"
     },
     "half_legs": {
-      "name": "نصف الساقين",
-      "description": "Эпиляция ног до колен",
+      "name": "من الساقين إلى الركبتين",
+      "description": "إزالة شعر الساقين حتى الركبتين",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -902,8 +902,8 @@
       "category": "waxing"
     },
     "full_legs": {
-      "name": "الساقين كاملة",
-      "description": "Полная эпиляция ног",
+      "name": "أرجل كاملة",
+      "description": "إزالة شعر الساق بالكامل",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -913,7 +913,7 @@
     },
     "chin": {
       "name": "الذقن",
-      "description": "Эпиляция подбородка",
+      "description": "إزالة شعر الذقن",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -923,7 +923,7 @@
     },
     "underarms": {
       "name": "الإبطين",
-      "description": "Эпиляция подмышек",
+      "description": "إزالة شعر الإبط",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -932,8 +932,8 @@
       "category": "waxing"
     },
     "half_arms": {
-      "name": "نصف الذراعين",
-      "description": "Эпиляция рук до локтя",
+      "name": "الأيدي إلى المرفقين",
+      "description": "إزالة شعر الذراعين حتى المرفق",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -942,8 +942,8 @@
       "category": "waxing"
     },
     "full_arms": {
-      "name": "الذراعين كاملة",
-      "description": "Полная эпиляция рук",
+      "name": "أيدي كاملة",
+      "description": "إزالة شعر الذراع بالكامل",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -961,16 +961,6 @@
       "duration": "60",
       "category": "waxing"
     },
-    "full_body": {
-      "name": "إزالة الشعر من الجسم كاملاً",
-      "description": "Полная эпиляция тела",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
     "key_full_body": {
       "name": "إزالة شعر الجسم بالكامل",
       "description": "كامل الجسم",
@@ -979,6 +969,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "waxing"
+    },
+    "full_body": {
+      "name": "إزالة شعر الجسم بالكامل",
+      "description": "إزالة شعر الجسم بالكامل",
+      "price": 400.0,
+      "min_price": null,
+      "max_price": null,
+      "currency": "AED",
+      "duration": "1h",
       "category": "waxing"
     },
     "key_under_arms": {

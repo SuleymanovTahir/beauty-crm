@@ -667,6 +667,23 @@ export class ApiClient {
   }
 
 
+  // ===== NOTIFICATIONS =====
+  async getNotifications(unreadOnly: boolean = false, limit: number = 50) {
+    return this.request<{ notifications: any[] }>(`/api/notifications?unread_only=${unreadOnly}&limit=${limit}`)
+  }
+
+  async markNotificationRead(id: number) {
+    return this.request(`/api/notifications/${id}/read`, {
+      method: 'POST',
+    })
+  }
+
+  async markAllNotificationsRead() {
+    return this.request('/api/notifications/read-all', {
+      method: 'POST',
+    })
+  }
+
   // ===== UNREAD COUNT =====
   async getUnreadCount() {
     return this.request<any>('/api/notifications/unread-count')

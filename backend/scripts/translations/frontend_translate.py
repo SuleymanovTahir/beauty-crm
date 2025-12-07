@@ -39,15 +39,35 @@ def translate_json_file(source_file: Path, target_file: Path, source_lang: str, 
         except:
             pass
     
+    def translate_value(key, value, target_dict):
+        """Recursively translate a value, handling nested dicts"""
+        nonlocal translated_count
+        
+        if isinstance(value, dict):
+            # Handle nested dict
+            if key not in target_dict or not isinstance(target_dict.get(key), dict):
+                target_dict[key] = {}
+            for nested_key, nested_value in value.items():
+                translate_value(nested_key, nested_value, target_dict[key])
+        elif isinstance(value, str):
+            # Handle string
+            if key not in target_dict or not target_dict[key]:
+                if value and value.strip():
+                    translated = translator.translate(value, source_lang, target_lang)
+                    target_dict[key] = translated
+                    translated_count += 1
+                    print(f"    {key}: '{value}' → '{translated}'")
+                else:
+                    target_dict[key] = value
+        else:
+            # Handle other types (numbers, bools, etc) - just copy
+            if key not in target_dict:
+                target_dict[key] = value
+    
     # Translate missing keys
     translated_count = 0
     for key, value in source_data.items():
-        if key not in target_data or not target_data[key]:
-            # Translate
-            translated = translator.translate(value, source_lang, target_lang)
-            target_data[key] = translated
-            translated_count += 1
-            print(f"    {key}: '{value}' → '{translated}'")
+        translate_value(key, value, target_data)
     
     # Save target
     target_file.parent.mkdir(parents=True, exist_ok=True)

@@ -12,8 +12,8 @@
   },
   "items": {
     "brow_lamination": {
-      "name": "Ламинирование бровей",
-      "description": "Ламинирование бровей",
+      "name": "आइब्रो लेमिनेशन",
+      "description": "आइब्रो लेमिनेशन",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -22,8 +22,8 @@
       "category": "brows"
     },
     "combo_lamination": {
-      "name": "Ламинирование бровей и ресниц",
-      "description": "Комбо ламинирование",
+      "name": "भौंहों और पलकों का लेमिनेशन",
+      "description": "कॉम्बो लेमिनेशन",
       "price": 300.0,
       "min_price": null,
       "max_price": null,
@@ -32,8 +32,8 @@
       "category": "brows"
     },
     "brow_coloring": {
-      "name": "Окрашивание бровей",
-      "description": "Профессиональное окрашивание",
+      "name": "भौंहों का रंगना",
+      "description": "पेशेवर रंग-रोगन",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -42,8 +42,8 @@
       "category": "brows"
     },
     "brow_shaping": {
-      "name": "Оформление бровей",
-      "description": "Профессиональное оформление",
+      "name": "भौंहों को आकार देना",
+      "description": "पेशेवर डिज़ाइन",
       "price": 40.0,
       "min_price": null,
       "max_price": null,
@@ -52,8 +52,8 @@
       "category": "brows"
     },
     "deep_facial_cleaning": {
-      "name": "Глубокая чистка лица",
-      "description": "Профессиональная глубокая чистка",
+      "name": "चेहरे की गहरी सफाई",
+      "description": "पेशेवर गहरी सफ़ाई",
       "price": 400.0,
       "min_price": null,
       "max_price": null,
@@ -62,8 +62,8 @@
       "category": "facial"
     },
     "medical_facial": {
-      "name": "Медицинская чистка для проблемной кожи",
-      "description": "Медицинская чистка",
+      "name": "समस्याग्रस्त त्वचा के लिए चिकित्सीय सफाई",
+      "description": "चिकित्सीय सफ़ाई",
       "price": 450.0,
       "min_price": null,
       "max_price": null,
@@ -72,8 +72,8 @@
       "category": "facial"
     },
     "peeling": {
-      "name": "Пилинг",
-      "description": "Химический пилинг",
+      "name": "छीलना",
+      "description": "रासायनिक छीलने",
       "price": 350.0,
       "min_price": 300.0,
       "max_price": 400.0,
@@ -82,8 +82,8 @@
       "category": "facial"
     },
     "face_lift_massage": {
-      "name": "Подтягивающий массаж лица с маской",
-      "description": "Подтягивающий массаж",
+      "name": "मास्क के साथ चेहरे की मजबूत मालिश",
+      "description": "दृढ़ मालिश",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -92,8 +92,8 @@
       "category": "facial"
     },
     "balayage": {
-      "name": "Балаяж",
-      "description": "Техника балаяж",
+      "name": "Balayage",
+      "description": "बलायेज तकनीक",
       "price": 950.0,
       "min_price": 700.0,
       "max_price": 1200.0,
@@ -102,8 +102,8 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "Выход из черного",
-      "description": "Коррекция цвета из темного",
+      "name": "काले रंग से बाहर आ रहा हूँ",
+      "description": "अंधेरे से रंग सुधार",
       "price": 1800.0,
       "min_price": 1300.0,
       "max_price": 2300.0,
@@ -112,8 +112,8 @@
       "category": "hair"
     },
     "baby_cut": {
-      "name": "Детская стрижка",
-      "description": "Стрижка для детей",
+      "name": "बच्चों के बाल कटवाना",
+      "description": "बच्चों के लिए बाल कटवाने",
       "price": 70.0,
       "min_price": 60.0,
       "max_price": 80.0,
@@ -123,7 +123,7 @@
     },
     "key_hair_wash": {
       "name": "बाल धोना",
-      "description": "Мытье волос",
+      "description": "बाल धोना",
       "price": 60.0,
       "min_price": null,
       "max_price": null,
@@ -133,7 +133,7 @@
     },
     "key_hair_extensions_1_can": {
       "name": "बाल एक्सटेंशन (1 कैप्सूल)",
-      "description": "Наращивание волос (1 банка)",
+      "description": "बाल एक्सटेंशन (1 जार)",
       "price": 10.0,
       "min_price": null,
       "max_price": null,
@@ -142,8 +142,8 @@
       "category": "hair"
     },
     "hair_extension_capsule": {
-      "name": "Наращивание волос за капсулу",
-      "description": "Наращивание за капсулу",
+      "name": "प्रति कैप्सूल बाल एक्सटेंशन",
+      "description": "प्रति कैप्सूल विस्तार",
       "price": 11.0,
       "min_price": 10.0,
       "max_price": 12.0,
@@ -152,8 +152,8 @@
       "category": "hair"
     },
     "natural_treatment": {
-      "name": "Натуральный уход",
-      "description": "Натуральный уход за волосами",
+      "name": "प्राकृतिक देखभाल",
+      "description": "प्राकृतिक बालों की देखभाल",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -162,8 +162,8 @@
       "category": "hair"
     },
     "full_color": {
-      "name": "Окрашивание в один тон + Укладка",
-      "description": "Полное окрашивание с укладкой",
+      "name": "एक टोन रंग + स्टाइलिंग",
+      "description": "स्टाइल के साथ पूर्ण रंग",
       "price": 425.0,
       "min_price": 350.0,
       "max_price": 500.0,
@@ -172,8 +172,8 @@
       "category": "hair"
     },
     "roots_color": {
-      "name": "Окрашивание корней + Укладка",
-      "description": "Окрашивание корней с укладкой",
+      "name": "जड़ का रंग + स्टाइलिंग",
+      "description": "स्टाइल के साथ जड़ों को रंगना",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -182,8 +182,8 @@
       "category": "hair"
     },
     "ombre": {
-      "name": "Омбре/Шатуш/Аиртач",
-      "description": "Техники градиентного окрашивания",
+      "name": "ओम्ब्रे/शतुश/एयरटैच",
+      "description": "धीरे-धीरे रंग भरने की तकनीक",
       "price": 1250.0,
       "min_price": 1000.0,
       "max_price": 1500.0,
@@ -192,8 +192,8 @@
       "category": "hair"
     },
     "roots_bleach": {
-      "name": "Осветление корней + Укладка",
-      "description": "Осветление корней с укладкой",
+      "name": "रूट लाइटनिंग + स्टाइलिंग",
+      "description": "स्टाइलिंग के साथ जड़ों को हल्का करना",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -212,8 +212,8 @@
       "category": "hair"
     },
     "hair_trim": {
-      "name": "Ровный срез кончиков",
-      "description": "Простой срез без мытья",
+      "name": "यहां तक ​​कि कटे हुए सिरे भी",
+      "description": "बिना धोए काटना आसान",
       "price": 90.0,
       "min_price": 80.0,
       "max_price": 100.0,
@@ -223,7 +223,7 @@
     },
     "key_hair_extension_only_removal": {
       "name": "बाल एक्सटेंशन हटाना",
-      "description": "Наращивание волос (только удаление)",
+      "description": "बाल एक्सटेंशन (केवल हटाना)",
       "price": 1500.0,
       "min_price": null,
       "max_price": null,
@@ -242,8 +242,8 @@
       "category": "hair"
     },
     "hair_cut_blowdry": {
-      "name": "Стрижка + Укладка",
-      "description": "Профессиональная стрижка с укладкой",
+      "name": "हेयरकट + स्टाइलिंग",
+      "description": "स्टाइल के साथ प्रोफेशनल हेयरकट",
       "price": 275.0,
       "min_price": 250.0,
       "max_price": 300.0,
@@ -252,13 +252,23 @@
       "category": "hair"
     },
     "toner_blowdry": {
-      "name": "Тонирование + Укладка",
-      "description": "Тонирование волос с укладкой",
+      "name": "टोनिंग + स्टाइलिंग",
+      "description": "स्टाइल के साथ बालों को रंगना",
       "price": 375.0,
       "min_price": 300.0,
       "max_price": 450.0,
       "currency": "AED",
       "duration": "",
+      "category": "hair"
+    },
+    "blowdry": {
+      "name": "बिछाना",
+      "description": "पेशेवर हेयर स्टाइलिंग",
+      "price": 125.0,
+      "min_price": 100.0,
+      "max_price": 150.0,
+      "currency": "AED",
+      "duration": "1h",
       "category": "hair"
     },
     "key_hair_style": {
@@ -269,16 +279,6 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
-      "category": "hair"
-    },
-    "blowdry": {
-      "name": "Укладка",
-      "description": "Профессиональная укладка волос",
-      "price": 125.0,
-      "min_price": 100.0,
-      "max_price": 150.0,
-      "currency": "AED",
-      "duration": "1h",
       "category": "hair"
     },
     "key_hair_treatment": {
@@ -292,8 +292,8 @@
       "category": "hair"
     },
     "2d_volume": {
-      "name": "2D объем ресниц",
-      "description": "Наращивание 2D",
+      "name": "2D बरौनी की मात्रा",
+      "description": "2डी एक्सटेंशन",
       "price": 230.0,
       "min_price": null,
       "max_price": null,
@@ -302,8 +302,8 @@
       "category": "lashes"
     },
     "3d_volume": {
-      "name": "3D объем ресниц",
-      "description": "Наращивание 3D",
+      "name": "3D बरौनी की मात्रा",
+      "description": "3डी विस्तार",
       "price": 260.0,
       "min_price": null,
       "max_price": null,
@@ -312,8 +312,8 @@
       "category": "lashes"
     },
     "mega_volume": {
-      "name": "4-5D объем (Мега)",
-      "description": "Мега объем ресниц",
+      "name": "4-5डी वॉल्यूम (मेगा)",
+      "description": "मेगा वॉल्यूम पलकें",
       "price": 290.0,
       "min_price": null,
       "max_price": null,
@@ -323,7 +323,7 @@
     },
     "ml_curl": {
       "name": "एमएल कर्ल / किम स्टाइल",
-      "description": "Специальный изгиб",
+      "description": "विशेष मोड़",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -332,8 +332,8 @@
       "category": "lashes"
     },
     "classic_volume": {
-      "name": "Классический объем ресниц",
-      "description": "Натуральное наращивание ресниц",
+      "name": "क्लासिक बरौनी मात्रा",
+      "description": "प्राकृतिक बरौनी एक्सटेंशन",
       "price": 180.0,
       "min_price": null,
       "max_price": null,
@@ -342,8 +342,8 @@
       "category": "lashes"
     },
     "lash_lamination": {
-      "name": "Ламинирование ресниц",
-      "description": "Ламинирование ресниц",
+      "name": "पलकों का लेमिनेशन",
+      "description": "पलकों का लेमिनेशन",
       "price": 200.0,
       "min_price": null,
       "max_price": null,
@@ -352,8 +352,8 @@
       "category": "lashes"
     },
     "remove_lashes": {
-      "name": "Снятие ресниц",
-      "description": "Безопасное снятие",
+      "name": "पलकें हटाना",
+      "description": "सुरक्षित निष्कासन",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -393,7 +393,7 @@
     },
     "key_moroccan_bath_loofa": {
       "name": "लूफै़ण के साथ मोरक्कन स्नान",
-      "description": "Сервиз: Марокканская ванна с люфой.",
+      "description": "सेवा: लूफै़ण के साथ मोरक्कन स्नान।",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -413,7 +413,7 @@
     },
     "key_head_40_min": {
       "name": "सिर की मालिश",
-      "description": "Руководитель 40 мин.",
+      "description": "नेता 40 मिनट.",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -423,7 +423,7 @@
     },
     "key_legfeet_hand_40_min": {
       "name": "पैर/हाथ की मालिश",
-      "description": "Нога/стопа/рука 40 мин.",
+      "description": "पैर/पैर/हाथ 40 मिनट।",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -433,7 +433,7 @@
     },
     "key_back_massage_510": {
       "name": "पीठ की मालिश (पाठ्यक्रम)",
-      "description": "Массаж спины (5-10)",
+      "description": "पीठ की मालिश (5-10)",
       "price": 540.0,
       "min_price": null,
       "max_price": null,
@@ -453,7 +453,7 @@
     },
     "key_neck__shoulder_30_min": {
       "name": "गर्दन और कंधे की मालिश",
-      "description": "Шея и плечи 30 мин.",
+      "description": "गर्दन और कंधे 30 मिनट।",
       "price": 165.0,
       "min_price": null,
       "max_price": null,
@@ -463,7 +463,7 @@
     },
     "key_sculpture_body_massage": {
       "name": "मूर्तिकला मालिश",
-      "description": "Скульптурный массаж тела.",
+      "description": "मूर्तिकला शरीर की मालिश.",
       "price": 370.0,
       "min_price": null,
       "max_price": null,
@@ -492,8 +492,8 @@
       "category": "nails"
     },
     "baby_manicure": {
-      "name": "Детский маникюр",
-      "description": "Маникюр для детей",
+      "name": "बच्चों का मैनीक्योर",
+      "description": "बच्चों के लिए मैनीक्योर",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -523,7 +523,7 @@
     },
     "key_починка_1_ноготь": {
       "name": "सुधार 1 कील",
-      "description": "Коррекция одного ногтя",
+      "description": "एक कील का सुधार",
       "price": 35.0,
       "min_price": null,
       "max_price": null,
@@ -532,8 +532,8 @@
       "category": "nails"
     },
     "manicure_no_polish": {
-      "name": "Маникюр без покрытия",
-      "description": "Базовый маникюр",
+      "name": "कोटिंग के बिना मैनीक्योर",
+      "description": "बुनियादी मैनीक्योर",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -542,8 +542,8 @@
       "category": "nails"
     },
     "gelish_manicure": {
-      "name": "Маникюр гель-лак",
-      "description": "Маникюр с гель-лаком",
+      "name": "मैनीक्योर जेल पॉलिश",
+      "description": "जेल पॉलिश के साथ मैनीक्योर",
       "price": 130.0,
       "min_price": null,
       "max_price": null,
@@ -552,8 +552,8 @@
       "category": "nails"
     },
     "manicure_normal": {
-      "name": "Маникюр с обычным покрытием",
-      "description": "Маникюр с обычным лаком",
+      "name": "नियमित फिनिश के साथ मैनीक्योर",
+      "description": "नियमित पॉलिश के साथ मैनीक्योर",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -563,7 +563,7 @@
     },
     "key_накладные_ногти": {
       "name": "नकली नाखून",
-      "description": "Накладные ногти",
+      "description": "नकली नाखून",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -583,7 +583,7 @@
     },
     "key_gel_extension": {
       "name": "जेल एक्सटेंशन",
-      "description": "Наращивание гелем",
+      "description": "जेल एक्सटेंशन",
       "price": 350.0,
       "min_price": null,
       "max_price": null,
@@ -593,7 +593,7 @@
     },
     "key_pedicure_gel": {
       "name": "जेल पॉलिश से पेडिक्योर करें",
-      "description": "Гель для педикюра",
+      "description": "पेडीक्योर जेल",
       "price": 160.0,
       "min_price": null,
       "max_price": null,
@@ -623,7 +623,7 @@
     },
     "key_gel_overlay": {
       "name": "जेल कोटिंग",
-      "description": "Наложение геля",
+      "description": "जेल अनुप्रयोग",
       "price": 250.0,
       "min_price": null,
       "max_price": null,
@@ -633,7 +633,7 @@
     },
     "key_change_gel": {
       "name": "जेल पॉलिश बदलना",
-      "description": "Замена геля",
+      "description": "जेल बदलना",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -642,8 +642,8 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "Смена обычного лака",
-      "description": "Смена обычного лака",
+      "name": "नियमित वार्निश बदलना",
+      "description": "नियमित वार्निश बदलना",
       "price": 65.0,
       "min_price": 40.0,
       "max_price": 90.0,
@@ -682,8 +682,8 @@
       "category": "nails"
     },
     "spa_manicure": {
-      "name": "Спа маникюр",
-      "description": "Спа маникюр",
+      "name": "स्पा मैनीक्योर",
+      "description": "स्पा मैनीक्योर",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -722,8 +722,8 @@
       "category": "nails"
     },
     "japanese_manicure": {
-      "name": "Японский маникюр",
-      "description": "Японский маникюр",
+      "name": "जापानी मैनीक्योर",
+      "description": "जापानी मैनीक्योर",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -732,8 +732,8 @@
       "category": "nails"
     },
     "permanent_correction": {
-      "name": "Коррекция перманентного макияжа",
-      "description": "Коррекция существующего перманента",
+      "name": "स्थायी मेकअप सुधार",
+      "description": "मौजूदा स्थाई का सुधार",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -742,8 +742,8 @@
       "category": "स्थायी_मेकअप"
     },
     "lashliner": {
-      "name": "Межресничная стрелка",
-      "description": "Подчеркивание линии роста ресниц",
+      "name": "अंतर्वर्ती तीर",
+      "description": "लैश लाइन पर जोर देना",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -752,8 +752,8 @@
       "category": "स्थायी_मेकअप"
     },
     "permanent_brows": {
-      "name": "Перманентный макияж бровей",
-      "description": "Микроблейдинг или пудровые брови",
+      "name": "स्थायी भौं मेकअप",
+      "description": "माइक्रोब्लैडिंग या पाउडर आइब्रो",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
@@ -762,8 +762,8 @@
       "category": "स्थायी_मेकअप"
     },
     "permanent_lips": {
-      "name": "Перманентный макияж губ",
-      "description": "Стойкий цвет губ",
+      "name": "स्थायी होंठ मेकअप",
+      "description": "लंबे समय तक टिकने वाला लिप कलर",
       "price": 1200.0,
       "min_price": null,
       "max_price": null,
@@ -772,8 +772,8 @@
       "category": "स्थायी_मेकअप"
     },
     "eyeliner": {
-      "name": "Подводка для глаз",
-      "description": "Перманентная подводка глаз",
+      "name": "आईलाइनर",
+      "description": "स्थायी आईलाइनर",
       "price": 1000.0,
       "min_price": null,
       "max_price": null,
@@ -783,7 +783,7 @@
     },
     "key_promotion_overlay_manicure": {
       "name": "प्रोमोशनल मैनीक्योर",
-      "description": "Акция накладной маникюр",
+      "description": "प्रमोशन: झूठी मैनीक्योर",
       "price": 145.0,
       "min_price": null,
       "max_price": null,
@@ -823,7 +823,7 @@
     },
     "key_blow_dry_packages_5": {
       "name": "स्टाइलिंग पैकेज (5 पीसी।)",
-      "description": "Пакеты для сушки феном 5",
+      "description": "ब्लो ड्राई बैग 5",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
@@ -842,8 +842,8 @@
       "category": "waxing"
     },
     "brazilian": {
-      "name": "Бразильское бикини",
-      "description": "Бразильская эпиляция бикини",
+      "name": "ब्राजीलियाई बिकिनी",
+      "description": "ब्राजीलियाई बिकनी बाल हटाना",
       "price": 120.0,
       "min_price": null,
       "max_price": null,
@@ -852,8 +852,8 @@
       "category": "waxing"
     },
     "upper_lips": {
-      "name": "Верхняя губа",
-      "description": "Эпиляция верхней губы",
+      "name": "होंठ के ऊपर का हिस्सा",
+      "description": "ऊपरी होंठ का एपिलेशन",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -862,8 +862,8 @@
       "category": "waxing"
     },
     "full_bikini": {
-      "name": "Глубокое бикини",
-      "description": "Полная эпиляция зоны бикини",
+      "name": "गहरी बिकिनी",
+      "description": "बिकनी क्षेत्र का पूर्ण एपिलेशन",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -872,8 +872,8 @@
       "category": "waxing"
     },
     "bikini_line": {
-      "name": "Линия бикини",
-      "description": "Эпиляция по линии бикини",
+      "name": "बिकनी लाइन",
+      "description": "बिकनी लाइन के साथ एपिलेशन",
       "price": 100.0,
       "min_price": null,
       "max_price": null,
@@ -882,8 +882,8 @@
       "category": "waxing"
     },
     "full_face": {
-      "name": "Лицо полностью",
-      "description": "Полная эпиляция лица",
+      "name": "पूरा चेहरा",
+      "description": "चेहरे के पूरे बाल हटाना",
       "price": 90.0,
       "min_price": null,
       "max_price": null,
@@ -892,8 +892,8 @@
       "category": "waxing"
     },
     "half_legs": {
-      "name": "Ноги до колен",
-      "description": "Эпиляция ног до колен",
+      "name": "पैर घुटनों तक",
+      "description": "घुटनों तक पैरों का एपिलेशन",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -902,8 +902,8 @@
       "category": "waxing"
     },
     "full_legs": {
-      "name": "Ноги полностью",
-      "description": "Полная эпиляция ног",
+      "name": "पूरे पैर",
+      "description": "पूरे पैर के बाल हटाना",
       "price": 150.0,
       "min_price": null,
       "max_price": null,
@@ -912,8 +912,8 @@
       "category": "waxing"
     },
     "chin": {
-      "name": "Подбородок",
-      "description": "Эпиляция подбородка",
+      "name": "ठोड़ी",
+      "description": "ठुड्डी के बाल हटाना",
       "price": 30.0,
       "min_price": null,
       "max_price": null,
@@ -922,8 +922,8 @@
       "category": "waxing"
     },
     "underarms": {
-      "name": "Подмышки",
-      "description": "Эпиляция подмышек",
+      "name": "बगल",
+      "description": "बगल के बाल हटाना",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -932,8 +932,8 @@
       "category": "waxing"
     },
     "half_arms": {
-      "name": "Руки до локтя",
-      "description": "Эпиляция рук до локтя",
+      "name": "हाथ कोहनी तक",
+      "description": "कोहनी तक भुजाओं का एपिलेशन",
       "price": 50.0,
       "min_price": null,
       "max_price": null,
@@ -942,8 +942,8 @@
       "category": "waxing"
     },
     "full_arms": {
-      "name": "Руки полностью",
-      "description": "Полная эпиляция рук",
+      "name": "भरे हाथ",
+      "description": "पूरी बांह के बाल हटाना",
       "price": 80.0,
       "min_price": null,
       "max_price": null,
@@ -961,16 +961,6 @@
       "duration": "60",
       "category": "waxing"
     },
-    "full_body": {
-      "name": "Эпиляция всего тела",
-      "description": "Полная эпиляция тела",
-      "price": 400.0,
-      "min_price": null,
-      "max_price": null,
-      "currency": "AED",
-      "duration": "1h",
-      "category": "waxing"
-    },
     "key_full_body": {
       "name": "पूरे शरीर के बाल हटाना",
       "description": "पूरा शरीर",
@@ -979,6 +969,16 @@
       "max_price": null,
       "currency": "AED",
       "duration": "60",
+      "category": "waxing"
+    },
+    "full_body": {
+      "name": "पूरे शरीर के बाल हटाना",
+      "description": "पूरे शरीर के बाल हटाना",
+      "price": 400.0,
+      "min_price": null,
+      "max_price": null,
+      "currency": "AED",
+      "duration": "1h",
       "category": "waxing"
     },
     "key_under_arms": {

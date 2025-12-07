@@ -1,5 +1,6 @@
 // /frontend/src/components/admin/publicContent/BannersTab.tsx
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, Image as ImageIcon, Link as LinkIcon, Calendar, Eye, EyeOff, MousePointerClick, FlipHorizontal, FlipVertical } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -98,7 +99,7 @@ const VisualPositionPicker = ({
 
             <div className="space-y-1">
                 <div className="text-xs text-muted-foreground mb-1">
-                    Кликните или перетащите точку, чтобы выбрать центр:
+                    Click or drag to select center:
                 </div>
 
                 <div
@@ -130,7 +131,7 @@ const VisualPositionPicker = ({
                         </>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                            Нет фото
+                            No photo
                         </div>
                     )}
 
@@ -143,6 +144,7 @@ const VisualPositionPicker = ({
 };
 
 export default function BannersTab() {
+    const { t } = useTranslation(['admin/PublicContent', 'common']);
     const [banners, setBanners] = useState<Banner[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -195,10 +197,10 @@ export default function BannersTab() {
             // Save promo end date
             await apiClient.updateSalonSettings({ promo_end_date: promoEndDate });
 
-            toast.success('Настройки сохранены');
+            toast.success(t('banners.settings_saved'));
         } catch (error) {
             console.error('Error saving settings:', error);
-            toast.error('Ошибка сохранения настроек');
+            toast.error(t('banners.error_save_settings'));
         }
     };
 
@@ -208,7 +210,7 @@ export default function BannersTab() {
             setBanners(data.banners || []);
         } catch (error) {
             console.error('Error loading banners:', error);
-            toast.error('Ошибка загрузки баннеров');
+            toast.error(t('banners.error_load'));
         } finally {
             setLoading(false);
         }
@@ -230,10 +232,10 @@ export default function BannersTab() {
             // We should only use timestamp for display.
 
             setFormData({ ...formData, image_url: newUrl });
-            toast.success('Файл загружен');
+            toast.success(t('banners.file_uploaded'));
         } catch (error) {
             console.error('Upload error:', error);
-            toast.error('Ошибка загрузки файла');
+            toast.error(t('banners.error_file_upload'));
         } finally {
             setUploading(false);
             // Reset input so same file can be selected again
@@ -246,28 +248,28 @@ export default function BannersTab() {
         try {
             if (editingBanner) {
                 await apiClient.updatePublicBanner(editingBanner.id, formData);
-                toast.success('Баннер обновлен');
+                toast.success(t('banners.banner_updated'));
             } else {
                 await apiClient.createPublicBanner(formData);
-                toast.success('Баннер создан');
+                toast.success(t('banners.banner_created'));
             }
             setIsDialogOpen(false);
             loadBanners();
             resetForm();
         } catch (error) {
             console.error('Error saving banner:', error);
-            toast.error('Ошибка сохранения');
+            toast.error(t('banners.error_save'));
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm('Вы уверены, что хотите удалить этот баннер?')) return;
+        if (!confirm(t('banners.delete_confirm'))) return;
         try {
             await apiClient.deletePublicBanner(id);
-            toast.success('Баннер удален');
+            toast.success(t('banners.banner_deleted'));
             loadBanners();
         } catch (error) {
-            toast.error('Ошибка удаления');
+            toast.error(t('banners.error_delete'));
         }
     };
 
@@ -277,11 +279,11 @@ export default function BannersTab() {
         setBanners(prev => prev.map(b => b.id === banner.id ? { ...b, is_active: nextIsActive } : b));
         try {
             await apiClient.updatePublicBanner(banner.id, { is_active: nextIsActive });
-            toast.success(nextIsActive ? 'Баннер активирован' : 'Баннер скрыт');
+            toast.success(nextIsActive ? t('banners.banner_activated') : t('banners.banner_hidden'));
             // Dispatch event to notify public page
             window.dispatchEvent(new CustomEvent('bannerUpdated'));
         } catch (error) {
-            toast.error('Ошибка обновления');
+            toast.error(t('banners.error_update'));
             loadBanners();
         }
     };
@@ -320,7 +322,7 @@ export default function BannersTab() {
         setUploadTab('url');
     };
 
-    if (loading) return <div>Загрузка...</div>;
+    if (loading) return <div>{t('banners.loading')}</div>;
 
     return (
         <div className="space-y-8">
@@ -328,12 +330,12 @@ export default function BannersTab() {
             <div className="bg-white p-6 rounded-lg border shadow-sm space-y-6">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
-                    Настройки главной страницы
+                    {t('banners.page_settings')}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="rotation-interval">Интервал ротации баннеров (сек)</Label>
+                        <Label htmlFor="rotation-interval">{t('banners.rotation_interval')}</Label>
                         <div className="flex items-center gap-2">
                             <Input
                                 id="rotation-interval"
@@ -348,7 +350,7 @@ export default function BannersTab() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="promo-end-date">Дата окончания акции (Таймер)</Label>
+                        <Label htmlFor="promo-end-date">{t('banners.promo_end_date')}</Label>
                         <Input
                             id="promo-end-date"
                             type="datetime-local"
@@ -357,14 +359,14 @@ export default function BannersTab() {
                             className="w-full px-3"
                         />
                         <p className="text-xs text-gray-500">
-                            Если дата в будущем, на главной странице появится таймер обратного отсчета.
+                            {t('banners.promo_hint')}
                         </p>
                     </div>
                 </div>
 
                 <div className="flex justify-end">
                     <Button onClick={saveSettings}>
-                        Сохранить настройки
+                        {t('banners.save_settings')}
                     </Button>
                 </div>
             </div>
@@ -373,8 +375,8 @@ export default function BannersTab() {
             <div>
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h2 className="text-xl font-semibold">Список баннеров</h2>
-                        <p className="text-sm text-gray-500">Первый активный баннер отображается в Hero секции</p>
+                        <h2 className="text-xl font-semibold">{t('banners.list_title')}</h2>
+                        <p className="text-sm text-gray-500">{t('banners.list_hint')}</p>
                     </div>
 
                     <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -384,43 +386,43 @@ export default function BannersTab() {
                         <DialogTrigger asChild>
                             <Button>
                                 <Plus className="w-4 h-4 mr-2" />
-                                Добавить баннер
+                                {t('banners.add_banner')}
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle>
-                                    {editingBanner ? 'Редактировать баннер' : 'Новый баннер'}
+                                    {editingBanner ? t('banners.edit_banner') : t('banners.new_banner')}
                                 </DialogTitle>
                                 <DialogDescription>
-                                    Заполните информацию о баннере. Изображение и заголовок обязательны.
+                                    {t('banners.form_hint')}
                                 </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="space-y-4">
                                     <div>
-                                        <Label htmlFor="title">Заголовок (RU)</Label>
+                                        <Label htmlFor="title">{t('banners.title_label')}</Label>
                                         <Input
                                             id="title"
                                             value={formData.title_ru}
                                             onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
                                             required
-                                            placeholder="Например: Скидка 20% на все услуги"
+                                            placeholder={t('banners.title_placeholder')}
                                             className="px-3"
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="subtitle">Подзаголовок (RU)</Label>
+                                        <Label htmlFor="subtitle">{t('banners.subtitle_label')}</Label>
                                         <Input
                                             id="subtitle"
                                             value={formData.subtitle_ru}
                                             onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
-                                            placeholder="Например: Только до конца месяца"
+                                            placeholder={t('banners.subtitle_placeholder')}
                                             className="px-3"
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="link">Ссылка при клике (опционально)</Label>
+                                        <Label htmlFor="link">{t('banners.link_label')}</Label>
                                         <Input
                                             id="link"
                                             value={formData.link_url}
@@ -431,11 +433,11 @@ export default function BannersTab() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Изображение</Label>
+                                        <Label>{t('banners.image_label')}</Label>
                                         <Tabs value={uploadTab} onValueChange={setUploadTab} className="w-full">
                                             <TabsList className="grid w-full grid-cols-2">
-                                                <TabsTrigger value="url">Ссылка</TabsTrigger>
-                                                <TabsTrigger value="file">Загрузить файл</TabsTrigger>
+                                                <TabsTrigger value="url">{t('banners.url_tab')}</TabsTrigger>
+                                                <TabsTrigger value="file">{t('banners.file_tab')}</TabsTrigger>
                                             </TabsList>
                                             <TabsContent value="url" className="mt-2">
                                                 <Input
@@ -453,7 +455,7 @@ export default function BannersTab() {
                                                     onClick={() => document.getElementById('banner-file-upload')?.click()}
                                                     disabled={uploading}
                                                 >
-                                                    {uploading ? 'Загрузка...' : 'Выбрать файл'}
+                                                    {uploading ? t('banners.uploading') : t('banners.choose_file')}
                                                 </Button>
                                                 <input
                                                     id="banner-file-upload"
@@ -474,7 +476,7 @@ export default function BannersTab() {
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="flex items-center gap-2">
                                                 <MousePointerClick className="w-4 h-4 text-primary" />
-                                                <h4 className="font-medium">Настройка отображения</h4>
+                                                <h4 className="font-medium">{t('banners.display_settings')}</h4>
                                             </div>
 
                                             {/* Flip Controls */}
@@ -487,7 +489,7 @@ export default function BannersTab() {
                                                     />
                                                     <Label htmlFor="flip-h" className="flex items-center gap-1 cursor-pointer">
                                                         <FlipHorizontal className="w-4 h-4" />
-                                                        <span className="text-xs">Отразить по гор.</span>
+                                                        <span className="text-xs">{t('banners.flip_horizontal')}</span>
                                                     </Label>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
@@ -498,7 +500,7 @@ export default function BannersTab() {
                                                     />
                                                     <Label htmlFor="flip-v" className="flex items-center gap-1 cursor-pointer">
                                                         <FlipVertical className="w-4 h-4" />
-                                                        <span className="text-xs">Отразить по верт.</span>
+                                                        <span className="text-xs">{t('banners.flip_vertical')}</span>
                                                     </Label>
                                                 </div>
                                             </div>
@@ -527,7 +529,7 @@ export default function BannersTab() {
                                 )}
 
                                 <Button type="submit" className="w-full" disabled={uploading}>
-                                    {editingBanner ? 'Сохранить' : 'Создать'}
+                                    {editingBanner ? t('common:save') : t('banners.create')}
                                 </Button>
                             </form>
                         </DialogContent>
@@ -584,7 +586,7 @@ export default function BannersTab() {
                                     size="icon"
                                     className="h-8 w-8 bg-white/90 hover:bg-white"
                                     onClick={() => handleToggleVisibility(banner)}
-                                    title={banner.is_active ? 'Скрыть' : 'Показать'}
+                                    title={banner.is_active ? t('gallery.hide') : t('gallery.show')}
                                 >
                                     {banner.is_active ? (
                                         <Eye className="w-4 h-4 text-green-600" />
@@ -613,7 +615,7 @@ export default function BannersTab() {
                             {/* Status Badge */}
                             {!banner.is_active && (
                                 <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-                                    Скрыт
+                                    {t('banners.status_hidden')}
                                 </div>
                             )}
                         </div>
@@ -621,7 +623,7 @@ export default function BannersTab() {
 
                     {banners.length === 0 && (
                         <div className="col-span-full text-center py-12 text-gray-500 border-2 border-dashed rounded-lg">
-                            Нет активных баннеров. Добавьте первый!
+                            {t('banners.no_banners')}
                         </div>
                     )}
                 </div>

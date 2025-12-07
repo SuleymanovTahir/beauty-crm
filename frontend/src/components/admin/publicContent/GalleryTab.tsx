@@ -1,5 +1,6 @@
 // /frontend/src/components/admin/publicContent/GalleryTab.tsx
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image as ImageIcon, Upload, Trash2, Eye, EyeOff, Loader, Settings, Save, Pencil } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
@@ -27,6 +28,7 @@ interface GalleryImage {
 }
 
 export default function GalleryTab() {
+    const { t } = useTranslation(['admin/PublicContent', 'common']);
     const [portfolioImages, setPortfolioImages] = useState<GalleryImage[]>([]);
     const [salonImages, setSalonImages] = useState<GalleryImage[]>([]);
     const [servicesImages, setServicesImages] = useState<GalleryImage[]>([]);
@@ -63,10 +65,10 @@ export default function GalleryTab() {
     const saveSettings = async () => {
         try {
             await galleryApi.saveSettings(displaySettings);
-            toast.success('Настройки сохранены');
+            toast.success(t('gallery.settings_saved'));
             setShowSettings(false);
         } catch (error) {
-            toast.error('Ошибка сохранения настроек');
+            toast.error(t('gallery.error_save_settings'));
         }
     };
 
@@ -87,7 +89,7 @@ export default function GalleryTab() {
 
         } catch (error) {
             console.error('Error loading gallery:', error);
-            toast.error('Ошибка загрузки галереи');
+            toast.error(t('gallery.error_load_gallery'));
         } finally {
             setLoading(false);
         }
@@ -107,19 +109,19 @@ export default function GalleryTab() {
 
         try {
             await galleryApi.updateImage(image.id, { is_visible: nextIsVisible });
-            toast.success(nextIsVisible ? 'Фото показано' : 'Фото скрыто');
+            toast.success(nextIsVisible ? t('gallery.photo_shown') : t('gallery.photo_hidden'));
         } catch (error) {
-            toast.error('Ошибка обновления');
+            toast.error(t('gallery.error_update'));
             loadGallery();
         }
     };
 
     const handleDelete = async (imageId: number) => {
-        if (!confirm('Удалить это фото?')) return;
+        if (!confirm(t('gallery.delete_confirm'))) return;
 
         try {
             await galleryApi.deleteImage(imageId);
-            toast.success('Фото удалено');
+            toast.success(t('gallery.photo_deleted'));
 
             const filterState = (prev: GalleryImage[]) => prev.filter(img => img.id !== imageId);
             if (activeTab === 'portfolio') setPortfolioImages(filterState);
@@ -128,17 +130,17 @@ export default function GalleryTab() {
             else if (activeTab === 'faces') setFacesImages(filterState);
 
         } catch (error) {
-            toast.error('Ошибка удаления');
+            toast.error(t('gallery.error_delete'));
         }
     };
 
     const handleUpload = async (category: string, file: File) => {
         try {
             await galleryApi.uploadImage(category, file);
-            toast.success('Фото загружено');
+            toast.success(t('gallery.photo_uploaded'));
             loadGallery();
         } catch (error) {
-            toast.error('Ошибка загрузки');
+            toast.error(t('gallery.error_upload'));
         }
     };
 
@@ -159,12 +161,12 @@ export default function GalleryTab() {
 
         try {
             await galleryApi.updateImage(editingImage.id, editForm);
-            toast.success('Изображение обновлено');
+            toast.success(t('gallery.image_updated'));
             setIsEditOpen(false);
             loadGallery();
         } catch (error) {
             console.error('Failed to update image', error);
-            toast.error('Ошибка обновления');
+            toast.error(t('gallery.error_update'));
         }
     };
 
@@ -177,10 +179,10 @@ export default function GalleryTab() {
             // Upload to the current active category
             const response = await galleryApi.uploadImage(activeTab, file);
             setEditForm({ ...editForm, image_path: response.image_path });
-            toast.success('Новое изображение загружено');
+            toast.success(t('gallery.new_image_uploaded'));
         } catch (error) {
             console.error('Upload error:', error);
-            toast.error('Ошибка загрузки файла');
+            toast.error(t('gallery.error_file_upload'));
         } finally {
             setIsUploadingEdit(false);
         }
@@ -225,9 +227,9 @@ export default function GalleryTab() {
             await Promise.all(updatedImages.map(img =>
                 galleryApi.updateImage(img.id, { sort_order: img.sort_order })
             ));
-            toast.success('Порядок сохранен');
+            toast.success(t('gallery.order_saved'));
         } catch (error) {
-            toast.error('Ошибка сохранения порядка');
+            toast.error(t('gallery.error_save_order'));
             loadGallery();
         }
     };
@@ -245,9 +247,9 @@ export default function GalleryTab() {
             return (
                 <div className="text-center py-12">
                     <ImageIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600">Нет фото в этой категории</p>
+                    <p className="text-gray-600">{t('gallery.no_photos')}</p>
                     <p className="text-sm text-gray-500 mt-2">
-                        Загрузите фото или поместите их в папку backend/static/uploads/{category}
+                        {t('gallery.upload_hint')} backend/static/uploads/{category}
                     </p>
                 </div>
             );
@@ -282,7 +284,7 @@ export default function GalleryTab() {
                                     size="sm"
                                     variant="secondary"
                                     onClick={() => handleToggleVisibility(image)}
-                                    title={image.is_visible === false || image.is_visible === 0 ? 'Показать' : 'Скрыть'}
+                                    title={image.is_visible === false || image.is_visible === 0 ? t('gallery.show') : t('gallery.hide')}
                                 >
                                     {image.is_visible === false || image.is_visible === 0 ? (
                                         <Eye className="w-4 h-4" />
@@ -295,7 +297,7 @@ export default function GalleryTab() {
                                     size="sm"
                                     variant="secondary"
                                     onClick={() => handleEditClick(image)}
-                                    title="Редактировать"
+                                    title={t('gallery.edit')}
                                 >
                                     <Pencil className="w-4 h-4" />
                                 </Button>
@@ -304,7 +306,7 @@ export default function GalleryTab() {
                                     size="sm"
                                     variant="destructive"
                                     onClick={() => handleDelete(image.id)}
-                                    title="Удалить"
+                                    title={t('gallery.delete')}
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -317,7 +319,7 @@ export default function GalleryTab() {
                                     defaultValue={image.title}
                                     onBlur={(e) => handleUpdateTitle(image.id, e.target.value)}
                                     className="w-full bg-transparent text-white text-sm border-none p-1 focus:ring-0 focus:bg-black/60 rounded placeholder-white/50"
-                                    placeholder="Подпись..."
+                                    placeholder={t('gallery.caption_placeholder')}
                                 />
                             </div>
                         </div>
@@ -328,9 +330,9 @@ export default function GalleryTab() {
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                     <DialogContent className="sm:max-w-[500px]">
                         <DialogHeader>
-                            <DialogTitle>Редактирование изображения</DialogTitle>
+                            <DialogTitle>{t('gallery.edit_image')}</DialogTitle>
                             <DialogDescription>
-                                Измените заголовок, описание или само изображение.
+                                {t('gallery.edit_hint')}
                             </DialogDescription>
                         </DialogHeader>
 
@@ -345,7 +347,7 @@ export default function GalleryTab() {
                                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Label htmlFor="edit-file-upload" className="cursor-pointer text-white flex flex-col items-center gap-1 hover:scale-105 transition-transform">
                                             <Upload className="w-6 h-6" />
-                                            <span className="text-xs">Заменить</span>
+                                            <span className="text-xs">{t('gallery.replace')}</span>
                                         </Label>
                                         <input
                                             id="edit-file-upload"
@@ -365,23 +367,23 @@ export default function GalleryTab() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-title">Заголовок</Label>
+                                <Label htmlFor="edit-title">{t('gallery.image_title')}</Label>
                                 <Input
                                     id="edit-title"
                                     value={editForm.title}
                                     onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                                    placeholder="Введите заголовок..."
+                                    placeholder={t('gallery.enter_title')}
                                     className="px-3"
                                 />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="edit-desc">Описание</Label>
+                                <Label htmlFor="edit-desc">{t('gallery.image_description')}</Label>
                                 <Textarea
                                     id="edit-desc"
                                     value={editForm.description}
                                     onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                                    placeholder="Введите описание..."
+                                    placeholder={t('gallery.enter_description')}
                                     className="min-h-[80px]"
                                 />
                             </div>
@@ -389,7 +391,7 @@ export default function GalleryTab() {
 
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                                Отмена
+                                {t('common:cancel')}
                             </Button>
                             <Button onClick={handleEditSave} disabled={isUploadingEdit}>
                                 Сохранить
@@ -405,15 +407,15 @@ export default function GalleryTab() {
         <div>
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-xl font-semibold">Галерея изображений</h2>
-                    <p className="text-gray-600">Перетаскивайте фото для сортировки</p>
+                    <h2 className="text-xl font-semibold">{t('gallery.title')}</h2>
+                    <p className="text-gray-600">{t('gallery.drag_hint')}</p>
                 </div>
                 <Button
                     variant={showSettings ? "secondary" : "outline"}
                     onClick={() => setShowSettings(!showSettings)}
                 >
                     <Settings className="w-4 h-4 mr-2" />
-                    {showSettings ? 'Скрыть настройки' : 'Настройки отображения'}
+                    {showSettings ? t('gallery.hide_settings') : t('gallery.settings_display')}
                 </Button>
             </div>
 
@@ -422,7 +424,7 @@ export default function GalleryTab() {
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <Label htmlFor="gallery-count">Количество фото в Галерее (Салон)</Label>
+                            <Label htmlFor="gallery-count">{t('gallery.gallery_count_label')}</Label>
                             <Input
                                 id="gallery-count"
                                 type="number"
@@ -434,7 +436,7 @@ export default function GalleryTab() {
                             />
                         </div>
                         <div>
-                            <Label htmlFor="portfolio-count">Количество фото в Портфолио</Label>
+                            <Label htmlFor="portfolio-count">{t('gallery.portfolio_count_label')}</Label>
                             <Input
                                 id="portfolio-count"
                                 type="number"
@@ -446,7 +448,7 @@ export default function GalleryTab() {
                             />
                         </div>
                         <div>
-                            <Label htmlFor="services-count">Количество фото в Услугах</Label>
+                            <Label htmlFor="services-count">{t('gallery.services_count_label')}</Label>
                             <Input
                                 id="services-count"
                                 type="number"
@@ -458,7 +460,7 @@ export default function GalleryTab() {
                             />
                         </div>
                         <div>
-                            <Label htmlFor="faces-count">Количество фото в Лицах</Label>
+                            <Label htmlFor="faces-count">{t('gallery.faces_count_label')}</Label>
                             <Input
                                 id="faces-count"
                                 type="number"
@@ -477,7 +479,7 @@ export default function GalleryTab() {
                         </div>
                     </div>
                     <p className="text-sm text-gray-500 mt-2">
-                        💡 Вкладка "Услуги" не отображается на публичной странице
+                        {t('gallery.services_hint')}
                     </p>
                 </div>
             )}
@@ -485,16 +487,16 @@ export default function GalleryTab() {
             <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-6">
                     <TabsTrigger value="portfolio">
-                        Портфолио ({portfolioImages.length})
+                        {t('gallery.portfolio')} ({portfolioImages.length})
                     </TabsTrigger>
                     <TabsTrigger value="salon">
-                        Фото салона ({salonImages.length})
+                        {t('gallery.salon_photos')} ({salonImages.length})
                     </TabsTrigger>
                     <TabsTrigger value="services">
-                        Услуги ({servicesImages.length})
+                        {t('gallery.services')} ({servicesImages.length})
                     </TabsTrigger>
                     <TabsTrigger value="faces">
-                        Лица ({facesImages.length})
+                        {t('gallery.faces')} ({facesImages.length})
                     </TabsTrigger>
                 </TabsList>
 
@@ -518,7 +520,7 @@ export default function GalleryTab() {
                                 className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             >
                                 <Upload className="w-4 h-4 mr-2" />
-                                Загрузить фото
+                                {t('gallery.upload_photo')}
                             </Label>
                         </div>
                     </div>
@@ -545,7 +547,7 @@ export default function GalleryTab() {
                                 className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             >
                                 <Upload className="w-4 h-4 mr-2" />
-                                Загрузить фото
+                                {t('gallery.upload_photo')}
                             </Label>
                         </div>
                     </div>
@@ -572,7 +574,7 @@ export default function GalleryTab() {
                                 className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             >
                                 <Upload className="w-4 h-4 mr-2" />
-                                Загрузить фото
+                                {t('gallery.upload_photo')}
                             </Label>
                         </div>
                     </div>
@@ -599,7 +601,7 @@ export default function GalleryTab() {
                                 className="cursor-pointer inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             >
                                 <Upload className="w-4 h-4 mr-2" />
-                                Загрузить фото
+                                {t('gallery.upload_photo')}
                             </Label>
                         </div>
                     </div>

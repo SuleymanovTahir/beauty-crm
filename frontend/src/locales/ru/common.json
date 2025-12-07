@@ -17,7 +17,7 @@
   "all_time": "за все время",
   "allergies": "Аллергия",
   "allRightsReserved": "Все права защищены.",
-  "back": "",
+  "back": "Назад",
   "back_to_bookings": "Вернуться к бронированиям",
   "back_to_clients": "Вернуться к клиентам",
   "booking": "Бронирование",
@@ -317,5 +317,10 @@
   "visitSalon": "Посетите наш салон",
   "workingHours": "Часы работы",
   "yearsExperience": "лет опыта",
-  "yourName": "Ваше имя"
+  "yourName": "Ваше имя",
+  "url_link": "Ссылка",
+  "upload_file": "Загрузить файл",
+  "uploading": "Загрузка...",
+  "choose_file": "Выбрать файл",
+  "file_upload_error": "Ошибка загрузки файла"
 }

@@ -41,17 +41,17 @@ async def get_notifications(
             c.execute("""
                 SELECT id, title, message, type, is_read, created_at, action_url
                 FROM notifications 
-                WHERE user_id =%s AND is_read = FALSE
+                WHERE user_id = %s AND is_read = FALSE
                 ORDER BY created_at DESC
-                LIMIT%s
+                LIMIT %s
             """, (user["id"], limit))
         else:
             c.execute("""
                 SELECT id, title, message, type, is_read, created_at, action_url
                 FROM notifications 
-                WHERE user_id =%s
+                WHERE user_id = %s
                 ORDER BY created_at DESC
-                LIMIT%s
+                LIMIT %s
             """, (user["id"], limit))
         
         notifications = c.fetchall()
