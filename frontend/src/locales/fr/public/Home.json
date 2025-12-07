@@ -52,14 +52,14 @@
   },
   "services": {
     "items": [
-      "Maquillage permanent des sourcils",
-      "Manucure",
-      "Pédicure",
-      "Massage du visage",
-      "Extensions de cils",
-      "Coupe de cheveux et stylisme",
-      "Coloration des cheveux",
-      "Nettoyage du visage"
+      "Перманентный макияж бровей",
+      "Маникюр",
+      "Педикюр",
+      "Массаж лица",
+      "Наращивание ресниц",
+      "Стрижка и укладка",
+      "Окрашивание волос",
+      "Чистка лица"
     ]
   },
   "team": {

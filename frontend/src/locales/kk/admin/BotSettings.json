@@ -55,6 +55,7 @@
   "price_response_template": "Баға жауап шаблоны",
   "real_dialogues_for_training": "Оқу үшін нақты диалогтар",
   "recommended_length": "200-400 таңба ұсынылады. Боттың жауаптары азырақ.",
+  "response_style": "",
   "safety_and_ethics": "Қауіпсіздік және этика",
   "safety_rules": "Қауіпсіздік ережелері",
   "save_all": "Барлығын сақтаңыз",

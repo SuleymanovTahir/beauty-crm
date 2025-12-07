@@ -55,6 +55,7 @@
   "price_response_template": "نموذج الرد على الأسعار",
   "real_dialogues_for_training": "حوارات حقيقية للتعلم",
   "recommended_length": "يوصى باستخدام 200-400 حرفًا. كلما كانت استجابات الروبوت أقل، كانت أقصر.",
+  "response_style": "",
   "safety_and_ethics": "السلامة والأخلاق",
   "safety_rules": "قواعد السلامة",
   "save_all": "احفظ الكل",

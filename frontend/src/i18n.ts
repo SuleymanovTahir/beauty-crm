@@ -58,6 +58,9 @@ const namespaces = [
   'components/employeelayout',
   'components/publiclanguageswitcher',
   'public_landing',
+  'public_landing/services',
+  'public_landing/faq',
+  'public_landing/banners',
   'dynamic'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite

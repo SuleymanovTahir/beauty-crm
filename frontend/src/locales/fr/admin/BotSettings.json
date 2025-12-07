@@ -55,6 +55,7 @@
   "price_response_template": "Modèle de réponse aux prix",
   "real_dialogues_for_training": "De vrais dialogues pour apprendre",
   "recommended_length": "200 à 400 caractères sont recommandés. Moins il y en a, plus les réponses du bot sont courtes.",
+  "response_style": "",
   "safety_and_ethics": "Sécurité et éthique",
   "safety_rules": "Règles de sécurité",
   "save_all": "Enregistrer tout",

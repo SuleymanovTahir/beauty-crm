@@ -10,6 +10,12 @@ import urllib.parse
 import time
 from typing import List, Dict, Optional
 from pathlib import Path
+import sys
+import os
+
+# Add scripts/translations to path for local config
+script_dir = Path(__file__).parent
+sys.path.insert(0, str(script_dir))
 
 from config import CACHE_DIR, LANGUAGES
 
@@ -20,6 +26,32 @@ try:
 except ImportError:
     LIBRE_AVAILABLE = False
     print("⚠️  LibreTranslate not available, using Google Translate for all text")
+
+# Salon-specific terminology dictionary for better context
+# This helps correct common mistranslations
+SALON_TERMINOLOGY = {
+    # Russian terms that are often mistranslated
+    'ru': {
+        'запись': 'booking',  # Not 'post' or 'entry' or 'record'
+        'записи': 'bookings',
+        'записей': 'bookings',
+        'напоминание': 'reminder',
+        'напоминания': 'reminders',
+        'напоминаний': 'reminders',
+        'починка': 'repair',  # Not 'fix' in context of nails
+        'ремонт': 'repair',
+        'ноготь': 'nail',
+        'ногтя': 'nail',
+        'ногтей': 'nails',
+    },
+    # English terms that need specific translations
+    'en': {
+        'post': 'booking',  # Correct mistranslation
+        'record': 'booking',  # Correct mistranslation
+        'entry': 'booking',  # Correct mistranslation
+    }
+}
+
 
 class Translator:
     def __init__(self, use_cache=True):
@@ -210,6 +242,27 @@ class Translator:
         if not text or not text.strip():
             return text
         
+        # Exclusions - never translate these
+        EXCLUSIONS = {
+            # Currencies
+            'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR',
+            # Technical terms
+            'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API',
+            # Codes
+            'UV', 'LED', '2D', '3D', '4D', '5D', 'ML',
+        }
+        
+        if text.strip().upper() in EXCLUSIONS:
+            return text
+        
+        # Check if this is a known terminology term (exact match)
+        text_lower = text.lower().strip()
+        if source in SALON_TERMINOLOGY:
+            source_terms = SALON_TERMINOLOGY[source]
+            if text_lower in source_terms:
+                # This is a known term, add context hint
+                use_context = True
+        
         # Check cache first
         # We append context flag to key to differentiate
         cache_key_suffix = "|ctx" if use_context else ""
@@ -227,21 +280,72 @@ class Translator:
                 libre = get_libre_translator()
                 translated = libre.translate(text, source, target)
                 if translated and translated != text:
+                    # Check if translation needs correction based on terminology
+                    translated = self._apply_terminology_corrections(translated, target)
                     self._save_to_cache(text + cache_key_suffix, source, target, translated)
-                    time.sleep(0.1)  # Small delay
+                    time.sleep(0.01)  # Minimal delay
                     return translated
                 # If LibreTranslate fails, fall through to Google Translate
             except Exception as e:
                 print(f"  ⚠️  LibreTranslate error, falling back to Google: {e}")
         
         # Use Google Translate for longer text or if LibreTranslate failed
-        translated = self._translate_via_http(text, source, target, use_context=use_context)
+        max_retries = 3
+        retry_delay = 0.5
+        
+        for attempt in range(max_retries):
+            translated = self._translate_via_http(text, source, target, use_context=use_context)
+            
+            # Check if translation failed due to rate limiting
+            if translated == text and attempt < max_retries - 1:
+                # Retry with exponential backoff
+                time.sleep(retry_delay * (2 ** attempt))
+                continue
+            break
+        
+        # Apply terminology corrections to the translation
+        translated = self._apply_terminology_corrections(translated, target)
+        
         self._save_to_cache(text + cache_key_suffix, source, target, translated)
         
-        # Small delay to avoid rate limiting
-        time.sleep(0.1)
+        # Minimal delay to avoid rate limiting
+        time.sleep(0.01)
         
         return translated
+    
+    def _apply_terminology_corrections(self, text: str, target_lang: str) -> str:
+        """
+        Apply salon terminology corrections to translated text
+        
+        Args:
+            text: Translated text
+            target_lang: Target language code
+            
+        Returns:
+            Corrected text
+        """
+        if target_lang not in SALON_TERMINOLOGY:
+            return text
+        
+        corrections = SALON_TERMINOLOGY[target_lang]
+        text_lower = text.lower().strip()
+        
+        # Check for exact matches (case-insensitive)
+        for wrong_term, correct_term in corrections.items():
+            if text_lower == wrong_term.lower():
+                # Preserve original capitalization pattern
+                if text[0].isupper():
+                    return correct_term.capitalize()
+                return correct_term
+        
+        # Check for word replacements within text
+        for wrong_term, correct_term in corrections.items():
+            # Replace whole words only
+            import re
+            pattern = r'\b' + re.escape(wrong_term) + r'\b'
+            text = re.sub(pattern, correct_term, text, flags=re.IGNORECASE)
+        
+        return text
     
     def translate_batch(self, texts: List[str], source: str, target: str) -> List[str]:
         """
