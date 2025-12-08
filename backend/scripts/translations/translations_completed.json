@@ -1,377 +1,789 @@
 {
-  "public_reviews": [
+  "users": [
     {
-      "id": 5,
+      "id": 2,
       "fields": {
-        "author_name": {
-          "ru": "Fatima Al-Sayed",
-          "key": "public_reviews.5.author_name.f26d4aa2",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима әл-Саид",
-          "pt": "Fátima Al-Sayed"
+        "full_name": {
+          "ru": "Симо",
+          "key": "users.2.full_name.3bfe88dd",
+          "en": "Simo",
+          "ar": "سيمو",
+          "es": "Simo",
+          "de": "Simo",
+          "fr": "Simo",
+          "hi": "सिमो",
+          "kk": "Симо",
+          "pt": "Simo",
+          "detected_language": "en"
+        },
+        "position": {
+          "ru": "Стилист-парикмахер",
+          "key": "users.2.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro",
+          "detected_language": "en"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "full_name": {
+          "ru": "Большая Часть Этого",
+          "key": "users.3.full_name.6b69b58c",
+          "en": "Mestan",
+          "ar": "معظمها",
+          "es": "Mestan",
+          "de": "Mestan",
+          "fr": "Mestan",
+          "hi": "इसमें से अधिकांश",
+          "kk": "Оның Көпшілігі",
+          "pt": "Mestan",
+          "detected_language": "is"
+        },
+        "position": {
+          "ru": "Стилист-парикмахер",
+          "key": "users.3.position.18612649",
+          "en": "Hair Stylist",
+          "ar": "مصفف الشعر",
+          "es": "estilista",
+          "de": "Friseur",
+          "fr": "Coiffeur",
+          "hi": "बालों की स्टाइल बनाने वाला",
+          "kk": "Шаш стилисті",
+          "pt": "Cabeleireiro",
+          "detected_language": "en"
         }
       }
     },
     {
       "id": 4,
       "fields": {
-        "author_name": {
-          "ru": "Maria Gonzalez",
-          "key": "public_reviews.4.author_name.653816a6",
-          "en": "Maria Gonzalez",
-          "ar": "ماريا جونزاليس",
-          "es": "María González",
-          "de": "Maria Gonzalez",
-          "fr": "Maria González",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Maria González"
+        "full_name": {
+          "ru": "Ляззат",
+          "key": "users.4.full_name.cff5b0c9",
+          "en": "Lyazzat",
+          "ar": "ليازات",
+          "es": "Lyazzat",
+          "de": "Lyazzat",
+          "fr": "Lyazzat",
+          "hi": "लयज़त",
+          "kk": "Ляззат",
+          "pt": "Lyazzat",
+          "detected_language": "en"
+        },
+        "position": {
+          "ru": "Мастер ногтевого сервиса",
+          "key": "users.4.position.1c34eb1b",
+          "en": "Nail Master",
+          "ar": "سيد الأظافر",
+          "es": "Maestro de uñas",
+          "de": "Nagelmeister",
+          "fr": "Maître des Ongles",
+          "hi": "नेल मास्टर",
+          "kk": "Тырнақ шебері",
+          "pt": "Mestre de unhas",
+          "detected_language": "en"
         }
       }
     },
     {
-      "id": 2,
+      "id": 5,
       "fields": {
-        "author_name": {
-          "ru": "Sarah Jenkins",
-          "key": "public_reviews.2.author_name.ff715865",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins"
-        }
-      }
-    }
-  ],
-  "services": [
-    {
-      "id": 91,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.91.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
+        "full_name": {
+          "ru": "Гуля",
+          "key": "users.5.full_name.5e43f4f1",
+          "en": "Gulya",
+          "ar": "غوليا",
+          "es": "Gulya",
+          "de": "Gulya",
+          "fr": "Gulya",
+          "hi": "गुल्या",
+          "kk": "Гуля",
+          "pt": "Gulya",
+          "detected_language": "az"
+        },
+        "position": {
+          "ru": "Ногти/Вощение",
+          "key": "users.5.position.0e33fa6b",
+          "en": "Nail/Waxing",
+          "ar": "الأظافر/الصبح",
+          "es": "Uñas/Cera",
+          "de": "Nägel/Wachsen",
+          "fr": "Ongle/Épilation",
+          "hi": "नाखून/वैक्सिंग",
+          "kk": "Тырнақ / балауыздау",
+          "pt": "Prego/Depilação",
+          "detected_language": "en"
         }
       }
     },
     {
-      "id": 82,
+      "id": 6,
       "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.82.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 98,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.98.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 8,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.8.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 29,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.29.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 67,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.67.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 73,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.73.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 13,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.13.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 49,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.49.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 59,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.59.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 50,
-      "fields": {
-        "duration": {
-          "ru": "1h 30min",
-          "key": "services.50.duration.d7cc86dd",
-          "en": "1h 30min",
-          "ar": "ساعة و30 دقيقة",
-          "es": "1h 30min",
-          "de": "1 Stunde 30 Minuten",
-          "fr": "Service salon de beauté 1h 30min",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा 30 मिनट",
-          "kk": "1 сағат 30мин",
-          "pt": "1h 30min"
-        }
-      }
-    },
-    {
-      "id": 83,
-      "fields": {
-        "duration": {
-          "ru": "30",
-          "key": "services.83.duration.34173cb3",
-          "en": "30",
-          "ar": "30",
-          "es": "30",
-          "de": "30",
-          "fr": "30",
-          "hi": "30",
-          "kk": "30",
-          "pt": "30"
+        "full_name": {
+          "ru": "Дженнифер",
+          "key": "users.6.full_name.da883156",
+          "en": "Jennifer",
+          "ar": "جنيفر",
+          "es": "Jennifer",
+          "de": "Jennifer",
+          "fr": "Jennifer",
+          "hi": "जेनिफर",
+          "kk": "Дженнифер",
+          "pt": "Jennifer",
+          "detected_language": "en"
+        },
+        "position": {
+          "ru": "Мастер ногтевого сервиса/Массажи",
+          "key": "users.6.position.d68a2270",
+          "en": "Nail Master/Massages",
+          "ar": "ماجستير الأظافر/التدليك",
+          "es": "Maestro de uñas/Masajes",
+          "de": "Nagelmeister/Massagen",
+          "fr": "Maître des Ongles/Massages",
+          "hi": "नेल मास्टर/मालिश",
+          "kk": "Тырнақ қожайыны / массаж",
+          "pt": "Mestre de unhas/massagens",
+          "detected_language": "en"
         }
       }
     },
     {
       "id": 7,
       "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.7.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
+        "full_name": {
+          "ru": "Турсунай",
+          "key": "users.7.full_name.ab8bc7dd",
+          "en": "Tursunay",
+          "ar": "تورسوناي",
+          "es": "Tursunay",
+          "de": "Tursunay",
+          "fr": "Tursunay",
+          "hi": "तुरसुनाई",
+          "kk": "Турсунай",
+          "pt": "Tursunay",
+          "detected_language": "ky"
+        },
+        "position": {
+          "ru": "Директор",
+          "key": "users.7.position.7c5ba892",
+          "en": "Director",
+          "ar": "مخرج",
+          "es": "Director",
+          "de": "Direktor",
+          "fr": "Directeur",
+          "hi": "निदेशक",
+          "kk": "Директор",
+          "pt": "Diretor",
+          "detected_language": "en"
+        }
+      }
+    }
+  ],
+  "public_reviews": [
+    {
+      "id": 1,
+      "fields": {
+        "text_ru": {
+          "ru": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.",
+          "key": "public_reviews.1.text_ru.941dc55e",
+          "en": "Amazing salon! ",
+          "ar": "صالون مذهل! السادة محترفون حقيقيون. لقد قمت بعمل مكياج حواجب دائم، وكانت النتيجة فاقت كل التوقعات. طبيعية جدا وجميلة.",
+          "es": "Salón increíble! Los maestros son verdaderos profesionales. Me maquillé las cejas permanentemente, el resultado superó todas las expectativas. Muy natural y hermoso.",
+          "de": "Toller Salon! Die Meister sind wahre Profis. Ich habe ein permanentes Augenbrauen-Make-up gemacht, das Ergebnis hat alle Erwartungen übertroffen. Sehr natürlich und schön.",
+          "fr": "Salon incroyable ! Les maîtres sont de vrais professionnels. J'ai fait un maquillage permanent des sourcils, le résultat a dépassé toutes les attentes. Très naturel et beau.",
+          "hi": "अद्भुत सैलून! स्वामी सच्चे पेशेवर हैं। मैंने स्थायी भौं मेकअप किया, परिणाम सभी अपेक्षाओं से अधिक रहा। बहुत ही प्राकृतिक और सुंदर.",
+          "kk": "Таңқаларлық салон! Магистрлер - бұл нағыз мамандар. Мен қастардың тұрақты макияжын жасадым, нәтиже барлық күткеннен асып түсті. Өте табиғи және әдемі.",
+          "pt": "Salão incrível! Os mestres são verdadeiros profissionais. Fiz maquiagem definitiva nas sobrancelhas, o resultado superou todas as expectativas. Muito natural e bonito.",
+          "detected_language": "ru"
+        },
+        "author_name": {
+          "ru": "Anna Petrova",
+          "key": "public_reviews.1.author_name.73217063",
+          "en": "Anna Petrova",
+          "ar": "Anna Petrova",
+          "es": "Anna Petrova",
+          "de": "Anna Petrova",
+          "fr": "Anna Petrova",
+          "hi": "Anna Petrova",
+          "kk": "Anna Petrova",
+          "pt": "Anna Petrova"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон красоты в Дубае! ",
+          "key": "public_reviews.2.text_ru.6f00ad70",
+          "en": "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!",
+          "ar": "أفضل صالون تجميل في دبي! ",
+          "es": "¡El mejor salón de belleza en Dubai! ",
+          "de": "Bester Schönheitssalon in Dubai! ",
+          "fr": "Meilleur salon de beauté à Dubaï ! ",
+          "hi": "दुबई में सर्वश्रेष्ठ ब्यूटी सैलून! ",
+          "kk": "Дубайдағы ең жақсы сұлулық салоны! ",
+          "pt": "Melhor salão de beleza em Dubai! ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Sarah Jenkins",
+          "key": "public_reviews.2.author_name.ff715865",
+          "en": "Sarah Jenkins",
+          "ar": "Sarah Jenkins",
+          "es": "Sarah Jenkins",
+          "de": "Sarah Jenkins",
+          "fr": "Sarah Jenkins",
+          "hi": "Sarah Jenkins",
+          "kk": "Sarah Jenkins",
+          "pt": "Sarah Jenkins"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "text_ru": {
+          "ru": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!",
+          "key": "public_reviews.3.text_ru.9b9eb8cb",
+          "en": "I've been going here for manicures and pedicures for a year now. ",
+          "ar": "لقد كنت أذهب إلى هنا من أجل عمليات تجميل الأظافر والباديكير منذ عام الآن. دائما نظيفة تماما ومعقمة وعالية الجودة. أوصي به لجميع أصدقائي!",
+          "es": "Llevo un año yendo aquí para hacerme manicura y pedicura. Siempre perfectamente limpio, esterilizado y de gran calidad. ¡Se lo recomiendo a todos mis amigos!",
+          "de": "Ich gehe jetzt seit einem Jahr zur Maniküre und Pediküre hierher. Immer perfekt sauber, steril und hochwertig. Ich empfehle es allen meinen Freunden!",
+          "fr": "Cela fait maintenant un an que je vais ici pour des manucures et des pédicures. Toujours parfaitement propre, stérile et de haute qualité. Je le recommande à tous mes amis !",
+          "hi": "मैं पिछले एक साल से यहां मैनीक्योर और पेडीक्योर के लिए जा रही हूं। हमेशा पूरी तरह से साफ, कीटाणुरहित और उच्च गुणवत्ता वाला। मैं अपने सभी दोस्तों को इसकी अनुशंसा करता हूँ!",
+          "kk": "Мен мұнда қазір бір жылдан бері маникюрдер мен педикерлер үшін бара жатқанмын. Әрқашан таза, зарарсыздандырылған және жоғары сапалы. Мен оны барлық достарыма ұсынамын!",
+          "pt": "Há um ano que venho aqui fazer manicure e pedicure. Sempre perfeitamente limpo, estéril e de alta qualidade. Recomendo a todos os meus amigos!",
+          "detected_language": "ru"
+        },
+        "author_name": {
+          "ru": "Elena Smirnova",
+          "key": "public_reviews.3.author_name.cafa8492",
+          "en": "Elena Smirnova",
+          "ar": "Elena Smirnova",
+          "es": "Elena Smirnova",
+          "de": "Elena Smirnova",
+          "fr": "Elena Smirnova",
+          "hi": "Elena Smirnova",
+          "kk": "Elena Smirnova",
+          "pt": "Elena Smirnova"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "text_ru": {
+          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
+          "key": "public_reviews.4.text_ru.f38138da",
+          "en": "Incredible service. ",
+          "ar": "خدمة لا تصدق. كان لدي وجه وبشرتي تتوهج. سأعود بالتأكيد!",
+          "es": "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!",
+          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+          "fr": "Service incroyable. J'ai eu un soin du visage et ma peau est éclatante. Je reviendrai c'est sûr !",
+          "hi": "अविश्वसनीय सेवा. मैंने फेशियल कराया और मेरी त्वचा चमक उठी। मै अवश्य ही लौट कर आउंगा!",
+          "kk": "Керемет қызмет. Менде бет әлпеті болды, терісі жарқырайды. Мен сенімді боламын!",
+          "pt": "Serviço incrível. Fiz um tratamento facial e minha pele brilha. Voltarei com certeza!",
+          "detected_language": "es"
+        },
+        "author_name": {
+          "ru": "Maria Gonzalez",
+          "key": "public_reviews.4.author_name.653816a6",
+          "en": "Maria Gonzalez",
+          "ar": "Maria Gonzalez",
+          "es": "Maria Gonzalez",
+          "de": "Maria Gonzalez",
+          "fr": "Maria Gonzalez",
+          "hi": "Maria Gonzalez",
+          "kk": "Maria Gonzalez",
+          "pt": "Maria Gonzalez"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "text_ru": {
+          "ru": "Отличный сервис и профессиональный персонал. ",
+          "key": "public_reviews.5.text_ru.ae85e84b",
+          "en": "Excellent service and professional staff. I did microblading and I am very happy with the result.",
+          "ar": "خدمة ممتازة وفريق عمل محترف. ",
+          "es": "Excelente servicio y personal profesional. ",
+          "de": "Exzellenter Service und professionelles Personal. ",
+          "fr": "Excellent service et personnel professionnel. ",
+          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी। ",
+          "kk": "Тамаша қызмет көрсету және кәсіби қызметкерлер. ",
+          "pt": "Excelente atendimento e equipe profissional. ",
+          "detected_language": "en"
+        },
+        "author_name": {
+          "ru": "Fatima Al-Sayed",
+          "key": "public_reviews.5.author_name.f26d4aa2",
+          "en": "Fatima Al-Sayed",
+          "ar": "Fatima Al-Sayed",
+          "es": "Fatima Al-Sayed",
+          "de": "Fatima Al-Sayed",
+          "fr": "Fatima Al-Sayed",
+          "hi": "Fatima Al-Sayed",
+          "kk": "Fatima Al-Sayed",
+          "pt": "Fatima Al-Sayed"
+        }
+      }
+    }
+  ],
+  "public_faq": [
+    {
+      "id": 1,
+      "fields": {
+        "question_ru": {
+          "ru": "Как записаться на процедуру",
+          "key": "public_faq.1.question_ru.ca37a34b",
+          "en": "How to sign up for the procedure",
+          "ar": "كيفية الاشتراك في هذا الإجراء",
+          "es": "Cómo inscribirse en el trámite",
+          "de": "So melden Sie sich für das Verfahren an",
+          "fr": "Comment s'inscrire à la procédure",
+          "hi": "प्रक्रिया के लिए साइन अप कैसे करें",
+          "kk": "Процедураға қалай тіркелуге болады",
+          "pt": "Como se inscrever no procedimento",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Вы можете записаться на процедуру через форму на нашем сайте, позвонив по телефону, или написав нам в Instagram. Мы свяжемся с вами для подтверждения записи.",
+          "key": "public_faq.1.answer_ru.0aebd2fd",
+          "en": "You can sign up for the procedure through the form on our website, by calling, or writing to us on Instagram. ",
+          "ar": "يمكنك الاشتراك في الإجراء من خلال النموذج الموجود على موقعنا الإلكتروني أو عن طريق الاتصال بنا أو مراسلتنا على Instagram. سوف نتصل بك لتأكيد موعدك.",
+          "es": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos por Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
+          "de": "Sie können sich für das Verfahren über das Formular auf unserer Website anmelden, indem Sie uns anrufen oder uns auf Instagram schreiben. Wir werden Sie kontaktieren, um Ihren Termin zu bestätigen.",
+          "fr": "Vous pouvez vous inscrire à la procédure via le formulaire sur notre site Internet, en nous appelant ou en nous écrivant sur Instagram. Nous vous contacterons pour confirmer votre rendez-vous.",
+          "hi": "आप हमारी वेबसाइट पर फ़ॉर्म के माध्यम से, कॉल करके या इंस्टाग्राम पर हमें लिखकर प्रक्रिया के लिए साइन अप कर सकते हैं। हम आपकी नियुक्ति की पुष्टि करने के लिए आपसे संपर्क करेंगे।",
+          "kk": "Процедураға біздің веб-сайттағы пішін арқылы, Instagram-да қоңырау шалып, жаза отырып, бізге жазыла аласыз. Кездесуді растау үшін сізбен хабарласамыз.",
+          "pt": "Você pode se inscrever no procedimento através do formulário em nosso site, ligando ou escrevendo para nós no Instagram. Entraremos em contato para confirmar seu agendamento.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие способы оплаты вы принимаете",
+          "key": "public_faq.2.question_ru.0db37e23",
+          "en": "What payment methods do you accept?",
+          "ar": "ما هي طرق الدفع التي تقبلونها؟",
+          "es": "¿Qué métodos de pago aceptan?",
+          "de": "Welche Zahlungsmethoden akzeptieren Sie?",
+          "fr": "Quels modes de paiement acceptez-vous ?",
+          "hi": "आप कौन सी भुगतान पद्धतियां स्वीकार करते हैं?",
+          "kk": "Сіз қандай төлем әдістерін қабылдайсыз?",
+          "pt": "Quais métodos de pagamento você aceita?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги.",
+          "key": "public_faq.2.answer_ru.c07c855f",
+          "en": "We accept payment in cash and cards (Visa, MasterCard, American Express). ",
+          "ar": "نحن نقبل الدفع نقدًا وبطاقات (فيزا، ماستركارد، أمريكان إكسبريس). يتم الدفع بعد تقديم الخدمة.",
+          "es": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
+          "de": "Wir akzeptieren Zahlungen in bar und mit Karten (Visa, MasterCard, American Express). Die Bezahlung erfolgt nach Erbringung der Leistung.",
+          "fr": "Nous acceptons les paiements en espèces et par cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+          "hi": "हम नकद और कार्ड (वीज़ा, मास्टरकार्ड, अमेरिकन एक्सप्रेस) में भुगतान स्वीकार करते हैं। सेवा प्रदान करने के बाद भुगतान किया जाता है।",
+          "kk": "Біз төлемді қолма-қол ақшамен және карточкаларда қабылдаймыз (Visa, MasterCard, American Express). Төлем қызмет көрсетілгеннен кейін жүзеге асырылады.",
+          "pt": "Aceitamos pagamento em dinheiro e cartões (Visa, MasterCard, American Express). O pagamento é feito após a prestação do serviço.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "question_ru": {
+          "ru": "Могу ли я отменить или перенести запись",
+          "key": "public_faq.3.question_ru.e2d9683f",
+          "en": "Can I cancel or reschedule an appointment?",
+          "ar": "هل يمكنني إلغاء أو إعادة جدولة موعد؟",
+          "es": "¿Puedo cancelar o reprogramar una cita?",
+          "de": "Kann ich einen Termin absagen oder verschieben?",
+          "fr": "Puis-je annuler ou reporter un rendez-vous ?",
+          "hi": "क्या मैं किसी अपॉइंटमेंट को रद्द या पुनर्निर्धारित कर सकता हूँ?",
+          "kk": "Кездесуді болдырмауға немесе қайта жоспарлауға бола ма?",
+          "pt": "Posso cancelar ou reagendar uma consulta?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
+          "key": "public_faq.3.answer_ru.6efb24d6",
+          "en": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. ",
+          "ar": "نعم، يمكنك إلغاء أو إعادة جدولة موعدك حتى 24 ساعة قبل الموعد المقرر. إذا تم الإلغاء قبل أقل من 24 ساعة، فقد يتم فرض غرامة قدرها 50% من تكلفة الخدمة.",
+          "es": "Sí, puedes cancelar o reprogramar tu cita hasta 24 horas antes de la hora programada. Si cancela con menos de 24 horas de antelación se podrá cobrar una penalización del 50% del coste del servicio.",
+          "de": "Ja, Sie können Ihren Termin bis zu 24 Stunden vor Ihrem geplanten Termin absagen oder verschieben. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
+          "fr": "Oui, vous pouvez annuler ou reprogrammer votre rendez-vous jusqu'à 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
+          "hi": "हां, आप अपने निर्धारित समय से 24 घंटे पहले तक अपनी नियुक्ति रद्द या पुनर्निर्धारित कर सकते हैं। 24 घंटे से कम समय पहले रद्द करने पर सेवा की लागत का 50% जुर्माना लगाया जा सकता है।",
+          "kk": "Ия, сіз кездесуден 24 сағат бұрын кездесуден бас тартуға немесе қайта жоспарлай аласыз. Егер алдын-ала 24 сағаттан аз болса, алдын-ала 24 сағаттан аз болса, онда қызмет құнының 50% айыппұл алынады.",
+          "pt": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие материалы вы используете",
+          "key": "public_faq.4.question_ru.04ca7970",
+          "en": "What materials do you use",
+          "ar": "ما هي المواد التي تستخدمها",
+          "es": "¿Qué materiales utilizas?",
+          "de": "Welche Materialien verwenden Sie?",
+          "fr": "Quels matériaux utilisez-vous",
+          "hi": "आप कौन सी सामग्री का उपयोग करते हैं",
+          "kk": "Сіз қандай материалдарды қолданасыз",
+          "pt": "Que materiais você usa",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+          "key": "public_faq.4.answer_ru.9989a917",
+          "en": "We use only certified premium materials from the world's leading brands. ",
+          "ar": "نحن نستخدم فقط المواد المتميزة المعتمدة من العلامات التجارية الرائدة في العالم. جميع الأصباغ مضادة للحساسية وآمنة للصحة.",
+          "es": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud.",
+          "de": "Wir verwenden ausschließlich zertifizierte Premiummaterialien der weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
+          "fr": "Nous utilisons uniquement des matériaux certifiés haut de gamme provenant des plus grandes marques mondiales. Tous les pigments sont hypoallergéniques et sans danger pour la santé.",
+          "hi": "हम दुनिया के अग्रणी ब्रांडों से केवल प्रमाणित प्रीमियम सामग्री का उपयोग करते हैं। सभी रंगद्रव्य हाइपोएलर्जेनिक हैं और स्वास्थ्य के लिए सुरक्षित हैं।",
+          "kk": "Біз әлемдегі жетекші брендтерден тек сертификатталған премиум материалдарды қолданамыз. Барлық пигменттер гипоаллергенді және денсаулыққа қауіпсіз.",
+          "pt": "Utilizamos apenas materiais premium certificados das marcas líderes mundiais. Todos os pigmentos são hipoalergênicos e seguros para a saúde.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли у ваших мастеров сертификаты",
+          "key": "public_faq.5.question_ru.10e5389c",
+          "en": "Do your craftsmen have certificates?",
+          "ar": "هل لدى الحرفيين شهادات؟",
+          "es": "¿Tienen sus artesanos certificados?",
+          "de": "Verfügen Ihre Handwerker über Zertifikate?",
+          "fr": "Vos artisans ont-ils des certificats ?",
+          "hi": "क्या आपके कारीगरों के पास प्रमाणपत्र हैं?",
+          "kk": "Қолөнершілеріңізде сертификаттар бар ма?",
+          "pt": "Seus artesãos possuem certificados?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.",
+          "key": "public_faq.5.answer_ru.c33e5756",
+          "en": "Yes, all our masters have international certificates and regularly take advanced training courses.",
+          "ar": "نعم، جميع الأساتذة لدينا حاصلون على شهادات دولية ويأخذون دورات تدريبية متقدمة بانتظام.",
+          "es": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
+          "de": "Ja, alle unsere Meister verfügen über internationale Zertifikate und nehmen regelmäßig an Fortbildungen teil.",
+          "fr": "Oui, tous nos masters sont titulaires de certificats internationaux et suivent régulièrement des formations avancées.",
+          "hi": "हां, हमारे सभी मास्टर्स के पास अंतरराष्ट्रीय प्रमाणपत्र हैं और वे नियमित रूप से उन्नत प्रशिक्षण पाठ्यक्रम लेते हैं।",
+          "kk": "Иә, біздің барлық шеберлеріміз халықаралық сертификаттарға ие және үнемі біліктілікті арттыру курстарынан өтеді.",
+          "pt": "Sim, todos os nossos mestres possuem certificados internacionais e realizam regularmente cursos de formação avançada.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "question_ru": {
+          "ru": "Нужна ли подготовка перед процедурой",
+          "key": "public_faq.6.question_ru.4a091b3c",
+          "en": "Is preparation necessary before the procedure?",
+          "ar": "هل التحضير ضروري قبل الإجراء؟",
+          "es": "¿Es necesaria preparación antes del procedimiento?",
+          "de": "Ist vor dem Eingriff eine Vorbereitung notwendig?",
+          "fr": "Une préparation est-elle nécessaire avant l’intervention ?",
+          "hi": "क्या प्रक्रिया से पहले तैयारी आवश्यक है?",
+          "kk": "Процедураға дейін дайындық қажет пе?",
+          "pt": "É necessária preparação antes do procedimento?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.",
+          "key": "public_faq.6.answer_ru.c6e12dad",
+          "en": "Yes, some procedures require preparation. ",
+          "ar": "نعم، بعض الإجراءات تتطلب التحضير. نحن نقدم توصيات مفصلة عند التسجيل.",
+          "es": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
+          "de": "Ja, einige Verfahren erfordern eine Vorbereitung. Detaillierte Empfehlungen geben wir Ihnen bei der Anmeldung.",
+          "fr": "Oui, certaines procédures nécessitent une préparation. Nous fournissons des recommandations détaillées lors de l’inscription.",
+          "hi": "हां, कुछ प्रक्रियाओं के लिए तैयारी की आवश्यकता होती है। हम पंजीकरण पर विस्तृत अनुशंसाएँ प्रदान करते हैं।",
+          "kk": "Иә, кейбір процедуралар дайындауды қажет етеді. Біз тіркеуден өткеннен кейін егжей-тегжейлі ұсыныстар береміз.",
+          "pt": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do registro.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли противопоказания к процедурам",
+          "key": "public_faq.7.question_ru.6d37eadc",
+          "en": "Are there any contraindications to the procedures?",
+          "ar": "هل هناك أي موانع للإجراءات؟",
+          "es": "¿Existe alguna contraindicación para los procedimientos?",
+          "de": "Gibt es Kontraindikationen für die Verfahren?",
+          "fr": "Y a-t-il des contre-indications aux procédures ?",
+          "hi": "क्या प्रक्रियाओं में कोई मतभेद हैं?",
+          "kk": "Процедураларға қарсы көрсетілімдер бар ма?",
+          "pt": "Existem contra-indicações para os procedimentos?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
+          "key": "public_faq.7.answer_ru.a2d7b11d",
+          "en": "Yes, each procedure has its own contraindications. ",
+          "ar": "نعم، كل إجراء له موانع خاصة به. الرئيسية: الحمل، الرضاعة، الالتهابات الحادة، أمراض الدم، الأورام. قبل الإجراء، مطلوب التشاور مع أخصائي.",
+          "es": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento es necesaria la consulta con un especialista.",
+          "de": "Ja, jedes Verfahren hat seine eigenen Kontraindikationen. Hauptsächlich: Schwangerschaft, Stillzeit, akute entzündliche Prozesse, Blutkrankheiten, Onkologie. Vor dem Eingriff ist eine Rücksprache mit einem Spezialisten erforderlich.",
+          "fr": "Oui, chaque procédure a ses propres contre-indications. Principal : grossesse, allaitement, processus inflammatoires aigus, maladies du sang, oncologie. Avant l'intervention, une consultation avec un spécialiste est nécessaire.",
+          "hi": "हां, प्रत्येक प्रक्रिया के अपने मतभेद होते हैं। मुख्य: गर्भावस्था, स्तनपान, तीव्र सूजन प्रक्रियाएं, रक्त रोग, ऑन्कोलॉजी। प्रक्रिया से पहले, किसी विशेषज्ञ से परामर्श आवश्यक है।",
+          "kk": "Иә, әр процедураның өз көрсеткіштері бар. Негізгі: жүктілік, лактация, жедел қабатты қабыну процестері, қан аурулары, онкология. Процедураға дейін маманмен кеңес алу қажет.",
+          "pt": "Sim, cada procedimento tem suas contra-indicações. Principal: gravidez, lactação, processos inflamatórios agudos, doenças do sangue, oncologia. Antes do procedimento, é necessária consulta com um especialista.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "question_ru": {
+          "ru": "Предоставляете ли вы гарантию на услуги",
+          "key": "public_faq.8.question_ru.53c63ea4",
+          "en": "Do you provide a guarantee for services",
+          "ar": "هل تقدم ضمانا للخدمات",
+          "es": "¿Ofrecen una garantía por los servicios?",
+          "de": "Gewähren Sie eine Garantie für Dienstleistungen?",
+          "fr": "Fournissez-vous une garantie pour les services",
+          "hi": "क्या आप सेवाओं के लिए गारंटी प्रदान करते हैं?",
+          "kk": "Сіз қызметтерге кепілдік бересіз бе?",
+          "pt": "Você fornece uma garantia para serviços",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
+          "key": "public_faq.8.answer_ru.5480ef0d",
+          "en": "Yes, we guarantee the quality of all our services. ",
+          "ar": "نعم، نحن نضمن جودة جميع خدماتنا. إذا لم تكن راضيًا عن النتيجة، فاتصل بنا خلال 7 أيام وسنجد الحل.",
+          "es": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
+          "de": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Sollten Sie mit dem Ergebnis nicht zufrieden sein, kontaktieren Sie uns innerhalb von 7 Tagen und wir finden eine Lösung.",
+          "fr": "Oui, nous garantissons la qualité de tous nos services. Si vous n'êtes pas satisfait du résultat, contactez-nous dans les 7 jours et nous trouverons une solution.",
+          "hi": "हां, हम अपनी सभी सेवाओं की गुणवत्ता की गारंटी देते हैं। यदि आप परिणाम से संतुष्ट नहीं हैं, तो 7 दिनों के भीतर हमसे संपर्क करें और हम समाधान ढूंढेंगे।",
+          "kk": "Иә, біз барлық қызметтеріміздің сапасына кепілдік береміз. Егер сіз нәтижеге қанағаттанбасаңыз, бізге 7 күн ішінде хабарласыңыз және біз шешім табамыз.",
+          "pt": "Sim, garantimos a qualidade de todos os nossos serviços. Se não ficar satisfeito com o resultado, contacte-nos no prazo de 7 dias e encontraremos uma solução.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли у вас программа лояльности",
+          "key": "public_faq.9.question_ru.40eab490",
+          "en": "Do you have a loyalty program",
+          "ar": "هل لديك برنامج الولاء",
+          "es": "¿Tienes un programa de fidelización?",
+          "de": "Haben Sie ein Treueprogramm?",
+          "fr": "Avez-vous un programme de fidélité",
+          "hi": "क्या आपके पास कोई लॉयल्टी कार्यक्रम है",
+          "kk": "Сізде адалдық бағдарламасы бар ма?",
+          "pt": "Você tem um programa de fidelidade",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
+          "key": "public_faq.9.answer_ru.caa87ffe",
+          "en": "Yes, we have a cumulative loyalty program. ",
+          "ar": "نعم، لدينا برنامج ولاء تراكمي. بعد كل زيارة تتلقى مكافآت يمكن استخدامها لدفع ثمن الزيارات المستقبلية.",
+          "es": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas futuras.",
+          "de": "Ja, wir haben ein kumulatives Treueprogramm. Nach jedem Besuch erhalten Sie Prämien, mit denen Sie künftige Besuche bezahlen können.",
+          "fr": "Oui, nous avons un programme de fidélité cumulatif. Après chaque visite, vous recevez des bonus qui peuvent être utilisés pour payer de futures visites.",
+          "hi": "हाँ, हमारे पास एक संचयी वफादारी कार्यक्रम है। प्रत्येक विज़िट के बाद आपको बोनस प्राप्त होता है जिसका उपयोग भविष्य की विज़िट के भुगतान के लिए किया जा सकता है।",
+          "kk": "Иә, бізде кумулятивті адалдық бағдарламасы бар. Әр сапардан кейін сіз болашаққа кіру үшін пайдалануға болатын бонустар аласыз.",
+          "pt": "Sim, temos um programa de fidelidade cumulativo. Após cada visita você recebe bônus que podem ser usados ​​para pagar visitas futuras.",
+          "detected_language": "ru"
         }
       }
     },
     {
       "id": 10,
       "fields": {
+        "question_ru": {
+          "ru": "Работаете ли вы в выходные",
+          "key": "public_faq.10.question_ru.09fd8154",
+          "en": "Do you work on weekends",
+          "ar": "هل تعمل في عطلة نهاية الأسبوع",
+          "es": "¿Trabajas los fines de semana?",
+          "de": "Arbeiten Sie am Wochenende?",
+          "fr": "Travaillez-vous le week-end",
+          "hi": "क्या आप सप्ताहांत पर काम करते हैं",
+          "kk": "Сіз демалыс күндері жұмыс жасайсыз ба?",
+          "pt": "Você trabalha nos finais de semana",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы работаем 7 дней в неделю.",
+          "key": "public_faq.10.answer_ru.652dc0a6",
+          "en": "Yes, we work 7 days a week.",
+          "ar": "نعم، نحن نعمل 7 أيام في الأسبوع.",
+          "es": "Sí, trabajamos los 7 días de la semana.",
+          "de": "Ja, wir arbeiten 7 Tage die Woche.",
+          "fr": "Oui, nous travaillons 7 jours sur 7.",
+          "hi": "हां, हम सप्ताह में सातों दिन काम करते हैं।",
+          "kk": "Иә, біз аптасына 7 күн жұмыс істейміз.",
+          "pt": "Sim, trabalhamos 7 dias por semana.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "question_ru": {
+          "ru": "Можно ли подарить сертификат на услуги",
+          "key": "public_faq.11.question_ru.bcc59516",
+          "en": "Is it possible to give a certificate for services?",
+          "ar": "هل من الممكن إعطاء شهادة للخدمات؟",
+          "es": "¿Es posible emitir un certificado de servicios?",
+          "de": "Ist es möglich, für Dienstleistungen ein Zertifikat auszustellen?",
+          "fr": "Est-il possible de délivrer une attestation pour des prestations ?",
+          "hi": "क्या सेवाओं के लिए प्रमाणपत्र देना संभव है?",
+          "kk": "Қызметтерге сертификат беруге бола ма?",
+          "pt": "É possível emitir certificado de serviços?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
+          "key": "public_faq.11.answer_ru.3ae65684",
+          "en": "Yes, we offer gift certificates for any amount or for specific services. ",
+          "ar": "نعم، نقدم شهادات هدايا بأي مبلغ أو لخدمات محددة. اتصل بنا للحصول على الشهادة.",
+          "es": "Sí, ofrecemos certificados de regalo por cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
+          "de": "Ja, wir bieten Geschenkgutscheine in beliebiger Höhe oder für bestimmte Leistungen an. Kontaktieren Sie uns, um ein Zertifikat zu erhalten.",
+          "fr": "Oui, nous proposons des chèques-cadeaux pour n'importe quel montant ou pour des services spécifiques. Contactez-nous pour obtenir un certificat.",
+          "hi": "हां, हम किसी भी राशि या विशिष्ट सेवाओं के लिए उपहार प्रमाण पत्र प्रदान करते हैं। प्रमाणपत्र प्राप्त करने के लिए हमसे संपर्क करें.",
+          "kk": "Иә, біз кез-келген сома немесе нақты қызметтер үшін сыйлық сертификаттарын ұсынамыз. Сертификат алу үшін бізге хабарласыңыз.",
+          "pt": "Sim, oferecemos vales-presente de qualquer valor ou para serviços específicos. Entre em contato conosco para obter um certificado.",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "fields": {
+        "question_ru": {
+          "ru": "Где находится ваш салон",
+          "key": "public_faq.12.question_ru.2cc640a7",
+          "en": "Where is your salon located?",
+          "ar": "أين يقع صالونك؟",
+          "es": "¿Dónde está ubicado tu salón?",
+          "de": "Wo befindet sich Ihr Salon?",
+          "fr": "Où se trouve votre salon ?",
+          "hi": "आपका सैलून कहाँ स्थित है?",
+          "kk": "Сіздің салоныңыз қай жерде орналасқан?",
+          "pt": "Onde fica o seu salão?",
+          "detected_language": "ru"
+        },
+        "answer_ru": {
+          "ru": "Мы находимся в центре Дубая. Подробную информацию о том, как добраться, вы можете найти на странице Контакты.",
+          "key": "public_faq.12.answer_ru.62473075",
+          "en": "We are located in the center of Dubai. ",
+          "ar": "نحن موجودون في وسط دبي. يمكن العثور على معلومات مفصلة حول كيفية الوصول إلى هناك على صفحة جهات الاتصال.",
+          "es": "Estamos ubicados en el centro de Dubai. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",
+          "de": "Wir befinden uns im Zentrum von Dubai. Detaillierte Informationen zur Anfahrt finden Sie auf der Seite Kontakte.",
+          "fr": "Nous sommes situés au centre de Dubaï. Des informations détaillées sur la façon de s'y rendre sont disponibles sur la page Contacts.",
+          "hi": "हम दुबई के केंद्र में स्थित हैं। वहां कैसे पहुंचें इसकी विस्तृत जानकारी संपर्क पृष्ठ पर पाई जा सकती है।",
+          "kk": "Біз Дубай орталығында орналасқан. Онда қалай жетуге болатындығы туралы толық ақпаратты Контактілер бетінен табуға болады.",
+          "pt": "Estamos localizados no centro de Dubai. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos.",
+          "detected_language": "ru"
+        }
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": 4,
+      "fields": {
+        "name_ru": {
+          "ru": "Подводка для глаз",
+          "key": "services.4.name_ru.b6beadab",
+          "en": "Eyeliner",
+          "ar": "كحل",
+          "es": "Lápiz de ojos",
+          "de": "Eyeliner",
+          "fr": "Eye-liner",
+          "hi": "आईलाइनर",
+          "kk": "Көз контурлағышы",
+          "pt": "Delineador",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Перманентная подводка глаз",
+          "key": "services.4.description_ru.3dea7e3c",
+          "en": "Permanent eyeliner",
+          "ar": "كحل دائم",
+          "es": "Delineador de ojos permanente",
+          "de": "Permanenter Eyeliner",
+          "fr": "Eye-liner permanent",
+          "hi": "स्थायी आईलाइनर",
+          "kk": "Тұрақты көз контурлағышы",
+          "pt": "Delineador permanente",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "fields": {
+        "name_ru": {
+          "ru": "Руки полностью",
+          "key": "services.11.name_ru.fac91d90",
+          "en": "Full hands",
+          "ar": "أيدي كاملة",
+          "es": "manos llenas",
+          "de": "Volle Hände",
+          "fr": "Les mains pleines",
+          "hi": "भरे हाथ",
+          "kk": "Толық қол",
+          "pt": "Mãos cheias",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция рук",
+          "key": "services.11.description_ru.7168d5eb",
+          "en": "Full arm hair removal",
+          "ar": "إزالة شعر الذراع بالكامل",
+          "es": "Depilación de todo el brazo",
+          "de": "Haarentfernung am ganzen Arm",
+          "fr": "Epilation complète du bras",
+          "hi": "पूरी बांह के बाल हटाना",
+          "kk": "Толық қолды тазарту",
+          "pt": "Depilação completa do braço",
+          "detected_language": "ru"
+        },
         "duration": {
           "ru": "1h",
-          "key": "services.10.duration.7c68645d",
+          "key": "services.11.duration.7c68645d",
           "en": "1h",
-          "ar": "1 ساعة",
+          "ar": "1h",
           "es": "1h",
           "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 96,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.96.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 44,
-      "fields": {
-        "duration": {
-          "ru": "30min",
-          "key": "services.44.duration.0d3f22e5",
-          "en": "30min",
-          "ar": "30 دقيقة",
-          "es": "30min",
-          "de": "30min",
-          "fr": "30min",
-          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
-          "kk": "30мин",
-          "pt": "30min"
-        }
-      }
-    },
-    {
-      "id": 52,
-      "fields": {
-        "duration": {
-          "ru": "30min",
-          "key": "services.52.duration.0d3f22e5",
-          "en": "30min",
-          "ar": "30 دقيقة",
-          "es": "30min",
-          "de": "30min",
-          "fr": "30min",
-          "hi": "ब्यूटी सैलून सेवा 30 मिनट",
-          "kk": "30мин",
-          "pt": "30min"
-        }
-      }
-    },
-    {
-      "id": 90,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.90.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 46,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.46.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
           "pt": "1h"
         }
       }
@@ -379,366 +791,1446 @@
     {
       "id": 12,
       "fields": {
+        "name_ru": {
+          "ru": "Руки до локтя",
+          "key": "services.12.name_ru.7fb86af9",
+          "en": "Hands to elbows",
+          "ar": "الأيدي إلى المرفقين",
+          "es": "Manos hasta el codo",
+          "de": "Hände bis zum Ellenbogen",
+          "fr": "Les mains jusqu'au coude",
+          "hi": "हाथ कोहनी तक",
+          "kk": "Қолдар шынтаққа дейін",
+          "pt": "Mãos até o cotovelo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Эпиляция рук до локтя",
+          "key": "services.12.description_ru.e9cb16e1",
+          "en": "Epilation of arms up to the elbow",
+          "ar": "إزالة شعر الذراعين حتى المرفق",
+          "es": "Depilación de brazos hasta el codo.",
+          "de": "Epilation der Arme bis zum Ellenbogen",
+          "fr": "Epilation des bras jusqu'au coude",
+          "hi": "कोहनी तक भुजाओं का एपिलेशन",
+          "kk": "Қаруды шынтаққа дейін эпиляциялау",
+          "pt": "Depilação dos braços até o cotovelo",
+          "detected_language": "ru"
+        },
         "duration": {
           "ru": "1h",
           "key": "services.12.duration.7c68645d",
           "en": "1h",
-          "ar": "1 ساعة",
+          "ar": "1h",
           "es": "1h",
           "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
           "pt": "1h"
         }
       }
     },
     {
-      "id": 6,
+      "id": 13,
       "fields": {
+        "name_ru": {
+          "ru": "Эпиляция всего тела",
+          "key": "services.13.name_ru.7b40c2d8",
+          "en": "Full body hair removal",
+          "ar": "إزالة شعر الجسم بالكامل",
+          "es": "Depilación de cuerpo completo",
+          "de": "Haarentfernung am ganzen Körper",
+          "fr": "Épilation complète du corps",
+          "hi": "पूरे शरीर के बाल हटाना",
+          "kk": "Толық дене шашты кетіру",
+          "pt": "Depilação de corpo inteiro",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция тела",
+          "key": "services.13.description_ru.187ce3b9",
+          "en": "Full body hair removal",
+          "ar": "إزالة شعر الجسم بالكامل",
+          "es": "Depilación de cuerpo completo",
+          "de": "Haarentfernung am ganzen Körper",
+          "fr": "Épilation complète du corps",
+          "hi": "पूरे शरीर के बाल हटाना",
+          "kk": "Толық дене шашты кетіру",
+          "pt": "Depilação de corpo inteiro",
+          "detected_language": "ru"
+        },
         "duration": {
           "ru": "1h",
-          "key": "services.6.duration.7c68645d",
+          "key": "services.13.duration.7c68645d",
           "en": "1h",
-          "ar": "1 ساعة",
+          "ar": "1h",
           "es": "1h",
           "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
           "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 22,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.22.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 47,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.47.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 42,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.42.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 79,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.79.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 43,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.43.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 48,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.48.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 53,
-      "fields": {
-        "duration": {
-          "ru": "30",
-          "key": "services.53.duration.34173cb3",
-          "en": "30",
-          "ar": "30",
-          "es": "30",
-          "de": "30",
-          "fr": "30",
-          "hi": "30",
-          "kk": "30",
-          "pt": "30"
-        }
-      }
-    },
-    {
-      "id": 58,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.58.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 56,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.56.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 68,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.68.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 74,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.74.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 81,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.81.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 84,
-      "fields": {
-        "duration": {
-          "ru": "30",
-          "key": "services.84.duration.34173cb3",
-          "en": "30",
-          "ar": "30",
-          "es": "30",
-          "de": "30",
-          "fr": "30",
-          "hi": "30",
-          "kk": "30",
-          "pt": "30"
         }
       }
     },
     {
       "id": 14,
       "fields": {
+        "name_ru": {
+          "ru": "Подмышки",
+          "key": "services.14.name_ru.4da5bc5b",
+          "en": "Armpits",
+          "ar": "الإبطين",
+          "es": "Axilas",
+          "de": "Achseln",
+          "fr": "Aisselles",
+          "hi": "बगल",
+          "kk": "Қолтырықтар",
+          "pt": "Axilas",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Эпиляция подмышек",
+          "key": "services.14.description_ru.3186a3c3",
+          "en": "Armpit hair removal",
+          "ar": "إزالة شعر الإبط",
+          "es": "depilación de axilas",
+          "de": "Achselhaarentfernung",
+          "fr": "Épilation des aisselles",
+          "hi": "बगल के बाल हटाना",
+          "kk": "Артптаз шашты кетіру",
+          "pt": "Depilação nas axilas",
+          "detected_language": "ru"
+        },
         "duration": {
           "ru": "1h",
           "key": "services.14.duration.7c68645d",
           "en": "1h",
-          "ar": "1 ساعة",
+          "ar": "1h",
           "es": "1h",
           "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
           "pt": "1h"
         }
       }
     },
     {
-      "id": 57,
+      "id": 15,
       "fields": {
-        "duration": {
-          "ru": "180",
-          "key": "services.57.duration.045117b0",
-          "en": "180",
-          "ar": "180",
-          "es": "180",
-          "de": "180",
-          "fr": "180",
-          "hi": "180",
-          "kk": "180",
-          "pt": "180"
-        }
-      }
-    },
-    {
-      "id": 85,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.85.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 88,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.88.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 99,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.99.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 45,
-      "fields": {
+        "name_ru": {
+          "ru": "Лицо полностью",
+          "key": "services.15.name_ru.c6f390eb",
+          "en": "Full face",
+          "ar": "وجه كامل",
+          "es": "cara completa",
+          "de": "Volles Gesicht",
+          "fr": "Visage complet",
+          "hi": "पूरा चेहरा",
+          "kk": "Толық тұлға",
+          "pt": "Rosto completo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция лица",
+          "key": "services.15.description_ru.67086220",
+          "en": "Full facial hair removal",
+          "ar": "إزالة شعر الوجه بالكامل",
+          "es": "Depilación facial completa",
+          "de": "Vollständige Haarentfernung im Gesicht",
+          "fr": "Epilation complète du visage",
+          "hi": "चेहरे के पूरे बाल हटाना",
+          "kk": "Толық бет шашын кетіру",
+          "pt": "Depilação facial completa",
+          "detected_language": "ru"
+        },
         "duration": {
           "ru": "1h",
-          "key": "services.45.duration.7c68645d",
+          "key": "services.15.duration.7c68645d",
           "en": "1h",
-          "ar": "1 ساعة",
+          "ar": "1h",
           "es": "1h",
           "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
           "pt": "1h"
         }
       }
     },
     {
-      "id": 63,
+      "id": 16,
+      "fields": {
+        "name_ru": {
+          "ru": "Верхняя губа",
+          "key": "services.16.name_ru.9a3255a9",
+          "en": "Upper lip",
+          "ar": "الشفة العليا",
+          "es": "labio superior",
+          "de": "Oberlippe",
+          "fr": "Lèvre supérieure",
+          "hi": "होंठ के ऊपर का हिस्सा",
+          "kk": "Жоғарғы ерін",
+          "pt": "Lábio superior",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Эпиляция верхней губы",
+          "key": "services.16.description_ru.c364dec1",
+          "en": "Upper lip epilation",
+          "ar": "إزالة الشعر من الشفة العليا",
+          "es": "Depilación del labio superior.",
+          "de": "Epilation der Oberlippe",
+          "fr": "Épilation de la lèvre supérieure",
+          "hi": "ऊपरी होंठ का एपिलेशन",
+          "kk": "Жоғарғы еріннің эпиляциясы",
+          "pt": "Depilação do lábio superior",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.16.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "fields": {
+        "name_ru": {
+          "ru": "Подбородок",
+          "key": "services.17.name_ru.d2c6f434",
+          "en": "Chin",
+          "ar": "الذقن",
+          "es": "Mentón",
+          "de": "Kinn",
+          "fr": "Menton",
+          "hi": "ठोड़ी",
+          "kk": "Иек",
+          "pt": "Queixo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Эпиляция подбородка",
+          "key": "services.17.description_ru.3e342887",
+          "en": "Chin hair removal",
+          "ar": "إزالة شعر الذقن",
+          "es": "depilación de mentón",
+          "de": "Kinnhaarentfernung",
+          "fr": "Épilation du menton",
+          "hi": "ठुड्डी के बाल हटाना",
+          "kk": "Шашты кетіру",
+          "pt": "Depilação no queixo",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.17.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "fields": {
+        "name_ru": {
+          "ru": "Ровный срез кончиков",
+          "key": "services.18.name_ru.d588be99",
+          "en": "Even cut ends",
+          "ar": "أطراف متساوية",
+          "es": "Incluso las puntas cortadas",
+          "de": "Sogar abgeschnittene Enden",
+          "fr": "Même les extrémités coupées",
+          "hi": "यहां तक ​​कि कटे हुए सिरे भी",
+          "kk": "Тіпті кесілген ұштар",
+          "pt": "Mesmo pontas cortadas",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Простой срез без мытья",
+          "key": "services.18.description_ru.6a0312d4",
+          "en": "Easy cutting without washing",
+          "ar": "قطع سهل بدون غسل",
+          "es": "Fácil corte sin lavado",
+          "de": "Einfaches Schneiden ohne Waschen",
+          "fr": "Découpe facile sans lavage",
+          "hi": "बिना धोए काटना आसान",
+          "kk": "Жуыссыз оңай кесу",
+          "pt": "Corte fácil sem lavar",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "fields": {
+        "name_ru": {
+          "ru": "Стрижка + Укладка",
+          "key": "services.19.name_ru.68ef3fa2",
+          "en": "Haircut + Styling",
+          "ar": "قص شعر + تصفيف",
+          "es": "Corte de pelo + peinado",
+          "de": "Haarschnitt + Styling",
+          "fr": "Coupe de cheveux + Stylisme",
+          "hi": "हेयरकट + स्टाइलिंग",
+          "kk": "Шашыңыз + сәндеу",
+          "pt": "Corte de cabelo + estilo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Профессиональная стрижка с укладкой",
+          "key": "services.19.description_ru.5d2597e1",
+          "en": "Professional haircut with styling",
+          "ar": "قصة شعر احترافية مع التصميم",
+          "es": "Corte de pelo profesional con peinado.",
+          "de": "Professioneller Haarschnitt mit Styling",
+          "fr": "Coupe de cheveux professionnelle avec stylisme",
+          "hi": "स्टाइल के साथ प्रोफेशनल हेयरकट",
+          "kk": "Сәндеумен кәсіби шаштараз",
+          "pt": "Corte de cabelo profissional com estilo",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "fields": {
+        "name_ru": {
+          "ru": "Укладка",
+          "key": "services.20.name_ru.3fd3ef81",
+          "en": "Styling",
+          "ar": "التصميم",
+          "es": "tendido",
+          "de": "Verlegung",
+          "fr": "Pose",
+          "hi": "बिछाना",
+          "kk": "Төсеу",
+          "pt": "Deitado",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Профессиональная укладка волос",
+          "key": "services.20.description_ru.7cbd9728",
+          "en": "Professional hair styling",
+          "ar": "تصفيف الشعر الاحترافي",
+          "es": "Peinado profesional",
+          "de": "Professionelles Haarstyling",
+          "fr": "Coiffure professionnelle",
+          "hi": "पेशेवर हेयर स्टाइलिंग",
+          "kk": "Кәсіби шаш сәндеу",
+          "pt": "Estilo de cabelo profissional",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.20.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "fields": {
+        "name_ru": {
+          "ru": "Детская стрижка",
+          "key": "services.21.name_ru.fe5b249b",
+          "en": "Children's haircut",
+          "ar": "قص شعر الأطفال",
+          "es": "corte de pelo infantil",
+          "de": "Kinderhaarschnitt",
+          "fr": "Coupe de cheveux pour enfants",
+          "hi": "बच्चों के बाल कटवाना",
+          "kk": "Балалардың шаштары",
+          "pt": "Corte de cabelo infantil",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Стрижка для детей",
+          "key": "services.21.description_ru.aaee775a",
+          "en": "Haircut for children",
+          "ar": "قص شعر للأطفال",
+          "es": "corte de pelo para niños",
+          "de": "Haarschnitt für Kinder",
+          "fr": "Coupe de cheveux pour les enfants",
+          "hi": "बच्चों के लिए बाल कटवाने",
+          "kk": "Балаларға арналған шаш",
+          "pt": "Corte de cabelo para crianças",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание корней + Укладка",
+          "key": "services.22.name_ru.34258f73",
+          "en": "Root coloring + Styling",
+          "ar": "تلوين الجذر + التصميم",
+          "es": "Coloración de raíces + Peinado",
+          "de": "Wurzelfärbung + Styling",
+          "fr": "Coloration des racines + Coiffage",
+          "hi": "जड़ का रंग + स्टाइलिंग",
+          "kk": "Түбір бояуы + сәндеу",
+          "pt": "Coloração de raiz + estilo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Окрашивание корней с укладкой",
+          "key": "services.22.description_ru.2ad52607",
+          "en": "Root coloring with styling",
+          "ar": "تلوين الجذر مع التصميم",
+          "es": "Coloración de raíces con peinado.",
+          "de": "Wurzelfärbung mit Styling",
+          "fr": "Coloration des racines avec coiffage",
+          "hi": "स्टाइल के साथ जड़ों को रंगना",
+          "kk": "Тамырды сәндеумен бояу",
+          "pt": "Coloração de raiz com estilo",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.22.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "fields": {
+        "name_ru": {
+          "ru": "Осветление корней + Укладка",
+          "key": "services.23.name_ru.3caf9ba3",
+          "en": "Root Lightening + Styling",
+          "ar": "تفتيح الجذور + التصفيف",
+          "es": "Aclaramiento de raíces + peinado",
+          "de": "Wurzelaufhellung + Styling",
+          "fr": "Éclaircissement des racines + coiffage",
+          "hi": "रूट लाइटनिंग + स्टाइलिंग",
+          "kk": "Тамырды жарықтандыру + сәндеу",
+          "pt": "Clareamento de raiz + modelagem",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Осветление корней с укладкой",
+          "key": "services.23.description_ru.785f83b1",
+          "en": "Root lightening with styling",
+          "ar": "تفتيح الجذور مع التصفيف",
+          "es": "Aclaramiento de raíces con peinado.",
+          "de": "Ansatzaufhellung mit Styling",
+          "fr": "Éclaircissement des racines avec coiffage",
+          "hi": "स्टाइलिंग के साथ जड़ों को हल्का करना",
+          "kk": "Тамырды сәндеумен жарықтандыру",
+          "pt": "Clareamento de raiz com estilo",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "fields": {
+        "name_ru": {
+          "ru": "Тонирование + Укладка",
+          "key": "services.24.name_ru.60be0b49",
+          "en": "Toning + Styling",
+          "ar": "التنغيم + التصميم",
+          "es": "Tonificación + Peinado",
+          "de": "Tonisierung + Styling",
+          "fr": "Tonifiant + Coiffant",
+          "hi": "टोनिंग + स्टाइलिंग",
+          "kk": "Сергітпелер + сәндеу",
+          "pt": "Tonificação + Estilo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Тонирование волос с укладкой",
+          "key": "services.24.description_ru.837dbffc",
+          "en": "Hair tinting with styling",
+          "ar": "صبغ الشعر مع التصفيف",
+          "es": "Teñir el cabello con peinado.",
+          "de": "Haare tönen mit Styling",
+          "fr": "Teinture des cheveux avec coiffage",
+          "hi": "स्टाइल के साथ बालों को रंगना",
+          "kk": "Шашты сәндеумен тонау",
+          "pt": "Coloração de cabelo com estilo",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание в один тон + Укладка",
+          "key": "services.25.name_ru.841add1a",
+          "en": "One tone coloring + Styling",
+          "ar": "تلوين لهجة واحدة + التصميم",
+          "es": "Coloración monotono + Peinado",
+          "de": "Einfarbig + Styling",
+          "fr": "Coloration un ton + Stylisme",
+          "hi": "एक टोन रंग + स्टाइलिंग",
+          "kk": "Бір реңді бояу + сәндеу",
+          "pt": "Coloração em um tom + estilo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полное окрашивание с укладкой",
+          "key": "services.25.description_ru.d5d8904e",
+          "en": "Full coloring with styling",
+          "ar": "تلوين كامل مع التصميم",
+          "es": "Coloración completa con estilo.",
+          "de": "Vollständige Farbgebung mit Styling",
+          "fr": "Coloration complète avec style",
+          "hi": "स्टाइल के साथ पूर्ण रंग",
+          "kk": "Сәндеумен толық бояу",
+          "pt": "Coloração completa com estilo",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "2h",
+          "key": "services.25.duration.2bdde03f",
+          "en": "2h",
+          "ar": "2h",
+          "es": "2h",
+          "de": "2h",
+          "fr": "2h",
+          "hi": "2h",
+          "kk": "2h",
+          "pt": "2h"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "fields": {
+        "name_ru": {
+          "ru": "Балаяж",
+          "key": "services.26.name_ru.abc5305a",
+          "en": "Balayage",
+          "ar": "بالاياج",
+          "es": "Balayage",
+          "de": "Balayage",
+          "fr": "Balayage",
+          "hi": "Balayage",
+          "kk": "Alyate",
+          "pt": "Balayage",
+          "detected_language": "uk"
+        },
+        "description_ru": {
+          "ru": "Техника балаяж",
+          "key": "services.26.description_ru.0d9921e5",
+          "en": "Balayage technique",
+          "ar": "تقنية البلاياج",
+          "es": "tecnica balayage",
+          "de": "Balayage-Technik",
+          "fr": "Technique de balayage",
+          "hi": "बलायेज तकनीक",
+          "kk": "Балалау техникасы",
+          "pt": "Técnica balayage",
+          "detected_language": "uk"
+        },
+        "duration": {
+          "ru": "2h",
+          "key": "services.26.duration.2bdde03f",
+          "en": "2h",
+          "ar": "2h",
+          "es": "2h",
+          "de": "2h",
+          "fr": "2h",
+          "hi": "2h",
+          "kk": "2h",
+          "pt": "2h"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "fields": {
+        "name_ru": {
+          "ru": "Омбре/Шатуш/Аиртач",
+          "key": "services.27.name_ru.dffc4fe7",
+          "en": "Ombre/Shatush/Airtach",
+          "ar": "أومبير/شاتوش/إيرتاش",
+          "es": "Ombre/Shatush/Airtach",
+          "de": "Ombre/Shatush/Airtach",
+          "fr": "Ombre/Shatush/Airtach",
+          "hi": "ओम्ब्रे/शतुश/एयरटैच",
+          "kk": "Омбре / Шатуш / Airtach",
+          "pt": "Ombre/Shatush/Airtach",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Техники градиентного окрашивания",
+          "key": "services.27.description_ru.596e8006",
+          "en": "Gradient coloring techniques",
+          "ar": "تقنيات التلوين المتدرج",
+          "es": "Técnicas de coloración degradada.",
+          "de": "Farbverlaufstechniken",
+          "fr": "Techniques de coloration dégradée",
+          "hi": "धीरे-धीरे रंग भरने की तकनीक",
+          "kk": "Градиент бояу техникасы",
+          "pt": "Técnicas de coloração gradiente",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "2h",
+          "key": "services.27.duration.2bdde03f",
+          "en": "2h",
+          "ar": "2h",
+          "es": "2h",
+          "de": "2h",
+          "fr": "2h",
+          "hi": "2h",
+          "kk": "2h",
+          "pt": "2h"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "fields": {
+        "name_ru": {
+          "ru": "Выход из черного",
+          "key": "services.28.name_ru.1b90012d",
+          "en": "Beauty Salon Service Coming Out of the Black",
+          "ar": "الخروج من الأسود",
+          "es": "Saliendo del negro",
+          "de": "Ich komme aus den schwarzen Zahlen",
+          "fr": "Sortir du noir",
+          "hi": "काले रंग से बाहर आ रहा हूँ",
+          "kk": "Қара түстен шығады",
+          "pt": "Saindo do preto",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Коррекция цвета из темного",
+          "key": "services.28.description_ru.32fb73b4",
+          "en": "Color correction from dark",
+          "ar": "تصحيح الألوان من الظلام",
+          "es": "Corrección de color desde la oscuridad.",
+          "de": "Farbkorrektur von dunkel",
+          "fr": "Correction des couleurs depuis l'obscurité",
+          "hi": "अंधेरे से रंग सुधार",
+          "kk": "Қараңғыдан түс түзету",
+          "pt": "Correção de cor do escuro",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "fields": {
+        "name_ru": {
+          "ru": "Натуральный уход",
+          "key": "services.29.name_ru.04259ed1",
+          "en": "Natural care",
+          "ar": "العناية الطبيعية",
+          "es": "Cuidados naturales",
+          "de": "Natürliche Pflege",
+          "fr": "Soins naturels",
+          "hi": "प्राकृतिक देखभाल",
+          "kk": "Табиғи күтім",
+          "pt": "Cuidado natural",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Натуральный уход за волосами",
+          "key": "services.29.description_ru.2777cc29",
+          "en": "Natural hair care",
+          "ar": "العناية بالشعر الطبيعي",
+          "es": "Cuidado del cabello natural",
+          "de": "Natürliche Haarpflege",
+          "fr": "Soins capillaires naturels",
+          "hi": "प्राकृतिक बालों की देखभाल",
+          "kk": "Табиғи шаш күтімі",
+          "pt": "Cuidados naturais com os cabelos",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.29.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 30,
+      "fields": {
+        "name_ru": {
+          "ru": "Наращивание волос за капсулу",
+          "key": "services.30.name_ru.ab1edd95",
+          "en": "Hair extensions per capsule",
+          "ar": "وصلات شعر لكل كبسولة",
+          "es": "Extensiones de cabello por cápsula",
+          "de": "Haarverlängerungen pro Kapsel",
+          "fr": "Extensions de cheveux par capsule",
+          "hi": "प्रति कैप्सूल बाल एक्सटेंशन",
+          "kk": "Капсулаға арналған шаш ұзартқыштары",
+          "pt": "Extensões de cabelo por cápsula",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Наращивание за капсулу",
+          "key": "services.30.description_ru.7295515b",
+          "en": "Extensions per capsule",
+          "ar": "تمديد لكل كبسولة",
+          "es": "Extensión por cápsula",
+          "de": "Verlängerung pro Kapsel",
+          "fr": "Extension par capsule",
+          "hi": "प्रति कैप्सूल विस्तार",
+          "kk": "Капсулаға қосымша",
+          "pt": "Extensão por cápsula",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "fields": {
+        "name_ru": {
+          "ru": "Классический объем ресниц",
+          "key": "services.31.name_ru.d85c8406",
+          "en": "Classic eyelash volume",
+          "ar": "حجم رموش كلاسيكي",
+          "es": "Volumen de pestañas clásico",
+          "de": "Klassisches Wimpernvolumen",
+          "fr": "Volume des cils classique",
+          "hi": "क्लासिक बरौनी मात्रा",
+          "kk": "Классикалық кірпіктің көлемі",
+          "pt": "Volume clássico dos cílios",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Натуральное наращивание ресниц",
+          "key": "services.31.description_ru.1cb01f28",
+          "en": "Natural eyelash extensions",
+          "ar": "تطويل الرموش بشكل طبيعي",
+          "es": "Extensiones de pestañas naturales",
+          "de": "Natürliche Wimpernverlängerung",
+          "fr": "Extensions de cils naturels",
+          "hi": "प्राकृतिक बरौनी एक्सटेंशन",
+          "kk": "Табиғи кірпіш кеңейтімдері",
+          "pt": "Extensões de cílios naturais",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "fields": {
+        "name_ru": {
+          "ru": "2D объем ресниц",
+          "key": "services.32.name_ru.6dc0aef0",
+          "en": "2D eyelash volume",
+          "ar": "حجم رموش ثنائي الأبعاد",
+          "es": "Volumen de pestañas 2D",
+          "de": "2D-Wimpernvolumen",
+          "fr": "Volume des cils 2D",
+          "hi": "2D बरौनी की मात्रा",
+          "kk": "2D кірпіктің көлемі",
+          "pt": "Volume dos cílios 2D",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Наращивание 2D",
+          "key": "services.32.description_ru.b4b7781e",
+          "en": "2D extensions",
+          "ar": "تمديد ثنائي الأبعاد",
+          "es": "extensión 2D",
+          "de": "2D-Erweiterung",
+          "fr": "Extension 2D",
+          "hi": "2डी एक्सटेंशन",
+          "kk": "2D ұзартқыш",
+          "pt": "Extensão 2D",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 33,
+      "fields": {
+        "name_ru": {
+          "ru": "3D объем ресниц",
+          "key": "services.33.name_ru.3276ee2f",
+          "en": "3D eyelash volume",
+          "ar": "حجم رموش ثلاثي الأبعاد",
+          "es": "Volumen de pestañas 3D",
+          "de": "3D-Wimpernvolumen",
+          "fr": "Volume des cils 3D",
+          "hi": "3D बरौनी की मात्रा",
+          "kk": "3D кірпіктің көлемі",
+          "pt": "Volume dos cílios 3D",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Наращивание 3D",
+          "key": "services.33.description_ru.9088ab16",
+          "en": "3D extensions",
+          "ar": "تمديد ثلاثي الأبعاد",
+          "es": "extensión 3D",
+          "de": "3D-Erweiterung",
+          "fr": "Extension 3D",
+          "hi": "3डी विस्तार",
+          "kk": "3D ұзарту",
+          "pt": "Extensão 3D",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "fields": {
+        "name_ru": {
+          "ru": "4-5D объем (Мега)",
+          "key": "services.34.name_ru.b156e5fd",
+          "en": "4-5D volume (Mega)",
+          "ar": "حجم 4-5D (ميجا)",
+          "es": "Volumen 4-5D (Mega)",
+          "de": "4-5D Volumen (Mega)",
+          "fr": "Volume 4-5D (Méga)",
+          "hi": "4-5डी वॉल्यूम (मेगा)",
+          "kk": "4-5d көлемі (мега)",
+          "pt": "Volume 4-5D (Mega)",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Мега объем ресниц",
+          "key": "services.34.description_ru.0a54c5b1",
+          "en": "Mega volume eyelashes",
+          "ar": "رموش ضخمة الحجم",
+          "es": "Pestañas mega volumen",
+          "de": "Mega-Volumen-Wimpern",
+          "fr": "Cils méga volume",
+          "hi": "मेगा वॉल्यूम पलकें",
+          "kk": "Мега көлемі кірпіктер",
+          "pt": "Cílios com mega volume",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 35,
+      "fields": {
+        "name_ru": {
+          "ru": "ML локон / Стиль Ким",
+          "key": "services.35.name_ru.c64091d8",
+          "en": "ML curl / Kim style",
+          "ar": "ML حليقة / أسلوب كيم",
+          "es": "ML curl / Estilo Kim",
+          "de": "ML-Locke / Stil Kim",
+          "fr": "ML curl / Style Kim",
+          "hi": "एमएल कर्ल / स्टाइल किम",
+          "kk": "ML Curl / Style KIM",
+          "pt": "Curl ML / Estilo Kim",
+          "detected_language": "uk"
+        },
+        "description_ru": {
+          "ru": "Специальный изгиб",
+          "key": "services.35.description_ru.cc8b3435",
+          "en": "Special bend",
+          "ar": "الانحناء الخاص",
+          "es": "Curva especial",
+          "de": "Besondere Biegung",
+          "fr": "Courbure spéciale",
+          "hi": "विशेष मोड़",
+          "kk": "Арнайы иілу",
+          "pt": "Curva especial",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 36,
+      "fields": {
+        "name_ru": {
+          "ru": "Снятие ресниц",
+          "key": "services.36.name_ru.89cf60fb",
+          "en": "Eyelash removal",
+          "ar": "إزالة الرموش",
+          "es": "quitar las pestañas",
+          "de": "Wimpern entfernen",
+          "fr": "Enlever les cils",
+          "hi": "पलकें हटाना",
+          "kk": "Кірпіктерді жою",
+          "pt": "Removendo cílios",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Безопасное снятие",
+          "key": "services.36.description_ru.4610f41a",
+          "en": "Safe removal",
+          "ar": "إزالة آمنة",
+          "es": "Eliminación segura",
+          "de": "Sichere Entfernung",
+          "fr": "Retrait en toute sécurité",
+          "hi": "सुरक्षित निष्कासन",
+          "kk": "Қауіпсіз жою",
+          "pt": "Remoção segura",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.36.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж губ",
+          "key": "services.1.name_ru.0988ebc3",
+          "en": "Permanent lip makeup",
+          "ar": "مكياج الشفاه الدائم",
+          "es": "Maquillaje permanente de labios",
+          "de": "Permanentes Lippen-Make-up",
+          "fr": "Maquillage permanent des lèvres",
+          "hi": "स्थायी होंठ मेकअप",
+          "kk": "Тұрақты ерін макияжы",
+          "pt": "Maquiagem labial permanente",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Стойкий цвет губ",
+          "key": "services.1.description_ru.2c7149ec",
+          "en": "Long-lasting lip color",
+          "ar": "لون شفاه يدوم طويلاً",
+          "es": "Color de labios de larga duración",
+          "de": "Lang anhaltende Lippenfarbe",
+          "fr": "Couleur des lèvres longue tenue",
+          "hi": "लंबे समय तक टिकने वाला लिप कलर",
+          "kk": "Тұрақты ерін бояуы",
+          "pt": "Cor dos lábios de longa duração",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж бровей",
+          "key": "services.2.name_ru.e14e4ffc",
+          "en": "Permanent eyebrow makeup",
+          "ar": "مكياج حواجب دائم",
+          "es": "Maquillaje permanente de cejas",
+          "de": "Permanentes Augenbrauen-Make-up",
+          "fr": "Maquillage permanent des sourcils",
+          "hi": "स्थायी भौं मेकअप",
+          "kk": "Тұрақты қастар макияжы",
+          "pt": "Maquiagem permanente de sobrancelha",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Микроблейдинг или пудровые брови",
+          "key": "services.2.description_ru.d9f305a2",
+          "en": "Microblading or powder eyebrows",
+          "ar": "ميكروبليدنج أو بودرة الحواجب",
+          "es": "Microblading o cejas en polvo",
+          "de": "Microblading oder Puderaugenbrauen",
+          "fr": "Microblading ou sourcils en poudre",
+          "hi": "माइक्रोब्लैडिंग या पाउडर आइब्रो",
+          "kk": "Микроблинг немесе ұнтақты қастар",
+          "pt": "Microblading ou sobrancelhas em pó",
+          "detected_language": "bg"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "name_ru": {
+          "ru": "Межресничная стрелка",
+          "key": "services.3.name_ru.faaa31cf",
+          "en": "Interlash line",
+          "ar": "خط إنترلاش",
+          "es": "flecha interciliar",
+          "de": "Zwischenpfeil",
+          "fr": "Flèche interciliaire",
+          "hi": "अंतर्वर्ती तीर",
+          "kk": "Қоғамдық жебе",
+          "pt": "Flecha interciliar",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Подчеркивание линии роста ресниц",
+          "key": "services.3.description_ru.b4db8982",
+          "en": "Emphasizing the lash line",
+          "ar": "التأكيد على خط الرموش",
+          "es": "Destacando la línea de las pestañas",
+          "de": "Betonung des Wimpernkranzes",
+          "fr": "Mettre en valeur la ligne des cils",
+          "hi": "लैश लाइन पर जोर देना",
+          "kk": "Кірпік сызығына баса назар аудару",
+          "pt": "Enfatizando a linha dos cílios",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "name_ru": {
+          "ru": "Коррекция перманентного макияжа",
+          "key": "services.5.name_ru.58ddfb6f",
+          "en": "Permanent makeup correction",
+          "ar": "تصحيح المكياج الدائم",
+          "es": "Corrección de maquillaje permanente",
+          "de": "Permanente Make-up-Korrektur",
+          "fr": "Correction permanente du maquillage",
+          "hi": "स्थायी मेकअप सुधार",
+          "kk": "Тұрақты макияжды түзету",
+          "pt": "Correção de maquiagem permanente",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Коррекция существующего перманента",
+          "key": "services.5.description_ru.c816bc6a",
+          "en": "Correction of an existing permanent",
+          "ar": "تصحيح الدائم الموجود",
+          "es": "Corrección de una permanente existente.",
+          "de": "Korrektur einer bestehenden dauerhaften",
+          "fr": "Correction d'un permanent existant",
+          "hi": "मौजूदा स्थाई का सुधार",
+          "kk": "Бар тұрақты деп түзету",
+          "pt": "Correção de uma permanente existente",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокое бикини",
+          "key": "services.6.name_ru.7945c923",
+          "en": "Deep bikini",
+          "ar": "بيكيني عميق",
+          "es": "bikini profundo",
+          "de": "Tiefer Bikini",
+          "fr": "Bikini profond",
+          "hi": "गहरी बिकिनी",
+          "kk": "Терең бикини",
+          "pt": "Biquíni profundo",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция зоны бикини",
+          "key": "services.6.description_ru.568f1503",
+          "en": "Complete epilation of the bikini area",
+          "ar": "إزالة الشعر بالكامل في منطقة البكيني",
+          "es": "Depilación completa de la zona del bikini.",
+          "de": "Komplette Epilation der Bikinizone",
+          "fr": "Epilation complète de la zone du bikini",
+          "hi": "बिकनी क्षेत्र का पूर्ण एपिलेशन",
+          "kk": "Бикини аймағының толық эпиляциясы",
+          "pt": "Depilação completa da área do biquíni",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.6.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "fields": {
+        "name_ru": {
+          "ru": "Линия бикини",
+          "key": "services.7.name_ru.5c761657",
+          "en": "Bikini line",
+          "ar": "خط بيكيني",
+          "es": "línea del bikini",
+          "de": "Bikinizone",
+          "fr": "Ligne de bikini",
+          "hi": "बिकनी लाइन",
+          "kk": "Бикини сызығы",
+          "pt": "Linha de biquíni",
+          "detected_language": "bg"
+        },
+        "description_ru": {
+          "ru": "Эпиляция по линии бикини",
+          "key": "services.7.description_ru.078dcd37",
+          "en": "Epilation along the bikini line",
+          "ar": "إزالة الشعر على طول خط البيكيني",
+          "es": "Depilación a lo largo de la línea del bikini.",
+          "de": "Epilation entlang der Bikinizone",
+          "fr": "Épilation le long de la ligne du bikini",
+          "hi": "बिकनी लाइन के साथ एपिलेशन",
+          "kk": "Бикини сызығымен эпиляция",
+          "pt": "Depilação ao longo da linha do biquíni",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.7.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "fields": {
+        "name_ru": {
+          "ru": "Бразильское бикини",
+          "key": "services.8.name_ru.cd80affa",
+          "en": "Brazilian bikini",
+          "ar": "بيكيني برازيلي",
+          "es": "bikini brasileño",
+          "de": "Brasilianischer Bikini",
+          "fr": "Bikini brésilien",
+          "hi": "ब्राजीलियाई बिकिनी",
+          "kk": "Бразилиялық бикини",
+          "pt": "Biquíni brasileiro",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Бразильская эпиляция бикини",
+          "key": "services.8.description_ru.199d9108",
+          "en": "Brazilian bikini hair removal",
+          "ar": "إزالة شعر البيكيني البرازيلي",
+          "es": "Depilación del bikini brasileño",
+          "de": "Haarentfernung im brasilianischen Bikini",
+          "fr": "Epilation brésilienne du bikini",
+          "hi": "ब्राजीलियाई बिकनी बाल हटाना",
+          "kk": "Бразилиялық бикини шашты кетіреді",
+          "pt": "Depilação de biquíni brasileiro",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.8.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги полностью",
+          "key": "services.9.name_ru.3b3453b2",
+          "en": "Full legs",
+          "ar": "أرجل كاملة",
+          "es": "Piernas completas",
+          "de": "Volle Beine",
+          "fr": "Jambes pleines",
+          "hi": "पूरे पैर",
+          "kk": "Толық аяқтар",
+          "pt": "Pernas inteiras",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция ног",
+          "key": "services.9.description_ru.0ccc7a02",
+          "en": "Full leg hair removal",
+          "ar": "إزالة شعر الساق بالكامل",
+          "es": "Depilación de piernas completas",
+          "de": "Vollständige Beinhaarentfernung",
+          "fr": "Épilation complète des jambes",
+          "hi": "पूरे पैर के बाल हटाना",
+          "kk": "Толық аяқты шашты кетіру",
+          "pt": "Depilação completa nas pernas",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.9.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги до колен",
+          "key": "services.10.name_ru.65796548",
+          "en": "Legs to knees",
+          "ar": "من الساقين إلى الركبتين",
+          "es": "Piernas hasta las rodillas",
+          "de": "Beine bis zu den Knien",
+          "fr": "Jambes jusqu'aux genoux",
+          "hi": "पैर घुटनों तक",
+          "kk": "Аяқтар тізеге дейін",
+          "pt": "Pernas até os joelhos",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Эпиляция ног до колен",
+          "key": "services.10.description_ru.3bad9c89",
+          "en": "Epilation of legs up to the knees",
+          "ar": "إزالة شعر الساقين حتى الركبتين",
+          "es": "Depilación de piernas hasta las rodillas.",
+          "de": "Epilation der Beine bis zu den Knien",
+          "fr": "Epilation des jambes jusqu'aux genoux",
+          "hi": "घुटनों तक पैरों का एपिलेशन",
+          "kk": "Аяқтың эпиляциясы тізеге дейін",
+          "pt": "Depilação das pernas até os joelhos",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.10.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 37,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.37.name_ru.c66b6652",
+          "en": "Eyebrow lamination",
+          "ar": "تصفيح الحواجب",
+          "es": "Laminación de cejas",
+          "de": "Augenbrauenlaminierung",
+          "fr": "Stratification des sourcils",
+          "hi": "आइब्रो लेमिनेशन",
+          "kk": "Қас ламинациясы",
+          "pt": "Laminação de sobrancelha",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.37.description_ru.c66b6652",
+          "en": "Eyebrow lamination",
+          "ar": "تصفيح الحاجب",
+          "es": "Laminación de cejas",
+          "de": "Augenbrauenlaminierung",
+          "fr": "Stratification des sourcils",
+          "hi": "आइब्रो लेमिनेशन",
+          "kk": "Қас ламинациясы",
+          "pt": "Laminação de sobrancelha",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 38,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.38.name_ru.6a9d6c82",
+          "en": "Eyelash lamination",
+          "ar": "تصفيح الرموش",
+          "es": "Laminación de pestañas",
+          "de": "Laminieren von Wimpern",
+          "fr": "Stratification des cils",
+          "hi": "पलकों का लेमिनेशन",
+          "kk": "Кірпіктердің ламинациясы",
+          "pt": "Laminação de cílios",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.38.description_ru.6a9d6c82",
+          "en": "Eyelash lamination",
+          "ar": "تصفيح الرموش",
+          "es": "Laminación de pestañas",
+          "de": "Laminieren von Wimpern",
+          "fr": "Stratification des cils",
+          "hi": "पलकों का लेमिनेशन",
+          "kk": "Кірпіктердің ламинациясы",
+          "pt": "Laminação de cílios",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 39,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей и ресниц",
+          "key": "services.39.name_ru.429e7def",
+          "en": "Lamination of eyebrows and eyelashes",
+          "ar": "تصفيح الحواجب والرموش",
+          "es": "Laminación de cejas y pestañas.",
+          "de": "Laminierung von Augenbrauen und Wimpern",
+          "fr": "Stratification des sourcils et des cils",
+          "hi": "भौंहों और पलकों का लेमिनेशन",
+          "kk": "Қастар мен кірпіктердің ламинациясы",
+          "pt": "Laminação de sobrancelhas e cílios",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Комбо ламинирование",
+          "key": "services.39.description_ru.c37d7e65",
+          "en": "Combo lamination",
+          "ar": "التصفيح التحرير والسرد",
+          "es": "Laminación combinada",
+          "de": "Kombi-Laminierung",
+          "fr": "Stratification combinée",
+          "hi": "कॉम्बो लेमिनेशन",
+          "kk": "Combo ламинациясы",
+          "pt": "Laminação combinada",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание бровей",
+          "key": "services.40.name_ru.b0898877",
+          "en": "Eyebrow tinting",
+          "ar": "تلوين الحواجب",
+          "es": "tinte de cejas",
+          "de": "Augenbrauen färben",
+          "fr": "Teinture des sourcils",
+          "hi": "भौंहों का रंगना",
+          "kk": "Қастарды тонау",
+          "pt": "Coloração de sobrancelha",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Профессиональное окрашивание",
+          "key": "services.40.description_ru.fcb57901",
+          "en": "Professional coloring",
+          "ar": "تلوين احترافي",
+          "es": "Coloración profesional",
+          "de": "Professionelles Färben",
+          "fr": "Coloration professionnelle",
+          "hi": "पेशेवर रंग-रोगन",
+          "kk": "Кәсіби бояу",
+          "pt": "Coloração profissional",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.40.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 41,
+      "fields": {
+        "name_ru": {
+          "ru": "Оформление бровей",
+          "key": "services.41.name_ru.221b64b3",
+          "en": "Eyebrow shaping",
+          "ar": "تشكيل الحواجب",
+          "es": "dar forma a las cejas",
+          "de": "Augenbrauen formen",
+          "fr": "Mise en forme des sourcils",
+          "hi": "भौंहों को आकार देना",
+          "kk": "Қас қалыптастыру",
+          "pt": "Modelagem de sobrancelha",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Профессиональное оформление",
+          "key": "services.41.description_ru.dd9e95fb",
+          "en": "Professional decoration",
+          "ar": "تصميم احترافي",
+          "es": "Diseño profesional",
+          "de": "Professionelles Design",
+          "fr": "Conception professionnelle",
+          "hi": "पेशेवर डिज़ाइन",
+          "kk": "Кәсіби дизайн",
+          "pt": "Design profissional",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 70,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.63.duration.072b030b",
+          "key": "services.70.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -751,11 +2243,11 @@
       }
     },
     {
-      "id": 64,
+      "id": 71,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.64.duration.072b030b",
+          "key": "services.71.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -785,6 +2277,74 @@
       }
     },
     {
+      "id": 73,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.73.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 74,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.74.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 75,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.75.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 76,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.76.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
       "id": 77,
       "fields": {
         "duration": {
@@ -802,11 +2362,11 @@
       }
     },
     {
-      "id": 92,
+      "id": 78,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.92.duration.072b030b",
+          "key": "services.78.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -819,36 +2379,121 @@
       }
     },
     {
-      "id": 20,
+      "id": 79,
       "fields": {
         "duration": {
-          "ru": "1h",
-          "key": "services.20.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
+          "ru": "60",
+          "key": "services.79.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
         }
       }
     },
     {
-      "id": 9,
+      "id": 80,
       "fields": {
         "duration": {
-          "ru": "1h",
-          "key": "services.9.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
+          "ru": "60",
+          "key": "services.80.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 81,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.81.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 82,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.82.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 83,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.83.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
+        }
+      }
+    },
+    {
+      "id": 84,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.84.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
+        }
+      }
+    },
+    {
+      "id": 85,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.85.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
         }
       }
     },
@@ -887,147 +2532,11 @@
       }
     },
     {
-      "id": 94,
+      "id": 88,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.94.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 97,
-      "fields": {
-        "duration": {
-          "ru": "90",
-          "key": "services.97.duration.8613985e",
-          "en": "90",
-          "ar": "90",
-          "es": "90",
-          "de": "90",
-          "fr": "90",
-          "hi": "90",
-          "kk": "90",
-          "pt": "90"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.11.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.15.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 16,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.16.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.17.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 36,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.36.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 40,
-      "fields": {
-        "duration": {
-          "ru": "1h",
-          "key": "services.40.duration.7c68645d",
-          "en": "1h",
-          "ar": "1 ساعة",
-          "es": "1h",
-          "de": "1h",
-          "fr": "Service salon de beauté 1h",
-          "hi": "ब्यूटी सैलून सेवा 1 घंटा",
-          "kk": "1 сағат",
-          "pt": "1h"
-        }
-      }
-    },
-    {
-      "id": 80,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.80.duration.072b030b",
+          "key": "services.88.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1057,11 +2566,11 @@
       }
     },
     {
-      "id": 93,
+      "id": 90,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.93.duration.072b030b",
+          "key": "services.90.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1074,11 +2583,11 @@
       }
     },
     {
-      "id": 95,
+      "id": 91,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.95.duration.072b030b",
+          "key": "services.91.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1091,11 +2600,11 @@
       }
     },
     {
-      "id": 60,
+      "id": 92,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.60.duration.072b030b",
+          "key": "services.92.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1104,6 +2613,23 @@
           "hi": "60",
           "kk": "60",
           "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 53,
+      "fields": {
+        "duration": {
+          "ru": "30",
+          "key": "services.53.duration.34173cb3",
+          "en": "30",
+          "ar": "30",
+          "es": "30",
+          "de": "30",
+          "fr": "30",
+          "hi": "30",
+          "kk": "30",
+          "pt": "30"
         }
       }
     },
@@ -1130,6 +2656,91 @@
         "duration": {
           "ru": "60",
           "key": "services.55.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 56,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.56.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 57,
+      "fields": {
+        "duration": {
+          "ru": "180",
+          "key": "services.57.duration.045117b0",
+          "en": "180",
+          "ar": "180",
+          "es": "180",
+          "de": "180",
+          "fr": "180",
+          "hi": "180",
+          "kk": "180",
+          "pt": "180"
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.58.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 59,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.59.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 60,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.60.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1176,11 +2787,11 @@
       }
     },
     {
-      "id": 66,
+      "id": 63,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.66.duration.072b030b",
+          "key": "services.63.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1193,28 +2804,11 @@
       }
     },
     {
-      "id": 69,
+      "id": 64,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.69.duration.072b030b",
-          "en": "60",
-          "ar": "60",
-          "es": "60",
-          "de": "60",
-          "fr": "60",
-          "hi": "60",
-          "kk": "60",
-          "pt": "60"
-        }
-      }
-    },
-    {
-      "id": 76,
-      "fields": {
-        "duration": {
-          "ru": "60",
-          "key": "services.76.duration.072b030b",
+          "key": "services.64.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1244,11 +2838,11 @@
       }
     },
     {
-      "id": 78,
+      "id": 66,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.78.duration.072b030b",
+          "key": "services.66.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1261,11 +2855,11 @@
       }
     },
     {
-      "id": 71,
+      "id": 67,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.71.duration.072b030b",
+          "key": "services.67.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1278,11 +2872,11 @@
       }
     },
     {
-      "id": 70,
+      "id": 68,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.70.duration.072b030b",
+          "key": "services.68.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1295,11 +2889,591 @@
       }
     },
     {
-      "id": 75,
+      "id": 69,
       "fields": {
         "duration": {
           "ru": "60",
-          "key": "services.75.duration.072b030b",
+          "key": "services.69.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 42,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокая чистка лица",
+          "key": "services.42.name_ru.f5d3906b",
+          "en": "Deep facial cleansing",
+          "ar": "تنظيف عميق للوجه",
+          "es": "Limpieza facial profunda",
+          "de": "Tiefenreinigung des Gesichts",
+          "fr": "Nettoyage du visage en profondeur",
+          "hi": "चेहरे की गहरी सफाई",
+          "kk": "Тері тазартқыш",
+          "pt": "Limpeza facial profunda",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Профессиональная глубокая чистка",
+          "key": "services.42.description_ru.964e86eb",
+          "en": "Professional deep cleaning",
+          "ar": "التنظيف العميق الاحترافي",
+          "es": "Limpieza profunda profesional",
+          "de": "Professionelle Tiefenreinigung",
+          "fr": "Nettoyage en profondeur professionnel",
+          "hi": "पेशेवर गहरी सफ़ाई",
+          "kk": "Кәсіби терең тазарту",
+          "pt": "Limpeza profunda profissional",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.42.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "name_ru": {
+          "ru": "Медицинская чистка для проблемной кожи",
+          "key": "services.43.name_ru.a6e366dc",
+          "en": "Medical cleansing for problem skin",
+          "ar": "التطهير الطبي للبشرة المشكلة",
+          "es": "Limpieza médica para pieles problemáticas.",
+          "de": "Medizinische Reinigung bei Problemhaut",
+          "fr": "Nettoyage médical pour peaux à problèmes",
+          "hi": "समस्याग्रस्त त्वचा के लिए चिकित्सीय सफाई",
+          "kk": "Проблемалық теріге арналған медициналық тазартқыш",
+          "pt": "Limpeza médica para pele problemática",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Медицинская чистка",
+          "key": "services.43.description_ru.1340aaab",
+          "en": "Medical cleaning",
+          "ar": "التنظيف الطبي",
+          "es": "limpieza medica",
+          "de": "Medizinische Reinigung",
+          "fr": "Nettoyage médical",
+          "hi": "चिकित्सीय सफ़ाई",
+          "kk": "Медициналық тазалау",
+          "pt": "Limpeza médica",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.43.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "name_ru": {
+          "ru": "Подтягивающий массаж лица с маской",
+          "key": "services.44.name_ru.01f63d74",
+          "en": "Firming facial massage with mask",
+          "ar": "ثبات تدليك الوجه بالقناع",
+          "es": "Masaje facial reafirmante con mascarilla",
+          "de": "Straffende Gesichtsmassage mit Maske",
+          "fr": "Massage du visage raffermissant avec masque",
+          "hi": "मास्क के साथ चेहरे की मजबूत मालिश",
+          "kk": "Маскамен бет әлпетін қатайтыңыз",
+          "pt": "Massagem facial reafirmante com máscara",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Подтягивающий массаж",
+          "key": "services.44.description_ru.da76e7a6",
+          "en": "Tightening massage",
+          "ar": "تدليك ثبات",
+          "es": "Masaje reafirmante",
+          "de": "Straffende Massage",
+          "fr": "Massage raffermissant",
+          "hi": "दृढ़ मालिश",
+          "kk": "Қатайтатын массаж",
+          "pt": "Massagem reafirmante",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "30min",
+          "key": "services.44.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30min",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "30min",
+          "kk": "30min",
+          "pt": "30min"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "name_ru": {
+          "ru": "Пилинг",
+          "key": "services.45.name_ru.349ad56c",
+          "en": "Peeling",
+          "ar": "تقشير",
+          "es": "Peladura",
+          "de": "Peeling",
+          "fr": "Peeling",
+          "hi": "छीलना",
+          "kk": "Пилинг",
+          "pt": "Peeling",
+          "detected_language": "mk"
+        },
+        "description_ru": {
+          "ru": "Химический пилинг",
+          "key": "services.45.description_ru.8dea543f",
+          "en": "Chemical peeling",
+          "ar": "التقشير الكيميائي",
+          "es": "peeling químico",
+          "de": "Chemisches Peeling",
+          "fr": "Peeling chimique",
+          "hi": "रासायनिक छीलने",
+          "kk": "Химиялық пиллинг",
+          "pt": "Peeling químico",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.45.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр без покрытия",
+          "key": "services.46.name_ru.9ce5aa82",
+          "en": "Manicure without coating",
+          "ar": "مانيكير بدون طلاء",
+          "es": "Manicura sin recubrimiento",
+          "de": "Maniküre ohne Beschichtung",
+          "fr": "Manucure sans revêtement",
+          "hi": "कोटिंग के बिना मैनीक्योर",
+          "kk": "Қаптаусыз маникюр",
+          "pt": "Manicure sem revestimento",
+          "detected_language": "udm"
+        },
+        "description_ru": {
+          "ru": "Базовый маникюр",
+          "key": "services.46.description_ru.0079cd02",
+          "en": "Basic manicure",
+          "ar": "مانيكير أساسي",
+          "es": "manicura básica",
+          "de": "Grundlegende Maniküre",
+          "fr": "Manucure de base",
+          "hi": "बुनियादी मैनीक्योर",
+          "kk": "Негізгі маникюр",
+          "pt": "Manicura básica",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.46.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 47,
+      "fields": {
+        "name_ru": {
+          "ru": "Спа-маникюр",
+          "key": "services.47.name_ru.8deff1c9",
+          "en": "Spa manicure",
+          "ar": "مانيكير سبا",
+          "es": "manicura spa",
+          "de": "Spa-Maniküre",
+          "fr": "Manucure spa",
+          "hi": "स्पा मैनीक्योर",
+          "kk": "SPA маникюр",
+          "pt": "Manicura termal",
+          "detected_language": "bg"
+        },
+        "description_ru": {
+          "ru": "Спа-маникюр",
+          "key": "services.47.description_ru.8deff1c9",
+          "en": "Spa manicure",
+          "ar": "مانيكير سبا",
+          "es": "manicura spa",
+          "de": "Spa-Maniküre",
+          "fr": "Manucure spa",
+          "hi": "स्पा मैनीक्योर",
+          "kk": "SPA маникюр",
+          "pt": "Manicura termal",
+          "detected_language": "bg"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.47.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр с обычным покрытием",
+          "key": "services.48.name_ru.7d31de2e",
+          "en": "Manicure with regular finish",
+          "ar": "مانيكير مع لمسة نهائية عادية",
+          "es": "Manicura con acabado regular.",
+          "de": "Maniküre mit regelmäßigem Finish",
+          "fr": "Manucure avec finition régulière",
+          "hi": "नियमित फिनिश के साथ मैनीक्योर",
+          "kk": "Үнемі мәре бар маникюр",
+          "pt": "Manicure com acabamento regular",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Маникюр с обычным лаком",
+          "key": "services.48.description_ru.b2902707",
+          "en": "Manicure with regular polish",
+          "ar": "مانيكير مع طلاء عادي",
+          "es": "Manicura con esmalte regular.",
+          "de": "Maniküre mit normalem Lack",
+          "fr": "Manucure avec vernis régulier",
+          "hi": "नियमित पॉलिश के साथ मैनीक्योर",
+          "kk": "Үнемі полякпен маникюр",
+          "pt": "Manicure com esmalte normal",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.48.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 49,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр гель-лак",
+          "key": "services.49.name_ru.14c0870e",
+          "en": "Manicure gel polish",
+          "ar": "طلاء جل للأظافر",
+          "es": "Esmalte en gel para manicura",
+          "de": "Maniküre-Gel-Lack",
+          "fr": "Vernis gel manucure",
+          "hi": "मैनीक्योर जेल पॉलिश",
+          "kk": "Маникюр Гель жылтыратқышы",
+          "pt": "Esmalte em gel para manicure",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Маникюр с гель-лаком",
+          "key": "services.49.description_ru.eb95d49c",
+          "en": "Manicure with gel polish",
+          "ar": "مانيكير مع طلاء هلام",
+          "es": "Manicura con esmalte en gel.",
+          "de": "Maniküre mit Gellack",
+          "fr": "Manucure avec vernis gel",
+          "hi": "जेल पॉलिश के साथ मैनीक्योर",
+          "kk": "Гельді жылтыратқышпен маникюр",
+          "pt": "Manicure com esmalte gel",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h",
+          "key": "services.49.duration.7c68645d",
+          "en": "1h",
+          "ar": "1h",
+          "es": "1h",
+          "de": "1h",
+          "fr": "1h",
+          "hi": "1h",
+          "kk": "1h",
+          "pt": "1h"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "fields": {
+        "name_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.50.name_ru.4fec55b5",
+          "en": "Japanese manicure",
+          "ar": "مانيكير ياباني",
+          "es": "manicura japonesa",
+          "de": "Japanische Maniküre",
+          "fr": "Manucure japonaise",
+          "hi": "जापानी मैनीक्योर",
+          "kk": "Жапондық маникюр",
+          "pt": "Manicura japonesa",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.50.description_ru.4fec55b5",
+          "en": "Japanese manicure",
+          "ar": "مانيكير ياباني",
+          "es": "manicura japonesa",
+          "de": "Japanische Maniküre",
+          "fr": "Manucure japonaise",
+          "hi": "जापानी मैनीक्योर",
+          "kk": "Жапондық маникюр",
+          "pt": "Manicura japonesa",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "1h 30min",
+          "key": "services.50.duration.d7cc86dd",
+          "en": "1h 30min",
+          "ar": "1h 30min",
+          "es": "1h 30min",
+          "de": "1h 30min",
+          "fr": "1h 30min",
+          "hi": "1h 30min",
+          "kk": "1h 30min",
+          "pt": "1h 30min"
+        }
+      }
+    },
+    {
+      "id": 51,
+      "fields": {
+        "name_ru": {
+          "ru": "Детский маникюр",
+          "key": "services.51.name_ru.d83a8c76",
+          "en": "Children's manicure",
+          "ar": "مانيكير الأطفال",
+          "es": "manicura infantil",
+          "de": "Kindermaniküre",
+          "fr": "Manucure pour enfants",
+          "hi": "बच्चों का मैनीक्योर",
+          "kk": "Балалардың маникюрі",
+          "pt": "Manicura infantil",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Маникюр для детей",
+          "key": "services.51.description_ru.650bd84f",
+          "en": "Manicure for children",
+          "ar": "مانيكير للأطفال",
+          "es": "manicura para niños",
+          "de": "Maniküre für Kinder",
+          "fr": "Manucure pour les enfants",
+          "hi": "बच्चों के लिए मैनीक्योर",
+          "kk": "Балаларға маникюр",
+          "pt": "Manicura para crianças",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 52,
+      "fields": {
+        "name_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.52.name_ru.9e0c18fa",
+          "en": "Changing regular nail polish",
+          "ar": "تغيير طلاء الأظافر العادي",
+          "es": "Cambiar barniz normal",
+          "de": "Normalen Lack wechseln",
+          "fr": "Changer le vernis ordinaire",
+          "hi": "नियमित वार्निश बदलना",
+          "kk": "Тұрақты лакты өзгерту",
+          "pt": "Troca de verniz normal",
+          "detected_language": "ru"
+        },
+        "description_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.52.description_ru.9e0c18fa",
+          "en": "Changing regular nail polish",
+          "ar": "تغيير الورنيش العادي",
+          "es": "Cambiar barniz normal",
+          "de": "Normalen Lack wechseln",
+          "fr": "Changer le vernis ordinaire",
+          "hi": "नियमित वार्निश बदलना",
+          "kk": "Тұрақты лакты өзгерту",
+          "pt": "Troca de verniz normal",
+          "detected_language": "ru"
+        },
+        "duration": {
+          "ru": "30min",
+          "key": "services.52.duration.0d3f22e5",
+          "en": "30min",
+          "ar": "30min",
+          "es": "30min",
+          "de": "30min",
+          "fr": "30min",
+          "hi": "30min",
+          "kk": "30min",
+          "pt": "30min"
+        }
+      }
+    },
+    {
+      "id": 93,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.93.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 94,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.94.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 95,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.95.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 96,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.96.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 97,
+      "fields": {
+        "duration": {
+          "ru": "90",
+          "key": "services.97.duration.8613985e",
+          "en": "90",
+          "ar": "90",
+          "es": "90",
+          "de": "90",
+          "fr": "90",
+          "hi": "90",
+          "kk": "90",
+          "pt": "90"
+        }
+      }
+    },
+    {
+      "id": 98,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.98.duration.072b030b",
+          "en": "60",
+          "ar": "60",
+          "es": "60",
+          "de": "60",
+          "fr": "60",
+          "hi": "60",
+          "kk": "60",
+          "pt": "60"
+        }
+      }
+    },
+    {
+      "id": 99,
+      "fields": {
+        "duration": {
+          "ru": "60",
+          "key": "services.99.duration.072b030b",
           "en": "60",
           "ar": "60",
           "es": "60",
@@ -1316,6 +3490,19 @@
     {
       "id": 1,
       "fields": {
+        "address": {
+          "ru": "Магазин 13, Amwaj 3 Plaza Level, JBR, Дубай",
+          "key": "salon_settings.1.address.343b34cf",
+          "en": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+          "ar": "متجر 13، أمواج 3، طابق البلازا، جميرا بيتش ريزيدنس، دبي",
+          "es": "Tienda 13, nivel Amwaj 3 Plaza, JBR, Dubái",
+          "de": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+          "fr": "Boutique 13, Amwaj 3 Plaza Level, JBR, Dubaï",
+          "hi": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
+          "kk": "13 дүкен, Amwaj 3 Plaza деңгейі, JBR, Дубай",
+          "pt": "Loja 13, Amwaj 3 Plaza Level, JBR, Dubai",
+          "detected_language": "hi"
+        },
         "city": {
           "ru": "Dubai",
           "key": "salon_settings.1.city.23b998b1",
@@ -1332,13 +3519,77 @@
           "ru": "UAE",
           "key": "salon_settings.1.country.b6ae56d2",
           "en": "UAE",
-          "ar": "الإمارات العربية المتحدة",
-          "es": "Emiratos Árabes Unidos",
-          "de": "Vereinigte Arabische Emirate",
-          "fr": "Émirats arabes unis",
-          "hi": "संयुक्त अरब अमीरात",
-          "kk": ">",
-          "pt": "Emirados Árabes Unidos"
+          "ar": "UAE",
+          "es": "UAE",
+          "de": "UAE",
+          "fr": "UAE",
+          "hi": "UAE",
+          "kk": "UAE",
+          "pt": "UAE"
+        }
+      }
+    }
+  ],
+  "public_banners": [
+    {
+      "id": 1,
+      "fields": {
+        "title_ru": {
+          "ru": "Красота и Элегантность",
+          "key": "public_banners.1.title_ru.0b52ad71",
+          "en": "Beauty and Elegance",
+          "ar": "الجمال والأناقة",
+          "es": "Belleza y elegancia",
+          "de": "Schönheit und Eleganz",
+          "fr": "Beauté et élégance",
+          "hi": "सुंदरता और सुंदरता",
+          "kk": "Сұлулық және әсемдік",
+          "pt": "Beleza e Elegância",
+          "detected_language": "ru"
+        },
+        "subtitle_ru": {
+          "ru": "Профессиональные услуги красоты",
+          "key": "public_banners.1.subtitle_ru.a02f5b36",
+          "en": "Professional beauty services",
+          "ar": "خدمات التجميل المهنية",
+          "es": "Servicios de belleza profesionales.",
+          "de": "Professionelle Schönheitsdienstleistungen",
+          "fr": "Services de beauté professionnels",
+          "hi": "व्यावसायिक सौंदर्य सेवाएँ",
+          "kk": "Кәсіби сұлулық қызметтері",
+          "pt": "Serviços profissionais de beleza",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "title_ru": {
+          "ru": "Скидки до 50%",
+          "key": "public_banners.2.title_ru.816f4b30",
+          "en": "Discounts up to 50%",
+          "ar": "خصومات تصل إلى 50%",
+          "es": "Descuentos hasta el 50%",
+          "de": "Rabatte bis zu 50 %",
+          "fr": "Réductions jusqu'à 50%",
+          "hi": "50% तक की छूट",
+          "kk": "50% дейін жеңілдіктер",
+          "pt": "Descontos de até 50%",
+          "detected_language": "ru"
+        },
+        "subtitle_ru": {
+          "ru": "На все услуги салона",
+          "key": "public_banners.2.subtitle_ru.f9d0958e",
+          "en": "For all salon services",
+          "ar": "لجميع خدمات الصالون",
+          "es": "Para todos los servicios de salón",
+          "de": "Für alle Salondienstleistungen",
+          "fr": "Pour tous les services du salon",
+          "hi": "सभी सैलून सेवाओं के लिए",
+          "kk": "Барлық салон қызметтері үшін",
+          "pt": "Para todos os serviços de salão",
+          "detected_language": "ru"
         }
       }
     }

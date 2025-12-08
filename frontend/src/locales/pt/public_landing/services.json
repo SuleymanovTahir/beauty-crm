@@ -1,14 +1,14 @@
 {
   "categories": {
-    "brows": "Brows",
-    "facial": "Facial",
-    "hair": "Hair",
-    "lashes": "Lashes",
-    "massage": "Massage",
-    "nails": "Nails",
-    "permanent_makeup": "Permanent Makeup",
-    "promo": "Promo",
-    "waxing": "Waxing"
+    "brows": "Sobrancelhas",
+    "facial": "уход за лицом",
+    "hair": "Cabelo",
+    "lashes": "Cílios",
+    "massage": "массаж",
+    "nails": "Unhas",
+    "permanent_makeup": "Maquiagem Permanente",
+    "promo": "Promoção",
+    "waxing": "восковая эпиляция"
   },
   "items": {
     "brow_lamination": {
@@ -263,7 +263,7 @@
     },
     "key_hair_style": {
       "name": "Deitado",
-      "description": "Um penteado",
+      "description": "Penteado",
       "price": 225.0,
       "min_price": null,
       "max_price": null,
@@ -692,7 +692,7 @@
       "category": "nails"
     },
     "key_spa_pedicure": {
-      "name": "Spa-pedicura",
+      "name": "Pedicura SPA",
       "description": "Pedicura SPA relaxante",
       "price": 60.0,
       "min_price": null,
@@ -739,7 +739,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquiagem_permanente"
     },
     "lashliner": {
       "name": "Flecha interciliar",
@@ -749,7 +749,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquiagem_permanente"
     },
     "permanent_brows": {
       "name": "Maquiagem permanente de sobrancelha",
@@ -759,7 +759,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquiagem_permanente"
     },
     "permanent_lips": {
       "name": "Maquiagem labial permanente",
@@ -769,7 +769,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquiagem_permanente"
     },
     "eyeliner": {
       "name": "Delineador",
@@ -779,7 +779,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquiagem_permanente"
     },
     "key_promotion_overlay_manicure": {
       "name": "Manicure promocional",
@@ -802,7 +802,7 @@
       "category": "promo"
     },
     "key_promo_mani_pedi_250": {
-      "name": "Promoção manicure + pedicure",
+      "name": "Promoção para manicure + pedicure",
       "description": "Promoção manicure pedicure 250",
       "price": 125.0,
       "min_price": null,
