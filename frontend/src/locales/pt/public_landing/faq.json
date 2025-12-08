@@ -1,52 +1,52 @@
 {
   "items": [
     {
-      "question": "Como se inscrever no procedimento",
-      "answer": "Você pode se inscrever no procedimento através do formulário em nosso site, ligando ou escrevendo para nós no Instagram. Entraremos em contato para confirmar seu agendamento."
+      "question": "Как записаться на процедуру",
+      "answer": "Вы можете записаться на процедуру через форму на нашем сайте, позвонив по телефону, или написав нам в Instagram. Мы свяжемся с вами для подтверждения записи."
     },
     {
-      "question": "Quais métodos de pagamento você aceita?",
-      "answer": "Aceitamos pagamento em dinheiro e cartões (Visa, MasterCard, American Express). O pagamento é feito após a prestação do serviço."
+      "question": "Какие способы оплаты вы принимаете",
+      "answer": "Мы принимаем оплату наличными и картами (Visa, MasterCard, American Express). Оплата производится после оказания услуги."
     },
     {
-      "question": "Posso cancelar ou reagendar uma consulta?",
-      "answer": "Sim, você pode cancelar ou remarcar sua consulta até 24 horas antes do horário agendado. Se cancelado com menos de 24 horas de antecedência poderá ser cobrada uma multa de 50% do custo do serviço."
+      "question": "Могу ли я отменить или перенести запись",
+      "answer": "Да, вы можете отменить или перенести запись не позднее чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги."
     },
     {
-      "question": "Que materiais você usa",
-      "answer": "Utilizamos apenas materiais premium certificados das marcas líderes mundiais. Todos os pigmentos são hipoalergênicos e seguros para a saúde."
+      "question": "Какие материалы вы используете",
+      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья."
     },
     {
-      "question": "Seus artesãos possuem certificados?",
-      "answer": "Sim, todos os nossos mestres possuem certificados internacionais e realizam regularmente cursos de formação avançada."
+      "question": "Есть ли у ваших мастеров сертификаты",
+      "answer": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации."
     },
     {
-      "question": "É necessária preparação antes do procedimento?",
-      "answer": "Sim, alguns procedimentos requerem preparação. Fornecemos recomendações detalhadas no momento do registro."
+      "question": "Нужна ли подготовка перед процедурой",
+      "answer": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи."
     },
     {
-      "question": "Existem contra-indicações para os procedimentos?",
-      "answer": "Sim, cada procedimento tem suas contra-indicações. Principal: gravidez, lactação, processos inflamatórios agudos, doenças do sangue, oncologia. Antes do procedimento, é necessária consulta com um especialista."
+      "question": "Есть ли противопоказания к процедурам",
+      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером."
     },
     {
-      "question": "Você fornece uma garantia para serviços",
-      "answer": "Sim, garantimos a qualidade de todos os nossos serviços. Se não ficar satisfeito com o resultado, contacte-nos no prazo de 7 dias e encontraremos uma solução."
+      "question": "Предоставляете ли вы гарантию на услуги",
+      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение."
     },
     {
-      "question": "Você tem um programa de fidelidade",
-      "answer": "Sim, temos um programa de fidelidade cumulativo. Após cada visita você recebe bônus que podem ser usados ​​para pagar visitas futuras."
+      "question": "Есть ли у вас программа лояльности",
+      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов."
     },
     {
-      "question": "Você trabalha nos finais de semana",
-      "answer": "Sim, trabalhamos 7 dias por semana."
+      "question": "Работаете ли вы в выходные",
+      "answer": "Да, мы работаем 7 дней в неделю."
     },
     {
-      "question": "É possível emitir certificado de serviços?",
-      "answer": "Sim, oferecemos vales-presente de qualquer valor ou para serviços específicos. Entre em contato conosco para obter um certificado."
+      "question": "Можно ли подарить сертификат на услуги",
+      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата."
     },
     {
-      "question": "Onde fica o seu salão?",
-      "answer": "Estamos localizados no centro de Dubai. Informações detalhadas sobre como chegar podem ser encontradas na página Contatos."
+      "question": "Где находится ваш салон",
+      "answer": "Мы находимся в центре Дубая. Подробную информацию о том, как добраться, вы можете найти на странице Контакты."
     }
   ]
 }

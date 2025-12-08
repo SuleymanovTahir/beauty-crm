@@ -112,12 +112,15 @@ def translate_banners(translator):
         
         items = []
         for item in ru_data['items']:
-            items.append({
+            translated_item = {
                 "title": translator.translate(item['title'], 'ru', lang),
                 "subtitle": translator.translate(item['subtitle'], 'ru', lang),
-                "image": item['image'],  # Preserve
-                "link": item['link']  # Preserve
-            })
+            }
+            # Preserve all other fields as-is
+            for key in item:
+                if key not in ['title', 'subtitle']:
+                    translated_item[key] = item[key]
+            items.append(translated_item)
         
         lang_data = {"items": items}
         
@@ -133,15 +136,17 @@ def main():
     """Translate all public_landing content"""
     print("🌍 Translating public_landing content...\n")
     
-    # Create LibreTranslate translator (no rate limits)
     # Create robust translator
     print("⏳ Initializing Translator...")
     translator = Translator(use_cache=True)
     print("✅ Translator ready\n")
     
-    # translate_services(translator)
+    translate_services(translator)
     translate_faq(translator)
-    # translate_banners(translator)
+    translate_banners(translator)
+    
+    # Save cache
+    translator.save_cache_to_disk()
     
     print("\n✅ Translation complete!")
     print(f"📁 Files created in: {LOCALES_DIR}/{{lang}}/public_landing/")

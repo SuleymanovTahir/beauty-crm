@@ -85,7 +85,9 @@
     "db:i18n:sync-db": "cd ../backend && venv/bin/python scripts/translations/db_sync_to_db.py",
     "db:i18n:sync-frontend": "cd ../backend && venv/bin/python scripts/translations/sync_frontend_locales.py",
     "db:i18n:export-public": "cd ../backend && venv/bin/python scripts/migrations/export_db_to_locales.py",
-    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db && npm run db:i18n:export-public && npm run db:i18n:sync-frontend && npm run frontend:i18n:auto && cd ../backend && venv/bin/python scripts/translations/fix_bad_translations.py",
+    "db:i18n:export-public:force": "cd ../backend && venv/bin/python scripts/migrations/export_db_to_locales.py --force",
+    "db:i18n:import-public": "cd ../backend && venv/bin/python scripts/migrations/import_locales_to_db.py",
+    "db:i18n:auto": "npm run db:i18n:extract && npm run db:i18n:translate && npm run db:i18n:sync && npm run db:i18n:sync-db && npm run db:i18n:import-public && npm run db:i18n:sync-frontend && npm run frontend:i18n:auto && cd ../backend && venv/bin/python scripts/translations/fix_bad_translations.py",
     "i18n:static": "cd ../backend && venv/bin/python scripts/translations/static_translate.py",
     "frontend:i18n:auto": "cd ../backend && venv/bin/python scripts/translations/frontend_translate.py"
   },

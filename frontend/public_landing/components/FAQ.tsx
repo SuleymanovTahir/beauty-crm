@@ -102,7 +102,7 @@ export function FAQ() {
                 {/* CTA Section */}
                 <div className="mt-8 sm:mt-12 text-center space-y-4 p-6 sm:p-8 bg-card rounded-xl sm:rounded-2xl border border-border/50">
                     <p className="text-sm sm:text-base text-foreground/70">
-                        {t('faqContactPrompt', { defaultValue: 'Не нашли ответ на свой вопрос?' })}
+                        {t('faqContactPrompt', { ns: 'public_landing', defaultValue: 'Не нашли ответ на свой вопрос?' })}
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
                         <Button
@@ -111,7 +111,7 @@ export function FAQ() {
                             className="w-full overflow-hidden px-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                         >
                             <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
-                            <span className="truncate">{t('callUs', { defaultValue: 'Позвонить' })}: {salonPhone}</span>
+                            <span className="truncate">{t('callUs', { ns: 'public_landing', defaultValue: 'Позвонить' })}: {salonPhone}</span>
                         </Button>
                         <Button
                             onClick={() => {

@@ -24,3 +24,5 @@ salon_bot.db
 
 # Translation cache
 scripts/translations/.cache/
+.env.shared
+.env

@@ -1,14 +1,14 @@
 {
   "categories": {
-    "brows": "Brows",
-    "facial": "Facial",
-    "hair": "Hair",
-    "lashes": "Lashes",
-    "massage": "Massage",
-    "nails": "Nails",
-    "permanent_makeup": "Permanent Makeup",
-    "promo": "Promo",
-    "waxing": "Waxing"
+    "brows": "Cejas",
+    "facial": "уход за лицом",
+    "hair": "Cabello",
+    "lashes": "Pestañas",
+    "massage": "массаж",
+    "nails": "Clavos",
+    "permanent_makeup": "Maquillaje Permanente",
+    "promo": "Promoción",
+    "waxing": "восковая эпиляция"
   },
   "items": {
     "brow_lamination": {
@@ -263,7 +263,7 @@
     },
     "key_hair_style": {
       "name": "tendido",
-      "description": "un peinado",
+      "description": "Peinado",
       "price": 225.0,
       "min_price": null,
       "max_price": null,
@@ -739,7 +739,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquillaje_permanente"
     },
     "lashliner": {
       "name": "flecha interciliar",
@@ -749,7 +749,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquillaje_permanente"
     },
     "permanent_brows": {
       "name": "Maquillaje permanente de cejas",
@@ -759,7 +759,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquillaje_permanente"
     },
     "permanent_lips": {
       "name": "Maquillaje permanente de labios",
@@ -769,7 +769,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquillaje_permanente"
     },
     "eyeliner": {
       "name": "Lápiz de ojos",
@@ -779,7 +779,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "maquillaje_permanente"
     },
     "key_promotion_overlay_manicure": {
       "name": "manicura promocional",
@@ -802,7 +802,7 @@
       "category": "promo"
     },
     "key_promo_mani_pedi_250": {
-      "name": "Promoción manicura + pedicura",
+      "name": "Promoción para manicura + pedicura",
       "description": "Promo manicura pedicura 250",
       "price": 125.0,
       "min_price": null,

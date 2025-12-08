@@ -83,26 +83,18 @@ else:
 
 print("=" * 70)
 
-# 3. Выбираем файл конфигурации
-if environment == "development":
-    env_file = ".env.local"
+# 3. Загружаем единый .env файл
+# ENVIRONMENT уже определён автоматически выше (по localhost)
+if os.path.exists(".env"):
+    load_dotenv(".env", override=True)
+    print(f"✅ Загружен: .env")
 else:
-    env_file = ".env.production"
+    print(f"⚠️ Файл .env не найден, используем системные переменные")
 
-# 4. Загружаем файл (перезаписывает системные переменные)
-if os.path.exists(env_file):
-    load_dotenv(env_file, override=True)
-    print(f"✅ Загружен: {env_file}")
-else:
-    print(f"⚠️ Файл {env_file} не найден, используем системные переменные")
-    load_dotenv()  # Загрузим .env если есть
-
-# 5. Финальная проверка после загрузки файла
-loaded_env = os.getenv("ENVIRONMENT")
-if loaded_env and loaded_env != environment:
-    print(f"⚠️ ENVIRONMENT в {env_file} ({loaded_env}) отличается от автоопределения ({environment})")
-    print(f"✅ Используем автоопределение: {environment}")
-    os.environ["ENVIRONMENT"] = environment  # Принудительно ставим правильное значение
+# 4. Принудительно устанавливаем автоопределённое ENVIRONMENT
+# (игнорируем значение из файла если оно отличается)
+os.environ["ENVIRONMENT"] = environment
+print(f"✅ ENVIRONMENT = {environment} (автоопределение по hostname)")
 
 # Подавление логов
 os.environ['GRPC_VERBOSITY'] = 'ERROR'

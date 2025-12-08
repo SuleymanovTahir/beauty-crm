@@ -9,9 +9,6 @@ import logging
 
 logger = logging.getLogger('crm')
 
-def get_db_connection():
-    conn = get_db_connection()
-    return conn
 
 async def check_and_send_reminders():
     """Проверяет и отправляет напоминания (24ч и 2ч)"""
