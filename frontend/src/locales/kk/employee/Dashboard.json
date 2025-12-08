@@ -1,5 +1,5 @@
 {
-  "booking": "Хаттама",
+  "booking": "booking",
   "confirmed": "Расталды",
   "failed_to_fetch_bookings": "Жазбаларды жүктеу сәтсіз аяқталды",
   "loading_error": "Жүктеу қатесі",

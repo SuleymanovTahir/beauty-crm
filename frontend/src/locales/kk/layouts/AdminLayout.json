@@ -6,7 +6,7 @@
   "logout_success": "Сіз сәтті тіркелдіңіз",
   "menu": {
     "analytics": "Аналитика",
-    "bookings": "Жазбалар",
+    "bookings": "bookings",
     "bot_settings": "Бот параметрлері",
     "calendar": "Күнтібзе",
     "chat": "Сұхбат",

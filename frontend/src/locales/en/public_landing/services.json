@@ -1,14 +1,14 @@
 {
   "categories": {
     "brows": "Brows",
-    "facial": "Facial",
+    "facial": "уход за лицом",
     "hair": "Hair",
     "lashes": "Lashes",
-    "massage": "Massage",
+    "massage": "массаж",
     "nails": "Nails",
     "permanent_makeup": "Permanent Makeup",
     "promo": "Promo",
-    "waxing": "Waxing"
+    "waxing": "восковая эпиляция"
   },
   "items": {
     "brow_lamination": {
@@ -102,7 +102,7 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "Beauty Salon Service Coming Out of the Black",
+      "name": "Coming out of the black",
       "description": "Color correction from dark",
       "price": 1800.0,
       "min_price": 1300.0,
@@ -263,7 +263,7 @@
     },
     "key_hair_style": {
       "name": "Laying",
-      "description": "A hairstyle",
+      "description": "Hairstyle",
       "price": 225.0,
       "min_price": null,
       "max_price": null,
@@ -272,7 +272,7 @@
       "category": "hair"
     },
     "blowdry": {
-      "name": "Styling",
+      "name": "Laying",
       "description": "Professional hair styling",
       "price": 125.0,
       "min_price": 100.0,
@@ -342,7 +342,7 @@
       "category": "lashes"
     },
     "lash_lamination": {
-      "name": "Eyelash lamination",
+      "name": "Lamination of eyelashes",
       "description": "Lamination of eyelashes",
       "price": 200.0,
       "min_price": null,
@@ -352,7 +352,7 @@
       "category": "lashes"
     },
     "remove_lashes": {
-      "name": "Eyelash removal",
+      "name": "Removing eyelashes",
       "description": "Safe removal",
       "price": 50.0,
       "min_price": null,
@@ -642,7 +642,7 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "Changing regular nail polish",
+      "name": "Changing regular varnish",
       "description": "Changing regular varnish",
       "price": 65.0,
       "min_price": 40.0,
@@ -692,7 +692,7 @@
       "category": "nails"
     },
     "key_spa_pedicure": {
-      "name": "Spa pedicure",
+      "name": "SPA pedicure",
       "description": "Relaxing SPA pedicure",
       "price": 60.0,
       "min_price": null,
@@ -742,7 +742,7 @@
       "category": "permanent_makeup"
     },
     "lashliner": {
-      "name": "Interlash line",
+      "name": "Interciliary arrow",
       "description": "Emphasizing the lash line",
       "price": 500.0,
       "min_price": null,
@@ -753,7 +753,7 @@
     },
     "permanent_brows": {
       "name": "Permanent eyebrow makeup",
-      "description": "Microblading or powder eyebrows",
+      "description": "Microblading or powder brows",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
@@ -802,7 +802,7 @@
       "category": "promo"
     },
     "key_promo_mani_pedi_250": {
-      "name": "Manicure + pedicure promotion",
+      "name": "Promotion for manicure + pedicure",
       "description": "Promo manicure pedicure 250",
       "price": 125.0,
       "min_price": null,
@@ -892,7 +892,7 @@
       "category": "waxing"
     },
     "half_legs": {
-      "name": "Legs to knees",
+      "name": "Legs up to the knees",
       "description": "Epilation of legs up to the knees",
       "price": 80.0,
       "min_price": null,
@@ -932,7 +932,7 @@
       "category": "waxing"
     },
     "half_arms": {
-      "name": "Hands to elbows",
+      "name": "Hands up to the elbow",
       "description": "Epilation of arms up to the elbow",
       "price": 50.0,
       "min_price": null,

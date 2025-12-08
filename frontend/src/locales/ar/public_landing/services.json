@@ -1,18 +1,18 @@
 {
   "categories": {
-    "brows": "Brows",
-    "facial": "Facial",
-    "hair": "Hair",
-    "lashes": "Lashes",
-    "massage": "Massage",
-    "nails": "Nails",
-    "permanent_makeup": "Permanent Makeup",
-    "promo": "Promo",
-    "waxing": "Waxing"
+    "brows": "الحواجب",
+    "facial": "уход за лицом",
+    "hair": "شعر",
+    "lashes": "رموش",
+    "massage": "массаж",
+    "nails": "الأظافر",
+    "permanent_makeup": "مكياج دائم",
+    "promo": "الترويجي",
+    "waxing": "восковая эпиляция"
   },
   "items": {
     "brow_lamination": {
-      "name": "تصفيح الحواجب",
+      "name": "تصفيح الحاجب",
       "description": "تصفيح الحاجب",
       "price": 200.0,
       "min_price": null,
@@ -32,7 +32,7 @@
       "category": "brows"
     },
     "brow_coloring": {
-      "name": "تلوين الحواجب",
+      "name": "تلوين الحاجب",
       "description": "تلوين احترافي",
       "price": 40.0,
       "min_price": null,
@@ -42,7 +42,7 @@
       "category": "brows"
     },
     "brow_shaping": {
-      "name": "تشكيل الحواجب",
+      "name": "تشكيل الحاجب",
       "description": "تصميم احترافي",
       "price": 40.0,
       "min_price": null,
@@ -102,7 +102,7 @@
       "category": "hair"
     },
     "bleach_hair": {
-      "name": "الخروج من الأسود",
+      "name": "يخرج من الأسود",
       "description": "تصحيح الألوان من الظلام",
       "price": 1800.0,
       "min_price": 1300.0,
@@ -112,7 +112,7 @@
       "category": "hair"
     },
     "baby_cut": {
-      "name": "قص شعر الأطفال",
+      "name": "قصة شعر الاطفال",
       "description": "قص شعر للأطفال",
       "price": 70.0,
       "min_price": 60.0,
@@ -152,7 +152,7 @@
       "category": "hair"
     },
     "natural_treatment": {
-      "name": "العناية الطبيعية",
+      "name": "الرعاية الطبيعية",
       "description": "العناية بالشعر الطبيعي",
       "price": 200.0,
       "min_price": null,
@@ -212,7 +212,7 @@
       "category": "hair"
     },
     "hair_trim": {
-      "name": "أطراف متساوية",
+      "name": "حتى قطع النهايات",
       "description": "قطع سهل بدون غسل",
       "price": 90.0,
       "min_price": 80.0,
@@ -272,7 +272,7 @@
       "category": "hair"
     },
     "blowdry": {
-      "name": "التصميم",
+      "name": "وضع",
       "description": "تصفيف الشعر الاحترافي",
       "price": 125.0,
       "min_price": 100.0,
@@ -292,7 +292,7 @@
       "category": "hair"
     },
     "2d_volume": {
-      "name": "حجم رموش ثنائي الأبعاد",
+      "name": "حجم رمش ثنائي الأبعاد",
       "description": "تمديد ثنائي الأبعاد",
       "price": 230.0,
       "min_price": null,
@@ -302,7 +302,7 @@
       "category": "lashes"
     },
     "3d_volume": {
-      "name": "حجم رموش ثلاثي الأبعاد",
+      "name": "حجم رمش ثلاثي الأبعاد",
       "description": "تمديد ثلاثي الأبعاد",
       "price": 260.0,
       "min_price": null,
@@ -332,7 +332,7 @@
       "category": "lashes"
     },
     "classic_volume": {
-      "name": "حجم رموش كلاسيكي",
+      "name": "حجم الرموش الكلاسيكي",
       "description": "تطويل الرموش بشكل طبيعي",
       "price": 180.0,
       "min_price": null,
@@ -542,7 +542,7 @@
       "category": "nails"
     },
     "gelish_manicure": {
-      "name": "طلاء جل للأظافر",
+      "name": "طلاء جل مانيكير",
       "description": "مانيكير مع طلاء هلام",
       "price": 130.0,
       "min_price": null,
@@ -642,7 +642,7 @@
       "category": "nails"
     },
     "change_classic_polish": {
-      "name": "تغيير طلاء الأظافر العادي",
+      "name": "تغيير الورنيش العادي",
       "description": "تغيير الورنيش العادي",
       "price": 65.0,
       "min_price": 40.0,
@@ -739,27 +739,27 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "Permanent_makeup"
     },
     "lashliner": {
-      "name": "خط إنترلاش",
+      "name": "سهم بيني",
       "description": "التأكيد على خط الرموش",
       "price": 500.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "Permanent_makeup"
     },
     "permanent_brows": {
-      "name": "مكياج حواجب دائم",
+      "name": "مكياج الحواجب الدائم",
       "description": "ميكروبليدنج أو بودرة الحواجب",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "Permanent_makeup"
     },
     "permanent_lips": {
       "name": "مكياج الشفاه الدائم",
@@ -769,7 +769,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "Permanent_makeup"
     },
     "eyeliner": {
       "name": "كحل",
@@ -779,7 +779,7 @@
       "max_price": null,
       "currency": "AED",
       "duration": "",
-      "category": "permanent_makeup"
+      "category": "Permanent_makeup"
     },
     "key_promotion_overlay_manicure": {
       "name": "مانيكير الترويجية",
@@ -892,7 +892,7 @@
       "category": "waxing"
     },
     "half_legs": {
-      "name": "من الساقين إلى الركبتين",
+      "name": "الساقين حتى الركبتين",
       "description": "إزالة شعر الساقين حتى الركبتين",
       "price": 80.0,
       "min_price": null,
@@ -912,7 +912,7 @@
       "category": "waxing"
     },
     "chin": {
-      "name": "الذقن",
+      "name": "ذقن",
       "description": "إزالة شعر الذقن",
       "price": 30.0,
       "min_price": null,
@@ -932,7 +932,7 @@
       "category": "waxing"
     },
     "half_arms": {
-      "name": "الأيدي إلى المرفقين",
+      "name": "الأيدي حتى الكوع",
       "description": "إزالة شعر الذراعين حتى المرفق",
       "price": 50.0,
       "min_price": null,

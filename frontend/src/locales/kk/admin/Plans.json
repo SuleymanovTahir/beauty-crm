@@ -15,7 +15,7 @@
   "metric_type": "Метрикалық түрі",
   "metrics": {
     "active_clients": "Белсенді клиенттер",
-    "average_check": "Орташа есепшот",
+    "average_check": "Орташа тексеру",
     "bookings": "Брондау",
     "new_clients": "Жаңа клиенттер",
     "revenue": "Табыс",

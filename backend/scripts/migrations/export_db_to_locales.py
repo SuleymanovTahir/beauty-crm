@@ -2,11 +2,18 @@
 """
 Export services, FAQ, and banners from database to ALL locale files.
 Uses existing translations from database columns (name_ru, name_en, name_ar, etc.)
+
+SAFETY: By default, this script will SKIP exporting if:
+  - Locale files already exist AND
+  - Database has empty/missing translations (would result in fallback to Russian)
+  
+Use --force to override this safety check and always export.
 """
 
 import sys
 import os
 import json
+import argparse
 from pathlib import Path
 
 # Add backend to path
@@ -22,7 +29,31 @@ LOCALES_DIR = FRONTEND_DIR / 'src' / 'locales'
 # All supported languages
 LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
 
-def export_services():
+
+def has_proper_translations(db_value, lang, default_value):
+    """
+    Check if database has a proper translation, not just a Russian fallback.
+    Returns True if the value exists and is different from Russian default for non-ru languages.
+    """
+    if not db_value:
+        return False
+    if lang == 'ru':
+        return True
+    # If the translated value equals Russian default, it's probably not translated
+    return db_value != default_value
+
+
+def should_skip_export(output_file, force=False):
+    """
+    Check if we should skip exporting to this file.
+    Skip if file exists and we're not forcing.
+    """
+    if force:
+        return False
+    return output_file.exists()
+
+
+def export_services(force=False):
     """Export services from database to all language files"""
     print("📦 Exporting services...")
     
@@ -44,8 +75,18 @@ def export_services():
         
         services = cursor.fetchall()
         
+        if not services:
+            print("   ⚠️  No services in database, skipping export")
+            return
+        
         # Process each language
         for lang_idx, lang in enumerate(LANGUAGES):
+            output_file = LOCALES_DIR / lang / 'public_landing' / 'services.json'
+            
+            if should_skip_export(output_file, force):
+                print(f"   ⏭️  {lang}: Skipped (file exists, use --force to overwrite)")
+                continue
+            
             categories = {}
             items = {}
             
@@ -81,7 +122,6 @@ def export_services():
             }
             
             # Write to file
-            output_file = LOCALES_DIR / lang / 'public_landing' / 'services.json'
             output_file.parent.mkdir(parents=True, exist_ok=True)
             
             with open(output_file, 'w', encoding='utf-8') as f:
@@ -93,7 +133,7 @@ def export_services():
         cursor.close()
         conn.close()
 
-def export_faq():
+def export_faq(force=False):
     """Export FAQ from database to all language files"""
     print("\n❓ Exporting FAQ...")
     
@@ -114,7 +154,17 @@ def export_faq():
         
         faqs = cursor.fetchall()
         
+        if not faqs:
+            print("   ⚠️  No FAQ items in database, skipping export")
+            return
+        
         for lang_idx, lang in enumerate(LANGUAGES):
+            output_file = LOCALES_DIR / lang / 'public_landing' / 'faq.json'
+            
+            if should_skip_export(output_file, force):
+                print(f"   ⏭️  {lang}: Skipped (file exists, use --force to overwrite)")
+                continue
+            
             items = []
             for row in faqs:
                 question = row[lang_idx] or row[0]  # Fallback to Russian
@@ -127,7 +177,6 @@ def export_faq():
             
             data = {"items": items}
             
-            output_file = LOCALES_DIR / lang / 'public_landing' / 'faq.json'
             output_file.parent.mkdir(parents=True, exist_ok=True)
             
             with open(output_file, 'w', encoding='utf-8') as f:
@@ -139,7 +188,7 @@ def export_faq():
         cursor.close()
         conn.close()
 
-def export_banners():
+def export_banners(force=False):
     """Export banners from database to all language files"""
     print("\n🖼  Exporting banners...")
     
@@ -161,7 +210,17 @@ def export_banners():
         
         banners = cursor.fetchall()
         
+        if not banners:
+            print("   ⚠️  No banners in database, skipping export")
+            return
+        
         for lang_idx, lang in enumerate(LANGUAGES):
+            output_file = LOCALES_DIR / lang / 'public_landing' / 'banners.json'
+            
+            if should_skip_export(output_file, force):
+                print(f"   ⏭️  {lang}: Skipped (file exists, use --force to overwrite)")
+                continue
+            
             items = []
             for row in banners:
                 title = row[lang_idx] or row[0]  # Fallback to Russian
@@ -185,7 +244,6 @@ def export_banners():
             
             data = {"items": items}
             
-            output_file = LOCALES_DIR / lang / 'public_landing' / 'banners.json'
             output_file.parent.mkdir(parents=True, exist_ok=True)
             
             with open(output_file, 'w', encoding='utf-8') as f:
@@ -199,14 +257,24 @@ def export_banners():
 
 def main():
     """Export all public content from database to locale files"""
-    print("🔄 Exporting database content to ALL locale files...\n")
+    parser = argparse.ArgumentParser(description='Export DB content to locale files')
+    parser.add_argument('--force', action='store_true', 
+                        help='Force overwrite existing locale files')
+    args = parser.parse_args()
     
-    export_services()
-    export_faq()
-    export_banners()
+    if args.force:
+        print("🔄 FORCE MODE: Exporting database content to ALL locale files...\n")
+        print("⚠️  WARNING: This will overwrite existing translations!\n")
+    else:
+        print("🔄 Exporting database content to locale files (safe mode)...\n")
+        print("ℹ️  Existing files will be skipped. Use --force to overwrite.\n")
     
-    print("\n✅ Export complete for all languages!")
-    print(f"📁 Files created in: {LOCALES_DIR}/{{lang}}/public_landing/")
+    export_services(force=args.force)
+    export_faq(force=args.force)
+    export_banners(force=args.force)
+    
+    print("\n✅ Export complete!")
+    print(f"📁 Files location: {LOCALES_DIR}/{{lang}}/public_landing/")
 
 if __name__ == "__main__":
     main()

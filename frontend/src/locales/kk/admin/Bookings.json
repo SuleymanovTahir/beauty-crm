@@ -77,7 +77,7 @@
   "phone": "Телефон",
   "phone_placeholder": "+971 50 123 4567",
   "price": "Баға",
-  "records_count": "Жазбалар",
+  "records_count": "bookings",
   "refresh": "Жаңарту",
   "revenue": "Табыс",
   "search": "Іздеу ...",
@@ -101,7 +101,7 @@
   "template_download_failed": "Шаблонды жүктеу қатесі",
   "template_downloaded": "Шаблон жүктелген",
   "time": "Уақыт",
-  "title": "Жазбалар",
+  "title": "bookings",
   "total": "Жалпы",
   "update_failed": "Жаңарту қатесі",
   "view": "Көзқарас"

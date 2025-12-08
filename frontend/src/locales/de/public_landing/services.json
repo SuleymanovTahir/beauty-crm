@@ -1,14 +1,14 @@
 {
   "categories": {
-    "brows": "Brows",
-    "facial": "Facial",
-    "hair": "Hair",
-    "lashes": "Lashes",
-    "massage": "Massage",
-    "nails": "Nails",
-    "permanent_makeup": "Permanent Makeup",
+    "brows": "Augenbrauen",
+    "facial": "уход за лицом",
+    "hair": "Haar",
+    "lashes": "Wimpern",
+    "massage": "массаж",
+    "nails": "Nägel",
+    "permanent_makeup": "Permanentes Make-up",
     "promo": "Promo",
-    "waxing": "Waxing"
+    "waxing": "восковая эпиляция"
   },
   "items": {
     "brow_lamination": {
@@ -263,7 +263,7 @@
     },
     "key_hair_style": {
       "name": "Verlegung",
-      "description": "Eine Frisur",
+      "description": "Frisur",
       "price": 225.0,
       "min_price": null,
       "max_price": null,
@@ -692,7 +692,7 @@
       "category": "nails"
     },
     "key_spa_pedicure": {
-      "name": "Spa-Pediküre",
+      "name": "SPA-Pediküre",
       "description": "Entspannende SPA-Pediküre",
       "price": 60.0,
       "min_price": null,
@@ -753,7 +753,7 @@
     },
     "permanent_brows": {
       "name": "Permanentes Augenbrauen-Make-up",
-      "description": "Microblading oder Puderaugenbrauen",
+      "description": "Microblading oder Puderbrauen",
       "price": 1100.0,
       "min_price": null,
       "max_price": null,
@@ -802,7 +802,7 @@
       "category": "promo"
     },
     "key_promo_mani_pedi_250": {
-      "name": "Maniküre + Pediküre-Aktion",
+      "name": "Aktion für Maniküre + Pediküre",
       "description": "Promo Maniküre Pediküre 250",
       "price": 125.0,
       "min_price": null,

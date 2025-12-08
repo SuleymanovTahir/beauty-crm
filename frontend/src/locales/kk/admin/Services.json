@@ -15,7 +15,7 @@
   "cancel": "Күшін жою",
   "category": "Санат",
   "create_first_package": "Бірінші пакетті жасаңыз",
-  "create_package": "Пакет жасау",
+  "create_package": "Пакет жасаңыз",
   "currency": "Валюта",
   "description": "Түсіндірме",
   "disable": "Өшіру",
@@ -86,11 +86,11 @@
   "when_client_mentions_keywords_or_promo_code_bot_will_offer_special_price": "Клиент кілт сөздері немесе промо-кодты айтылған кезде, BOT арнайы бағамен ұсынылады",
   "when_client_mentions_these_words_bot_will_offer_this_package": "Клиент осы сөздерді айтып тұрған кезде, BOT бұл пакетті ұсынады",
   "category_permanent_makeup": "Тұрақты макияж",
-  "category_facial": "Бет",
-  "category_massage": "Массаж",
+  "category_facial": "Бетке арналған күтім",
+  "category_massage": "Массаж жасау",
   "category_nails": "Тырнақтар",
-  "category_hair": "Шаш",
+  "category_hair": "Жүн",
   "category_lashes": "Кірпіктер",
-  "category_brows": "Қастар",
-  "category_waxing": "Балауыздау"
+  "category_brows": "Қойлар",
+  "category_waxing": "Тұтқындау"
 }

@@ -46,11 +46,16 @@ def test_bot_analytics_flow():
     print("✅ Сессия завершена успешно")
     
     # 4. Check stats
+    # 4. Check stats
     stats = get_bot_analytics_summary(days=1)
-    # Note: stats might aggregate all tests runs, so we just check keys exist
-    assert 'total_sessions' in stats
-    assert 'bookings_created' in stats
-    assert 'avg_messages_per_session' in stats
+    
+    assert 'summary' in stats
+    summary = stats['summary']
+    
+    assert 'total_sessions' in summary
+    assert 'bookings_created' in summary
+    assert 'messages_avg' in summary
+    print(f"✅ Статистика получена: {summary}")
     print("✅ Статистика получена")
 
 def test_referral_tracking():
