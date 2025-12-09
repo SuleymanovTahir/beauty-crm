@@ -262,14 +262,13 @@ def get_client_usual_booking_pattern(instagram_id: str) -> Optional[Dict]:
     c = conn.cursor()
     
     # Берём последние 3 записи
+    # Берём последние 5 записей для анализа паттерна
     c.execute("""
-        SELECT service_name, master, 
-               strftime('%w', datetime) as weekday,
-               strftime('%H', datetime) as hour
+        SELECT service_name, master, datetime
         FROM bookings
         WHERE instagram_id = %s AND status = 'completed'
         ORDER BY datetime DESC
-        LIMIT 3
+        LIMIT 5
     """, (instagram_id,))
     
     bookings = c.fetchall()
@@ -284,12 +283,30 @@ def get_client_usual_booking_pattern(instagram_id: str) -> Optional[Dict]:
     weekdays = {}
     hours = {}
     
-    for service, master, weekday, hour in bookings:
+    for service, master, dt_str in bookings:
         services[service] = services.get(service, 0) + 1
         if master:
             masters[master] = masters.get(master, 0) + 1
-        weekdays[weekday] = weekdays.get(weekday, 0) + 1
-        hours[hour] = hours.get(hour, 0) + 1
+            
+        try:
+            # Parse datetime in Python
+            if 'T' in dt_str:
+                dt = datetime.fromisoformat(dt_str)
+            else:
+                dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+                
+            # weekday() is 0=Monday, 6=Sunday
+            # But the original code likely used strftime %w (0=Sunday, 6=Saturday)
+            # Let's standardize on 0=Monday (Python ISO) -> 0=Sunday (SQL expectation if needed)
+            # Actually, let's stick to Python weekday integers 0-6 (Mon-Sun) and map them later
+            weekday = str(dt.weekday()) 
+            hour = str(dt.hour)
+            
+            weekdays[weekday] = weekdays.get(weekday, 0) + 1
+            hours[hour] = hours.get(hour, 0) + 1
+        except Exception as e:
+            print(f"Error parsing datetime {dt_str}: {e}")
+            continue
     
     # Находим самые частые
     fav_service = max(services.items(), key=lambda x: x[1])[0] if services else None
@@ -302,13 +319,13 @@ def get_client_usual_booking_pattern(instagram_id: str) -> Optional[Dict]:
         return None
     
     weekday_names = {
-        '0': 'воскресенье',
-        '1': 'понедельник',
-        '2': 'вторник',
-        '3': 'среда',
-        '4': 'четверг',
-        '5': 'пятница',
-        '6': 'суббота'
+        '0': 'понедельник',
+        '1': 'вторник',
+        '2': 'среда',
+        '3': 'четверг',
+        '4': 'пятница',
+        '5': 'суббота',
+        '6': 'воскресенье'
     }
     
     return {

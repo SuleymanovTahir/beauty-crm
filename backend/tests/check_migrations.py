@@ -54,7 +54,7 @@ def check_database():
         
         if count > 0:
             critical_fields = [
-                'bot_name', 'max_message_chars', 'personality_traits',
+                'bot_name', 'personality_traits',
                 'greeting_message', 'emoji_usage', 'objection_expensive',
                 'emotional_triggers', 'fomo_messages', 'upsell_techniques'
             ]

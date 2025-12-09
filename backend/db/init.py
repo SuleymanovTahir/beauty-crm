@@ -159,6 +159,8 @@ def init_database():
         hours_ar TEXT,
         hours_weekdays TEXT DEFAULT '10:30 - 21:30',
         hours_weekends TEXT DEFAULT '10:30 - 21:30',
+        lunch_start TEXT DEFAULT '13:00',
+        lunch_end TEXT DEFAULT '14:00',
         booking_url TEXT,
         phone TEXT,
         email TEXT,

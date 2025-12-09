@@ -24,7 +24,6 @@ interface BotSettings {
   fomo_messages: string;
   upsell_techniques: string;
   communication_style: string;
-  max_message_chars: number;
   max_message_length?: number;
   response_style: string;
   emoji_usage: string;
@@ -98,7 +97,6 @@ export default function BotSettings() {
     fomo_messages: '',
     upsell_techniques: '',
     communication_style: '',
-    max_message_chars: 0,
     response_style: 'adaptive',
     emoji_usage: '',
     languages_supported: '',
@@ -160,7 +158,7 @@ export default function BotSettings() {
       const botData = data.bot_settings || data;
 
       setSettings({
-        bot_name: botData.bot_name || 'M.Le Diamant Assistant',
+        bot_name: botData.bot_name || '',
         personality_traits: botData.personality_traits || '',
         greeting_message: botData.greeting_message || '',
         farewell_message: botData.farewell_message || '',
@@ -171,10 +169,9 @@ export default function BotSettings() {
         fomo_messages: botData.fomo_messages || '',
         upsell_techniques: botData.upsell_techniques || '',
         communication_style: botData.communication_style || '',
-        max_message_chars: botData.max_message_chars || 300,
         response_style: botData.response_style || 'adaptive',
         emoji_usage: botData.emoji_usage || '',
-        languages_supported: botData.languages_supported || 'ru,en,ar',
+        languages_supported: botData.languages_supported || '',
         objection_expensive: botData.objection_expensive || '',
         objection_think_about_it: botData.objection_think_about_it || '',
         objection_no_time: botData.objection_no_time || '',

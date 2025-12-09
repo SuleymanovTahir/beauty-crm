@@ -360,10 +360,15 @@ class SalonBot:
             frustration_keywords = ['человек', 'менеджер', 'оператор', 'живой', 'недоволен', 'недовольна',
                                     'ужас', 'кошмар', 'возмутительно', 'верните деньги', 'жалоба',
                                     'не понимаешь', 'не понимаете', 'человека позови', 'настоящий человек',
-                                    'speak to human', 'manager please', 'real person', 'complaint']
+                                    'speak to human', 'manager please', 'real person', 'complaint',
+                                    'админ', 'администратор', 'директор', 'главный', 'начальство']
+            is_frustrated = any(kw in user_message.lower() for kw in frustration_keywords)
+            
             is_frustrated = any(kw in user_message.lower() for kw in frustration_keywords)
             
             if is_frustrated:
+                print(f"😤 Frustration/Manager request detected! Keywords found.")
+                
                 additional_context += """
     😤 КЛИЕНТ РАССТРОЕН / ПРОСИТ МЕНЕДЖЕРА!
     
@@ -443,6 +448,7 @@ class SalonBot:
                     managers = [u for u in users if u[4] in ['admin', 'manager', 'director']]
                     
                     for manager in managers:
+                        print(f"🔔 Sending notification to manager {manager[0]} ({manager[4]})...")
                         create_notification(
                             user_id=str(manager[0]),
                             title="😤 КЛИЕНТ НЕДОВОЛЕН",
@@ -450,6 +456,7 @@ class SalonBot:
                             notification_type="urgent",
                             action_url=f"/admin/chat?client_id={instagram_id}"
                         )
+                        print(f"   ✅ Notification created in DB")
                         
                         # Email notification
                         manager_email = manager[2]  # email field
@@ -558,6 +565,50 @@ class SalonBot:
                 service_name = booking_progress.get('service_name') if booking_progress else None
                 master_name = booking_progress.get('master') if booking_progress else None
 
+                # ✅ Если мастер не выбран в прогрессе, ищем его имя в сообщении
+                if not master_name:
+                    from db.users import get_all_service_providers
+                    from utils.transliteration import transliterate_to_latin
+                    
+                    providers = get_all_service_providers()  # [{'fullname': 'Lyazzat', ...}]
+                    
+                    found_master = None
+                    for provider in providers:
+                        full_name = provider['full_name']
+                        # Генерируем варианты написания
+                        variants = set()
+                        variants.add(full_name.lower())
+                        variants.add(transliterate_to_latin(full_name).lower()) # Lyazzat -> lyazzat
+                        # Также можно добавить обратную транслитерацию, но пока просто ищем вхождение
+                        # Если имя на латинице, пробуем найти его кириллическую версию? 
+                        # В данном случае проще искать вхождения частей имени
+                        
+                        # Разбиваем имя на части (если вдруг "Lyazzat K.")
+                        parts = full_name.lower().split()
+                        for part in parts:
+                            variants.add(part)
+                            
+                        # Проверяем вхождение любого варианта в сообщение
+                        # Плюс костыль для кириллицы, если в БД латиница
+                        # Например, БД: "Lyazzat", User: "Ляззат"
+                        # Нужно транслитерировать user_msg или имя мастера?
+                        # Проще: транслитерировать имя мастера в кириллицу? Нет, лучше user_msg -> latin
+                        
+                        user_msg_latin = transliterate_to_latin(user_message).lower()
+                        
+                        # Проверка: имя есть в оригинале (если в сообщении латиница) ИЛИ в транслите
+                        if full_name.lower() in user_msg_lower or full_name.lower() in user_msg_latin:
+                            found_master = full_name
+                            break
+                            
+                        # Также простая проверка по словарю (если вдруг транслитерация сложная)
+                        # Но мы хотим УБРАТЬ хардкод.
+                        # Доверимся транслитерации сообщения пользователя.
+                        
+                    if found_master:
+                        master_name = found_master
+                        print(f"👤 Detected master in message (dynamic): {master_name}")
+
                 print(f"🔍 Looking for slots: service={service_name}, master={master_name}")
 
                 # Получаем реальные свободные слоты из БД
@@ -603,7 +654,7 @@ class SalonBot:
     3. Если время занято у одного, но свободно у другого - ПРЕДЛОЖИ АЛЬТЕРНАТИВУ!
        Пример: "У Дженнифер в 19:00 занято, но могу предложить к Местану в 19:00. Подходит?"
     4. НЕ ГОВОРИ "нет свободных слотов" если есть другие мастера на это время!
-    5. ВСЕГДА используй РУССКИЕ имена мастеров из списка выше!"""
+    5. ВСЕГДА используй имена мастеров на языке на котором написал клиент из списка выше!"""
                 else:
                     print(f"❌ No available slots found for {target_date}")
 
@@ -916,6 +967,9 @@ class SalonBot:
             # ========================================
 
             ai_response = await self._generate_via_proxy(full_prompt)
+            
+            # ✅ ОБЯЗАТЕЛЬНО: Проверяем необходимость уведомления на успешном ответе
+            await self._check_and_escalate(ai_response, instagram_id)
 
             print(f"✅ AI response generated: {ai_response[:100]}")
             print("=" * 50)
@@ -929,10 +983,156 @@ class SalonBot:
 
             # Fallback ответ - простое сообщение (AI недоступен)
             fallback = "Our manager will respond soon! 💎" if client_language == 'en' else "Наш менеджер скоро ответит! 💎"
+            
+            # ✅ ОБЯЗАТЕЛЬНО: Проверяем необходимость уведомления даже при ошибке!
+            await self._check_and_escalate(fallback, instagram_id)
+            
             return fallback
 
-    async def _generate_via_proxy(self, prompt: str, max_retries: int = 2) -> str:
-        """Генерация через Gemini REST API с прокси и retry механизмом"""
+    async def _check_and_escalate(self, response_text: str, instagram_id: str):
+        """Проверка ответа на необходимость эскалации и отправка уведомлений"""
+        
+        escalation_promises = [
+            'менеджер свяжется', 'свяжусь с менеджером', 'передал ваш запрос', 
+            'позвал администратора', 'администратор ответит', 'manager will contact',
+            'передаю информацию менеджеру', 'уведомил менеджера', 'менеджер скоро ответит' # Added for fallback
+        ]
+        
+        if any(promise in response_text.lower() for promise in escalation_promises):
+            print(f"🔔 Bot promised escalation! Checking if notification needed...")
+            
+            try:
+                from api.notifications import create_notification
+                from db.users import get_all_users
+                from db.clients import get_client_by_id
+                
+                # 1. Fetch Client Details
+                client_data = get_client_by_id(instagram_id)
+                client_name = "Неизвестный"
+                client_username = ""
+                client_pic = ""
+                
+                if client_data:
+                    # 0:id, 1:username, 2:phone, 3:name, ..., 10:profile_pic
+                    client_username = client_data[1] or ""
+                    client_name = client_data[3] or client_username or "Без имени"
+                    client_pic = client_data[10] or ""
+
+                # Determine platform and profile link
+                platform_icon = "❓"
+                profile_link = "Не найден"
+                platform_name = "Unknown"
+
+                if instagram_id.startswith("telegram_"):
+                    platform_icon = "✈️"
+                    platform_name = "Telegram"
+                    tg_id = instagram_id.replace("telegram_", "")
+                    if client_username:
+                            profile_link = f"https://t.me/{client_username.replace('@', '')}"
+                    else:
+                            profile_link = f"tg://user?id={tg_id}"
+                
+                elif instagram_id.startswith("whatsapp_"):
+                    platform_icon = "💚"
+                    platform_name = "WhatsApp"
+                    profile_link = f"https://wa.me/{instagram_id.replace('whatsapp_', '')}"
+                
+                else:
+                    # Instagram
+                    platform_icon = "📸"
+                    platform_name = "Instagram"
+                    if client_username:
+                        profile_link = f"https://instagram.com/{client_username}"
+                    else:
+                        profile_link = f"https://instagram.com/{instagram_id}"
+
+                users = get_all_users()
+                managers = [u for u in users if u[4] in ['admin', 'manager', 'director']]
+                
+                for manager in managers:
+                    # 1. DB Notification
+                    create_notification(
+                        user_id=str(manager[0]),
+                        title="🤖 БОТ ПОЗВАЛ МЕНЕДЖЕРА",
+                        message=f"Бот пообещал клиенту {client_name}: {response_text[:100]}...",
+                        notification_type="urgent",
+                        action_url=f"/admin/chat?client_id={instagram_id}"
+                    )
+                    
+                    # 2. Email Notification
+                    manager_email = manager[2]
+                    if manager_email:
+                        try:
+                            from utils.email import send_email_async
+                            
+                            # HTML for email with photo
+                            photo_html = f'<img src="{client_pic}" style="width: 50px; height: 50px; border-radius: 50%;">' if client_pic else ''
+                            
+                            await send_email_async(
+                                recipients=[manager_email],
+                                subject=f"🤖 Авто-эскалация: Бот позвал менеджера ({client_name})",
+                                message=f"""
+                                Бот пообещал клиенту позвать менеджера.
+                                
+                                Клиент: {client_name}
+                                Никнейм: {client_username}
+                                Платформа: {platform_name}
+                                Ссылка: {profile_link}
+                                
+                                Ответ бота: '{response_text}'
+                                
+                                Перейти в чат: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                                """,
+                                html=f"""
+                                <h2>🤖 Авто-эскалация</h2>
+                                <p>Бот пообещал клиенту позвать менеджера.</p>
+                                <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                                    {photo_html}
+                                    <p><strong>Клиент:</strong> {client_name} ({platform_name})</p>
+                                    <p><strong>Никнейм:</strong> {client_username}</p>
+                                    <p><strong>Ссылка:</strong> <a href="{profile_link}">{profile_link}</a></p>
+                                </div>
+                                <hr>
+                                <p><strong>Ответ бота:</strong> {response_text}</p>
+                                <p><a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Перейти в чат CRM</a></p>
+                                """
+                            )
+                            print(f"   📧 Auto-escalation email sent to {manager_email}")
+                        except Exception as ex:
+                            print(f"   ⚠️ Email failed: {ex}")
+                            
+                # 3. Telegram Notification (Broadcast)
+                try:
+                    from integrations.telegram_bot import send_telegram_alert
+                    
+                    tg_message = f"""
+🤖 <b>АВТО-ЭСКАЛАЦИЯ</b>
+
+Бот пообещал клиенту позвать менеджера!
+
+<b>Клиент:</b> {client_name}
+<b>Ник:</b> {client_username or '-'}
+<b>Платформа:</b> {platform_name} {platform_icon}
+<b>Ссылка:</b> <a href="{profile_link}">{profile_link}</a>
+
+<b>Ответ бота:</b> {response_text[:200]}...
+"""
+                    await send_telegram_alert(message=tg_message)
+                    print(f"   ✈️ Auto-escalation Telegram sent")
+                except Exception as ex:
+                    print(f"   ⚠️ Telegram failed: {ex}")
+                    
+                print(f"   ✅ Auto-escalation notification sent!")
+            except Exception as e:
+                print(f"❌ Error in escalation logic: {e}")
+
+    async def _generate_via_proxy(self, full_prompt: str, max_retries: int = 4) -> str:
+        """Попытка генерации через пул прокси"""
+        
+        # 🔍 LOGGING FULL PROMPT (TRUNCATED) - First 500 + Last 500 chars only
+        truncated_prompt = full_prompt[:500] + "\n...\n[SNIPPED]... \n" + full_prompt[-500:] if len(full_prompt) > 1000 else full_prompt
+        print(f"\n🧠 SYSTEM PROMPT SENT TO GEMINI (Brief):\n{'-'*50}\n{truncated_prompt}\n{'-'*50}\n")
+        
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
 
         # ✅ НАСТРОЙКА ИЗ БД: response_style (concise/detailed/adaptive)
@@ -952,11 +1152,17 @@ class SalonBot:
 ✅ ПРАВИЛЬНО: "Маникюр: гель-лак 150 AED, обычный 80 AED. Какой интересует?"
 
 НЕ ПИШИ восклицания типа "Прекрасный выбор!"
-НЕ ПИШИ списки с буллетами!  
-СРАЗУ К ДЕЛУ!
+НЕ ПИШИ списки с буллетами!  """
+        if response_style == 'brief':
+            max_tokens = 1500  # Increased from 800
+            style_instruction = """
+⚠️ РЕЖИМ: БЫСТРЫЙ ОТВЕТ
+- Пиши кратко и по делу
+- Не используй лишние вводные слова
+- СРАЗУ К ДЕЛУ!
 """
         elif response_style == 'detailed':
-            max_tokens = 1100  # 500 thinking + 600 ответ
+            max_tokens = 2000  # Increased from 1100
             style_instruction = """
 ⚠️ РЕЖИМ: ПОДРОБНЫЙ (настройка администратора)
 - Описывай услуги детально
@@ -964,14 +1170,14 @@ class SalonBot:
 - Давай рекомендации
 """
         else:  # adaptive
-            max_tokens = 900  # 500 thinking + 400 ответ
+            max_tokens = 1800  # Increased from 900
             style_instruction = """
 ⚠️ РЕЖИМ: УМНЫЙ
 - Для записи: кратко (2-3 предложения)
 - Для вопросов: подробнее
 """
 
-        prompt_with_limit = f"""{prompt}
+        prompt_with_limit = f"""{full_prompt}
 {style_instruction}
 """
 
@@ -1025,34 +1231,88 @@ class SalonBot:
 
                     if error_code == 429:
                         if attempt < max_retries - 1:
-                            wait_time = (2 ** attempt) * 8  # 8s, 16s, 32s, 64s (увеличено!)
+                            wait_time = 12 * (2 ** attempt)  # 12s, 24s, 48s, 96s (MAX SAFE BUFFER)
                             print(f"⚠️ Rate limit 429 (попытка {attempt + 1}/{max_retries}), ждём {wait_time}s...")
                             await asyncio.sleep(wait_time)
                             continue
-                        else:
-                            print(f"❌ Rate limit 429 после {max_retries} попыток через все прокси")
-                            raise Exception("Rate limit exceeded after retries")
+                        # Если все попытки исчерпаны
+                        print(f"❌ Rate limit 429 после {max_retries} попыток через все прокси")
+                        raise Exception("Rate limit exceeded after retries")
+                    
+                    elif error_code == 403:
+                        # 403 Forbidden (может быть Geo-block прокси или временная проблема ключа)
+                        if attempt < max_retries - 1:
+                            print(f"⚠️ Gemini 403 Forbidden (попытка {attempt + 1}/{max_retries}). Пробуем другой прокси...")
+                            # Не ждем долго, просто меняем прокси
+                            await asyncio.sleep(1) 
+                            continue
+                        raise Exception(f"Gemini API error 403 (Permission Denied) after retries")
+                        
                     else:
                         raise Exception(f"Gemini API error {error_code}: {error_msg}")
 
                 # Извлекаем текст ответа
                 if "candidates" in data and len(data["candidates"]) > 0:
                     candidate = data["candidates"][0]
+                    
+                    # Проверяем причину завершения
+                    finish_reason = candidate.get("finishReason")
+                    if finish_reason and finish_reason != "STOP":
+                        print(f"⚠️ Gemini stopped with reason: {finish_reason}")
+                        # Если заблокировано безопасностью или другое - пробуем еще раз или фоллбэк
+                        if finish_reason == "SAFETY":
+                             raise Exception(f"Gemini Safety Filter triggered")
+                    
                     if "content" in candidate and "parts" in candidate["content"]:
                         parts = candidate["content"]["parts"]
                         if len(parts) > 0 and "text" in parts[0]:
                             response_text = parts[0]["text"].strip()
+                            
+                            # 🤖 ACTION PARSING (SAVE BOOKING)
+                            import re
+                            import json
+                            action_match = re.search(r'\[ACTION\](.*?)\[/ACTION\]', response_text, re.DOTALL)
+                            if action_match:
+                                try:
+                                    action_json = action_match.group(1).strip()
+                                    # Fix common json errors (like single quotes)
+                                    if "'" in action_json and '"' not in action_json:
+                                        action_json = action_json.replace("'", '"')
+                                    
+                                    action_data = json.loads(action_json)
+                                    print(f"⚡️ BOT ACTION DETECTED: {action_data}")
+                                    
+                                    # Execute Action
+                                    await self._handle_bot_action(action_data, instagram_id)
+                                    
+                                    # Remove action block from text to send to user
+                                    response_text = response_text.replace(action_match.group(0), "").strip()
+                                except Exception as e:
+                                    print(f"❌ Error processing bot action: {e}")
 
-                            # ❌ УБРАНО ЖЕСТКОЕ ОБРЕЗАНИЕ
-                        # if len(response_text) > max_chars:
-                        #     response_text = response_text[:max_chars-3] + "..."
+                            # 🧩 LOGIC PARSING (Legacy, checking just in case)
+                            logic_match = re.search(r'\[LOGIC\](.*?)\[/LOGIC\]', response_text, re.DOTALL)
+                            if logic_match:
+                                logic_content = logic_match.group(1).strip()
+                                # Remove logic block
+                                response_text = response_text.replace(logic_match.group(0), "").strip()
 
-                        print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(proxy_urls) + 1 if proxy_urls else 'direct'})")
-                        return response_text
+
+                            # Очистка от markdown
+                            response_text = response_text.replace('*', '').replace('`', '').strip()
+
+                            print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(proxy_urls) + 1 if proxy_urls else 'direct'})")
+
+                            return response_text
+                            
+                    # Если ответ пустой, но без ошибки (иногда бывает)
+                    print(f"⚠️ Received empty content from Gemini (finishReason={finish_reason})")
+                    if attempt < max_retries - 1:
+                        continue # Пробуем следующую попытку
 
                 # Логируем неожиданный ответ для отладки
                 print(f"⚠️ Unexpected response structure: {str(data)[:500]}")
-                raise Exception(f"Unexpected Gemini response structure")
+                raise Exception(f"Unexpected Gemini response structure: {str(data)[:100]}")
 
             except httpx.HTTPError as e:
                 if attempt < max_retries - 1:
@@ -1073,7 +1333,106 @@ class SalonBot:
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке (синхронный контекст - без AI)"""
         # Простой fallback без AI (синхронный метод)
-        return "Our manager will respond soon! 💎" if language == 'en' else "Наш менеджер скоро ответит! 💎"
+        msg_ru = "Наш менеджер скоро ответит! 💎"
+        msg_en = "Our manager will respond soon! 💎"
+        
+        # 🔔 Notify manager since we failed
+        try:
+             # Need to be careful with imports/context here as this might be called in exception handler
+             # Just logging for now, or assume system logs error elsewhere
+             print("⚠️ Fallback triggered: User should be notified to manager manually if possible.")
+        except:
+             pass
+
+        return msg_en if language == 'en' else msg_ru
+
+    async def _handle_bot_action(self, action_data: dict, instagram_id: str):
+        """Обработка действий от бота (сохранение записи и т.д.)"""
+        action_type = action_data.get('action')
+        
+        if action_type == 'save_booking':
+            try:
+                print(f"💾 EXECUTE ACTION: Saving booking for {instagram_id}")
+                service = action_data.get('service')
+                master = action_data.get('master')
+                date_str = action_data.get('date') # YYYY-MM-DD
+                time_str = action_data.get('time') # HH:MM
+                phone = action_data.get('phone')
+                
+                if not all([service, master, date_str, time_str, phone]):
+                    print(f"❌ Missing data for booking action: {action_data}")
+                    return
+
+                # Convert date/time to ISO format expected by DB
+                datetime_str = f"{date_str}T{time_str}"
+                
+                # 1. Get Client Name from DB (or use default)
+                # We need to fetch client info first to get the name
+                from db.clients import get_client_by_id, update_client_status
+                from db.bookings import save_booking
+                
+                client = get_client_by_id(instagram_id)
+                # client: id, username, phone, name...
+                client_name = "Client"
+                if client:
+                    client_name = client[3] or client[1] or "Client" # Name or Username
+                
+                # 2. Save Booking
+                booking_id = save_booking(
+                    instagram_id=instagram_id,
+                    service=service,
+                    datetime_str=datetime_str,
+                    phone=phone,
+                    name=client_name,
+                    master=master
+                )
+                print(f"✅ Booking saved successfully! ID: {booking_id}")
+                
+                # 3. Update Client Status -> 'lead' (or 'client')
+                # User asked for 'hot' (lead/client). Let's set to 'client' as they have a booking.
+                update_client_status(instagram_id, 'client')
+                print(f"✅ Client status updated to 'client'")
+                
+                # 4. Send Email Notification
+                # User asked to send to "notification email" instead of master for now.
+                # We can use the manager notification logic or `send_email_async` directly.
+                from utils.email import send_email_async
+                from db.settings import get_salon_settings
+                
+                # Get recipient from settings or environment
+                # Fallback to the same email used for auto-escalations if specific setting missing
+                # For now let's try to notify ALL managers/admins as per user request "send to mail where we send notifications"
+                
+                # Fetch managers email
+                from db.users import get_all_users
+                users = get_all_users()
+                managers_emails = [u[2] for u in users if u[4] in ['admin', 'manager', 'director'] and u[2]]
+                
+                if managers_emails:
+                    from utils.templates import get_booking_notification_email
+                    email_data = get_booking_notification_email(
+                        date_str=date_str,
+                        time_str=time_str,
+                        service_name=service,
+                        master_name=master,
+                        client_name=client_name,
+                        client_phone=phone,
+                        is_bot_booking=True
+                    )
+                    
+                    await send_email_async(
+                        recipients=managers_emails,
+                        subject=email_data['subject'],
+                        message=email_data['body']
+                    )
+                    print(f"📧 Notification sent to {len(managers_emails)} managers")
+                else:
+                    print("⚠️ No manager emails found for notification")
+
+            except Exception as e:
+                print(f"❌ Error in _handle_bot_action: {e}")
+                import traceback
+                traceback.print_exc()
 
     def should_greet(self, history: List[Tuple]) -> bool:
         """
@@ -1094,6 +1453,8 @@ class SalonBot:
                 now = get_current_time()
                 time_diff = now - last_timestamp
 
+                print(f"👋 Checking greeting: Last msg at {last_timestamp}, Now {now}, Diff {time_diff}")
+
                 if time_diff > timedelta(hours=6):
                     # Проверяем смену "делового дня" (08:00 - следующий день)
                     last_business_day = (
@@ -1106,9 +1467,12 @@ class SalonBot:
                         if now.hour >= 8
                         else (now - timedelta(days=1)).date()
                     )
+                    
+                    print(f"   📅 Business days: Last {last_business_day}, Curr {current_business_day}")
 
                     return current_business_day > last_business_day
-            except:
+            except Exception as e:
+                print(f"⚠️ Error checking greeting logic: {e}")
                 pass
 
         return False
