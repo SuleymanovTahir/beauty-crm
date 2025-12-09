@@ -1,10 +1,69 @@
 import logging
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from services.master_schedule import MasterScheduleService
 from utils.datetime_utils import get_current_time
 
 logger = logging.getLogger(__name__)
+
+# ✅ ФУНКЦИЯ ДЛЯ ЛОКАЛИЗАЦИИ ИМЁН МАСТЕРОВ
+def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
+    """
+    Получить локализованное имя мастера из БД
+    
+    Args:
+        emp_id: ID мастера в таблице users
+        full_name: Полное имя (fallback если локализация не найдена)
+        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
+    
+    Returns:
+        Локализованное имя или full_name если не найдено
+    """
+    from db.connection import get_db_connection
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        # Проверяем, что мастер существует
+        cursor.execute("SELECT id, is_active FROM users WHERE id = %s", (emp_id,))
+        master_check = cursor.fetchone()
+        
+        if not master_check:
+            logger.error(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
+            print(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
+            return full_name
+        
+        if not master_check[1]:
+            logger.warning(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
+            print(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
+        
+        # Валидация языка
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'ru'
+        
+        # Получаем локализованное имя
+        name_field = f'full_name_{language}'
+        cursor.execute(f"""
+            SELECT COALESCE({name_field}, full_name_en, full_name_ru, full_name)
+            FROM users 
+            WHERE id = %s
+        """, (emp_id,))
+        
+        result = cursor.fetchone()
+        localized_name = result[0] if result and result[0] else full_name
+        
+        if localized_name != full_name:
+            logger.debug(f"✅ Localized name for id={emp_id}: {full_name} -> {localized_name} ({language})")
+        
+        return localized_name
+        
+    except Exception as e:
+        logger.error(f"❌ ERROR in get_localized_name for id={emp_id}: {e}", exc_info=True)
+        print(f"❌ ERROR in get_localized_name for id={emp_id}: {e}")
+        return full_name
+    finally:
+        conn.close()
 
 class SmartScheduler:
     """
@@ -88,13 +147,57 @@ class SmartScheduler:
         """Fetch slots and apply Smart Constraints (Travel Buffer)"""
         date_str = date_obj.strftime("%Y-%m-%d")
         
+        # ✅ ВАЛИДАЦИЯ: Проверяем, что мастер существует в БД
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute("SELECT id, full_name, is_active, is_service_provider FROM users WHERE full_name = %s", (master_name,))
+            master_info = cursor.fetchone()
+            
+            if not master_info:
+                logger.error(f"❌ ERROR: Master '{master_name}' NOT FOUND in users table!")
+                print(f"❌ ERROR: Master '{master_name}' NOT FOUND in users table!")
+                return []
+            
+            if not master_info[2]:  # is_active
+                logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT ACTIVE!")
+                print(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT ACTIVE!")
+                return []
+            
+            if not master_info[3]:  # is_service_provider
+                logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT a service provider!")
+                print(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT a service provider!")
+                return []
+        finally:
+            conn.close()
+        
         # 1. Get Raw Slots
         # We assume 1h duration for now, ideally this comes from service
-        raw_slots = self.schedule_service.get_available_slots(
-            master_name=master_name,
-            date=date_str,
-            duration_minutes=duration_minutes 
-        )
+        try:
+            raw_slots = self.schedule_service.get_available_slots(
+                master_name=master_name,
+                date=date_str,
+                duration_minutes=duration_minutes 
+            )
+        except Exception as e:
+            logger.error(f"❌ ERROR in get_available_slots for {master_name}: {e}", exc_info=True)
+            print(f"❌ ERROR in get_available_slots for {master_name}: {e}")
+            return []
+        
+        # ✅ ВАЛИДАЦИЯ: Проверяем тип и формат слотов
+        if not isinstance(raw_slots, list):
+            logger.error(f"❌ ERROR: get_available_slots returned invalid type: {type(raw_slots)}")
+            print(f"❌ ERROR: get_available_slots returned invalid type: {type(raw_slots)}")
+            return []
+        
+        if not raw_slots:
+            logger.debug(f"⚠️ No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
+            print(f"⚠️ WARNING: No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
+        else:
+            logger.debug(f"✅ Found {len(raw_slots)} raw slots for {master_name} on {date_str}")
+            print(f"✅ Found {len(raw_slots)} raw slots for {master_name} on {date_str}")
         
         # 2. Apply Travel Buffer Constraint
         now = get_current_time()
@@ -102,9 +205,26 @@ class SmartScheduler:
         
         final_slots = []
         for slot in raw_slots:
+            # ✅ ВАЛИДАЦИЯ: Проверяем формат слота
+            if not isinstance(slot, str):
+                logger.warning(f"⚠️ Invalid slot type: {type(slot)}, value: {slot}")
+                continue
+            
+            if ':' not in slot:
+                logger.warning(f"⚠️ Invalid slot format (no ':'): {slot}")
+                continue
+            
+            try:
+                slot_hour, slot_min = map(int, slot.split(':'))
+                if not (0 <= slot_hour < 24 and 0 <= slot_min < 60):
+                    logger.warning(f"⚠️ Invalid time values: {slot}")
+                    continue
+            except (ValueError, AttributeError) as e:
+                logger.warning(f"⚠️ Error parsing slot '{slot}': {e}")
+                continue
+            
             if is_today:
                 # Check if slot is at least X hours from now
-                slot_hour, slot_min = map(int, slot.split(':'))
                 slot_time = now.replace(hour=slot_hour, minute=slot_min, second=0, microsecond=0)
                 
                 # If slot time is earlier than now (should theoretically be filtered by service, but double check)
@@ -117,5 +237,6 @@ class SmartScheduler:
                     continue
             
             final_slots.append(slot)
-            
+        
+        logger.debug(f"✅ Filtered to {len(final_slots)} slots for {master_name} on {date_str}")
         return final_slots

@@ -1216,6 +1216,10 @@ export class ApiClient {
       }>;
     }>('/api/broadcasts/history')
   }
+
+  async getSalonWorkingHours() {
+    return this.get('/api/salon-settings/working-hours');
+  }
 }
 
 export const api = new ApiClient()

@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Calendar.tsx
 // frontend/src/pages/admin/Calendar.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -73,21 +73,17 @@ interface UserMaster {
 }
 
 
-const SALON_START_HOUR = 9;
-const SALON_END_HOUR = 21;
-
-const generateTimeSlots = () => {
+// Функция генерации слотов времени (вынесена наружу, принимает параметры)
+const generateTimeSlots = (startHour: number, endHour: number) => {
   const slots = [];
-  for (let hour = SALON_START_HOUR; hour <= SALON_END_HOUR; hour++) {
+  for (let hour = startHour; hour <= endHour; hour++) {
     slots.push({ hour, minute: 0, display: `${String(hour).padStart(2, '0')}:00` });
-    if (hour < SALON_END_HOUR) {
+    if (hour < endHour) {
       slots.push({ hour, minute: 30, display: `${String(hour).padStart(2, '0')}:30` });
     }
   }
   return slots;
 };
-
-const TIME_SLOTS = generateTimeSlots();
 
 const statusColors: Record<string, { bg: string; text: string; border: string }> = {
   pending: { bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
@@ -152,9 +148,28 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
   const statuses = ['pending', 'confirmed', 'completed', 'cancelled'];
 
+  const [salonHours, setSalonHours] = useState({ start_hour: 10, end_hour: 21 });
+
+  // Генерируем слоты времени на основе salonHours
+  const TIME_SLOTS = useMemo(() => generateTimeSlots(salonHours.start_hour, salonHours.end_hour), [salonHours]);
+
   useEffect(() => {
     loadData();
-  }, [employeeId]);
+    const loadSalonHours = async () => {
+      try {
+        const hours = await api.get('/api/salon-settings/working-hours');
+        setSalonHours({
+          start_hour: hours.weekdays.start_hour,
+          end_hour: hours.weekdays.end_hour
+        });
+      } catch (err) {
+        console.error('Error loading salon hours:', err);
+        // Fallback
+        setSalonHours({ start_hour: 10, end_hour: 21 });
+      }
+    };
+    loadSalonHours();
+  }, []);
 
   const loadData = async () => {
     try {

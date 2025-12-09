@@ -5,6 +5,12 @@ Provides dynamic SEO metadata from database for public landing page
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from db.settings import get_salon_settings
+from core.config import (
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS,
+    DEFAULT_HOURS_START,
+    DEFAULT_HOURS_END
+)
 
 router = APIRouter()
 
@@ -25,16 +31,16 @@ async def get_seo_metadata():
             logo_url = f"{base_url}{logo_url}"
         
         # Parse working hours
-        hours_weekdays = salon.get('hours_weekdays', '10:30 - 21:30')
-        hours_weekends = salon.get('hours_weekends', '10:30 - 21:30')
+        hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
+        hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
         
         # Extract opening/closing times (assuming format "HH:MM - HH:MM")
         try:
             opens = hours_weekdays.split(' - ')[0].strip()
             closes = hours_weekdays.split(' - ')[1].strip()
         except:
-            opens = "10:30"  # Fallback to actual salon hours
-            closes = "21:30"
+            opens = DEFAULT_HOURS_START  # ✅ Используем константу
+            closes = DEFAULT_HOURS_END   # ✅ Используем константу
         
         # Clean Instagram URL
         instagram_url = salon.get('instagram', '')

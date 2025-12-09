@@ -1086,7 +1086,7 @@ export default function AdminSettings() {
                         ...generalSettings,
                         working_hours: { ...generalSettings.working_hours, weekdays: e.target.value }
                       })}
-                      placeholder="9:00 - 21:00"
+                      placeholder="9:00 - 21:30"
                       className="px-3"
                     />
                   </div>
@@ -1100,7 +1100,7 @@ export default function AdminSettings() {
                         ...generalSettings,
                         working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
                       })}
-                      placeholder="10:30 - 21:00"
+                      placeholder="10:30 - 21:30"
                       className="px-3"
                     />
                   </div>
