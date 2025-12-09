@@ -77,23 +77,23 @@ def detect_platform(recipient_id: str) -> Platform:
     try:
         # Check if this ID exists in clients table
         c.execute("""
-            SELECT instagram, telegram_id, preferred_messenger 
+            SELECT instagram_id, telegram_id, preferred_messenger 
             FROM clients 
-            WHERE instagram = %s OR telegram_id = %s
+            WHERE instagram_id = %s OR telegram_id = %s
             LIMIT 1
         """, (recipient_id, recipient_id))
         
         result = c.fetchone()
         
         if result:
-            instagram, telegram_id, preferred = result
+            instagram_id, telegram_id, preferred = result
             
             # If client has preferred messenger set, use it
             if preferred and preferred in ['instagram', 'telegram', 'whatsapp']:
                 return preferred
             
             # Match by ID
-            if recipient_id == instagram:
+            if recipient_id == instagram_id:
                 return 'instagram'
             if recipient_id == telegram_id:
                 return 'telegram'
@@ -131,21 +131,21 @@ async def send_to_all_channels(
     
     try:
         c.execute("""
-            SELECT instagram, telegram_id 
+            SELECT instagram_id, telegram_id 
             FROM clients 
-            WHERE instagram = %s OR telegram_id = %s OR id::text = %s
+            WHERE instagram_id = %s OR telegram_id = %s OR id::text = %s
             LIMIT 1
         """, (client_id, client_id, client_id))
         
         result = c.fetchone()
         
         if result:
-            instagram, telegram_id = result
+            instagram_id, telegram_id = result
             
-            if instagram:
+            if instagram_id:
                 try:
                     from integrations.instagram import send_message as send_instagram
-                    await send_instagram(instagram, text)
+                    await send_instagram(instagram_id, text)
                     results['instagram'] = True
                 except Exception as e:
                     log_error(f"Instagram send failed: {e}", "messenger")

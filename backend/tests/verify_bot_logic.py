@@ -1,16 +1,11 @@
 import sys
 import os
-from db.connection import get_db_connection
+from db.connection import get_db_connection as _get_db_connection
 from datetime import datetime, timedelta
-
-# Add backend directory to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from core.config import DATABASE_NAME
 from bot.tools import get_available_time_slots
 
 def get_db_connection():
-    conn = get_db_connection()
+    conn = _get_db_connection()
     return conn
 
 def verify_bot_logic():
@@ -21,9 +16,16 @@ def verify_bot_logic():
 
     # 1. Setup: Ensure Mestan provides "Hair Treatment" and it is enabled
     c.execute("SELECT id FROM services WHERE service_key = 'hair_treatment'")
-    service_id = c.fetchone()[0]
+    row = c.fetchone()
+    if row:
+        service_id = row[0]
+    else:
+        print("   Creating service 'hair_treatment'...")
+        c.execute("INSERT INTO services (service_key, name, price, category, duration) VALUES ('hair_treatment', 'Hair Treatment', 100, 'Hair', '60') RETURNING id")
+        service_id = c.fetchone()[0]
+        conn.commit()
     
-    c.execute("SELECT id FROM users WHERE full_name LIKE '%Mestan%'")
+    c.execute("SELECT id FROM users WHERE full_name ILIKE '%Mestan%'")
     mestan_id = c.fetchone()[0]
 
     print(f"   Service ID: {service_id}, Mestan ID: {mestan_id}")
@@ -52,10 +54,13 @@ def verify_bot_logic():
     conn.commit()
 
     # Enable online booking
-    c.execute("""UPDATE user_services 
-                 SET is_online_booking_enabled = TRUE 
-                 WHERE user_id = %s AND service_id = %s""", 
-              (mestan_id, service_id))
+    # Enable online booking
+    c.execute("""
+        INSERT INTO user_services (user_id, service_id, is_online_booking_enabled)
+        VALUES (%s, %s, TRUE)
+        ON CONFLICT (user_id, service_id) 
+        DO UPDATE SET is_online_booking_enabled = TRUE
+    """, (mestan_id, service_id))
     conn.commit()
     print("   ✅ Enabled online booking for Mestan -> Hair Treatment")
 

@@ -24,6 +24,8 @@ def migrate_salon_schema(db_path="salon_bot.db"):
         columns_to_add = {
             'hours_weekdays': 'TEXT',
             'hours_weekends': 'TEXT',
+            'lunch_start': "TEXT DEFAULT '13:00'",
+            'lunch_end': "TEXT DEFAULT '14:00'",
             'payment_methods': "TEXT DEFAULT \'Наличные, карта\'",
             'prepayment_required': 'BOOLEAN DEFAULT FALSE',
             'parking_info': 'TEXT',

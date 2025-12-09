@@ -15,12 +15,26 @@ def get_all_users():
     c = conn.cursor()
     
     c.execute("""SELECT id, username, password_hash, full_name, email, role, 
-                 created_at, last_login, is_active 
+                 created_at, last_login, is_active, is_service_provider 
                  FROM users ORDER BY id""")
     
     users = c.fetchall()
     conn.close()
     return users
+
+def get_all_service_providers():
+    """Получить всех мастеров (провайдеров услуг)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("""SELECT id, full_name, role 
+                 FROM users 
+                 WHERE is_service_provider = TRUE AND is_active = TRUE
+                 ORDER BY full_name""")
+    
+    providers = c.fetchall()
+    conn.close()
+    return [{"id": row[0], "full_name": row[1], "role": row[2]} for row in providers]
 
 def create_user(username: str, password: str, full_name: str = None,
                 email: str = None, role: str = 'employee'):

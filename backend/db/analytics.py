@@ -432,12 +432,12 @@ def get_advanced_analytics_data(period=30, date_from=None, date_to=None):
     """, (start_date, end_date))
     top_active_clients = c.fetchall()
     
-    # Распределение сообщений по времени суток
+    # Распределение сообщений по времени суток (Postgres compatible)
     c.execute("""
-        SELECT strftime('%H', created_at) as hour, COUNT(*) as count
+        SELECT EXTRACT(HOUR FROM created_at::TIMESTAMP) as hour, COUNT(*) as count
         FROM messages 
         WHERE created_at >= %s AND created_at <= %s
-        GROUP BY strftime('%H', created_at)
+        GROUP BY EXTRACT(HOUR FROM created_at::TIMESTAMP)
         ORDER BY hour
     """, (start_date, end_date))
     hourly_distribution = c.fetchall()

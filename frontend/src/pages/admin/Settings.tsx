@@ -37,6 +37,10 @@ export default function AdminSettings() {
     working_hours: {
       weekdays: '',
       weekends: ''
+    },
+    lunch_time: {
+      start: '',
+      end: ''
     }
   });
   const [loading, setLoading] = useState(true);
@@ -194,6 +198,10 @@ export default function AdminSettings() {
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
+        },
+        lunch_time: {
+          start: data.lunch_start || '13:00',
+          end: data.lunch_end || '14:00'
         }
       });
       setBotGloballyEnabled(data.bot_globally_enabled ?? true);
@@ -407,7 +415,9 @@ export default function AdminSettings() {
         timezone_offset: generalSettings.timezone_offset,
         birthday_discount: generalSettings.birthday_discount,
         hours_weekdays: generalSettings.working_hours.weekdays,
-        hours_weekends: generalSettings.working_hours.weekends
+        hours_weekends: generalSettings.working_hours.weekends,
+        lunch_start: generalSettings.lunch_time.start,
+        lunch_end: generalSettings.lunch_time.end
       });
 
       toast.success(t('settings:general_settings_saved'));
@@ -1091,6 +1101,35 @@ export default function AdminSettings() {
                         working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
                       })}
                       placeholder="10:30 - 21:00"
+                      className="px-3"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                  <div>
+                    <Label htmlFor="lunch_start">{t('settings:lunch_start', 'Начало обеда')}</Label>
+                    <Input
+                      id="lunch_start"
+                      type="time"
+                      value={generalSettings.lunch_time.start}
+                      onChange={(e) => setGeneralSettings({
+                        ...generalSettings,
+                        lunch_time: { ...generalSettings.lunch_time, start: e.target.value }
+                      })}
+                      className="px-3"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lunch_end">{t('settings:lunch_end', 'Конец обеда')}</Label>
+                    <Input
+                      id="lunch_end"
+                      type="time"
+                      value={generalSettings.lunch_time.end}
+                      onChange={(e) => setGeneralSettings({
+                        ...generalSettings,
+                        lunch_time: { ...generalSettings.lunch_time, end: e.target.value }
+                      })}
                       className="px-3"
                     />
                   </div>

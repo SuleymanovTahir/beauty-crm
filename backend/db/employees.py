@@ -48,7 +48,7 @@ def get_all_employees(active_only=True, service_providers_only=False):
     columns = [row[0] for row in c.fetchall()]
     
     if 'is_service_provider' in columns:
-        query = "SELECT * FROM users WHERE is_service_provider = TRUE AND role NOT IN ('director', 'admin')"
+        query = "SELECT * FROM users WHERE is_service_provider = TRUE AND role NOT IN ('director', 'admin', 'manager')"
     else:
         # Fallback: filter by role
         query = "SELECT * FROM users WHERE role IN ('employee', 'master')"
@@ -315,6 +315,7 @@ def get_employees_by_service(service_id: int):
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
                      WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE
+                     AND u.role NOT IN ('director', 'admin', 'manager')
                      AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)""",
                   (service_id,))
     else:
@@ -322,7 +323,8 @@ def get_employees_by_service(service_id: int):
         c.execute("""SELECT u.*, NULL as price, NULL as duration, NULL as price_min, NULL as price_max
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
-                     WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE""",
+                     WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE
+                     AND u.role NOT IN ('director', 'admin', 'manager')""",
                   (service_id,))
     
     employees = c.fetchall()

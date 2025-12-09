@@ -149,6 +149,44 @@ def transliterate_to_arabic(text: str) -> str:
 
     return ''.join(result)
 
+def transliterate_to_latin(text: str) -> str:
+    """
+    Транслитерация кириллицы в латиницу (для поиска мастеров)
+    
+    Примеры:
+        Гуля -> Gulya
+        Ляззат -> Lyazzat
+        Тахир -> Takhir
+    """
+    if not text:
+        return text
+        
+    # Если уже латиница - оставить как есть
+    if is_latin(text):
+        return text
+        
+    # Mapping Cyrillic to Latin
+    mapping = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'ye', 'ё': 'yo',
+        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+        'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+        'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+    }
+    
+    result = []
+    for char in text.lower():
+        if char in mapping:
+            result.append(mapping[char])
+        else:
+            result.append(char)
+            
+    # Capitalize first letter
+    res_str = ''.join(result)
+    if res_str:
+        return res_str[0].upper() + res_str[1:]
+    return res_str
+
 def transliterate_name(name: str, target_language: str) -> str:
     """
     Универсальная транслитерация имени в зависимости от языка

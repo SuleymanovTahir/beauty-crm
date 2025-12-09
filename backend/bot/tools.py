@@ -60,19 +60,27 @@ def get_available_time_slots(
         # Если нет - берем всех активных
         if service_id:
             # Get only masters who provide this service AND have online booking enabled
+            # ✅ EXCLUDE admins/directors even if they are marked as service providers
             c.execute("""
                 SELECT DISTINCT u.id, u.full_name
                 FROM users u
                 JOIN user_services us ON u.id = us.user_id
                 WHERE u.is_active = TRUE 
                   AND u.is_service_provider = TRUE
+                  AND u.role NOT IN ('director', 'admin', 'manager')
                   AND us.service_id = %s
                   AND us.is_online_booking_enabled = TRUE
             """, (service_id,))
             potential_masters = c.fetchall()
         else:
-            # Fallback: все активные мастера
-            c.execute("SELECT id, full_name FROM users WHERE is_active = TRUE AND is_service_provider = TRUE")
+            # Fallback: все активные мастера (исключая директоров)
+            c.execute("""
+                SELECT id, full_name 
+                FROM users 
+                WHERE is_active = TRUE 
+                  AND is_service_provider = TRUE
+                  AND role NOT IN ('director', 'admin', 'manager')
+            """)
             potential_masters = c.fetchall()
 
         # Фильтр по имени если указано
@@ -80,7 +88,10 @@ def get_available_time_slots(
             potential_masters = [m for m in potential_masters if master_name.lower() in m[1].lower()]
 
         if not potential_masters:
+            print(f"❌ No masters found for service_id={service_id}")
             return []
+
+        # print(f"👤 Potential masters found: {[m[1] for m in potential_masters]}")
 
         # 3. Генерируем слоты через MasterScheduleService
         schedule_service = MasterScheduleService()
@@ -96,6 +107,9 @@ def get_available_time_slots(
                 duration_minutes=duration_minutes
             )
             
+            # Reduce log noise
+            # print(f"   📅 Slots for {master_name_real}: {len(slots)} slots")
+            
             for time_str in slots:
                 all_slots.append({
                     "time": time_str,
@@ -109,10 +123,11 @@ def get_available_time_slots(
         # ✅ ВАЖНО: Возвращаем ВСЕ комбинации время+мастер
         # Это позволяет боту предлагать альтернативных мастеров
         # Например: "У Jennifer занято в 19:00, но могу предложить к Mestan в 19:00"
+        print(f"✅ Total available slots found: {len(all_slots)}")
         return all_slots[:20]  # Увеличили лимит до 20 для большего выбора
 
     except Exception as e:
-        print(f"Error in get_available_time_slots: {e}")
+        print(f"❌ Error in get_available_time_slots: {e}")
         return []
         
     finally:
@@ -129,17 +144,20 @@ def check_time_slot_available(
     Returns:
         {"available": True/False, "reason": "...", "alternatives": [...]}
     """
+    print(f"🔍 Check slot request: {date} {time} (Master: {master_name})")
     schedule_service = MasterScheduleService()
     
     # Если мастер не указан, проверяем есть ли ХОТЯ БЫ ОДИН свободный мастер
     if not master_name:
         # Получаем доступность всех мастеров
         availability = schedule_service.get_all_masters_availability(date)
+        print(f"   📊 All masters availability: {availability}")
         
         is_any_available = False
         for master, slots in availability.items():
             if time in slots:
                 is_any_available = True
+                print(f"   ✅ Found available master: {master}")
                 break
         
         if is_any_available:
@@ -153,13 +171,14 @@ def check_time_slot_available(
             # Получаем рабочие часы салона
             from db import get_salon_settings
             salon = get_salon_settings()
-            salon_hours = salon.get('hours', 'Daily 10:30 - 21:00')
+            # Use specific weekday hours if available, else fallback
+            hours_str = salon.get('hours_weekdays', '10:30 - 21:00')
             
             # Парсим время работы
-            if '-' in salon_hours:
-                parts = salon_hours.split('-')
-                start_time_str = parts[0].strip().split()[-1]  # "10:30"
-                end_time_str = parts[1].strip()  # "21:00"
+            try:
+                parts = hours_str.split('-')
+                start_time_str = parts[0].strip() # Expected "10:30"
+                end_time_str = parts[1].strip()   # Expected "21:00"
                 
                 # Проверяем, попадает ли запрошенное время в рабочие часы
                 from datetime import datetime
@@ -167,14 +186,19 @@ def check_time_slot_available(
                 salon_start = datetime.strptime(start_time_str, '%H:%M').time()
                 salon_end = datetime.strptime(end_time_str, '%H:%M').time()
                 
+                print(f"   ⏱️ Working hours check: {requested_time} vs {salon_start}-{salon_end}")
+
+                
                 if requested_time < salon_start:
                     reason = f"Салон ещё не работает (открываемся в {start_time_str})"
                 elif requested_time >= salon_end:
                     reason = f"Салон уже закрыт (работаем до {end_time_str})"
                 else:
                     reason = f"Время {time} занято у всех мастеров"
-            else:
+            except Exception:
                 reason = f"Время {time} занято у всех мастеров"
+            
+            print(f"   ❌ Slot unavailable reason: {reason}")
             
             # Слот занят или вне рабочего времени - ищем альтернативы
             alternatives = get_available_time_slots(date)
@@ -190,6 +214,7 @@ def check_time_slot_available(
         date=date,
         time_str=time
     )
+    print(f"   👤 Master {master_name} available at {time}?: {is_available}")
     
     if is_available:
         return {
@@ -199,6 +224,7 @@ def check_time_slot_available(
         }
     else:
         # Слот занят - ищем альтернативы
+        print(f"   ❌ Slot blocked for {master_name}")
         alternatives = get_available_time_slots(date, master_name=master_name)
         
         return {
