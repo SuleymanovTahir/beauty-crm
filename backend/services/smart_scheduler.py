@@ -24,7 +24,8 @@ class SmartScheduler:
         self, 
         service_name: str,
         master_name: str,
-        target_date_str: Optional[str] = None # YYYY-MM-DD
+        target_date_str: Optional[str] = None, # YYYY-MM-DD
+        duration_minutes: int = 60
     ) -> Dict[str, Any]:
         """
         Get intelligent slot suggestions based on constraints.
@@ -51,7 +52,7 @@ class SmartScheduler:
                 target_date = now.date()
         
         # 2. Check Primary Date Availability
-        primary_slots = self._get_filtered_slots(master_name, target_date)
+        primary_slots = self._get_filtered_slots(master_name, target_date, duration_minutes)
         
         result = {
             "primary_date": target_date.strftime("%Y-%m-%d"),
@@ -64,7 +65,7 @@ class SmartScheduler:
         if len(primary_slots) < 3:
             # Check Next Day
             next_day = target_date + timedelta(days=1)
-            next_slots = self._get_filtered_slots(master_name, next_day)
+            next_slots = self._get_filtered_slots(master_name, next_day, duration_minutes)
             if next_slots:
                 result["alternatives"].append({
                     "date": next_day.strftime("%Y-%m-%d"),
@@ -74,7 +75,7 @@ class SmartScheduler:
             # Check Previous Day (if not in past)
             prev_day = target_date - timedelta(days=1)
             if prev_day >= now.date() and prev_day != target_date:
-                prev_slots = self._get_filtered_slots(master_name, prev_day)
+                prev_slots = self._get_filtered_slots(master_name, prev_day, duration_minutes)
                 if prev_slots:
                     result["alternatives"].append({
                         "date": prev_day.strftime("%Y-%m-%d"),
@@ -83,7 +84,7 @@ class SmartScheduler:
 
         return result
 
-    def _get_filtered_slots(self, master_name: str, date_obj) -> List[str]:
+    def _get_filtered_slots(self, master_name: str, date_obj, duration_minutes: int) -> List[str]:
         """Fetch slots and apply Smart Constraints (Travel Buffer)"""
         date_str = date_obj.strftime("%Y-%m-%d")
         
@@ -92,7 +93,7 @@ class SmartScheduler:
         raw_slots = self.schedule_service.get_available_slots(
             master_name=master_name,
             date=date_str,
-            duration_minutes=60 
+            duration_minutes=duration_minutes 
         )
         
         # 2. Apply Travel Buffer Constraint

@@ -175,7 +175,7 @@ class PromptBuilder:
         2. Использование эмодзи: {emoji_rule}.
         3. Всегда предлагай конкретное время если есть слоты.
         4. Если клиент спрашивает цену - называй цену из списка услуг.
-        5. Если клиент спрашивает "есть ли места" - смотри блок ДОСТУПНЫЕ МАСТЕРА.
+        5. ⛔️ ПРОВЕРКА ДОСТУПНОСТИ: Если в блоке "ДОСТУПНЫЕ МАСТЕРА" написано "мест нет" или "❌" - ЗНАЧИТ МАСТЕР ЗАНЯТ! Не предлагай его, даже если он есть в общем списке мастеров.
         6. Не придумывай услуги, которых нет в списке.
         7. Используй язык клиента ({client_language}).
         8. Если клиент просто здоровается - отвечай приветливо, используя фразу: "{greeting_msg}" (но адаптируй под язык клиента).
@@ -183,6 +183,12 @@ class PromptBuilder:
 {anti_patterns_section}
         9. ВАЖНО: Не спрашивай "На что хотите записаться?". Лучше: "На какую процедуру хотели бы попасть?". 
         10. ⛔️ ЗАПРЕТ НА ДУБЛИ ПРИВЕТСТВИЙ: Если в истории диалога (см. выше) ты УЖЕ здоровался - НЕ здоровайся снова.
+        11. ⛔️ ОДИН ВОПРОС ЗА РАЗ (One Question Rule): СТРОГО ЗАПРЕЩЕНО спрашивать Дату + Мастера + Телефон одновременно. 
+        Задавай вопросы ПОСЛЕДОВАТЕЛЬНО:
+        - Шаг 1: Дата (когда удобно?)
+        - Шаг 2: Телефон (для записи нужен WhatsApp)
+        ⚠️ ПРО МАСТЕРА НЕ СПРАШИВАЙ, если клиент сам не попросил! Выбирай ЛЮБОГО свободного мастера (или предложи "Любой топ-мастер").
+        12. 🛡️ СОХРАНЕНИЕ КОНТЕКСТА: Если клиент уже выбрал услугу, а потом спрашивает справочную информацию ("Что такое Х?"), ОТВЕТЬ на вопрос, но НЕ МЕНЯЙ услугу записи, пока клиент явно не скажет "Хочу Х". После ответа спроси: "Оставляем запись на [первая услуга]?"
         {phone_instruction}
 
 ✅ PROTOCOL: FINALIZING BOOKING (SAVE TO DB)
@@ -619,46 +625,61 @@ Google Maps: {self.salon.get('google_maps', '')}
             
             combined_msg = " ".join(client_messages)
 
-            # Пытаемся найти название услуги в тексте
-            # Сортируем услуги по длине названия (чтобы 'Manicure Spa' находилось раньше 'Manicure')
-            # Создаем список для поиска: (name, service_obj)
-            search_candidates = []
-            for s in db_services:
-                # Добавляем EN название
-                if s[2]: search_candidates.append((s[2].lower(), s))
-                # Добавляем RU название
-                if s[3]: search_candidates.append((s[3].lower(), s))
-                # Можно добавить и category
-                if s[9]: search_candidates.append((s[9].lower(), s))
+            # ✅ FIX: Restrict service detection scope to avoid "ghost" matches from history
+            # Only look at the VERY LAST message for new service intent, 
+            # unless we clearly don't have a service yet.
             
-            # ✅ Add Synonyms from Constants
-            for syn_key, target_names in self.service_synonyms.items():
-                if syn_key in combined_msg:
-                    # Client used a synonym (e.g. "кератин")
-                    # Find the target service object
-                    for target_name in target_names:
-                        target_name_lower = target_name.lower()
-                        # Find service by EN or RU name
-                        for s in db_services:
-                            # s[2] is name_en, s[3] is name_ru (adjust indices if needed based on fetch_services_db)
-                            # Actually fetch_services_db returns: id, code, name(en), name_ru, duration...
-                            # Let's assume name match
-                            if (s[2] and target_name_lower in s[2].lower()) or \
-                               (s[3] and target_name_lower in s[3].lower()):
-                                search_candidates.insert(0, (syn_key, s)) # High priority
+            # If we already have a service intent from argument, skip detection
+            if service_name:
+                print(f"ℹ️ [PromptBuilder] Service already known: '{service_name}'. Skipping detection.")
+            else:
+                # Analyze mostly the last message for strong intent
+                last_msg_lower = ""
+                if history:
+                    last_item = history[-1]
+                    if len(last_item) >= 2 and last_item[1] == 'client':
+                        last_msg_lower = last_item[0].lower()
+                
+                # Check for strong match in LAST message first
+                found_in_last = False
+                
+                # Search candidates construction (same as before)
+                search_candidates = []
+                for s in db_services:
+                    if s[2]: search_candidates.append((s[2].lower(), s))
+                    if s[3]: search_candidates.append((s[3].lower(), s))
+                    if s[9]: search_candidates.append((s[9].lower(), s))
+                
+                # Add Synonyms
+                for syn_key, target_names in self.service_synonyms.items():
+                    if syn_key in combined_msg: # Keep checking synonyms in broader context as they are rare
+                         for target_name in target_names:
+                            target_name_lower = target_name.lower()
+                            for s in db_services:
+                                if (s[2] and target_name_lower in s[2].lower()) or \
+                                   (s[3] and target_name_lower in s[3].lower()):
+                                    search_candidates.insert(0, (syn_key, s))
 
+                search_candidates.sort(key=lambda x: len(x[0]), reverse=True)
 
-            # Сортировка по убыванию длины
-            search_candidates.sort(key=lambda x: len(x[0]), reverse=True)
-
-            for name_key, s_obj in search_candidates:
-                if name_key in combined_msg:
-                    # Нашли совпадение!
-                    # Берем display name (RU if available)
-                    detected_service = s_obj[3] if s_obj[3] else s_obj[2]
-                    service_name = detected_service # Используем найденное имя как ключевое для поиска ID
-                    print(f"🔎 [PromptBuilder] Detected service in text: '{service_name}' (matched '{name_key}')")
-                    break
+                # 1. Try to find in LAST message (High Confidence)
+                for name_key, s_obj in search_candidates:
+                    if name_key in last_msg_lower:
+                        detected_service = s_obj[3] if s_obj[3] else s_obj[2]
+                        service_name = detected_service
+                        found_in_last = True
+                        print(f"🔎 [PromptBuilder] Service detected in LAST message: '{service_name}'")
+                        break
+                
+                # 2. If not found in last message, check broader history BUT be careful
+                # We only fallback to history if the last message was likely "Yes", "No", "Ok" (short)
+                if not found_in_last and len(last_msg_lower) < 10:
+                     for name_key, s_obj in search_candidates:
+                        if name_key in combined_msg:
+                            detected_service = s_obj[3] if s_obj[3] else s_obj[2]
+                            service_name = detected_service
+                            print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
+                            break
         
         if not service_name:
              print(f"ℹ️ [PromptBuilder] No service detected in conversation history.")
@@ -791,7 +812,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         # Ищем услугу в БД по названию (точному или похожему)
         # service_name мы определили выше или оно пришло аргументом
         c.execute("""
-            SELECT id, name_ru, price, currency FROM services 
+            SELECT id, name_ru, price, currency, duration FROM services 
             WHERE (LOWER(name) LIKE %s OR LOWER(name_ru) LIKE %s)
             AND is_active = TRUE
             LIMIT 1
@@ -806,12 +827,30 @@ Google Maps: {self.salon.get('google_maps', '')}
 Попробуй назвать услугу иначе (например "Маникюр", "Педикюр", "Стрижка")."""
 
         service_id = service_row[0]
+        # Parse base duration from service definition (index 4 in new query)
+        base_duration_val = service_row[4]
+        base_duration_minutes = 60 # Default fallback if DB is empty
+        
+        if base_duration_val:
+            try:
+                # Handle "1h 30min", "90", "90 min"
+                s_dur = str(base_duration_val).lower()
+                if 'h' in s_dur:
+                     parts = s_dur.split('h')
+                     h = int(parts[0])
+                     m = 0
+                     if len(parts) > 1 and 'min' in parts[1]:
+                         m = int(parts[1].split('min')[0])
+                     base_duration_minutes = h * 60 + m
+                elif 'min' in s_dur:
+                     base_duration_minutes = int(s_dur.split('min')[0])
+                elif s_dur.isdigit():
+                     base_duration_minutes = int(s_dur)
+            except:
+                pass
+        
         employees = get_employees_by_service(service_id)
         print(f"👥 [PromptBuilder] Found {len(employees)} employees for service ID {service_id}")
-
-        if not employees:
-            conn.close()
-            return f"⚠️ Нет мастеров для услуги '{service_name}'"
 
         if not employees:
             conn.close()
@@ -821,48 +860,49 @@ Google Maps: {self.salon.get('google_maps', '')}
         from services.smart_scheduler import SmartScheduler
         scheduler = SmartScheduler()
         
-        # Use detected date or default logic
-        final_target_date = target_date_str 
-        if not final_target_date and preferred_date:
-            final_target_date = preferred_date
-            
-        header_text = self.prompt_headers.get('AVAILABILITY', PROMPT_HEADERS['AVAILABILITY']).format(service_name=service_name)
-        avail_text = f"{header_text}\n"
-
-        found_any = False
-        
-        # Helper to get localized name
-        def get_localized_name(user_id, default_name):
-            try:
-                conn_u = get_db_connection()
-                cur_u = conn_u.cursor()
-                cur_u.execute("SELECT full_name_ru, full_name_en, full_name_ar FROM users WHERE id = %s", (user_id,))
-                row = cur_u.fetchone()
-                conn_u.close()
-                
-                if not row: return default_name
-                
-                lang = getattr(self, 'lang', 'ru')
-                if lang == 'ru' and row[0]: return row[0]
-                if lang == 'en' and row[1]: return row[1]
-                if lang == 'ar' and row[2]: return row[2]
-                return default_name
-            except:
-                return default_name
+        # ... (lines skipped)
 
         for emp in employees:
-            # emp: (id, full_name, ...)
+            # emp: (u.*, price, duration, price_min, price_max)
+            # u.* fields: 0:id, 1:username, 2:pass, 3:full_name, ...
             emp_id = emp[0]
-            master_name = get_localized_name(emp_id, emp[1])
+            username = emp[1]
+            full_name = emp[3]
+            
+            # Fetch duration (Master Override)
+            duration_val = emp[-3]
+            
+            # Start with BASE service duration
+            duration_minutes = base_duration_minutes 
+            
+            if duration_val:
+                try:
+                    if 'h' in str(duration_val):
+                         parts = str(duration_val).split('h')
+                         h = int(parts[0])
+                         m = 0
+                         if len(parts) > 1 and 'min' in parts[1]:
+                             m = int(parts[1].split('min')[0])
+                         duration_minutes = h * 60 + m
+                    elif 'min' in str(duration_val):
+                         duration_minutes = int(str(duration_val).split('min')[0])
+                    elif str(duration_val).isdigit():
+                         duration_minutes = int(str(duration_val))
+                except:
+                    pass
+
+            master_display_name = get_localized_name(emp_id, full_name)
             
             # 🧠 SMART SUGGESTION
+            # Pass full_name because MasterScheduleService uses it for lookup
             suggestions = scheduler.get_smart_suggestions(
                 service_name=service_name,
-                master_name=emp[1], # Use technical name for scheduler lookup just in case
-                target_date_str=final_target_date
+                master_name=full_name, 
+                target_date_str=final_target_date,
+                duration_minutes=duration_minutes
             )
             
-            avail_text += f"\n👤 Мастер: {master_name}\n"
+            avail_text += f"\n👤 Мастер: {master_display_name}\n"
             
             if suggestions['primary_slots']:
                 found_any = True

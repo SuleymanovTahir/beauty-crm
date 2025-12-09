@@ -37,28 +37,50 @@ class SalonBot:
 
         # ✅ Настройка прокси для обхода геоблокировки
         environment = os.getenv("ENVIRONMENT", "development")
-        proxy_url_raw = os.getenv("PROXY_URL", "")
+        
+        # Load proxy list (PROXY_URL, PROXY_URL_1, PROXY_URL_2...)
+        self.proxies = []
+        
+        # Legacy/Single proxy
+        legacy_proxy = os.getenv("PROXY_URL")
+        if legacy_proxy:
+            self.proxies.append(legacy_proxy)
+            
+        # Numbered proxies
+        for i in range(1, 10):
+            p = os.getenv(f"PROXY_URL_{i}")
+            if p and p not in self.proxies:
+                self.proxies.append(p)
 
         print("=" * 50)
         print(f"🔍 ENVIRONMENT: {environment}")
-        print(f"🔍 PROXY_URL: {'установлен' if proxy_url_raw else 'не установлен'}")
+        print(f"🔍 PROXIES LOADED: {len(self.proxies)}")
 
-        # Прокси активны только если:
-        # 1. Окружение = production
-        # 2. PROXY_URL не пустой
-        if environment == "production" and proxy_url_raw:
-            self.proxy_url = proxy_url_raw
-            proxy_display = self.proxy_url.split('@')[1] if '@' in self.proxy_url else self.proxy_url[:30]
-            print(f"✅ Прокси АКТИВЕН: {proxy_display}...")
+        # ✅ Load API KEYS (GEMINI_API_KEY, GEMINI_API_KEY_1, ...)
+        self.api_keys = []
+        base_key = os.getenv("GEMINI_API_KEY")
+        if base_key:
+            self.api_keys.append(base_key)
+            
+        for i in range(1, 10):
+            k = os.getenv(f"GEMINI_API_KEY_{i}")
+            if k and k not in self.api_keys:
+                self.api_keys.append(k)
+                
+        print(f"🔍 API KEYS LOADED: {len(self.api_keys)}")
+
+        # Configure initial model with first key
+        if self.api_keys:
+             genai.configure(api_key=self.api_keys[0])
         else:
-            self.proxy_url = None
-            print(f"❌ Прокси ОТКЛЮЧЕН")
-
-        # Настраиваем Gemini (для fallback без прокси)
-        genai.configure(api_key=GEMINI_API_KEY)
+             print("❌ NO API KEYS FOUND!")
+             
         self.model = genai.GenerativeModel(GEMINI_MODEL)
 
-        print("✅ Бот инициализирован (Gemini через прокси)")
+        self.proxy_index = 0
+        self.key_index = 0
+
+        print("✅ Бот инициализирован (Gemini Multi-Key + Proxy Rotation)")
 
     def reload_settings(self):
         """Перезагрузить настройки из БД"""
@@ -1126,7 +1148,7 @@ class SalonBot:
             except Exception as e:
                 print(f"❌ Error in escalation logic: {e}")
 
-    async def _generate_via_proxy(self, full_prompt: str, max_retries: int = 4) -> str:
+    async def _generate_via_proxy(self, full_prompt: str, max_retries: int = 6) -> str:
         """Попытка генерации через пул прокси"""
         
         # 🔍 LOGGING FULL PROMPT (TRUNCATED) - First 500 + Last 500 chars only
@@ -1192,34 +1214,29 @@ class SalonBot:
             }
         }
 
-        # ✅ РОТАЦИЯ ПРОКСИ
-        proxy_urls = []
-        if self.proxy_url:
-            proxy_urls.append(self.proxy_url)
-        proxy_2 = os.getenv("PROXY_URL_2")
-        proxy_3 = os.getenv("PROXY_URL_3")
-        if proxy_2:
-            proxy_urls.append(proxy_2)
-        if proxy_3:
-            proxy_urls.append(proxy_3)
-
-        if not proxy_urls:
+        if not self.proxies:
             print("ℹ️ Прямое подключение к Gemini API (localhost режим)")
 
         for attempt in range(max_retries):
             try:
-                # ✅ Выбираем прокси по кругу
-                current_proxy = proxy_urls[attempt % len(proxy_urls)] if proxy_urls else None
+                # ✅ ROTATION LOGIC: Key & Proxy
+                current_proxy = self.proxies[attempt % len(self.proxies)] if self.proxies else None
+                current_key = self.api_keys[attempt % len(self.api_keys)] if self.api_keys else GEMINI_API_KEY
+                
+                # Construct URL with current rotated key
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={current_key}"
+                
+                # Debug Info
+                proxy_label = current_proxy.split('@')[1] if current_proxy and '@' in current_proxy else (current_proxy[:25] + "..." if current_proxy else "Direct")
+                key_label = f"...{current_key[-6:]}" if current_key else "None"
+                
+                print(f"🌐 Попытка {attempt + 1}/{max_retries} | Proxy: {proxy_label} | Key: {key_label}")
 
                 if current_proxy:
-                    proxy_display = current_proxy.split('@')[1] if '@' in current_proxy else current_proxy[:30]
-                    print(f"🌐 Попытка {attempt + 1}/{max_retries} через прокси: {proxy_display}")
-
                     async with httpx.AsyncClient(timeout=60.0, follow_redirects=True, proxy=current_proxy) as client:
                         response = await client.post(url, json=payload)
                         data = response.json()
                 else:
-                    print(f"ℹ️ Попытка {attempt + 1}/{max_retries} (прямое подключение)")
                     async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
                         response = await client.post(url, json=payload)
                         data = response.json()
@@ -1230,23 +1247,21 @@ class SalonBot:
                     error_msg = data["error"].get("message", "")
 
                     if error_code == 429:
+                        print(f"⚠️ Rate limit 429 (Key: {key_label})")
                         if attempt < max_retries - 1:
-                            wait_time = 12 * (2 ** attempt)  # 12s, 24s, 48s, 96s (MAX SAFE BUFFER)
-                            print(f"⚠️ Rate limit 429 (попытка {attempt + 1}/{max_retries}), ждём {wait_time}s...")
+                            # Exponential backoff: 2s, 4s, 8s...
+                            wait_time = 2 ** (attempt + 1)
+                            print(f"⏳ Waiting {wait_time}s before next attempt...")
                             await asyncio.sleep(wait_time)
                             continue
-                        # Если все попытки исчерпаны
-                        print(f"❌ Rate limit 429 после {max_retries} попыток через все прокси")
-                        raise Exception("Rate limit exceeded after retries")
+                        raise Exception(f"Rate limit exceeded after {max_retries} retries")
                     
                     elif error_code == 403:
-                        # 403 Forbidden (может быть Geo-block прокси или временная проблема ключа)
+                        print(f"⚠️ Gemini 403 (Key: {key_label}). Пробуем другой ключ/прокси...")
                         if attempt < max_retries - 1:
-                            print(f"⚠️ Gemini 403 Forbidden (попытка {attempt + 1}/{max_retries}). Пробуем другой прокси...")
-                            # Не ждем долго, просто меняем прокси
                             await asyncio.sleep(1) 
                             continue
-                        raise Exception(f"Gemini API error 403 (Permission Denied) after retries")
+                        raise Exception(f"Gemini API error 403 after retries")
                         
                     else:
                         raise Exception(f"Gemini API error {error_code}: {error_msg}")
@@ -1301,7 +1316,7 @@ class SalonBot:
                             # Очистка от markdown
                             response_text = response_text.replace('*', '').replace('`', '').strip()
 
-                            print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(proxy_urls) + 1 if proxy_urls else 'direct'})")
+                            print(f"✅ Успешно получен ответ (попытка {attempt + 1}, прокси {attempt % len(self.proxies) + 1 if self.proxies else 'direct'})")
 
                             return response_text
                             
