@@ -4,6 +4,7 @@ import google.generativeai as genai
 import httpx
 import os
 import asyncio
+import logging  # ✅ ДОБАВЛЕНО
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
 from bot.tools import get_available_time_slots, check_time_slot_available
@@ -19,6 +20,10 @@ from db import (
 )
 from services.smart_assistant import SmartAssistant
 from services.conversation_context import ConversationContext
+from core.config import DEFAULT_HOURS_WEEKDAYS
+
+# ✅ ДОБАВЛЕНО: Инициализация logger
+logger = logging.getLogger(__name__)
 
 class SalonBot:
     """
@@ -540,13 +545,20 @@ class SalonBot:
             
             # ✅ Определяем человекочитаемое название даты
             def get_date_label(date_obj):
-                """Возвращает 'сегодня', 'завтра' или DD.MM"""
+                """Получить читаемую метку для даты"""
+                today = datetime.now().date()
                 if date_obj == today:
                     return "сегодня"
-                elif date_obj == tomorrow:
+                elif date_obj == today + timedelta(days=1):
                     return "завтра"
                 else:
-                    return date_obj.strftime('%d.%m')
+                    days_diff = (date_obj - today).days
+                    if days_diff == 2:
+                        return "послезавтра"
+                    elif 2 < days_diff <= 7:
+                        return f"через {days_diff} дня"
+                    else:
+                        return date_obj.strftime("%d.%m.%Y")
             
             # Явно передаем текущую дату в контекст
             additional_context += f"\n📅 СЕГОДНЯ: {today.strftime('%d.%m.%Y')} ({today.strftime('%A')})\n"
@@ -580,7 +592,58 @@ class SalonBot:
                     except:
                         pass
 
+            # ✅ NEW: Если дата не найдена в сообщении, ищем в контексте (история или booking_progress)
+            if not target_date:
+                # Проверяем booking_progress
+                if booking_progress and booking_progress.get('date'):
+                    target_date = booking_progress.get('date')
+                    # ✅ Безопасный парсинг даты с обработкой ошибок
+                    try:
+                        target_date_label = get_date_label(datetime.strptime(target_date, "%Y-%m-%d").date())
+                    except (ValueError, TypeError) as e:
+                        print(f"⚠️ Error parsing date from booking_progress: {e}, using default label")
+                        target_date_label = "этот день"  # Fallback
+                    print(f"📅 Target date from booking_progress: {target_date} ({target_date_label})")
+                else:
+                    # Ищем в истории диалога упоминание "сегодня" или "завтра"
+                    for item in reversed(history[-5:]):  # Проверяем последние 5 сообщений
+                        # ✅ Правильная распаковка истории (может быть 4 или 5 элементов)
+                        if len(item) >= 2:
+                            msg_text = item[0]
+                            sender = item[1]
+                        else:
+                            continue
+                            
+                        if sender == 'client':
+                            msg_lower = msg_text.lower() if isinstance(msg_text, str) else str(msg_text).lower()
+                            if 'сегодня' in msg_lower or 'today' in msg_lower:
+                                target_date = today.strftime("%Y-%m-%d")
+                                target_date_label = "сегодня"
+                                print(f"📅 Target date from history (сегодня): {target_date}")
+                                break
+                            elif 'завтра' in msg_lower or 'tomorrow' in msg_lower:
+                                target_date = tomorrow.strftime("%Y-%m-%d")
+                                target_date_label = "завтра"
+                                print(f"📅 Target date from history (завтра): {target_date}")
+                                break
+                    
+                    # ✅ Если всё ещё не нашли, но есть время в сообщении - используем "сегодня" по умолчанию
+                    if not target_date and re.search(r'(\d{1,2}):(\d{2})', user_message):
+                        target_date = today.strftime("%Y-%m-%d")
+                        target_date_label = "сегодня"
+                        print(f"📅 Target date defaulted to today (time found in message): {target_date}")
+
+            # ✅ Убеждаемся, что target_date_label определен, если target_date определен
+            if target_date and not target_date_label:
+                try:
+                    target_date_label = get_date_label(datetime.strptime(target_date, "%Y-%m-%d").date())
+                except (ValueError, TypeError):
+                    target_date_label = "этот день"  # Fallback
+                print(f"📅 Generated target_date_label: {target_date_label}")
+
             if target_date:
+                # ✅ Безопасное использование target_date_label
+                date_label_upper = target_date_label.upper() if target_date_label else "ЭТОТ ДЕНЬ"
                 print(f"📅 Target date detected: {target_date} ({target_date_label})")
 
                 # Определяем услугу и мастера из прогресса бронирования
@@ -652,14 +715,14 @@ class SalonBot:
 
                     additional_context += f"""
 
-    🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {target_date_label.upper()} (из БД):
+    🔴 РЕАЛЬНЫЕ СВОБОДНЫЕ СЛОТЫ НА {date_label_upper} (из БД):
     {slots_text}
 
     ⚠️ КРИТИЧНО:
     - ТЫ ОБЯЗАН ПРЕДЛАГАТЬ ТОЛЬКО ЭТИ ВРЕМЕНА!
     - НЕ ПРИДУМЫВАЙ ДРУГОЕ ВРЕМЯ!
     - Время выше РЕАЛЬНО СВОБОДНО - проверено в базе данных!
-    - ВСЕГДА говори "{target_date_label}" вместо полной даты!
+    - ВСЕГДА говори "{target_date_label or 'этот день'}" вместо полной даты!
     
     📝 РУССКИЕ ИМЕНА МАСТЕРОВ (ВСЕГДА используй эти имена):
     - GULYA / Gulya → Гуля
@@ -684,12 +747,12 @@ class SalonBot:
                     reason_text = ""
                     if target_date_label == "сегодня":
                         # Получаем часы работы салона
-                        salon_hours = self.salon.get('hours', 'Daily 10:30 - 21:00')
+                        salon_hours = self.salon.get('hours', f'Daily {DEFAULT_HOURS_WEEKDAYS}')  # ✅ Используем константу
                         
                         # Парсим время закрытия
                         if '-' in salon_hours:
                             try:
-                                end_time_str = salon_hours.split('-')[1].strip()  # "21:00"
+                                end_time_str = salon_hours.split('-')[1].strip()  # "21:30"  // ✅ Исправлено в комментарии
                                 from datetime import datetime
                                 salon_close = datetime.strptime(end_time_str, '%H:%M').time()
                                 
@@ -738,12 +801,12 @@ class SalonBot:
 
                     additional_context += f"""
 
-    🔴 НА {target_date_label.upper()} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
+    🔴 НА {date_label_upper} ВСЕ СЛОТЫ ЗАНЯТЫ (проверено в БД)!
     {reason_text}
     ⚠️ СТРОГИЙ ЗАПРЕТ:
-    - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date_label}!
+    - НЕ ПРЕДЛАГАЙ НИКАКОЕ ВРЕМЯ НА {target_date_label or 'этот день'}!
     - НЕ ГОВОРИ "ЕСТЬ ОКОШКО", ЕСЛИ ЕГО НЕТ!
-    - Скажи: "На {target_date_label} уже полная запись. Предложить ближайшее свободное время на следующие дни?"
+    - Скажи: "На {target_date_label or 'этот день'} уже полная запись. Предложить ближайшее свободное время на следующие дни?"
     """
 
             # ========================================
@@ -865,25 +928,178 @@ class SalonBot:
 
             # Проверка конкретного времени если клиент спрашивает
             time_match = re.search(r'(\d{1,2}):(\d{2})', user_message)
-            if time_match and target_date:
+            if time_match:
                 requested_time = f"{time_match.group(1).zfill(2)}:{time_match.group(2)}"
                 print(f"⏰ Checking specific time: {requested_time}")
+                
+                # ✅ Если target_date не определен, используем сегодня по умолчанию
+                check_date = target_date if target_date else today.strftime("%Y-%m-%d")
+                check_date_label = target_date_label if target_date_label else "сегодня"
+                
+                # ✅ Определяем услугу из контекста для более точной проверки
+                service_name_for_check = booking_progress.get('service_name') if booking_progress else None
+                if not service_name_for_check:
+                    # Ищем услугу в истории диалога
+                    for item in reversed(history[-10:]):
+                        # ✅ Правильная распаковка истории
+                        if len(item) >= 2:
+                            msg_text = item[0]
+                            sender = item[1]
+                        else:
+                            continue
+                            
+                        if sender == 'client':
+                            msg_lower = msg_text.lower() if isinstance(msg_text, str) else str(msg_text).lower()
+                            # Простая проверка на упоминание услуг
+                            if 'маникюр' in msg_lower or 'manicure' in msg_lower:
+                                service_name_for_check = 'маникюр'
+                                break
+                            elif 'педикюр' in msg_lower or 'pedicure' in msg_lower:
+                                service_name_for_check = 'педикюр'
+                                break
+
+                print(f"🔍 Checking availability for {check_date} {requested_time} (service: {service_name_for_check or 'any'}, master: {booking_progress.get('master') if booking_progress else 'any'})")
 
                 check_result = check_time_slot_available(
-                    date=target_date,
+                    date=check_date,
                     time=requested_time,
                     master_name=booking_progress.get('master') if booking_progress else None
                 )
+                
+                print(f"📊 Check result: available={check_result['available']}, reason={check_result.get('reason', 'N/A')}, alternatives={len(check_result.get('alternatives', []))}")
 
-                if not check_result['available']:
-                    print(f"❌ Time {requested_time} is NOT available")
+                # ✅ ИНИЦИАЛИЗАЦИЯ: Всегда инициализируем переменные
+                alternatives = []
+                reason = ""
+                
+                if check_result['available']:
+                    # ✅ СЛУЧАЙ 1: Слот ДОСТУПЕН - добавляем информацию о доступных мастерах
+                    print(f"✅ Time {requested_time} is AVAILABLE on {check_date_label}")
+                    logger.info(f"✅ Slot {requested_time} is AVAILABLE on {check_date_label}")
+                    
+                    available_masters = check_result.get('available_masters', [])
+                    reason = check_result.get('reason', f'Слот свободен')
+                    
+                    if available_masters:
+                        masters_text = ", ".join(available_masters)
+                        additional_context += f"""
 
-                    alternatives = check_result['alternatives']
+✅ ВРЕМЯ {requested_time} СВОБОДНО НА {check_date_label.upper()}!
+
+👥 Доступные мастера: {masters_text}
+
+⚠️ ПРЕДЛОЖИ КЛИЕНТУ ЗАПИСАТЬСЯ:
+"Да, на {requested_time} {check_date_label} свободно! К какому мастеру записать?"
+Или: "Да, свободно! Записываю вас на {requested_time}?"
+"""
+                        print(f"✅ Slot {requested_time} available with {len(available_masters)} masters: {masters_text}")
+                        logger.info(f"✅ Slot {requested_time} available with {len(available_masters)} masters: {masters_text}")
+                    else:
+                        additional_context += f"""
+
+✅ ВРЕМЯ {requested_time} СВОБОДНО НА {check_date_label.upper()}!
+
+⚠️ ПРЕДЛОЖИ КЛИЕНТУ ЗАПИСАТЬСЯ:
+"Да, на {requested_time} {check_date_label} свободно! Записываю вас?"
+"""
+                        print(f"✅ Slot {requested_time} available (no master list provided)")
+                        logger.info(f"✅ Slot {requested_time} available (no master list provided)")
+                
+                elif not check_result['available']:
+                    # ✅ СЛУЧАЙ 2: Слот НЕДОСТУПЕН - добавляем причину и альтернативы
+                    print(f"❌ Time {requested_time} is NOT available on {check_date_label}: {check_result.get('reason', 'N/A')}")
+                    logger.warning(f"❌ Time {requested_time} is NOT available on {check_date_label}: {check_result.get('reason', 'N/A')}")
+
+                    # ✅ NEW: Добавляем причину недоступности в контекст
+                    reason = check_result.get('reason', 'Время занято')
+                    
+                    alternatives = check_result.get('alternatives', [])
+                    
+                    # ✅ NEW: Если клиент спрашивает про утро (до 12:00), фильтруем альтернативы - предлагаем утренние слоты
+                    requested_hour = int(requested_time.split(':')[0])
+                    is_morning_request = requested_hour < 12
+                    
+                    if is_morning_request and alternatives:
+                        # Фильтруем альтернативы - оставляем только утренние (до 14:00, чтобы не попасть на обед)
+                        morning_alternatives = [alt for alt in alternatives if int(alt['time'].split(':')[0]) < 14]
+                        if morning_alternatives:
+                            # ✅ Дедупликация: убираем дубликаты по времени и мастеру
+                            seen = set()
+                            unique_morning = []
+                            for alt in morning_alternatives:
+                                key = (alt['time'], alt['master'])
+                                if key not in seen:
+                                    seen.add(key)
+                                    unique_morning.append(alt)
+                            alternatives = unique_morning[:3]  # Берем первые 3 уникальных утренних
+                            print(f"🌅 Filtered to morning alternatives: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                            logger.info(f"🌅 Filtered to {len(alternatives)} morning alternatives for morning request: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                        else:
+                            # Если утренних нет, берем ближайшие после обеда
+                            afternoon_alternatives = [alt for alt in alternatives if int(alt['time'].split(':')[0]) >= 14]
+                            if afternoon_alternatives:
+                                # ✅ Дедупликация
+                                seen = set()
+                                unique_afternoon = []
+                                for alt in afternoon_alternatives:
+                                    key = (alt['time'], alt['master'])
+                                    if key not in seen:
+                                        seen.add(key)
+                                        unique_afternoon.append(alt)
+                                alternatives = unique_afternoon[:3]
+                                print(f"🌆 No morning slots, using afternoon: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                                logger.info(f"🌆 No morning slots available, using {len(alternatives)} afternoon alternatives: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                    elif alternatives:
+                        # ✅ УЛУЧШЕНИЕ: Для вечерних запросов тоже фильтруем - предлагаем ближайшие слоты
+                        # Сортируем альтернативы по близости к запрошенному времени
+                        try:
+                            from datetime import datetime as dt_class
+                            req_dt = dt_class.strptime(requested_time, "%H:%M")
+                            
+                            # Сортируем по близости к запрошенному времени
+                            alternatives_with_diff = []
+                            for alt in alternatives:
+                                slot_dt = dt_class.strptime(alt['time'], "%H:%M")
+                                diff = abs((slot_dt - req_dt).total_seconds())
+                                alternatives_with_diff.append((alt, diff))
+                            
+                            # Сортируем по разнице времени
+                            alternatives_with_diff.sort(key=lambda x: x[1])
+                            
+                            # Дедупликация
+                            seen = set()
+                            unique_alternatives = []
+                            for alt, _ in alternatives_with_diff:
+                                key = (alt['time'], alt['master'])
+                                if key not in seen:
+                                    seen.add(key)
+                                    unique_alternatives.append(alt)
+                            
+                            alternatives = unique_alternatives[:3]
+                            print(f"📋 Sorted alternatives by proximity: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                            logger.info(f"📋 Sorted {len(alternatives)} alternatives by proximity to {requested_time}: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                        except Exception as e:
+                            print(f"⚠️ Error sorting alternatives: {e}")
+                            logger.error(f"⚠️ Error sorting alternatives: {e}", exc_info=True)
+                            # Fallback: простая дедупликация
+                            seen = set()
+                            unique_alternatives = []
+                            for alt in alternatives:
+                                key = (alt['time'], alt['master'])
+                                if key not in seen:
+                                    seen.add(key)
+                                    unique_alternatives.append(alt)
+                            alternatives = unique_alternatives[:3]
+                            print(f"📋 Unique alternatives: {[a['time'] + ' (' + a['master'] + ')' for a in alternatives]}")
+                            logger.warning(f"📋 Fallback: Using {len(alternatives)} unique alternatives after sorting error")
+                    
+                    # ✅ Обработка альтернатив (только если слот недоступен)
                     if alternatives:
-                        # 🧠 SMART SUGGESTION LOGIC
-                        # Find the closest slot to requested_time
-                        from datetime import datetime as dt_class
+                        print(f"✅ Found {len(alternatives)} alternative slots")
+                        logger.info(f"✅ Found {len(alternatives)} alternative slots for {requested_time}")
                         
+                        # ✅ Находим ближайшее время к запрошенному
+                        from datetime import datetime as dt_class
                         try:
                             req_dt = dt_class.strptime(requested_time, "%H:%M")
                             best_slot = None
@@ -902,43 +1118,44 @@ class SalonBot:
                                 
                                 additional_context += f"""
 
-    🚫 ВРЕМЯ {requested_time} УЖЕ ЗАНЯТО!
-    
-    🧠 Я НАШЕЛ БЛИЖАЙШЕЕ СВОБОДНОЕ ОКНО: {alt_time} (мастер {alt_master})
-    
-    ⚠️ ТВОЯ ЗАДАЧА - БЫТЬ "УМНЫМ АССИСТЕНТОМ" (ПРИНИМАЙ РЕШЕНИЕ ЗА КЛИЕНТА):
-    НЕ СПРАШИВАЙ "Когда вам удобно?".
-    
-    СКАЖИ УТВЕРДИТЕЛЬНО И РЕШИТЕЛЬНО:
-    "На {requested_time} уже есть запись, но я нашла для вас окошко рядом - в {alt_time} к мастеру {alt_master}! Записываю вас на это время?"
-    
-    (Будь настойчива - клиент хочет, чтобы за него решили!)"""
-                            else:
-                                # Fallback if calc fails
-                                alt_text = "\n".join([f"• {s['time']}" for s in alternatives[:3]])
-                                additional_context += f"""
-    🚫 ВРЕМЯ {requested_time} ЗАНЯТО! Есть: {alt_text}. Предложи ближайшее!"""
+🚫 ВРЕМЯ {requested_time} НЕДОСТУПНО НА {check_date_label.upper()}!
+
+📋 ПРИЧИНА: {reason}
+
+⚠️ ВАЖНО: ВСЕГДА ГОВОРИ КЛИЕНТУ ПРИЧИНУ!
+- Если салон закрыт: "К сожалению, мы открываемся в [время]. Могу предложить [альтернативы]"
+- Если обед: "В это время у мастеров обед (13:00-14:00). Могу предложить [альтернативы]"
+- Если занято: "На {requested_time} уже есть запись. Могу предложить [альтернативы]"
+
+🧠 БЛИЖАЙШЕЕ СВОБОДНОЕ ОКНО: {alt_time} (мастер {alt_master})
+
+⚠️ ТВОЯ ЗАДАЧА:
+НЕ ПРОСТО ГОВОРИ "нет", А ОБЪЯСНЯЙ ПРИЧИНУ И ПРЕДЛАГАЙ РЕШЕНИЕ!
+Если клиент спрашивал про утро - ПРЕДЛАГАЙ УТРЕННИЕ СЛОТЫ (если есть)!
+"""
+                                logger.info(f"✅ Best alternative slot found: {alt_time} at {alt_master} (diff: {min_diff/60:.1f} min)")
                         except Exception as e:
-                            print(f"Error finding best slot: {e}")
-                            alt_text = "\n".join([f"• {s['time']}" for s in alternatives[:3]])
+                            print(f"⚠️ Error finding best slot: {e}")
+                            logger.error(f"⚠️ Error finding best slot: {e}", exc_info=True)
+                            alt_text = "\n".join([f"• {s['time']} у {s['master']}" for s in alternatives[:3]])
                             additional_context += f"""
-    🚫 ВРЕМЯ {requested_time} ЗАНЯТО! Есть: {alt_text}. Предложи любое из них!"""
-                            
+🚫 ВРЕМЯ {requested_time} НЕДОСТУПНО! ПРИЧИНА: {reason}
+Альтернативы: {alt_text}
+"""
                     else:
+                        print(f"❌ No alternatives found for {requested_time}")
+                        logger.warning(f"❌ No alternatives found for {requested_time} on {check_date_label}")
                         additional_context += f"""
-    🚫 ВРЕМЯ {requested_time} ЗАНЯТО И НЕТ АЛЬТЕРНАТИВ НА {target_date}!
-    
-    ⚠️ ПРЕДЛОЖИ WAITLIST (Лист ожидания):
-    "К сожалению, на {target_date} всё занято. Но могу добавить вас в лист ожидания - 
-    если кто-то отменит запись, сразу напишу вам! Хотите?"
-    
-    ИЛИ предложи другую дату/"ближайшие дни".
-    """
-                    
-                    # Prevent AI from saying checking time is available
-                    additional_context += "\n⚠️ НЕ ГОВОРИ ЧТО ЭТО ВРЕМЯ СВОБОДНО!"
-                else:
-                    print(f"✅ Time {requested_time} is available")
+
+🚫 ВРЕМЯ {requested_time} НЕДОСТУПНО НА {check_date_label.upper()}!
+
+📋 ПРИЧИНА: {reason}
+
+⚠️ ВАЖНО: ВСЕГДА ГОВОРИ КЛИЕНТУ ПРИЧИНУ!
+- Если салон закрыт: "К сожалению, мы открываемся в [время]. Предложить другое время?"
+- Если обед: "В это время у мастеров обед (13:00-14:00). Предложить другое время?"
+- Если занято: "На {requested_time} уже есть запись. Предложить другую дату?"
+"""
 
             # ========================================
             # ✅ PHONE VALIDATION WITH IMMEDIATE FEEDBACK
@@ -988,7 +1205,7 @@ class SalonBot:
             # Генерируем ответ через прокси
             # ========================================
 
-            ai_response = await self._generate_via_proxy(full_prompt)
+            ai_response = await self._generate_via_proxy(full_prompt, instagram_id=instagram_id)
             
             # ✅ ОБЯЗАТЕЛЬНО: Проверяем необходимость уведомления на успешном ответе
             await self._check_and_escalate(ai_response, instagram_id)
@@ -1000,6 +1217,7 @@ class SalonBot:
 
         except Exception as e:
             print(f"❌ Error in generate_response: {e}")
+            logger.error(f"❌ Error in generate_response: {e}", exc_info=True)  # ✅ ДОБАВЛЕНО
             import traceback
             traceback.print_exc()
 
@@ -1148,7 +1366,7 @@ class SalonBot:
             except Exception as e:
                 print(f"❌ Error in escalation logic: {e}")
 
-    async def _generate_via_proxy(self, full_prompt: str, max_retries: int = 6) -> str:
+    async def _generate_via_proxy(self, full_prompt: str, max_retries: int = 6, instagram_id: str = None) -> str:
         """Попытка генерации через пул прокси"""
         
         # 🔍 LOGGING FULL PROMPT (TRUNCATED) - First 500 + Last 500 chars only
@@ -1298,12 +1516,22 @@ class SalonBot:
                                     print(f"⚡️ BOT ACTION DETECTED: {action_data}")
                                     
                                     # Execute Action
-                                    await self._handle_bot_action(action_data, instagram_id)
+                                    if instagram_id:
+                                        await self._handle_bot_action(action_data, instagram_id)
+                                    else:
+                                        print(f"⚠️ WARNING: instagram_id not available, cannot process action")
                                     
                                     # Remove action block from text to send to user
-                                    response_text = response_text.replace(action_match.group(0), "").strip()
+                                    # ✅ УБЕДИТЕЛЬНО УДАЛЯЕМ ACTION БЛОК - клиент не должен его видеть!
+                                    action_block = action_match.group(0)
+                                    response_text = response_text.replace(action_block, "").strip()
+                                    
+                                    # Дополнительная очистка на случай если остались следы
+                                    response_text = re.sub(r'\[ACTION\].*?\[/ACTION\]', '', response_text, flags=re.DOTALL).strip()
                                 except Exception as e:
                                     print(f"❌ Error processing bot action: {e}")
+                                    import traceback
+                                    traceback.print_exc()
 
                             # 🧩 LOGIC PARSING (Legacy, checking just in case)
                             logic_match = re.search(r'\[LOGIC\](.*?)\[/LOGIC\]', response_text, re.DOTALL)
@@ -1370,7 +1598,7 @@ class SalonBot:
                 print(f"💾 EXECUTE ACTION: Saving booking for {instagram_id}")
                 service = action_data.get('service')
                 master = action_data.get('master')
-                date_str = action_data.get('date') # YYYY-MM-DD
+                date_str = action_data.get('date') # YYYY-MM-DD или "сегодня"/"завтра"
                 time_str = action_data.get('time') # HH:MM
                 phone = action_data.get('phone')
                 
@@ -1378,6 +1606,19 @@ class SalonBot:
                     print(f"❌ Missing data for booking action: {action_data}")
                     return
 
+                # ✅ ПАРСИНГ ДАТЫ: Преобразуем "сегодня"/"завтра" в конкретную дату
+                from datetime import datetime, timedelta
+                today = datetime.now().date()
+                
+                date_str_lower = date_str.lower().strip()
+                if date_str_lower in ['сегодня', 'today']:
+                    date_str = today.strftime('%Y-%m-%d')
+                elif date_str_lower in ['завтра', 'tomorrow']:
+                    date_str = (today + timedelta(days=1)).strftime('%Y-%m-%d')
+                elif date_str_lower in ['послезавтра', 'day after tomorrow']:
+                    date_str = (today + timedelta(days=2)).strftime('%Y-%m-%d')
+                # Если дата уже в формате YYYY-MM-DD, оставляем как есть
+                
                 # Convert date/time to ISO format expected by DB
                 datetime_str = f"{date_str}T{time_str}"
                 
@@ -1393,15 +1634,21 @@ class SalonBot:
                     client_name = client[3] or client[1] or "Client" # Name or Username
                 
                 # 2. Save Booking
-                booking_id = save_booking(
-                    instagram_id=instagram_id,
-                    service=service,
-                    datetime_str=datetime_str,
-                    phone=phone,
-                    name=client_name,
-                    master=master
-                )
-                print(f"✅ Booking saved successfully! ID: {booking_id}")
+                try:
+                    booking_id = save_booking(
+                        instagram_id=instagram_id,
+                        service=service,
+                        datetime_str=datetime_str,
+                        phone=phone,
+                        name=client_name,
+                        master=master
+                    )
+                    print(f"✅ Booking saved successfully! ID: {booking_id}")
+                except Exception as e:
+                    print(f"❌ Error saving booking: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    return  # Прерываем выполнение при ошибке сохранения
                 
                 # 3. Update Client Status -> 'lead' (or 'client')
                 # User asked for 'hot' (lead/client). Let's set to 'client' as they have a booking.

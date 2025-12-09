@@ -42,6 +42,9 @@ const HOURS = Array.from({ length: 23 }, (_, i) => i + 1); // 1 AM - 11 PM
 export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps) {
     const { t } = useTranslation(['admin/users', 'common']);
 
+    // ✅ ДОБАВИТЬ: Состояние для дефолтных часов салона
+    const [defaultHours, setDefaultHours] = useState({ start: '10:30', end: '21:30' }); // ✅ Это fallback, будет заменено из API
+
     // State
     const [schedule, setSchedule] = useState<ScheduleEntry[]>([]);
     const [timeOffs, setTimeOffs] = useState<TimeOff[]>([]);
@@ -66,6 +69,23 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     useEffect(() => {
         loadScheduleData();
     }, [employeeId]);
+
+    // ✅ ДОБАВИТЬ: Загрузка дефолтных часов из API
+    useEffect(() => {
+        const loadDefaultHours = async () => {
+            try {
+                const hours = await api.get('/api/salon-settings/working-hours');
+                setDefaultHours({
+                    start: hours.weekdays.start,
+                    end: hours.weekdays.end
+                });
+            } catch (error) {
+                console.error('Error loading default hours:', error);
+                // Оставляем fallback значения
+            }
+        };
+        loadDefaultHours();
+    }, []);
 
     const loadScheduleData = async () => {
         try {
@@ -114,8 +134,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             for (let day = 5; day < 7; day++) {
                 newSchedule.push({
                     day_of_week: day,
-                    start_time: '09:00',
-                    end_time: '18:00',
+                    start_time: defaultHours.start,  // ✅ Исправлено
+                    end_time: defaultHours.end,      // ✅ Исправлено
                     is_working: false
                 });
             }
@@ -174,8 +194,8 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         try {
             const emptySchedule = Array.from({ length: 7 }, (_, i) => ({
                 day_of_week: i,
-                start_time: '09:00',
-                end_time: '18:00',
+                start_time: defaultHours.start,  // ✅ Исправлено
+                end_time: defaultHours.end,      // ✅ Исправлено
                 is_working: false
             }));
 

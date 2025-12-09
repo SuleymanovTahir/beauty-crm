@@ -41,6 +41,40 @@ async def main():
              # It might not be critical
              log_error(f"⚠️ Ошибка в seo_optimizer.py: {e}", "run_all_fixes")
 
+        # 3. Fix Master Services (Remove incorrect service assignments)
+        log_info("3️⃣  Запуск fix_master_services.py...", "run_all_fixes")
+        try:
+            from scripts.maintenance.fix_master_services import main as fix_master_services_main
+            fix_master_services_main()
+            log_info("✅ fix_master_services.py выполнен успешно", "run_all_fixes")
+        except Exception as e:
+            log_error(f"❌ Ошибка в fix_master_services.py: {e}", "run_all_fixes")
+
+        # 3.5. Assign Lashes to Jennifer (Ensure Jennifer has all lash services)
+        log_info("3.5️⃣  Запуск assign_lashes_to_jennifer.py...", "run_all_fixes")
+        try:
+            from scripts.maintenance.assign_lashes_to_jennifer import assign_lashes_to_jennifer
+            assigned = assign_lashes_to_jennifer()
+            if assigned > 0:
+                log_info(f"✅ assign_lashes_to_jennifer.py выполнен: назначено {assigned} услуг", "run_all_fixes")
+            else:
+                log_info("✅ assign_lashes_to_jennifer.py: все услуги уже назначены", "run_all_fixes")
+        except Exception as e:
+            log_error(f"❌ Ошибка в assign_lashes_to_jennifer.py: {e}", "run_all_fixes")
+
+        # 4. Assign Masters to Services (Auto-assign masters to services without masters)
+        log_info("4️⃣  Запуск assign_masters_to_services.py...", "run_all_fixes")
+        try:
+            from scripts.maintenance.assign_masters_to_services import assign_masters_auto
+            # assign_masters_auto is synchronous
+            result = assign_masters_auto(auto_assign=False)  # False = запрашивает подтверждение
+            if result:
+                log_info("✅ assign_masters_to_services.py выполнен успешно", "run_all_fixes")
+            else:
+                log_info("⚠️ assign_masters_to_services.py отменен пользователем", "run_all_fixes")
+        except Exception as e:
+            log_error(f"❌ Ошибка в assign_masters_to_services.py: {e}", "run_all_fixes")
+
         log_info("🎉 Все исправления завершены!", "run_all_fixes")
 
     except Exception as e:
