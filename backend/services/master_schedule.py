@@ -337,21 +337,45 @@ class MasterScheduleService:
 
             schedule = c.fetchone()
             
-            # ✅ DEFAULT SCHEDULE LOGIC
-            # If no schedule found in DB, use default salon hours (10:30 - 21:00)
+            # ✅ DYNAMIC SCHEDULE LOGIC
+            # If no schedule found in DB, use salon defaults from settings
             if not schedule:
-                # Default hours can be fetched from settings in future, hardcoded for now as per request
-                start_time_str = "10:30"
-                end_time_str = "21:00"
+                from db.settings import get_salon_settings
+                settings = get_salon_settings()
+                
+                # Try to get specific weekday/weekend hours first, then fall back to generic
+                # TODO: Implement weekend specific check if needed
+                hours_str = settings.get('hours_weekdays', '10:30 - 21:00')
+                
+                # Parse "10:30 - 21:30"
+                try:
+                    parts = hours_str.split('-')
+                    start_time_str = parts[0].strip()
+                    end_time_str = parts[1].strip()
+                except:
+                    # Fallback if parsing fails (should rarely happen with defaults)
+                    start_time_str = "10:30"
+                    end_time_str = "21:30"
             else:
                 start_time_str, end_time_str = schedule
                 # Если время не установлено (выходной), слотов нет
                 if not start_time_str or not end_time_str:
                     return []
 
+            # 🛠️ LUNCH BREAK LOGIC (Dynamic from Settings)
+            from db.settings import get_salon_settings
+            settings = get_salon_settings()
+            
+            lunch_start = settings.get('lunch_start', '13:00')
+            lunch_end = settings.get('lunch_end', '14:00')
+            
             # Проверяем отпуска (на весь день или часть)
             day_start = f"{date} 00:00:00"
             day_end = f"{date} 23:59:59"
+            
+            # Добавляем обед как "недоступное время" на этот день
+            lunch_start_dt = f"{date} {lunch_start}:00"
+            lunch_end_dt = f"{date} {lunch_end}:00"
             
             c.execute("""
                 SELECT start_date, end_date
@@ -365,6 +389,9 @@ class MasterScheduleService:
             """, (user_id, day_start, day_end, day_start, day_end, day_start, day_end))
 
             unavailability = c.fetchall()
+            
+            # Add lunch to unavailable intervals
+            unavailability.append((lunch_start_dt, lunch_end_dt))
             
             # Если есть перекрытие на весь рабочий день - возвращаем пусто
             # Для простоты, если есть любое отсутствие в этот день, нужно проверять слоты детально

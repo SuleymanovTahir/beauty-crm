@@ -3,6 +3,7 @@
 """
 
 from datetime import datetime
+import json
 import psycopg2
 from psycopg2 import errors as pg_errors
 
@@ -53,6 +54,8 @@ def get_salon_settings() -> dict:
                 "hours_weekdays": row_dict.get("hours_weekdays", "10:30 - 21:00"),
                 "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00"),
                 "promo_end_date": row_dict.get("promo_end_date"),
+                "lunch_start": row_dict.get("lunch_start", "13:00"),
+                "lunch_end": row_dict.get("lunch_end", "14:00"),
                 # SEO & Analytics fields
                 "google_analytics_id": row_dict.get("google_analytics_id"),
                 "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
@@ -93,6 +96,8 @@ def _get_default_salon_settings() -> dict:
         "hours_ar": "يوميًا 10:30 - 21:30",
         "hours_weekdays": "10:30 - 21:30",
         "hours_weekends": "10:30 - 21:30",
+        "lunch_start": "13:00",
+        "lunch_end": "14:00",
         "booking_url": "https://n1314037.alteg.io",
         "phone": "+971526961100",  # Fallback only
         "email": "mladiamontuae@gmail.com",  # Fallback only
@@ -136,6 +141,8 @@ def update_salon_settings(data: dict) -> bool:
             'hours_ar': 'hours_ar',
             'hours_weekdays': 'hours_weekdays',
             'hours_weekends': 'hours_weekends',
+            'lunch_start': 'lunch_start',
+            'lunch_end': 'lunch_end',
             'booking_url': 'booking_url',
             'phone': 'phone',
             'email': 'email',
@@ -223,7 +230,6 @@ def get_bot_settings() -> dict:
                 "fomo_messages": row_dict.get("fomo_messages", ""),
                 "upsell_techniques": row_dict.get("upsell_techniques", ""),
                 "communication_style": row_dict.get("communication_style", ""),
-                "max_message_chars": row_dict.get("max_message_chars", 300),
                 "max_message_length": row_dict.get("max_message_length", 4),
                 "emoji_usage": row_dict.get("emoji_usage", ""),
                 "languages_supported": row_dict.get("languages_supported", "ru,en,ar"),
@@ -268,6 +274,9 @@ def get_bot_settings() -> dict:
                 "conversation_flow_rules": row_dict.get("conversation_flow_rules", ""),
                 "personality_adaptations": row_dict.get("personality_adaptations", ""),
                 "smart_objection_detection": row_dict.get("smart_objection_detection", ""),
+                "service_synonyms": row_dict.get("service_synonyms", "{}"),
+                "objection_keywords": row_dict.get("objection_keywords", "{}"),
+                "prompt_headers": row_dict.get("prompt_headers", "{}"),
                 "updated_at": row_dict.get("updated_at"),
             }
 
@@ -331,6 +340,8 @@ def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
+    from bot.constants import SERVICE_SYNONYMS, OBJECTION_KEYWORDS, PROMPT_HEADERS
+    
     try:
         salon = get_salon_settings()
         bot_name = salon.get('bot_name', 'M.Le Diamant Assistant')
@@ -347,34 +358,33 @@ def _get_default_bot_settings() -> dict:
         "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться%s",
         "premium_justification": "",
         "booking_redirect_message": "Я AI-ассистент, запись онлайн!\nВыберите время: {BOOKING_URL}",
-        "fomo_messages": "",
-        "upsell_techniques": "",
+        "fomo_messages": "🔥 'Осталось всего 2 места на завтра!'\n⏳ 'Этот мастер очень популярен, лучше записаться заранее'",
+        "upsell_techniques": "➕ 'Хотите добавить SPA-уход для рук? Это всего +15 минут и +50 AED, но руки будут как шёлк!'\n💅 'Сделаем дизайн на 2 пальчика в подарок?'",
         "communication_style": "Короткий, дружелюбный, экспертный",
-        "max_message_chars": 300,
         "emoji_usage": "Минимальное (1-2 на сообщение)",
         "languages_supported": "ru,en,ar",
         "objection_handling": "",
-        "negative_handling": "",
-        "safety_guidelines": "",
-        "example_good_responses": "",
+        "negative_handling": "😞 'Нам очень жаль, что так вышло. Пожалуйста, напишите управляющему: {PHONE}. Мы обязательно разберемся и компенсируем!'",
+        "safety_guidelines": "🛡️ 'Мы используем одноразовые пилки и крафт-пакеты, вскрываем при вас.'",
+        "example_good_responses": "✅ 'Отлично! Записала вас на субботу 14:00. Придет SMS с подтверждением.'",
         "algorithm_actions": "",
-        "location_features": "",
-        "seasonality": "",
-        "emergency_situations": "",
+        "location_features": "🅿️ 'У нас есть бесплатная парковка для клиентов.'\n☕ 'Вкусный кофе и сериалы включены!'",
+        "seasonality": "🌞 'Летом рекомендуем педикюр с покрытием Luxio - держится до 4 недель!'",
+        "emergency_situations": "🆘 'Если вы опаздываете - предупредите, пожалуйста, мы постараемся сдвинуть запись.'",
         "success_metrics": "",
-        "objection_expensive": "",
-        "objection_think_about_it": "",
-        "objection_no_time": "",
-        "objection_pain": "",
-        "objection_result_doubt": "",
-        "objection_cheaper_elsewhere": "",
-        "objection_too_far": "",
-        "objection_consult_husband": "",
-        "objection_first_time": "",
-        "objection_not_happy": "",
-        "emotional_triggers": "",
-        "social_proof_phrases": "",
-        "personalization_rules": "",
+        "objection_expensive": "💰 'Дорого' - НЕ снижай цену! Подчеркни ценность и качество (премиум материалы, стерильность)",
+        "objection_think_about_it": "🤔 'Подумать' - Дай конкретную информацию, предложи свободное окно на выбор",
+        "objection_no_time": "⏰ 'Нет времени' - Покажи что процедура быстрая (есть экспресс), предложи вечернее время",
+        "objection_pain": "😣 'Больно' - Успокой, расскажи про стерильность и аккуратность мастеров",
+        "objection_result_doubt": "🧐 'Сомнения' - Предложи посмотреть портфолио в Instagram, расскажи про гарантию",
+        "objection_cheaper_elsewhere": "💸 'Где-то дешевле' - Объясни разницу в качестве материалов (мы не экономим на здоровье)",
+        "objection_too_far": "📍 'Далеко' - Подчеркни удобство локации, скажи что результат стоит поездки",
+        "objection_consult_husband": "💑 'Посоветоваться' - Скажи 'Конечно!', предложи подарочный сертификат или запиши предварительно",
+        "objection_first_time": "👋 'Первый раз' - Расскажи подробно про этапы, успокой, предложи скидку на первый визит",
+        "objection_not_happy": "😡 'Был плохой опыт' - Вырази сожаление, предложи исправить и комплимент от салона",
+        "emotional_triggers": "✨ 'Почувствуйте себя королевой!'\n💆‍♀️ 'Время для себя любимой'",
+        "social_proof_phrases": "⭐ 'У этого мастера рейтинг 5.0 на Google Maps'\n🏆 'Наш топ-мастер, к ней запись за неделю'",
+        "personalization_rules": "🎂 'Поздравляем с прошедшим Днем Рождения! Вам скидка 15%!'",
         "example_dialogues": "",
         "emotional_responses": "",
         "anti_patterns": "",
@@ -384,8 +394,22 @@ def _get_default_bot_settings() -> dict:
         "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
         "manager_consultation_prompt": "",
         "booking_time_logic": "Предлагай конкретное время (например: 'Есть окно завтра в 14:00 или послезавтра в 17:00')",
-        "booking_data_collection": """...""",
-        "booking_availability_instructions": """...""",
+        "booking_data_collection": """
+        Для записи собери следующие данные:
+        - Услуга (если не указана)
+        - Мастер (по желанию)
+        - Дата и время
+        - Телефон (обязательно!)
+        """,
+        "booking_availability_instructions": """
+        ВАЖНЫЕ ПРАВИЛА ПОИСКА СЛОТОВ:
+        1. Используй ТОЛЬКО слоты из раздела "ДОСТУПНЫЕ МАСТЕРА".
+        2. Если слотов нет - предложи альтернативу или запиши в лист ожидания.
+        3. Не придумывай время, которого нет в списке.
+        """,
+        "service_synonyms": json.dumps(SERVICE_SYNONYMS, ensure_ascii=False),
+        "objection_keywords": json.dumps(OBJECTION_KEYWORDS, ensure_ascii=False),
+        "prompt_headers": json.dumps(PROMPT_HEADERS, ensure_ascii=False),
     }
 
 def update_bot_settings(data: dict) -> bool:
@@ -418,7 +442,6 @@ def update_bot_settings(data: dict) -> bool:
             'fomo_messages': 'fomo_messages',
             'upsell_techniques': 'upsell_techniques',
             'communication_style': 'communication_style',
-            'max_message_chars': 'max_message_chars',
             'emoji_usage': 'emoji_usage',
             'languages_supported': 'languages_supported',
             'objection_handling': 'objection_handling',
@@ -455,6 +478,9 @@ def update_bot_settings(data: dict) -> bool:
             'booking_data_collection': 'booking_data_collection',
             'booking_data_collection': 'booking_data_collection',
             'booking_availability_instructions': 'booking_availability_instructions',
+            'service_synonyms': 'service_synonyms',
+            'objection_keywords': 'objection_keywords',
+            'prompt_headers': 'prompt_headers',
             # Reminder Settings
             'abandoned_cart_enabled': 'abandoned_cart_enabled',
             'abandoned_cart_delay': 'abandoned_cart_delay',

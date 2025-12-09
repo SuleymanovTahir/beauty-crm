@@ -552,8 +552,8 @@ async def startup_event():
         from services.reminder_service import check_and_send_reminders
         from apscheduler.schedulers.asyncio import AsyncIOScheduler
         
-        scheduler = AsyncIOScheduler()
-        
+        scheduler = AsyncIOScheduler(job_defaults={'misfire_grace_time': 3600}) # 1 hour grace time
+
         # Запускаем проверку instagram напоминаний каждые 30 минут
         scheduler.add_job(
             check_and_send_reminders,

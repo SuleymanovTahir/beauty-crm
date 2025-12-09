@@ -22,6 +22,14 @@ def test_smart_assistant():
     try:
         # 1. Создаем экземпляр ассистента
         print("\n1️⃣ Создание SmartAssistant...")
+        # Ensure test client exists
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO clients (instagram_id, name) VALUES (%s, 'Test Client') ON CONFLICT (instagram_id) DO NOTHING", (test_client_id,))
+        conn.commit()
+        conn.close()
+
         assistant = SmartAssistant(test_client_id)
         print(f"✅ SmartAssistant создан для клиента: {test_client_id}")
 
@@ -64,9 +72,25 @@ def test_smart_assistant():
 
         # 6. Тестируем сохранение предпочтений
         print("\n6️⃣ Сохранение предпочтений...")
+        # Fetch valid IDs for FK constraints
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Get random employee
+        cur.execute("SELECT id FROM users WHERE is_service_provider = TRUE LIMIT 1")
+        emp_row = cur.fetchone()
+        valid_master_id = emp_row[0] if emp_row else 1
+        
+        # Get random service
+        cur.execute("SELECT id FROM services LIMIT 1")
+        srv_row = cur.fetchone()
+        valid_service_id = srv_row[0] if srv_row else 1
+        conn.close()
+
         test_preferences = {
-            'preferred_master': 'Jennifer',
-            'preferred_service': 'Маникюр',
+            'preferred_master': valid_master_id,
+            'preferred_service': valid_service_id,
             'preferred_time_of_day': 'afternoon',
             'allergies': 'Нет',
             'special_notes': 'Любит яркие цвета'

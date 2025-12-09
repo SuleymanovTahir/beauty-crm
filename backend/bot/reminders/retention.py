@@ -46,15 +46,16 @@ async def check_client_retention():
                 SELECT 1 FROM bookings b_past
                 WHERE b_past.instagram_id = c.instagram
                 AND b_past.status = 'completed'
-                AND to_date(b_past.date, 'YYYY-MM-DD') <= CURRENT_DATE - INTERVAL '%s days'
-                AND to_date(b_past.date, 'YYYY-MM-DD') >= CURRENT_DATE - INTERVAL '%s days'
+                -- Используем datetime (TEXT) -> Timestamp -> Date для сравнения
+                AND to_timestamp(b_past.datetime, 'YYYY-MM-DD HH24:MI')::date <= CURRENT_DATE - INTERVAL '%s days'
+                AND to_timestamp(b_past.datetime, 'YYYY-MM-DD HH24:MI')::date >= CURRENT_DATE - INTERVAL '%s days'
             )
             -- Условие 2: НЕТ будущих записей
             AND NOT EXISTS (
                 SELECT 1 FROM bookings b_future
                 WHERE b_future.instagram_id = c.instagram
                 AND b_future.status IN ('pending', 'confirmed')
-                AND to_date(b_future.date, 'YYYY-MM-DD') >= CURRENT_DATE
+                AND to_timestamp(b_future.datetime, 'YYYY-MM-DD HH24:MI')::date >= CURRENT_DATE
             )
             -- Условие 3: Не напоминали в последние 30 дней
             AND (c.last_retention_reminder_at IS NULL OR c.last_retention_reminder_at < NOW() - INTERVAL '30 days')

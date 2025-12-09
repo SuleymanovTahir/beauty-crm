@@ -42,24 +42,30 @@ async def check_appointment_reminders():
         tomorrow = (now + timedelta(days=1)).strftime('%Y-%m-%d')
         
         c.execute("""
-            SELECT b.id, b.instagram_id, b.time, b.language,
-                   s.name as service_name,
-                   u.full_name as master_name
+            SELECT b.id, b.instagram_id, b.datetime, c.language,
+                   b.service_name,
+                   b.master as master_name
             FROM bookings b
-            LEFT JOIN services s ON b.service_id = s.id
-            LEFT JOIN users u ON b.employee_id = u.id
-            WHERE b.date = %s
+            LEFT JOIN clients c ON b.instagram_id = c.instagram_id
+            WHERE b.datetime LIKE %s
               AND b.status IN ('confirmed', 'pending')
               AND b.instagram_id IS NOT NULL
               AND (b.reminder_sent_24h IS FALSE OR b.reminder_sent_24h IS NULL)
-        """, (tomorrow,))
+        """, (f"{tomorrow}%",))
         
         tomorrow_bookings = c.fetchall()
         
-        for booking_id, instagram_id, time, lang, service, master in tomorrow_bookings:
+        for booking_id, instagram_id, booking_datetime, lang, service, master in tomorrow_bookings:
             lang = lang or 'ru'
             service = service or 'Услуга'
             master = master or 'Мастер'
+            
+            # Extract time from datetime string
+            try:
+                # Assuming format "YYYY-MM-DD HH:MM" or similar
+                booking_time = booking_datetime.split(' ')[1][:5]
+            except:
+                booking_time = booking_datetime
             
             try:
                 # AI генерирует напоминание
@@ -67,7 +73,7 @@ async def check_appointment_reminders():
                     'booking_reminder_1d', 
                     lang,
                     service=service,
-                    time=time,
+                    time=booking_time,
                     master=master
                 )
                 
@@ -85,21 +91,21 @@ async def check_appointment_reminders():
         
         # === НАПОМИНАНИЕ ЗА 2 ЧАСА ===
         two_hours_later = now + timedelta(hours=2)
-        target_date = two_hours_later.strftime('%Y-%m-%d')
-        target_time_start = two_hours_later.strftime('%H:%M')
-        target_time_end = (two_hours_later + timedelta(minutes=30)).strftime('%H:%M')
+        # We want reminders for bookings happening in the window of [now+2h, now+2.5h]
+        # Since datetime is TEXT, we can compare strings if format is ISO-like (YYYY-MM-DD HH:MM)
+        start_range = two_hours_later.strftime('%Y-%m-%d %H:%M')
+        end_range = (two_hours_later + timedelta(minutes=30)).strftime('%Y-%m-%d %H:%M')
         
         c.execute("""
-            SELECT b.id, b.instagram_id, b.time, b.language,
-                   s.name as service_name
+            SELECT b.id, b.instagram_id, b.datetime, c.language,
+                   b.service_name
             FROM bookings b
-            LEFT JOIN services s ON b.service_id = s.id
-            WHERE b.date = %s
-              AND b.time >= %s AND b.time <= %s
+            LEFT JOIN clients c ON b.instagram_id = c.instagram_id
+            WHERE b.datetime >= %s AND b.datetime <= %s
               AND b.status IN ('confirmed', 'pending')
               AND b.instagram_id IS NOT NULL
               AND (b.reminder_sent_2h IS FALSE OR b.reminder_sent_2h IS NULL)
-        """, (target_date, target_time_start, target_time_end))
+        """, (start_range, end_range))
         
         soon_bookings = c.fetchall()
         

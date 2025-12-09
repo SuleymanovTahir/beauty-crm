@@ -36,15 +36,20 @@ async def check_visits_for_feedback():
     c = conn.cursor()
     
     try:
+        # Since datetime is TEXT (ISO format like YYYY-MM-DD HH:MM), we can compare strings directly
+        # or use to_timestamp if postgres. 
+        # Using string comparison is safer for generic text fields if format is consistent.
+        
         c.execute("""
-            SELECT b.id, b.instagram_id, b.language
+            SELECT b.id, b.instagram_id, c.language
             FROM bookings b
+            LEFT JOIN clients c ON b.instagram_id = c.instagram_id
             WHERE (b.status = 'confirmed' OR b.status = 'completed')
-              AND to_timestamp(b.date || ' ' || b.time, 'YYYY-MM-DD HH24:MI') <= %s
-              AND to_timestamp(b.date || ' ' || b.time, 'YYYY-MM-DD HH24:MI') >= %s
+              AND b.datetime <= %s
+              AND b.datetime >= %s
               AND (b.feedback_requested IS FALSE OR b.feedback_requested IS NULL)
             LIMIT 20
-        """, (check_time_limit_recent, check_time_limit_old))
+        """, (check_time_limit_recent.strftime('%Y-%m-%d %H:%M'), check_time_limit_old.strftime('%Y-%m-%d %H:%M')))
         
         visits = c.fetchall()
         
