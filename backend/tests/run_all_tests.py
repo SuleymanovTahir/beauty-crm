@@ -480,6 +480,74 @@ def run_all_tests():
         results.append(("test_conversation_context.py - Контекст диалога", False))
     
     # ========================================================================
+    # 18. Проверка услуг без мастеров
+    # ========================================================================
+    print_test_file(
+        "Проверка услуг без мастеров",
+        "Проверка наличия услуг без назначенных мастеров"
+    )
+    try:
+        from db.connection import get_db_connection
+        
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        c.execute("""
+            SELECT s.id, s.name_ru, s.name, s.category
+            FROM services s
+            WHERE s.is_active = TRUE
+            AND s.id NOT IN (
+                SELECT DISTINCT us.service_id
+                FROM user_services us
+                JOIN users u ON u.id = us.user_id
+                WHERE u.is_active = TRUE 
+                AND u.is_service_provider = TRUE
+                AND u.role NOT IN ('director', 'admin', 'manager')
+                AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
+            )
+            ORDER BY s.category, s.name_ru
+        """)
+        
+        services_without_masters = c.fetchall()
+        conn.close()
+        
+        if services_without_masters:
+            print(f"❌ Найдено {len(services_without_masters)} услуг без мастеров:")
+            print()
+            
+            # Группируем по категориям
+            by_category = {}
+            for service in services_without_masters:
+                category = service[3] if len(service) > 3 else "N/A"
+                if category not in by_category:
+                    by_category[category] = []
+                by_category[category].append(service)
+            
+            for category in sorted(by_category.keys()):
+                print(f"   📂 {category}:")
+                for service in sorted(by_category[category], key=lambda x: x[1] or x[2]):
+                    service_id = service[0]
+                    service_name_ru = service[1] if service[1] else None
+                    service_name_en = service[2] if service[2] else None
+                    service_name = service_name_ru or service_name_en or f"ID: {service_id}"
+                    print(f"      • {service_name} (ID: {service_id})")
+                print()
+            
+            print("   ⚠️  ВНИМАНИЕ: Эти услуги не могут быть забронированы через бота!")
+            print("   💡 Рекомендация: Назначьте мастеров на эти услуги через админ-панель")
+            print()
+            results.append(("Проверка услуг без мастеров", False))
+        else:
+            print("✅ Все услуги имеют назначенных мастеров")
+            results.append(("Проверка услуг без мастеров", True))
+            
+    except Exception as e:
+        print(f"❌ Ошибка при проверке услуг без мастеров: {e}")
+        import traceback
+        traceback.print_exc()
+        results.append(("Проверка услуг без мастеров", False))
+
+    # ========================================================================
     # ИТОГИ
     # ========================================================================
     print_header("ИТОГИ ТЕСТИРОВАНИЯ")

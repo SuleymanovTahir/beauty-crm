@@ -10,6 +10,14 @@ from psycopg2 import errors as pg_errors
 from db.connection import get_db_connection
 from utils.logger import log_error, log_warning, log_info
 
+from core.config import (
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS,
+    DEFAULT_LUNCH_START,
+    DEFAULT_LUNCH_END,
+    DEFAULT_REPORT_TIME
+)
+
 # ===== НАСТРОЙКИ САЛОНА =====
 
 def get_salon_settings() -> dict:
@@ -33,9 +41,9 @@ def get_salon_settings() -> dict:
                 "google_maps": row_dict.get("google_maps", ""),
                 "google_place_id": row_dict.get("google_place_id", ""),
                 "google_api_key": row_dict.get("google_api_key", ""),
-                "hours": row_dict.get("hours", ""),
-                "hours_ru": row_dict.get("hours_ru", ""),
-                "hours_ar": row_dict.get("hours_ar", ""),
+                "hours": f"Daily {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
+                "hours_ru": f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
+                "hours_ar": f"يوميًا {DEFAULT_HOURS_WEEKDAYS}",  # ✅ Используем константу
                 "booking_url": row_dict.get("booking_url", ""),
                 "phone": row_dict.get("phone", ""),
                 "email": row_dict.get("email"),
@@ -51,11 +59,11 @@ def get_salon_settings() -> dict:
                 "currency": row_dict.get("currency", "AED"),
                 "birthday_discount": row_dict.get("birthday_discount", "15%"),
                 "updated_at": row_dict.get("updated_at"),
-                "hours_weekdays": row_dict.get("hours_weekdays", "10:30 - 21:00"),
-                "hours_weekends": row_dict.get("hours_weekends", "10:30 - 21:00"),
+                "hours_weekdays": row_dict.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),  # ✅ Используем константу
+                "hours_weekends": row_dict.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),  # ✅ Используем константу
                 "promo_end_date": row_dict.get("promo_end_date"),
-                "lunch_start": row_dict.get("lunch_start", "13:00"),
-                "lunch_end": row_dict.get("lunch_end", "14:00"),
+                "lunch_start": row_dict.get("lunch_start", DEFAULT_LUNCH_START),  # ✅ Используем константу
+                "lunch_end": row_dict.get("lunch_end", DEFAULT_LUNCH_END),  # ✅ Используем константу
                 # SEO & Analytics fields
                 "google_analytics_id": row_dict.get("google_analytics_id"),
                 "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
@@ -94,10 +102,10 @@ def _get_default_salon_settings() -> dict:
         "hours": "Daily 10:30 - 21:30",
         "hours_ru": "Ежедневно 10:30 - 21:30",
         "hours_ar": "يوميًا 10:30 - 21:30",
-        "hours_weekdays": "10:30 - 21:30",
-        "hours_weekends": "10:30 - 21:30",
-        "lunch_start": "13:00",
-        "lunch_end": "14:00",
+        "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,  # ✅ Используем константу
+        "hours_weekends": DEFAULT_HOURS_WEEKENDS,  # ✅ Используем константу
+        "lunch_start": DEFAULT_LUNCH_START,  # ✅ Используем константу
+        "lunch_end": DEFAULT_LUNCH_END,  # ✅ Используем константу
         "booking_url": "https://n1314037.alteg.io",
         "phone": "+971526961100",  # Fallback only
         "email": "mladiamontuae@gmail.com",  # Fallback only

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import os
 
-from core.config import DATABASE_NAME
+from core.config import DATABASE_NAME, DEFAULT_REPORT_TIME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -298,7 +298,7 @@ async def get_notification_settings_api():
         c = conn.cursor()
 
         # Создаем таблицу если её нет
-        c.execute("""
+        c.execute(f"""
             CREATE TABLE IF NOT EXISTS notification_settings (
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL,
@@ -307,7 +307,7 @@ async def get_notification_settings_api():
                 booking_notifications INTEGER DEFAULT 1,
                 chat_notifications INTEGER DEFAULT 1,
                 daily_report INTEGER DEFAULT 1,
-                report_time TEXT DEFAULT '09:00',
+                report_time TEXT DEFAULT '{DEFAULT_REPORT_TIME}',
                 birthday_reminders INTEGER DEFAULT 1,
                 birthday_days_advance INTEGER DEFAULT 7,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -339,7 +339,7 @@ async def get_notification_settings_api():
                 "bookingNotifications": bool(row_dict.get('booking_notifications', 1)),
                 "chatNotifications": bool(row_dict.get('chat_notifications', 1)),
                 "dailyReport": bool(row_dict.get('daily_report', 1)),
-                "reportTime": row_dict.get('report_time', '09:00'),
+                "reportTime": row_dict.get('report_time', DEFAULT_REPORT_TIME),  # ✅ Используем константу
                 "birthdayReminders": bool(row_dict.get('birthday_reminders', 1)),
                 "birthdayDaysAdvance": row_dict.get('birthday_days_advance', 7)
             }
@@ -351,7 +351,7 @@ async def get_notification_settings_api():
                 "bookingNotifications": True,
                 "chatNotifications": True,
                 "dailyReport": True,
-                "reportTime": "09:00",
+                "reportTime": DEFAULT_REPORT_TIME,  # ✅ Используем константу
                 "birthdayReminders": True,
                 "birthdayDaysAdvance": 7
             }
@@ -420,7 +420,7 @@ async def save_notification_settings(request: Request):
                 
             if 'report_time' in columns:
                 update_fields.append("report_time = %s")
-                params.append(data.get('reportTime', '09:00'))
+                params.append(data.get('reportTime', DEFAULT_REPORT_TIME))  # ✅ Используем константу
                 
             if 'birthday_reminders' in columns:
                 update_fields.append("birthday_reminders = %s")
@@ -462,7 +462,7 @@ async def save_notification_settings(request: Request):
                 True if data.get('bookingNotifications', True) else False,
                 1 if data.get('chatNotifications', True) else 0,
                 1 if data.get('dailyReport', True) else 0,
-                data.get('reportTime', '09:00'),
+                data.get('reportTime', DEFAULT_REPORT_TIME),  # ✅ Используем константу
                 True if data.get('birthdayReminders', True) else False,
                 int(data.get('birthdayDaysAdvance', 7))
             ))

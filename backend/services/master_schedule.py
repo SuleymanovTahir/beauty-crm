@@ -7,6 +7,16 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.datetime_utils import get_current_time
+from core.config import (
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS,
+    DEFAULT_HOURS_START,
+    DEFAULT_HOURS_END,
+    DEFAULT_LUNCH_START,
+    DEFAULT_LUNCH_END,
+    get_default_hours_dict,
+    get_default_working_hours_response
+)
 
 class MasterScheduleService:
     """Сервис управления расписанием мастеров"""
@@ -345,7 +355,7 @@ class MasterScheduleService:
                 
                 # Try to get specific weekday/weekend hours first, then fall back to generic
                 # TODO: Implement weekend specific check if needed
-                hours_str = settings.get('hours_weekdays', '10:30 - 21:00')
+                hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
                 
                 # Parse "10:30 - 21:30"
                 try:
@@ -354,8 +364,8 @@ class MasterScheduleService:
                     end_time_str = parts[1].strip()
                 except:
                     # Fallback if parsing fails (should rarely happen with defaults)
-                    start_time_str = "10:30"
-                    end_time_str = "21:30"
+                    start_time_str = DEFAULT_HOURS_START
+                    end_time_str = DEFAULT_HOURS_END
             else:
                 start_time_str, end_time_str = schedule
                 # Если время не установлено (выходной), слотов нет
@@ -366,8 +376,8 @@ class MasterScheduleService:
             from db.settings import get_salon_settings
             settings = get_salon_settings()
             
-            lunch_start = settings.get('lunch_start', '13:00')
-            lunch_end = settings.get('lunch_end', '14:00')
+            lunch_start = settings.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
+            lunch_end = settings.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
             
             # Проверяем отпуска (на весь день или часть)
             day_start = f"{date} 00:00:00"
@@ -480,25 +490,34 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
-            # Получаем всех мастеров из расписания
+            # ✅ ИСПРАВЛЕНО: Используем ту же логику что и get_available_time_slots
+            # Получаем всех активных мастеров-провайдеров (исключая директоров)
             c.execute("""
                 SELECT DISTINCT u.full_name
-                FROM user_schedule us
-                JOIN users u ON us.user_id = u.id
-                WHERE us.is_active = TRUE AND u.is_service_provider = TRUE
+                FROM users u
+                WHERE u.is_active = TRUE 
+                  AND u.is_service_provider = TRUE
+                  AND u.role NOT IN ('director', 'admin', 'manager')
             """)
 
             masters = [row[0] for row in c.fetchall()]
+            
+            print(f"   👥 Found {len(masters)} active masters: {[m for m in masters[:5]]}...")
 
             availability = {}
             for master in masters:
                 slots = self.get_available_slots(master, date)
-                availability[master] = slots
+                if slots:  # ✅ Только добавляем если есть слоты
+                    availability[master] = slots
+                    print(f"   📅 {master}: {len(slots)} slots (first: {slots[0] if slots else 'none'})")
 
+            print(f"   ✅ Total masters with availability: {len(availability)}")
             return availability
 
         except Exception as e:
             log_error(f"Error getting all masters availability: {e}", "schedule")
+            import traceback
+            print(f"   ❌ Traceback: {traceback.format_exc()}")
             return {}
         finally:
             conn.close()

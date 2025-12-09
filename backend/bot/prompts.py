@@ -21,6 +21,158 @@ from utils.transliteration import transliterate_name
 
 logger = logging.getLogger(__name__)
 
+# ✅ УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: Извлечение ключевых слов из названий услуг
+def extract_service_keywords(service_name: str) -> List[str]:
+    """
+    Извлекает ключевые слова из названия услуги для универсального поиска
+    
+    Примеры:
+    "Маникюр с обычным покрытием" -> ["маникюр", "обычный", "покрытие", "обычным"]
+    "Японский маникюр" -> ["японский", "маникюр"]
+    "Hair Color" -> ["hair", "color"]
+    """
+    if not service_name:
+        return []
+    
+    # Разбиваем на слова
+    words = service_name.lower().split()
+    
+    # Убираем стоп-слова (предлоги, союзы)
+    stop_words = {'с', 'и', 'на', 'для', 'the', 'with', 'for', 'of', 'a', 'an'}
+    keywords = [w for w in words if w not in stop_words and len(w) > 2]
+    
+    # Добавляем полные фразы из 2-3 слов для лучшего поиска
+    # Например: "обычный маникюр", "гель лак"
+    if len(words) >= 2:
+        for i in range(len(words) - 1):
+            bigram = f"{words[i]} {words[i+1]}"
+            if bigram not in stop_words:
+                keywords.append(bigram)
+    
+    return keywords
+
+# ✅ УНИВЕРСАЛЬНАЯ ФУНКЦИЯ: Поиск услуги по ключевым словам с учетом контекста
+def find_service_by_keywords(
+    user_message: str,
+    db_services: List,
+    context_category: Optional[str] = None
+) -> Optional[tuple]:
+    """
+    Универсальный поиск услуги по ключевым словам из БД
+    
+    Args:
+        user_message: Сообщение пользователя
+        db_services: Список услуг из БД
+        context_category: Категория из контекста (например, "маникюр" если клиент говорил про маникюр)
+    
+    Returns:
+        (service_row, match_score) или None
+    """
+    user_msg_lower = user_message.lower()
+    
+    best_match = None
+    best_score = 0
+    
+    for service_row in db_services:
+        service_name_en = (service_row[2] or "").lower()
+        service_name_ru = (service_row[3] or "").lower()
+        service_category = (service_row[9] or "").lower() if len(service_row) > 9 else ""
+        
+        # Извлекаем ключевые слова из названия услуги
+        keywords_en = extract_service_keywords(service_name_en)
+        keywords_ru = extract_service_keywords(service_name_ru)
+        all_keywords = keywords_en + keywords_ru
+        
+        # Подсчитываем совпадения
+        score = 0
+        
+        # 1. Точное совпадение названия (высокий приоритет)
+        if service_name_ru in user_msg_lower or service_name_en in user_msg_lower:
+            score += 100
+        
+        # 2. Совпадение ключевых слов
+        matched_keywords = []
+        for keyword in all_keywords:
+            if keyword in user_msg_lower:
+                score += 10
+                matched_keywords.append(keyword)
+        
+        # 3. Бонус за совпадение категории из контекста
+        if context_category and context_category in service_category:
+            score += 5
+        
+        # 4. Бонус если все ключевые слова совпали
+        if matched_keywords and len(matched_keywords) == len(all_keywords):
+            score += 20
+        
+        if score > best_score:
+            best_score = score
+            best_match = service_row
+    
+    # Возвращаем только если есть значимое совпадение
+    if best_score >= 10:
+        return (best_match, best_score)
+    
+    return None
+
+# ✅ ФУНКЦИЯ ДЛЯ ЛОКАЛИЗАЦИИ ИМЁН МАСТЕРОВ
+def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
+    """
+    Получить локализованное имя мастера из БД
+    
+    Args:
+        emp_id: ID мастера в таблице users
+        full_name: Полное имя (fallback если локализация не найдена)
+        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
+    
+    Returns:
+        Локализованное имя или full_name если не найдено
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        # Проверяем, что мастер существует
+        cursor.execute("SELECT id, is_active FROM users WHERE id = %s", (emp_id,))
+        master_check = cursor.fetchone()
+        
+        if not master_check:
+            logger.error(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
+            print(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
+            return full_name
+        
+        if not master_check[1]:
+            logger.warning(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
+            print(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
+        
+        # Валидация языка
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'ru'
+        
+        # Получаем локализованное имя
+        name_field = f'full_name_{language}'
+        cursor.execute(f"""
+            SELECT COALESCE({name_field}, full_name_en, full_name_ru, full_name)
+            FROM users 
+            WHERE id = %s
+        """, (emp_id,))
+        
+        result = cursor.fetchone()
+        localized_name = result[0] if result and result[0] else full_name
+        
+        if localized_name != full_name:
+            logger.debug(f"✅ Localized name for id={emp_id}: {full_name} -> {localized_name} ({language})")
+        
+        return localized_name
+        
+    except Exception as e:
+        logger.error(f"❌ ERROR in get_localized_name for id={emp_id}: {e}", exc_info=True)
+        print(f"❌ ERROR in get_localized_name for id={emp_id}: {e}")
+        return full_name
+    finally:
+        conn.close()
+
 class PromptBuilder:
     def __init__(self, salon: dict, bot_settings: dict):
         self.salon = salon
@@ -50,6 +202,14 @@ class PromptBuilder:
                           client_language: str = 'ru',
                           additional_context: str = "") -> str:
         """Сборка основного системного промта"""
+        from datetime import datetime, timedelta
+        
+        # Получаем текущую дату и завтрашнюю для промпта
+        today = datetime.now().date()
+        tomorrow = today + timedelta(days=1)
+        today_str = today.strftime('%Y-%m-%d')
+        tomorrow_str = tomorrow.strftime('%Y-%m-%d')
+        day_after_tomorrow_str = (tomorrow + timedelta(days=1)).strftime('%Y-%m-%d')
         # Map arguments to context for internal helper methods
         context = {
             'instagram_id': instagram_id,
@@ -71,11 +231,24 @@ class PromptBuilder:
         # 4. Проверка доступности (если есть запрос)
         # Получаем instagram_id из контекста или ищем в истории
         instagram_id = context.get('instagram_id', '')
-        booking_availability = self._build_booking_availability(
-            instagram_id, 
-            history=history,
-            client_language=client_language
-        )
+        
+        # ✅ ОБРАБОТКА ОШИБОК: Не падаем при ошибке в _build_booking_availability
+        try:
+            booking_availability = self._build_booking_availability(
+                instagram_id, 
+                history=history,
+                client_language=client_language
+            )
+        except Exception as e:
+            logger.error(f"❌ ERROR in _build_booking_availability: {e}", exc_info=True)
+            print(f"❌ ERROR in _build_booking_availability: {e}")
+            import traceback
+            traceback.print_exc()
+            # ✅ Fallback: Показываем базовую информацию даже при ошибке
+            booking_availability = f"""
+⚠️ ВРЕМЕННО НЕДОСТУПНО: Не удалось загрузить расписание.
+Пожалуйста, уточните желаемую дату и время, и мы подберем свободное окно.
+"""
         
         # 5. История и контекст
         history_summary = self._build_history(history)
@@ -193,22 +366,43 @@ class PromptBuilder:
 
 ✅ PROTOCOL: FINALIZING BOOKING (SAVE TO DB)
 Когда клиент ПОДТВЕРДИЛ запись (написал "подтверждаю", "да, записывайте" и т.д.) И у тебя есть ВСЕ данные (Услуга, Мастер, Дата, Время, Телефон):
-Ты должен сгенерировать специальный блок [ACTION].
+Ты должен сгенерировать специальный блок [ACTION] - ОН НЕВИДИМ ДЛЯ КЛИЕНТА (удаляется автоматически).
 Внутри блока - JSON с данными для сохранения в БД.
 
-Пример финального ответа:
-"Отлично! Записала вас на Маникюр к мастеру Анна на завтра в 14:00. 💅
+⚠️ КРИТИЧЕСКИ ВАЖНЫЕ ПРАВИЛА ДЛЯ ACTION БЛОКА:
+1. "service" - ВСЕГДА используй ТОЧНОЕ русское название услуги из списка услуг выше (например "Маникюр без покрытия", НЕ "Manicure basic")
+2. "master" - ВСЕГДА используй ТОЧНОЕ русское имя мастера из списка мастеров выше (например "Гуля", НЕ "Gulya" или "GULYA")
+3. "date" - ВСЕГДА используй КОНКРЕТНУЮ ДАТУ в формате YYYY-MM-DD (например "2025-12-10"), НЕ используй "сегодня", "завтра", "послезавтра"!
+   - Если клиент сказал "сегодня" - используй: {today_str}
+   - Если клиент сказал "завтра" - используй: {tomorrow_str}
+   - Если клиент сказал "послезавтра" - используй: {day_after_tomorrow_str}
+   - Если клиент назвал конкретную дату - используй её в формате YYYY-MM-DD
+4. "time" - формат HH:MM (например "10:30", "14:00")
+5. "phone" - полный номер с кодом страны (например "+77053334455")
+
+📝 ФОРМАТ ОТВЕТА КЛИЕНТУ:
+- НЕ показывай ACTION блок клиенту! Он удаляется автоматически перед отправкой.
+- Напиши красивое подтверждение с адресом салона и временем работы.
+- Используй русский язык для всего текста.
+
+Пример финального ответа (КЛИЕНТ ВИДИТ ТОЛЬКО ТЕКСТ БЕЗ ACTION БЛОКА):
+"Отлично! Записала вас на Маникюр без покрытия к мастеру Гуля на сегодня в 10:30. 💅
+
+Мы находимся по адресу: {self.salon.get('address', '')}
+Время работы: {self.salon.get('hours', '')}
+
+До встречи в салоне! 😊
+
 [ACTION]
 {{
   "action": "save_booking",
-  "service": "Маникюр классический",
-  "master": "Anna",
-  "date": "2025-05-20",
-  "time": "14:00",
-  "phone": "971501234567"
+  "service": "Маникюр без покрытия",
+  "master": "Гуля",
+  "date": "{today_str}",
+  "time": "10:30",
+  "phone": "+77053334455"
 }}
-[/ACTION]
-До встречи в салоне!"
+[/ACTION]"
 """
         return system_prompt
 
@@ -249,8 +443,24 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         services_text = f"{self.prompt_headers.get('SERVICES', PROMPT_HEADERS['SERVICES'])}\n\n"
 
+        # Словарь переводов категорий на русский
+        category_translations = {
+            'Brows': 'Брови',
+            'Facial': 'Уход за лицом',
+            'Hair': 'Волосы',
+            'Lashes': 'Ресницы',
+            'Massage': 'Массаж',
+            'Nails': 'Ногти',
+            'Permanent Makeup': 'Перманентный макияж',
+            'Waxing': 'Депиляция',
+            'Promo': 'Акции',
+            'Hair Treatment': 'Уход за волосами'
+        }
+        
         for category, services_list in services_by_category.items():
-            services_text += f"📂 {category}:\n"
+            # Используем русский перевод категории если доступен
+            category_display = category_translations.get(category, category)
+            services_text += f"📂 {category_display}:\n"
             
             # ✅ ОПТИМИЗАЦИЯ: Показываем только ТОП-15 услуг в категории чтобы не забивать контекст
             # Остальные бот найдет через поиск если клиент спросит
@@ -304,9 +514,11 @@ Google Maps: {self.salon.get('google_maps', '')}
             
             services_text += "\n"
         
-        services_text += "\n⚠️ КОГДА КЛИЕНТ СПРАШИВАЕТ 'СКОЛЬКО ДЛИТСЯ?':\n"
-        services_text += "СМОТРИ ДЛИТЕЛЬНОСТЬ В СКОБКАХ ВЫШЕ И НАЗЫВАЙ ТОЧНОЕ ВРЕМЯ!\n"
-        services_text += "НЕ говори 'около 2 часов' если точная длительность известна!\n"
+        services_text += "\n⚠️ ВАЖНЫЕ ПРАВИЛА ДЛЯ УСЛУГ:\n"
+        services_text += "1. ВСЕГДА используй РУССКИЕ названия услуг из списка выше!\n"
+        services_text += "2. ВСЕГДА используй РУССКИЕ названия категорий (Брови, Волосы, Ногти, Ресницы, Массаж, Депиляция и т.д.), НЕ используй английские (Brows, Hair, Nails, Lashes, Massage, Waxing)!\n"
+        services_text += "3. КОГДА КЛИЕНТ СПРАШИВАЕТ 'СКОЛЬКО ДЛИТСЯ?': СМОТРИ ДЛИТЕЛЬНОСТЬ В СКОБКАХ ВЫШЕ И НАЗЫВАЙ ТОЧНОЕ ВРЕМЯ!\n"
+        services_text += "4. НЕ говори 'около 2 часов' если точная длительность известна!\n"
 
         return services_text
 
@@ -321,7 +533,8 @@ Google Maps: {self.salon.get('google_maps', '')}
             return ""
 
         masters_text = f"{self.prompt_headers.get('MASTERS', PROMPT_HEADERS['MASTERS'])}\n"
-        masters_text += "⚠️ ПРОВЕРЯЙ ЭТОТ СПИСОК КОГДА КЛИЕНТ СПРАШИВАЕТ ПРО МАСТЕРА!\n\n"
+        masters_text += "⚠️ ПРОВЕРЯЙ ЭТОТ СПИСОК КОГДА КЛИЕНТ СПРАШИВАЕТ ПРО МАСТЕРА!\n"
+        masters_text += "⚠️ ВСЕГДА используй РУССКИЕ имена мастеров из списка выше (не транслит, не английские имена)!\n\n"
 
         conn = get_db_connection()
         c = conn.cursor()
@@ -616,6 +829,8 @@ Google Maps: {self.salon.get('google_maps', '')}
         
         detected_service = None
         
+        logger.info(f"🔍 [PromptBuilder] Starting service detection. service_name='{service_name}', history_length={len(history)}")
+        
         if not service_name and history:
             # Собираем все сообщения клиента
             client_messages = []
@@ -624,6 +839,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                     client_messages.append(item[0].lower())
             
             combined_msg = " ".join(client_messages)
+            logger.debug(f"📝 [PromptBuilder] Client messages (last 5): {client_messages}")
 
             # ✅ FIX: Restrict service detection scope to avoid "ghost" matches from history
             # Only look at the VERY LAST message for new service intent, 
@@ -650,51 +866,234 @@ Google Maps: {self.salon.get('google_maps', '')}
                     if s[3]: search_candidates.append((s[3].lower(), s))
                     if s[9]: search_candidates.append((s[9].lower(), s))
                 
-                # Add Synonyms
-                for syn_key, target_names in self.service_synonyms.items():
-                    if syn_key in combined_msg: # Keep checking synonyms in broader context as they are rare
-                         for target_name in target_names:
-                            target_name_lower = target_name.lower()
-                            for s in db_services:
-                                if (s[2] and target_name_lower in s[2].lower()) or \
-                                   (s[3] and target_name_lower in s[3].lower()):
-                                    search_candidates.insert(0, (syn_key, s))
-
-                search_candidates.sort(key=lambda x: len(x[0]), reverse=True)
-
-                # 1. Try to find in LAST message (High Confidence)
+                # ✅ УНИВЕРСАЛЬНЫЙ ПОИСК: Используем контекст для определения категории
+                # Определяем категорию из предыдущих сообщений (если клиент говорил про маникюр, то "обычный" = маникюр)
+                context_category = None
+                for item in reversed(history[-10:]):
+                    if len(item) >= 2 and item[1] == 'client':
+                        msg_lower = item[0].lower()
+                        # Ищем упоминания категорий услуг
+                        if 'маникюр' in msg_lower or 'manicure' in msg_lower:
+                            context_category = 'маникюр'
+                            break
+                        elif 'педикюр' in msg_lower or 'pedicure' in msg_lower:
+                            context_category = 'педикюр'
+                            break
+                        elif 'стрижка' in msg_lower or 'haircut' in msg_lower:
+                            context_category = 'стрижка'
+                            break
+                        elif 'окрашивание' in msg_lower or 'coloring' in msg_lower:
+                            context_category = 'окрашивание'
+                            break
+                
+                # ✅ УНИВЕРСАЛЬНЫЙ ПОИСК: Сначала пробуем точное совпадение
                 for name_key, s_obj in search_candidates:
                     if name_key in last_msg_lower:
                         detected_service = s_obj[3] if s_obj[3] else s_obj[2]
                         service_name = detected_service
                         found_in_last = True
+                        logger.info(f"✅ [PromptBuilder] Exact match found: '{service_name}'")
                         print(f"🔎 [PromptBuilder] Service detected in LAST message: '{service_name}'")
                         break
+                
+                # ✅ УНИВЕРСАЛЬНЫЙ ПОИСК: Если точного совпадения нет, используем поиск по ключевым словам
+                if not found_in_last:
+                    match_result = find_service_by_keywords(
+                        user_message=last_msg_lower,
+                        db_services=db_services,
+                        context_category=context_category
+                    )
+                    
+                    if match_result:
+                        service_row, match_score = match_result
+                        detected_service = service_row[3] if service_row[3] else service_row[2]
+                        service_name = detected_service
+                        found_in_last = True
+                        logger.info(f"✅ [PromptBuilder] Keyword match found: '{service_name}' (score: {match_score})")
+                        print(f"🔎 [PromptBuilder] Service detected by keywords: '{service_name}' (score: {match_score})")
+                
+                # ✅ FALLBACK: Старые синонимы (только общие, не зависящие от услуг)
+                if not found_in_last:
+                    for syn_key, target_names in self.service_synonyms.items():
+                        if syn_key in last_msg_lower:
+                            logger.info(f"🔍 [PromptBuilder] Found general synonym '{syn_key}' in last message")
+                            print(f"🔍 [PromptBuilder] Found general synonym '{syn_key}' in last message")
+                            # Ищем соответствующую услугу в БД
+                            for target_name in target_names:
+                                target_name_lower = target_name.lower()
+                                for s in db_services:
+                                    service_name_en = (s[2] or "").lower()
+                                    service_name_ru = (s[3] or "").lower()
+                                    if target_name_lower in service_name_en or target_name_lower in service_name_ru:
+                                        detected_service = s[3] if s[3] else s[2]
+                                        service_name = detected_service
+                                        logger.info(f"✅ [PromptBuilder] Mapped synonym '{syn_key}' → service '{service_name}'")
+                                        print(f"✅ [PromptBuilder] Mapped synonym '{syn_key}' → service '{service_name}'")
+                                        found_in_last = True
+                                        break
+                                if found_in_last:
+                                    break
+                            if found_in_last:
+                                break
                 
                 # 2. If not found in last message, check broader history BUT be careful
                 # We only fallback to history if the last message was likely "Yes", "No", "Ok" (short)
                 if not found_in_last and len(last_msg_lower) < 10:
-                     for name_key, s_obj in search_candidates:
-                        if name_key in combined_msg:
-                            detected_service = s_obj[3] if s_obj[3] else s_obj[2]
-                            service_name = detected_service
-                            print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
-                            break
+                    # ✅ УНИВЕРСАЛЬНЫЙ ПОИСК: Используем поиск по ключевым словам в истории
+                    match_result = find_service_by_keywords(
+                        user_message=combined_msg,
+                        db_services=db_services,
+                        context_category=context_category
+                    )
+                    
+                    if match_result:
+                        service_row, match_score = match_result
+                        detected_service = service_row[3] if service_row[3] else service_row[2]
+                        service_name = detected_service
+                        logger.info(f"✅ [PromptBuilder] Service recovery from history: '{service_name}' (score: {match_score})")
+                        print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
+                    else:
+                        # Fallback на старый метод
+                        for name_key, s_obj in search_candidates:
+                            if name_key in combined_msg:
+                                detected_service = s_obj[3] if s_obj[3] else s_obj[2]
+                                service_name = detected_service
+                                print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
+                                break
+
         
         if not service_name:
              print(f"ℹ️ [PromptBuilder] No service detected in conversation history.")
+             logger.info(f"ℹ️ [PromptBuilder] No service detected in conversation history. Will ask client.")
 
         instructions = self.bot_settings.get(
             'booking_availability_instructions', '')
 
         if not service_name:
+            # ✅ УЛУЧШЕНИЕ UX: Проверяем, был ли уже задан вопрос об услуге
+            recent_bot_messages = []
+            for item in reversed(history[-5:]):
+                if len(item) >= 2 and item[1] == 'bot':
+                    recent_bot_messages.append(item[0].lower())
+            
+            # Проверяем, был ли уже вопрос об услуге
+            service_question_asked = any(
+                'какую процедуру' in msg or 'на какую услугу' in msg or 
+                'что вас интересует' in msg or 'какой маникюр' in msg or
+                'какой педикюр' in msg or 'какая услуга' in msg or
+                'what service' in msg or 'which service' in msg
+                for msg in recent_bot_messages
+            )
+            
+            # ✅ УЛУЧШЕНИЕ UX: Если вопрос уже задан, предлагаем варианты вместо открытого вопроса
+            if service_question_asked:
+                logger.info(f"🔄 [PromptBuilder] Service question already asked. Providing options instead.")
+                print(f"🔄 [PromptBuilder] Service question already asked. Providing options instead.")
+                
+                # Определяем категорию из контекста
+                context_category = None
+                for item in reversed(history[-10:]):
+                    if len(item) >= 2 and item[1] == 'client':
+                        msg_lower = item[0].lower()
+                        if 'маникюр' in msg_lower or 'manicure' in msg_lower:
+                            context_category = 'маникюр'
+                            break
+                        elif 'педикюр' in msg_lower or 'pedicure' in msg_lower:
+                            context_category = 'педикюр'
+                            break
+                        elif 'стрижка' in msg_lower or 'haircut' in msg_lower:
+                            context_category = 'стрижка'
+                            break
+                        elif 'окрашивание' in msg_lower or 'coloring' in msg_lower:
+                            context_category = 'окрашивание'
+                            break
+                
+                # Получаем популярные услуги из БД (либо по категории, либо все популярные)
+                if context_category:
+                    c.execute("""
+                        SELECT name_ru, name, category
+                        FROM services 
+                        WHERE is_active = TRUE 
+                        AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s)
+                        ORDER BY id
+                        LIMIT 5
+                    """, (f"%{context_category}%", f"%{context_category}%", f"%{context_category}%"))
+                else:
+                    # Если категория не определена, берем услуги из разных категорий
+                    c.execute("""
+                        SELECT DISTINCT ON (category) name_ru, name, category
+                        FROM services 
+                        WHERE is_active = TRUE 
+                        ORDER BY category, id
+                        LIMIT 6
+                    """)
+                
+                popular_services = c.fetchall()
+                conn.close()
+                
+                if popular_services:
+                    services_list = "\n".join([f"   • {s[0] or s[1]}" for s in popular_services])
+                    category_text = f" в категории '{context_category}'" if context_category else ""
+                    return f"""
+✅ У нас есть несколько вариантов{category_text}:
+{services_list}
+
+Какой вас интересует? 😊
+"""
+            
+            # ✅ УЛУЧШЕНИЕ UX: Используем контекст - если клиент упоминал категорию, предлагаем услуги этой категории
+            context_category = None
+            for item in reversed(history[-10:]):
+                if len(item) >= 2 and item[1] == 'client':
+                    msg_lower = item[0].lower()
+                    if 'маникюр' in msg_lower or 'manicure' in msg_lower:
+                        context_category = 'маникюр'
+                        break
+                    elif 'педикюр' in msg_lower or 'pedicure' in msg_lower:
+                        context_category = 'педикюр'
+                        break
+                    elif 'стрижка' in msg_lower or 'haircut' in msg_lower:
+                        context_category = 'стрижка'
+                        break
+                    elif 'окрашивание' in msg_lower or 'coloring' in msg_lower:
+                        context_category = 'окрашивание'
+                        break
+            
+            if context_category:
+                logger.info(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
+                print(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
+                
+                c.execute("""
+                    SELECT name_ru, name 
+                    FROM services 
+                    WHERE is_active = TRUE 
+                    AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s)
+                    ORDER BY id
+                    LIMIT 4
+                """, (f"%{context_category}%", f"%{context_category}%", f"%{context_category}%"))
+                
+                category_services = c.fetchall()
+                conn.close()
+                
+                if category_services:
+                    services_text = "\n".join([f"   • {s[0] or s[1]}" for s in category_services])
+                    return f"""
+У нас есть несколько вариантов {context_category}а:
+{services_text}
+
+Какой вас интересует? 😊
+"""
+            
+            # Если ничего не найдено, возвращаем стандартное сообщение
             conn.close()
             return f"""{self.prompt_headers.get('UNKNOWN_SERVICE', PROMPT_HEADERS['UNKNOWN_SERVICE'])}
 {instructions}"""
 
         print(f"✅ [PromptBuilder] Building availability for service: '{service_name}'")
+        logger.info(f"✅ [PromptBuilder] Building availability for service: '{service_name}'")
 
         if client_has_name:
+            logger.debug(f"✅ [PromptBuilder] Client has name, skipping name request")
             instructions = instructions.replace(
                 "Для записи нужно имя и WhatsApp",
                 "Для записи нужен только WhatsApp"
@@ -708,111 +1107,15 @@ Google Maps: {self.salon.get('google_maps', '')}
                 "WhatsApp"
             )
             instructions = instructions.replace(
-                "Нужно имя",
+                "имя и",
                 ""
             )
 
-        # ✅ NEW: Simple Date Intent Parsing
-        # Пытаемся понять, какую дату хочет клиент
-        # (Это базовая логика, можно улучшить regex)
-        target_date_str = None
-        combined_msg_lower = " ".join([m[0].lower() for m in history[-3:] if m[1] == 'client'])
-        
-        from datetime import datetime, timedelta
-        from utils.datetime_utils import get_current_time
-        
-        # NOTE: get_current_time returns timezone-aware datetime
-        now = get_current_time()
-        
-        import re
-        
-        if "сегодня" in combined_msg_lower:
-            target_date_str = now.strftime('%Y-%m-%d')
-            print(f"🗓 Date Intent: TODAY ({target_date_str})")
-        elif "завтра" in combined_msg_lower:
-            target_date_str = (now + timedelta(days=1)).strftime('%Y-%m-%d')
-            print(f"🗓 Date Intent: TOMORROW ({target_date_str})")
-        elif "послезавтра" in combined_msg_lower:
-            target_date_str = (now + timedelta(days=2)).strftime('%Y-%m-%d')
-            print(f"🗓 Date Intent: DAY AFTER TOMORROW ({target_date_str})")
-        else:
-            # Try to find specific date like "30.12" or "30 число"
-            # Regex for "DD.MM" or "DD число"
-            match = re.search(r'(\d{1,2})[\./-](\d{1,2})', combined_msg_lower)
-            if match:
-                day, month = int(match.group(1)), int(match.group(2))
-                # Assume current year (or next year if month < current_month)
-                year = now.year
-                if month < now.month:
-                    year += 1
-                try:
-                    target_date_str = f"{year}-{month:02d}-{day:02d}"
-                    print(f"🗓 Date Intent: SPECIFIC DATE ({target_date_str})")
-                except:
-                    pass
-            else:
-                 # Check for "30 число"
-                 match_day = re.search(r'(\d{1,2})\s+(число|числа)', combined_msg_lower)
-                 if match_day:
-                     day = int(match_day.group(1))
-                     # Assume current month/year
-                     # If day < current_day, assume next month
-                     target_dt_temp = now
-                     if day < now.day:
-                         # Move to next month
-                         if now.month == 12:
-                             target_dt_temp = now.replace(year=now.year+1, month=1)
-                         else:
-                             target_dt_temp = now.replace(month=now.month+1)
-                     
-                     try:
-                         # Safe replace day
-                         target_date_str = target_dt_temp.replace(day=day).strftime('%Y-%m-%d')
-                         print(f"🗓 Date Intent: NUMBER ({target_date_str}) from '{match_day.group(0)}'")
-                     except:
-                         pass
-
-        
-        avail_text = f"=== 📅 ДОСТУПНЫЕ МАСТЕРА ({service_name}) ===\n"
-        avail_text += f"Услуга: {service_name}\n"
-        avail_text += "\n"
-
-
-        if client_has_name:
-            # Добавляем явную инструкцию НЕ спрашивать имя
-            additional_instruction = f"\n\n⚠️ У КЛИЕНТА УЖЕ ЕСТЬ ИМЯ (из Instagram) - НЕ СПРАШИВАЙ ИМЯ! Для записи нужен только WhatsApp."
-            instructions = additional_instruction + "\n" + instructions
-            print(f"ℹ️ [PromptBuilder] Client has name -> Instructions modified to skip name request.")
-
-        now = get_current_time()
-        current_hour = now.hour
-
-        time_phrases = {
-            'утр': (9, 12),
-            'обед': (14, 17),
-            'вечер': (17, 21),
-            'morning': (9, 12),
-            'afternoon': (14, 17),
-            'evening': (17, 21)
-        }
-
-        time_preference = None
-        if history:
-            for msg in reversed(history[-5:]):
-                if msg[1] == 'client':
-                    msg_lower = msg[0].lower()
-                    for phrase, (start_h, end_h) in time_phrases.items():
-                        if phrase in msg_lower:
-                            time_preference = (start_h, end_h)
-                            print(f"🕰️ [PromptBuilder] Detected time preference: {phrase} ({start_h}-{end_h})")
-                            break
-                    if time_preference:
-                        break
-
         # Ищем услугу в БД по названию (точному или похожему)
         # service_name мы определили выше или оно пришло аргументом
+        logger.debug(f"🔍 [PromptBuilder] Searching for service in DB: '{service_name}'")
         c.execute("""
-            SELECT id, name_ru, price, currency, duration FROM services 
+            SELECT id, name_ru, name, price, currency, duration, category FROM services 
             WHERE (LOWER(name) LIKE %s OR LOWER(name_ru) LIKE %s)
             AND is_active = TRUE
             LIMIT 1
@@ -820,6 +1123,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         service_row = c.fetchone()
 
         if not service_row:
+            logger.warning(f"❌ [PromptBuilder] Service '{service_name}' NOT found in DB search.")
             print(f"❌ [PromptBuilder] Service '{service_name}' NOT found in DB search.")
             conn.close()
             return f"""{self.prompt_headers.get('NOT_FOUND_SERVICE', PROMPT_HEADERS['NOT_FOUND_SERVICE'])}
@@ -827,8 +1131,13 @@ Google Maps: {self.salon.get('google_maps', '')}
 Попробуй назвать услугу иначе (например "Маникюр", "Педикюр", "Стрижка")."""
 
         service_id = service_row[0]
-        # Parse base duration from service definition (index 4 in new query)
-        base_duration_val = service_row[4]
+        service_name_ru = service_row[1] or service_row[2]  # name_ru or name_en
+        service_category = service_row[6] if len(service_row) > 6 else None
+        logger.info(f"✅ [PromptBuilder] Service found in DB: id={service_id}, name='{service_name_ru}', category='{service_category}'")
+        print(f"✅ [PromptBuilder] Service found: id={service_id}, name='{service_name_ru}', category='{service_category}'")
+        
+        # Parse base duration from service definition (index 5 in new query: 0:id, 1:name_ru, 2:name, 3:price, 4:currency, 5:duration, 6:category)
+        base_duration_val = service_row[5]
         base_duration_minutes = 60 # Default fallback if DB is empty
         
         if base_duration_val:
@@ -846,28 +1155,125 @@ Google Maps: {self.salon.get('google_maps', '')}
                      base_duration_minutes = int(s_dur.split('min')[0])
                 elif s_dur.isdigit():
                      base_duration_minutes = int(s_dur)
-            except:
+                logger.debug(f"📏 [PromptBuilder] Parsed duration: {base_duration_minutes} minutes")
+            except Exception as e:
+                logger.warning(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}': {e}")
                 pass
         
         employees = get_employees_by_service(service_id)
         print(f"👥 [PromptBuilder] Found {len(employees)} employees for service ID {service_id}")
+        logger.info(f"✅ Found {len(employees)} employees for service_id={service_id}, service_name='{service_name}'")
 
         if not employees:
+            logger.warning(f"⚠️ No employees found for service_id={service_id}, service_name='{service_name}'")
+            print(f"❌ ERROR: No employees found for service_id={service_id}, service_name='{service_name}'")
+            
+            # ✅ УЛУЧШЕНИЕ: Ищем альтернативные услуги в той же категории, у которых ЕСТЬ мастера
+            # service_row structure: 0:id, 1:name_ru, 2:name, 3:price, 4:currency, 5:duration, 6:category
+            service_category = service_row[6] if len(service_row) > 6 else None
+            alternative_services = []
+            
+            if service_category:
+                # Ищем услуги в той же категории, у которых есть мастера
+                c.execute("""
+                    SELECT s.id, s.name_ru, s.name
+                    FROM services s
+                    WHERE s.is_active = TRUE 
+                    AND s.id != %s
+                    AND (LOWER(s.category) LIKE %s OR LOWER(s.name_ru) LIKE %s OR LOWER(s.name) LIKE %s)
+                    AND EXISTS (
+                        SELECT 1 FROM user_services us
+                        JOIN users u ON u.id = us.user_id
+                        WHERE us.service_id = s.id
+                        AND u.is_active = TRUE 
+                        AND u.is_service_provider = TRUE
+                        AND u.role NOT IN ('director', 'admin', 'manager')
+                    )
+                    ORDER BY s.id
+                    LIMIT 5
+                """, (service_id, f"%{service_category.lower()}%", f"%{service_category.lower()}%", f"%{service_category.lower()}%"))
+                alternative_services = c.fetchall()
+            
+            # Если не нашли в категории, ищем любые популярные услуги с мастерами
+            if not alternative_services:
+                c.execute("""
+                    SELECT DISTINCT s.id, s.name_ru, s.name
+                    FROM services s
+                    WHERE s.is_active = TRUE 
+                    AND s.id != %s
+                    AND EXISTS (
+                        SELECT 1 FROM user_services us
+                        JOIN users u ON u.id = us.user_id
+                        WHERE us.service_id = s.id
+                        AND u.is_active = TRUE 
+                        AND u.is_service_provider = TRUE
+                        AND u.role NOT IN ('director', 'admin', 'manager')
+                    )
+                    ORDER BY s.id
+                    LIMIT 5
+                """, (service_id,))
+                alternative_services = c.fetchall()
+            
             conn.close()
-            return f"⚠️ Нет мастеров для услуги '{service_name}'"
+            
+            # Используем фактическое название услуги из БД
+            actual_service_name = service_name_ru if service_name_ru else service_name
+            
+            if alternative_services:
+                alt_list = "\n".join([f"   • {s[1] or s[2]}" for s in alternative_services])
+                return f"""⚠️ ВАЖНО: Услуга "{actual_service_name}" временно недоступна (нет свободных мастеров).
+
+✅ Вместо этого доступны похожие услуги:
+{alt_list}
+
+🎯 ИНСТРУКЦИЯ ДЛЯ AI: 
+- НЕ предлагай услугу "{actual_service_name}" - она недоступна!
+- Вежливо сообщи клиенту, что "{actual_service_name}" временно недоступна
+- Предложи альтернативные услуги из списка выше
+- Если клиент настаивает на "{actual_service_name}", предложи связаться с салоном по телефону"""
+            else:
+                return f"""⚠️ ВАЖНО: Услуга "{actual_service_name}" временно недоступна (нет свободных мастеров).
+
+🎯 ИНСТРУКЦИЯ ДЛЯ AI: 
+- НЕ предлагай услугу "{actual_service_name}" - она недоступна!
+- Вежливо сообщи клиенту, что "{actual_service_name}" временно недоступна
+- Предложи клиенту связаться с салоном по телефону {self.salon.get('phone', '')} для уточнения доступности
+- Или предложи выбрать другую услугу из общего списка услуг"""
 
         # ✅ INIT SMART SCHEDULER
         from services.smart_scheduler import SmartScheduler
         scheduler = SmartScheduler()
         
         # ... (lines skipped)
-
+        
+        found_any = False
+        avail_text = ""
+        
         for emp in employees:
             # emp: (u.*, price, duration, price_min, price_max)
             # u.* fields: 0:id, 1:username, 2:pass, 3:full_name, ...
             emp_id = emp[0]
             username = emp[1]
             full_name = emp[3]
+            
+            # ✅ ВАЛИДАЦИЯ: Проверяем, что мастер существует и активен
+            c.execute("SELECT id, is_active, is_service_provider FROM users WHERE id = %s", (emp_id,))
+            master_check = c.fetchone()
+            
+            if not master_check:
+                logger.error(f"❌ ERROR: Master with id={emp_id}, name='{full_name}' NOT FOUND in DB! Skipping.")
+                print(f"❌ ERROR: Master with id={emp_id}, name='{full_name}' NOT FOUND in DB! Skipping.")
+                continue
+            
+            if not master_check[1]:  # is_active
+                logger.warning(f"⚠️ WARNING: Master {full_name} (id={emp_id}) is NOT ACTIVE! Skipping.")
+                print(f"⚠️ WARNING: Master {full_name} (id={emp_id}) is NOT ACTIVE! Skipping.")
+                continue
+            
+            if not master_check[2]:  # is_service_provider
+                logger.warning(f"⚠️ WARNING: Master {full_name} (id={emp_id}) is NOT a service provider! Skipping.")
+                print(f"⚠️ WARNING: Master {full_name} (id={emp_id}) is NOT a service provider! Skipping.")
+                continue
             
             # Fetch duration (Master Override)
             duration_val = emp[-3]
@@ -888,19 +1294,48 @@ Google Maps: {self.salon.get('google_maps', '')}
                          duration_minutes = int(str(duration_val).split('min')[0])
                     elif str(duration_val).isdigit():
                          duration_minutes = int(str(duration_val))
-                except:
+                except Exception as e:
+                    logger.warning(f"⚠️ Error parsing duration for {full_name}: {e}, using default {base_duration_minutes}")
                     pass
 
-            master_display_name = get_localized_name(emp_id, full_name)
+            master_display_name = get_localized_name(emp_id, full_name, client_language)
+            
+            # ✅ ВАЛИДАЦИЯ: Проверяем, что service_name существует в БД перед вызовом scheduler
+            if service_name:
+                c.execute("SELECT id, name FROM services WHERE id = %s AND is_active = TRUE", (service_id,))
+                service_check = c.fetchone()
+                if not service_check:
+                    logger.error(f"❌ ERROR: Service id={service_id}, name='{service_name}' NOT FOUND or NOT ACTIVE in DB!")
+                    print(f"❌ ERROR: Service id={service_id}, name='{service_name}' NOT FOUND or NOT ACTIVE in DB!")
+                    continue
             
             # 🧠 SMART SUGGESTION
             # Pass full_name because MasterScheduleService uses it for lookup
-            suggestions = scheduler.get_smart_suggestions(
-                service_name=service_name,
-                master_name=full_name, 
-                target_date_str=final_target_date,
-                duration_minutes=duration_minutes
-            )
+            # Используем preferred_date если есть, иначе None (scheduler сам определит)
+            target_date_str = preferred_date if preferred_date else None
+            try:
+                suggestions = scheduler.get_smart_suggestions(
+                    service_name=service_name,
+                    master_name=full_name, 
+                    target_date_str=target_date_str,
+                    duration_minutes=duration_minutes
+                )
+                
+                # ✅ ВАЛИДАЦИЯ: Проверяем, что suggestions содержит валидные данные
+                if not isinstance(suggestions, dict):
+                    logger.error(f"❌ ERROR: scheduler.get_smart_suggestions returned invalid data type: {type(suggestions)}")
+                    print(f"❌ ERROR: scheduler.get_smart_suggestions returned invalid data type: {type(suggestions)}")
+                    continue
+                
+                if 'primary_slots' not in suggestions:
+                    logger.error(f"❌ ERROR: suggestions missing 'primary_slots' key!")
+                    print(f"❌ ERROR: suggestions missing 'primary_slots' key!")
+                    continue
+                
+            except Exception as e:
+                logger.error(f"❌ ERROR in get_smart_suggestions for {full_name}: {e}", exc_info=True)
+                print(f"❌ ERROR in get_smart_suggestions for {full_name}: {e}")
+                continue
             
             avail_text += f"\n👤 Мастер: {master_display_name}\n"
             
@@ -908,22 +1343,54 @@ Google Maps: {self.salon.get('google_maps', '')}
                 found_any = True
                 date_display = suggestions['primary_date']
                 
-                # ✅ SHOW MORE SLOTS (Fix #2: Hidden 11:00)
-                # Show up to 10 slots to cover full day (10:00 - 20:00 is approx 20 slots of 30min, so 10 is half day)
-                # If we detect specific time preference, we should ideally prioritize it, 
-                # but increasing limit is the safest quick fix.
-                slots_str = ", ".join(suggestions['primary_slots'][:12]) 
-                avail_text += f"   ✅ {date_display}: {slots_str}\n"
+                # ✅ ВАЛИДАЦИЯ: Проверяем, что слоты - это строки времени
+                valid_slots = []
+                for slot in suggestions['primary_slots'][:12]:
+                    if isinstance(slot, str) and ':' in slot:
+                        try:
+                            # Проверяем формат времени
+                            hour, minute = map(int, slot.split(':'))
+                            if 0 <= hour < 24 and 0 <= minute < 60:
+                                valid_slots.append(slot)
+                            else:
+                                logger.warning(f"⚠️ Invalid time slot format: {slot}")
+                        except ValueError:
+                            logger.warning(f"⚠️ Invalid time slot format: {slot}")
+                    else:
+                        logger.warning(f"⚠️ Invalid slot type: {type(slot)}, value: {slot}")
+                
+                if valid_slots:
+                    slots_str = ", ".join(valid_slots)
+                    avail_text += f"   ✅ {date_display}: {slots_str}\n"
+                else:
+                    logger.warning(f"⚠️ No valid slots found for {full_name} on {date_display}")
+                    avail_text += f"   ❌ На {date_display} мест нет.\n"
             else:
                 avail_text += f"   ❌ На {suggestions['primary_date']} мест нет.\n"
                 
             # Show alternatives if primary is full or explicitly requested
-            if suggestions['alternatives']:
+            if suggestions.get('alternatives'):
                 found_any = True
                 avail_text += f"   💡 Альтернативы:\n"
                 for alt in suggestions['alternatives']:
-                    alt_slots = ", ".join(alt['slots'][:3])
-                    avail_text += f"      - {alt['date']}: {alt_slots}\n"
+                    if not isinstance(alt, dict) or 'date' not in alt or 'slots' not in alt:
+                        logger.warning(f"⚠️ Invalid alternative format: {alt}")
+                        continue
+                    
+                    # Валидация слотов в альтернативах
+                    valid_alt_slots = []
+                    for slot in alt['slots'][:3]:
+                        if isinstance(slot, str) and ':' in slot:
+                            try:
+                                hour, minute = map(int, slot.split(':'))
+                                if 0 <= hour < 24 and 0 <= minute < 60:
+                                    valid_alt_slots.append(slot)
+                            except ValueError:
+                                pass
+                    
+                    if valid_alt_slots:
+                        alt_slots = ", ".join(valid_alt_slots)
+                        avail_text += f"      - {alt['date']}: {alt_slots}\n"
 
         if not found_any:
             avail_text += "\n😔 К сожалению, свободных окошек на ближайшие дни нет."

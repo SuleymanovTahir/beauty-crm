@@ -8,7 +8,18 @@ from typing import Optional
 
 from datetime import datetime
 
-from core.config import DATABASE_NAME
+from core.config import (
+    DATABASE_NAME,
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS,
+    DEFAULT_HOURS_START,
+    DEFAULT_HOURS_END,
+    DEFAULT_LUNCH_START,
+    DEFAULT_LUNCH_END,
+    DEFAULT_REPORT_TIME,
+    get_default_hours_dict,
+    get_default_working_hours_response
+)
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
@@ -23,7 +34,7 @@ class NotificationSettings(BaseModel):
     bookingNotifications: bool = True
     chatNotifications: bool = True
     dailyReport: bool = True
-    reportTime: str = "09:00"
+    reportTime: str = DEFAULT_REPORT_TIME  # ✅ Используем константу
 
 @router.post("/settings/notifications")
 async def save_notification_settings(request: Request, settings: NotificationSettings):
@@ -105,7 +116,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
             try:
                 conn = get_db_connection()
                 c = conn.cursor()
-                c.execute("""
+                c.execute(f"""
                     CREATE TABLE IF NOT EXISTS notification_settings (
                         id SERIAL PRIMARY KEY,
                         user_id INTEGER NOT NULL,
@@ -114,7 +125,7 @@ async def save_notification_settings(request: Request, settings: NotificationSet
                         booking_notifications INTEGER DEFAULT 1,
                         chat_notifications INTEGER DEFAULT 1,
                         daily_report INTEGER DEFAULT 1,
-                        report_time TEXT DEFAULT '09:00',
+                        report_time TEXT DEFAULT '{DEFAULT_REPORT_TIME}',
                         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
                         UNIQUE(user_id)
@@ -204,7 +215,7 @@ async def get_notification_settings():
                 "bookingNotifications": True,
                 "chatNotifications": True,
                 "dailyReport": True,
-                "reportTime": "09:00"
+                "reportTime": DEFAULT_REPORT_TIME  # ✅ Используем константу
             }
 
     except psycopg2.OperationalError:
@@ -215,7 +226,7 @@ async def get_notification_settings():
             "bookingNotifications": True,
             "chatNotifications": True,
             "dailyReport": True,
-            "reportTime": "09:00"
+            "reportTime": DEFAULT_REPORT_TIME  # ✅ Используем константу
         }
     except Exception as e:
         log_error(f"Error loading notification settings: {e}", "settings")
@@ -349,3 +360,43 @@ async def update_salon_settings_api(request: Request):
     except Exception as e:
         log_error(f"Error updating salon settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/salon-settings/working-hours")
+async def get_salon_working_hours():
+    """Получить рабочие часы салона из настроек"""
+    try:
+        from db import get_salon_settings
+        salon = get_salon_settings()
+        
+        # Парсим часы работы
+        hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
+        hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
+        lunch_start = salon.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
+        lunch_end = salon.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+        
+        # Парсим время начала и конца
+        def parse_hours(hours_str):
+            parts = hours_str.split('-')
+            if len(parts) == 2:
+                start = parts[0].strip()
+                end = parts[1].strip()
+                return {
+                    "start": start,
+                    "end": end,
+                    "start_hour": int(start.split(':')[0]),
+                    "end_hour": int(end.split(':')[0])
+                }
+            return get_default_hours_dict()  # ✅ Используем функцию
+        
+        return {
+            "weekdays": parse_hours(hours_weekdays),
+            "weekends": parse_hours(hours_weekends),
+            "lunch": {
+                "start": lunch_start,
+                "end": lunch_end
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting salon working hours: {e}", "settings")
+        # Fallback
+        return get_default_working_hours_response()  # ✅ Используем функцию

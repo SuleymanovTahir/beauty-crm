@@ -7,7 +7,17 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from psycopg2.extras import RealDictCursor
-from core.config import DATABASE_NAME
+from core.config import (
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS,
+    DEFAULT_HOURS_START,
+    DEFAULT_HOURS_END,
+    DEFAULT_LUNCH_START,
+    DEFAULT_LUNCH_END,
+    DEFAULT_REPORT_TIME,
+    get_default_hours_dict,
+    get_default_working_hours_response
+)
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -35,47 +45,52 @@ class TimeOffCreate(BaseModel):
 
 # --- New Endpoints for Admin UI (User ID based) ---
 
+# ✅ ИСПОЛЬЗОВАТЬ MasterScheduleService для получения расписания
 @router.get("/schedule/user/{user_id}", response_model=List[WorkScheduleItem])
 async def get_user_schedule(user_id: int):
-    conn = get_db_connection()
+    """Получить расписание пользователя - использует MasterScheduleService"""
     try:
+        # Получаем имя мастера по user_id
+        conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        
-        cursor.execute("""
-            SELECT day_of_week, start_time, end_time, is_active 
-            FROM user_schedule 
-            WHERE user_id = %s 
-            ORDER BY day_of_week
-        """, (user_id,))
-        
-        rows = cursor.fetchall()
-        schedule = []
-        
-        # Map existing schedule
-        existing_days = {row['day_of_week']: row for row in rows}
-        
-        # Return full week (0-6)
-        for day in range(7):
-            if day in existing_days:
-                row = existing_days[day]
-                schedule.append({
-                    "day_of_week": day,
-                    "start_time": row['start_time'],
-                    "end_time": row['end_time'],
-                    "is_working": bool(row['is_active'])
-                })
-            else:
-                # Default empty/non-working day
-                schedule.append({
-                    "day_of_week": day,
-                    "start_time": "09:00",
-                    "end_time": "18:00",
-                    "is_working": False
-                })
-            
-        return schedule
-    finally:
+        cursor.execute("SELECT full_name FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
         conn.close()
+        
+        if not user:
+            return JSONResponse({"error": "User not found"}, status_code=404)
+        
+        master_name = user['full_name']
+        
+        # ✅ Используем MasterScheduleService
+        schedule_service = MasterScheduleService()
+        schedule_list = schedule_service.get_working_hours(master_name)  # Возвращает List[Dict]
+        
+        # ✅ Преобразуем список в словарь для удобства поиска
+        schedule_map = {item['day_of_week']: item for item in schedule_list}
+        
+        # Преобразуем в формат для UI
+        result = []
+        for day in range(7):
+            day_schedule = schedule_map.get(day, {})
+            
+            # ✅ ИСПРАВЛЕНО: Проверяем на None и используем дефолты
+            # get_working_hours() возвращает None для start_time/end_time если расписание не установлено
+            start_time = day_schedule.get('start_time') or DEFAULT_HOURS_START
+            end_time = day_schedule.get('end_time') or DEFAULT_HOURS_END
+            is_working = day_schedule.get('is_active', False)
+            
+            result.append({
+                "day_of_week": day,
+                "start_time": start_time,
+                "end_time": end_time,
+                "is_working": is_working
+            })
+        
+        return result
+    except Exception as e:
+        log_error(f"Error getting user schedule: {e}", "schedule")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.put("/schedule/user/{user_id}")
 async def update_user_schedule(user_id: int, data: WorkScheduleUpdate):
@@ -158,8 +173,8 @@ async def set_working_hours_api(
     Body:
     {
         "day_of_week": 0,  // 0=Пн, 6=Вс
-        "start_time": "09:00",
-        "end_time": "18:00"
+        "start_time": "10:30",  // Пример (используется DEFAULT_HOURS_START)
+        "end_time": "21:30"    // Пример (используется DEFAULT_HOURS_END)
     }
     """
     user = require_auth(session_token)
@@ -414,3 +429,43 @@ async def check_availability_api(
     except Exception as e:
         log_error(f"Error checking availability: {e}", "schedule")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/salon-settings/working-hours")
+async def get_salon_working_hours():
+    """Получить рабочие часы салона из настроек"""
+    try:
+        from db import get_salon_settings
+        salon = get_salon_settings()
+        
+        # Парсим часы работы
+        hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
+        hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
+        lunch_start = salon.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
+        lunch_end = salon.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+        
+        # Парсим время начала и конца
+        def parse_hours(hours_str):
+            parts = hours_str.split('-')
+            if len(parts) == 2:
+                start = parts[0].strip()
+                end = parts[1].strip()
+                return {
+                    "start": start,
+                    "end": end,
+                    "start_hour": int(start.split(':')[0]),
+                    "end_hour": int(end.split(':')[0])
+                }
+            return get_default_hours_dict()  # ✅ Используем функцию
+        
+        return {
+            "weekdays": parse_hours(hours_weekdays),
+            "weekends": parse_hours(hours_weekends),
+            "lunch": {
+                "start": lunch_start,
+                "end": lunch_end
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting salon working hours: {e}", "settings")
+        # Fallback
+        return get_default_working_hours_response()  # ✅ Используем функцию
