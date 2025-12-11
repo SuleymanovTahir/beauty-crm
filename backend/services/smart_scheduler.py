@@ -7,63 +7,8 @@ from utils.datetime_utils import get_current_time
 logger = logging.getLogger(__name__)
 
 # ✅ ФУНКЦИЯ ДЛЯ ЛОКАЛИЗАЦИИ ИМЁН МАСТЕРОВ
-def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
-    """
-    Получить локализованное имя мастера из БД
-    
-    Args:
-        emp_id: ID мастера в таблице users
-        full_name: Полное имя (fallback если локализация не найдена)
-        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
-    
-    Returns:
-        Локализованное имя или full_name если не найдено
-    """
-    from db.connection import get_db_connection
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    try:
-        # Проверяем, что мастер существует
-        cursor.execute("SELECT id, is_active FROM users WHERE id = %s", (emp_id,))
-        master_check = cursor.fetchone()
-        
-        if not master_check:
-            logger.error(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            print(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            return full_name
-        
-        if not master_check[1]:
-            logger.warning(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-            print(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-        
-        # Валидация языка
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if language not in valid_languages:
-            language = 'ru'
-        
-        # Получаем локализованное имя
-        name_field = f'full_name_{language}'
-        cursor.execute(f"""
-            SELECT COALESCE({name_field}, full_name_en, full_name_ru, full_name)
-            FROM users 
-            WHERE id = %s
-        """, (emp_id,))
-        
-        result = cursor.fetchone()
-        localized_name = result[0] if result and result[0] else full_name
-        
-        if localized_name != full_name:
-            logger.debug(f"✅ Localized name for id={emp_id}: {full_name} -> {localized_name} ({language})")
-        
-        return localized_name
-        
-    except Exception as e:
-        logger.error(f"❌ ERROR in get_localized_name for id={emp_id}: {e}", exc_info=True)
-        print(f"❌ ERROR in get_localized_name for id={emp_id}: {e}")
-        return full_name
-    finally:
-        conn.close()
+# ✅ Импортируем универсальную функцию из utils (убрано дублирование)
+from utils.language_utils import get_localized_name
 
 class SmartScheduler:
     """
