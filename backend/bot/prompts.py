@@ -115,63 +115,8 @@ def find_service_by_keywords(
     
     return None
 
-# ✅ ФУНКЦИЯ ДЛЯ ЛОКАЛИЗАЦИИ ИМЁН МАСТЕРОВ
-def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
-    """
-    Получить локализованное имя мастера из БД
-    
-    Args:
-        emp_id: ID мастера в таблице users
-        full_name: Полное имя (fallback если локализация не найдена)
-        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
-    
-    Returns:
-        Локализованное имя или full_name если не найдено
-    """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    try:
-        # Проверяем, что мастер существует
-        cursor.execute("SELECT id, is_active FROM users WHERE id = %s", (emp_id,))
-        master_check = cursor.fetchone()
-        
-        if not master_check:
-            logger.error(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            print(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            return full_name
-        
-        if not master_check[1]:
-            logger.warning(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-            print(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-        
-        # Валидация языка
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if language not in valid_languages:
-            language = 'ru'
-        
-        # Получаем локализованное имя
-        name_field = f'full_name_{language}'
-        cursor.execute(f"""
-            SELECT COALESCE({name_field}, full_name_en, full_name_ru, full_name)
-            FROM users 
-            WHERE id = %s
-        """, (emp_id,))
-        
-        result = cursor.fetchone()
-        localized_name = result[0] if result and result[0] else full_name
-        
-        if localized_name != full_name:
-            logger.debug(f"✅ Localized name for id={emp_id}: {full_name} -> {localized_name} ({language})")
-        
-        return localized_name
-        
-    except Exception as e:
-        logger.error(f"❌ ERROR in get_localized_name for id={emp_id}: {e}", exc_info=True)
-        print(f"❌ ERROR in get_localized_name for id={emp_id}: {e}")
-        return full_name
-    finally:
-        conn.close()
+# ✅ Импортируем универсальную функцию из utils (убрано дублирование)
+from utils.language_utils import get_localized_name
 
 class PromptBuilder:
     def __init__(self, salon: dict, bot_settings: dict):
@@ -198,7 +143,7 @@ class PromptBuilder:
     def build_full_prompt(self, 
                           instagram_id: str,
                           history: List[Tuple], 
-                          booking_progress: dict = None,
+                          booking_progress: Optional[dict] = None,
                           client_language: str = 'ru',
                           additional_context: str = "") -> str:
         """Сборка основного системного промта"""
@@ -222,8 +167,8 @@ class PromptBuilder:
         # 1. Базовая информация о салоне
         base_info = self._build_salon_info()
         
-        # 2. Список услуг (ДИНАМИЧЕСКИЙ)
-        services_list = self._build_services_list()
+        # 2. Список услуг (ДИНАМИЧЕСКИЙ) с локализацией
+        services_list = self._build_services_list(client_language)
         
         # 3. Список мастеров (ДИНАМИЧЕСКИЙ)
         masters_list = self._build_masters_list(client_language)
@@ -350,7 +295,7 @@ class PromptBuilder:
         4. Если клиент спрашивает цену - называй цену из списка услуг.
         5. ⛔️ ПРОВЕРКА ДОСТУПНОСТИ: Если в блоке "ДОСТУПНЫЕ МАСТЕРА" написано "мест нет" или "❌" - ЗНАЧИТ МАСТЕР ЗАНЯТ! Не предлагай его, даже если он есть в общем списке мастеров.
         6. Не придумывай услуги, которых нет в списке.
-        7. Используй язык клиента ({client_language}).
+        7. 🌐 КРИТИЧЕСКИ ВАЖНО: ВСЕГДА используй язык клиента ({client_language}) для ВСЕХ ответов! Все названия услуг, категорий, имена мастеров, единицы времени - ВСЕ должно быть на языке клиента!
         8. Если клиент просто здоровается - отвечай приветливо, используя фразу: "{greeting_msg}" (но адаптируй под язык клиента).
         
 {anti_patterns_section}
@@ -370,8 +315,8 @@ class PromptBuilder:
 Внутри блока - JSON с данными для сохранения в БД.
 
 ⚠️ КРИТИЧЕСКИ ВАЖНЫЕ ПРАВИЛА ДЛЯ ACTION БЛОКА:
-1. "service" - ВСЕГДА используй ТОЧНОЕ русское название услуги из списка услуг выше (например "Маникюр без покрытия", НЕ "Manicure basic")
-2. "master" - ВСЕГДА используй ТОЧНОЕ русское имя мастера из списка мастеров выше (например "Гуля", НЕ "Gulya" или "GULYA")
+1. "service" - ВСЕГДА используй ТОЧНОЕ название услуги из списка услуг выше (используй ТОЧНО такое же название, как в списке, на языке клиента)
+2. "master" - ВСЕГДА используй ТОЧНОЕ имя мастера из списка мастеров выше (используй ТОЧНО такое же имя, как в списке, на языке клиента)
 3. "date" - ВСЕГДА используй КОНКРЕТНУЮ ДАТУ в формате YYYY-MM-DD (например "2025-12-10"), НЕ используй "сегодня", "завтра", "послезавтра"!
    - Если клиент сказал "сегодня" - используй: {today_str}
    - Если клиент сказал "завтра" - используй: {tomorrow_str}
@@ -383,10 +328,14 @@ class PromptBuilder:
 📝 ФОРМАТ ОТВЕТА КЛИЕНТУ:
 - НЕ показывай ACTION блок клиенту! Он удаляется автоматически перед отправкой.
 - Напиши красивое подтверждение с адресом салона и временем работы.
-- Используй русский язык для всего текста.
+- Используй язык клиента ({client_language}) для всего текста.
 
 Пример финального ответа (КЛИЕНТ ВИДИТ ТОЛЬКО ТЕКСТ БЕЗ ACTION БЛОКА):
-"Отлично! Записала вас на Маникюр без покрытия к мастеру Гуля на сегодня в 10:30. 💅
+Используй язык клиента ({client_language}) для текста подтверждения.
+В ACTION блоке используй ТОЧНЫЕ названия из списков выше (на языке клиента).
+
+Пример для языка {client_language}:
+"Отлично! Записала вас на [название услуги из списка] к мастеру [имя мастера из списка] на сегодня в 10:30. 💅
 
 Мы находимся по адресу: {self.salon.get('address', '')}
 Время работы: {self.salon.get('hours', '')}
@@ -396,8 +345,8 @@ class PromptBuilder:
 [ACTION]
 {{
   "action": "save_booking",
-  "service": "Маникюр без покрытия",
-  "master": "Гуля",
+  "service": "[ТОЧНОЕ название услуги из списка выше]",
+  "master": "[ТОЧНОЕ имя мастера из списка выше]",
   "date": "{today_str}",
   "time": "10:30",
   "phone": "+77053334455"
@@ -430,8 +379,50 @@ Google Maps: {self.salon.get('google_maps', '')}
 - "Есть парковка?" → Назови информацию о парковке
 - "Есть Wi-Fi?" → Скажи да или нет"""
 
-    def _build_services_list(self) -> str:
-        """Список услуг из БД"""
+    def _get_category_translation(self, category: str, language: str) -> str:
+        """Получить перевод категории - бот сам переведет, просто возвращаем оригинал"""
+        # Бот сам переведет категории на язык клиента, просто возвращаем оригинальное название
+        return category
+    
+    def _get_service_name_by_language(self, service: tuple, language: str) -> str:
+        """Получить название услуги на указанном языке из БД"""
+        from utils.language_utils import validate_language, get_service_name_index
+        
+        language = validate_language(language)
+        index = get_service_name_index(language)
+        
+        if len(service) > index and service[index]:
+            return service[index]
+        
+        # Fallback: пробуем русский, потом английский
+        ru_index = get_service_name_index('ru')
+        en_index = get_service_name_index('en')
+        
+        if len(service) > ru_index and service[ru_index]:
+            return service[ru_index]
+        if len(service) > en_index and service[en_index]:
+            return service[en_index]
+        
+        return f"Service ID: {service[0]}"
+    
+    def _get_duration_display(self, duration: str, language: str) -> str:
+        """Получить отображение длительности - бот сам переведет единицы времени"""
+        if not duration:
+            return ""
+        # Просто возвращаем длительность как есть - бот сам переведет единицы на язык клиента
+        return f" ({duration})"
+    
+    def _get_language_instructions(self, language: str) -> str:
+        """Получить универсальные инструкции - бот сам переведет на язык клиента"""
+        # Универсальная инструкция - бот сам переведет на язык клиента
+        return """⚠️ ВАЖНЫЕ ПРАВИЛА ДЛЯ УСЛУГ:
+1. ВСЕГДА используй ТОЧНЫЕ названия услуг из списка выше на языке клиента!
+2. ВСЕГДА используй названия категорий на языке клиента, НЕ используй другие языки!
+3. КОГДА КЛИЕНТ СПРАШИВАЕТ О ДЛИТЕЛЬНОСТИ: СМОТРИ ДЛИТЕЛЬНОСТЬ В СКОБКАХ ВЫШЕ И НАЗЫВАЙ ТОЧНОЕ ВРЕМЯ на языке клиента!
+4. НЕ говори приблизительные значения если точная длительность известна!"""
+
+    def _build_services_list(self, client_language: str = 'ru') -> str:
+        """Список услуг из БД с локализацией"""
         services = get_all_services(active_only=True)
 
         services_by_category = {}
@@ -442,83 +433,35 @@ Google Maps: {self.salon.get('google_maps', '')}
             services_by_category[category].append(service)
 
         services_text = f"{self.prompt_headers.get('SERVICES', PROMPT_HEADERS['SERVICES'])}\n\n"
-
-        # Словарь переводов категорий на русский
-        category_translations = {
-            'Brows': 'Брови',
-            'Facial': 'Уход за лицом',
-            'Hair': 'Волосы',
-            'Lashes': 'Ресницы',
-            'Massage': 'Массаж',
-            'Nails': 'Ногти',
-            'Permanent Makeup': 'Перманентный макияж',
-            'Waxing': 'Депиляция',
-            'Promo': 'Акции',
-            'Hair Treatment': 'Уход за волосами'
-        }
         
         for category, services_list in services_by_category.items():
-            # Используем русский перевод категории если доступен
-            category_display = category_translations.get(category, category)
+            # Используем перевод категории на язык клиента
+            category_display = self._get_category_translation(category, client_language)
             services_text += f"📂 {category_display}:\n"
             
             # ✅ ОПТИМИЗАЦИЯ: Показываем только ТОП-15 услуг в категории чтобы не забивать контекст
-            # Остальные бот найдет через поиск если клиент спросит
             shown_services = services_list[:15]
             hidden_count = len(services_list) - 15
             
             for service in shown_services:
                 price_str = format_service_price_for_bot(service)
-                # service[3] is name_ru, service[2] is name_en
-                # Force RU name if available, otherwise EN
-                name = service[3] if service[3] else service[2]
-                # description = service[11] or '' # ❌ Убрали описание для экономии токенов
-                duration = service[15] or ''  # duration field
+                # Получаем название услуги на языке клиента
+                name = self._get_service_name_by_language(service, client_language)
+                duration = service[15] if len(service) > 15 else ''
                 
-                # ✅ Добавляем длительность к каждой услуге
-                duration_display = ""
-                if duration:
-                    # Парсим длительность для отображения
-                    try:
-                        if 'h' in duration and 'min' in duration:
-                            # Формат "1h 30min"
-                            hours = duration.split('h')[0].strip()
-                            mins = duration.split('h')[1].split('min')[0].strip()
-                            duration_display = f" ({hours} ч {mins} мин)"
-                        elif 'h' in duration:
-                            # Формат "1h" или "2h"
-                            hours = duration.split('h')[0].strip()
-                            if hours == '1':
-                                duration_display = f" (1 час)"
-                            else:
-                                duration_display = f" ({hours} часа)"
-                        elif duration.isdigit():
-                            # Формат "60" (минуты)
-                            mins = int(duration)
-                            if mins >= 60:
-                                hours = mins // 60
-                                remaining_mins = mins % 60
-                                if remaining_mins > 0:
-                                    duration_display = f" ({hours} ч {remaining_mins} мин)"
-                                else:
-                                    duration_display = f" ({hours} час{'а' if hours > 1 else ''})"
-                            else:
-                                duration_display = f" ({mins} мин)"
-                    except:
-                        pass
+                # Получаем отображение длительности на языке клиента
+                duration_display = self._get_duration_display(duration, client_language)
 
                 services_text += f"• {name} - {price_str}{duration_display}\n"
                 
             if hidden_count > 0:
+                # Бот сам переведет этот текст на язык клиента
                 services_text += f"  ... и еще {hidden_count} услуг (ищи в базе если спросят)\n"
             
             services_text += "\n"
         
-        services_text += "\n⚠️ ВАЖНЫЕ ПРАВИЛА ДЛЯ УСЛУГ:\n"
-        services_text += "1. ВСЕГДА используй РУССКИЕ названия услуг из списка выше!\n"
-        services_text += "2. ВСЕГДА используй РУССКИЕ названия категорий (Брови, Волосы, Ногти, Ресницы, Массаж, Депиляция и т.д.), НЕ используй английские (Brows, Hair, Nails, Lashes, Massage, Waxing)!\n"
-        services_text += "3. КОГДА КЛИЕНТ СПРАШИВАЕТ 'СКОЛЬКО ДЛИТСЯ?': СМОТРИ ДЛИТЕЛЬНОСТЬ В СКОБКАХ ВЫШЕ И НАЗЫВАЙ ТОЧНОЕ ВРЕМЯ!\n"
-        services_text += "4. НЕ говори 'около 2 часов' если точная длительность известна!\n"
+        # Добавляем инструкции на языке клиента
+        services_text += "\n" + self._get_language_instructions(client_language) + "\n"
 
         return services_text
 
@@ -534,7 +477,7 @@ Google Maps: {self.salon.get('google_maps', '')}
 
         masters_text = f"{self.prompt_headers.get('MASTERS', PROMPT_HEADERS['MASTERS'])}\n"
         masters_text += "⚠️ ПРОВЕРЯЙ ЭТОТ СПИСОК КОГДА КЛИЕНТ СПРАШИВАЕТ ПРО МАСТЕРА!\n"
-        masters_text += "⚠️ ВСЕГДА используй РУССКИЕ имена мастеров из списка выше (не транслит, не английские имена)!\n\n"
+        masters_text += "⚠️ ВСЕГДА используй ТОЧНЫЕ имена мастеров из списка выше на языке клиента (не транслит, не другие языки)!\n\n"
 
         conn = get_db_connection()
         c = conn.cursor()
@@ -555,24 +498,48 @@ Google Maps: {self.salon.get('google_maps', '')}
 
             original_name = emp[3]
             
-            # ✅ Выбор имени в зависимости от языка
-            if client_language == 'ru':
-                emp_name_display = emp[24] if emp[24] else original_name
-                emp_position_display = emp[18] if emp[18] else (emp[9] or "Мастер")
-                emp_bio_display = emp[45] if emp[45] else emp[12]
-            else:
-                emp_name_display = emp[25] if emp[25] else original_name
-                emp_position_display = emp[20] if emp[20] else (emp[9] or "Master")
-                emp_bio_display = emp[12]  # Default bio
+            # ✅ Универсальный выбор имени в зависимости от языка
+            from utils.language_utils import validate_language, get_master_name_field, get_position_field, build_coalesce_query
+            
+            client_language = validate_language(client_language)
+            
+            # Получаем локализованные поля
+            name_field = get_master_name_field(client_language)
+            position_field = get_position_field(client_language)
+            
+            # Индексы из users таблицы (см. users schema):
+            # 3: full_name, 24: full_name_ru, 25: full_name_en
+            # 9: position, 18: position_ru, 20: position_en
+            # 12: bio, 45: bio_ru
+            name_index_map = {'ru': 24, 'en': 25}  # если нет языка, берём базовое full_name
+            position_index_map = {'ru': 18, 'en': 20}  # если нет языка, берём position
+            bio_index_map = {'ru': 45}  # если нет языка, берём bio
+            
+            # Получаем имя
+            name_index = name_index_map.get(client_language, 3)
+            emp_name_display = emp[name_index] if len(emp) > name_index and emp[name_index] else original_name
+            
+            # Получаем должность
+            position_index = position_index_map.get(client_language, 9)
+            # Без хардкода языка: используем локализованное поле или общее position из БД, иначе пусто
+            emp_position_display = ""
+            if len(emp) > position_index and emp[position_index]:
+                emp_position_display = emp[position_index]
+            elif len(emp) > 9 and emp[9]:
+                emp_position_display = emp[9]
+            
+            # Получаем bio
+            bio_index = bio_index_map.get(client_language, 12)
+            emp_bio_display = emp[bio_index] if len(emp) > bio_index and emp[bio_index] else (emp[12] if len(emp) > 12 else "")
 
-            experience = emp[13]
+            experience = emp[13] if len(emp) > 13 else None
 
             # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД С ЦЕНАМИ
-            # Выбираем название услуги на нужном языке (name_ru или name)
-            service_name_col = "s.name_ru" if client_language == 'ru' else "s.name"
+            # Универсальный запрос с COALESCE для любого языка
+            service_name_coalesce = build_coalesce_query('name', client_language)
             
             c.execute(f"""
-                SELECT COALESCE({service_name_col}, s.name) as service_name, 
+                SELECT {service_name_coalesce} as service_name, 
                        s.category, us.price, us.price_min, us.price_max, 
                        us.duration, us.is_online_booking_enabled
                 FROM user_services us
@@ -588,6 +555,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                 continue
 
             # ✅ ОПТИМИЗАЦИЯ: Краткий формат мастеров
+            # Бот сам переведет эти тексты на язык клиента
             masters_text += f"👤 {emp_name_display}\n"
             masters_text += f"   Должность: {emp_position_display}\n"
             if experience:
@@ -598,16 +566,16 @@ Google Maps: {self.salon.get('google_maps', '')}
             # Группировка услуг по категориям для компактности (опционально)
             # Но пока выводим списком
             for service_name, category, price, price_min, price_max, duration, online_booking in services:
-                # Format price
+                # Format price - бот сам переведет единицы
                 if price_min and price_max:
                     price_display = f"{int(price_min)}-{int(price_max)} AED"
                 elif price:
                     price_display = f"{int(price)} AED"
                 else:
-                    price_display = "цена по запросу"
+                    price_display = "цена по запросу"  # Бот переведет на язык клиента
                 
-                # Show duration if custom
-                duration_display = f", {duration} мин" if duration else ""
+                # Show duration if custom - бот сам переведет единицы времени
+                duration_display = f", {duration}" if duration else ""
                 
                 masters_text += f"  - {service_name} ({category}) - {price_display}{duration_display}\n"
 
@@ -627,9 +595,15 @@ Google Maps: {self.salon.get('google_maps', '')}
         filtered_history = []
         for item in history[-10:]:  # Берём последние 10
             if len(item) >= 5:
-                msg, sender, timestamp, msg_type, msg_id = item
+                msg, sender, timestamp, msg_type, msg_id = item[:5]
+            elif len(item) >= 4:
+                msg, sender, timestamp, msg_type = item[:4]
+            elif len(item) >= 3:
+                msg, sender, timestamp = item[:3]
+                msg_type = 'text'
             else:
-                msg, sender, timestamp, msg_type = item
+                # Недостаточно данных - пропускаем
+                continue
 
             # Пропускаем fallback сообщения
             if any(phrase in msg for phrase in fallback_phrases):
@@ -799,7 +773,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         service_name: str = "",
         master_name: str = "",
         preferred_date: str = "",
-        history: List[Tuple] = None,
+        history: Optional[List[Tuple]] = None,
         client_language: str = 'ru'
     ) -> str:
         """Построить информацию о доступности мастеров"""
@@ -1009,19 +983,26 @@ Google Maps: {self.salon.get('google_maps', '')}
                             break
                 
                 # Получаем популярные услуги из БД (либо по категории, либо все популярные)
+                from utils.language_utils import build_coalesce_query
+                service_name_coalesce = build_coalesce_query('name', client_language)
+                
                 if context_category:
-                    c.execute("""
-                        SELECT name_ru, name, category
+                    # Поиск по всем языкам, но SELECT на языке клиента
+                    c.execute(f"""
+                        SELECT {service_name_coalesce} as name, category
                         FROM services 
                         WHERE is_active = TRUE 
-                        AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s)
+                        AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s 
+                             OR LOWER(name_ar) LIKE %s OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s
+                             OR LOWER(name_fr) LIKE %s OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s 
+                             OR LOWER(name_kk) LIKE %s)
                         ORDER BY id
                         LIMIT 5
-                    """, (f"%{context_category}%", f"%{context_category}%", f"%{context_category}%"))
+                    """, (f"%{context_category}%",) * 10)
                 else:
                     # Если категория не определена, берем услуги из разных категорий
-                    c.execute("""
-                        SELECT DISTINCT ON (category) name_ru, name, category
+                    c.execute(f"""
+                        SELECT DISTINCT ON (category) {service_name_coalesce} as name, category
                         FROM services 
                         WHERE is_active = TRUE 
                         ORDER BY category, id
@@ -1063,20 +1044,27 @@ Google Maps: {self.salon.get('google_maps', '')}
                 logger.info(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
                 print(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
                 
-                c.execute("""
-                    SELECT name_ru, name 
+                from utils.language_utils import build_coalesce_query
+                service_name_coalesce = build_coalesce_query('name', client_language)
+                
+                c.execute(f"""
+                    SELECT {service_name_coalesce} as name
                     FROM services 
                     WHERE is_active = TRUE 
-                    AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s)
+                    AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s
+                         OR LOWER(name_ar) LIKE %s OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s
+                         OR LOWER(name_fr) LIKE %s OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s
+                         OR LOWER(name_kk) LIKE %s)
                     ORDER BY id
                     LIMIT 4
-                """, (f"%{context_category}%", f"%{context_category}%", f"%{context_category}%"))
+                """, (f"%{context_category}%",) * 10)
                 
                 category_services = c.fetchall()
                 conn.close()
                 
                 if category_services:
-                    services_text = "\n".join([f"   • {s[0] or s[1]}" for s in category_services])
+                    services_text = "\n".join([f"   • {s[0]}" for s in category_services])
+                    # Бот сам переведет этот текст на язык клиента
                     return f"""
 У нас есть несколько вариантов {context_category}а:
 {services_text}
@@ -1114,51 +1102,64 @@ Google Maps: {self.salon.get('google_maps', '')}
         # Ищем услугу в БД по названию (точному или похожему)
         # service_name мы определили выше или оно пришло аргументом
         logger.debug(f"🔍 [PromptBuilder] Searching for service in DB: '{service_name}'")
-        c.execute("""
-            SELECT id, name_ru, name, price, currency, duration, category FROM services 
-            WHERE (LOWER(name) LIKE %s OR LOWER(name_ru) LIKE %s)
+        from utils.language_utils import build_coalesce_query
+        service_name_coalesce = build_coalesce_query('name', client_language)
+        
+        # Поиск по всем языкам, но SELECT на языке клиента
+        c.execute(f"""
+            SELECT id, {service_name_coalesce} as name, price, currency, duration, category 
+            FROM services 
+            WHERE (LOWER(name) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name_ar) LIKE %s
+                   OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s OR LOWER(name_fr) LIKE %s
+                   OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s OR LOWER(name_kk) LIKE %s)
             AND is_active = TRUE
             LIMIT 1
-        """, (f"%{service_name.lower()}%", f"%{service_name.lower()}%"))
+        """, (f"%{service_name.lower()}%",) * 9)
         service_row = c.fetchone()
 
         if not service_row:
             logger.warning(f"❌ [PromptBuilder] Service '{service_name}' NOT found in DB search.")
             print(f"❌ [PromptBuilder] Service '{service_name}' NOT found in DB search.")
             conn.close()
+            # Бот сам переведет это сообщение на язык клиента
             return f"""{self.prompt_headers.get('NOT_FOUND_SERVICE', PROMPT_HEADERS['NOT_FOUND_SERVICE'])}
 Не нашла услугу "{service_name}" в списке.
-Попробуй назвать услугу иначе (например "Маникюр", "Педикюр", "Стрижка")."""
+Попробуй назвать услугу иначе."""
 
         service_id = service_row[0]
-        service_name_ru = service_row[1] or service_row[2]  # name_ru or name_en
-        service_category = service_row[6] if len(service_row) > 6 else None
-        logger.info(f"✅ [PromptBuilder] Service found in DB: id={service_id}, name='{service_name_ru}', category='{service_category}'")
-        print(f"✅ [PromptBuilder] Service found: id={service_id}, name='{service_name_ru}', category='{service_category}'")
+        service_name_display = service_row[1]  # Уже локализованное название
+        service_category = service_row[5] if len(service_row) > 5 else None
+        logger.info(f"✅ [PromptBuilder] Service found in DB: id={service_id}, name='{service_name_display}', category='{service_category}'")
+        print(f"✅ [PromptBuilder] Service found: id={service_id}, name='{service_name_display}', category='{service_category}'")
         
         # Parse base duration from service definition (index 5 in new query: 0:id, 1:name_ru, 2:name, 3:price, 4:currency, 5:duration, 6:category)
         base_duration_val = service_row[5]
-        base_duration_minutes = 60 # Default fallback if DB is empty
+        base_duration_minutes = 60 # Default safe fallback
         
         if base_duration_val:
             try:
                 # Handle "1h 30min", "90", "90 min"
-                s_dur = str(base_duration_val).lower()
-                if 'h' in s_dur:
-                     parts = s_dur.split('h')
-                     h = int(parts[0])
-                     m = 0
-                     if len(parts) > 1 and 'min' in parts[1]:
-                         m = int(parts[1].split('min')[0])
-                     base_duration_minutes = h * 60 + m
-                elif 'min' in s_dur:
-                     base_duration_minutes = int(s_dur.split('min')[0])
-                elif s_dur.isdigit():
-                     base_duration_minutes = int(s_dur)
+                s_dur = str(base_duration_val).lower().strip()
+                # Если нет цифр вообще — логируем и используем fallback без ошибки
+                import re
+                if not re.search(r"\d", s_dur):
+                    logger.warning(f"⚠️ [PromptBuilder] Invalid duration (no digits) for service id={service_id}, name='{service_name_display}': '{base_duration_val}'. Using fallback {base_duration_minutes} min")
+                else:
+                    if 'h' in s_dur:
+                        parts = s_dur.split('h')
+                        h = int(parts[0])
+                        m = 0
+                        if len(parts) > 1 and 'min' in parts[1]:
+                            m = int(parts[1].split('min')[0])
+                        base_duration_minutes = h * 60 + m
+                    elif 'min' in s_dur:
+                        base_duration_minutes = int(s_dur.split('min')[0])
+                    elif s_dur.isdigit():
+                        base_duration_minutes = int(s_dur)
                 logger.debug(f"📏 [PromptBuilder] Parsed duration: {base_duration_minutes} minutes")
             except Exception as e:
-                logger.warning(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}': {e}")
-                pass
+                logger.warning(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}' for service id={service_id}, name='{service_name_display}': {e}. Using fallback {base_duration_minutes} min")
+                print(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}' for service id={service_id}, name='{service_name_display}': {e}. Using fallback {base_duration_minutes} min")
         
         employees = get_employees_by_service(service_id)
         print(f"👥 [PromptBuilder] Found {len(employees)} employees for service ID {service_id}")
@@ -1173,14 +1174,17 @@ Google Maps: {self.salon.get('google_maps', '')}
             service_category = service_row[6] if len(service_row) > 6 else None
             alternative_services = []
             
+            from utils.language_utils import build_coalesce_query
+            service_name_coalesce = build_coalesce_query('name', client_language)
+            
             if service_category:
                 # Ищем услуги в той же категории, у которых есть мастера
-                c.execute("""
-                    SELECT s.id, s.name_ru, s.name
+                c.execute(f"""
+                    SELECT s.id, {service_name_coalesce} as name
                     FROM services s
                     WHERE s.is_active = TRUE 
                     AND s.id != %s
-                    AND (LOWER(s.category) LIKE %s OR LOWER(s.name_ru) LIKE %s OR LOWER(s.name) LIKE %s)
+                    AND LOWER(s.category) LIKE %s
                     AND EXISTS (
                         SELECT 1 FROM user_services us
                         JOIN users u ON u.id = us.user_id
@@ -1191,13 +1195,13 @@ Google Maps: {self.salon.get('google_maps', '')}
                     )
                     ORDER BY s.id
                     LIMIT 5
-                """, (service_id, f"%{service_category.lower()}%", f"%{service_category.lower()}%", f"%{service_category.lower()}%"))
+                """, (service_id, f"%{service_category.lower()}%"))
                 alternative_services = c.fetchall()
             
             # Если не нашли в категории, ищем любые популярные услуги с мастерами
             if not alternative_services:
-                c.execute("""
-                    SELECT DISTINCT s.id, s.name_ru, s.name
+                c.execute(f"""
+                    SELECT DISTINCT s.id, {service_name_coalesce} as name
                     FROM services s
                     WHERE s.is_active = TRUE 
                     AND s.id != %s
@@ -1217,10 +1221,10 @@ Google Maps: {self.salon.get('google_maps', '')}
             conn.close()
             
             # Используем фактическое название услуги из БД
-            actual_service_name = service_name_ru if service_name_ru else service_name
+            actual_service_name = service_name_display if service_name_display else service_name
             
             if alternative_services:
-                alt_list = "\n".join([f"   • {s[1] or s[2]}" for s in alternative_services])
+                alt_list = "\n".join([f"   • {s[1]}" for s in alternative_services])
                 return f"""⚠️ ВАЖНО: Услуга "{actual_service_name}" временно недоступна (нет свободных мастеров).
 
 ✅ Вместо этого доступны похожие услуги:
@@ -1451,7 +1455,7 @@ def get_client_recent_preferences(instagram_id: str, limit: int = 3) -> dict:
         'total_visits': len(bookings)
     }
 
-def get_popular_booking_times(service_name: str = None) -> List[str]:
+def get_popular_booking_times(service_name: Optional[str] = None) -> List[str]:
     """Популярные времена записи (#9)"""
     conn = get_db_connection()
     c = conn.cursor()
