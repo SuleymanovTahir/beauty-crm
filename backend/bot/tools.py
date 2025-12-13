@@ -30,25 +30,15 @@ def get_available_time_slots(
             service_row = c.fetchone()
             if service_row:
                 service_id = service_row[0]
-                # ✅ Парсим длительность из БД
-                try:
-                    dur_str = service_row[1]
-                    if dur_str:
-                        hours = 0
-                        minutes = 0
-                        if 'h' in dur_str:
-                            hours = int(dur_str.split('h')[0])
-                        if 'min' in dur_str:
-                            min_part = dur_str.split('min')[0]
-                            if 'h' in min_part:
-                                minutes = int(min_part.split('h')[1].strip())
-                            else:
-                                minutes = int(min_part)
-                        # ✅ ИСПОЛЬЗУЕМ распарсенную длительность
-                        duration_minutes = hours * 60 + minutes
-                        print(f"📏 Parsed duration for '{service_name}': {duration_minutes} minutes")
-                except Exception as e:
-                    print(f"⚠️ Failed to parse duration '{dur_str}': {e}")
+                # ✅ Парсим длительность из БД используя утилиту
+                from utils.duration_utils import parse_duration_to_minutes
+                
+                dur_str = service_row[1]
+                if dur_str:
+                    parsed_minutes = parse_duration_to_minutes(dur_str)
+                    if parsed_minutes:
+                        duration_minutes = parsed_minutes
+                        print(f"📏 Parsed duration for '{service_name}': {duration_minutes} minutes (from '{dur_str}')")
         
         # ✅ Если длительность не определена, используем дефолт 60 минут
         if duration_minutes is None:

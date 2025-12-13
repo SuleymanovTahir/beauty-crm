@@ -1,0 +1,74 @@
+# CHANGELOG - Память проекта Beauty CRM
+
+## 2025-12-13: Миграция формата длительности услуг
+
+### ПРОБЛЕМА
+Длительность услуг хранилась в текстовом формате ("1h", "1h 30min", "1ч 30"), что вызывало проблемы:
+- Бот не мог понять формат "1ч 30"
+- Сложный парсинг в разных местах кода (дублирование логики)
+- Нет поддержки многоязычного отображения
+
+### РЕШЕНИЕ
+1. Создан модуль `utils/duration_utils.py` с универсальными функциями:
+   - `parse_duration_to_minutes(duration_str)` - парсит любой формат в минуты
+   - `format_duration_display(minutes, language)` - форматирует минуты в читаемый вид
+   
+2. Изменен формат хранения в БД:
+   - БЫЛО: `duration TEXT` с значениями "1h", "1h 30min", "1ч 30" 
+   - СТАЛО: `duration TEXT` с значениями в минутах: "60", "90"
+   
+3. Обновлен код во всех местах использования:
+   - `bot/tools.py` - использует `parse_duration_to_minutes()`
+   - `bot/prompts.py` - использует `format_duration_display(minutes, language)`
+   - `db/employees.py` - использует утилиты для расчета занятых слотов
+
+4. Создан скрипт миграции:
+   - `scripts/migrations/migrate_duration_to_minutes.py` - одноразовый скрипт
+   - Функция добавлена в `scripts/maintenance/fix_data.py` (SSOT принцип)
+
+### ВАЖНО ПОМНИТЬ
+- **НЕ хранить длительность в текстовом формате** - только минуты (числа)
+- **Использовать утилиты**: `parse_duration_to_minutes()` и `format_duration_display()`
+- **Для отображения всегда указывать язык**: format_duration_display(90, 'ru') → "1ч 30мин"
+- **Миграция уже выполнена** - все услуги переведены в новый формат
+
+### УНИВЕРСАЛЬНОСТЬ КОДА ✅
+**НЕТ ХАРДКОДА:**
+- ✅ Список языков вынесен в константу `DURATION_FORMATS`
+- ✅ Поддержка всех 9 языков проекта: ru, en, ar, de, es, fr, hi, kk, pt
+- ✅ Парсинг работает с любыми форматами: "1h", "1ч", "1 Std", "1 hour", "90"
+- ✅ Автоматический fallback на русский язык если язык не найден
+- ✅ Синхронизация с `frontend/public/locales/`
+- ✅ Функция `get_supported_languages()` для динамического получения списка языков
+
+**Примеры универсальности:**
+```python
+# Backend поддерживает все языки
+parse_duration_to_minutes("1h 30min")    # → 90 (английский)
+parse_duration_to_minutes("1ч 30мин")    # → 90 (русский)
+parse_duration_to_minutes("2 Std 15 Min") # → 135 (немецкий)
+
+format_duration_display(90, 'ru')  # → "1ч 30мин"
+format_duration_display(90, 'de')  # → "1Std 30Min"
+format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
+```
+
+### МОЖЕТ СЛОМАТЬСЯ
+- Если где-то в коде ожидается текстовый формат "1h 30min" вместо "90"
+- Если при создании новой услуги duration записывается в старом формате
+- Проверить API endpoints создания/обновления услуг
+
+### TESTING
+Проверено преобразование:
+- "1h" → 60 → "1ч" (ru), "1h" (en), "1س" (ar) ✅
+- "1h 30min" → 90 → "1ч 30мин" (ru), "1h 30min" (en) ✅  
+- "90" → 90 → "1ч 30мин" ✅
+- "2h" → 120 → "2ч" ✅
+
+### ФАЙЛЫ
+- `backend/utils/duration_utils.py` - NEW
+- `backend/bot/tools.py` - MODIFIED (упрощен парсинг)
+- `backend/bot/prompts.py` - MODIFIED (форматирование с учетом языка)
+- `backend/db/employees.py` - MODIFIED (расчет занятых слотов)
+- `backend/scripts/migrations/migrate_duration_to_minutes.py` - NEW
+- `backend/scripts/maintenance/fix_data.py` - MODIFIED (добавлена fix_service_durations)

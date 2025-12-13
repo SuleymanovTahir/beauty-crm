@@ -760,28 +760,17 @@ class SalonBot:
                                 service_duration_mins = 60  # default
                                 if service_name:
                                     from bot.tools import get_available_time_slots
-                                    # Функция уже парсит длительность, используем её логику
+                                    from utils.duration_utils import parse_duration_to_minutes
+                                    
                                     conn = get_db_connection()
                                     c = conn.cursor()
                                     c.execute("SELECT duration FROM services WHERE name_ru LIKE %s OR name LIKE %s", 
                                              (f"%{service_name}%", f"%{service_name}%"))
                                     dur_row = c.fetchone()
                                     if dur_row and dur_row[0]:
-                                        dur_str = dur_row[0]
-                                        try:
-                                            hours = 0
-                                            minutes = 0
-                                            if 'h' in dur_str:
-                                                hours = int(dur_str.split('h')[0])
-                                            if 'min' in dur_str:
-                                                min_part = dur_str.split('min')[0]
-                                                if 'h' in min_part:
-                                                    minutes = int(min_part.split('h')[1].strip())
-                                                else:
-                                                    minutes = int(min_part)
-                                            service_duration_mins = hours * 60 + minutes
-                                        except:
-                                            pass
+                                        parsed = parse_duration_to_minutes(dur_row[0])
+                                        if parsed:
+                                            service_duration_mins = parsed
                                     conn.close()
                                 
                                 # Проверяем достаточно ли времени

@@ -60,7 +60,7 @@ export function FAQ() {
     }
 
     return (
-        <section id="faq" className="py-16 sm:py-24 bg-muted/30">
+        <section id="faq" className="py-16 sm:py-24 bg-background">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12 sm:mb-16">
                     <p className="text-xs sm:text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">

@@ -56,11 +56,12 @@ const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 // const RateUs = React.lazy(() => import('./pages/public/RateUs'));
 
 // New Public Landing Pages
-import { LandingPage } from '../public_landing/pages/LandingPage';
-import { PrivacyPolicy as PrivacyPolicyNew } from '../public_landing/pages/public_landing__PrivacyPolicy';
-import { TermsOfUse as TermsOfUseNew } from '../public_landing/pages/public_landing__TermsOfUse';
-import { ServiceDetail } from '../public_landing/pages/ServiceDetail';
-import { DataDeletion } from '../public_landing/pages/DataDeletion';
+// New Public Landing Pages - Lazy Loaded
+const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage').then(module => ({ default: module.LandingPage })));
+const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/public_landing__PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/public_landing__TermsOfUse').then(module => ({ default: module.TermsOfUse })));
+const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
+const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion').then(module => ({ default: module.DataDeletion })));
 
 const Login = React.lazy(() => import('./pages/auth/Login'));
 const Register = React.lazy(() => import('./pages/auth/Register'));
@@ -329,7 +330,7 @@ export default function App() {
                 <Route path="/service/:category" element={<ServiceDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
-                <Route path="/data-deletion" element={<DataDeletion />} />
+                <Route path="/data-deletion" element={<DataDeletionNew />} />
               </Route>
 
               {/* Public Routes using PublicLayout - COMMENTED OUT: files don't exist */}

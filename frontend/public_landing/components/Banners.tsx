@@ -14,6 +14,8 @@ interface Banner {
     image_url: string;
     link_url?: string;
     is_active: boolean;
+    is_flipped_horizontal?: boolean;
+    is_flipped_vertical?: boolean;
 }
 
 export function Banners() {
@@ -96,7 +98,8 @@ export function Banners() {
                 className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                 style={{
                     backgroundImage: `url(${currentBanner.image_url})`,
-                    filter: 'brightness(0.7)'
+                    filter: 'brightness(0.7)',
+                    transform: `scale(${currentBanner.is_flipped_horizontal ? -1 : 1}, ${currentBanner.is_flipped_vertical ? -1 : 1})`
                 }}
             />
 
