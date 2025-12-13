@@ -1,7 +1,7 @@
 // /frontend/public_landing/pages/LandingPage.tsx
 import { Header } from "../components/Header";
-import "../styles/public_landing_globals.css";
 import "../public_landing.css";
+import "../styles/public_landing_globals.css";
 import { Hero } from "../components/Hero";
 import { About } from "../components/About";
 import { Services } from "../components/Services";
@@ -38,7 +38,7 @@ export function LandingPage() {
     }, [language]);
 
     return (
-        <div className="min-h-screen bg-[#f5f3f0]">
+        <div className="min-h-screen bg-background">
             <Header salonInfo={salonInfo} />
             <main>
                 <Hero />

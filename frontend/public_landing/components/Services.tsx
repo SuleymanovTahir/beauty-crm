@@ -83,7 +83,7 @@ export function Services() {
   }
 
   return (
-    <section className="py-24 px-6 lg:px-12 bg-white">
+    <section className="py-24 px-6 lg:px-12 bg-background">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
@@ -98,7 +98,7 @@ export function Services() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-muted/50 p-2 rounded-2xl h-auto">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-2 mb-12 bg-transparent p-2 rounded-2xl h-auto">
             {Object.keys(groupedServices).map((category) => {
               const Icon = getTabIcon(category);
               const isActive = activeTab === category;
@@ -106,7 +106,7 @@ export function Services() {
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg border border-border/50"
+                  className="py-4 rounded-xl whitespace-normal min-h-[60px] transition-all hover:bg-muted-foreground/10 data-[state=active]:shadow-lg border border-primary bg-[#faf8f6] text-primary"
                   style={isActive ? { backgroundColor: '#db2777', color: 'white' } : {}}
                 >
                   <div className="flex items-center gap-2 justify-center">
@@ -131,7 +131,7 @@ export function Services() {
                     </h3>
 
                     {service.description && (
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-3 line-clamp-2">{service.description}</p>
+                      <p className="text-xs sm:text-sm text-[#717182] mb-3 line-clamp-2">{service.description}</p>
                     )}
 
                     <div className="flex items-center justify-between mt-auto pt-2">

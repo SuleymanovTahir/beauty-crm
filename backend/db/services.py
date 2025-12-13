@@ -142,6 +142,18 @@ def update_service(service_id, **kwargs):
         elif key == 'is_active':
             # Преобразуем is_active в число (0 или 1)
             value = True if value in [True, 1, '1', 'true', 'True'] else False
+        elif key == 'duration' and value:
+            # ✅ НОРМАЛИЗАЦИЯ: Автоматически конвертируем любой формат в минуты
+            from utils.duration_utils import parse_duration_to_minutes
+            
+            # Если уже число - оставляем как есть, иначе парсим
+            if not str(value).strip().isdigit():
+                minutes = parse_duration_to_minutes(value)
+                if minutes:
+                    value = str(minutes)
+                    from utils.logger import log_info
+                    log_info(f"🔄 DB: Normalized duration '{kwargs['duration']}' → {value} minutes", "database")
+        
         updates.append(f"{key} = %s")
         params.append(value)
     

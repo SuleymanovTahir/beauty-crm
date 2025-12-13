@@ -106,7 +106,7 @@ export function BookingSection({ services }: BookingSectionProps) {
   };
 
   return (
-    <section id="booking" className="pt-24 pb-6 bg-background">
+    <div id="booking" className="w-full max-w-7xl mx-auto px-4 py-12 bg-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
@@ -130,7 +130,7 @@ export function BookingSection({ services }: BookingSectionProps) {
                 placeholder={t('enterName', { defaultValue: 'Введите ваше имя' })}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-input-background border-border/50 px-3"
+                className="bg-[#f3f3f5] border-border/50 px-3 placeholder:text-[#717182]"
                 minLength={2}
                 required
               />
@@ -144,7 +144,7 @@ export function BookingSection({ services }: BookingSectionProps) {
                 placeholder={t('enterPhone', { defaultValue: '+971 (50) 123-45-67' })}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-input-background border-border/50 px-3"
+                className="bg-[#f3f3f5] border-border/50 px-3 placeholder:text-[#717182]"
                 minLength={10}
                 required
               />
@@ -254,6 +254,6 @@ export function BookingSection({ services }: BookingSectionProps) {
           </p>
         </form>
       </div>
-    </section>
+    </div>
   );
 }

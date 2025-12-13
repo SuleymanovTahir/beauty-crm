@@ -406,11 +406,20 @@ Google Maps: {self.salon.get('google_maps', '')}
         return f"Service ID: {service[0]}"
     
     def _get_duration_display(self, duration: str, language: str) -> str:
-        """Получить отображение длительности - бот сам переведет единицы времени"""
+        """Получить отображение длительности с учетом языка"""
         if not duration:
             return ""
-        # Просто возвращаем длительность как есть - бот сам переведет единицы на язык клиента
-        return f" ({duration})"
+        
+        from utils.duration_utils import parse_duration_to_minutes, format_duration_display
+        
+        # Парсим длительность в минуты
+        minutes = parse_duration_to_minutes(duration)
+        if not minutes:
+            return ""
+        
+        # Форматируем в читаемый вид на нужном языке
+        formatted = format_duration_display(minutes, language)
+        return f" ({formatted})"
     
     def _get_language_instructions(self, language: str) -> str:
         """Получить универсальные инструкции - бот сам переведет на язык клиента"""
@@ -1132,34 +1141,19 @@ Google Maps: {self.salon.get('google_maps', '')}
         logger.info(f"✅ [PromptBuilder] Service found in DB: id={service_id}, name='{service_name_display}', category='{service_category}'")
         print(f"✅ [PromptBuilder] Service found: id={service_id}, name='{service_name_display}', category='{service_category}'")
         
-        # Parse base duration from service definition (index 5 in new query: 0:id, 1:name_ru, 2:name, 3:price, 4:currency, 5:duration, 6:category)
+        # Parse base duration from service definition
         base_duration_val = service_row[5]
-        base_duration_minutes = 60 # Default safe fallback
+        base_duration_minutes = 60  # Default safe fallback
         
         if base_duration_val:
-            try:
-                # Handle "1h 30min", "90", "90 min"
-                s_dur = str(base_duration_val).lower().strip()
-                # Если нет цифр вообще — логируем и используем fallback без ошибки
-                import re
-                if not re.search(r"\d", s_dur):
-                    logger.warning(f"⚠️ [PromptBuilder] Invalid duration (no digits) for service id={service_id}, name='{service_name_display}': '{base_duration_val}'. Using fallback {base_duration_minutes} min")
-                else:
-                    if 'h' in s_dur:
-                        parts = s_dur.split('h')
-                        h = int(parts[0])
-                        m = 0
-                        if len(parts) > 1 and 'min' in parts[1]:
-                            m = int(parts[1].split('min')[0])
-                        base_duration_minutes = h * 60 + m
-                    elif 'min' in s_dur:
-                        base_duration_minutes = int(s_dur.split('min')[0])
-                    elif s_dur.isdigit():
-                        base_duration_minutes = int(s_dur)
-                logger.debug(f"📏 [PromptBuilder] Parsed duration: {base_duration_minutes} minutes")
-            except Exception as e:
-                logger.warning(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}' for service id={service_id}, name='{service_name_display}': {e}. Using fallback {base_duration_minutes} min")
-                print(f"⚠️ [PromptBuilder] Error parsing duration '{base_duration_val}' for service id={service_id}, name='{service_name_display}': {e}. Using fallback {base_duration_minutes} min")
+            from utils.duration_utils import parse_duration_to_minutes
+            
+            parsed = parse_duration_to_minutes(base_duration_val)
+            if parsed:
+                base_duration_minutes = parsed
+                logger.debug(f"📏 [PromptBuilder] Parsed duration: {base_duration_minutes} minutes from '{base_duration_val}'")
+            else:
+                logger.warning(f"⚠️ [PromptBuilder] Could not parse duration '{base_duration_val}' for service id={service_id}, name='{service_name_display}'. Using fallback {base_duration_minutes} min")
         
         employees = get_employees_by_service(service_id)
         print(f"👥 [PromptBuilder] Found {len(employees)} employees for service ID {service_id}")
@@ -1286,21 +1280,13 @@ Google Maps: {self.salon.get('google_maps', '')}
             duration_minutes = base_duration_minutes 
             
             if duration_val:
-                try:
-                    if 'h' in str(duration_val):
-                         parts = str(duration_val).split('h')
-                         h = int(parts[0])
-                         m = 0
-                         if len(parts) > 1 and 'min' in parts[1]:
-                             m = int(parts[1].split('min')[0])
-                         duration_minutes = h * 60 + m
-                    elif 'min' in str(duration_val):
-                         duration_minutes = int(str(duration_val).split('min')[0])
-                    elif str(duration_val).isdigit():
-                         duration_minutes = int(str(duration_val))
-                except Exception as e:
-                    logger.warning(f"⚠️ Error parsing duration for {full_name}: {e}, using default {base_duration_minutes}")
-                    pass
+                from utils.duration_utils import parse_duration_to_minutes
+                
+                parsed = parse_duration_to_minutes(duration_val)
+                if parsed:
+                    duration_minutes = parsed
+                else:
+                    logger.warning(f"⚠️ Could not parse master override duration '{duration_val}' for {full_name}, using base duration {base_duration_minutes} min")
 
             master_display_name = get_localized_name(emp_id, full_name, client_language)
             

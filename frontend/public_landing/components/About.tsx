@@ -29,7 +29,7 @@ export function About() {
   ];
 
   return (
-    <section id="about" className="py-24 bg-muted/30">
+    <section id="about" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
@@ -53,7 +53,7 @@ export function About() {
                 <feature.icon className="w-8 h-8 md:w-10 md:h-10 text-pink-600" />
               </div>
               <h3 className="text-lg md:text-xl mb-2 text-[var(--heading)]">{feature.title}</h3>
-              <p className="text-sm md:text-base text-muted-foreground">{feature.description}</p>
+              <p className="text-sm md:text-base text-[#717182]">{feature.description}</p>
             </div>
           ))}
         </div>

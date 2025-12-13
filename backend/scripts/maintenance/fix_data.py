@@ -751,6 +751,93 @@ def cleanup_faq_translations():
     else:
         print("✅ Неправильных переводов не найдено")
 
+def fix_service_durations():
+    """Миграция длительности услуг: текстовый формат → минуты"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    if not table_exists(c, 'services'):
+        print("⚠️  Таблица services не существует")
+        conn.close()
+        return
+
+    print("\n🔧 Миграция длительности услуг...")
+    
+    from utils.duration_utils import parse_duration_to_minutes, format_duration_display
+    
+    try:
+        # Получаем все услуги с длительностью
+        c.execute("""
+            SELECT id, name_ru, duration 
+            FROM services 
+            WHERE duration IS NOT NULL AND duration != ''
+        """)
+        services = c.fetchall()
+        
+        updated_count = 0
+        already_correct = 0
+        
+        for service_id, name_ru, current_duration in services:
+            name_display = name_ru if name_ru else "(No name)"
+            
+            # Проверяем, не является ли уже числом
+            if str(current_duration).strip().isdigit():
+                already_correct += 1
+                continue
+            
+            # Конвертируем в минуты
+            minutes = parse_duration_to_minutes(current_duration)
+            
+            if minutes is None:
+                continue
+            
+            # Обновляем в БД
+            c.execute("""
+                UPDATE services 
+                SET duration = %s
+                WHERE id = %s
+            """, (str(minutes), service_id))
+            
+            display = format_duration_display(minutes, 'ru')
+            print(f"  ➕ {name_display[:40]:40s} | '{current_duration}' → {minutes} мин ({display})")
+            updated_count += 1
+        
+        # Также обновляем user_services если там есть кастомная длительность
+        c.execute("""
+            SELECT id, user_id, service_id, duration 
+            FROM user_services 
+            WHERE duration IS NOT NULL AND duration != ''
+        """)
+        user_services = c.fetchall()
+        
+        us_updated = 0
+        for us_id, user_id, service_id, current_duration in user_services:
+            if str(current_duration).strip().isdigit():
+                continue
+            
+            minutes = parse_duration_to_minutes(current_duration)
+            if minutes:
+                c.execute("""
+                    UPDATE user_services 
+                    SET duration = %s
+                    WHERE id = %s
+                """, (str(minutes), us_id))
+                us_updated += 1
+        
+        conn.commit()
+        
+        if  updated_count > 0 or us_updated > 0:
+            print(f"  ✅ Обновлено: {updated_count} услуг, {us_updated} user_services")
+            print(f"  ✅ Уже корректные: {already_correct}")
+        else:
+            print("  ✅ Все длительности уже в нужном формате")
+        
+    except Exception as e:
+        conn.rollback()
+        print(f"  ❌ Ошибка при миграции: {e}")
+    finally:
+        conn.close()
+
 def fix_all_data():
     """Запустить все исправления данных"""
     print("=== Проверка данных в БД ===\n")
@@ -789,6 +876,11 @@ def fix_all_data():
             print("⚠️ Скрипт scripts.maintenance.fix_master_data не найден")
         except Exception as e:
             print(f"⚠️ Ошибка при синхронизации услуг мастеров: {e}")
+        
+        print("\n" + "="*50)
+        print("Миграция длительности услуг...")
+        print("="*50)
+        fix_service_durations()
 
         print("\n✅ Проверка завершена!")
 

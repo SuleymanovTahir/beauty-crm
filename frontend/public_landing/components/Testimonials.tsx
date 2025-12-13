@@ -53,7 +53,7 @@ export function Testimonials() {
   }
 
   return (
-    <section id="testimonials" className="py-24 bg-muted/30">
+    <section id="testimonials" className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
