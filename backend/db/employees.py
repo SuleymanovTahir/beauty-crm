@@ -443,18 +443,14 @@ def get_employee_busy_slots(employee_id: int, date: str):
 
                 # Если есть длительность, вычисляем конец
                 if duration:
-                    hours = 0
-                    minutes = 0
-                    if 'h' in duration:
-                        hours = int(duration.split('h')[0])
-                    if 'min' in duration:
-                        min_part = duration.split('min')[0]
-                        if 'h' in min_part:
-                            minutes = int(min_part.split('h')[1].strip())
-                        else:
-                            minutes = int(min_part)
-
-                    end = start + timedelta(hours=hours, minutes=minutes)
+                    from utils.duration_utils import parse_duration_to_minutes
+                    
+                    duration_minutes = parse_duration_to_minutes(duration)
+                    if duration_minutes:
+                        end = start + timedelta(minutes=duration_minutes)
+                    else:
+                        # По умолчанию 1 час если не удалось распарсить
+                        end = start + timedelta(hours=1)
                 else:
                     # По умолчанию 1 час
                     end = start + timedelta(hours=1)
