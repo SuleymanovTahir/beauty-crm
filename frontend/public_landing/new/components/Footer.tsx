@@ -1,8 +1,5 @@
-// /frontend/public_landing/components/Footer.tsx
-// import { Instagram, Facebook, Phone, Mail, MapPin, MessageCircle } from "lucide-react"; // Commented out - only used in full footer
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
-// import { Button } from "@/components/ui/button"; // Commented out - only used in full footer
 
 interface FooterProps {
   salonInfo?: any;
@@ -27,8 +24,7 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
 
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Simplified Footer - Only Copyright and Legal Links */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
           <p className="text-xs sm:text-sm text-primary-foreground/70">
             © {currentYear} {salonInfo?.name || "Beauty Salon"}. {t('allRightsReserved') || "Все права защищены."}
