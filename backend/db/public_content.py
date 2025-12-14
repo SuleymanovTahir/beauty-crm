@@ -42,7 +42,8 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
                 avatar_url,
                 display_order,
                 COALESCE(employee_name_{language}, employee_name_en, employee_name_ru, employee_name) as employee_name,
-                COALESCE(employee_position_{language}, employee_position_en, employee_position_ru, employee_position) as employee_position
+                COALESCE(employee_position_{language}, employee_position_en, employee_position_ru, employee_position) as employee_position,
+                created_at
             FROM public_reviews
             WHERE is_active = TRUE
             ORDER BY display_order DESC, created_at DESC
