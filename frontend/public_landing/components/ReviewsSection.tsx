@@ -120,7 +120,7 @@ export function ReviewsSection() {
             </button>
 
             {/* Cards */}
-            <div className="flex flex-col md:flex-row justify-center items-center gap-3">
+            <div className="flex flex-col md:flex-row justify-center items-stretch gap-3">
               {getVisibleReviews().map((review, index) => (
                 <div key={`${review.id}-${index}`} className="h-full w-full max-w-xs">
                   <ReviewCard review={review} />
@@ -147,26 +147,10 @@ export function ReviewsSection() {
               onClick={() => goToReview(index)}
               className={`transition-all ${index === currentIndex
                 ? 'w-8 h-2 bg-pink-600 rounded-full'
-                : 'w-2 h-2 bg-muted rounded-full hover:bg-pink-300'
+                : 'w-2 h-2 bg-gray-400 rounded-full hover:bg-pink-300'
                 }`}
               aria-label={`Go to review ${index + 1}`}
             />
-          ))}
-        </div>
-
-        {/* Stats */}
-        <div className="mt-16 grid md:grid-cols-3 gap-8 border-t border-border pt-12">
-          {[
-            { number: '500+', label: t('statsSatisfiedClients', 'Довольных клиентов') },
-            { number: '4.9', label: t('statsAvgRating', 'Средний рейтинг') },
-            { number: '98%', label: t('statsRepeatVisits', 'Повторных визитов') },
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-4xl font-bold text-pink-600 mb-2">
-                {stat.number}
-              </div>
-              <div className="text-muted-foreground">{stat.label}</div>
-            </div>
           ))}
         </div>
       </div>
