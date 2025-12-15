@@ -1,7 +1,7 @@
-// /frontend/public_landing/MastersSection.tsx
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getPhotoUrl } from "../src/utils/photoUtils";
+import { Award } from "lucide-react"; // Import Award icon
 
 interface TeamMember {
   id: number;
@@ -9,6 +9,7 @@ interface TeamMember {
   role: string;
   specialty: string;
   image: string;
+  experience: string; // Add experience field
 }
 
 import { apiClient } from "../src/api/client";
@@ -22,22 +23,18 @@ export function MastersSection() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        // Use the public API endpoint which handles translations
         const data = await apiClient.getPublicEmployees(language);
-
-        // The API returns a list of employees with translated fields
-        // data is List[Dict] -> Array<Employee>
 
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => ({
             id: emp.id,
             name: emp.name,
-            // API already returns translated role based on language
             role: emp.role || "",
             specialty: emp.specialty || "",
+            experience: emp.experience ? `${emp.experience} ${t('yearsExp', 'лет опыта')}` : t('expert', 'Эксперт'), // Map experience
             image: getPhotoUrl(emp.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
           }));
-          setTeam(teamMembers); // API returns sorted list
+          setTeam(teamMembers);
         } else {
           setTeam([]);
         }
@@ -86,17 +83,26 @@ export function MastersSection() {
                 key={member.id}
                 className="group relative overflow-hidden rounded-xl md:rounded-2xl bg-card"
               >
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden relative">
                   <img
                     src={member.image}
                     alt={member.name}
                     className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
                   />
+                  {/* Hover Overlay matching reference */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-center gap-2 text-primary-foreground mb-2">
+                        <Award className="w-4 h-4" />
+                        <span className="text-sm">{member.experience}</span>
+                      </div>
+                      <p className="text-primary-foreground text-sm">{member.specialty}</p>
+                    </div>
+                  </div>
                 </div>
                 <div className="p-3 sm:p-4 bg-gradient-to-t from-card to-transparent">
                   <h3 className="mb-1 text-sm sm:text-base text-[var(--heading)]">{member.name}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground mb-1">{member.role}</p>
-                  {/* <p className="text-sm text-foreground/70">{member.specialty}</p> */}
                 </div>
               </div>
             ))}

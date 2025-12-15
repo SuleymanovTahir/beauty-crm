@@ -6,7 +6,7 @@ import { Hero } from "../components/Hero";
 import { About } from "../components/About";
 import { Services } from "../components/Services";
 import { Portfolio } from "../components/Portfolio";
-import { Testimonials } from "../components/Testimonials";
+import { Testimonials } from "../components/ReviewsSection";
 import { Gallery } from "../components/Gallery";
 import { FAQ } from "../components/FAQ";
 import { Footer } from "../components/Footer";

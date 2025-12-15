@@ -234,6 +234,15 @@ def check_slot_availability(date: str, time: str, employee_id: Optional[int] = N
 
 # ... (create_booking is unchanged) ...
 
+
+@router.get("/reviews")
+async def get_public_reviews(limit: int = 20, language: str = "ru"):
+    """Получить активные отзывы"""
+    from db.public_content import get_active_reviews
+    
+    reviews = get_active_reviews(language=language, limit=limit)
+    return {"reviews": reviews}
+
 @router.get("/news")
 async def get_salon_news(limit: int = 10, language: str = "ru"):
     """Получить новости салона"""
