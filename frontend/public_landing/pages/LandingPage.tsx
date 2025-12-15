@@ -6,11 +6,11 @@ import { Hero } from "../components/Hero";
 import { About } from "../components/About";
 import { Services } from "../components/Services";
 import { Portfolio } from "../components/Portfolio";
-import { Testimonials } from "../components/ReviewsSection";
+import { ReviewsSection } from "../components/ReviewsSection";
 import { Gallery } from "../components/Gallery";
 import { FAQ } from "../components/FAQ";
 import { Footer } from "../components/Footer";
-import { MastersSection } from "../MastersSection";
+import { TeamSection } from "../components/TeamSection";
 import { MapSection } from "../MapSection";
 import { BookingSection } from "../BookingSection";
 
@@ -50,10 +50,10 @@ export function LandingPage() {
                     <Portfolio />
                 </div>
                 <div id="team">
-                    <MastersSection />
+                    <TeamSection />
                 </div>
                 <div id="testimonials">
-                    <Testimonials />
+                    <ReviewsSection />
                 </div>
                 <div id="gallery">
                     <Gallery />

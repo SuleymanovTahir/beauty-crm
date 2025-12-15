@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getPhotoUrl } from "../src/utils/photoUtils";
-import { Award } from "lucide-react"; // Import Award icon
-import { apiClient } from "../src/api/client";
+import { getPhotoUrl } from "../../src/utils/photoUtils";
+import { Award } from "lucide-react";
+import { apiClient } from "../../src/api/client";
 
 interface TeamMember {
     id: number;
@@ -10,10 +10,10 @@ interface TeamMember {
     role: string;
     specialty: string;
     image: string;
-    experience: string; // Add experience field
+    experience: string;
 }
 
-export function MastersSection() {
+export function TeamSection() {
     const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
     const language = i18n.language;
     const [team, setTeam] = useState<TeamMember[]>([]);
@@ -30,7 +30,7 @@ export function MastersSection() {
                         name: emp.name,
                         role: emp.role || "",
                         specialty: emp.specialty || "",
-                        experience: emp.experience ? `${emp.experience} ${t('yearsExp', 'лет опыта')}` : t('expert', 'Эксперт'), // Map experience
+                        experience: emp.experience ? `${emp.experience} ${t('yearsExp', 'лет опыта')}` : t('expert', 'Эксперт'),
                         image: getPhotoUrl(emp.image) || `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
                     }));
                     setTeam(teamMembers);
@@ -88,7 +88,6 @@ export function MastersSection() {
                                         alt={member.name}
                                         className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
                                     />
-                                    {/* Hover Overlay matching reference */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <div className="absolute bottom-0 left-0 right-0 p-4">
                                             <div className="flex items-center gap-2 text-white mb-2">
