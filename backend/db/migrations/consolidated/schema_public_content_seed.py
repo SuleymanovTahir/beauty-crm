@@ -45,24 +45,52 @@ def seed_public_content(db_path=DATABASE_NAME):
 
     # 2. Seed Reviews
     # Realistic reviews for a beauty salon in Dubai (only 5-star reviews)
+    # Format: (Author, Rating, Text, Avatar, Service)
     reviews = [
-        ("Anna Petrova", 5, "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.", "anna_p.jpg"),
-        ("Sarah Jenkins", 5, "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!", "sarah_j.jpg"),
-        ("Elena Smirnova", 5, "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!", "elena_s.jpg"),
-        ("Maria Gonzalez", 5, "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!", "maria_g.jpg"),
-        ("Fatima Al-Sayed", 5, "Excellent service and professional staff. I did microblading and I am very happy with the result.", "fatima_a.jpg")
+        ("Anna Petrova", 5, "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво.", "anna_p.jpg", "Permanent Makeup"),
+        ("Sarah Jenkins", 5, "Best beauty salon in Dubai! The atmosphere is so relaxing and the staff is incredibly friendly. I love my new lashes!", "sarah_j.jpg", "Eyelashes"),
+        ("Elena Smirnova", 5, "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!", "elena_s.jpg", "Manicure & Pedicure"),
+        ("Maria Gonzalez", 5, "Increíble servicio. Me hice un tratamiento facial y mi piel brilla. ¡Volveré seguro!", "maria_g.jpg", "Facial Treatment"),
+        ("Fatima Al-Sayed", 5, "Excellent service and professional staff. I did microblading and I am very happy with the result.", "fatima_a.jpg", "Microblading")
     ]
 
     log_info("Seeding Reviews...", "migration")
-    for i, (author, rating, text, avatar) in enumerate(reviews):
+    
+    import random
+    from datetime import datetime, timedelta
+
+    def get_random_date_2025():
+        start_date = datetime(2025, 1, 1)
+        end_date = datetime(2025, 12, 12) # Up to roughly now-ish or end of year
+        time_between_dates = end_date - start_date
+        days_between_dates = time_between_dates.days
+        random_number_of_days = random.randrange(days_between_dates)
+        random_date = start_date + timedelta(days=random_number_of_days)
+        return random_date.strftime("%Y-%m-%d %H:%M:%S")
+
+    for i, (author, rating, text, avatar, service) in enumerate(reviews):
+        # Generate random date for every iteration
+        created_at = get_random_date_2025()
+        
         # Check if exists
         c.execute("SELECT id FROM public_reviews WHERE author_name = %s AND text_ru = %s", (author, text))
-        if not c.fetchone():
+        row = c.fetchone()
+        
+        if row:
+            # Update existing review to fix date and service
+            review_id = row[0]
             c.execute("""
-                INSERT INTO public_reviews (author_name, rating, text_ru, avatar_url, display_order, is_active)
-                VALUES (%s, %s, %s, %s, %s, TRUE)
+                UPDATE public_reviews 
+                SET created_at = %s, employee_position = %s, avatar_url = %s
+                WHERE id = %s
+            """, (created_at, service, avatar, review_id))
+        else:
+            # Insert new review
+            c.execute("""
+                INSERT INTO public_reviews (author_name, rating, text_ru, avatar_url, employee_position, display_order, is_active, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s, TRUE, %s)
             ON CONFLICT DO NOTHING
-    """, (author, rating, text, avatar, i))
+            """, (author, rating, text, avatar, service, i, created_at))
 
     conn.commit()
     conn.close()
