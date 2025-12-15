@@ -24,6 +24,7 @@ interface Review {
     text_hi?: string;
     text_kk?: string;
     avatar_url?: string;
+    employee_position?: string;
     is_active: number;
     display_order: number;
     created_at: string;
@@ -46,7 +47,9 @@ export default function ReviewsTab() {
         author_name: '',
         rating: 5,
         text_ru: '',
-        avatar_url: ''
+        avatar_url: '',
+        employee_position: '',
+        created_at: ''
     });
     const [uploadTab, setUploadTab] = useState('url'); // 'url' or 'file'
     const [uploading, setUploading] = useState(false);
@@ -79,7 +82,7 @@ export default function ReviewsTab() {
 
             setShowModal(false);
             setEditingReview(null);
-            setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '' });
+            setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '', employee_position: '', created_at: '' });
             loadReviews();
         } catch (error) {
             console.error('Error saving review:', error);
@@ -110,7 +113,9 @@ export default function ReviewsTab() {
             author_name: review.author_name,
             rating: review.rating,
             text_ru: review.text_ru,
-            avatar_url: review.avatar_url || ''
+            avatar_url: review.avatar_url || '',
+            employee_position: review.employee_position || '',
+            created_at: review.created_at || ''
         });
         setShowModal(true);
     };
@@ -144,7 +149,7 @@ export default function ReviewsTab() {
                 </div>
                 <Button onClick={() => {
                     setEditingReview(null);
-                    setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '' });
+                    setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '', employee_position: '', created_at: '' });
                     setShowModal(true);
                 }}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -257,6 +262,26 @@ export default function ReviewsTab() {
                                         <option key={n} value={n}>{n} {t('stars')}</option>
                                     ))}
                                 </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1">{t('service', 'Услуга')}</label>
+                                <Input
+                                    value={formData.employee_position}
+                                    onChange={(e) => setFormData({ ...formData, employee_position: e.target.value })}
+                                    placeholder="e.g. Manicure"
+                                    className="px-3"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1">{t('date', 'Дата')}</label>
+                                <Input
+                                    type="date"
+                                    value={formData.created_at ? formData.created_at.split(/[T ]/)[0] : ''}
+                                    onChange={(e) => setFormData({ ...formData, created_at: e.target.value })}
+                                    className="px-3"
+                                />
                             </div>
 
                             <div>
