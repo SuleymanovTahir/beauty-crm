@@ -14,13 +14,12 @@ interface PortfolioItem {
 
 export function Portfolio() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('face');
   const [loading, setLoading] = useState(true);
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
 
   // Pre-defined categories
   const categories = [
-    { id: 'all', label: t('portfolioAll', 'Все работы') },
     { id: 'face', label: t('portfolioFace', 'Лицо') },
     { id: 'hair', label: t('portfolioHair', 'Волосы') },
     { id: 'nails', label: t('portfolioNails', 'Ногти') },
@@ -51,53 +50,36 @@ export function Portfolio() {
     fetchPortfolio();
   }, [i18n.language]);
 
-  const filteredPortfolio = selectedCategory === 'all'
-    ? portfolio
-    : portfolio.filter(item => {
-      // Map backend categories to frontend tabs if slightly different, or ensure consistency
-      // Backend usually stores keys like 'portfolio' - check categories.
-      // Assuming backend stores 'face', 'hair', 'nails' etc in `category` column.
-      // If data comes with 'portfolio' category, we might need a sub-category or tags.
-      // For now, let's assume `category` field in DB matches these IDs or we need to refine.
-      // Existing DB seed might assume 'portfolio' for all.
-      // Let's filter loosely or by title/desc if category is generic.
-      // If category is 'portfolio' for all, this filter won't work well.
-      // Let's assume the user will tag them correctly in admin panel.
+  const filteredPortfolio = portfolio.filter(item => {
+    if (item.category === selectedCategory) return true;
 
-      // Simple match
-      if (item.category === selectedCategory) return true;
+    // Fallback: Check if title/desc contains the tag
+    const searchStr = (item.title + " " + item.description).toLowerCase();
+    if (selectedCategory === 'face' && (searchStr.includes('face') || searchStr.includes('лиц') || searchStr.includes('чист') || searchStr.includes('уход'))) return true;
+    if (selectedCategory === 'hair' && (searchStr.includes('hair') || searchStr.includes('волос') || searchStr.includes('стриж') || searchStr.includes('окраш'))) return true;
+    if (selectedCategory === 'nails' && (searchStr.includes('nail') || searchStr.includes('ногт') || searchStr.includes('маник') || searchStr.includes('педик'))) return true;
+    if (selectedCategory === 'body' && (searchStr.includes('body') || searchStr.includes('тел') || searchStr.includes('массаж') || searchStr.includes('spa'))) return true;
 
-      // Fallback: Check if title/desc contains the tag
-      const searchStr = (item.title + " " + item.description).toLowerCase();
-      if (selectedCategory === 'face' && (searchStr.includes('face') || searchStr.includes('лиц') || searchStr.includes('чист') || searchStr.includes('уход'))) return true;
-      if (selectedCategory === 'hair' && (searchStr.includes('hair') || searchStr.includes('волос') || searchStr.includes('стриж') || searchStr.includes('окраш'))) return true;
-      if (selectedCategory === 'nails' && (searchStr.includes('nail') || searchStr.includes('ногт') || searchStr.includes('маник') || searchStr.includes('педик'))) return true;
-
-      return false;
-    });
+    return false;
+  });
 
   if (loading) return null;
   if (!loading && portfolio.length === 0) return null;
 
   return (
-    <section className="py-20 bg-white" id="portfolio">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl lg:text-5xl mb-4 text-gray-900">
-            {t('portfolioTitle', 'Наши')}{' '}
-            <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
-              {t('portfolioSubtitle', 'Работы')}
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {t('portfolioDesc', 'Примеры наших работ говорят сами за себя')}
+    <section className="py-20 bg-background" id="portfolio">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
+            {t('portfolioTag') || 'Наши работы'}
           </p>
-        </motion.div>
+          <h2 className="text-3xl sm:text-5xl mb-6 text-[var(--heading)]">
+            {t('portfolioTitle') || 'Примеры преображения'}
+          </h2>
+          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            {t('portfolioDesc') || 'Вдохновитесь результатами наших мастеров'}
+          </p>
+        </div>
 
         {/* Category Filters */}
         <motion.div
@@ -112,8 +94,8 @@ export function Portfolio() {
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
               className={`px-6 py-3 rounded-full transition-all ${selectedCategory === category.id
-                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-primary text-primary-foreground shadow-lg'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
                 }`}
             >
               {category.label}
@@ -135,17 +117,17 @@ export function Portfolio() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ delay: index * 0.05 }}
-                className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer"
+                className="group relative aspect-square rounded-2xl overflow-hidden cursor-pointer bg-muted"
               >
                 <img
                   src={item.image}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-white text-xl font-semibold">{item.title}</h3>
-                    {item.description && <p className="text-white/80 text-sm mt-1">{item.description}</p>}
+                    <h3 className="text-primary-foreground text-xl font-semibold">{item.title}</h3>
+                    {item.description && <p className="text-primary-foreground/80 text-sm mt-1">{item.description}</p>}
                   </div>
                 </div>
               </motion.div>
