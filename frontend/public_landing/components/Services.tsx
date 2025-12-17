@@ -1,16 +1,14 @@
 // /frontend/public_landing/components/Services.tsx
-import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useMemo, useEffect } from 'react';
+import { motion } from 'motion/react';
 import {
-  Search, Star, Clock, Sparkles, Heart, Gift, Hand, Scissors, User,
-  X, Calendar
+  Search, Clock, Sparkles, Heart, Gift, Hand, Scissors, User,
+  X
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../src/components/ui/button';
 import { Input } from '../../src/components/ui/input';
-import { Badge } from '../../src/components/ui/badge';
-import { Card, CardContent } from '../../src/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../src/components/ui/accordion';
+import { Card } from '../../src/components/ui/card';
 import { apiClient } from '../../src/api/client';
 
 interface Service {

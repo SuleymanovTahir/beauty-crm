@@ -285,19 +285,10 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="absolute top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-2xl flex flex-col"
             >
-              <div className="flex-none p-6 border-b border-border/10 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <a href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                    <img
-                      src={logo}
-                      alt="Logo"
-                      className="h-10 w-auto object-contain"
-                    />
-                  </a>
-                </div>
-                {/* Close button handled by header button, but spacing needed */}
-                <div className="w-8"></div>
-              </div>
+
+
+              {/* Spacer for fixed header overlap */}
+              <div className="flex-none h-20 w-full" />
 
               {/* Menu Items */}
               <nav className="flex-1 overflow-y-auto p-6">
