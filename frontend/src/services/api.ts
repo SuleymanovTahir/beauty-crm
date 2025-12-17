@@ -102,12 +102,13 @@ export class ApiClient {
     return response
   }
 
-  async register(username: string, password: string, full_name: string, email: string, role: string = 'employee', position: string = '', privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
+  async register(username: string, password: string, full_name: string, email: string, phone: string, role: string = 'employee', position: string = '', privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
     formData.append('full_name', full_name)
     formData.append('email', email)
+    formData.append('phone', phone)
     formData.append('role', role)
     formData.append('position', position)
     formData.append('privacy_accepted', privacy_accepted.toString())
@@ -421,7 +422,7 @@ export class ApiClient {
   }
 
   async deleteClient(clientId: string) {
-    return this.request(`/api/clients/${clientId}/delete`, {
+    return this.request(`/api/clients/${encodeURIComponent(clientId)}/delete`, {
       method: 'POST',
     })
   }
@@ -464,6 +465,13 @@ export class ApiClient {
     return this.request(`/api/statuses/booking/${key}`, {
       method: 'PUT',
       body: JSON.stringify(data),
+    })
+  }
+
+  async cancelBooking(bookingId: number) {
+    return this.request(`/api/bookings/${bookingId}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ status: 'cancelled' }),
     })
   }
 

@@ -32,37 +32,82 @@ def get_all_bookings():
     conn.close()
     return bookings
 
-def get_bookings_by_phone(phone: str):
-    """Получить записи клиента по номеру телефона"""
+def get_bookings_by_client(instagram_id: str, phone: str = None):
+    """
+    Получить записи клиента по Instagram ID или телефону.
+    Приоритет: ищем по обоим полям (OR).
+    """
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        # Нормализуем телефон для поиска (если нужно)
-        # В данном случае ищем точное совпадение или частичное (если формат разный)
-        # Лучше точное, но если форматы разные (+7... и 8...), можно использовать LIKE
-        # Пока используем точное совпадение, так как в системе вроде бы стандартизировано
+        # Пробуем современный запрос
+        query = """
+            SELECT id, instagram_id, service_name, datetime, phone,
+                   name, status, created_at, revenue, master
+            FROM bookings 
+            WHERE instagram_id = %s
+        """
+        params = [instagram_id]
+
+        if phone:
+            query += " OR phone = %s"
+            params.append(phone)
+            
+        query += " ORDER BY created_at DESC"
         
-        c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+        c.execute(query, tuple(params))
+    except psycopg2.OperationalError:
+         # Fallback (без master)
+        query = """
+            SELECT id, instagram_id, service_name, datetime, phone,
+                   name, status, created_at, revenue, NULL as master
+            FROM bookings 
+            WHERE instagram_id = %s
+        """
+        params = [instagram_id]
+
+        if phone:
+            query += " OR phone = %s"
+            params.append(phone)
+            
+        query += " ORDER BY created_at DESC"
+        
+        c.execute(query, tuple(params))
+        
+    bookings = c.fetchall()
+    conn.close()
+    
+    # Удаляем дубликаты по ID (если нашлись и по ID и по телефону)
+    seen_ids = set()
+    unique_bookings = []
+    for b in bookings:
+        if b[0] not in seen_ids:
+            seen_ids.add(b[0])
+            unique_bookings.append(b)
+            
+    return unique_bookings
+
+def get_bookings_by_phone(phone: str):
+    """Получить записи клиента по номеру телефона"""
+    return get_bookings_by_client(instagram_id=None, phone=phone)  # wrapper due to signature mismatch logic adjustment below or just keep separate if needed.
+    # Actually, keep original implementation logic or reuse.
+    # Reusing for simplicity if instagram_id isn't provided.
+    
+    # Original implementation for backward compatibility if needed strictly
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
                      name, status, created_at, revenue, master
                      FROM bookings 
                      WHERE phone = %s 
                      ORDER BY created_at DESC""", (phone,))
-    except psycopg2.OperationalError:
-        # Fallback для старой схемы
-        try:
-            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                         name, status, created_at, revenue, NULL as master
-                         FROM bookings 
-                         WHERE phone = %s
-                         ORDER BY created_at DESC""", (phone,))
-        except:
-             c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                         name, status, created_at, 0 as revenue, NULL as master
-                         FROM bookings 
-                         WHERE phone = %s
-                         ORDER BY created_at DESC""", (phone,))
-
+    except:
+         # Simplified fallback
+         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                     name, status, created_at, 0 as revenue, NULL as master
+                     FROM bookings WHERE phone = %s ORDER BY created_at DESC""", (phone,))
     bookings = c.fetchall()
     conn.close()
     return bookings

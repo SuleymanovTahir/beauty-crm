@@ -31,6 +31,10 @@ async def get_dashboard_kpi(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
+    # RBAC: Clients cannot see KPI
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
         analytics = AnalyticsService()
@@ -61,6 +65,10 @@ async def get_master_stats(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # RBAC: Clients cannot see master stats
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
         analytics = AnalyticsService()

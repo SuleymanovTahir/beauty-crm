@@ -16,6 +16,10 @@ async def get_dashboard(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
+    # RBAC
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     stats = get_stats()
     analytics = get_analytics_data()
@@ -39,6 +43,9 @@ async def get_analytics_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     if date_from and date_to:
         return get_analytics_data(date_from=date_from, date_to=date_to)
@@ -51,6 +58,9 @@ async def get_funnel_api(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     return get_funnel_data()
 
@@ -63,6 +73,9 @@ async def get_stats_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     return get_stats(comparison_period=comparison_period)
 
