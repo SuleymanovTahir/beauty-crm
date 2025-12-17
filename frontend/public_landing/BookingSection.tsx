@@ -130,7 +130,8 @@ export function BookingSection({ services }: BookingSectionProps) {
                 placeholder={t('enterName', { defaultValue: 'Введите ваше имя' })}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-[#f3f3f5] !border-2 !border-pink-300 px-3 placeholder:text-[#717182]"
+                style={{ border: "2px solid #f9a8d4" }}
+                className="bg-[#f3f3f5] px-3 placeholder:text-[#717182]"
                 minLength={2}
                 required
               />
@@ -144,7 +145,8 @@ export function BookingSection({ services }: BookingSectionProps) {
                 placeholder={t('enterPhone', { defaultValue: '+971 (50) 123-45-67' })}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-[#f3f3f5] !border-2 !border-pink-300 px-3 placeholder:text-[#717182]"
+                style={{ border: "2px solid #f9a8d4" }}
+                className="bg-[#f3f3f5] px-3 placeholder:text-[#717182]"
                 minLength={10}
                 required
               />

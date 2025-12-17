@@ -92,6 +92,7 @@ export function FAQ() {
                                         <span className="text-sm sm:text-base text-[var(--heading)] pr-4 transition-colors">{faq.question}</span>
                                     </AccordionTrigger>
                                     <AccordionContent className="pb-4 sm:pb-6 text-xs sm:text-sm text-foreground/70 leading-relaxed">
+                                        <div style={{ width: '100px', height: '2px', backgroundColor: '#ffffff', marginBottom: '16px', borderRadius: '4px' }}></div>
                                         {faq.answer}
                                     </AccordionContent>
                                 </AccordionItem>
