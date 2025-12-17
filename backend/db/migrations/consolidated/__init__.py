@@ -15,6 +15,7 @@ from .schema_gallery import (
 )
 from .schema_public import migrate_public_schema
 from .schema_bot_analytics import migrate_bot_analytics_schema
+from .schema_service_assignments import run_migration as migrate_service_assignments
 
 __all__ = [
     # Users
@@ -23,6 +24,7 @@ __all__ = [
     'migrate_bookings_schema',
     # Services
     'migrate_services_schema',
+    'migrate_service_assignments',  # Assigns services to masters
     # Clients
     'migrate_clients_schema',
     # Bot
@@ -39,3 +41,4 @@ __all__ = [
     # Public Content
     'migrate_public_schema',
 ]
+
