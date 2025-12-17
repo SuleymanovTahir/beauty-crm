@@ -115,10 +115,11 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     });
                   }
                 }}
-                className={`text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-primary hover:text-primary/80" : "text-primary hover:text-primary/80"
+                className={`group relative text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-primary hover:text-primary/80" : "text-primary hover:text-primary/80"
                   }`}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </a>
             ))}
 
@@ -214,7 +215,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               <a
                 key={item.name}
                 href={item.href}
-                className="block text-sm text-primary hover:text-primary/80 transition-colors duration-200 py-2"
+                className="group relative block text-sm lowercase text-primary hover:text-primary/80 transition-colors duration-200 py-2"
                 onClick={(e) => {
                   e.preventDefault();
                   setIsMobileMenuOpen(false);
@@ -232,6 +233,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 }}
               >
                 {t(item.key, { defaultValue: item.defaultText }) || item.name}
+                <span className="absolute bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full inline-block"></span>
               </a>
             ))}
 
