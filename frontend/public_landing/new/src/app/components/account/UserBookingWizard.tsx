@@ -421,9 +421,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         const service = selectedServices.find(s => String(s.id) === currentServiceId);
         if (!service) return masters;
 
+        console.log(`Filtering masters for service: ${service.name} (ID: ${service.id})`);
         return masters.filter(master => {
-            if (!master.services || master.services.length === 0) return true;
-            return master.services.some(s => String(s.id) === String(service.id));
+            if (!master.services || master.services.length === 0) {
+                console.log(`Master ${master.full_name} has NO services (kept)`);
+                return true;
+            }
+            const hasService = master.services.some(s => String(s.id) === String(service.id));
+            if (!hasService) console.log(`Master ${master.full_name} skipped (Does not have service ID ${service.id})`);
+            return hasService;
         });
     }, [masters, currentServiceId, selectedServices]);
 
@@ -815,6 +821,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         </div>
                     ))}
                 </div>
+                {renderStickyFooter()}
             </div>
         );
     }
