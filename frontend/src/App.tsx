@@ -57,7 +57,7 @@ const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 
 // New Public Landing Pages
 // New Public Landing Pages - Lazy Loaded
-const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage').then(module => ({ default: module.LandingPage })));
+const LandingPage = React.lazy(() => import('../public_landing/new/src/app/pages/LandingPage').then(module => ({ default: module.LandingPage })));
 const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/public_landing__PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
 const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/public_landing__TermsOfUse').then(module => ({ default: module.TermsOfUse })));
 const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
