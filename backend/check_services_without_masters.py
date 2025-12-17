@@ -91,7 +91,7 @@ def check_services_without_masters():
         print("=" * 80)
         print("📝 ДЕТАЛЬНАЯ ИНФОРМАЦИЯ:")
         print("=" * 80)
-        for service in sorted(services_without_masters, key=lambda x: (x['category'], x['name_ru'])):
+        for service in sorted(services_without_masters, key=lambda x: (str(x['category'] or ''), str(x['name_ru'] or ''))):
             print(f"ID: {service['id']}")
             print(f"  Название (RU): {service['name_ru']}")
             print(f"  Название (EN): {service['name_en']}")
