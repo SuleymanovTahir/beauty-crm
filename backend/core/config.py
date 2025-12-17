@@ -338,10 +338,10 @@ def can_manage_role(manager_role: str, target_role: str) -> bool:
 # Единый источник истины для всех дефолтных значений настроек салона
 
 # === РАБОЧИЕ ЧАСЫ САЛОНА ===
-DEFAULT_HOURS_WEEKDAYS = "10:30 - 21:30"
-DEFAULT_HOURS_WEEKENDS = "10:30 - 21:30"
+DEFAULT_HOURS_WEEKDAYS = "10:30 - 21:00"
+DEFAULT_HOURS_WEEKENDS = "10:30 - 21:00"
 DEFAULT_HOURS_START = "10:30"
-DEFAULT_HOURS_END = "21:30"
+DEFAULT_HOURS_END = "21:00"
 DEFAULT_HOURS_START_HOUR = 10
 DEFAULT_HOURS_END_HOUR = 21
 

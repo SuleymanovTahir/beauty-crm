@@ -71,7 +71,18 @@ const resources: Record<string, any> = {};
 for (const lang of languages) {
   resources[lang] = {};
   for (const ns of namespaces) {
-    const key = `./locales/${lang}/${ns}.json`;
+    let key = `./locales/${lang}/${ns}.json`;
+
+    // Support for separate public_landing folder
+    if (ns.startsWith('public_landing/')) {
+      const cleanNs = ns.replace('public_landing/', '');
+      // Check if file exists in the separate folder: locales/public_landing/en/common.json
+      const altKey = `./locales/public_landing/${lang}/${cleanNs}.json`;
+      if (localeFiles[altKey]) {
+        key = altKey;
+      }
+    }
+
     if (localeFiles[key]) {
       resources[lang][ns] = (localeFiles[key] as any).default || localeFiles[key];
     } else {

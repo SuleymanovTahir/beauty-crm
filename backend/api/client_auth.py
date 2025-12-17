@@ -134,6 +134,20 @@ async def register_client(data: ClientRegister):
             'Веб-регистрация'
         ))
 
+        # Add Welcome Bonus (100 points)
+        c.execute("""
+            INSERT INTO loyalty_transactions (client_id, points, reason, transaction_type)
+            VALUES (%s, 100, 'Приветственный бонус за регистрацию', 'system')
+        """, (instagram_id,))
+        
+        c.execute("UPDATE clients SET loyalty_points = loyalty_points + 100 WHERE instagram_id = %s", (instagram_id,))
+
+        # Add Welcome Notification
+        c.execute("""
+            INSERT INTO client_notifications (client_instagram_id, notification_type, title, message, sent_at)
+            VALUES (%s, 'welcome', 'Добро пожаловать!', 'Мы рады видеть вас! Вам начислено 100 приветственных бонусов.', %s)
+        """, (instagram_id, now))
+
         conn.commit()
 
         return {
@@ -344,3 +358,156 @@ async def mark_notification_read(notification_id: int):
     conn.close()
 
     return {"success": True}
+
+# ============================================================================
+# NEW ENDPOINTS FOR ACCOUNT ENHANCEMENTS
+# ============================================================================
+
+class ClientProfileUpdate(BaseModel):
+    client_id: str
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    avatar_url: Optional[str] = None
+    password: Optional[str] = None
+    notification_preferences: Optional[str] = None
+    birth_date: Optional[str] = None
+
+@router.put("/profile")
+async def update_client_profile(data: ClientProfileUpdate):
+    """Обновление профиля клиента"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Build query dynamically
+        fields = []
+        values = []
+
+        if data.name:
+            fields.append("name = %s")
+            values.append(data.name)
+        if data.email:
+            fields.append("email = %s")
+            values.append(data.email)
+        if data.phone:
+            fields.append("phone = %s")
+            values.append(data.phone)
+        if data.avatar_url:
+            fields.append("avatar_url = %s")
+            values.append(data.avatar_url)
+        if data.notification_preferences:
+            fields.append("notification_preferences = %s")
+            values.append(data.notification_preferences)
+        if data.birth_date:
+            fields.append("birth_date = %s")
+            values.append(data.birth_date)
+            
+        if data.password:
+            fields.append("password_hash = %s")
+            values.append(hash_password(data.password))
+
+        if not fields:
+            return {"success": True, "message": "Нет изменений"}
+
+        query = f"UPDATE clients SET {', '.join(fields)} WHERE instagram_id = %s"
+        values.append(data.client_id)
+
+        c.execute(query, tuple(values))
+        conn.commit()
+        
+        # Return updated user info
+        c.execute("""
+            SELECT instagram_id, email, name, phone, birthday, avatar_url, notification_preferences, birth_date, loyalty_points
+            FROM clients WHERE instagram_id = %s
+        """, (data.client_id,))
+        row = c.fetchone()
+        
+        updated_client = None
+        if row:
+             updated_client = {
+                "id": row[0],
+                "email": row[1],
+                "name": row[2],
+                "phone": row[3],
+                "birthday": row[7] or row[4], # Preference new birth_date column
+                "avatar_url": row[5],
+                "notification_preferences": row[6],
+                "loyalty_points": row[8] if len(row) > 8 else 0
+            }
+
+        return {"success": True, "message": "Профиль обновлен", "client": updated_client}
+
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+from fastapi import UploadFile, File
+import shutil
+import os
+
+@router.post("/upload-avatar")
+async def upload_client_avatar(file: UploadFile = File(...)):
+    """Загрузка аватара"""
+    try:
+        # Create upload dir
+        UPLOAD_DIR = "static/uploads/avatars"
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        
+        # Generate filename
+        ext = file.filename.split(".")[-1]
+        filename = f"avatar_{secrets.token_hex(8)}.{ext}"
+        file_path = os.path.join(UPLOAD_DIR, filename)
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        # Return URL relative to API
+        return {"success": True, "url": f"/static/uploads/avatars/{filename}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
+
+@router.get("/loyalty")
+async def get_loyalty_info(client_id: str):
+    """Получить информацию о бонусах"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Get points summary from clients table
+        c.execute("SELECT loyalty_points FROM clients WHERE instagram_id = %s", (client_id,))
+        row = c.fetchone()
+        points = row[0] if row else 0
+        
+        # Get transaction history
+        c.execute("""
+            SELECT points, reason, created_at, transaction_type 
+            FROM loyalty_transactions 
+            WHERE client_id = %s 
+            ORDER BY created_at DESC 
+            LIMIT 20
+        """, (client_id,))
+        
+        history = []
+        for row in c.fetchall():
+            history.append({
+                "amount": row[0],
+                "reason": row[1],
+                "date": row[2],
+                "source": row[3]
+            })
+            
+        # Determine level based on points
+        level = "Bronze"
+        if points > 1000:
+            level = "Silver"
+        if points > 5000:
+            level = "Gold"
+        if points > 10000:
+            level = "Platinum"
+        
+        return {"points": points, "history": history, "level": level}
+    finally:
+        conn.close()

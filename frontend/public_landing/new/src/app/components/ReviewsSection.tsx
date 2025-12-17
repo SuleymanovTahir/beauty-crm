@@ -52,10 +52,31 @@ export function ReviewsSection() {
   const nextReview = () => setCurrentIndex((prev) => (prev + 1) % reviews.length);
   const prevReview = () => setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
 
+  const [itemsPerSlide, setItemsPerSlide] = useState(3);
+
+  // Responsive check
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerSlide(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerSlide(2);
+      } else {
+        setItemsPerSlide(3);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const getVisibleReviews = () => {
     if (reviews.length === 0) return [];
     const visible = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < itemsPerSlide; i++) {
       visible.push(reviews[(currentIndex + i) % reviews.length]);
     }
     return visible;
@@ -104,12 +125,19 @@ export function ReviewsSection() {
                   <p className="text-xs sm:text-sm text-foreground/80 mb-4 flex-grow line-clamp-4">{review.text}</p>
                   <div className="flex items-center gap-2 sm:gap-3 pt-3 border-t border-border">
                     {review.avatar_url ? (
-                      <img src={review.avatar_url} alt={review.name} className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm">
-                        {review.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+                      <img
+                        src={review.avatar_url}
+                        alt={review.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div className={`w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-sm ${review.avatar_url ? 'hidden' : ''}`}>
+                      {review.name.charAt(0).toUpperCase()}
+                    </div>
                     <div className="min-w-0">
                       <div className="font-semibold text-sm text-card-foreground truncate">{review.name}</div>
                       <div className="text-xs text-muted-foreground truncate">{review.employee_position}</div>

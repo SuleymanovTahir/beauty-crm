@@ -15,6 +15,7 @@ from .roles import router as roles_router
 from .uploads import router as uploads_router
 from .employees import router as employees_router
 from api.diagnostics import router as diagnostics_router
+from .client_auth import router as client_auth_router
 
 # Главный роутер API
 router = APIRouter(tags=["API"])
@@ -33,5 +34,6 @@ router.include_router(uploads_router)
 router.include_router(employees_router)
 router.include_router(diagnostics_router)
 router.include_router(salary_router)
+router.include_router(client_auth_router)
 
 __all__ = ["router"]

@@ -3,6 +3,8 @@ import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { CookieConsent } from '../components/CookieConsent';
 import { Footer } from '../components/Footer';
+import '../../styles/theme.css';
+import '../../styles/index.css';
 
 // Lazy load components for better performance
 const About = lazy(() => import('../components/About').then(m => ({ default: m.About })));
@@ -27,60 +29,60 @@ export function LandingPage() {
       <Header />
       <main>
         <Hero />
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <About />
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="services">
             <Services />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="portfolio">
             <Portfolio />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="team">
             <TeamSection />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="testimonials">
             <ReviewsSection />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="gallery">
             <Gallery />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="faq">
             <FAQ />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="map-section">
             <MapSection />
           </div>
         </Suspense>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <div id="booking">
             <BookingSection />
           </div>
         </Suspense>
       </main>
-      
+
       <Footer />
       <CookieConsent />
     </div>

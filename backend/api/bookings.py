@@ -9,7 +9,8 @@ from datetime import datetime
 
 from db import (
     get_all_bookings, save_booking, update_booking_status,
-    get_or_create_client, update_client_info, log_activity
+    get_or_create_client, update_client_info, log_activity,
+    get_bookings_by_phone
 )
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -45,6 +46,41 @@ def get_client_messengers_for_bookings(client_id: str):
 
     conn.close()
     return messengers
+
+@router.get("/client/bookings")
+async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
+    """Получить записи ТОЛЬКО текущего авторизованного клиента"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    phone = user.get("phone")
+    # Если телефона нет в профиле, считаем что записей нет (так как привязка по телефону)
+    if not phone:
+         return {"bookings": [], "count": 0}
+
+    bookings = get_bookings_by_phone(phone)
+    
+    formatted_bookings = []
+    for b in bookings:
+         formatted_bookings.append({
+            "id": b[0],
+            "client_id": b[1],
+            "service": b[2] if len(b) > 2 else None,
+            "service_name": b[2] if len(b) > 2 else None,
+            "datetime": b[3] if len(b) > 3 else None,
+            "phone": b[4] if len(b) > 4 else '',
+            "name": b[5] if len(b) > 5 else '',
+            "status": b[6] if len(b) > 6 else 'pending',
+            "created_at": b[7] if len(b) > 7 else None,
+            "revenue": b[8] if len(b) > 8 else 0,
+            "master": b[9] if len(b) > 9 else None,
+         })
+         
+    return {
+        "bookings": formatted_bookings,
+        "count": len(formatted_bookings)
+    }
 
 @router.get("/bookings")
 async def list_bookings(session_token: Optional[str] = Cookie(None)):

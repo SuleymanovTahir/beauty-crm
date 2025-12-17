@@ -11,33 +11,56 @@ import { useTranslation } from "react-i18next";
 
 export function FAQ() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const [salonPhone, setSalonPhone] = useState("+971 58 533 5555");
+  const [salonPhone, setSalonPhone] = useState("");
 
   // Use translations for FAQs. Ensure your translation files structure matches this.
-  // Assuming structure in public_landing.json: "faqItems": [{ "question": "...", "answer": "..." }, ...]
-  const faqData = t('faqItems', { returnObjects: true, ns: 'public_landing' }) as Array<any>;
-
-  const faqs = Array.isArray(faqData) ? faqData.map((item, index) => ({
-    id: index,
-    question: item.question || '',
-    answer: item.answer || ''
-  })) : [];
+  const [faqs, setFaqs] = useState<{ id: number; question: string; answer: string }[]>([]);
 
   useEffect(() => {
-    // Fetch salon info for phone number
-    const fetchSalonInfo = async () => {
+    // Fetch salon info and FAQs
+    const fetchData = async () => {
       try {
         const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
-        const res = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
-        const data = await res.json();
-        if (data.phone) {
-          setSalonPhone(data.phone);
+
+        // 1. Fetch Salon Info for phone
+        const resInfo = await fetch(`${API_URL}/api/public/salon-info?language=${i18n.language}`);
+        const dataInfo = await resInfo.json();
+        if (dataInfo.phone) {
+          setSalonPhone(dataInfo.phone);
         }
+
+        // 2. Fetch FAQs from DB
+        const resFaq = await fetch(`${API_URL}/api/public/faq?language=${i18n.language}`);
+        const dataFaq = await resFaq.json();
+
+        if (dataFaq.faqItems && dataFaq.faqItems.length > 0) {
+          setFaqs(dataFaq.faqItems);
+        } else {
+          // Fallback to translations if DB is empty
+          const tFaqs = t('faqItems', { returnObjects: true, ns: 'public_landing' }) as Array<any>;
+          if (Array.isArray(tFaqs)) {
+            setFaqs(tFaqs.map((item, index) => ({
+              id: index,
+              question: item.question || '',
+              answer: item.answer || ''
+            })));
+          }
+        }
+
       } catch (error) {
-        console.error('Error loading salon info:', error);
+        console.error('Error loading data:', error);
+        // Fallback on error
+        const tFaqs = t('faqItems', { returnObjects: true, ns: 'public_landing' }) as Array<any>;
+        if (Array.isArray(tFaqs)) {
+          setFaqs(tFaqs.map((item, index) => ({
+            id: index,
+            question: item.question || '',
+            answer: item.answer || ''
+          })));
+        }
       }
     };
-    fetchSalonInfo();
+    fetchData();
   }, [i18n.language]);
 
   return (
