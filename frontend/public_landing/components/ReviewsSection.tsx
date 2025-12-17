@@ -148,7 +148,7 @@ export function ReviewsSection() {
                 <div
                   key={`${review.id}-${index}`}
                   className={`flex-none transition-all duration-300 ${visibleCount === 1
-                    ? 'w-full max-w-[85%] mx-auto'
+                    ? 'w-full max-w-xs mx-auto'
                     : visibleCount === 2
                       ? 'w-[calc(50%-1rem)] max-w-sm'
                       : 'w-full max-w-xs'
