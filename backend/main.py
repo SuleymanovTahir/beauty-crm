@@ -49,12 +49,12 @@ from middleware import CacheControlMiddleware
 # ╚════════════════════════════════════════════════════════════════════════════╝
 # from comprehensive_test import run_comprehensive_test
 
-# Импорт роутеров
+# Импорт роутеров (все импортируются напрямую ниже)
+# Main routers
 from api import router as api_router
 from core.auth import router as auth_router
-from webhooks import router as webhooks_router
-from webhooks.telegram import router as telegram_webhook_router
 from api.templates import router as templates_router
+# Other routers
 from api.statuses import router as statuses_router
 from api.uploads import router as upload_router
 from api.proxy import router as proxy_router  # ✅ НОВЫЙ РОУТЕР
@@ -96,7 +96,10 @@ from api.booking_import import router as booking_import_router
 from api.payroll import router as payroll_router
 from api.feedback import router as feedback_router
 from api.sitemap import router as sitemap_router
+from api.feedback import router as feedback_router
+from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
+from api.holidays import router as holidays_router
 from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
 from api.newsletter import router as newsletter_router
@@ -156,15 +159,16 @@ app.include_router(notes_router, prefix="/api")
 # Модуль публичных страниц (опциональный)
 from modules import is_module_enabled
 if is_module_enabled('public'):
-    app.include_router(public_router, prefix="/api/public")
+    app.include_router(public_router, prefix="/api/public", tags=["public"])
     app.include_router(public_content_router, prefix="/api")  # Public content API
     app.include_router(public_employees_router, prefix="/api")  # Public employees API
     app.include_router(gallery_router, prefix="/api")  # Gallery API
     # app.include_router(client_auth_router, prefix="/public")  # Moved to /api/client
     log_info("✅ Модуль 'public' подключен: /api/public/* endpoints", "startup")
+app.include_router(holidays_router, prefix="/api/holidays", tags=["holidays"])
 # Специальные роутеры (БЕЗ /api)
-app.include_router(webhooks_router)  # для Instagram webhook (/webhook)
-app.include_router(telegram_webhook_router)  # для Telegram webhook (/webhooks/telegram)
+# app.include_router(webhooks_router)  # для Instagram webhook (/webhook) - модуль не существует
+# app.include_router(telegram_webhook_router)  # для Telegram webhook (/webhooks/telegram) - модуль не существует
 app.include_router(proxy_router, prefix="/api")   # для прокси изображений
 app.include_router(internal_chat_router)
 app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)

@@ -166,6 +166,17 @@ export default function AdminSettings() {
     webhook_url: ''
   });
 
+  // Holidays state
+  const [holidays, setHolidays] = useState<Array<{ id: number; date: string; name: string; is_closed: boolean; created_at: string }>>([]);
+  const [loadingHolidays, setLoadingHolidays] = useState(false);
+  const [showCreateHolidayDialog, setShowCreateHolidayDialog] = useState(false);
+  const [holidayForm, setHolidayForm] = useState({
+    date: '',
+    name: '',
+    is_closed: true,
+    master_exceptions: [] as number[]
+  });
+
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
@@ -176,6 +187,7 @@ export default function AdminSettings() {
     loadBookingReminderSettings();
     loadMessengerSettings();
     loadBroadcastUsers();
+    loadHolidays();
   }, []);
 
   // ДОБАВИТЬ эту функцию:
@@ -863,6 +875,52 @@ export default function AdminSettings() {
     }
   };
 
+  // Holidays functions
+  const loadHolidays = async () => {
+    try {
+      setLoadingHolidays(true);
+      const data = await api.getHolidays();
+      setHolidays(data);
+    } catch (err) {
+      console.error('Error loading holidays:', err);
+    } finally {
+      setLoadingHolidays(false);
+    }
+  };
+
+  const handleCreateHoliday = async () => {
+    if (!holidayForm.date || !holidayForm.name) {
+      toast.error(t('settings:enter_holiday_details', 'Please enter holiday date and name'));
+      return;
+    }
+
+    try {
+      await api.createHoliday(holidayForm);
+      toast.success(t('settings:holiday_created', 'Holiday created successfully'));
+      setShowCreateHolidayDialog(false);
+      setHolidayForm({ date: '', name: '', is_closed: true, master_exceptions: [] });
+      loadHolidays();
+    } catch (err) {
+      console.error('Error creating holiday:', err);
+      toast.error(t('settings:error_creating_holiday', 'Error creating holiday'));
+    }
+  };
+
+  const handleDeleteHoliday = async (date: string) => {
+    if (!confirm(t('settings:delete_holiday_confirm', 'Are you sure you want to delete this holiday?'))) {
+      return;
+    }
+
+    try {
+      await api.deleteHoliday(date);
+      toast.success(t('settings:holiday_deleted', 'Holiday deleted successfully'));
+      loadHolidays();
+    } catch (err) {
+      console.error('Error deleting holiday:', err);
+      toast.error(t('settings:error_deleting_holiday', 'Error deleting holiday'));
+    }
+  };
+
   // Проверка доступа к настройкам
   if (!userPermissions.canViewSettings) {
     return (
@@ -934,6 +992,10 @@ export default function AdminSettings() {
           <TabsTrigger key="messengers" value="messengers" className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4" />
             <span className="hidden sm:inline">{t('settings:messengers')}</span>
+          </TabsTrigger>
+          <TabsTrigger key="holidays" value="holidays" className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('settings:holidays', 'Holidays')}</span>
           </TabsTrigger>
           <TabsTrigger key="danger" value="danger" className="flex items-center gap-2">
             <Trash2 className="w-4 h-4" />
@@ -2338,6 +2400,120 @@ export default function AdminSettings() {
               </div>
             )}
           </div>
+        </TabsContent>
+
+        {/* Holidays Management */}
+        <TabsContent value="holidays">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl text-gray-900 mb-2">{t('settings:holidays', 'Salon Holidays')}</h2>
+                <p className="text-gray-600">{t('settings:manage_holidays_desc', 'Manage salon holidays and closures')}</p>
+              </div>
+              <Button
+                onClick={() => setShowCreateHolidayDialog(true)}
+                className="bg-gradient-to-r from-pink-500 to-purple-600"
+                disabled={!userPermissions.canEditSettings}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t('settings:add_holiday', 'Add Holiday')}
+              </Button>
+            </div>
+
+            {loadingHolidays ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : holidays.length === 0 ? (
+              <div className="text-center py-12">
+                <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">{t('settings:no_holidays', 'No holidays configured')}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {holidays.map((holiday) => (
+                  <div
+                    key={holiday.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Calendar className="w-5 h-5 text-pink-600" />
+                      <div>
+                        <p className="font-medium text-gray-900">{holiday.name}</p>
+                        <p className="text-sm text-gray-600">{holiday.date}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteHoliday(holiday.date)}
+                      disabled={!userPermissions.canEditSettings}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Create Holiday Dialog */}
+          {showCreateHolidayDialog && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 className="text-xl font-bold mb-4">{t('settings:add_holiday', 'Add Holiday')}</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="holidayDate">{t('settings:date', 'Date')} *</Label>
+                    <Input
+                      id="holidayDate"
+                      type="date"
+                      value={holidayForm.date}
+                      onChange={(e) => setHolidayForm({ ...holidayForm, date: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="holidayName">{t('settings:holiday_name', 'Holiday Name')} *</Label>
+                    <Input
+                      id="holidayName"
+                      value={holidayForm.name}
+                      onChange={(e) => setHolidayForm({ ...holidayForm, name: e.target.value })}
+                      placeholder={t('settings:holiday_name_placeholder', 'e.g., New Year')}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>{t('settings:salon_closed', 'Salon Closed')}</Label>
+                      <p className="text-xs text-gray-500">{t('settings:block_all_bookings', 'Block all bookings on this day')}</p>
+                    </div>
+                    <Switch
+                      checked={holidayForm.is_closed}
+                      onCheckedChange={(checked) => setHolidayForm({ ...holidayForm, is_closed: checked })}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowCreateHolidayDialog(false);
+                      setHolidayForm({ date: '', name: '', is_closed: true, master_exceptions: [] });
+                    }}
+                    className="flex-1"
+                  >
+                    {t('common:cancel', 'Cancel')}
+                  </Button>
+                  <Button
+                    onClick={handleCreateHoliday}
+                    className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600"
+                  >
+                    {t('common:create', 'Create')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         {/* Danger Zone */}

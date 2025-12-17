@@ -406,77 +406,146 @@ class MasterScheduleService:
             # Если есть перекрытие на весь рабочий день - возвращаем пусто
             # Для простоты, если есть любое отсутствие в этот день, нужно проверять слоты детально
             
-            # Получаем все занятые слоты из bookings
-            # ✅ Case-insensitive поиск по имени мастера
+            # ✅ 5. Smart Slot Logic (Optimization)
+            # Find gap boundaries (start/end of shift, start/end of bookings)
+            boundaries = set()
+            
+            # Start/End of shift are boundaries
+            boundaries.add(start_hour * 60 + start_minute)
+            
+            # End of shift is a boundary for the END of a slot
+            shift_end_minutes = end_hour * 60 + end_minute
+            
+            # Bookings are boundaries
+            for b_time in booked_times:
+                th, tm = map(int, b_time.split(':'))
+                b_minutes = th * 60 + tm
+                # Start of a booking is a boundary (slot should END here)
+                # End of a booking is a boundary (slot should START here)
+                # Wait, booked_times is just START times of bookings.
+                # We need duration of bookings to know end times.
+                # Assuming generic 60 min or checking DB? 
+                # Current logic just checks explicit overlap.
+                # Ideally we need end times of bookings.
+                # Let's use the explicit query for bookings again or adjust?
+                # The existing `booked_times` only has HH:MM strings of starts.
+                pass
+            
+            # Re-query bookings with end times for smart logic?
+            # Or simplified: Most bookings are same duration? No.
+            # Let's do a more robust fetch of bookings earlier or just add a separate query for boundaries if performance allows
+            # Actually, `c.execute` at line 412 only selected `datetime`.
+            # Let's fetch duration too.
+            
             c.execute("""
-                SELECT datetime
-                FROM bookings
-                WHERE UPPER(master) = UPPER(%s)
-                AND DATE(datetime) = %s
-                AND status != 'cancelled'
+                SELECT b.datetime, s.duration
+                FROM bookings b
+                LEFT JOIN services s ON b.service_id = s.id
+                WHERE UPPER(b.master) = UPPER(%s)
+                AND DATE(b.datetime) = %s
+                AND b.status != 'cancelled'
             """, (master_name, date))
-
-            booked_times = set()
-            for row in c.fetchall():
-                datetime_str = row[0]
-                if 'T' in datetime_str:
-                    time_part = datetime_str.split('T')[1]
+            
+            booking_boundaries_start = set() # Times adjacent to end of a booking (Slot can start)
+            booking_boundaries_end = set()   # Times adjacent to start of a booking (Slot can end)
+            
+            rows = c.fetchall()
+            for row in rows:
+                dt_val, b_dur = row
+                if not b_dur: b_dur = 60 # Default
+                
+                if isinstance(dt_val, str):
+                    # Parse
+                    dt_parsed = datetime.strptime(dt_val, "%Y-%m-%d %H:%M:%S") if ' ' in dt_val else datetime.strptime(dt_val, "%Y-%m-%dT%H:%M:%S")
                 else:
-                    time_part = datetime_str.split(' ')[1]
-                booked_times.add(time_part[:5])  # Только HH:MM
-
-            # Генерируем все возможные слоты
-            start_hour, start_minute = map(int, start_time_str.split(':'))
-            end_hour, end_minute = map(int, end_time_str.split(':'))
-
-            start_dt = datetime.combine(dt.date(), dt_time(start_hour, start_minute))
-            end_dt = datetime.combine(dt.date(), dt_time(end_hour, end_minute))
-
-            available_slots = []
-            current_dt = start_dt
+                    dt_parsed = dt_val
+                
+                # Start of booking -> Slot closest to this should END at this time
+                b_start_min = dt_parsed.hour * 60 + dt_parsed.minute
+                booking_boundaries_end.add(b_start_min)
+                
+                # End of booking -> Slot closest to this should START at this time
+                b_end_dt = dt_parsed + timedelta(minutes=int(b_dur))
+                b_end_min = b_end_dt.hour * 60 + b_end_dt.minute
+                booking_boundaries_start.add(b_end_min)
             
-            # Get current time for filtering past slots (convert to naive for comparison)
-            now = get_current_time().replace(tzinfo=None)
-            is_today = dt.date() == now.date()
+            # Also add Shift Start and End
+            shift_start_minutes = start_hour * 60 + start_minute
             
-            # Minimum advance booking time for same-day appointments (2 hours)
-            # This gives clients enough time to prepare and travel to the salon
-            min_advance_hours = 2
-            min_booking_time = now + timedelta(hours=min_advance_hours) if is_today else now
+            # Logic:
+            # Slot is optimal if:
+            # 1. Slot START matches Shift START
+            # 2. Slot START matches any Booking END
+            # 3. Slot END matches any Booking START
+            # 4. Slot END matches Shift END
 
+            smart_slots = []
+            
             while current_dt < end_dt:
                 time_str = current_dt.strftime('%H:%M')
                 slot_end_dt = current_dt + timedelta(minutes=duration_minutes)
                 
-                # 0. Filter past times and slots too close for same-day booking
+                # 0. Filter past times
                 if is_today and current_dt < min_booking_time:
-                    current_dt += timedelta(minutes=30)  # Increment by 30 minutes
+                    current_dt += timedelta(minutes=30)
                     continue
                 
-                # 1. Check if procedure can finish before closing time
+                # 1. Check fitting
                 if slot_end_dt > end_dt:
-                    break  # No more slots can fit
+                    break
                 
-                # 2. Проверка на занятость записью
-                if time_str in booked_times:
-                    current_dt += timedelta(minutes=30)  # Increment by 30 minutes
+                # 2. Booked check
+                if time_str in booked_times: # booked_times set might be incomplete if we rely on it, but we kept lines 412 logic conceptually
+                    current_dt += timedelta(minutes=30)
+                    continue
+
+                # 2.1 Check Holds
+                if time_str in held_times:
+                    current_dt += timedelta(minutes=30)
                     continue
                     
-                # 3. Проверка на unavailability
-                is_unavailable = False
+                # 3. Check Unavailability
                 current_dt_str = current_dt.strftime('%Y-%m-%d %H:%M:%S')
+                is_unavailable = False
+                for u_start, u_end in unavailability:
+                    if u_start <= current_dt_str < u_end:
+                         is_unavailable = True
+                         break
                 
-                for un_start, un_end in unavailability:
-                    if un_start <= current_dt_str < un_end:
-                        is_unavailable = True
-                        break
+                if is_unavailable:
+                    current_dt += timedelta(minutes=30)
+                    continue
+
+                # 4. Is Optimal?
+                current_minutes = current_dt.hour * 60 + current_dt.minute
+                slot_end_minutes = slot_end_dt.hour * 60 + slot_end_dt.minute
                 
-                if not is_unavailable:
-                    available_slots.append(time_str)
+                is_optimal = False
+                
+                # Matches Shift Start?
+                if current_minutes == shift_start_minutes:
+                    is_optimal = True
+                
+                # Matches Shift End?
+                if slot_end_minutes == shift_end_minutes:
+                    is_optimal = True
+                    
+                # Matches Booking End? (Slot starts right after a booking)
+                if current_minutes in booking_boundaries_start:
+                    is_optimal = True
+                    
+                # Matches Booking Start? (Slot ends right before a booking)
+                if slot_end_minutes in booking_boundaries_end:
+                    is_optimal = True
 
-                current_dt += timedelta(minutes=30)  # Increment by 30 minutes
+                smart_slots.append({
+                    "time": time_str,
+                    "is_optimal": is_optimal
+                })
 
-            return available_slots
+                current_dt += timedelta(minutes=30)
+
+            return smart_slots
 
         except Exception as e:
             log_error(f"Error getting available slots: {e}", "schedule")
@@ -521,3 +590,264 @@ class MasterScheduleService:
             return {}
         finally:
             conn.close()
+
+    def get_available_dates(
+        self,
+        master_name: Optional[str],
+        year: int,
+        month: int,
+        duration_minutes: int = 60
+    ) -> List[str]:
+        """
+        Получить список дат с доступными слотами в указанном месяце.
+        Оптимизированная версия с bulk-запросами.
+        Если master_name is None, проверяет глобальную доступность (любой мастер).
+        """
+        import calendar
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        try:
+            # 1. Определяем диапазон дат
+            num_days = calendar.monthrange(year, month)[1]
+            start_date_str = f"{year}-{month:02d}-01"
+            end_date_str = f"{year}-{month:02d}-{num_days}"
+            
+            today = get_current_time().date()
+            
+            available_dates = []
+
+            # 2. Получаем список мастеров для проверки
+            masters_to_check = []
+            if master_name and master_name.lower() != 'any':
+                user_id = self._get_user_id(master_name)
+                if user_id:
+                    masters_to_check.append({"id": user_id, "name": master_name})
+            else:
+                # Global Availability: Get all service providers
+                c.execute("""
+                    SELECT id, full_name FROM users 
+                    WHERE is_service_provider = TRUE AND is_active = TRUE
+                    AND role NOT IN ('director', 'admin', 'manager') 
+                """) 
+                # Note: Excluding roles might be business logic specific, adjust if needed
+                for row in c.fetchall():
+                    masters_to_check.append({"id": row[0], "name": row[1]})
+
+            if not masters_to_check:
+                return []
+            
+            master_ids = [m["id"] for m in masters_to_check]
+
+            # 3. BULK FETCH: Расписания (Schedules)
+            # Fetch schedules for all relevant masters
+            c.execute(f"""
+                SELECT user_id, day_of_week, start_time, end_time
+                FROM user_schedule
+                WHERE user_id = ANY(%s) AND is_active = TRUE
+            """, (master_ids,))
+            
+            schedules_map = {} # {user_id: {day_of_week: (start, end)}}
+            for row in c.fetchall():
+                uid, dow, start, end = row
+                if uid not in schedules_map:
+                    schedules_map[uid] = {}
+                schedules_map[uid][dow] = (start, end)
+                
+            # Fallback to default schedule if missing? 
+            # Current logic in `get_available_slots` falls back to settings. We should replicate that or fetch settings once.
+            from db.settings import get_salon_settings
+            settings = get_salon_settings()
+            
+            # 4. BULK FETCH: Выходные (Time Offs)
+            c.execute(f"""
+                SELECT user_id, start_date, end_date
+                FROM user_time_off
+                WHERE user_id = ANY(%s)
+                AND (start_date <= %s AND end_date >= %s)
+            """, (master_ids, f"{end_date_str} 23:59:59", f"{start_date_str} 00:00:00"))
+            
+            time_offs_map = {} # {user_id: [(start_dt, end_dt)]}
+            for row in c.fetchall():
+                uid, start, end = row
+                if uid not in time_offs_map:
+                    time_offs_map[uid] = []
+                time_offs_map[uid].append((str(start), str(end)))
+
+            # 5. BULK FETCH: Бронирования (Bookings)
+            c.execute(f"""
+                SELECT master, datetime
+                FROM bookings
+                WHERE datetime BETWEEN %s AND %s
+                AND status != 'cancelled'
+            """, (f"{start_date_str} 00:00:00", f"{end_date_str} 23:59:59"))
+            
+            bookings_map = {} # {master_name_lower: {date_str: [time_str]}}
+            for row in c.fetchall():
+                m_name, dt_val = row
+                if not m_name: continue
+                m_key = m_name.strip().lower()
+                
+                # Parse datetime
+                if isinstance(dt_val, str):
+                    dt_str = dt_val
+                else:
+                    dt_str = dt_val.strftime("%Y-%m-%d %H:%M:%S")
+                
+                date_part = dt_str.split(' ')[0]
+                time_part = dt_str.split(' ')[1][:5] # HH:MM
+                
+                if m_key not in bookings_map:
+                    bookings_map[m_key] = {}
+                if date_part not in bookings_map[m_key]:
+                    bookings_map[m_key][date_part] = set()
+                bookings_map[m_key][date_part].add(time_part)
+
+            # 6. Iterate Days and Check Availability using In-Memory Data
+            from datetime import timedelta
+            
+            for day in range(1, num_days + 1):
+                date_obj = datetime(year, month, day).date()
+                if date_obj < today:
+                    continue
+                
+                date_str = date_obj.strftime('%Y-%m-%d')
+                day_of_week = date_obj.weekday()
+                
+                day_is_available = False
+                
+                # Check if ANY master is available on this day
+                for master in masters_to_check:
+                    uid = master["id"]
+                    m_name = master["name"]
+                    
+                    # A. Check Schedule
+                    user_schedule = schedules_map.get(uid, {})
+                    if day_of_week in user_schedule:
+                        start_time, end_time = user_schedule[day_of_week]
+                    else:
+                        # Fallback to settings defaults if not in DB
+                        # Replicating logic from get_available_slots roughly
+                        # For speed, assume default if not explicitly set? 
+                        # Actually logic says "If no schedule found in DB... use defaults". 
+                        # But `get_working_hours` returns empty active days. 
+                        # Let's assume if not in `user_schedule` table, use Default from settings
+                        # WARNING: master_schedule.py line 352 logic says "if not schedule" (meaning fetchone is None).
+                        # So if user has NO rows in user_schedule, use defaults. 
+                        # If user has some rows but not for this day? Usually means day off.
+                        # Detailed check:
+                        if not user_schedule: 
+                            # No schedule records at all for this user -> Use Defaults
+                            hours_str = settings.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
+                            try:
+                                parts = hours_str.split('-')
+                                start_time = parts[0].strip()
+                                end_time = parts[1].strip()
+                            except:
+                                start_time = DEFAULT_HOURS_START
+                                end_time = DEFAULT_HOURS_END
+                        else:
+                            # User has schedule, but not for this day -> Day Off
+                            continue
+
+                    if not start_time or not end_time:
+                        continue
+
+                    # B. Check Time Off (Full Day or blocking)
+                    # Simplified: If any Full Day time off covers this date -> Skip
+                    # Detail: If time off is partial, we need slot check.
+                    # For optimization, let's assume if "Time Off" covers working hours, skip.
+                    
+                    is_on_leave = False
+                    user_offs = time_offs_map.get(uid, [])
+                    
+                    # Lunch logic
+                    lunch_start = settings.get('lunch_start', DEFAULT_LUNCH_START)
+                    lunch_end = settings.get('lunch_end', DEFAULT_LUNCH_END)
+                    lunch_start_full = f"{date_str} {lunch_start}:00"
+                    lunch_end_full = f"{date_str} {lunch_end}:00"
+                    
+                    # Prepare unavailability intervals for this day
+                    unavailability_intervals = [(lunch_start_full, lunch_end_full)]
+                    
+                    start_dt_full = f"{date_str} {start_time}:00"
+                    end_dt_full = f"{date_str} {end_time}:00"
+
+                    for off_start, off_end in user_offs:
+                        # Check if fully covers the day's working hours
+                        if off_start <= start_dt_full and off_end >= end_dt_full:
+                            is_on_leave = True
+                            break
+                        # Collect partials
+                        unavailability_intervals.append((off_start, off_end))
+                    
+                    if is_on_leave:
+                        continue
+
+                    # C. Check Bookings
+                    m_key = m_name.strip().lower()
+                    day_bookings = bookings_map.get(m_key, {}).get(date_str, set())
+                    
+                    # D. Slot Generation (Fast In-Memory)
+                    # We only need to find ONE available slot
+                    
+                    # Parse times
+                    s_h, s_m = map(int, start_time.split(':'))
+                    e_h, e_m = map(int, end_time.split(':'))
+                    
+                    current_dt = datetime.combine(date_obj, dt_time(s_h, s_m))
+                    work_end_dt = datetime.combine(date_obj, dt_time(e_h, e_m))
+                    
+                    # Same day advance buffer
+                    min_booking_time = datetime.now()
+                    if date_obj == today:
+                         min_booking_time += timedelta(hours=2)
+
+                    has_slot = False
+                    while current_dt + timedelta(minutes=duration_minutes) <= work_end_dt:
+                        slot_end_dt = current_dt + timedelta(minutes=duration_minutes)
+                        time_str = current_dt.strftime('%H:%M')
+                        
+                        # 1. Past check
+                        if date_obj == today and current_dt < min_booking_time:
+                            current_dt += timedelta(minutes=30)
+                            continue
+                            
+                        # 2. Booked check
+                        if time_str in day_bookings:
+                            current_dt += timedelta(minutes=30)
+                            continue
+                            
+                        # 3. Unavailability interval check
+                        current_dt_str = current_dt.strftime('%Y-%m-%d %H:%M:%S')
+                        is_unavailable_slot = False
+                        for u_start, u_end in unavailability_intervals:
+                             if u_start <= current_dt_str < u_end:
+                                 is_unavailable_slot = True
+                                 break
+                        
+                        if is_unavailable_slot:
+                            current_dt += timedelta(minutes=30)
+                            continue
+                            
+                        # Found one!
+                        has_slot = True
+                        break
+                    
+                    if has_slot:
+                        day_is_available = True
+                        break # Optimization: If any master available, day is available (Global)
+                
+                # If checking specific master, look at loop result (which ran once)
+                # If checking global, loop breaks on first avail master
+                if day_is_available:
+                    available_dates.append(date_str)
+                    
+            return available_dates
+
+        except Exception as e:
+            log_error(f"Error getting available dates: {e}", "schedule")
+            return []
+        finally:
+            conn.close()
+

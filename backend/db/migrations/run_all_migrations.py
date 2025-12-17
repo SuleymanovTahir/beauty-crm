@@ -101,6 +101,7 @@ def run_all_migrations():
     from db.migrations.consolidated.schema_cookies import create_cookie_consents_table
     from db.migrations.consolidated.schema_loyalty import migrate_loyalty_schema
     from db.migrations.consolidated.schema_preferences import migrate_preferences
+    from db.migrations.consolidated.schema_holidays import migrate_holidays_schema
 
     results["consolidated/newsletter"] = run_migration_function(
         create_newsletter_table,
@@ -177,6 +178,11 @@ def run_all_migrations():
     results["consolidated/public"] = run_migration_function(
         migrate_public_schema,
         "Все изменения публичных таблиц (banners, reviews, faq, gallery)"
+    )
+    
+    results["consolidated/holidays"] = run_migration_function(
+        migrate_holidays_schema,
+        "Таблица salon_holidays (праздничные дни)"
     )
 
     # ========================================================================
