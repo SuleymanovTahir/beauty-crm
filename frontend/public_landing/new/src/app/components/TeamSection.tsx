@@ -33,7 +33,12 @@ export function TeamSection() {
             // Experience from backend might be number or string. 
             experience: emp.experience || 0,
             // Check if image is full URL or needs prefix. Usually backend sends filename.
-            image: emp.image ? (emp.image.startsWith('http') ? emp.image : `${API_URL}/uploads/${emp.image}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
+            // Check if image is full URL or needs prefix. Usually backend sends filename.
+            image: emp.image ? (
+              emp.image.startsWith('http') ? emp.image :
+                emp.image.startsWith('/') ? `${API_URL}${emp.image}` :
+                  `${API_URL}/uploads/${emp.image}`
+            ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
           }));
           setTeam(teamMembers);
         } else {

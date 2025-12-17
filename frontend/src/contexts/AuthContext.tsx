@@ -1,11 +1,13 @@
 // /frontend/src/contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface User {
   id: number;
   username: string;
   full_name: string;
   role: string;
+  email?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -39,7 +41,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             id: userData.id,
             username: userData.username,
             full_name: userData.full_name,
-            role: userData.role
+            role: userData.role,
+            email: userData.email,
+            phone: userData.phone
           });
         }
       } catch (err) {

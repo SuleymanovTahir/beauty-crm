@@ -105,7 +105,8 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
                 "username": user["username"],
                 "full_name": user["full_name"],
                 "email": user["email"],
-                "role": user["role"]
+                "role": user["role"],
+                "phone": user.get("phone")
             }
         }
         
@@ -475,7 +476,7 @@ async def verify_email_token(token: str):
 
         # Находим пользователя с таким токеном
         c.execute("""
-            SELECT id, username, full_name, email, role, email_verified
+            SELECT id, username, full_name, email, role, email_verified, phone
             FROM users
             WHERE email_verification_token = %s
         """, (token,))
@@ -489,7 +490,7 @@ async def verify_email_token(token: str):
                 status_code=400
             )
 
-        user_id, username, full_name, email, role, email_verified = result
+        user_id, username, full_name, email, role, email_verified, phone = result
 
         # Проверяем, не подтвержден ли уже email
         if email_verified:
@@ -526,7 +527,8 @@ async def verify_email_token(token: str):
                 "username": username,
                 "full_name": full_name,
                 "email": email,
-                "role": role
+                "role": role,
+                "phone": phone
             }
         }
 

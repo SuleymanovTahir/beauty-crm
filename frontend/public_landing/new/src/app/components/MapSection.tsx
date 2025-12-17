@@ -21,11 +21,11 @@ export function MapSection() {
     fetchSalonInfo();
   }, [i18n.language]);
 
-  const phone = salonInfo?.phone || "+971 54 247 8604";
-  const email = salonInfo?.email || "info@salon.ae";
-  const address = salonInfo?.address || "Business Bay, Dubai, UAE";
-  // Working hours handling (assuming simple string or constructed)
-  const workingHours = t('workingHoursValue', { defaultValue: 'Пн-Вс: 10:30 - 21:30' });
+  const phone = salonInfo?.phone || "";
+  const email = salonInfo?.email || "";
+  const address = salonInfo?.address || "";
+  // Working hours handling
+  const workingHours = salonInfo?.hours || "";
 
   return (
     <section id="map-section" className="py-12 sm:py-16 bg-muted/30">
@@ -116,6 +116,8 @@ export function MapSection() {
               src={salonInfo?.google_maps_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1!2d55.1315886!3d25.0738739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f138d81fa2729%3A0x4f52784c0fa00c32!2sBusiness%20Bay%2C%20Dubai!5e0!3m2!1sen!2sae!4v1733334000000"}
               loading="lazy"
               title="Salon Location"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
         </div>

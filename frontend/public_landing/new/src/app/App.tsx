@@ -1,19 +1,22 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
-import { AccountPage } from './pages/AccountPage';
-import './styles/landing.css';
+import { AccountPage } from './pages/account/AccountPage';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsOfUse } from './pages/TermsOfUse';
 
 export default function App() {
-  // Simple routing based on hash
-  const path = window.location.hash.slice(1) || '/';
-
-  if (path === '/login') {
-    return <LoginPage />;
-  }
-
-  if (path === '/account') {
-    return <AccountPage />;
-  }
-
-  return <LandingPage />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfUse />} />
+        {/* Fallback for unknown routes */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 }

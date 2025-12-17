@@ -445,6 +445,10 @@ export class ApiClient {
     return this.request<any>('/api/bookings')
   }
 
+  async getClientBookings() {
+    return this.request<any>('/api/client/bookings')
+  }
+
   async getBooking(bookingId: number) {
     return this.request<any>(`/api/bookings/${bookingId}`)
   }
@@ -1072,6 +1076,16 @@ export class ApiClient {
 
   async getTimeOffs(masterName: string) {
     return this.request<any>(`/api/schedule/${masterName}/time-off`)
+  }
+
+  async getAvailableSlots(masterName: string, date: string, duration: number = 60) {
+    return this.request<{
+      success: boolean;
+      master: string;
+      date: string;
+      available_slots: string[];
+      count: number;
+    }>(`/api/schedule/${masterName}/available-slots?date=${date}&duration=${duration}`)
   }
 
 

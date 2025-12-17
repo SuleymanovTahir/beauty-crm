@@ -37,6 +37,7 @@ from .bookings import (
     update_booking_progress,
     clear_booking_progress,
     # ✅ ДОБАВЬ ЭТИ НОВЫЕ ФУНКЦИИ:
+    get_bookings_by_phone,                # ✅ NEW
     get_incomplete_booking,               # #4
     mark_booking_incomplete,              # #4
     get_client_usual_booking_pattern,     # #7
@@ -165,6 +166,7 @@ __all__ = [
     "check_if_urgent_booking",
     "get_clients_for_rebooking",
     "get_upcoming_bookings",
+    "get_bookings_by_phone",
     
     # Services
     "get_all_services",

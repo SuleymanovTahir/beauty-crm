@@ -8,20 +8,64 @@ export function CookieConsent() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookieConsent');
-    if (!consent) {
-      setTimeout(() => setShowBanner(true), 1000);
-    }
+    const checkConsent = async () => {
+      const consent = localStorage.getItem('cookieConsent');
+      if (consent) {
+        // Already decided locally
+        return;
+      }
+
+      // Not decided locally, check server (IP based)
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        const res = await fetch(`${API_URL}/api/cookies/check`);
+        const data = await res.json();
+
+        if (data.status === 'accept') {
+          localStorage.setItem('cookieConsent', 'true');
+          return; // Respect server choice, don't show
+        } else if (data.status === 'decline') {
+          localStorage.setItem('cookieConsent', 'false');
+          return; // Respect server choice
+        }
+
+        // Unknown status, show banner
+        // Small delay to ensure smooth loading
+        setTimeout(() => setShowBanner(true), 1000);
+
+      } catch (e) {
+        console.error("Cookie check error", e);
+        // Fallback: show banner if error
+        setShowBanner(true);
+      }
+    };
+
+    checkConsent();
   }, []);
 
+  const logConsent = async (action: 'accept' | 'decline') => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+      await fetch(`${API_URL}/api/cookies/consent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+    } catch (e) {
+      console.error("Cookie log error", e);
+    }
+  };
+
   const handleAccept = () => {
-    localStorage.setItem('cookieConsent', 'accepted');
+    localStorage.setItem('cookieConsent', 'true');
     setShowBanner(false);
+    logConsent('accept');
   };
 
   const handleDecline = () => {
-    localStorage.setItem('cookieConsent', 'declined');
+    localStorage.setItem('cookieConsent', 'false');
     setShowBanner(false);
+    logConsent('decline');
   };
 
   if (!showBanner) return null;
@@ -41,16 +85,14 @@ export function CookieConsent() {
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               onClick={handleDecline}
-              variant="outline"
-              size="sm"
-              className="flex-1 sm:flex-none text-xs h-8"
+              variant="default" // Using default (outline-like) or secondary
+              className="flex-1 sm:flex-none text-xs h-8 border border-input bg-background hover:bg-accent hover:text-accent-foreground text-foreground"
             >
               {t('decline', { defaultValue: 'Отклонить' })}
             </Button>
             <Button
               onClick={handleAccept}
-              size="sm"
-              className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-xs h-8"
+              className="flex-1 sm:flex-none hero-button-primary text-xs h-8 text-primary-foreground"
             >
               {t('accept', { defaultValue: 'Принять' })}
             </Button>

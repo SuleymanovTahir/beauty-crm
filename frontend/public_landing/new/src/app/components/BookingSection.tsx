@@ -1,18 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Calendar } from 'lucide-react';
+import { Calendar, Clock, Loader2 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
+import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { api } from '../../../../../src/services/api';
+import { toast } from 'sonner';
 
 export function BookingSection() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    service: '',
-    date: ''
+    service: '', // This will hold the ID initially
+    date: '',
+    time: ''
   });
   const [availableServices, setAvailableServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Pre-fill user data
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.full_name || user.username || '',
+        phone: user.phone || ''
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     // Fetch services for dropdown
@@ -22,8 +40,7 @@ export function BookingSection() {
         const res = await fetch(`${API_URL}/api/public/services?language=${i18n.language}`);
         const data = await res.json();
 
-        // Flatten categories to get all services, or just use categories. 
-        // If data is { categories: [...] }, map them.
+        // Flatten categories to get all services
         if (data.categories) {
           const services: any[] = [];
           data.categories.forEach((cat: any) => {
@@ -40,10 +57,53 @@ export function BookingSection() {
     fetchServices();
   }, [i18n.language]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t('bookingSuccessMessage', { defaultValue: 'Спасибо за запись! Мы свяжемся с вами в ближайшее время.' }));
-    setFormData({ name: '', phone: '', service: '', date: '' });
+
+    if (!formData.service) {
+      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите услугу' }));
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Find service name from ID
+      const selectedService = availableServices.find(s => s.id.toString() === formData.service.toString());
+      const serviceName = selectedService ? (selectedService.name || selectedService.title) : 'Unknown Service';
+
+      // Generate client ID (instagram_id)
+      // Use pending user logic: if logged in, use their ID/username. 
+      // If guest, generate ephemeral ID based on phone.
+      const instagramId = user?.username || `web_${formData.phone.replace(/\D/g, '')}`;
+
+      const payload = {
+        instagram_id: instagramId,
+        service: serviceName, // Backend expects Name
+        date: formData.date,
+        time: formData.time,
+        phone: formData.phone,
+        name: formData.name,
+        // master: optional, not in this simplified form yet
+      };
+
+      const response = await api.createBooking(payload) as any;
+
+      if (response.success) {
+        toast.success(t('bookingSuccessMessage', { defaultValue: 'Спасибо за запись! Мы свяжемся с вами в ближайшее время.' }));
+        // Only clear date/time/service, keep contact info if user might book again? 
+        // Or clear all? Let's clear sensitive time/service info.
+        setFormData(prev => ({ ...prev, service: '', date: '', time: '' }));
+      } else {
+        toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' }));
+      }
+
+    } catch (error) {
+      console.error('Booking error:', error);
+      toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи.' }));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,28 +163,44 @@ export function BookingSection() {
                 ))
               ) : (
                 <>
-                  <option value="manicure">{t('serviceManicure', { defaultValue: 'Маникюр' })}</option>
-                  <option value="pedicure">{t('servicePedicure', { defaultValue: 'Педикюр' })}</option>
-                  <option value="haircut">{t('serviceHaircut', { defaultValue: 'Стрижка' })}</option>
+                  <option disabled>{t('loadingServices', { defaultValue: 'Загрузка услуг...' })}</option>
                 </>
               )}
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">{t('formDate', { defaultValue: 'Желаемая дата' })}</label>
-            <Input
-              type="date"
-              required
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="h-10 sm:h-11"
-              min={new Date().toISOString().split('T')[0]}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">{t('formDate', { defaultValue: 'Дата' })}</label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="h-10 sm:h-11 pl-10"
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">{t('formTime', { defaultValue: 'Время' })}</label>
+              <div className="relative">
+                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="time"
+                  required
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                  className="h-10 sm:h-11 pl-10"
+                />
+              </div>
+            </div>
           </div>
 
-          <Button type="submit" className="w-full hero-button-primary h-11 sm:h-12 text-sm sm:text-base">
-            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+          <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11 sm:h-12 text-sm sm:text-base">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />}
             {t('submitBooking', { defaultValue: 'Отправить заявку' })}
           </Button>
 

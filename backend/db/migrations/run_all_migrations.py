@@ -86,7 +86,47 @@ def run_all_migrations():
         migrate_gallery_schema,
         migrate_public_schema,
         add_show_on_public_page_to_users,
+        add_show_on_public_page_to_users,
         import_gallery_images,
+    )
+    
+    # Import new schemas locally to register them
+    # Since they are not in the 'consolidated/__init__.py' exports yet, we might need to modify that file too,
+    # OR just import them here directly if the file allows relative imports or if they are in python path.
+    # The simplest way is to update 'db/migrations/consolidated/__init__.py' to export them,
+    # but for now I will add them here if possible, or assume they are added to __init__.py.
+    
+    # Let's check if we can import them from their files directly
+    from db.migrations.consolidated.schema_newsletter import create_newsletter_table
+    from db.migrations.consolidated.schema_cookies import create_cookie_consents_table
+    from db.migrations.consolidated.schema_loyalty import migrate_loyalty_schema
+    from db.migrations.consolidated.schema_preferences import migrate_preferences
+
+    results["consolidated/newsletter"] = run_migration_function(
+        create_newsletter_table,
+        "Таблица newsletter_subscribers"
+    )
+
+    results["consolidated/cookies"] = run_migration_function(
+        create_cookie_consents_table,
+        "Таблица cookie_consents"
+    )
+
+    from db.migrations.consolidated.schema_user_enhancements import migrate_user_enhancements
+    results["consolidated/user_enhancements"] = run_migration_function(
+        migrate_user_enhancements,
+        "Расширение таблицы пользователей (avatar, birthday, notifications)"
+    )
+    
+    # New migrations added here
+    results["consolidated/preferences"] = run_migration_function(
+        migrate_preferences,
+        "Все изменения таблиц предпочтений и контекста"
+    )
+    
+    results["consolidated/loyalty"] = run_migration_function(
+        migrate_loyalty_schema,
+        "Все изменения таблицы лояльности"
     )
     
     results["consolidated/users"] = run_migration_function(

@@ -99,9 +99,9 @@ def _get_default_salon_settings() -> dict:
         "address": "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
         "address_ar": None,
         "google_maps": "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
-        "hours": "Daily 10:30 - 21:30",
-        "hours_ru": "Ежедневно 10:30 - 21:30",
-        "hours_ar": "يوميًا 10:30 - 21:30",
+        "hours": "Daily 10:30 - 21:00",
+        "hours_ru": "Ежедневно 10:30 - 21:00",
+        "hours_ar": "يوميًا 10:30 - 21:00",
         "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,  # ✅ Используем константу
         "hours_weekends": DEFAULT_HOURS_WEEKENDS,  # ✅ Используем константу
         "lunch_start": DEFAULT_LUNCH_START,  # ✅ Используем константу

@@ -25,8 +25,8 @@ async def update_salon_translations():
         address_ar = "متجر 13، مستوى بلازا أمواج 3، جي بي آر، دبي، الإمارات العربية المتحدة"
         
         # 2. Update Hours
-        hours_ru = "10:30 - 21:30"
-        hours_ar = "10:30 - 21:30"
+        hours_ru = "10:30 - 21:00"
+        hours_ar = "10:30 - 21:00"
         
         c.execute("""
             UPDATE salon_settings

@@ -37,7 +37,7 @@ def get_all_service_providers():
     return [{"id": row[0], "full_name": row[1], "role": row[2]} for row in providers]
 
 def create_user(username: str, password: str, full_name: str = None,
-                email: str = None, role: str = 'employee'):
+                email: str = None, role: str = 'employee', phone: str = None):
     """Создать нового пользователя"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -47,9 +47,9 @@ def create_user(username: str, password: str, full_name: str = None,
     
     try:
         c.execute("""INSERT INTO users 
-                     (username, password_hash, full_name, email, role, created_at)
-                     VALUES (%s, %s, %s, %s, %s, %s)""",
-                  (username, password_hash, full_name, email, role, now))
+                     (username, password_hash, full_name, email, role, created_at, phone)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                  (username, password_hash, full_name, email, role, now, phone))
         conn.commit()
         user_id = c.lastrowid
         conn.close()
@@ -65,7 +65,7 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
     
     password_hash = hashlib.sha256(password.encode()).hexdigest()
     
-    c.execute("""SELECT id, username, full_name, email, role, employee_id 
+    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone
                  FROM users 
                  WHERE username = %s AND password_hash = %s AND is_active = TRUE""",
               (username, password_hash))
@@ -80,7 +80,8 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
             "full_name": user[2],
             "email": user[3],
             "role": user[4],
-            "employee_id": user[5]
+            "employee_id": user[5],
+            "phone": user[6]
         }
     return None
 
@@ -108,7 +109,7 @@ def get_user_by_email(email: str):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, full_name, email 
+    c.execute("""SELECT id, username, full_name, email, phone 
                  FROM users 
                  WHERE email = %s AND is_active = TRUE""", (email,))
     
@@ -120,7 +121,8 @@ def get_user_by_email(email: str):
             "id": user[0],
             "username": user[1],
             "full_name": user[2],
-            "email": user[3]
+            "email": user[3],
+            "phone": user[4]
         }
     return None
 
@@ -155,7 +157,7 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
     
     now = datetime.now().isoformat()
     
-    c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id
+    c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone
                  FROM users u
                  JOIN sessions s ON u.id = s.user_id
                  WHERE s.session_token = %s AND s.expires_at > %s AND u.is_active = TRUE""",
@@ -171,7 +173,8 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
             "full_name": user[2],
             "email": user[3],
             "role": user[4],
-            "employee_id": user[5]
+            "employee_id": user[5],
+            "phone": user[6]
         }
     return None
 

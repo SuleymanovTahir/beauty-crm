@@ -1,32 +1,128 @@
 import { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { User, Lock } from 'lucide-react';
+import { User, Lock, Mail, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useAuth } from '../../../../../src/contexts/AuthContext';
+import { api } from '../../../../../src/services/api';
 
-export function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+interface LoginPageProps {
+  initialView?: 'login' | 'register';
+}
+
+export function LoginPage({ initialView = 'login' }: LoginPageProps) {
+  const { t } = useTranslation(['public_landing', 'auth/Login', 'auth/register', 'common']);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [isLogin, setIsLogin] = useState(initialView === 'login');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Form states
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
-    name: '',
+    confirmPassword: '',
+    full_name: '',
     phone: '',
     agreedToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     if (isLogin) {
-      // Login logic
-      alert('Вход выполнен успешно!');
-      window.location.href = '/account';
+      await handleLogin();
     } else {
-      // Register logic
-      if (!formData.agreedToTerms) {
-        alert('Пожалуйста, согласитесь с условиями');
-        return;
+      await handleRegister();
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!formData.username || !formData.password) {
+      setError(t('auth/Login:fill_both_fields', 'Please fill in both fields'));
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.login(formData.username, formData.password);
+
+      if (response.success && response.token) {
+        login(response.user, response.token);
+        toast.success(`${t('auth/Login:welcome', 'Welcome')} ${response.user.full_name || response.user.username}!`);
+
+        // Redirect based on role
+        if (response.user.role === 'client') {
+          // If we had a ClientCabinet, we'd go there. For now, maybe admin dashboard or home.
+          // User mentioned "client cabinet", let's assume /account path from new router or admin dashboard as fallback
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/admin/dashboard");
+        }
+      } else {
+        if (response.error_type === "email_not_verified" && response.email) {
+          toast.error(t('auth/verify:email_not_verified', 'Email not verified'));
+          setTimeout(() => navigate("/verify-email", { state: { email: response.email } }), 1500);
+          return;
+        }
+        setError(t('auth/Login:authorization_error', 'Authorization failed'));
       }
-      alert('Регистрация выполнена успешно!');
-      window.location.href = '/account';
+    } catch (err: any) {
+      console.error("Login error:", err);
+      const message = err.message || t('auth/Login:login_error', 'Login error');
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    // Basic validation matches Register.tsx
+    if (!formData.username || !formData.password || !formData.full_name || !formData.email) {
+      setError(t('auth/register:error_fill_all_fields', 'All fields are required'));
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError(t('auth/register:error_passwords_dont_match', 'Passwords do not match'));
+      return;
+    }
+    if (!formData.agreedToTerms) {
+      setError(t('auth/register:error_accept_privacy', 'You must accept the terms'));
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Default to 'client' role for public registration unless specified otherwise
+      const response = await api.register(
+        formData.username,
+        formData.password,
+        formData.full_name,
+        formData.email,
+        'client', // role
+        '', // position
+        formData.agreedToTerms,
+        true // subscribe to newsletter
+      );
+
+      if (response.success) {
+        toast.success(t('auth/register:code_sent_to_email', 'Verification code sent to email'));
+        // Navigate to existing verification page
+        setTimeout(() => navigate("/verify-email", { state: { email: formData.email } }), 1000);
+      } else {
+        setError(response.error || t('auth/register:error_registration', 'Registration failed'));
+      }
+    } catch (err: any) {
+      console.error("Register error:", err);
+      setError(err.message || t('auth/register:error_registration', 'Registration failed'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,74 +132,85 @@ export function LoginPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">Beauty Salon</h1>
           <p className="text-muted-foreground">
-            {isLogin ? 'Войдите в свой аккаунт' : 'Создайте новый аккаунт'}
+            {isLogin ? t('auth/Login:login_title', 'Login to your account') : t('auth/register:register_title', 'Create new account')}
           </p>
         </div>
 
         <div className="bg-card rounded-2xl p-6 sm:p-8 shadow-lg border border-border">
           <div className="flex gap-2 mb-6">
             <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 rounded-lg transition-colors ${
-                isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              }`}
+              onClick={() => { setIsLogin(true); setError(""); }}
+              className={`flex-1 py-2 rounded-lg transition-colors ${isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}
             >
-              Вход
+              {t('auth/Login:login', 'Login')}
             </button>
             <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 rounded-lg transition-colors ${
-                !isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              }`}
+              onClick={() => { setIsLogin(false); setError(""); }}
+              className={`flex-1 py-2 rounded-lg transition-colors ${!isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}
             >
-              Регистрация
+              {t('auth/register:register_button', 'Register')}
             </button>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive text-sm">
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Имя</label>
+                  <label className="block text-sm font-medium mb-2">{t('auth/register:full_name', 'Full Name')}</label>
                   <Input
                     type="text"
                     required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ваше имя"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Телефон</label>
-                  <Input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+971 XX XXX XXXX"
+                    value={formData.full_name}
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    placeholder={t('auth/register:full_name_placeholder', 'Your Name')}
                   />
                 </div>
               </>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">{t('auth/Login:username', 'Username')}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  type="email"
+                  type="text"
                   required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="ваш@email.com"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder={t('auth/Login:enter_login', 'Enter username')}
                   className="pl-10"
                 />
               </div>
             </div>
 
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium mb-2">{t('auth/register:email', 'Email')}</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder={t('auth/register:email_placeholder', 'email@example.com')}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
-              <label className="block text-sm font-medium mb-2">Пароль</label>
+              <label className="block text-sm font-medium mb-2">{t('auth/Login:password', 'Password')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
