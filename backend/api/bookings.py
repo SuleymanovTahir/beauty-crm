@@ -8,9 +8,13 @@ from typing import Optional
 from datetime import datetime
 
 from db import (
-    get_all_bookings, save_booking, update_booking_status,
+    get_all_bookings, save_booking,
+    update_booking_status,
     get_or_create_client, update_client_info, log_activity,
-    get_bookings_by_phone
+    get_bookings_by_phone,
+    get_bookings_by_client,
+    get_booking_progress,
+    update_booking_progress,
 )
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -49,34 +53,35 @@ def get_client_messengers_for_bookings(client_id: str):
 
 @router.get("/client/bookings")
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
-    """Получить записи ТОЛЬКО текущего авторизованного клиента"""
+    """Получить записи текущего клиента (API)"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
-    phone = user.get("phone")
-    # Если телефона нет в профиле, считаем что записей нет (так как привязка по телефону)
-    if not phone:
-         return {"bookings": [], "count": 0}
-
-    bookings = get_bookings_by_phone(phone)
     
+    # Try to find by both Instagram ID (username) and Phone
+    # This handles cases where phone is missing or mismatching
+    instagram_id = user.get("username")
+    phone = user.get("phone")
+    
+    # Fix for legacy or web-only users without phone
+    bookings = get_bookings_by_client(instagram_id, phone)
+    
+    # Format dates
     formatted_bookings = []
     for b in bookings:
-         formatted_bookings.append({
+        formatted_bookings.append({
             "id": b[0],
-            "client_id": b[1],
-            "service": b[2] if len(b) > 2 else None,
-            "service_name": b[2] if len(b) > 2 else None,
-            "datetime": b[3] if len(b) > 3 else None,
-            "phone": b[4] if len(b) > 4 else '',
-            "name": b[5] if len(b) > 5 else '',
-            "status": b[6] if len(b) > 6 else 'pending',
-            "created_at": b[7] if len(b) > 7 else None,
-            "revenue": b[8] if len(b) > 8 else 0,
-            "master": b[9] if len(b) > 9 else None,
-         })
-         
+            "instagram_id": b[1],
+            "service_name": b[2],
+            "start_time": b[3], # Keep ISO format for JS
+            "phone": b[4],
+            "name": b[5],
+            "status": b[6],
+            "created_at": b[7],
+            "revenue": b[8],
+            "master_name": b[9] if len(b) > 9 else None
+        })
+        
     return {
         "bookings": formatted_bookings,
         "count": len(formatted_bookings)
@@ -88,6 +93,11 @@ async def list_bookings(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # RBAC: Clients cannot see all bookings
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
 
     bookings = get_all_bookings()
 
@@ -132,6 +142,23 @@ async def get_booking_detail(
     
     if not booking:
         return JSONResponse({"error": "Booking not found"}, status_code=404)
+        
+    # RBAC: Clients can only see their own bookings
+    if user["role"] == "client":
+        booking_client_id = booking[1]
+        booking_phone = booking[4]
+        
+        user_client_id = user.get("username")
+        user_phone = user.get("phone")
+        
+        # Check fuzzy match
+        is_owner = (user_client_id and str(user_client_id) == str(booking_client_id))
+        if not is_owner and user_phone and booking_phone:
+             # Basic phone normalization for comparison if needed, currently exact match
+             is_owner = (str(user_phone) == str(booking_phone))
+             
+        if not is_owner:
+            return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     return {
         "id": booking[0],
@@ -145,9 +172,69 @@ async def get_booking_detail(
         "revenue": booking[8] if len(booking) > 8 else 0
     }
 
+from fastapi import BackgroundTasks
+
+async def process_booking_background_tasks(
+    booking_id: int,
+    data: dict,
+    user_id: str
+):
+    """Background task handler for new bookings"""
+    try:
+        instagram_id = data.get('instagram_id')
+        service = data.get('service')
+        datetime_str = f"{data.get('date')} {data.get('time')}"
+        phone = data.get('phone', '')
+        name = data.get('name')
+        master = data.get('master', '')
+
+        # 1. 🧠 Smart Assistant Learning
+        try:
+            assistant = SmartAssistant(instagram_id)
+            assistant.learn_from_booking({
+                'service': service,
+                'master': master,
+                'datetime': datetime_str,
+                'phone': phone,
+                'name': name
+            })
+            log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
+        except Exception as e:
+            log_error(f"SmartAssistant learning failed: {e}", "bookings")
+
+        # 2. Notify Master
+        if master and booking_id:
+            try:
+                notification_results = await notify_master_about_booking(
+                    master_name=master,
+                    client_name=name,
+                    service=service,
+                    datetime_str=datetime_str,
+                    phone=phone,
+                    booking_id=booking_id
+                )
+
+                # Log notifications
+                master_info = get_master_info(master)
+                if master_info:
+                    for notif_type, success in notification_results.items():
+                        if success:
+                            save_notification_log(master_info["id"], booking_id, notif_type, "sent")
+                        elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
+                            save_notification_log(master_info["id"], booking_id, notif_type, "failed")
+            except Exception as e:
+                log_error(f"Error sending master notification: {e}", "api")
+
+        # 3. Notify Admin
+        await notify_admin_about_booking(data)
+        
+    except Exception as e:
+        log_error(f"Background task error: {e}", "background_tasks")
+
 @router.post("/bookings")
 async def create_booking_api(
     request: Request,
+    background_tasks: BackgroundTasks,
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать запись"""
@@ -165,73 +252,23 @@ async def create_booking_api(
         name = data.get('name')
         master = data.get('master', '')
 
+        # Synchronous DB Save (Required for ID)
         get_or_create_client(instagram_id, username=name)
         save_booking(instagram_id, service, datetime_str, phone, name, master=master)
 
-        # Получаем ID созданной записи
+        # Get ID
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT id FROM bookings WHERE instagram_id = %s ORDER BY id DESC LIMIT 1",
-                  (instagram_id,))
+        c.execute("SELECT id FROM bookings WHERE instagram_id = %s ORDER BY id DESC LIMIT 1", (instagram_id,))
         booking_result = c.fetchone()
         booking_id = booking_result[0] if booking_result else None
         conn.close()
 
-        log_activity(user["id"], "create_booking", "booking", instagram_id,
-                    f"Service: {service}")
+        log_activity(user["id"], "create_booking", "booking", instagram_id, f"Service: {service}")
 
-        # 🧠 Умный ассистент: обучаемся на основе новой записи
-        try:
-            assistant = SmartAssistant(instagram_id)
-            assistant.learn_from_booking({
-                'service': service,
-                'master': master,
-                'datetime': datetime_str,
-                'phone': phone,
-                'name': name
-            })
-            log_info(f"🧠 SmartAssistant learned from booking for {instagram_id}", "bookings")
-        except Exception as e:
-            log_error(f"SmartAssistant learning failed: {e}", "bookings")
-
-        # Отправляем уведомление мастеру
-        if master and booking_id:
-            try:
-                # Отправляем уведомления асинхронно
-                notification_results = await notify_master_about_booking(
-                    master_name=master,
-                    client_name=name,
-                    service=service,
-                    datetime_str=datetime_str,
-                    phone=phone,
-                    booking_id=booking_id
-                )
-
-                # Сохраняем логи уведомлений
-                master_info = get_master_info(master)
-                if master_info:
-                    for notif_type, success in notification_results.items():
-                        if success:
-                            save_notification_log(
-                                master_id=master_info["id"],
-                                booking_id=booking_id,
-                                notification_type=notif_type,
-                                status="sent"
-                            )
-                        elif master_info.get(notif_type) or master_info.get(f"{notif_type}_username"):
-                            # Пытались отправить, но не получилось
-                            save_notification_log(
-                                master_id=master_info["id"],
-                                booking_id=booking_id,
-                                notification_type=notif_type,
-                                status="failed"
-                            )
-            except Exception as e:
-                # Не блокируем создание записи, если уведомление не отправилось
-                log_error(f"Error sending master notification: {e}", "api")
-
-        # Notify Admin (Email + Telegram)
-        await notify_admin_about_booking(data)
+        # Offload slow tasks
+        if booking_id:
+            background_tasks.add_task(process_booking_background_tasks, booking_id, data, user["id"])
 
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
@@ -240,6 +277,9 @@ async def create_booking_api(
 
 async def notify_admin_about_booking(data: dict):
     """Notify admin about new booking"""
+    # Assuming send_email_sync is blocking, running it in threadpool might be safer if it were not async def.
+    # Since we are in an async def (process_booking_background_tasks), we should run sync calls in run_in_executor
+    # But for now, just calling it here inside the background task is better than main request.
     from utils.email import send_email_sync
     from integrations.telegram_bot import send_telegram_alert
     import os
@@ -263,7 +303,9 @@ async def notify_admin_about_booking(data: dict):
             f"Время: {datetime_str}"
         )
         try:
-            send_email_sync([admin_email], subject, message_text)
+            # Run sync email in thread pool to not block async event loop even in background
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, lambda: send_email_sync([admin_email], subject, message_text))
         except Exception as e:
             print(f"Error sending admin email: {e}")
 
@@ -294,6 +336,30 @@ async def update_booking_status_api(
     
     data = await request.json()
     status = data.get('status')
+
+    # RBAC: Clients can only cancel their own bookings
+    if user["role"] == "client":
+        if status != "cancelled":
+            return JSONResponse({"error": "Forbidden: Clients can only cancel bookings"}, status_code=403)
+            
+        # Verify ownership
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT instagram_id, phone FROM bookings WHERE id = %s", (booking_id,))
+        row = c.fetchone()
+        conn.close()
+        
+        if not row:
+             return JSONResponse({"error": "Booking not found"}, status_code=404)
+        
+        # Check ownership (username=instagram_id)
+        is_owner = (user.get("username") and str(user.get("username")) == str(row[0]))
+        if not is_owner and user.get("phone") and row[1]:
+             is_owner = (str(user.get("phone")) == str(row[1]))
+             
+        if not is_owner:
+            return JSONResponse({"error": "Forbidden"}, status_code=403)
+
     
     if not status:
         return JSONResponse({"error": "Status required"}, status_code=400)
@@ -302,6 +368,37 @@ async def update_booking_status_api(
     if success:
         log_activity(user["id"], "update_booking_status", "booking", 
                     str(booking_id), f"Status: {status}")
+        
+        # ✅ Автоматическое начисление баллов (только при переходе в completed)
+        if status == 'completed':
+            try:
+                # Получаем данные записи для начисления
+                conn = get_db_connection()
+                c = conn.cursor()
+                c.execute("SELECT instagram_id, revenue, service_name FROM bookings WHERE id = %s", (booking_id,))
+                b_row = c.fetchone()
+                conn.close()
+
+                if b_row:
+                    client_id, revenue, service_name = b_row
+                    revenue = revenue or 0
+                    
+                    from services.loyalty import LoyaltyService
+                    loyalty = LoyaltyService()
+                    
+                    # Проверяем, не начислены ли уже баллы
+                    if not loyalty.has_earned_for_booking(booking_id):
+                        points = loyalty.points_for_booking(revenue)
+                        if points > 0:
+                            loyalty.earn_points(
+                                client_id=client_id,
+                                points=points,
+                                reason=f"Посещение: {service_name}",
+                                booking_id=booking_id
+                            )
+            except Exception as e:
+                log_error(f"Error earning loyalty points: {e}", "api")
+
         return {"success": True, "message": "Booking status updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
@@ -593,6 +690,10 @@ async def update_booking_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
+    # RBAC: Clients cannot direct update bookings (must use cancellation)
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden: Clients cannot edit bookings directly"}, status_code=403)
 
     data = await request.json()
 
@@ -673,6 +774,10 @@ async def delete_booking_api(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
+    # RBAC: Clients cannot delete bookings (must use cancellation)
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden: Clients cannot delete bookings directly"}, status_code=403)
 
     try:
         # Получаем информацию о записи для уведомления
@@ -689,13 +794,22 @@ async def delete_booking_api(
 
         service, datetime_str, master, name, phone = booking
 
+        # ✅ Удаляем зависимые записи из таблиц с FOREIGN KEY на bookings
+        c.execute("DELETE FROM booking_reminders_sent WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM loyalty_transactions WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM ratings WHERE booking_id = %s", (booking_id,))
+        c.execute("DELETE FROM reminder_logs WHERE booking_id = %s", (booking_id,))
+
         # Удаляем запись
         c.execute("DELETE FROM bookings WHERE id = %s", (booking_id,))
         conn.commit()
         conn.close()
 
-        log_activity(user["id"], "delete_booking", "booking", str(booking_id),
-                    f"Deleted booking: {service}")
+        try:
+            log_activity(user["id"], "delete_booking", "booking", str(booking_id),
+                        f"Deleted booking: {service}")
+        except Exception as log_err:
+            log_error(f"Error logging activity for booking deletion: {log_err}", "api")
 
         # Отправляем уведомление мастеру об отмене
         if master:

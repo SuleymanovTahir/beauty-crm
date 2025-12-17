@@ -38,6 +38,7 @@ from .bookings import (
     clear_booking_progress,
     # ✅ ДОБАВЬ ЭТИ НОВЫЕ ФУНКЦИИ:
     get_bookings_by_phone,                # ✅ NEW
+    get_bookings_by_client,               # ✅ NEW - Robust fetch
     get_incomplete_booking,               # #4
     mark_booking_incomplete,              # #4
     get_client_usual_booking_pattern,     # #7
@@ -167,6 +168,7 @@ __all__ = [
     "get_clients_for_rebooking",
     "get_upcoming_bookings",
     "get_bookings_by_phone",
+    "get_bookings_by_client",
     
     # Services
     "get_all_services",

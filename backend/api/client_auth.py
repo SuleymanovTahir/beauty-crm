@@ -13,6 +13,8 @@ from db.connection import get_db_connection
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from fastapi import Cookie, Request
+from utils.utils import require_auth
 
 router = APIRouter(prefix="/client", tags=["Client Auth"])
 
@@ -279,8 +281,19 @@ async def reset_password(data: PasswordReset):
         conn.close()
 
 @router.get("/my-bookings")
-async def get_client_bookings(client_id: str):
+async def get_client_bookings(
+    client_id: Optional[str] = None, 
+    session_token: Optional[str] = Cookie(None)
+):
     """Получить историю записей клиента"""
+    user = require_auth(session_token)
+    if not user:
+        # Fallback for old calls? No, this is sensitive.
+        return HTTPException(status_code=401, detail="Unauthorized")
+        
+    # Use authenticated user ID
+    target_id = user["username"]
+    phone = user.get("phone")
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -290,7 +303,7 @@ async def get_client_bookings(client_id: str):
         FROM bookings
         WHERE instagram_id = %s
         ORDER BY datetime DESC
-    """, (client_id,))
+    """, (target_id,))
 
     bookings = []
     for row in c.fetchall():
@@ -309,8 +322,19 @@ async def get_client_bookings(client_id: str):
     return {"bookings": bookings}
 
 @router.get("/my-notifications")
-async def get_client_notifications(client_id: str, unread_only: bool = False):
+async def get_client_notifications(
+    client_id: Optional[str] = None, 
+    unread_only: bool = False,
+    session_token: Optional[str] = Cookie(None)
+):
     """Получить уведомления клиента"""
+    user = require_auth(session_token)
+    if not user:
+         raise HTTPException(status_code=401, detail="Unauthorized")
+
+    # Use authenticated user
+    target_id = user["username"]
+    
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -325,7 +349,7 @@ async def get_client_notifications(client_id: str, unread_only: bool = False):
 
     query += " ORDER BY created_at DESC LIMIT 50"
 
-    c.execute(query, (client_id,))
+    c.execute(query, (target_id,))
 
     notifications = []
     for row in c.fetchall():
@@ -470,14 +494,24 @@ async def upload_client_avatar(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
 
 @router.get("/loyalty")
-async def get_loyalty_info(client_id: str):
+async def get_loyalty_info(
+    client_id: Optional[str] = None,
+    session_token: Optional[str] = Cookie(None)
+):
     """Получить информацию о бонусах"""
+    user = require_auth(session_token)
+    if not user:
+         raise HTTPException(status_code=401, detail="Unauthorized")
+
+    # Use authenticated user
+    target_id = user["username"]
+    
     conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Get points summary from clients table
-        c.execute("SELECT loyalty_points FROM clients WHERE instagram_id = %s", (client_id,))
+        c.execute("SELECT loyalty_points FROM clients WHERE instagram_id = %s", (target_id,))
         row = c.fetchone()
         points = row[0] if row else 0
         
@@ -488,7 +522,7 @@ async def get_loyalty_info(client_id: str):
             WHERE client_id = %s 
             ORDER BY created_at DESC 
             LIMIT 20
-        """, (client_id,))
+        """, (target_id,))
         
         history = []
         for row in c.fetchall():

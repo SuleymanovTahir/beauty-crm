@@ -20,6 +20,7 @@ export default function Register() {
     confirmPassword: "",
     full_name: "",
     email: "",
+    phone: "",
     role: "employee",
     position: "",
   });
@@ -36,7 +37,7 @@ export default function Register() {
     const loadPositions = async () => {
       try {
         const response = await api.getPositions();
-        if (response.success && response.positions) {
+        if (response.positions) {
           setPositions(response.positions);
         }
       } catch (err) {
@@ -50,7 +51,7 @@ export default function Register() {
     e.preventDefault();
 
     // Валидация
-    if (!formData.username || !formData.password || !formData.full_name || !formData.email) {
+    if (!formData.username || !formData.password || !formData.full_name || !formData.email || !formData.phone) {
       setError(t('error_fill_all_fields'));
       return;
     }
@@ -89,6 +90,7 @@ export default function Register() {
         formData.password,
         formData.full_name,
         formData.email,
+        formData.phone,
         formData.role,
         formData.position,
         privacyAccepted,
@@ -378,6 +380,21 @@ export default function Register() {
               <p className="text-sm text-gray-500 mt-1">
                 {t('email_hint')}
               </p>
+            </div>
+
+            <div>
+              <Label htmlFor="phone">{t('phone', 'Phone Number')} *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                required
+                disabled={loading}
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                placeholder="+971 50 123 4567"
+              />
             </div>
 
             <div>

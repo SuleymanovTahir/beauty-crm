@@ -392,3 +392,13 @@ class LoyaltyService:
     def points_for_booking(self, revenue: float) -> int:
         """Вычислить баллы за запись (1 балл за каждые 10 AED)"""
         return int(revenue / 10)
+
+    def has_earned_for_booking(self, booking_id: int) -> bool:
+        """Проверить, были ли уже начислены баллы за эту запись"""
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("SELECT 1 FROM loyalty_transactions WHERE booking_id = %s AND transaction_type = 'earn'", (booking_id,))
+            return c.fetchone() is not None
+        finally:
+            conn.close()
