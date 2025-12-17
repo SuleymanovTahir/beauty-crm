@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ru, enUS, ar } from 'date-fns/locale';
-import { User, List, ChevronRight, ArrowLeft, MapPin, Loader2, Calendar as CalendarIcon, Search, Check, Edit2, X } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Check, ChevronRight, Clock, Info, List, MapPin, Search, Star, User, X, Home, Loader2, Edit2 } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -13,7 +13,7 @@ import { api } from '../../../../../../src/services/api';
 import { toast } from 'sonner';
 import { useAuth } from '../../../../../../src/contexts/AuthContext';
 
-import { useNavigate } from 'react-router-dom';
+
 
 interface Service {
     id: number;
@@ -49,12 +49,22 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     const [step, setStep] = useState<'menu' | 'professional' | 'services' | 'datetime' | 'confirm'>('menu');
     const [loading, setLoading] = useState(false);
 
+    interface Slot {
+        time: string;
+        is_optimal: boolean;
+    }
+
     // Data State
     const [masters, setMasters] = useState<Master[]>([]);
     const [services, setServices] = useState<Service[]>([]);
-    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [availableSlots, setAvailableSlots] = useState<Slot[]>([]);
+    const [holidays, setHolidays] = useState<{ date: string; name: string }[]>([]);
     const [previewSlots, setPreviewSlots] = useState<Record<number, string[]>>({});
     const [previewDates, setPreviewDates] = useState<Record<number, 'today' | 'tomorrow'>>({});
+
+    // Monthly Availability State
+    const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
+    const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
     // Selection State
     interface BookingConfig {
@@ -67,46 +77,205 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     // Selection State - Refactored for Multi-Service
     const [bookingConfigs, setBookingConfigs] = useState<Record<string, BookingConfig>>({});
     const [currentServiceId, setCurrentServiceId] = useState<string | null>(null);
-    const [preselectedMaster, setPreselectedMaster] = useState<Master | null>(null); // For Master First flow
+
+    // Draft Config for Master-First Flow
+    // When no service is selected, we store selection here.
+    const [draftConfig, setDraftConfig] = useState<{ master: Master | null; date: string; time: string; }>({
+        master: null,
+        date: '',
+        time: ''
+    });
 
     // Derived state for legacy compatibility or current context
     const currentConfig = currentServiceId ? bookingConfigs[currentServiceId] : null;
-    const selectedMaster = currentConfig?.master || null;
-    const selectedDate = currentConfig?.date || '';
-    const selectedTime = currentConfig?.time || '';
+    // If we have a current service, use its master. Otherwise, use draft master.
+    const selectedMaster = currentServiceId ? currentConfig?.master : draftConfig.master;
+    const selectedDate = currentServiceId ? currentConfig?.date : draftConfig.date;
+    const selectedTime = currentServiceId ? currentConfig?.time : draftConfig.time;
 
     const [selectedServices, setSelectedServices] = useState<Service[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showSelectedModal, setShowSelectedModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-    // Toggle Master
-    // Toggle Master Implementation for Current Service
-    const toggleMaster = (master: Master) => {
-        if (!currentServiceId) return;
+    // Navigation History for Back Button
+    const [history, setHistory] = useState<string[]>([]);
 
-        setBookingConfigs(prev => {
-            const current = prev[currentServiceId];
-            // If already selected, deselect. Else select.
-            const newMaster = current?.master?.id === master.id ? null : master;
+    // Smart Master Filtering: Availability Map
+    const [mastersAvailability, setMastersAvailability] = useState<Record<string, string[]>>({});
 
-            return {
-                ...prev,
-                [currentServiceId]: {
-                    ...current,
-                    master: newMaster,
-                    // Reset date/time if master changes, as slots might differ
-                    date: '',
-                    time: ''
+    const updateStep = (newStep: typeof step) => {
+        setHistory(prev => [...prev, step]);
+        setStep(newStep);
+    };
+
+    const handleBack = (override?: () => void) => {
+        if (override) {
+            override();
+            return;
+        }
+
+        // Logic 2: Back button should follow history or logical parent
+        if (history.length > 0) {
+            const laststep = history[history.length - 1] as typeof step;
+            setHistory(prev => prev.slice(0, -1));
+            setStep(laststep);
+        } else {
+            // Fallback logic
+            if (step === 'professional') setStep('menu');
+            else if (step === 'services') setStep('menu');
+            else if (step === 'datetime') {
+                if (currentServiceId) setStep('professional');
+                else setStep('menu');
+            }
+            else setStep('menu');
+        }
+    };
+
+    // Helper to get or generate client ID for holds
+    const getClientId = () => {
+        if (user?.id) return String(user.id);
+        let cid = localStorage.getItem('booking_client_id');
+        if (!cid) {
+            cid = 'guest_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('booking_client_id', cid);
+        }
+        return cid;
+    };
+
+    const handleSlotClick = async (slot: string) => {
+        // Prepare data for hold
+        // Need service ID, master name
+        // If master-first/draft mode, we might not have service ID yet!
+        // The hold endpoint expects service_id.
+        // If "Master First" -> We select Master, then Date, then Service? NO. 
+        // Flow: Master -> Service -> Date (Standard).
+        // Flow: Master -> Date -> Service (Flex).
+        // If we are selecting Date but no service selected yet (Draft mode), we cannot hold a specific service slot.
+        // BUT booking hold usually reserves the MASTER'S time. Service ID is just meta? 
+        // Our DB schema has service_id. 
+        // Strategy: 
+        // If Draft Mode (no Service), we can pass 0 or null if DB allows.
+        // Let's check DB schema... `service_id INTEGER`. 
+        // We should allow null service_id for holds or pass dummy.
+        // OR rely on the fact that `MasterScheduleService` checks `booking_holds` by TIME and MASTER, not service.
+        // Yes! `check_is_held` uses `master, date, time`. Service ID is extra info.
+
+        const m = selectedMaster;
+        if (!m) return;
+
+        const mName = m.username || m.full_name;
+        const dStr = selectedDate || ''; // Fix undefined
+        if (!dStr) return; // Should not happen if slots are shown
+        const sId = currentServiceId ? parseInt(currentServiceId) : 0; // 0 if no service yet
+
+        try {
+            setLoading(true);
+            const res = await api.createHold({
+                service_id: sId,
+                master_name: mName,
+                date: dStr,
+                time: slot,
+                client_id: getClientId()
+            });
+
+            setLoading(false);
+
+            if (res.success) {
+                // Proceed with selection
+                if (currentServiceId) {
+                    setBookingConfigs(prev => ({
+                        ...prev,
+                        [currentServiceId]: { ...prev[currentServiceId], time: slot }
+                    }));
+                } else {
+                    // Draft
+                    setDraftConfig(prev => ({
+                        ...prev,
+                        time: slot
+                    }));
                 }
-            };
-        });
+            } else {
+                toast.error(t('slotTaken', 'This slot is already taken. Please choose another.'));
+                // Refresh slots?
+                // setAvailableSlots(prev => prev.filter(s => s !== slot));
+            }
+        } catch (e) {
+            setLoading(false);
+            console.error("Hold failed", e);
+            toast.error(t('errorHold', 'Failed to reserve slot.'));
+        }
+    };
+
+    // Toggle Master
+    const toggleMaster = (master: Master) => {
+        if (currentServiceId) {
+            setBookingConfigs(prev => {
+                const current = prev[currentServiceId];
+                // If already selected, deselect. Else select.
+                const newMaster = current?.master?.id === master.id ? null : master;
+
+                return {
+                    ...prev,
+                    [currentServiceId]: {
+                        ...current,
+                        master: newMaster,
+                        // Keep date, but reset time as slots usually differ
+                        date: current.date,
+                        time: ''
+                    }
+                };
+            });
+        } else {
+            // Draft Mode
+            setDraftConfig(prev => ({
+                ...prev,
+                master: prev.master?.id === master.id ? null : master,
+                // Keep date
+                date: prev.date,
+                time: ''
+            }));
+        }
         // Do not auto-navigate
     };
 
     // Smart Sticky Footer
     const renderStickyFooter = () => {
-        if (selectedServices.length === 0) return null;
+        // If master-first flow (no services yet)
+        if (selectedServices.length === 0) {
+            if (step === 'menu') return null; // Don't show on menu
+
+            // If on professional or date, show options
+
+
+            if ((draftConfig.master || draftConfig.date) && step !== 'services') {
+                return (
+                    <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-20 md:absolute md:rounded-b-xl animate-in slide-in-from-bottom-2">
+                        <div className="flex gap-3">
+                            {/* Secondary: Select Master (if not selected) */}
+                            {!draftConfig.master && (
+                                <Button
+                                    variant="outline"
+                                    className="flex-1 h-12 text-lg hover:bg-accent"
+                                    onClick={() => updateStep('professional')}
+                                >
+                                    <User className="w-4 h-4 mr-2" />
+                                    {t('chooseMaster', 'Select Master')}
+                                </Button>
+                            )}
+                            <Button
+                                className={`h - 12 text - lg hero - button - primary bg - black text - white hover: bg - black / 90 ${!draftConfig.master ? 'flex-1' : 'w-full'} `}
+                                onClick={() => updateStep('services')}
+                            >
+                                {t('chooseServices', 'Select Services')}
+                                <ChevronRight className="w-4 h-4 ml-2" />
+                            </Button>
+                        </div>
+                    </div>
+                );
+            }
+            return null;
+        }
 
         // Find first incomplete service
         const incompleteService = selectedServices.find(s => {
@@ -119,7 +288,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             return (
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-20 md:absolute md:rounded-b-xl">
                     <Button
-                        onClick={() => setStep('confirm')}
+                        onClick={() => updateStep('confirm')}
                         className="w-full h-12 text-lg hero-button-primary hover:bg-black/90"
                         style={{ backgroundColor: 'black', color: 'white' }}
                     >
@@ -146,23 +315,19 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         <Button
                             variant="outline"
                             className="flex-1 h-12 border-primary/50 text-foreground"
-                            onClick={() => setStep('services')}
+                            onClick={() => updateStep('services')}
                         >
                             {t('services', 'Services')}
                         </Button>
                     )}
 
-                    {/* Select Date (Any Master) */}
-                    {needsMaster && (
+                    {/* Select Date (Any Master) - Only show if NO date selected yet */}
+                    {needsMaster && !config.date && (
                         <Button
                             variant="outline"
                             className="flex-[1.5] h-12 border-primary/50 text-foreground"
                             onClick={() => {
                                 setCurrentServiceId(String(incompleteService.id));
-                                // Set 'Any' master implicitly by not setting specific master
-                                // But we might need to clear it if it was set?
-                                // toggleMaster ensures correct state.
-                                // Here we just go to date.
                                 setBookingConfigs(prev => ({
                                     ...prev,
                                     [String(incompleteService.id)]: {
@@ -170,7 +335,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                         master: null // Any
                                     }
                                 }));
-                                setStep('datetime');
+                                updateStep('datetime');
                             }}
                         >
                             {t('chooseDate', 'Only Date')}
@@ -184,11 +349,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         style={{ backgroundColor: 'black', color: 'white' }}
                         onClick={() => {
                             setCurrentServiceId(String(incompleteService.id));
-                            if (needsMaster) setStep('professional');
-                            else if (needsDate) setStep('datetime');
+                            if (needsMaster) updateStep('professional');
+                            else if (needsDate) updateStep('datetime');
                         }}
                     >
-                        {needsMaster ? t('chooseMaster', 'Select Master') : t('chooseDate', 'Select Date')}
+                        {needsMaster ? t('chooseMaster', 'Select Master') : (config.date ? t('chooseTime', 'Select Time') : t('chooseDate', 'Select Date'))}
                         <ChevronRight className="w-4 h-4 ml-2" />
                     </Button>
                 </div>
@@ -198,57 +363,45 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     // Helpers
     const getServiceName = (s: Service) => {
-        return s[`name_${i18n.language}` as keyof Service] || s.name_ru || s.name;
+        return s[`name_${i18n.language} ` as keyof Service] || s.name_ru || s.name;
     };
 
-    const renderHeader = (title: string, onBackHost?: () => void) => (
+    const renderHeader = (title: string, onBackOverride?: () => void) => (
         <div className="flex flex-col gap-2 mb-6">
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" onClick={() => {
-                    if (onBackHost) {
-                        onBackHost();
-                    } else if (step === 'datetime') {
-                        // Intelligent Back from Date
-                        const config = currentServiceId ? bookingConfigs[currentServiceId] : null;
-                        if (config?.master) {
-                            setStep('professional');
-                        } else {
-                            // If no master selected (Any), go back to Service or Professional?
-                            // User wants flexibility. If they came from Professional (Any), go back there.
-                            // If they started at Date... "Back" should go to Menu?
-                            // Let's assume standard flow: Professional -> Date.
-                            setStep('professional');
-                        }
-                    } else if (step === 'professional') {
-                        setStep('services');
-                    } else {
-                        setStep('menu');
-                    }
-                }}>
+                <Button variant="ghost" size="icon" onClick={() => handleBack(onBackOverride)}>
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
+                {/* Home Button (Exit to Cabinet) */}
+                {onClose && (
+                    <Button variant="ghost" size="icon" onClick={onClose} className="mr-2">
+                        <Home className="w-5 h-5" />
+                    </Button>
+                )}
                 <div className="flex-1">
                     <h2 className="text-xl font-semibold">{title}</h2>
                     {/* Visual Breadcrumbs */}
                     {step !== 'menu' && (
                         <div className="flex items-center gap-2 text-xs uppercase tracking-wider font-semibold mt-1">
+                            {/* Breadcrumbs Logic Issue 3: Make them navigate intelligently */}
                             <span
-                                className={`${step === 'services' ? 'text-primary' : 'text-muted-foreground hover:text-primary cursor-pointer transition-colors'}`}
+                                className={`${step === 'services' ? 'text-primary' : 'text-muted-foreground hover:text-primary cursor-pointer transition-colors'} `}
                                 onClick={() => setStep('services')}
                             >
                                 Services
                             </span>
                             <span className="text-muted-foreground/30">/</span>
                             <span
-                                className={`${step === 'professional' ? 'text-primary' : (['datetime', 'confirm'].includes(step) ? 'text-muted-foreground hover:text-primary cursor-pointer transition-colors' : 'text-muted-foreground/50')}`}
+                                className={`${step === 'professional' ? 'text-primary' : (['datetime', 'confirm'].includes(step) ? 'text-muted-foreground hover:text-primary cursor-pointer transition-colors' : 'text-muted-foreground/50')} `}
                                 onClick={() => {
                                     if (['datetime', 'confirm'].includes(step)) setStep('professional');
+                                    else if (step === 'services') setStep('professional'); // Allow jump?
                                 }}
                             >
                                 Master
                             </span>
                             <span className="text-muted-foreground/30">/</span>
-                            <span className={`${step === 'datetime' ? 'text-primary' : (step === 'confirm' ? 'text-muted-foreground' : 'text-muted-foreground/50')}`}>
+                            <span className={`${step === 'datetime' ? 'text-primary' : (step === 'confirm' ? 'text-muted-foreground' : 'text-muted-foreground/50')} `}>
                                 Date
                             </span>
                         </div>
@@ -262,14 +415,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         </div>
     );
 
-    const groupSlots = (slots: string[]) => {
-        const groups: { label: string; slots: string[] }[] = [];
-        const morning: string[] = [];
-        const day: string[] = [];
-        const evening: string[] = [];
+    const groupSlots = (slots: Slot[]) => {
+        const groups: { label: string; slots: Slot[] }[] = [];
+        const morning: Slot[] = [];
+        const day: Slot[] = [];
+        const evening: Slot[] = [];
 
         slots.forEach(slot => {
-            const hour = parseInt(slot.split(':')[0], 10);
+            const hour = parseInt(slot.time.split(':')[0], 10);
             if (hour < 12) morning.push(slot);
             else if (hour < 17) day.push(slot);
             else evening.push(slot);
@@ -322,7 +475,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             durationStr: formattedDuration(totalDuration),
             price: totalPrice
         };
-    }; const [searchParams, setSearchParams] = useSearchParams();
+    };
+
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // Sync URL on Mount and Step Change (Listen to URL changes)
     useEffect(() => {
@@ -397,16 +552,16 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     // Reset selection when returning to menu (as per user request)
     useEffect(() => {
         if (step === 'menu') {
-            // Do not clear services if we want to "remember" selection?
-            // User complaint: "when I first selected Master, then went to Service, then Back... logic issue"
-            // Actually, standard wizard practice is clearing on full exit, but navigating Menu <-> Steps might be exploring.
-            // However, if we clear here, we lose state when user hits "Back" from Services to Menu.
-            // Let's KEEP selection unless explicit clear?
-            // The user specifically said: "when navigating back to the services menu or refreshing the page, the previously selected service checkbox is deselected."
-            // So we SHOULD clear.
+            // Only clear if we explicitly want to reset.
+            // If user just hit 'Back' from Professional via history, we might keep it.
+            // BUT user complaint 1: "Back logic weird".
+            // User complaint 2: "Reset checkmarks".
+            // So if we reach menu, we clear.
             setSelectedServices([]);
             setBookingConfigs({});
             setCurrentServiceId(null);
+            setDraftConfig({ master: null, date: '', time: '' });
+            setHistory([]);
         }
     }, [step]);
 
@@ -435,9 +590,16 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     ...curr,
                     [String(service.id)]: {
                         serviceId: String(service.id),
-                        master: preselectedMaster || null, // Apply preselected master if exists
-                        date: '',
-                        time: ''
+                        master: draftConfig.master || null, // Apply preselected master if exists
+                        date: draftConfig.date || '', // Apply preselected date
+                        // Smart Time: If we have a time, checking if it is valid is hard here without fetching.
+                        // But we should AT LEAST try to keep it if it exists.
+                        // The User's issue is likely that 'date' was somehow empty or not applied.
+                        // But wait, if I select Date -> Master -> Service.
+                        // Step 1: Date selected -> stored in draftConfig.date
+                        // Step 2: Master selected -> stored in draftConfig.master
+                        // Step 3: Service toggle -> Should use draftConfig.date.
+                        time: '' // Reset time because duration changes slot availability
                     }
                 }));
                 setCurrentServiceId(String(service.id));
@@ -448,33 +610,22 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     // Filter masters for CURRENT service
     const capableMasters = useMemo(() => {
+        // If draft mode (no service), show all employees?
+        // Or show all, and then when selecting service filter?
         if (!currentServiceId) return masters;
+
         // Find the service object
         const service = selectedServices.find(s => String(s.id) === currentServiceId);
         if (!service) return masters;
 
-        console.log(`Filtering masters for service: ${service.name} (ID: ${service.id})`);
         return masters.filter(master => {
             if (!master.services || master.services.length === 0) {
-                console.log(`Master ${master.full_name} has NO services (kept)`);
                 return true;
             }
             const hasService = master.services.some(s => String(s.id) === String(service.id));
-            if (!hasService) console.log(`Master ${master.full_name} skipped (Does not have service ID ${service.id})`);
             return hasService;
         });
     }, [masters, currentServiceId, selectedServices]);
-
-    // ... (rest of code)
-
-    // Replace usage of 'masters' with 'capableMasters' in render
-    // ...
-
-    // Fix click handler in render loop (pass e)
-    // onClick={(e) => toggleService(service, e)}
-
-    // Moved filteredServices logic to render or useMemo if needed
-    // const filteredServices = ... (Removed to avoid duplicate)
 
     // Load Data
     useEffect(() => {
@@ -486,9 +637,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 try {
                     const usersRes = await api.getUsers();
                     const users = Array.isArray(usersRes) ? usersRes : (usersRes.users || []);
-                    // Log to verify services
-                    console.log("Users loaded:", users.map((u: any) => ({ name: u.full_name, servicesCount: u.services?.length, services: u.services })));
-
                     employees = users.filter((u: any) => u.role === 'employee' || u.is_service_provider);
                     setMasters(employees);
                 } catch (err) {
@@ -497,7 +645,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
                 // Load Services
                 const servicesRes = await api.getServices();
-                // Response from backend/api/services.py is { services: [...] }
                 if (Array.isArray(servicesRes)) {
                     setServices(servicesRes);
                 } else if (servicesRes.services && Array.isArray(servicesRes.services)) {
@@ -519,12 +666,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         loadInitialData();
     }, [i18n.language]);
 
+    // Load holidays
+    useEffect(() => {
+        api.getHolidays().then(data => {
+            if (Array.isArray(data)) {
+                setHolidays(data);
+            }
+        });
+    }, []);
+
     // Load Slots trigger
     useEffect(() => {
         if (currentServiceId && bookingConfigs[currentServiceId]?.date) {
             loadSlots();
+        } else if (!currentServiceId && draftConfig.date) {
+            // Load slots for draft (master first)
+            loadSlots();
         }
-    }, [bookingConfigs, currentServiceId]);
+    }, [bookingConfigs, currentServiceId, draftConfig.date, draftConfig.master]);
 
     // Load Preview Slots
     useEffect(() => {
@@ -541,12 +700,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             try {
                 let res = await api.getAvailableSlots(m.username, today, 60);
                 if (res.available_slots?.length > 0) {
-                    newSlots[m.id] = res.available_slots.slice(0, 5);
+                    // Preview only needs strings
+                    newSlots[m.id] = res.available_slots.map(s => s.time).slice(0, 5);
                     newDates[m.id] = 'today';
                 } else {
                     res = await api.getAvailableSlots(m.username, tomorrow, 60);
                     if (res.available_slots?.length > 0) {
-                        newSlots[m.id] = res.available_slots.slice(0, 5);
+                        newSlots[m.id] = res.available_slots.map(s => s.time).slice(0, 5);
                         newDates[m.id] = 'tomorrow';
                     }
                 }
@@ -556,47 +716,139 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         setPreviewDates(newDates);
     };
 
-    const loadSlots = async () => {
-        if (!currentServiceId) return;
-        const config = bookingConfigs[currentServiceId];
-        if (!config || !config.date) return;
+    // Load Monthly Availability
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            // Determine master and duration
+            let masterName = '';
+            let duration = 60;
 
-        try {
+            if (currentServiceId) {
+                const config = bookingConfigs[currentServiceId];
+                if (config?.master) {
+                    masterName = config.master.username || config.master.full_name;
+                }
+                const service = selectedServices.find(s => String(s.id) === currentServiceId);
+                if (service) duration = parseDuration(service.duration);
+            } else {
+                if (draftConfig.master) {
+                    masterName = draftConfig.master.username || draftConfig.master.full_name;
+                }
+            }
+
+            if (!masterName) {
+                // Global Availability check
+                masterName = 'any';
+            }
+
+            try {
+                const year = currentMonth.getFullYear();
+                const month = currentMonth.getMonth() + 1;
+                const res = await api.getAvailableDates(masterName, year, month, duration);
+                if (res.success && res.available_dates) {
+                    setAvailableDates(new Set(res.available_dates));
+                }
+            } catch (e) {
+                console.error("Error loading availability", e);
+            }
+        };
+
+        fetchAvailability();
+        fetchAvailability();
+    }, [currentMonth, currentServiceId, draftConfig.master, bookingConfigs]);
+
+    // Smart Master Filtering: Load availability for date
+    useEffect(() => {
+        const checkMasters = async () => {
+            // Only if we have a date selected (either in draft or active config)
+            const date = currentServiceId ? bookingConfigs[currentServiceId]?.date : draftConfig.date;
+            if (!date) {
+                setMastersAvailability({});
+                return;
+            }
+
+            try {
+                // We use the existing API that returns availability for ALL masters
+                const res = await api.getAllMastersAvailability(date);
+
+                if (res.success && res.availability) {
+                    setMastersAvailability(res.availability);
+                }
+            } catch (e) {
+                console.error("Failed to check masters availability", e);
+            }
+        };
+        checkMasters();
+    }, [currentServiceId, bookingConfigs, draftConfig.date]);
+
+    const loadSlots = async () => {
+        let dateToCheck = '';
+        let masterToCheck = null;
+        let duration = 60; // Default
+
+        if (currentServiceId) {
+            const config = bookingConfigs[currentServiceId];
+            if (!config || !config.date) return;
+            dateToCheck = config.date;
+            masterToCheck = config.master;
             // Calculate duration for CURRENT service
             const service = selectedServices.find(s => String(s.id) === currentServiceId);
-            const duration = service ? parseDuration(service.duration) : 60;
+            if (service) duration = parseDuration(service.duration);
+        } else {
+            // Draft Mode
+            if (!draftConfig.date) return;
+            dateToCheck = draftConfig.date;
+            masterToCheck = draftConfig.master;
+            // Duration default 60
+        }
 
-            if (config.master) {
+        try {
+            if (masterToCheck) {
                 // Specific master
-                const res = await api.getAvailableSlots(config.master.full_name, config.date, duration);
+                const res = await api.getAvailableSlots(masterToCheck.username, dateToCheck, duration);
                 if (res.success && res.available_slots) {
                     setAvailableSlots(res.available_slots);
+                } else {
+                    setAvailableSlots([]);
                 }
             } else {
-                // Any master: Filter candidates who can do THIS service, then merge slots.
-                const candidates = capableMasters;
-                const allSlotsSet = new Set<string>();
+                // Any master: Filter candidates who can do THIS service (if service selected)
+                // If draft mode, we don't know service yet, so we assume ANY capable master?
+                // Actually if draft mode + Any master -> We probably should show ALL valid slots?
+                // But simplified: Aggregate slots from all employees.
+
+                const candidates = currentServiceId ? capableMasters : masters;
 
                 if (candidates.length === 0) {
-                    // If no capable masters, no slots.
                     setAvailableSlots([]);
                     return;
                 }
 
-                await Promise.all(candidates.map(async (m) => {
-                    try {
-                        const res = await api.getAvailableSlots(m.full_name, config.date, duration);
-                        if (res.success && res.available_slots) {
-                            res.available_slots.forEach(s => allSlotsSet.add(s));
-                        }
-                    } catch (e) { }
-                }));
+                // 3. For each candidate, fetch slots
+                // Note: Parallel fetch might be heave?
+                const requests = candidates.map(m =>
+                    api.getAvailableSlots(m.username, dateToCheck, duration)
+                        .then(r => r.available_slots || [])
+                        .catch(() => [] as Slot[])
+                );
 
-                const sorted = Array.from(allSlotsSet).sort();
-                setAvailableSlots(sorted);
+                const results = await Promise.all(requests);
+                // Flatten and deduplicate
+                const allSlots: Slot[] = [];
+                const seenTimes = new Set<string>();
+
+                results.flat().forEach(slot => {
+                    if (!seenTimes.has(slot.time)) {
+                        seenTimes.add(slot.time);
+                        allSlots.push(slot); // Keep object
+                    }
+                });
+
+                setAvailableSlots(allSlots.sort((a, b) => a.time.localeCompare(b.time)));
             }
         } catch (e) {
             console.error("Error loading slots", e);
+            setAvailableSlots([]);
         }
     };
 
@@ -616,18 +868,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         try {
             setLoading(true);
-
-            // Execute bookings in sequence (or separate calls)
-            // Backend might not support array? Let's assume loop for now.
             for (const service of selectedServices) {
                 const config = bookingConfigs[String(service.id)];
-                // If incomplete, skip or error? Should be validated before confirm.
                 if (!config || !config.date || !config.time) continue;
 
                 await api.createBooking({
-                    instagram_id: user?.username || `web_${user?.id}`,
-                    service: getServiceName(service), // Pass single service name
-                    master: config.master?.username || 'any_professional', // or handle Any logic if backend supports
+                    instagram_id: user?.username || `web_${user?.id} `,
+                    service: getServiceName(service),
+                    master: config.master?.username || 'any_professional',
                     date: config.date,
                     time: config.time,
                     phone: user?.phone,
@@ -645,10 +893,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             setLoading(false);
         }
     };
-
-    // ... (renderHeader)
-
-    // ... (groupSlots)
 
     if (step === 'menu') {
         return (
@@ -678,7 +922,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Card
                         className="cursor-pointer hover:bg-muted/50 transition-colors border-l-4 border-l-transparent hover:border-l-primary"
                         onClick={() => {
-                            setStep('services');
+                            updateStep('services');
                         }}
                     >
                         <CardContent className="p-4 flex items-center gap-4">
@@ -689,7 +933,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                 <h3 className="font-medium">{t('chooseServices', 'Select services')}</h3>
                                 <p className="text-sm text-muted-foreground">
                                     {selectedServices.length > 0
-                                        ? `${selectedServices.length} selected (${selectedServices.reduce((acc, s) => acc + s.price, 0)} AED)`
+                                        ? `${selectedServices.length} selected(${selectedServices.reduce((acc, s) => acc + s.price, 0)} AED)`
                                         : "Choose from menu"}
                                 </p>
                             </div>
@@ -700,14 +944,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Card
                         className="cursor-pointer hover:bg-muted/50 transition-colors border-l-4 border-l-transparent hover:border-l-primary"
                         onClick={() => {
-                            // If services selected, configure first one.
-                            // If NO services selected, we go to Professional step, BUT user wants to select Master first.
-                            // "I want to select Master first, then Service/Date buttons appear below"
-                            // This implies a "Master Mode".
-                            // Current 'professional' step filters masters by 'currentServiceId'.
-                            // If currentServiceId is null, we show ALL masters?
-                            // Yes, let's allow selecting master without service.
-                            setStep('professional');
+                            updateStep('professional');
                         }}
                     >
                         <CardContent className="p-4 flex items-center gap-4">
@@ -727,7 +964,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Card
                         className="cursor-pointer hover:bg-muted/50 transition-colors border-l-4 border-l-transparent hover:border-l-primary"
                         onClick={() => {
-                            setStep('datetime');
+                            updateStep('datetime');
                         }}
                     >
                         <CardContent className="p-4 flex items-center gap-4">
@@ -744,9 +981,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         </CardContent>
                     </Card>
                 </div>
-
-                {/* Action Button */}
-                {/* Action Button - Moved to Sticky Footer Logic */}
                 {renderStickyFooter()}
             </div >
         );
@@ -759,7 +993,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         return (
             <div className="space-y-6">
-                {renderHeader(currentService ? `${t('chooseMaster')} for ${getServiceName(currentService)}` : t('chooseMaster'), () => setStep('services'))}
+                {renderHeader(currentService ? `${t('chooseMaster')} for ${getServiceName(currentService)}` : t('chooseMaster'))}
 
                 <div className="space-y-6 pb-24">
                     {/* Any Professional Option */}
@@ -771,11 +1005,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                     ...prev,
                                     [currentServiceId]: { ...prev[currentServiceId], master: null, date: '', time: '' }
                                 }));
-                                setStep('datetime');
+                                updateStep('datetime');
                             } else {
                                 // Master First: Any Professional -> Go to Services
-                                setPreselectedMaster(null);
-                                setStep('services');
+                                setDraftConfig(prev => ({ ...prev, master: null }));
+                                updateStep('services');
                             }
                         }}
                     >
@@ -785,28 +1019,21 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                             </div>
                             <span className="font-medium text-lg">Any available professional</span>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 ${!selectedMaster && !preselectedMaster ? 'border-primary bg-primary' : 'border-muted-foreground/30'} flex items-center justify-center`}>
-                            {(!selectedMaster && !preselectedMaster) && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                        <div className={`w - 6 h - 6 rounded - full border - 2 ${!selectedMaster ? 'border-primary bg-primary' : 'border-muted-foreground/30'} flex items - center justify - center`}>
+                            {!selectedMaster && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
                         </div>
                     </div>
 
                     {/* Masters List */}
                     {capableMasters.map(master => {
-                        const isSelected = selectedMaster?.id === master.id || preselectedMaster?.id === master.id;
+                        const isSelected = selectedMaster?.id === master.id;
                         return (
                             <div key={master.id} className="space-y-3">
                                 {/* Master Header */}
                                 <div
                                     className="flex items-center justify-between cursor-pointer group"
                                     onClick={() => {
-                                        if (currentServiceId) {
-                                            toggleMaster(master);
-                                        } else {
-                                            // Master First Logic
-                                            setPreselectedMaster(master);
-                                            // Stay here to show selection? Or toast and encourage next step?
-                                            // Visually select it.
-                                        }
+                                        toggleMaster(master);
                                     }}
                                 >
                                     <div className="flex items-center gap-4">
@@ -824,7 +1051,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                         <Button variant="ghost" size="icon" className="rounded-full w-8 h-8 border border-border text-muted-foreground" onClick={(e) => { e.stopPropagation(); /* Show info */ }}>
                                             <span className="font-serif italic font-bold text-xs">i</span>
                                         </Button>
-                                        <div className={`w-6 h-6 rounded-full border-2 ${isSelected ? 'border-primary bg-primary' : 'border-muted-foreground/30'} flex items-center justify-center`}>
+                                        <div className={`w - 6 h - 6 rounded - full border - 2 ${isSelected ? 'border-primary bg-primary' : 'border-muted-foreground/30'} flex items - center justify - center`}>
                                             {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
                                         </div>
                                     </div>
@@ -857,12 +1084,21 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                                                     time: slot
                                                                 }
                                                             }));
-                                                            setStep('datetime');
+                                                            updateStep('datetime');
                                                         } else {
                                                             // Master First: Clicked slot
-                                                            setPreselectedMaster(master);
+                                                            const date = previewDates[master.id] === 'today'
+                                                                ? new Date().toISOString().split('T')[0]
+                                                                : new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+                                                            // Update draft
+                                                            setDraftConfig({
+                                                                master: master,
+                                                                date: date,
+                                                                time: slot
+                                                            });
                                                             // Go to services since we can't book without service
-                                                            setStep('services');
+                                                            updateStep('services');
                                                         }
                                                     }}
                                                 >
@@ -880,11 +1116,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 {/* Master First Footer Buttons */}
                 {!currentServiceId && selectedServices.length === 0 && (
                     <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-20 md:absolute md:rounded-b-xl flex gap-2">
-                        <Button className="flex-1 h-12" variant="outline" onClick={() => setStep('services')}>
+                        <Button className="flex-1 h-12" variant="outline" onClick={() => updateStep('services')}>
                             <List className="w-4 h-4 mr-2" />
                             {t('chooseServices', 'Select Services')}
                         </Button>
-                        <Button className="flex-1 h-12" variant="outline" onClick={() => setStep('datetime')}>
+                        <Button className="flex-1 h-12" variant="outline" onClick={() => updateStep('datetime')}>
                             <CalendarIcon className="w-4 h-4 mr-2" />
                             {t('chooseDate', 'Select Date')}
                         </Button>
@@ -898,13 +1134,39 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     if (step === 'services') {
         // Extract categories
-        const categories = ['All', ...Array.from(new Set(services.map(s => s.category || t('other', 'Other'))))];
+        // Filter available services based on selected Master (if any)
+        const relevantServices = services.filter(s => {
+            // If master selected, check if they do this service
+            // If draftConfig.master has services populated
+            if (!currentServiceId && draftConfig.master) {
+                if (draftConfig.master.services && draftConfig.master.services.length > 0) {
+                    return draftConfig.master.services.some(ms => String(ms.id) === String(s.id));
+                }
+                // If master has NO services listed? Assume none? Or All?
+                // Safer: If strictly defined, strict. If undefined, maybe show all (but backend usually strict).
+                // User request imply strict filtering.
+                // Let's check typical Master object.
+                if (draftConfig.master.services) return false;
+            }
+            return true;
+        });
 
-        // Filter services based on search AND category
+        const categories = ['All', ...Array.from(new Set(relevantServices.map(s => s.category || t('other', 'Other'))))];
+
+        // Filter services based on search AND category AND draft config master
         const filteredServices = services.filter(s => {
             const matchesSearch = String(getServiceName(s)).toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory = selectedCategory === 'All' || (s.category || t('other', 'Other')) === selectedCategory;
-            return matchesSearch && matchesCategory;
+            let matchesMaster = true;
+            if (!currentServiceId && draftConfig.master) {
+                // If we have a draft master, only show services they perform
+                // If master.services is empty/undefined, assume they do everything? Or nothing?
+                // Usually employees have services.
+                if (draftConfig.master.services && draftConfig.master.services.length > 0) {
+                    matchesMaster = draftConfig.master.services.some(ms => String(ms.id) === String(s.id));
+                }
+            }
+            return matchesSearch && matchesCategory && matchesMaster;
         });
 
         // Group filtered services by category for display (if All selected)
@@ -927,10 +1189,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                             <button
                                 key={c}
                                 onClick={() => setSelectedCategory(c)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === c
+                                className={`px - 4 py - 2 rounded - full text - sm font - medium whitespace - nowrap transition - colors ${selectedCategory === c
                                     ? 'bg-black text-white'
                                     : 'bg-muted/50 hover:bg-muted text-foreground'
-                                    }`}
+                                    } `}
                             >
                                 {c}
                             </button>
@@ -975,7 +1237,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                                 </div>
                                             </div>
                                             <div
-                                                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${isSelected ? 'border-black' : 'border-muted-foreground group-hover:border-primary'}`}
+                                                className={`w - 6 h - 6 rounded - md border - 2 flex items - center justify - center transition - all duration - 200 ${isSelected ? 'border-black' : 'border-muted-foreground group-hover:border-primary'} `}
                                                 style={{ backgroundColor: isSelected ? 'black' : 'transparent', borderColor: isSelected ? 'black' : undefined }}
                                             >
                                                 {isSelected && <Check className="w-4 h-4" style={{ color: 'white' }} strokeWidth={3} />}
@@ -992,124 +1254,146 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 </div>
 
                 {/* Bottom Sticky Summary (Legacy replaced by Smart Footer) */}
-                {/* However, user liked the summary stats... 
-                    The Smart Footer doesn't show stats. 
-                    Maybe we should show stats above buttons? 
-                    For now, let's use the Smart Footer as requested for navigation.
-                    The Summary is useful though. 
-                    Let's combine: Show Summary Bar + Smart Buttons below?
-                    Or just buttons. User asked for "two buttons".
-                */}
-                {selectedServices.length > 0 && (
-                    <div className="fixed bottom-20 left-4 right-4 z-20 flex justify-between items-center bg-black/5 backdrop-blur-md p-2 rounded-lg mb-2 md:bottom-24">
-                        <span className="font-bold text-sm">{selectedServices.length} selected</span>
-                        <span className="font-bold text-sm">{getTotalStats().price} AED</span>
-                    </div>
-                )}
+                {
+                    selectedServices.length > 0 && (
+                        <div className="fixed bottom-20 left-4 right-4 z-20 flex justify-between items-center bg-black/5 backdrop-blur-md p-2 rounded-lg mb-2 md:bottom-24">
+                            <span className="font-bold text-sm">{selectedServices.length} selected</span>
+                            <span className="font-bold text-sm">{getTotalStats().price} AED</span>
+                        </div>
+                    )
+                }
                 {renderStickyFooter()}
 
                 {/* Edit Modal (Simple overlay) */}
-                {showSelectedModal && (
-                    <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-sm p-6 flex flex-col animate-in fade-in duration-200">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-bold">Selected Services</h3>
-                            <Button variant="ghost" size="icon" onClick={() => setShowSelectedModal(false)}>
-                                <X className="w-6 h-6" />
-                            </Button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto space-y-4">
-                            {selectedServices.map(s => (
-                                <div key={s.id} className="flex justify-between items-center border-b pb-4">
-                                    <div>
-                                        <p className="font-medium">{getServiceName(s)}</p>
-                                        <p className="text-sm text-muted-foreground">{s.duration || '30 min'}</p>
+                {
+                    showSelectedModal && (
+                        <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-sm p-6 flex flex-col animate-in fade-in duration-200">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold">Selected Services</h3>
+                                <Button variant="ghost" size="icon" onClick={() => setShowSelectedModal(false)}>
+                                    <X className="w-6 h-6" />
+                                </Button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto space-y-4">
+                                {selectedServices.map(s => (
+                                    <div key={s.id} className="flex justify-between items-center border-b pb-4">
+                                        <div>
+                                            <p className="font-medium">{getServiceName(s)}</p>
+                                            <p className="text-sm text-muted-foreground">{s.duration || '30 min'}</p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <span className="font-semibold">{s.price} AED</span>
+                                            <Button variant="ghost" size="icon" onClick={() => toggleService(s)}>
+                                                <X className="w-4 h-4 text-muted-foreground" />
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <span className="font-semibold">{s.price} AED</span>
-                                        <Button variant="ghost" size="icon" onClick={() => toggleService(s)}>
-                                            <X className="w-4 h-4 text-muted-foreground" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
+                            <div className="pt-4 border-t">
+                                <Button className="w-full h-12 bg-black text-white" onClick={() => setShowSelectedModal(false)}>
+                                    Close
+                                </Button>
+                            </div>
                         </div>
-                        <div className="pt-4 border-t">
-                            <Button className="w-full h-12 bg-black text-white" onClick={() => setShowSelectedModal(false)}>
-                                Close
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )
+                }
+            </div >
         );
     }
 
     if (step === 'datetime') {
         const currentLocale = i18n.language === 'ru' ? ru : (i18n.language === 'ar' ? ar : enUS);
 
-        // Helper: Check if we have Master/Service selected
-        const hasService = selectedServices.length > 0;
-
         return (
             <div className="space-y-6 pb-24 relative min-h-screen">
-                {renderHeader("Select date and time", () => {
-                    // Back Logic
-                    if (currentServiceId) {
-                        setStep('professional');
-                    } else {
-                        setStep('menu');
-                    }
-                })}
+                {renderHeader("Select date and time")}
 
-                {/* Date First Flow: Show Options to Select Service/Master */}
-                {!hasService && (
-                    <div className="flex gap-2 mb-4">
-                        <Button variant="outline" className="flex-1 h-12" onClick={() => setStep('services')}>
-                            <List className="w-4 h-4 mr-2" />
-                            {t('chooseServices', 'Select Service')}
-                        </Button>
-                        <Button variant="outline" className="flex-1 h-12" onClick={() => setStep('professional')}>
-                            <User className="w-4 h-4 mr-2" />
-                            {t('chooseMaster', 'Select Master')}
-                        </Button>
-                    </div>
-                )}
+                {/* Date First Flow: Show Options to Select Service/Master IF they are missing */}
+
+
 
                 <div className="space-y-6">
                     {/* Date Picker */}
                     <div className="flex justify-center bg-card rounded-lg shadow-sm border p-4">
+                        <style>{`
+                            .rdp-day_disabled { opacity: 0.3 !important; cursor: not-allowed !important; pointer-events: none !important; }
+                            .available-day { background-color: rgba(0, 0, 0, 0.05); color: black; font-weight: bold; border-radius: 50%; }
+                            .available-day:hover { background-color: rgba(0, 0, 0, 0.1); }
+                            .rdp-day_selected.available-day { background-color: black; color: white; }
+                            .rdp-day_holiday { color: var(--destructive); font-weight: bold; }
+                            .rdp-day_outside { opacity: 0.5; }
+`}</style>
                         <Calendar
                             mode="single"
+                            month={currentMonth}
+                            onMonthChange={setCurrentMonth}
                             selected={selectedDate ? new Date(selectedDate) : undefined}
+                            modifiers={{
+                                available: (date) => availableDates.has(format(date, 'yyyy-MM-dd')),
+                                holiday: (date) => holidays.some(h => h.date === format(date, 'yyyy-MM-dd'))
+                            }}
+                            modifiersClassNames={{ available: 'available-day', holiday: 'holiday' }}
+                            disabled={(date) => {
+                                const dStr = format(date, 'yyyy-MM-dd');
+                                // Disable holidays
+                                const isHoliday = holidays.some(h => h.date === dStr);
+                                if (isHoliday) return true;
+
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                if (date < today) return true; // Past dates
+
+                                // KEY FIX: Only disable unavailable dates if we have availability data
+                                // AND the date is in the currently viewed month
+                                const dateMonth = date.getMonth();
+                                const currentViewMonth = currentMonth.getMonth();
+                                const dateYear = date.getFullYear();
+                                const currentViewYear = currentMonth.getFullYear();
+
+                                // If date is from a different month/year than current view, don't restrict by availability
+                                // This allows next month dates to be clickable
+                                if (dateMonth !== currentViewMonth || dateYear !== currentViewYear) {
+                                    return false;
+                                }
+
+                                // For current month: disable if we have availability data and date is not available
+                                if (availableDates.size > 0) {
+                                    return !availableDates.has(dStr);
+                                }
+
+                                return false;
+                            }}
                             onSelect={(date) => {
+                                let dStr = '';
                                 if (date) {
                                     // Fix timezone
                                     const d = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-                                    const dStr = d.toISOString().split('T')[0];
+                                    dStr = d.toISOString().split('T')[0];
+                                }
 
-                                    if (currentServiceId) {
-                                        setBookingConfigs(prev => ({
-                                            ...prev,
-                                            [currentServiceId]: {
-                                                ...prev[currentServiceId],
-                                                date: dStr,
-                                                time: '' // Reset time
-                                            }
-                                        }));
-                                    } else {
-                                        // Date First: Just store URL logic or generic?
-                                        // We can't store in config without ID.
-                                        // Just let them pick date contextually?
-                                        // We basically need to "Preselect Date".
-                                        // But without service, we can't show slots really.
-                                        toast.info("Date selected. Please select a service to see available times.");
-                                        // Maybe go to Services?
-                                    }
+                                // Issue 1: Allow deselection.
+                                if (currentServiceId) {
+                                    setBookingConfigs(prev => ({
+                                        ...prev,
+                                        [currentServiceId]: {
+                                            ...prev[currentServiceId],
+                                            date: dStr,
+                                            time: '' // Reset time
+                                        }
+                                    }));
+                                } else {
+                                    // Draft Mode
+                                    setDraftConfig(prev => ({
+                                        ...prev,
+                                        date: dStr,
+                                        time: ''
+                                    }));
                                 }
                             }}
                             className="rounded-md"
                             locale={currentLocale}
-                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+
                         />
                     </div>
 
@@ -1120,7 +1404,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         </div>
                     ) : availableSlots.length === 0 && selectedDate ? (
                         <div className="text-center py-8 text-muted-foreground">
-                            {hasService ? t('noSlots', 'No available slots for this date') : "Select a service to see slots"}
+                            {t('noSlots', 'No available slots for this date')}
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -1129,21 +1413,23 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                     <h4 className="font-medium text-muted-foreground">{group.label}</h4>
                                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                                         {group.slots.map(slot => (
-                                            <Button
-                                                key={slot}
-                                                variant={selectedTime === slot ? "default" : "outline"}
-                                                className={`rounded-full px-6 ${selectedTime === slot ? 'bg-black text-white' : 'border-primary/30 text-foreground hover:border-primary'}`}
-                                                onClick={() => {
-                                                    if (currentServiceId) {
-                                                        setBookingConfigs(prev => ({
-                                                            ...prev,
-                                                            [currentServiceId]: { ...prev[currentServiceId], time: slot }
-                                                        }));
-                                                    }
-                                                }}
-                                            >
-                                                {slot}
-                                            </Button>
+                                            <div key={slot.time} className="relative group/slot">
+                                                {slot.is_optimal && (
+                                                    <div className="absolute -top-2 -right-1 z-10">
+                                                        <span className="flex h-2 w-2">
+                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                <Button
+                                                    variant={selectedTime === slot.time ? "default" : "outline"}
+                                                    className={`w - full rounded - full px - 2 ${selectedTime === slot.time ? 'bg-black text-white' : 'border-primary/30 text-foreground hover:border-primary'} ${slot.is_optimal ? 'border-pink-300 ring-1 ring-pink-100' : ''} `}
+                                                    onClick={() => handleSlotClick(slot.time)}
+                                                >
+                                                    {slot.time}
+                                                </Button>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>
@@ -1186,7 +1472,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                                         </div>
                                         <Button variant="ghost" size="sm" onClick={() => {
                                             setCurrentServiceId(String(service.id));
-                                            setStep('professional');
+                                            updateStep('professional');
                                         }}>
                                             <Edit2 className="w-4 h-4 ml-2" />
                                         </Button>

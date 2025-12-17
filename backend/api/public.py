@@ -452,3 +452,40 @@ async def get_public_faq(language: str = "ru"):
     finally:
         if 'conn' in locals():
             conn.close()
+
+# ============================================================================
+# BOOKING HOLD
+# ============================================================================
+
+class BookingHoldRequest(BaseModel):
+    service_id: int
+    master_name: str
+    date: str
+    time: str
+    client_id: str
+
+@router.post("/bookings/hold")
+async def create_booking_hold(data: BookingHoldRequest):
+    """
+    Create a temporary hold on a slot.
+    Returns success: True if hold created, False if slot taken.
+    """
+    from services.booking_hold import BookingHoldService
+    
+    service = BookingHoldService()
+    success = service.create_hold(
+        service_id=data.service_id,
+        master_name=data.master_name,
+        date=data.date,
+        time=data.time,
+        client_id=data.client_id
+    )
+    
+    if success:
+        return {"success": True}
+    else:
+        # 409 Conflict - Slot already held/taken
+        return JSONResponse(
+            status_code=409, 
+            content={"success": False, "error": "Slot already held by another user"}
+        )

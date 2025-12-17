@@ -695,6 +695,15 @@ def init_database():
         FOREIGN KEY (user_id) REFERENCES users(id)
     )''')
     
+    # Таблица праздников салона
+    c.execute('''CREATE TABLE IF NOT EXISTS salon_holidays (
+        id SERIAL PRIMARY KEY,
+        date DATE UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        is_closed BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    
     # Таблица уровней лояльности
     c.execute('''CREATE TABLE IF NOT EXISTS loyalty_levels (
         id SERIAL PRIMARY KEY,
