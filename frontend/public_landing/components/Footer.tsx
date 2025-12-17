@@ -29,11 +29,11 @@ export function Footer({ salonInfo: propSalonInfo }: FooterProps) {
     <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Simplified Footer - Only Copyright and Legal Links */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-          <p className="text-xs sm:text-sm text-primary-foreground/70">
-            © {currentYear} {salonInfo?.name || "Beauty Salon"}. {t('allRightsReserved') || "Все права защищены."}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-y-6 gap-x-8 text-center md:text-left">
+          <p className="text-xs sm:text-sm text-primary-foreground/70 leading-loose">
+            © {currentYear} {salonInfo?.name || "Beauty Salon"}.<br className="sm:hidden" /> {t('allRightsReserved') || "Все права защищены."}
           </p>
-          <div className="flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm text-primary-foreground/70 justify-center">
+          <div className="flex flex-wrap gap-6 sm:gap-10 text-xs sm:text-sm text-primary-foreground/70 justify-center">
             <a href="/privacy-policy" className="hover:text-primary-foreground transition-colors">
               {t('privacyPolicy') || "Политика конфиденциальности"}
             </a>
