@@ -1,27 +1,70 @@
-import { useState } from 'react';
-import { mockGalleryImages } from '../../utils/mockData';
+import { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
+
+interface GalleryImage {
+  id: number;
+  image_path: string;
+  title: string;
+}
 
 export function Gallery() {
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const [images, setImages] = useState<GalleryImage[]>([]);
   const [displayCount, setDisplayCount] = useState(12);
-  const displayedImages = mockGalleryImages.slice(0, displayCount);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        // Fetch salon category images
+        const res = await fetch(`${API_URL}/api/public/gallery?category=salon&language=${i18n.language}`);
+        const data = await res.json();
+
+        if (data.images && data.images.length > 0) {
+          const currentLang = i18n.language;
+          const mapped = data.images.map((item: any) => ({
+            id: item.id,
+            image_path: item.image_path,
+            title: item[`title_${currentLang}`] || item.title_ru || item.title || ""
+          }));
+          setImages(mapped);
+        } else {
+          setImages([]);
+        }
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        setImages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [i18n.language]);
+
+  const displayedImages = images.slice(0, displayCount);
+
+  if (loading) return null;
+  if (images.length === 0) return null;
 
   return (
     <section id="gallery" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            Наш салон
+            {t('galleryTag', { defaultValue: 'Наш салон' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            Атмосфера роскоши и комфорта
+            {t('galleryTitle', { defaultValue: 'Атмосфера роскоши и комфорта' })}
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            Современный интерьер создает атмосферу спокойствия
+            {t('galleryDesc', { defaultValue: 'Современный интерьер создает атмосферу спокойствия' })}
           </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 max-w-6xl mx-auto">
-          {displayedImages.map((item, index) => (
+          {displayedImages.map((item) => (
             <div
               key={item.id}
               className="group relative aspect-square overflow-hidden rounded-lg sm:rounded-xl bg-muted"
@@ -41,13 +84,13 @@ export function Gallery() {
           ))}
         </div>
 
-        {displayCount < mockGalleryImages.length && (
+        {displayCount < images.length && (
           <div className="text-center mt-6 sm:mt-8">
             <button
-              onClick={() => setDisplayCount(prev => Math.min(prev + 12, mockGalleryImages.length))}
+              onClick={() => setDisplayCount(prev => Math.min(prev + 12, images.length))}
               className="px-6 sm:px-8 py-2 sm:py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors text-sm sm:text-base"
             >
-              Показать еще ({mockGalleryImages.length - displayCount})
+              {t('loading', { defaultValue: 'Показать еще' })} ({images.length - displayCount})
             </button>
           </div>
         )}

@@ -2,29 +2,57 @@ import { useState, useEffect } from "react";
 import { Menu, X, Globe, Instagram, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
+import logo from "../../assets/logo.png"; // Assuming path needs adjustment or use absolute if needed, but relative usually works if structure similar. Check logo path.
 
 const navigation = [
-  { name: "Главная", href: "#home" },
-  { name: "Услуги", href: "#services" },
-  { name: "Портфолио", href: "#portfolio" },
-  { name: "Команда", href: "#team" },
-  { name: "Отзывы", href: "#testimonials" },
-  { name: "FAQ", href: "#faq" },
-  { name: "Контакты", href: "#map-section" },
+  { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },
+  { name: "Услуги", href: "#services", key: "servicesTag", defaultText: "Услуги" },
+  { name: "Портфолио", href: "#portfolio", key: "portfolioTag", defaultText: "Портфолио" },
+  { name: "Команда", href: "#team", key: "teamTag", defaultText: "Команда" },
+  { name: "Отзывы", href: "#testimonials", key: "testimonialsTag", defaultText: "Отзывы" },
+  { name: "FAQ", href: "#faq", key: "faqTag", defaultText: "FAQ" },
+  { name: "Контакты", href: "#map-section", key: "contactsTag", defaultText: "Контакты" }, // Kept #map-section from new
 ];
 
 const languages = [
   { code: 'ru', name: 'Русский', flag: '🇷🇺', short: 'RU' },
   { code: 'en', name: 'English', flag: '🇬🇧', short: 'EN' },
   { code: 'ar', name: 'العربية', flag: '🇦🇪', short: 'AR' },
+  { code: 'es', name: 'Español', flag: '🇪🇸', short: 'ES' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪', short: 'DE' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷', short: 'FR' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', short: 'HI' },
+  { code: 'kk', name: 'Қазақша', flag: '🇰🇿', short: 'KZ' },
+  { code: 'pt', name: 'Português', flag: '🇵🇹', short: 'PT' }
 ];
 
-export function Header() {
+interface HeaderProps {
+  salonInfo?: any;
+}
+
+export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const language = i18n.language;
+  const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
+  const [salonInfo, setSalonInfo] = useState(propSalonInfo || {});
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const [language, setLanguage] = useState('ru');
+
+  useEffect(() => {
+    // Fetch salon info if not provided
+    if (!propSalonInfo || Object.keys(propSalonInfo).length === 0) {
+      const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+      fetch(`${API_URL}/api/public/salon-info?language=${language}`)
+        .then(res => res.json())
+        .then(setSalonInfo)
+        .catch(err => console.error('Error loading salon info:', err));
+    } else {
+      setSalonInfo(propSalonInfo);
+    }
+  }, [propSalonInfo, language]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,15 +97,19 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-background/5 backdrop-blur-sm shadow-sm"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-background/5 backdrop-blur-sm shadow-sm"
+          }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex-shrink-0">
               <a href="/" className="block">
-                <div className="text-xl sm:text-2xl font-bold text-primary">Beauty Salon</div>
+                {/* <div className="text-xl sm:text-2xl font-bold text-primary">Beauty Salon</div> */}
+                <img
+                  src={logo} // Use imported logo
+                  alt={salonInfo?.name || "Logo"}
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
               </a>
             </div>
 
@@ -108,16 +140,15 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
-                  className={`nav-item text-xs xl:text-sm transition-colors duration-200 ${
-                    activeSection === item.href ? "active text-primary" : "text-primary hover:text-primary/80"
-                  }`}
+                  className={`nav-item text-xs xl:text-sm transition-colors duration-200 ${activeSection === item.href ? "active text-primary" : "text-primary hover:text-primary/80"
+                    }`}
                 >
-                  {item.name}
+                  {t(item.key, { defaultValue: item.defaultText }) || item.name}
                 </a>
               ))}
 
               {/* Language Switcher */}
-              <div className="relative">
+              <div className="relative language-switcher">
                 <button
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                   className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-black/5 transition-colors"
@@ -131,12 +162,11 @@ export function Header() {
                       <button
                         key={lang.code}
                         onClick={() => {
-                          setLanguage(lang.code);
+                          changeLanguage(lang.code);
                           setIsLangMenuOpen(false);
                         }}
-                        className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-1.5 text-primary ${
-                          language === lang.code ? 'bg-gray-50 font-medium' : ''
-                        }`}
+                        className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-1.5 text-primary ${language === lang.code ? 'bg-gray-50 font-medium' : ''
+                          }`}
                       >
                         <span className="text-base leading-none">{lang.flag}</span>
                         {lang.short}
@@ -148,9 +178,16 @@ export function Header() {
 
               {/* Social Icons */}
               <div className="flex items-center gap-3">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">
-                  <Instagram className="w-4 h-4" />
-                </a>
+                {salonInfo?.instagram && (
+                  <a
+                    href={salonInfo.instagram?.startsWith('http') ? salonInfo.instagram : `https://${salonInfo.instagram?.replace(/^(https?:\/\/)?(www\.)?/, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Instagram className="w-4 h-4" />
+                  </a>
+                )}
               </div>
 
               {/* User Account */}
@@ -161,7 +198,7 @@ export function Header() {
                 className="border-primary text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
               >
                 <User className="w-3.5 h-3.5 mr-1.5" />
-                Войти
+                {t('login', { defaultValue: 'Войти' })}
               </Button>
 
               <Button
@@ -171,7 +208,7 @@ export function Header() {
                 className="hero-button-primary h-8 text-xs"
                 size="sm"
               >
-                Записаться
+                {t('bookingTag') || 'Записаться'}
               </Button>
             </nav>
 
@@ -230,7 +267,7 @@ export function Header() {
                       className="block w-full px-3 py-2.5 rounded-lg hover:bg-black/5 text-primary transition-all group"
                     >
                       <span className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{item.name}</span>
+                        <span className="lowercase text-lg font-medium">{t(item.key, { defaultValue: item.defaultText }) || item.name}</span>
                         <span className="text-primary/50 group-hover:text-primary group-hover:translate-x-1 transition-all text-sm">
                           →
                         </span>
@@ -241,18 +278,17 @@ export function Header() {
 
                 <div className="mt-6 pt-4 border-t border-border/10">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
-                    Язык
+                    Язык / Language
                   </p>
                   <div className="grid grid-cols-3 gap-1.5">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
-                        onClick={() => setLanguage(lang.code)}
-                        className={`px-2 py-1.5 rounded-lg text-xs flex flex-col items-center justify-center gap-0.5 transition-all ${
-                          language === lang.code
+                        onClick={() => changeLanguage(lang.code)}
+                        className={`px-2 py-1.5 rounded-lg text-xs flex flex-col items-center justify-center gap-0.5 transition-all ${language === lang.code
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-secondary hover:bg-secondary/80 text-primary'
-                        }`}
+                          }`}
                       >
                         <span className="text-base">{lang.flag}</span>
                         <span className="text-[9px]">{lang.short}</span>
@@ -270,7 +306,7 @@ export function Header() {
                     className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
                   >
                     <User className="w-4 h-4 mr-2" />
-                    Войти
+                    {t('login', { defaultValue: 'Войти' })}
                   </Button>
                   <Button
                     onClick={() => {
@@ -279,7 +315,7 @@ export function Header() {
                     }}
                     className="w-full hero-button-primary h-9 text-sm"
                   >
-                    Записаться
+                    {t('bookingTag') || 'Записаться'}
                   </Button>
                 </div>
               </div>
