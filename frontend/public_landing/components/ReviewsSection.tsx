@@ -18,7 +18,7 @@ export function ReviewsSection() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
   const language = i18n.language;
 
-  console.log('👀 ReviewsSection: Rendering. Language:', language);
+
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -28,13 +28,13 @@ export function ReviewsSection() {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      console.log('🚀 ReviewsSection: Starting fetchReviews...');
+
       try {
         const data = await apiClient.getPublicReviews(language);
-        console.log('📦 ReviewsSection: API Response:', data);
+
 
         if (data.reviews && data.reviews.length > 0) {
-          console.log(`✅ ReviewsSection: Found ${data.reviews.length} reviews from API`);
+
           const mappedReviews = data.reviews.map((review: any) => ({
             id: review.id,
             name: review.name || review.author_name || "Client",
@@ -46,11 +46,11 @@ export function ReviewsSection() {
           }));
           setReviews(mappedReviews);
         } else {
-          console.warn('⚠️ ReviewsSection: No reviews in API response, using fallback');
+
           setReviews([]);
         }
       } catch (error) {
-        console.error('❌ ReviewsSection: Error loading reviews:', error);
+
         setReviews([]);
       }
     };
@@ -77,7 +77,7 @@ export function ReviewsSection() {
       const item = reviews[(currentIndex + i) % reviews.length];
       visible.push(item);
     }
-    console.log('👀 DEBUG: Returning visible reviews count:', visible.length);
+
     return visible;
   };
 
@@ -175,7 +175,7 @@ function ReviewCard({ review }: ReviewCardProps) {
       </div>
 
       {/* Review Text */}
-      <p className="text-foreground/80 mb-6 leading-relaxed flex-grow italic line-clamp-6 font-medium">"{review.text}"</p>
+      <p className="text-foreground/80 mb-6 leading-relaxed flex-grow italic line-clamp-6 font-medium min-h-[120px]">"{review.text}"</p>
 
       <div className="mt-auto">
         {/* Rating */}
