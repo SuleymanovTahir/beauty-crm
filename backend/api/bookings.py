@@ -230,10 +230,56 @@ async def create_booking_api(
                 # Не блокируем создание записи, если уведомление не отправилось
                 log_error(f"Error sending master notification: {e}", "api")
 
+        # Notify Admin (Email + Telegram)
+        await notify_admin_about_booking(data)
+
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
+
+async def notify_admin_about_booking(data: dict):
+    """Notify admin about new booking"""
+    from utils.email import send_email_sync
+    from integrations.telegram_bot import send_telegram_alert
+    import os
+    import asyncio
+    
+    name = data.get('name')
+    phone = data.get('phone')
+    service = data.get('service')
+    datetime_str = f"{data.get('date')} {data.get('time')}"
+    master = data.get('master', 'Любой специалист')
+    
+    # 1. Email Admin
+    admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
+    if admin_email:
+        subject = f"📅 Новая запись: {name}"
+        message_text = (
+            f"Имя: {name}\n"
+            f"Телефон: {phone}\n"
+            f"Услуга: {service}\n"
+            f"Мастер: {master}\n"
+            f"Время: {datetime_str}"
+        )
+        try:
+            send_email_sync([admin_email], subject, message_text)
+        except Exception as e:
+            print(f"Error sending admin email: {e}")
+
+    # 2. Telegram Admin
+    try:
+        telegram_message = (
+            f"📅 <b>Новая запись!</b>\n\n"
+            f"👤 <b>Имя:</b> {name}\n"
+            f"📞 <b>Телефон:</b> {phone}\n"
+            f"💇‍♀️ <b>Услуга:</b> {service}\n"
+            f"👤 <b>Мастер:</b> {master}\n"
+            f"🕒 <b>Время:</b> {datetime_str}"
+        )
+        await send_telegram_alert(telegram_message)
+    except Exception as e:
+        print(f"Error sending admin telegram: {e}")
 
 @router.post("/bookings/{booking_id}/status")
 async def update_booking_status_api(
