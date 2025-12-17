@@ -1,23 +1,68 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Award } from 'lucide-react';
-import { mockTeamMembers } from '../../utils/mockData';
+import { useTranslation } from "react-i18next";
+
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  specialty: string;
+  image: string;
+  experience: number | string;
+}
 
 export function TeamSection() {
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
+  const language = i18n.language;
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [displayCount, setDisplayCount] = useState(8);
-  const displayedMembers = mockTeamMembers.slice(0, displayCount);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+        const res = await fetch(`${API_URL}/api/public/employees?language=${language}`);
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          const teamMembers = data.map((emp: any) => ({
+            id: emp.id,
+            name: emp.name,
+            role: emp.role || "",
+            specialty: emp.specialty || "",
+            // Experience from backend might be number or string. 
+            experience: emp.experience || 0,
+            // Check if image is full URL or needs prefix. Usually backend sends filename.
+            image: emp.image ? (emp.image.startsWith('http') ? emp.image : `${API_URL}/uploads/${emp.image}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
+          }));
+          setTeam(teamMembers);
+        } else {
+          setTeam([]);
+        }
+
+      } catch (error) {
+        console.error('Error loading employees:', error);
+        setTeam([]);
+      }
+    };
+
+    fetchEmployees();
+  }, [language]);
+
+  const displayedMembers = team.slice(0, displayCount);
 
   return (
     <section id="team" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            Наша команда
+            {t('teamTag', { defaultValue: 'Наша команда' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            Мастера своего дела
+            {t('teamTitle', { defaultValue: 'Мастера своего дела' })}
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            Профессионалы с многолетним опытом
+            {t('teamDesc', { defaultValue: 'Профессионалы с многолетним опытом' })}
           </p>
         </div>
 
@@ -35,7 +80,7 @@ export function TeamSection() {
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
                     <div className="flex items-center gap-1.5 text-white mb-1">
                       <Award className="w-3 h-3" />
-                      <span className="text-xs">{member.experience} лет</span>
+                      <span className="text-xs">{member.experience} {t('yearsExp', { defaultValue: 'лет' })}</span>
                     </div>
                     <p className="text-white text-xs line-clamp-2">{member.specialty}</p>
                   </div>
@@ -49,13 +94,13 @@ export function TeamSection() {
           ))}
         </div>
 
-        {displayCount < mockTeamMembers.length && (
+        {displayCount < team.length && (
           <div className="text-center mt-6 sm:mt-8">
             <button
-              onClick={() => setDisplayCount(prev => Math.min(prev + 8, mockTeamMembers.length))}
+              onClick={() => setDisplayCount(prev => Math.min(prev + 8, team.length))}
               className="px-6 sm:px-8 py-2 sm:py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors text-sm sm:text-base"
             >
-              Показать еще ({mockTeamMembers.length - displayCount})
+              {t('loading', { defaultValue: 'Показать еще' })} ({team.length - displayCount})
             </button>
           </div>
         )}

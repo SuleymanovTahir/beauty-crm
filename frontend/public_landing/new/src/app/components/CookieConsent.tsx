@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function CookieConsent() {
+  const { t } = useTranslation(['public_landing', 'common']);
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
@@ -30,9 +32,9 @@ export function CookieConsent() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex-1 pr-8 sm:pr-0">
             <p className="text-xs sm:text-sm text-foreground leading-relaxed">
-              Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с нашей{' '}
+              {t('cookieConsentText', { defaultValue: 'Мы используем файлы cookie для улучшения работы сайта. Продолжая использовать сайт, вы соглашаетесь с нашей' })}{' '}
               <a href="/privacy-policy" className="text-primary hover:underline font-medium">
-                политикой конфиденциальности
+                {t('privacyPolicy', { defaultValue: 'политикой конфиденциальности' })}
               </a>.
             </p>
           </div>
@@ -43,14 +45,14 @@ export function CookieConsent() {
               size="sm"
               className="flex-1 sm:flex-none text-xs h-8"
             >
-              Отклонить
+              {t('decline', { defaultValue: 'Отклонить' })}
             </Button>
             <Button
               onClick={handleAccept}
               size="sm"
               className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-xs h-8"
             >
-              Принять
+              {t('accept', { defaultValue: 'Принять' })}
             </Button>
           </div>
           <button
