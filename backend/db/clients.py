@@ -223,7 +223,6 @@ def delete_client(instagram_id: str) -> bool:
         # Проверяем наличие клиента перед удалением
         c.execute("SELECT 1 FROM clients WHERE instagram_id = %s", (instagram_id,))
         if not c.fetchone():
-            print(f"❌ DEBUG: Client {instagram_id!r} NOT FOUND in database before deletion check")
             conn.close()
             return False
 
@@ -246,9 +245,7 @@ def delete_client(instagram_id: str) -> bool:
         c.execute("DELETE FROM booking_reminders_sent WHERE booking_id IN (SELECT id FROM bookings WHERE instagram_id = %s)", (instagram_id,))
         c.execute("DELETE FROM bookings WHERE instagram_id = %s", (instagram_id,))
         c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
-        # Эти таблицы могут отсутствовать в старых версиях БД
-        # c.execute("DELETE FROM client_interactions WHERE instagram_id = %s", (instagram_id,))
-        # c.execute("DELETE FROM client_interests WHERE client_id = %s", (instagram_id,))
+        c.execute("DELETE FROM client_notifications WHERE client_instagram_id = %s", (instagram_id,))
         
         # Удалить самого клиента
         print(f"🧹 DEBUG: Deleting from clients table for id: {instagram_id!r}")

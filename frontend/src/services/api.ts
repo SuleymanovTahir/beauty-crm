@@ -1091,11 +1091,63 @@ export class ApiClient {
       success: boolean;
       master: string;
       date: string;
-      available_slots: string[];
+      available_slots: { time: string; is_optimal: boolean }[];
       count: number;
     }>(`/api/schedule/${masterName}/available-slots?date=${date}&duration=${duration}`)
   }
 
+  async getAvailableDates(masterName: string, year: number, month: number, duration: number = 60) {
+    return this.request<{
+      success: boolean;
+      master: string;
+      year: number;
+      month: number;
+      available_dates: string[]; // YYYY-MM-DD
+    }>(`/api/schedule/${masterName}/available-dates?year=${year}&month=${month}&duration=${duration}`)
+  }
+
+  async createHold(data: { service_id: number, master_name: string, date: string, time: string, client_id: string }) {
+    return this.request<{ success: boolean; error?: string }>('/api/bookings/hold', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+
+  async getAllMastersAvailability(date: string) {
+    return this.request<{
+      success: boolean;
+      date: string;
+      availability: Record<string, string[]>;
+    }>(`/api/schedule/available-slots?date=${date}`);
+  }
+
+  async getHolidays(start?: string, end?: string): Promise<any[]> {
+    const params: any = {};
+    if (start) params.start_date = start;
+    if (end) params.end_date = end;
+
+    // Note: We use the public fetch wrapper if available or standard request
+    try {
+      // Using 'request' helper which wraps fetch
+      return this.request<any[]>('/api/holidays?' + new URLSearchParams(params).toString());
+    } catch (e) {
+      console.error("Failed to fetch holidays", e);
+      return [];
+    }
+  }
+
+  async createHoliday(data: { date: string; name: string; is_closed?: boolean; master_exceptions?: number[] }) {
+    return this.request<{ success: boolean }>('/api/holidays', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteHoliday(date: string) {
+    return this.request<{ success: boolean }>(`/api/holidays/${date}`, {
+      method: 'DELETE',
+    });
+  }
 
 
   // ===== BOOKING REMINDERS =====
