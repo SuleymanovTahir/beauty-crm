@@ -27,6 +27,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   const languages = [
     { code: 'ru', name: 'Русский', flag: '🇷🇺', short: 'RU' },
@@ -55,6 +56,22 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+
+      // Determine active section
+      const sections = navigation.map(item => item.href.substring(1));
+      let current = "";
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Adjust detection zone to be more forgiving
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            current = section;
+            break;
+          }
+        }
+      }
+      if (current) setActiveSection("#" + current);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -80,6 +97,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const handleScrollTo = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
+    setActiveSection(href);
     const element = document.querySelector(href);
     if (element) {
       const headerOffset = 80; // Height of fixed header
@@ -114,16 +132,38 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
+              <style>{`
+                .nav-item {
+                  position: relative;
+                  padding-bottom: 4px;
+                }
+                .nav-item::after {
+                  content: '';
+                  position: absolute;
+                  bottom: 0;
+                  left: 0;
+                  width: 0;
+                  height: 2px;
+                  background-color: #db2777;
+                  transition: width 0.3s ease-in-out;
+                  display: block;
+                }
+                .nav-item:hover::after {
+                  width: 100%;
+                }
+                .nav-item.active::after {
+                  width: 100%;
+                }
+              `}</style>
               {navigation.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
-                  className={`group relative text-sm transition-colors duration-200 lowercase ${isScrolled ? "text-primary hover:text-primary/80" : "text-primary hover:text-primary/80"
+                  className={`nav-item text-sm transition-colors duration-200 lowercase ${activeSection === item.href ? "active text-primary" : "text-primary hover:text-primary/80"
                     }`}
                 >
                   {t(item.key, { defaultValue: item.defaultText }) || item.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                 </a>
               ))}
 
