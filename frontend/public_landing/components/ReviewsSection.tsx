@@ -18,23 +18,33 @@ export function ReviewsSection() {
   const { t, i18n } = useTranslation(['public_landing', 'common']);
   const language = i18n.language;
 
-
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [visibleCount, setVisibleCount] = useState(3);
 
-  // Fallback data
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(3);
+      }
+    };
 
+    // Initial check
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
-
       try {
         const data = await apiClient.getPublicReviews(language);
-
-
         if (data.reviews && data.reviews.length > 0) {
-
           const mappedReviews = data.reviews.map((review: any) => ({
             id: review.id,
             name: review.name || review.author_name || "Client",
@@ -46,11 +56,9 @@ export function ReviewsSection() {
           }));
           setReviews(mappedReviews);
         } else {
-
           setReviews([]);
         }
       } catch (error) {
-
         setReviews([]);
       }
     };
@@ -73,11 +81,10 @@ export function ReviewsSection() {
   const getVisibleReviews = () => {
     if (reviews.length === 0) return [];
     const visible = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < visibleCount; i++) {
       const item = reviews[(currentIndex + i) % reviews.length];
       visible.push(item);
     }
-
     return visible;
   };
 
@@ -106,8 +113,7 @@ export function ReviewsSection() {
           </p>
         </div>
 
-        {/* Desktop Carousel */}
-        {/* Desktop Carousel */}
+        {/* Carousel */}
         <div className="block mb-12">
           <div className="flex items-center justify-center gap-4">
             {/* Prev Button */}
@@ -120,9 +126,13 @@ export function ReviewsSection() {
             </button>
 
             {/* Cards */}
-            <div className="flex flex-col md:flex-row justify-center items-stretch gap-3">
+            <div className="flex-1 flex justify-center gap-4 transition-all duration-300">
               {getVisibleReviews().map((review, index) => (
-                <div key={`${review.id}-${index}`} className="h-full w-full max-w-xs">
+                <div
+                  key={`${review.id}-${index}`}
+                  className={`flex-1 transition-all duration-300 ${visibleCount === 1 ? 'max-w-sm' : 'max-w-xs'
+                    }`}
+                >
                   <ReviewCard review={review} />
                 </div>
               ))}
