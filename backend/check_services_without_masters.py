@@ -75,8 +75,8 @@ def check_services_without_masters():
         # Выводим по категориям
         for category in sorted(by_category.keys()):
             print(f"📂 {category}:")
-            for service in sorted(by_category[category], key=lambda x: x['name_ru']):
-                print(f"   • ID: {service['id']:4d} | {service['name_ru']} ({service['name_en']})")
+            for service in sorted(by_category[category], key=lambda x: (x['name_ru'] or '') + (x['name_en'] or '')):
+                print(f"   • ID: {service['id']:4d} | {service['name_ru'] or 'N/A'} ({service['name_en'] or 'N/A'})")
             print()
         
         # Список для копирования

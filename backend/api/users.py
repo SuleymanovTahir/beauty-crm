@@ -187,6 +187,31 @@ async def get_users(current_user: dict = Depends(get_current_user)):
 
         conn.close()
 
+        # Fetch services for all users efficienty
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT us.user_id, s.id, s.name, s.name_ru, s.name_ar
+            FROM user_services us
+            JOIN services s ON us.service_id = s.id
+            WHERE us.is_online_booking_enabled = TRUE
+        """)
+        services_map = {}
+        for row in c.fetchall():
+            uid = row[0]
+            if uid not in services_map:
+                services_map[uid] = []
+            services_map[uid].append({
+                "id": row[1],
+                "name": row[2],
+                "name_ru": row[3],
+                "name_ar": row[4]
+            })
+        conn.close()
+
+        for user in users:
+            user["services"] = services_map.get(user["id"], [])
+
         return {"users": users}  # ✅ Обёрнуто в объект
 
     except Exception as e:

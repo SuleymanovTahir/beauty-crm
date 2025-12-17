@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../../../../src/contexts/AuthContext';
 import { api } from '../../../../../../src/services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { ru, enUS, ar } from 'date-fns/locale';
@@ -42,12 +42,16 @@ export const AccountPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['account', 'common']);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loyalty, setLoyalty] = useState<LoyaltyInfo>({ points: 0, level: 'Bronze', history: [] });
-  const [isBooking, setIsBooking] = useState(false);
+
+  const isBooking = searchParams.get('booking') === 'true';
+  const openBooking = () => setSearchParams({ booking: 'true' });
+  const closeBooking = () => setSearchParams({});
 
   // Extended user type for local use
   const currentUser = user as any;
@@ -198,9 +202,9 @@ export const AccountPage = () => {
       <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           <UserBookingWizard
-            onClose={() => setIsBooking(false)}
+            onClose={closeBooking}
             onSuccess={() => {
-              setIsBooking(false);
+              closeBooking();
               loadData();
             }}
           />
@@ -208,6 +212,7 @@ export const AccountPage = () => {
       </div>
     );
   }
+
 
   if (loading) {
     return (
@@ -257,7 +262,7 @@ export const AccountPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 z-10 w-full md:w-auto">
-            <Button onClick={() => setIsBooking(true)} className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+            <Button onClick={openBooking} className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
               <Plus className="w-4 h-4 mr-2" />
               Записаться
             </Button>
@@ -297,7 +302,7 @@ export const AccountPage = () => {
             <TabsContent value="bookings" className="space-y-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">История посещений</h2>
-                <Button variant="link" onClick={() => setIsBooking(true)} className="text-primary p-0">Новая запись &rarr;</Button>
+                <Button variant="link" onClick={openBooking} className="text-primary p-0">Новая запись &rarr;</Button>
               </div>
               {bookings.length > 0 ? (
                 <div className="grid gap-4">
@@ -331,7 +336,7 @@ export const AccountPage = () => {
               ) : (
                 <div className="text-center py-12 bg-muted/30 rounded-2xl border border-dashed">
                   <p className="text-muted-foreground">У вас пока нет записей</p>
-                  <Button variant="outline" className="mt-4" onClick={() => setIsBooking(true)}>Записаться</Button>
+                  <Button variant="outline" className="mt-4" onClick={openBooking}>Записаться</Button>
                 </div>
               )}
             </TabsContent>
