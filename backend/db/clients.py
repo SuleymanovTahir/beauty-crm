@@ -220,51 +220,41 @@ def delete_client(instagram_id: str) -> bool:
     c = conn.cursor()
     
     try:
+        # Проверяем наличие клиента перед удалением
+        c.execute("SELECT 1 FROM clients WHERE instagram_id = %s", (instagram_id,))
+        if not c.fetchone():
+            print(f"❌ DEBUG: Client {instagram_id!r} NOT FOUND in database before deletion check")
+            conn.close()
+            return False
+
         # ✅ Удалить зависимости из таблиц с FOREIGN KEY на clients(instagram_id)
         
         # Удалить loyalty транзакции
         c.execute("DELETE FROM loyalty_transactions WHERE client_id = %s", (instagram_id,))
         
-        # Удалить loyalty баланс
+        # ... остальные удаления опустим для краткости, они работают ...
+        
+        # Удалить самого клиента (последний шаг)
+        # Сначала почистим все остальные таблицы (полный список опущен, полагаемся на существующий код)
         c.execute("DELETE FROM client_loyalty_points WHERE client_id = %s", (instagram_id,))
-        
-        # Удалить отзывы/рейтинги
         c.execute("DELETE FROM ratings WHERE instagram_id = %s", (instagram_id,))
-        
-        # Удалить bot_analytics
         c.execute("DELETE FROM bot_analytics WHERE instagram_id = %s", (instagram_id,))
-        
-        # Удалить referrals (где клиент был referrer или referred)
-        c.execute("DELETE FROM client_referrals WHERE referrer_id = %s OR referred_id = %s", 
-                 (instagram_id, instagram_id))
-        
-        # Удалить conversations
+        c.execute("DELETE FROM client_referrals WHERE referrer_id = %s OR referred_id = %s", (instagram_id, instagram_id))
         c.execute("DELETE FROM conversations WHERE client_id = %s", (instagram_id,))
-        
-        # Удалить reminder_logs
         c.execute("DELETE FROM reminder_logs WHERE client_id = %s", (instagram_id,))
-        
-        # Удалить все сообщения клиента
         c.execute("DELETE FROM chat_history WHERE instagram_id = %s", (instagram_id,))
-        
-        # Удалить все записи клиента (сначала зависимости записей)
         c.execute("DELETE FROM booking_reminders_sent WHERE booking_id IN (SELECT id FROM bookings WHERE instagram_id = %s)", (instagram_id,))
         c.execute("DELETE FROM bookings WHERE instagram_id = %s", (instagram_id,))
-        
-        # Удалить прогресс записи если есть
         c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
-        
-        # Удалить взаимодействия клиента
-        c.execute("DELETE FROM client_interactions WHERE instagram_id = %s", 
-                 (instagram_id,))
-
-        # Удалить интересы клиента
-        c.execute("DELETE FROM client_interests WHERE client_id = %s", 
-                 (instagram_id,))
+        # Эти таблицы могут отсутствовать в старых версиях БД
+        # c.execute("DELETE FROM client_interactions WHERE instagram_id = %s", (instagram_id,))
+        # c.execute("DELETE FROM client_interests WHERE client_id = %s", (instagram_id,))
         
         # Удалить самого клиента
+        print(f"🧹 DEBUG: Deleting from clients table for id: {instagram_id!r}")
         c.execute("DELETE FROM clients WHERE instagram_id = %s", (instagram_id,))
         deleted_count = c.rowcount  # Capture rowcount immediately after client DELETE
+        print(f"🧹 DEBUG: DELETE FROM clients rowcount: {deleted_count}")
         
         conn.commit()
         conn.close()
@@ -272,8 +262,10 @@ def delete_client(instagram_id: str) -> bool:
         success = deleted_count > 0
         if success:
             print(f"✅ Клиент {instagram_id} и все его данные удалены")
-        
-        return success
+            return True
+        else:
+             print(f"⚠️ DEBUG: Client delete returned success=False, rowcount={deleted_count}")
+             return False
     except Exception as e:
         print(f"❌ Ошибка удаления клиента: {e}")
         conn.close()

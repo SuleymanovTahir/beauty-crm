@@ -416,17 +416,24 @@ async def delete_client_api(
 ):
     """Удалить клиента"""
     from urllib.parse import unquote
-    client_id = unquote(client_id)  # Decode URL-encoded characters
+    
+    print(f"🔍 DEBUG: Raw client_id from URL: {client_id!r}")
+    decoded_id = unquote(client_id)
+    print(f"🔍 DEBUG: Decoded client_id: {decoded_id!r}")
     
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "manager", "director"]:
+        print(f"⛔ DEBUG: Auth failed or role mismatch for user: {user}")
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
-        success = delete_client(client_id)
+        print(f"🗑️ DEBUG: Calling delete_client with id: {decoded_id!r}")
+        success = delete_client(decoded_id)
+        print(f"🤷‍♂️ DEBUG: delete_client returned: {success}")
+        
         if success:
             log_activity(user["id"], "delete_client", "client", 
-                        client_id, "Client deleted")
+                        decoded_id, "Client deleted")
             return {"success": True, "message": "Client deleted"}
         else:
             return JSONResponse({"error": "Client not found"}, 
