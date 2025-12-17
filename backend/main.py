@@ -99,6 +99,7 @@ from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
 from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
+from api.newsletter import router as newsletter_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -148,6 +149,7 @@ app.include_router(booking_import_router, prefix="/api")  # Booking Import API
 app.include_router(public_admin_router, prefix="/api")  # Public Content Admin API (/api/public-admin)
 app.include_router(payroll_router, prefix="/api")  # Payroll API
 app.include_router(feedback_router, prefix="/api")  # Feedback API
+app.include_router(newsletter_router, prefix="/api")  # Newsletter API
 # Публичные роутеры (БЕЗ авторизации через /public)
 app.include_router(notes_router, prefix="/api")
 
@@ -158,7 +160,7 @@ if is_module_enabled('public'):
     app.include_router(public_content_router, prefix="/api")  # Public content API
     app.include_router(public_employees_router, prefix="/api")  # Public employees API
     app.include_router(gallery_router, prefix="/api")  # Gallery API
-    app.include_router(client_auth_router, prefix="/public")  # API для клиентов
+    # app.include_router(client_auth_router, prefix="/public")  # Moved to /api/client
     log_info("✅ Модуль 'public' подключен: /api/public/* endpoints", "startup")
 # Специальные роутеры (БЕЗ /api)
 app.include_router(webhooks_router)  # для Instagram webhook (/webhook)

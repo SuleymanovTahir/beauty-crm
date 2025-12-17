@@ -174,7 +174,7 @@ async def set_working_hours_api(
     {
         "day_of_week": 0,  // 0=Пн, 6=Вс
         "start_time": "10:30",  // Пример (используется DEFAULT_HOURS_START)
-        "end_time": "21:30"    // Пример (используется DEFAULT_HOURS_END)
+        "end_time": "21:00"    // Пример (используется DEFAULT_HOURS_END)
     }
     """
     user = require_auth(session_token)

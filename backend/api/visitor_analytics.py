@@ -2,17 +2,52 @@
 API endpoints for visitor analytics
 """
 from fastapi import APIRouter, Request, Cookie
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional
 from datetime import datetime, timedelta
 from db.visitor_tracking import get_visitor_stats, get_location_distribution, get_country_distribution, get_city_distribution, get_distance_distribution, get_visitor_trend, get_landing_sections, get_peak_hours
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
-from fastapi.responses import StreamingResponse
 import csv
 import io
+from db.migrations.consolidated.schema_cookies import log_cookie_consent, create_cookie_consents_table, check_cookie_consent
 
 router = APIRouter(tags=["Analytics"])
+
+@router.on_event("startup")
+async def startup_event():
+    """Инициализация таблицы при старте"""
+    create_cookie_consents_table()
+
+@router.get("/cookies/check")
+async def check_cookies(request: Request):
+    """Проверить статус куки для IP"""
+    try:
+        ip = request.client.host
+        status = check_cookie_consent(ip)
+        return {"status": status} # 'accept', 'decline', or None
+    except Exception as e:
+        log_error(f"Error checking cookies: {e}", "analytics")
+        return {"status": None}
+
+@router.post("/cookies/consent")
+async def cookie_consent(request: Request, data: dict):
+    """Сохранить выбор пользователя по куки"""
+    try:
+        action = data.get('action') # 'accept' or 'decline'
+        if action not in ['accept', 'decline']:
+             return JSONResponse({"error": "Invalid action"}, status_code=400)
+             
+        ip = request.client.host
+        user_agent = request.headers.get('user-agent', '')
+        
+        log_cookie_consent(ip, action, user_agent)
+        
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error logging cookie consent: {e}", "analytics")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 
 @router.get("/analytics/visitors")
 async def get_visitors(

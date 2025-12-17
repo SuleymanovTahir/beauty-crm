@@ -32,6 +32,41 @@ def get_all_bookings():
     conn.close()
     return bookings
 
+def get_bookings_by_phone(phone: str):
+    """Получить записи клиента по номеру телефона"""
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        # Нормализуем телефон для поиска (если нужно)
+        # В данном случае ищем точное совпадение или частичное (если формат разный)
+        # Лучше точное, но если форматы разные (+7... и 8...), можно использовать LIKE
+        # Пока используем точное совпадение, так как в системе вроде бы стандартизировано
+        
+        c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                     name, status, created_at, revenue, master
+                     FROM bookings 
+                     WHERE phone = %s 
+                     ORDER BY created_at DESC""", (phone,))
+    except psycopg2.OperationalError:
+        # Fallback для старой схемы
+        try:
+            c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                         name, status, created_at, revenue, NULL as master
+                         FROM bookings 
+                         WHERE phone = %s
+                         ORDER BY created_at DESC""", (phone,))
+        except:
+             c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
+                         name, status, created_at, 0 as revenue, NULL as master
+                         FROM bookings 
+                         WHERE phone = %s
+                         ORDER BY created_at DESC""", (phone,))
+
+    bookings = c.fetchall()
+    conn.close()
+    return bookings
+
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
                 phone: str, name: str, special_package_id: int = None, master: str = None):
     """Сохранить завершённую запись"""

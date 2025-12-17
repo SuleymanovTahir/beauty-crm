@@ -157,8 +157,8 @@ def init_database():
         hours TEXT,
         hours_ru TEXT,
         hours_ar TEXT,
-        hours_weekdays TEXT DEFAULT '10:30 - 21:30',
-        hours_weekends TEXT DEFAULT '10:30 - 21:30',
+        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
+        hours_weekends TEXT DEFAULT '10:30 - 21:00',
         lunch_start TEXT DEFAULT '13:00',
         lunch_end TEXT DEFAULT '14:00',
         booking_url TEXT,
@@ -221,10 +221,9 @@ def init_database():
         c.execute("ALTER TABLE salon_settings ADD COLUMN timezone_offset TEXT DEFAULT 'UTC+4'")
     if 'birthday_discount' not in columns:
         c.execute("ALTER TABLE salon_settings ADD COLUMN birthday_discount TEXT DEFAULT '15%'")
-    if 'hours_weekdays' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:30'")
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
     if 'hours_weekends' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:30'")
+        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
     
     # Миграция: добавить main_location
     location_migrations = {
@@ -821,9 +820,9 @@ def init_database():
                   ("M.Le Diamant Beauty Lounge",
                    "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
                    "https://maps.app.goo.gl/Puh5X1bNEjWPiToz6",
-                   "Daily 10:30 - 21:30",
-                   "Ежедневно 10:30 - 21:30",
-                   "يوميًا 10:30 - 21:30",
+                   "Daily 10:30 - 21:00",
+                   "Ежедневно 10:30 - 21:00",
+                   "يوميًا 10:30 - 21:00",
                    "https://n1314037.alteg.io",
                    "+971526961100",
                    "mladiamontuae@gmail.com",  # email

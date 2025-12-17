@@ -370,3 +370,49 @@ async def get_public_gallery(category: Optional[str] = None):
         from utils.logger import log_error
         log_error(f"Error fetching gallery images: {e}", "api")
         return {"success": False, "images": [], "error": str(e)}
+
+@router.get("/faq")
+async def get_public_faq(language: str = "ru"):
+    """Получить список FAQ"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Select active FAQs ordered by display_order
+        c.execute("""
+            SELECT id, question_ru, question_en, question_ar, 
+                   answer_ru, answer_en, answer_ar, category 
+            FROM public_faq 
+            ORDER BY display_order ASC, id ASC
+        """)
+        
+        faqs = []
+        rows = c.fetchall()
+        
+        for row in rows:
+            # Select language specific content
+            if language == "ar":
+                question = row[3] or row[2] or row[1]
+                answer = row[6] or row[5] or row[4]
+            elif language == "en":
+                question = row[2] or row[1]
+                answer = row[5] or row[4]
+            else: # Default or ru
+                question = row[1]
+                answer = row[4]
+                
+            faqs.append({
+                "id": row[0],
+                "question": question,
+                "answer": answer,
+                "category": row[7]
+            })
+            
+        return {"faqItems": faqs}
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error fetching FAQ: {e}", "api")
+        return {"faqItems": []}
+    finally:
+        if 'conn' in locals():
+            conn.close()

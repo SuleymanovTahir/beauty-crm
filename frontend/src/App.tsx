@@ -42,7 +42,7 @@ const EmployeeLayout = React.lazy(() => import('./components/layouts/EmployeeLay
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
 
-const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
+// const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
 // const Success = React.lazy(() => import('./pages/public/Success'));
 // const About = React.lazy(() => import('./pages/public/About'));
 // const Contacts = React.lazy(() => import('./pages/public/Contacts'));
@@ -58,13 +58,14 @@ const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 // New Public Landing Pages
 // New Public Landing Pages - Lazy Loaded
 const LandingPage = React.lazy(() => import('../public_landing/new/src/app/pages/LandingPage').then(module => ({ default: module.LandingPage })));
-const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/public_landing__PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
-const TermsOfUseNew = React.lazy(() => import('../public_landing/pages/public_landing__TermsOfUse').then(module => ({ default: module.TermsOfUse })));
-const ServiceDetail = React.lazy(() => import('../public_landing/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
-const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion').then(module => ({ default: module.DataDeletion })));
+const PrivacyPolicyNew = React.lazy(() => import('../public_landing/new/src/app/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
+const TermsOfUseNew = React.lazy(() => import('../public_landing/new/src/app/pages/TermsOfUse').then(module => ({ default: module.TermsOfUse })));
+const ServiceDetail = React.lazy(() => import('../public_landing/new/src/app/pages/ServiceDetail').then(module => ({ default: module.ServiceDetail })));
+const AccountPage = React.lazy(() => import('../public_landing/new/src/app/pages/account/AccountPage').then(module => ({ default: module.AccountPage })));
+const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 
-const Login = React.lazy(() => import('./pages/auth/Login'));
-const Register = React.lazy(() => import('./pages/auth/Register'));
+const Login = React.lazy(() => import('../public_landing/new/src/app/pages/LoginPage').then(module => ({ default: module.LoginPage })));
+// const Register = React.lazy(() => import('./pages/auth/Register'));
 const VerifyEmail = React.lazy(() => import('./pages/auth/VerifyEmail'));
 const ForgotPassword = React.lazy(() => import('./pages/auth/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('./pages/auth/ResetPassword'));
@@ -165,7 +166,7 @@ export default function App() {
                   currentUser ? (
                     <Navigate to="/admin/dashboard" replace />
                   ) : (
-                    <Register />
+                    <Login initialView="register" />
                   )
                 }
               />
@@ -331,6 +332,7 @@ export default function App() {
                 <Route path="/terms" element={<TermsOfUseNew />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
                 <Route path="/data-deletion" element={<DataDeletionNew />} />
+                <Route path="/account" element={<AccountPage />} />
               </Route>
 
               {/* Public Routes using PublicLayout - COMMENTED OUT: files don't exist */}
