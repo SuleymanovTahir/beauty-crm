@@ -114,23 +114,44 @@ export function ReviewsSection() {
         </div>
 
         {/* Carousel */}
-        <div className="block mb-12">
+        <div className="relative mb-12 max-w-7xl mx-auto">
+          {/* Mobile Arrows (Absolute) */}
+          <button
+            onClick={prevReview}
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
+            aria-label="Previous reviews"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={nextReview}
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
+            aria-label="Next reviews"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
           <div className="flex items-center justify-center gap-4">
-            {/* Prev Button */}
+            {/* Desktop Prev Button */}
             <button
               onClick={prevReview}
-              className="w-10 h-10 bg-card rounded-full shadow-lg flex items-center justify-center hover:bg-muted transition-all border border-border shrink-0"
+              className="hidden md:flex w-10 h-10 bg-card rounded-full shadow-lg items-center justify-center hover:bg-muted transition-all border border-border shrink-0"
               aria-label="Previous reviews"
             >
               <ChevronLeft className="w-5 h-5 text-pink-600" />
             </button>
 
             {/* Cards */}
-            <div className="flex-1 flex justify-center gap-4 transition-all duration-300">
+            <div className="flex-1 flex justify-center gap-4 transition-all duration-300 px-0 md:px-0">
               {getVisibleReviews().map((review, index) => (
                 <div
                   key={`${review.id}-${index}`}
-                  className={`flex-1 transition-all duration-300 ${visibleCount === 1 ? 'max-w-sm' : 'max-w-xs'
+                  className={`flex-none transition-all duration-300 ${visibleCount === 1
+                    ? 'w-full max-w-[85%] mx-auto'
+                    : visibleCount === 2
+                      ? 'w-[calc(50%-1rem)] max-w-sm'
+                      : 'w-full max-w-xs'
                     }`}
                 >
                   <ReviewCard review={review} />
@@ -138,10 +159,10 @@ export function ReviewsSection() {
               ))}
             </div>
 
-            {/* Next Button */}
+            {/* Desktop Next Button */}
             <button
               onClick={nextReview}
-              className="w-10 h-10 bg-card rounded-full shadow-lg flex items-center justify-center hover:bg-muted transition-all border border-border shrink-0"
+              className="hidden md:flex w-10 h-10 bg-card rounded-full shadow-lg items-center justify-center hover:bg-muted transition-all border border-border shrink-0"
               aria-label="Next reviews"
             >
               <ChevronRight className="w-5 h-5 text-pink-600" />
@@ -150,21 +171,23 @@ export function ReviewsSection() {
         </div>
 
         {/* Dots Navigation */}
-        <div className="flex justify-center gap-2">
+        <div className="flex justify-center gap-2 mt-8">
           {reviews.map((_, index) => (
-            <button
+            <div
               key={index}
               onClick={() => goToReview(index)}
-              className={`transition-all ${index === currentIndex
-                ? 'w-8 h-2 bg-pink-600 rounded-full'
-                : 'w-2 h-2 bg-gray-400 rounded-full hover:bg-pink-300'
+              role="button"
+              tabIndex={0}
+              className={`transition-all duration-300 shrink-0 rounded-full cursor-pointer ${index === currentIndex
+                ? 'bg-pink-600 w-6 h-2 md:w-8 md:h-3'
+                : 'bg-gray-400 hover:bg-pink-300 w-2 h-2 md:w-3 md:h-3'
                 }`}
               aria-label={`Go to review ${index + 1}`}
             />
           ))}
         </div>
       </div>
-    </section>
+    </section >
   );
 }
 
