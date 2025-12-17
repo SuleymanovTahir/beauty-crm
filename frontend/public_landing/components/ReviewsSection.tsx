@@ -118,7 +118,7 @@ export function ReviewsSection() {
           {/* Mobile Arrows (Absolute) */}
           <button
             onClick={prevReview}
-            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
             aria-label="Previous reviews"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -126,7 +126,7 @@ export function ReviewsSection() {
 
           <button
             onClick={nextReview}
-            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-20 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center border border-border text-pink-600 active:scale-95 transition-transform"
             aria-label="Next reviews"
           >
             <ChevronRight className="w-4 h-4" />
@@ -148,7 +148,7 @@ export function ReviewsSection() {
                 <div
                   key={`${review.id}-${index}`}
                   className={`flex-none transition-all duration-300 ${visibleCount === 1
-                    ? 'w-full max-w-xs mx-auto'
+                    ? 'w-[calc(100%-80px)] max-w-xs mx-auto'
                     : visibleCount === 2
                       ? 'w-[calc(50%-1rem)] max-w-sm'
                       : 'w-full max-w-xs'
