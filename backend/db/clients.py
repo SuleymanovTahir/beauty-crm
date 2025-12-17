@@ -220,10 +220,35 @@ def delete_client(instagram_id: str) -> bool:
     c = conn.cursor()
     
     try:
+        # ✅ Удалить зависимости из таблиц с FOREIGN KEY на clients(instagram_id)
+        
+        # Удалить loyalty транзакции
+        c.execute("DELETE FROM loyalty_transactions WHERE client_id = %s", (instagram_id,))
+        
+        # Удалить loyalty баланс
+        c.execute("DELETE FROM client_loyalty_points WHERE client_id = %s", (instagram_id,))
+        
+        # Удалить отзывы/рейтинги
+        c.execute("DELETE FROM ratings WHERE instagram_id = %s", (instagram_id,))
+        
+        # Удалить bot_analytics
+        c.execute("DELETE FROM bot_analytics WHERE instagram_id = %s", (instagram_id,))
+        
+        # Удалить referrals (где клиент был referrer или referred)
+        c.execute("DELETE FROM client_referrals WHERE referrer_id = %s OR referred_id = %s", 
+                 (instagram_id, instagram_id))
+        
+        # Удалить conversations
+        c.execute("DELETE FROM conversations WHERE client_id = %s", (instagram_id,))
+        
+        # Удалить reminder_logs
+        c.execute("DELETE FROM reminder_logs WHERE client_id = %s", (instagram_id,))
+        
         # Удалить все сообщения клиента
         c.execute("DELETE FROM chat_history WHERE instagram_id = %s", (instagram_id,))
         
-        # Удалить все записи клиента
+        # Удалить все записи клиента (сначала зависимости записей)
+        c.execute("DELETE FROM booking_reminders_sent WHERE booking_id IN (SELECT id FROM bookings WHERE instagram_id = %s)", (instagram_id,))
         c.execute("DELETE FROM bookings WHERE instagram_id = %s", (instagram_id,))
         
         # Удалить прогресс записи если есть
@@ -232,14 +257,19 @@ def delete_client(instagram_id: str) -> bool:
         # Удалить взаимодействия клиента
         c.execute("DELETE FROM client_interactions WHERE instagram_id = %s", 
                  (instagram_id,))
+
+        # Удалить интересы клиента
+        c.execute("DELETE FROM client_interests WHERE client_id = %s", 
+                 (instagram_id,))
         
         # Удалить самого клиента
         c.execute("DELETE FROM clients WHERE instagram_id = %s", (instagram_id,))
+        deleted_count = c.rowcount  # Capture rowcount immediately after client DELETE
         
         conn.commit()
-        success = c.rowcount > 0
         conn.close()
         
+        success = deleted_count > 0
         if success:
             print(f"✅ Клиент {instagram_id} и все его данные удалены")
         

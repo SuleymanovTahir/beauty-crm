@@ -11,7 +11,25 @@ import { Button } from "../../components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Label } from "../../components/ui/label";
-import { Bell, Calendar, User, Gift, LogOut, Camera, Plus, Loader2 } from 'lucide-react';
+import { Bell, Calendar, User, Gift, LogOut, Camera, Plus, Loader2, Info, XCircle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "../../components/ui/dialog";
 import { UserBookingWizard } from '../../components/account/UserBookingWizard';
 
 interface Booking {
@@ -66,6 +84,10 @@ export const AccountPage = () => {
     notification_preferences: { sms: true, email: true, push: true }
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Booking Actions State
+  const [bookingToCancel, setBookingToCancel] = useState<number | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -197,6 +219,28 @@ export const AccountPage = () => {
 
   if (!user) return null;
 
+  const handleCancelClick = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setBookingToCancel(id);
+  };
+
+  const confirmCancel = async () => {
+    if (!bookingToCancel) return;
+    try {
+      await api.cancelBooking(bookingToCancel);
+      loadData(); // Refresh list
+    } catch (e: any) {
+      console.error(e);
+      alert(e.message || "Ошибка отмены записи");
+    } finally {
+      setBookingToCancel(null);
+    }
+  };
+
+  const handleDetailsClick = (booking: Booking) => {
+    setSelectedBooking(booking);
+  };
+
   if (isBooking) {
     return (
       <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
@@ -307,7 +351,7 @@ export const AccountPage = () => {
               {bookings.length > 0 ? (
                 <div className="grid gap-4">
                   {bookings.map(booking => (
-                    <Card key={booking.id} className="hover:shadow-md transition-shadow">
+                    <Card key={booking.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleDetailsClick(booking)}>
                       <CardContent className="p-4 flex flex-col sm:flex-row justify-between gap-4">
                         <div>
                           <h3 className="font-semibold text-lg">{booking.service_name}</h3>
@@ -321,13 +365,26 @@ export const AccountPage = () => {
                           </div>
                           <p className="text-sm mt-1">Мастер: {booking.master_name || "Не выбран"}</p>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                            booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                              'bg-yellow-100 text-yellow-700'
-                            }`}>
-                            {booking.status}
-                          </span>
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="flex items-center gap-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                              booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                'bg-yellow-100 text-yellow-700'
+                              }`}>
+                              {booking.status}
+                            </span>
+                          </div>
+                          {(booking.status === 'pending' || booking.status === 'confirmed') && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={(e) => handleCancelClick(booking.id, e)}
+                            >
+                              <XCircle className="w-4 h-4 mr-2" />
+                              Отменить
+                            </Button>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -471,6 +528,77 @@ export const AccountPage = () => {
         </Tabs>
 
       </div>
+
+      {/* Cancel Alert Dialog */}
+      <AlertDialog open={!!bookingToCancel} onOpenChange={(open) => !open && setBookingToCancel(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Отменить запись?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Вы уверены, что хотите отменить эту запись? Это действие нельзя отменить.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Нет, оставить</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancel} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Да, отменить запись
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Details Dialog */}
+      <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Детали записи</DialogTitle>
+            <DialogDescription>
+              Информация о вашем визите
+            </DialogDescription>
+          </DialogHeader>
+          {selectedBooking && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-bold col-span-4 text-primary">{selectedBooking.service_name}</span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="col-span-3">
+                  {format(new Date(selectedBooking.start_time), "d MMMM yyyy", { locale: getDateLocale() })}
+                </span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Bell className="w-4 h-4 text-muted-foreground" />
+                <span className="col-span-3">
+                  {format(new Date(selectedBooking.start_time), "HH:mm", { locale: getDateLocale() })}
+                </span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <User className="w-4 h-4 text-muted-foreground" />
+                <span className="col-span-3">{selectedBooking.master_name || "Мастер не выбран"}</span>
+              </div>
+              {selectedBooking.price && (
+                <div className="grid grid-cols-4 items-center gap-4 text-muted-foreground">
+                  <span className="col-span-1 text-sm">Стоимость:</span>
+                  <span className="col-span-3 font-medium text-foreground">{selectedBooking.price} AED</span>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            {selectedBooking && (selectedBooking.status === 'pending' || selectedBooking.status === 'confirmed') && (
+              <Button variant="destructive" onClick={() => {
+                setBookingToCancel(selectedBooking.id);
+                setSelectedBooking(null);
+              }}>
+                Отменить запись
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setSelectedBooking(null)}>Закрыть</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

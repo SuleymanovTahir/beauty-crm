@@ -142,6 +142,10 @@ async def get_user_by_id(
 @router.get("/users")
 async def get_users(current_user: dict = Depends(get_current_user)):
     """Получить всех пользователей"""
+    # RBAC: Only staff can see all users
+    if current_user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+        
     try:
         conn = get_db_connection()
         c = conn.cursor()

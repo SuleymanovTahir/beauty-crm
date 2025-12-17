@@ -206,31 +206,67 @@ async def get_available_slots(
     return {"date": date, "slots": slots}
 
 def check_slot_availability(date: str, time: str, employee_id: Optional[int] = None) -> bool:
-    """Проверить доступность слота"""
+    """
+    Проверить доступность слота.
+    
+    Args:
+        date: Дата в формате YYYY-MM-DD
+        time: Время в формате HH:MM
+        employee_id: ID сотрудника (опционально). Если указан, проверяем занятость этого мастера.
+                     Если не указан (Date First flow), слот считается доступным если есть хотя бы
+                     один свободный мастер.
+    
+    Returns:
+        True если слот доступен, False если занят
+    """
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Формируем дату-время
     datetime_str = f"{date} {time}"
 
-    # Проверяем, есть ли запись на это время
     if employee_id:
-        # Проверяем для конкретного сотрудника
-        c.execute("""
-            SELECT COUNT(*) FROM bookings
-            WHERE datetime =%s AND employee_id =%s AND status NOT IN ('cancelled', 'no_show')
-        """, (datetime_str, employee_id))
+        # Получаем имя мастера по ID
+        c.execute("SELECT full_name FROM users WHERE id = %s", (employee_id,))
+        master_row = c.fetchone()
+        
+        if master_row:
+            master_name = master_row[0]
+            # Проверяем, есть ли запись на это время для этого мастера
+            c.execute("""
+                SELECT COUNT(*) FROM bookings
+                WHERE datetime = %s AND master = %s AND status NOT IN ('cancelled', 'no_show')
+            """, (datetime_str, master_name))
+            count = c.fetchone()[0]
+            conn.close()
+            return count == 0
+        else:
+            conn.close()
+            return True  # Мастер не найден, слот считаем свободным
     else:
-        # Проверяем общую занятость
+        # Date First flow: проверяем, есть ли хотя бы один свободный мастер
+        # Получаем всех активных мастеров (is_service_provider = TRUE)
         c.execute("""
-            SELECT COUNT(*) FROM bookings
-            WHERE datetime =%s AND status NOT IN ('cancelled', 'no_show')
+            SELECT full_name FROM users 
+            WHERE is_service_provider = TRUE AND is_active = TRUE
+        """)
+        all_masters = [row[0] for row in c.fetchall()]
+        
+        if not all_masters:
+            conn.close()
+            return True  # Нет мастеров — слот свободен (край-кейс)
+        
+        # Получаем занятых мастеров на это время
+        c.execute("""
+            SELECT master FROM bookings
+            WHERE datetime = %s AND status NOT IN ('cancelled', 'no_show')
         """, (datetime_str,))
-
-    count = c.fetchone()[0]
-    conn.close()
-
-    return count == 0
+        busy_masters = [row[0] for row in c.fetchall() if row[0]]
+        
+        conn.close()
+        
+        # Слот доступен, если есть хотя бы один свободный мастер
+        free_masters = [m for m in all_masters if m not in busy_masters]
+        return len(free_masters) > 0
 
 # ... (create_booking is unchanged) ...
 
