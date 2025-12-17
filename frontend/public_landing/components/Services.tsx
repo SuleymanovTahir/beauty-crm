@@ -40,7 +40,6 @@ const CATEGORY_ICONS: Record<string, any> = {
   'other': Gift
 };
 
-// Mapping for category display names if needed, or rely on existing logic
 const getCategoryIcon = (category: string) => {
   const norm = category?.toLowerCase() || 'other';
   if (norm.includes('nail') || norm.includes('manicure') || norm.includes('pedicure')) return Hand;
@@ -58,7 +57,6 @@ export function Services() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  // Fetch services from API
   useEffect(() => {
     const fetchServices = async () => {
       setLoading(true);
@@ -75,14 +73,11 @@ export function Services() {
     fetchServices();
   }, [i18n.language]);
 
-  // Extract unique categories, ignoring 'all' if it exists or was manually added before
   const categories = useMemo(() => {
     const cats = new Set(services.map(s => s.category));
-    // Sort categories alphabetically
     return Array.from(cats).sort((a, b) => a.localeCompare(b));
   }, [services]);
 
-  // Set default category to the first one once categories are loaded
   useEffect(() => {
     if (categories.length > 0 && selectedCategory === '') {
       setSelectedCategory(categories[0]);
@@ -132,16 +127,22 @@ export function Services() {
           viewport={{ once: true }}
           className="mb-12"
         >
+          {/* Using Card component as requested (Boxed Design) */}
           <Card className="p-4 md:p-6 border-pink-100 shadow-lg">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <div className="flex-1 relative">
+            {/* 
+               SEARCH BAR:
+               Using 'max-w-2xl' as per user preference for "normal size",
+               centered horizontally.
+            */}
+            <div className="flex flex-col items-center gap-4 mb-6">
+              <div className="relative w-full max-w-2xl">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   type="text"
                   placeholder={t('searchPlaceholder', { ns: 'public_landing' }) || "Search service..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-pink-200 focus:border-primary"
+                  className="pl-10 border-pink-200 focus:border-primary w-full rounded-full"
                 />
                 {searchQuery && (
                   <button
@@ -154,8 +155,8 @@ export function Services() {
               </div>
             </div>
 
-            {/* Category Pills - Scrollable on mobile, wrap on desktop */}
-            <div className="flex overflow-x-auto md:flex-wrap gap-2 pb-2 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            {/* Category Pills */}
+            <div className="flex overflow-x-auto md:flex-wrap justify-center gap-2 pb-2 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {categories.map((category) => {
                 const Icon = getCategoryIcon(category);
                 const label = category.charAt(0).toUpperCase() + category.slice(1);
@@ -180,7 +181,7 @@ export function Services() {
             </div>
 
             {/* Results count */}
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-4 text-sm text-gray-600 text-center">
               {t('foundServices', { ns: 'public_landing' }) || "Found services"}: <span className="font-semibold text-primary">{filteredServices.length}</span>
             </div>
           </Card>
