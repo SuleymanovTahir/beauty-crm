@@ -3,8 +3,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Calendar, Clock, Loader2 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
-import { useAuth } from '../../../../../src/contexts/AuthContext';
-import { api } from '../../../../../src/services/api';
+import { useAuth } from '../../../src/contexts/AuthContext';
+import { api } from '../../../src/services/api';
 import { toast } from 'sonner';
 
 export function BookingSection() {

@@ -3,7 +3,7 @@ import { Menu, X, Globe, Instagram, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../../../../src/contexts/AuthContext";
+import { useAuth } from '../../../src/contexts/AuthContext';
 import logo from "../../../../assets/logo.png";
 
 const navigation = [

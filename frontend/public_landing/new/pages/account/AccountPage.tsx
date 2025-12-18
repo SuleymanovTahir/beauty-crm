@@ -1,6 +1,7 @@
+//new/pages/account/AccountPage.tsx
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../../../../../src/contexts/AuthContext';
-import { api } from '../../../../../../src/services/api';
+import { useAuth } from '../../../../src/contexts/AuthContext';
+import { api } from '../../../../src/services/api';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
@@ -30,7 +31,7 @@ import {
   DialogTitle,
   DialogFooter
 } from "../../components/ui/dialog";
-import { UserBookingWizard } from '../../components/account/UserBookingWizard';
+import { UserBookingWizard } from '../../components/booking/UserBookingWizard';
 
 interface Booking {
   id: number;

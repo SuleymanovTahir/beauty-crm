@@ -1,3 +1,4 @@
+//new/pages/LoginPage.tsx
 import { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -5,8 +6,8 @@ import { User, Lock, Mail, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth } from '../../../../../src/contexts/AuthContext';
-import { api } from '../../../../../src/services/api';
+import { useAuth } from '../../../src/contexts/AuthContext';
+import { api } from '../../../src/services/api';
 
 interface LoginPageProps {
   initialView?: 'login' | 'register';

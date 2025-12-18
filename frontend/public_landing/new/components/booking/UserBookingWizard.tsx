@@ -9,9 +9,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { api } from '../../../../../../src/services/api';
+import { api } from '../../../../src/services/api';
 import { toast } from 'sonner';
-import { useAuth } from '../../../../../../src/contexts/AuthContext';
+import { useAuth } from '../../../../src/contexts/AuthContext';
 
 
 
