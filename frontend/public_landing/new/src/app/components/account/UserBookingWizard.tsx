@@ -144,33 +144,35 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     };
 
     const handleSlotClick = async (slot: string) => {
-        // Prepare data for hold
-        // Need service ID, master name
-        // If master-first/draft mode, we might not have service ID yet!
-        // The hold endpoint expects service_id.
-        // If "Master First" -> We select Master, then Date, then Service? NO. 
-        // Flow: Master -> Service -> Date (Standard).
-        // Flow: Master -> Date -> Service (Flex).
-        // If we are selecting Date but no service selected yet (Draft mode), we cannot hold a specific service slot.
-        // BUT booking hold usually reserves the MASTER'S time. Service ID is just meta? 
-        // Our DB schema has service_id. 
-        // Strategy: 
-        // If Draft Mode (no Service), we can pass 0 or null if DB allows.
-        // Let's check DB schema... `service_id INTEGER`. 
-        // We should allow null service_id for holds or pass dummy.
-        // OR rely on the fact that `MasterScheduleService` checks `booking_holds` by TIME and MASTER, not service.
-        // Yes! `check_is_held` uses `master, date, time`. Service ID is extra info.
+        const dStr = selectedDate || '';
+        if (!dStr) return; // Не должно случаться, если мы показываем слоты
 
+        // Оптимистично сразу выбираем время в интерфейсе
+        const applySelection = () => {
+            if (currentServiceId) {
+                setBookingConfigs(prev => ({
+                    ...prev,
+                    [currentServiceId]: { ...prev[currentServiceId], time: slot }
+                }));
+            } else {
+                setDraftConfig(prev => ({
+                    ...prev,
+                    time: slot
+                }));
+            }
+        };
+
+        applySelection();
+
+        // Если мастер не выбран (режим "любой мастер"), просто не делаем hold,
+        // чтобы не ломать UX — запись потом всё равно создаётся с master = 'any_professional'.
         const m = selectedMaster;
         if (!m) return;
 
-        const mName = m.username || m.full_name;
-        const dStr = selectedDate || ''; // Fix undefined
-        if (!dStr) return; // Should not happen if slots are shown
-        const sId = currentServiceId ? parseInt(currentServiceId) : 0; // 0 if no service yet
+        const sId = currentServiceId ? parseInt(currentServiceId) : 0; // 0 если услуги ещё нет
+        const mName = m.full_name || m.username;
 
         try {
-            setLoading(true);
             const res = await api.createHold({
                 service_id: sId,
                 master_name: mName,
@@ -179,31 +181,26 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 client_id: getClientId()
             });
 
-            setLoading(false);
-
-            if (res.success) {
-                // Proceed with selection
+            if (!res.success) {
+                // Бэкенд явно сказал, что слот занят — откатываем выбор
+                toast.error(t('slotTaken', 'This slot is already taken. Please choose another.'));
                 if (currentServiceId) {
                     setBookingConfigs(prev => ({
                         ...prev,
-                        [currentServiceId]: { ...prev[currentServiceId], time: slot }
+                        [currentServiceId]: { ...prev[currentServiceId], time: '' }
                     }));
                 } else {
-                    // Draft
                     setDraftConfig(prev => ({
                         ...prev,
-                        time: slot
+                        time: ''
                     }));
                 }
-            } else {
-                toast.error(t('slotTaken', 'This slot is already taken. Please choose another.'));
-                // Refresh slots?
-                // setAvailableSlots(prev => prev.filter(s => s !== slot));
             }
         } catch (e) {
-            setLoading(false);
+            // Ошибка сети / CORS: не блокируем выбор времени, просто логируем
             console.error("Hold failed", e);
-            toast.error(t('errorHold', 'Failed to reserve slot.'));
+            // Можно показать мягкое уведомление, но без блокировки UX
+            // toast.warning?.(t('errorHoldSoft', 'Slot selected, but failed to reserve it on server.'));
         }
     };
 
@@ -277,14 +274,46 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             return null;
         }
 
-        // Find first incomplete service
+        // Find first service that is not fully configured (master+date+time)
         const incompleteService = selectedServices.find(s => {
-            const config = bookingConfigs[String(s.id)];
-            return !config || !config.master || !config.date || !config.time;
+            const cfg = bookingConfigs[String(s.id)];
+            return !cfg || !cfg.master || !cfg.date || !cfg.time;
         });
 
-        // If all services configured -> Show Confirm
-        if (!incompleteService) {
+        const config = incompleteService ? bookingConfigs[String(incompleteService.id)] : undefined;
+
+        // Конфигурация шагов заполнения полей для услуги.
+        // Позволяет централизованно управлять порядком и целевым шагом без жёстких if/else.
+        const fieldFlow: {
+            key: 'master' | 'date' | 'time';
+            isMissing: (cfg: BookingConfig | undefined) => boolean;
+            step: typeof step;
+            label: string;
+        }[] = [
+            {
+                key: 'master',
+                isMissing: cfg => !cfg || !cfg.master,
+                step: 'professional',
+                label: t('chooseMaster', 'Выбрать мастера'),
+            },
+            {
+                key: 'date',
+                isMissing: cfg => !cfg || !cfg.date,
+                step: 'datetime',
+                label: t('chooseDate', 'Выбрать дату'),
+            },
+            {
+                key: 'time',
+                isMissing: cfg => !cfg || !cfg.time,
+                step: 'datetime',
+                label: t('chooseTime', 'Выбрать время'),
+            },
+        ];
+
+        // Если все услуги полностью настроены — показываем финальную кнопку "Записаться"
+        const nextField = incompleteService ? fieldFlow.find(f => f.isMissing(config)) : undefined;
+
+        if (!incompleteService || !nextField) {
             return (
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-20 md:absolute md:rounded-b-xl">
                     <Button
@@ -292,16 +321,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         className="w-full h-12 text-lg hero-button-primary hover:bg-black/90"
                         style={{ backgroundColor: 'black', color: 'white' }}
                     >
-                        {t('continue', 'Continue')}
+                        {t('confirmBooking', 'Записаться')}
                     </Button>
                 </div>
             );
         }
-
-        // Determine next step for the incomplete service
-        const config = bookingConfigs[String(incompleteService.id)];
-        const needsMaster = !config || !config.master;
-        const needsDate = !needsMaster && (!config.date || !config.time);
 
         return (
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-20 md:absolute md:rounded-b-xl flex flex-col gap-2">
@@ -310,50 +334,28 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 </div>
 
                 <div className="flex gap-2">
-                    {/* Services Button (Values 'Back') */}
+                    {/* Services Button (Back) */}
                     {step !== 'services' && (
                         <Button
                             variant="outline"
                             className="flex-1 h-12 border-primary/50 text-foreground"
                             onClick={() => updateStep('services')}
                         >
-                            {t('services', 'Services')}
+                            {t('services', 'Услуги')}
                         </Button>
                     )}
 
-                    {/* Select Date (Any Master) - Only show if NO date selected yet */}
-                    {needsMaster && !config.date && (
-                        <Button
-                            variant="outline"
-                            className="flex-[1.5] h-12 border-primary/50 text-foreground"
-                            onClick={() => {
-                                setCurrentServiceId(String(incompleteService.id));
-                                setBookingConfigs(prev => ({
-                                    ...prev,
-                                    [String(incompleteService.id)]: {
-                                        ...prev[String(incompleteService.id)],
-                                        master: null // Any
-                                    }
-                                }));
-                                updateStep('datetime');
-                            }}
-                        >
-                            {t('chooseDate', 'Only Date')}
-                        </Button>
-                    )}
-
-                    {/* Select Master */}
+                    {/* Main action button: next required field (master / date / time) */}
                     <Button
                         variant="default"
                         className="flex-[2] h-12"
                         style={{ backgroundColor: 'black', color: 'white' }}
                         onClick={() => {
                             setCurrentServiceId(String(incompleteService.id));
-                            if (needsMaster) updateStep('professional');
-                            else if (needsDate) updateStep('datetime');
+                            updateStep(nextField.step);
                         }}
                     >
-                        {needsMaster ? t('chooseMaster', 'Select Master') : (config.date ? t('chooseTime', 'Select Time') : t('chooseDate', 'Select Date'))}
+                        {nextField.label}
                         <ChevronRight className="w-4 h-4 ml-2" />
                     </Button>
                 </div>
@@ -685,6 +687,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         }
     }, [bookingConfigs, currentServiceId, draftConfig.date, draftConfig.master]);
 
+    // Гарантируем, что при входе на шаг выбора времени у текущей услуги сохранится дата,
+    // которую клиент уже выбрал ранее (в черновике), чтобы всегда подгружались слоты.
+    useEffect(() => {
+        if (step === 'datetime' && currentServiceId) {
+            const cfg = bookingConfigs[currentServiceId];
+            if (cfg && !cfg.date && draftConfig.date) {
+                setBookingConfigs(prev => ({
+                    ...prev,
+                    [currentServiceId]: {
+                        ...prev[currentServiceId],
+                        date: draftConfig.date,
+                        time: '' // сбрасываем время, чтобы заново подобрать слоты
+                    }
+                }));
+            }
+        }
+    }, [step, currentServiceId, bookingConfigs, draftConfig.date]);
+
     // Load Preview Slots
     useEffect(() => {
         if (masters.length > 0) loadPreviewSlots();
@@ -698,15 +718,17 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         await Promise.all(masters.map(async (m) => {
             try {
-                let res = await api.getAvailableSlots(m.username, today, 60);
-                if (res.available_slots?.length > 0) {
-                    // Preview only needs strings
-                    newSlots[m.id] = res.available_slots.map(s => s.time).slice(0, 5);
+                // Для превью используем публичный endpoint, который просто проверяет наличие записей
+                const resToday = await api.getPublicAvailableSlots(today, m.id);
+                const availableToday = (resToday.slots || []).filter(s => s.available).map(s => s.time);
+                if (availableToday.length > 0) {
+                    newSlots[m.id] = availableToday.slice(0, 5);
                     newDates[m.id] = 'today';
                 } else {
-                    res = await api.getAvailableSlots(m.username, tomorrow, 60);
-                    if (res.available_slots?.length > 0) {
-                        newSlots[m.id] = res.available_slots.map(s => s.time).slice(0, 5);
+                    const resTomorrow = await api.getPublicAvailableSlots(tomorrow, m.id);
+                    const availableTomorrow = (resTomorrow.slots || []).filter(s => s.available).map(s => s.time);
+                    if (availableTomorrow.length > 0) {
+                        newSlots[m.id] = availableTomorrow.slice(0, 5);
                         newDates[m.id] = 'tomorrow';
                     }
                 }
@@ -726,13 +748,15 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             if (currentServiceId) {
                 const config = bookingConfigs[currentServiceId];
                 if (config?.master) {
-                    masterName = config.master.username || config.master.full_name;
+                    // для публичного эндпоинта нужен employee_id, но для monthly availability
+                    // по-прежнему используем логический masterName (full_name)
+                    masterName = config.master.full_name || config.master.username;
                 }
                 const service = selectedServices.find(s => String(s.id) === currentServiceId);
                 if (service) duration = parseDuration(service.duration);
             } else {
                 if (draftConfig.master) {
-                    masterName = draftConfig.master.username || draftConfig.master.full_name;
+                    masterName = draftConfig.master.full_name || draftConfig.master.username;
                 }
             }
 
@@ -804,19 +828,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
         try {
             if (masterToCheck) {
-                // Specific master
-                const res = await api.getAvailableSlots(masterToCheck.username, dateToCheck, duration);
-                if (res.success && res.available_slots) {
-                    setAvailableSlots(res.available_slots);
-                } else {
-                    setAvailableSlots([]);
-                }
+                // Конкретный мастер: используем публичный эндпоинт по employee_id
+                const res = await api.getPublicAvailableSlots(dateToCheck, masterToCheck.id);
+                const slots = (res.slots || [])
+                    .filter(s => s.available)
+                    .map(s => ({ time: s.time, is_optimal: false }));
+                setAvailableSlots(slots);
             } else {
-                // Any master: Filter candidates who can do THIS service (if service selected)
-                // If draft mode, we don't know service yet, so we assume ANY capable master?
-                // Actually if draft mode + Any master -> We probably should show ALL valid slots?
-                // But simplified: Aggregate slots from all employees.
-
+                // Любой мастер: агрегируем доступные слоты по всем кандидатам
                 const candidates = currentServiceId ? capableMasters : masters;
 
                 if (candidates.length === 0) {
@@ -824,23 +843,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     return;
                 }
 
-                // 3. For each candidate, fetch slots
-                // Note: Parallel fetch might be heave?
                 const requests = candidates.map(m =>
-                    api.getAvailableSlots(m.username, dateToCheck, duration)
-                        .then(r => r.available_slots || [])
+                    api.getPublicAvailableSlots(dateToCheck, m.id)
+                        .then(r =>
+                            (r.slots || [])
+                                .filter(s => s.available)
+                                .map(s => ({ time: s.time, is_optimal: false }))
+                        )
                         .catch(() => [] as Slot[])
                 );
 
                 const results = await Promise.all(requests);
-                // Flatten and deduplicate
                 const allSlots: Slot[] = [];
                 const seenTimes = new Set<string>();
 
                 results.flat().forEach(slot => {
                     if (!seenTimes.has(slot.time)) {
                         seenTimes.add(slot.time);
-                        allSlots.push(slot); // Keep object
+                        allSlots.push(slot);
                     }
                 });
 
@@ -1311,8 +1331,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
                 {/* Date First Flow: Show Options to Select Service/Master IF they are missing */}
 
-
-
                 <div className="space-y-6">
                     {/* Date Picker */}
                     <div className="flex justify-center bg-card rounded-lg shadow-sm border p-4">
@@ -1396,6 +1414,23 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
                         />
                     </div>
+
+                    {/* Selected date info */}
+                    {selectedDate && (
+                        <div className="text-center text-sm text-muted-foreground">
+                            {t('selectedDateLabel', 'Selected date')}:{" "}
+                            <span className="font-medium text-foreground">
+                                {new Date(selectedDate).toLocaleDateString(
+                                    i18n.language === 'ru'
+                                        ? 'ru-RU'
+                                        : i18n.language === 'ar'
+                                            ? 'ar-AE'
+                                            : 'en-US',
+                                    { day: '2-digit', month: '2-digit', year: 'numeric' }
+                                )}
+                            </span>
+                        </div>
+                    )}
 
                     {/* Slots */}
                     {loading ? (
