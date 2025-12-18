@@ -1107,7 +1107,8 @@ export class ApiClient {
   }
 
   async createHold(data: { service_id: number, master_name: string, date: string, time: string, client_id: string }) {
-    return this.request<{ success: boolean; error?: string }>('/api/bookings/hold', {
+    // Публичный endpoint для холда слота находится под /api/public
+    return this.request<{ success: boolean; error?: string }>('/api/public/bookings/hold', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -1293,6 +1294,24 @@ export class ApiClient {
 
   async getSalonWorkingHours() {
     return this.get('/api/salon-settings/working-hours');
+  }
+
+  // ===== PUBLIC BOOKING (CLIENT CABINET) =====
+  // Использует публичный endpoint, который просто проверяет наличие записей в базе
+  // и не зависит от настроек расписания мастеров.
+  async getPublicAvailableSlots(
+    date: string,
+    employeeId?: number,
+    serviceId?: number
+  ) {
+    const params = new URLSearchParams({ date });
+    if (employeeId) params.append('employee_id', String(employeeId));
+    if (serviceId) params.append('service_id', String(serviceId));
+
+    return this.request<{
+      date: string;
+      slots: { time: string; available: boolean }[];
+    }>(`/api/public/available-slots?${params.toString()}`);
   }
 }
 
