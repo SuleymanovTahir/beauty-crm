@@ -1,3 +1,4 @@
+//new/pages/PrivacyPolicy.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useTranslation } from "react-i18next";

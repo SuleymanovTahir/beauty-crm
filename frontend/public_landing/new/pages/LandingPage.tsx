@@ -1,3 +1,4 @@
+//new/pages/LandingPage.tsx
 import { Suspense, lazy } from 'react';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
