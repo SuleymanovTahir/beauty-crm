@@ -58,16 +58,13 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.Re
   <div className="relative">
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all ${active
-        ? 'bg-gray-900 text-white'
-        : 'bg-white text-gray-600 hover:bg-gray-50'
-        }`}
+      className={`nav-tab ${active ? 'nav-tab-active' : 'nav-tab-inactive'}`}
     >
       {icon}
       <span className="hidden sm:inline">{label}</span>
     </button>
     {hasBadge && badgeCount !== undefined && badgeCount > 0 && (
-      <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+      <div className="nav-badge">
         {badgeCount}
       </div>
     )}
@@ -75,12 +72,10 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; icon: React.Re
 );
 
 const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number; trend?: string; color?: string }> = ({ icon, label, value, trend, color = 'text-gray-900' }) => {
-  // Suppress unused warning for trend
-  console.log(trend);
   return (
-    <div className="bg-white p-4 rounded-xl border border-gray-200">
+    <div className="stat-card">
       <div className="flex items-start justify-between mb-2">
-        <div className={`p-2 rounded-lg bg-gray-50 ${color}`}>
+        <div className={`stat-icon-wrapper ${color}`}>
           {icon}
         </div>
         {trend && (
@@ -90,8 +85,8 @@ const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string |
           </span>
         )}
       </div>
-      <p className="text-gray-500 text-sm mb-1">{label}</p>
-      <p className="text-2xl">{value}</p>
+      <p className="stat-label mb-1">{label}</p>
+      <p className="stat-value">{value}</p>
     </div>
   );
 };
@@ -388,11 +383,14 @@ export function AccountPage() {
   const renderDashboard = () => (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gray-900 text-white p-6 rounded-2xl relative overflow-hidden">
+      <div className="welcome-card">
+        <div className="welcome-bg-pattern">
+          <Sparkles className="w-full h-full" />
+        </div>
         <div className="flex items-start justify-between mb-4 relative z-10">
           <div>
             <h1 className="text-2xl mb-1">{getGreeting()}, {user?.full_name?.split(' ')[0] || 'Анна'}! 👋</h1>
-            <p className="text-gray-300">{getMotivationalPhrase()}</p>
+            <p className="opacity-90">{getMotivationalPhrase()}</p>
           </div>
           <div className="w-16 h-16 rounded-full bg-white overflow-hidden border-2 border-white relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
             <img src={(user as any)?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'} alt={user?.full_name} className="w-full h-full object-cover" />
@@ -402,25 +400,25 @@ export function AccountPage() {
         <div className="grid grid-cols-3 gap-4 mt-6 border-t border-white/10 pt-6 relative z-10">
           <div className="text-center">
             <p className="text-3xl mb-1">{dashboardData?.total_visits || 0}</p>
-            <p className="text-gray-300 text-sm">Визитов</p>
+            <p className="opacity-80 text-sm">Визитов</p>
           </div>
           <div className="text-center">
             <p className="text-3xl mb-1">{dashboardData?.loyalty_points || 0}</p>
-            <p className="text-gray-300 text-sm">Баллов</p>
+            <p className="opacity-80 text-sm">Баллов</p>
           </div>
           <div className="text-center">
             <p className="text-3xl mb-1">{dashboardData?.current_discount || 0}%</p>
-            <p className="text-gray-300 text-sm">Скидка</p>
+            <p className="opacity-80 text-sm">Скидка</p>
           </div>
         </div>
       </div>
 
       {/* Next Appointment */}
       {dashboardData?.next_booking && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
+        <div className="appointment-card space-y-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl">Следующая запись</h2>
-            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
+            <span className="badge-success">
               {getDaysUntil(dashboardData.next_booking.date)}
             </span>
           </div>
@@ -465,19 +463,19 @@ export function AccountPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={handleAddToCalendar}
-              className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="btn-primary flex-1"
             >
               В календарь
             </button>
             <button
               onClick={() => handleRescheduleAppointment(dashboardData.next_booking.id)}
-              className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+              className="btn-secondary"
             >
               Перенести
             </button>
             <button
               onClick={() => handleCancelAppointment(dashboardData.next_booking.id)}
-              className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+              className="btn-destructive"
             >
               Отменить
             </button>
@@ -489,28 +487,28 @@ export function AccountPage() {
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={openBooking}
-          className="p-4 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center gap-3"
+          className="btn-primary h-auto p-4 justify-start"
         >
           <Plus className="w-5 h-5" />
           <span>Новая запись</span>
         </button>
         <button
           onClick={openBooking}
-          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+          className="btn-outline h-auto p-4 justify-start"
         >
           <Repeat className="w-5 h-5" />
           <span>Повторить последнюю</span>
         </button>
         <button
           onClick={() => setActiveTab('masters')}
-          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+          className="btn-outline h-auto p-4 justify-start"
         >
           <Heart className="w-5 h-5" />
           <span>Мои мастера</span>
         </button>
         <button
           onClick={() => setActiveTab('chat')}
-          className="p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-3"
+          className="btn-outline h-auto p-4 justify-start"
         >
           <MessageCircle className="w-5 h-5" />
           <span>Связаться</span>
@@ -519,7 +517,7 @@ export function AccountPage() {
 
       {/* Last Visit */}
       {dashboardData?.last_booking && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-200">
+        <div className="account-card">
           <h2 className="text-xl mb-4">Ваш последний визит</h2>
 
           <div className="flex gap-4 mb-4">
@@ -538,13 +536,13 @@ export function AccountPage() {
           <div className="flex gap-2">
             <button
               onClick={() => handleLeaveReview(dashboardData.last_booking.id)}
-              className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="btn-primary flex-1"
             >
               Оставить отзыв
             </button>
             <button
               onClick={() => handleRepeatAppointment(dashboardData.last_booking.id)}
-              className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+              className="btn-secondary"
             >
               Повторить
             </button>
@@ -743,13 +741,12 @@ export function AccountPage() {
 
     return (
       <div className="space-y-6">
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="nav-tabs-list overflow-x-auto pb-2 mb-4">
           {['all', 'hair', 'nails', 'face', 'body'].map(filter => (
             <button
               key={filter}
               onClick={() => setGalleryFilter(filter)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${galleryFilter === filter ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200'
-                }`}
+              className={`nav-tab ${galleryFilter === filter ? 'nav-tab-active' : 'nav-tab-inactive'}`}
             >
               {filter === 'all' && 'Все'}
               {filter === 'hair' && 'Волосы'}
@@ -769,47 +766,49 @@ export function AccountPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredGallery.map(photo => (
-              <div key={photo.id} className="bg-white p-4 rounded-xl border border-gray-200">
+              <div key={photo.id} className="account-card p-4">
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">До</p>
-                    <img src={photo.before_url} alt="До" className="w-full h-48 object-cover rounded-lg" />
+                    <p className="text-sm text-gray-500 mb-2 font-medium">До</p>
+                    <img src={photo.before_url} alt="До" className="w-full h-48 object-cover rounded-lg shadow-inner" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">После</p>
-                    <img src={photo.after_url} alt="После" className="w-full h-48 object-cover rounded-lg" />
+                    <p className="text-sm text-gray-500 mb-2 font-medium">После</p>
+                    <img src={photo.after_url} alt="После" className="w-full h-48 object-cover rounded-lg shadow-inner" />
                   </div>
                 </div>
-                <div className="mb-3">
-                  <h3 className="mb-1">{photo.service_name}</h3>
-                  <p className="text-sm text-gray-500">{photo.master_name}</p>
-                  <p className="text-sm text-gray-400">{format(new Date(photo.created_at), "d MMMM yyyy", { locale: getDateLocale() })}</p>
+                <div className="mb-4">
+                  <h3 className="font-bold mb-1">{photo.service_name}</h3>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">{photo.master_name}</span>
+                    <span className="text-gray-400">{format(new Date(photo.created_at), "d MMMM yyyy", { locale: getDateLocale() })}</span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setComparePhotos({ before: photo.before_url, after: photo.after_url })}
-                    className="flex-1 px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm flex items-center justify-center gap-2"
+                    className="btn-secondary flex-1 text-sm"
                   >
                     <Eye className="w-4 h-4" />
                     Сравнить
                   </button>
                   <button
                     onClick={() => handleDownloadPhoto(photo.id)}
-                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="btn-secondary p-2"
                   >
                     <Download className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleSharePhoto(photo.id)}
-                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="btn-secondary p-2"
                   >
                     <Share2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleFavoritePhoto(photo.id)}
-                    className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="btn-secondary p-2"
                   >
-                    <Heart className={`w-4 h-4 ${selectedPhotoId === photo.id ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                    <Heart className={`w-4 h-4 favorite-heart ${selectedPhotoId === photo.id ? 'favorite-heart-active' : 'favorite-heart-inactive'}`} />
                   </button>
                 </div>
               </div>
@@ -846,21 +845,21 @@ export function AccountPage() {
   // Loyalty Content
   const renderLoyalty = () => (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-6 rounded-2xl">
+      <div className="loyalty-card-gold">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-yellow-100 mb-1">Ваш уровень</p>
+            <p className="loyalty-gold-text mb-1">Ваш уровень</p>
             <h2 className="text-3xl mb-2">{loyalty?.current_level?.name || 'Standard'}</h2>
-            <p className="text-yellow-100">Скидка {loyalty?.current_level?.discount_percent || 0}%</p>
+            <p className="loyalty-gold-text">Скидка {loyalty?.current_level?.discount_percent || 0}%</p>
           </div>
           <div className="text-right">
-            <p className="text-yellow-100 mb-1">Баллы</p>
+            <p className="loyalty-gold-text mb-1">Баллы</p>
             <p className="text-4xl">{loyalty?.total_points || 0}</p>
           </div>
         </div>
         {loyalty?.next_level && (
           <div>
-            <div className="flex justify-between text-sm text-yellow-100 mb-2">
+            <div className="flex justify-between text-sm loyalty-gold-text mb-2">
               <span>До уровня {loyalty.next_level.name}</span>
               <span>{loyalty.next_level.min_points - (loyalty.total_points || 0)} баллов</span>
             </div>
@@ -870,10 +869,10 @@ export function AccountPage() {
       </div>
 
       {/* Streak */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="streak-card">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-orange-500" />
+            <Flame className="w-5 h-5 streak-flame" />
             <h3 className="text-lg">Серия посещений</h3>
           </div>
           <span className="text-2xl font-bold">3🔥</span>
@@ -882,8 +881,7 @@ export function AccountPage() {
           {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
-              className={`flex-1 h-2 rounded-full ${step <= 3 ? 'bg-orange-500' : 'bg-gray-100'
-                }`}
+              className={`streak-bar ${step <= 3 ? 'streak-bar-active' : ''}`}
             />
           ))}
         </div>
@@ -983,14 +981,14 @@ export function AccountPage() {
       </div>
 
       {/* Virtual Card */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card">
         <h3 className="text-lg mb-4">Виртуальная карта лояльности</h3>
-        <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-6 rounded-xl mb-4">
+        <div className="loyalty-card-gold mb-4">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <p className="text-yellow-100 text-sm mb-1">Beauty Studio Dubai</p>
+              <p className="loyalty-gold-text text-sm mb-1">Beauty Studio Dubai</p>
               <h4 className="text-2xl mb-1">{user?.full_name}</h4>
-              <p className="text-yellow-100">{loyalty?.current_level?.name || 'Standard'} Member</p>
+              <p className="loyalty-gold-text">{loyalty?.current_level?.name || 'Standard'} Member</p>
             </div>
             <div className="w-20 h-20 bg-white rounded-lg p-2">
               <QrCode className="w-full h-full text-gray-900" />
@@ -998,7 +996,7 @@ export function AccountPage() {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-yellow-100 text-xs mb-1">Баллы</p>
+              <p className="loyalty-gold-text text-xs mb-1">Баллы</p>
               <p className="text-xl">{loyalty?.total_points || 0}</p>
             </div>
             <div>
@@ -1072,19 +1070,16 @@ export function AccountPage() {
   // Achievements Content
   const renderAchievements = () => (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white p-6 rounded-2xl">
+      <div className="achievement-hero">
         <h2 className="text-2xl mb-2">Ваши достижения</h2>
-        <p className="text-purple-100">Разблокировано {achievements.filter(a => a.is_unlocked).length} из {achievements.length}</p>
+        <p className="achievement-hero-text">Разблокировано {achievements.filter(a => a.is_unlocked).length} из {achievements.length}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {achievements.map(achievement => (
           <div
             key={achievement.id}
-            className={`p-4 rounded-xl border-2 ${achievement.is_unlocked
-              ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300'
-              : 'bg-white border-gray-200'
-              }`}
+            className={`achievement-item ${achievement.is_unlocked ? 'achievement-item-unlocked' : ''}`}
           >
             <div className="flex items-start gap-3 mb-3">
               <div className={`text-4xl ${!achievement.is_unlocked && 'grayscale opacity-50'}`}>
@@ -1110,7 +1105,7 @@ export function AccountPage() {
       </div>
 
       {/* Active Challenges */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card">
         <div className="flex items-center gap-2 mb-4">
           <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
             <Target className="w-5 h-5" />
@@ -1118,17 +1113,17 @@ export function AccountPage() {
           <h3 className="text-lg">Активные челленджи</h3>
         </div>
         <div className="space-y-3">
-          <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+          <div className="challenge-card">
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h4 className="mb-1">Запишитесь на этой неделе</h4>
                 <p className="text-sm text-gray-600">Получите 50 бонусных баллов</p>
               </div>
-              <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">5 дней</span>
+              <span className="badge-secondary text-xs">5 дней</span>
             </div>
             <button
               onClick={openBooking}
-              className="w-full mt-3 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="btn-primary w-full mt-3"
             >
               Выполнить
             </button>
@@ -1156,31 +1151,31 @@ export function AccountPage() {
         {masters
           .filter(master => showAllMasters || master.is_favorite)
           .map(master => (
-            <div key={master.id} className="bg-white p-4 rounded-xl border border-gray-200">
-              <div className="flex gap-3 mb-3">
-                <img src={master.photo} alt={master.name} className="w-20 h-20 rounded-xl object-cover" />
+            <div key={master.id} className="account-card master-card p-4">
+              <div className="flex gap-4 mb-3">
+                <img src={master.photo} alt={master.name} className="w-20 h-20 rounded-xl object-cover shadow-sm" />
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-1">
-                    <h3>{master.name}</h3>
+                    <h3 className="font-bold">{master.name}</h3>
                     <button
                       onClick={() => handleToggleFavoriteMaster(master.id, master.is_favorite)}
-                      className="p-1"
+                      className="p-1 hover:bg-muted rounded-full transition-colors"
                     >
-                      <Heart className={`w-5 h-5 ${master.is_favorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                      <Heart className={`w-5 h-5 favorite-heart ${master.is_favorite ? 'favorite-heart-active' : 'favorite-heart-inactive'}`} />
                     </button>
                   </div>
                   <p className="text-sm text-gray-500 mb-2">{master.specialty}</p>
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm">{master.rating || 5.0}</span>
+                      <Star className="w-4 h-4 rating-star" />
+                      <span className="text-sm font-medium">{master.rating || 5.0}</span>
                     </div>
                   </div>
                 </div>
               </div>
               <button
                 onClick={openBooking}
-                className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                className="btn-primary w-full"
               >
                 Записаться
               </button>
@@ -1217,15 +1212,15 @@ export function AccountPage() {
     return (
       <div className="space-y-6">
         {/* Overall Score */}
-        <div className="bg-gradient-to-br from-pink-500 to-purple-600 text-white p-6 rounded-2xl">
+        <div className="beauty-score-hero">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl mb-1">Beauty Score</h2>
-              <p className="text-purple-100">Общий уровень ухоженности</p>
+              <p className="beauty-score-text">Общий уровень ухоженности</p>
             </div>
             <div className="text-center">
               <div className="w-24 h-24 rounded-full border-4 border-white/30 flex items-center justify-center bg-white/10">
-                <span className="text-4xl">{averageBeautyScore}%</span>
+                <span className="text-4xl font-bold">{averageBeautyScore}%</span>
               </div>
             </div>
           </div>
@@ -1236,20 +1231,20 @@ export function AccountPage() {
         </div>
 
         {/* Metrics */}
-        <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="account-card beauty-metric-card p-6">
           <h3 className="text-lg mb-4">Показатели здоровья</h3>
           <div className="space-y-4">
             {metrics.map(metric => (
               <div key={metric.name}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex-1">
-                    <h4 className="mb-1">{metric.name}</h4>
+                    <h4 className="font-medium mb-1">{metric.name}</h4>
                     <p className="text-sm text-gray-500">
                       {metric.last_assessment ? format(new Date(metric.last_assessment), "d MMMM yyyy", { locale: getDateLocale() }) : '—'}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`text-sm ${getStatusColor(metric.score_value > 80 ? 'perfect' : metric.score_value > 50 ? 'good' : 'attention')}`}>
+                    <p className={`text-sm font-medium ${getStatusColor(metric.score_value > 80 ? 'perfect' : metric.score_value > 50 ? 'good' : 'attention')}`}>
                       {getStatusText(metric.score_value > 80 ? 'perfect' : metric.score_value > 50 ? 'good' : 'attention')}
                     </p>
                   </div>
@@ -1262,10 +1257,10 @@ export function AccountPage() {
                       color={metric.score_value < 50 ? 'bg-orange-500' : metric.score_value > 80 ? 'bg-green-500' : 'bg-blue-500'}
                     />
                   </div>
-                  <span className="text-sm w-12 text-right">{metric.score_value}%</span>
+                  <span className="text-sm w-12 text-right font-medium">{metric.score_value}%</span>
                   <button
                     onClick={openBooking}
-                    className="px-3 py-1 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                    className="btn-secondary px-3 py-1 text-sm"
                   >
                     Записаться
                   </button>
@@ -1276,20 +1271,20 @@ export function AccountPage() {
         </div>
 
         {/* Calendar */}
-        <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <div className="account-card p-6">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-5 h-5" />
             <h3 className="text-lg">Персональный календарь красоты</h3>
           </div>
           <div className="space-y-3">
-            <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <div className="alert-card">
+              <AlertCircle className="w-5 h-5 alert-card-icon mt-0.5" />
               <div className="flex-1">
-                <h4 className="mb-1 text-gray-900">Рекомендуем записаться</h4>
+                <h4 className="mb-1 text-gray-900 font-bold">Рекомендуем записаться</h4>
                 <p className="text-sm text-gray-600 mb-2">Брови: прошло слишком много времени с последней коррекции</p>
                 <button
                   onClick={openBooking}
-                  className="text-sm text-gray-900 hover:underline flex items-center gap-1"
+                  className="text-sm text-gray-900 hover:underline flex items-center gap-1 font-medium"
                 >
                   Записаться на коррекцию бровей
                   <ChevronRight className="w-4 h-4" />
@@ -1315,20 +1310,19 @@ export function AccountPage() {
       {notifications.map(notif => (
         <div
           key={notif.id}
-          className={`p-4 rounded-xl border cursor-pointer transition-all ${notif.is_read ? 'bg-white border-gray-200' : 'bg-blue-50 border-blue-200'
-            }`}
+          className={`notification-item cursor-pointer ${notif.is_read ? 'notification-read' : 'notification-unread'}`}
           onClick={() => handleMarkNotificationAsRead(notif.id)}
         >
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+          <div className="flex items-start gap-3 w-full">
+            <div className="p-2 bg-primary/10 text-primary rounded-lg">
               <Bell className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h4 className="mb-1">{notif.title}</h4>
+              <h4 className="font-bold mb-1">{notif.title}</h4>
               <p className="text-sm text-gray-600 mb-1">{notif.message}</p>
               <p className="text-xs text-gray-400">{format(new Date(notif.created_at), "d MMMM HH:mm", { locale: getDateLocale() })}</p>
             </div>
-            {!notif.is_read && <div className="w-2 h-2 bg-blue-600 rounded-full" />}
+            {!notif.is_read && <div className="w-2 h-2 bg-primary rounded-full mt-2" />}
           </div>
         </div>
       ))}
@@ -1342,7 +1336,7 @@ export function AccountPage() {
   const renderSettings = () => (
     <div className="space-y-6">
       {/* Profile */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card p-6">
         <h3 className="text-lg mb-4">Личные данные</h3>
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
@@ -1355,50 +1349,50 @@ export function AccountPage() {
             </button>
           </div>
           <div>
-            <h4 className="mb-1">{user?.full_name}</h4>
+            <h4 className="font-bold mb-1">{user?.full_name}</h4>
             <p className="text-sm text-gray-500">{user?.email}</p>
           </div>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-600 mb-2">Имя</label>
+            <label className="form-label">Имя</label>
             <input
               type="text"
               value={profileData.firstName}
               onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="form-input"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-2">Фамилия</label>
+            <label className="form-label">Фамилия</label>
             <input
               type="text"
               value={profileData.lastName}
               onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="form-input"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-2">Email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
               value={profileData.email}
               onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="form-input"
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-2">Телефон</label>
+            <label className="form-label">Телефон</label>
             <input
               type="tel"
               value={profileData.phone}
               onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="form-input"
             />
           </div>
           <button
             onClick={handleSaveProfile}
-            className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            className="btn-primary w-full"
           >
             Сохранить изменения
           </button>
@@ -1406,35 +1400,35 @@ export function AccountPage() {
       </div>
 
       {/* Security */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card p-6">
         <h3 className="text-lg mb-4">Безопасность</h3>
         <div className="space-y-3">
           <button
             onClick={handleChangePassword}
-            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between p-4 border border-border/10 rounded-lg hover:bg-muted transition-colors"
           >
             <div className="flex items-center gap-3">
-              <LockIcon className="w-5 h-5 text-gray-600" />
+              <LockIcon className="w-5 h-5 text-gray-500" />
               <span>Изменить пароль</span>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
           </button>
           <button
             onClick={handleEnable2FA}
-            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between p-4 border border-border/10 rounded-lg hover:bg-muted transition-colors"
           >
             <div className="flex items-center gap-3">
-              <LockIcon className="w-5 h-5 text-gray-600" />
+              <LockIcon className="w-5 h-5 text-gray-500" />
               <span>Двухфакторная аутентификация</span>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
           </button>
           <button
             onClick={handleExportData}
-            className="w-full flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between p-4 border border-border/10 rounded-lg hover:bg-muted transition-colors"
           >
             <div className="flex items-center gap-3">
-              <Download className="w-5 h-5 text-gray-600" />
+              <Download className="w-5 h-5 text-gray-500" />
               <span>Экспорт данных</span>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -1443,15 +1437,15 @@ export function AccountPage() {
       </div>
 
       {/* Notifications Settings */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card p-6">
         <h3 className="text-lg mb-4">Уведомления</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="mb-1">Push-уведомления</h4>
+              <h4 className="font-medium mb-1">Push-уведомления</h4>
               <p className="text-sm text-gray-500">Уведомления на устройстве</p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="toggle-switch">
               <input
                 type="checkbox"
                 checked={notificationSettings.push}
@@ -1459,17 +1453,17 @@ export function AccountPage() {
                   setNotificationSettings({ ...notificationSettings, push: e.target.checked });
                   toast.success(e.target.checked ? 'Push-уведомления включены' : 'Push-уведомления отключены');
                 }}
-                className="sr-only peer"
+                className="sr-only toggle-input peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+              <div className="toggle-slider"></div>
             </label>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="mb-1">Email-рассылка</h4>
+              <h4 className="font-medium mb-1">Email-рассылка</h4>
               <p className="text-sm text-gray-500">Новости и акции</p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="toggle-switch">
               <input
                 type="checkbox"
                 checked={notificationSettings.email}
@@ -1477,17 +1471,17 @@ export function AccountPage() {
                   setNotificationSettings({ ...notificationSettings, email: e.target.checked });
                   toast.success(e.target.checked ? 'Email-рассылка включена' : 'Email-рассылка отключена');
                 }}
-                className="sr-only peer"
+                className="sr-only toggle-input peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+              <div className="toggle-slider"></div>
             </label>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="mb-1">SMS-напоминания</h4>
+              <h4 className="font-medium mb-1">SMS-напоминания</h4>
               <p className="text-sm text-gray-500">О предстоящих записях</p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="toggle-switch">
               <input
                 type="checkbox"
                 checked={notificationSettings.sms}
@@ -1495,24 +1489,24 @@ export function AccountPage() {
                   setNotificationSettings({ ...notificationSettings, sms: e.target.checked });
                   toast.success(e.target.checked ? 'SMS-напоминания включены' : 'SMS-напоминания отключены');
                 }}
-                className="sr-only peer"
+                className="sr-only toggle-input peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+              <div className="toggle-slider"></div>
             </label>
           </div>
         </div>
       </div>
 
       {/* Privacy */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="account-card p-6">
         <h3 className="text-lg mb-4">Приватность</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="mb-1">Использование фото в портфолио</h4>
+              <h4 className="font-medium mb-1">Использование фото в портфолио</h4>
               <p className="text-sm text-gray-500">Разрешить салону публиковать</p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
+            <label className="toggle-switch">
               <input
                 type="checkbox"
                 checked={privacySettings.allowPhotos}
@@ -1520,18 +1514,18 @@ export function AccountPage() {
                   setPrivacySettings({ ...privacySettings, allowPhotos: e.target.checked });
                   toast.success(e.target.checked ? 'Разрешение на публикацию фото включено' : 'Разрешение на публикацию фото отключено');
                 }}
-                className="sr-only peer"
+                className="sr-only toggle-input peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-gray-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gray-900"></div>
+              <div className="toggle-slider"></div>
             </label>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <div className="flex items-center justify-between py-2 border-b border-gray-100 mb-4">
-          <h3 className="text-lg font-bold text-red-600">Выход из аккаунта</h3>
-          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
+      <div className="account-card p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-destructive">Выход из аккаунта</h3>
+          <button onClick={handleLogout} className="btn-destructive">
             <LogOut className="w-4 h-4" />
             Выйти
           </button>
@@ -1541,17 +1535,17 @@ export function AccountPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted/30">
       <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Личный кабинет</h1>
-          <p className="text-gray-600">Управляйте записями и отслеживайте свой прогресс</p>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2 tracking-tight">Личный кабинет</h1>
+          <p className="text-muted-foreground">Управляйте записями и отслеживайте свой прогресс</p>
         </div>
 
         {/* Navigation */}
-        <div className="mb-6 overflow-x-auto pb-2 scrollbar-hide">
-          <div className="flex gap-2 min-w-max">
+        <div className="nav-tabs-container">
+          <div className="nav-tabs-list">
             <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
             <TabButton active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
             <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
@@ -1670,7 +1664,13 @@ export function AccountPage() {
           {activeTab === 'settings' && renderSettings()}
         </div>
 
-        {isBooking && <UserBookingWizard onClose={closeBooking} />}
+        {isBooking && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/5 backdrop-blur-sm overflow-y-auto">
+            <div className="relative w-full min-h-screen bg-white shadow-2xl animate-in fade-in zoom-in duration-300">
+              <UserBookingWizard onClose={closeBooking} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
