@@ -18,7 +18,7 @@ def fix_employee_photos():
     project_root = os.path.dirname(backend_dir)
     
     # Универсальный путь
-    source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "M le Diamant  портфолио", "Сотрудники")
+    source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Сотрудники")
             
     if not os.path.exists(source_dir):
         log_error(f"❌ Could not find employee photos source directory: {source_dir}", "fix")
@@ -70,7 +70,7 @@ def fix_banner_path():
         project_root = os.path.dirname(backend_dir)
         
         # Source: Красивые лица -> faces
-        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "M le Diamant  портфолио", "Красивые лица")
+        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Красивые лица")
         target_dir = os.path.join(backend_dir, "static", "uploads", "faces")
         os.makedirs(target_dir, exist_ok=True)
         
