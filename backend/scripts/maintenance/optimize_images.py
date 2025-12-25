@@ -146,20 +146,26 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Optimize images in a directory")
-    parser.add_argument("directory", nargs="%s", help="Directory to scan")
+    parser.add_argument("directory", nargs="?", help="Directory to scan")
     parser.add_argument("--max-size", type=int, default=500, help="Max size in KB")
     parser.add_argument("--max-width", type=int, default=1920, help="Max width in pixels")
     
     args = parser.parse_args()
     
+    # Default directories to scan: project_root is one level above backend/
+    backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = os.path.dirname(backend_dir)
+    scan_dirs = [
+        os.path.join(backend_dir, "static", "uploads"),
+        os.path.join(project_root, "frontend", "public_landing", "styles", "img")
+    ]
+    
     if args.directory:
-        target_dir = args.directory
-    else:
-        # Default to backend/static/uploads
-        target_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "static", "uploads")
-        
-    if os.path.exists(target_dir):
-        optimize_images(target_dir, max_size_kb=args.max_size, max_width=args.max_width)
-    else:
-        print(f"❌ Directory not found: {target_dir}")
+        scan_dirs = [args.directory]
+    
+    for target_dir in scan_dirs:
+        if os.path.exists(target_dir):
+            optimize_images(target_dir, max_size_kb=args.max_size, max_width=args.max_width)
+        else:
+            print(f"❌ Directory not found: {target_dir}")
 

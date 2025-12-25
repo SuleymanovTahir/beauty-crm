@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.config import DATABASE_NAME
 
-SOURCE_DIR = "/Users/tahir/Desktop/beauty-crm/frontend/public_landing/styles/M le Diamant  портфолио/Сотрудники"
+SOURCE_DIR = "/Users/tahir/Desktop/beauty-crm/frontend/public_landing/styles/img/Сотрудники"
 TARGET_DIR = "static/uploads/images"
 ABS_TARGET_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), TARGET_DIR)
 

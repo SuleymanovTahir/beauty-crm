@@ -187,7 +187,7 @@ export const BookingSection = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-card rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 space-y-4 sm:space-y-6">
+        <form onSubmit={handleSubmit} className="bg-background rounded-lg sm:rounded-xl lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 space-y-4 sm:space-y-6">
           <div>
             <label className="block text-sm font-medium mb-2">{t('formName', { defaultValue: 'Имя' })}</label>
             <Input
@@ -196,7 +196,7 @@ export const BookingSection = () => {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder={t('formNamePlaceholder', { defaultValue: 'Ваше имя' })}
-              className="h-10 sm:h-11"
+              className="h-10 sm:h-11 bg-slate-50 border-primary/20"
             />
           </div>
 
@@ -218,7 +218,7 @@ export const BookingSection = () => {
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="w-full justify-between h-10 sm:h-11 px-3 bg-white hover:bg-white text-left font-normal border-input"
+                  className="w-full justify-between h-10 sm:h-11 px-3 bg-slate-50 hover:bg-slate-100 text-left font-normal border-primary/20"
                 >
                   {formData.service
                     ? availableServices.find((s) => s.id.toString() === formData.service.toString())?.[`name_${i18n.language}`] ||
@@ -270,7 +270,7 @@ export const BookingSection = () => {
                   required
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="h-10 sm:h-11 pl-10"
+                  className="h-10 sm:h-11 pl-10 bg-slate-50 border-primary/20"
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
@@ -284,7 +284,7 @@ export const BookingSection = () => {
                   required
                   value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  className="h-10 sm:h-11 pl-10"
+                  className="h-10 sm:h-11 pl-10 bg-slate-50 border-primary/20"
                 />
               </div>
             </div>

@@ -65,44 +65,44 @@ export function PromoTimer() {
 
     return (
         <div className="animate-fade-in">
-            <div className="bg-white/50 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-pink-100 shadow-lg">
-                <p className="text-[oklch(0.145_0_0)] text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-3 sm:mb-4 text-center font-medium">
+            <div className="bg-background/50 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-pink-100 shadow-lg">
+                <p className="text-[oklch(0.145_0_0)] text-[10px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-3 text-center font-medium">
                     {t('promoEnds', { defaultValue: 'Акция действует ещё' })}
                 </p>
 
-                <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6">
-                    <div className="flex flex-col items-center min-w-[50px] sm:min-w-[70px]">
-                        <div className="text-2xl sm:text-4xl md:text-5xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                <div className="flex items-center justify-center gap-1 sm:gap-3 md:gap-4">
+                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
+                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
                             {String(timeLeft.days).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-2 font-medium">
+                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
                             {t('days', { defaultValue: 'дней' })}
                         </div>
                     </div>
-                    <div className="text-xl sm:text-3xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-5">:</div>
-                    <div className="flex flex-col items-center min-w-[50px] sm:min-w-[70px]">
-                        <div className="text-2xl sm:text-4xl md:text-5xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
+                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
+                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
                             {String(timeLeft.hours).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-2 font-medium">
+                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
                             {t('hours', { defaultValue: 'часов' })}
                         </div>
                     </div>
-                    <div className="text-xl sm:text-3xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-5">:</div>
-                    <div className="flex flex-col items-center min-w-[50px] sm:min-w-[70px]">
-                        <div className="text-2xl sm:text-4xl md:text-5xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
+                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
+                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
                             {String(timeLeft.minutes).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-2 font-medium">
+                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
                             {t('minutes', { defaultValue: 'минут' })}
                         </div>
                     </div>
-                    <div className="text-xl sm:text-3xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-5">:</div>
-                    <div className="flex flex-col items-center min-w-[50px] sm:min-w-[70px]">
-                        <div className="text-2xl sm:text-4xl md:text-5xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
+                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
+                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
                             {String(timeLeft.seconds).padStart(2, '0')}
                         </div>
-                        <div className="text-[10px] sm:text-xs text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-2 font-medium">
+                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
                             {t('seconds', { defaultValue: 'секунд' })}
                         </div>
                     </div>

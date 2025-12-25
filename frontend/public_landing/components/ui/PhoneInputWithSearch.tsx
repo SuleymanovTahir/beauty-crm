@@ -77,7 +77,7 @@ export function PhoneInputWithSearch({
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center gap-2 h-10 sm:h-11 px-3 rounded-md border border-input bg-background hover:bg-muted/50 transition-colors"
+                    className="flex items-center gap-2 h-10 sm:h-11 px-3 rounded-md border border-primary/20 bg-slate-50 hover:bg-slate-100 transition-colors"
                 >
                     {selectedCountry && (
                         <FlagImage iso2={selectedCountry.iso2} size={20} />
@@ -141,7 +141,7 @@ export function PhoneInputWithSearch({
                 value={inputValue}
                 onChange={handlePhoneValueChange}
                 placeholder={placeholder}
-                className="flex-1 h-10 sm:h-11 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="flex-1 h-10 sm:h-11 px-3 rounded-md border border-primary/20 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-base md:text-sm"
             />
         </div>
     );

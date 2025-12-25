@@ -107,7 +107,7 @@ export function Portfolio() {
               }}
               className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all text-sm sm:text-base ${selectedCategory === category.id
                 ? 'bg-primary text-primary-foreground shadow-lg'
-                : 'bg-background border border-primary text-primary hover:bg-primary/10'
+                : 'bg-background border border-primary/20 text-primary hover:bg-primary/10'
                 }`}
             >
               {category.label}

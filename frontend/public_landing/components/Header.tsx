@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../src/contexts/AuthContext';
-import logo from "../assets/logo.png";
+import logo from "../styles/img/logo.png";
 
 const navigation = [
   { name: "Главная", href: "#home", key: "homeTag", defaultText: "Главная" },
@@ -152,7 +152,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   left: 0;
                   width: 0;
                   height: 2px;
-                  background-color: #db2777;
+                  background-color: var(--primary);
                   transition: width 0.3s ease-in-out;
                 }
                 .nav-item:hover::after,
@@ -182,7 +182,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   <span className="text-xs uppercase text-primary">{language}</span>
                 </button>
                 {isLangMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg overflow-hidden w-max min-w-[60px] py-1 z-50">
+                  <div className="absolute right-0 top-full mt-2 bg-background rounded-lg shadow-lg overflow-hidden w-max min-w-[60px] py-1 z-50">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
@@ -190,7 +190,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                           changeLanguage(lang.code);
                           setIsLangMenuOpen(false);
                         }}
-                        className={`block w-full px-3 py-2 text-left text-xs hover:bg-gray-50 flex items-center gap-1.5 text-primary ${language === lang.code ? 'bg-gray-50 font-medium' : ''
+                        className={`block w-full px-3 py-2 text-left text-xs hover:bg-muted/50 flex items-center gap-1.5 text-primary ${language === lang.code ? 'bg-muted/50 font-medium' : ''
                           }`}
                       >
                         <span className="text-base leading-none">{lang.flag}</span>
@@ -233,7 +233,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   onClick={() => window.location.href = '/account'}
                   variant="outline"
                   size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
+                  className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
                 >
                   <User className="w-3.5 h-3.5 mr-1.5" />
                   {user.full_name || t('account', { defaultValue: 'Кабинет' })}
@@ -243,7 +243,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                   onClick={() => window.location.href = '/login'}
                   variant="outline"
                   size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
+                  className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-8 text-xs"
                 >
                   <User className="w-3.5 h-3.5 mr-1.5" />
                   {t('login', { defaultValue: 'Войти' })}
@@ -299,7 +299,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 bottom-0 w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col"
+              className="absolute top-0 right-0 bottom-0 w-72 max-w-[85vw] bg-background shadow-2xl flex flex-col"
             >
               <div className="flex-none h-16 w-full" />
 
@@ -347,7 +347,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 </div>
               </nav>
 
-              <div className="flex-none p-4 border-t border-border/10 bg-gray-50/50">
+              <div className="flex-none p-4 border-t border-border/10 bg-muted/20">
                 <div className="space-y-2.5">
                   {/* Social Icons Mobile */}
                   <div className="flex items-center justify-center gap-6 mb-4">
@@ -383,7 +383,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     <Button
                       onClick={() => window.location.href = '/account'}
                       variant="outline"
-                      className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
+                      className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
                     >
                       <User className="w-4 h-4 mr-2" />
                       {user.full_name || t('account', { defaultValue: 'Кабинет' })}
@@ -392,7 +392,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     <Button
                       onClick={() => window.location.href = '/login'}
                       variant="outline"
-                      className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
+                      className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-9 text-sm"
                     >
                       <User className="w-4 h-4 mr-2" />
                       {t('login', { defaultValue: 'Войти' })}

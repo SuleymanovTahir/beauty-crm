@@ -4,8 +4,7 @@ import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { CookieConsent } from '../components/CookieConsent';
 import { Footer } from '../components/Footer';
-import '../styles/theme.css';
-import '../styles/index.css';
+import '../styles/css/index.css';
 
 // Lazy load components for better performance
 const About = lazy(() => import('../components/About').then(m => ({ default: m.About })));

@@ -84,7 +84,7 @@ export function FAQ() {
               <AccordionItem
                 key={faq.id}
                 value={`item-${index}`}
-                className="bg-card border-2 border-border/50 rounded-lg sm:rounded-xl px-3 sm:px-4 lg:px-6 data-[state=open]:shadow-lg data-[state=open]:border-primary/50 transition-all"
+                className="bg-card border-2 border-primary/20 rounded-lg sm:rounded-xl px-3 sm:px-4 lg:px-6 data-[state=open]:shadow-lg data-[state=open]:border-primary/50 transition-all"
               >
                 <AccordionTrigger className="text-left hover:no-underline py-3 sm:py-4 lg:py-6">
                   <span className="text-sm sm:text-base text-[var(--heading)] pr-4">{faq.question}</span>
@@ -102,7 +102,7 @@ export function FAQ() {
           </div>
         )}
 
-        <div className="mt-6 sm:mt-8 lg:mt-12 text-center space-y-4 p-4 sm:p-6 lg:p-8 bg-card rounded-lg sm:rounded-xl border border-border/50">
+        <div className="mt-6 sm:mt-8 lg:mt-12 text-center space-y-4 p-4 sm:p-6 lg:p-8 bg-card rounded-lg sm:rounded-xl border border-border transition-colors">
           <p className="text-sm sm:text-base text-foreground/70">
             {t('faqContactPrompt', { defaultValue: 'Не нашли ответ на свой вопрос?' })}
           </p>
@@ -110,7 +110,7 @@ export function FAQ() {
             <Button
               variant="outline"
               onClick={() => window.location.href = `tel:${salonPhone}`}
-              className="w-full bg-background border-primary text-primary hover:bg-primary hover:text-primary-foreground h-10 text-sm"
+              className="w-full bg-background border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-10 text-sm"
             >
               <Phone className="w-4 h-4 mr-2" />
               {t('callUs', { defaultValue: 'Позвонить' })}

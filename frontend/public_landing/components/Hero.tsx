@@ -68,12 +68,7 @@ export function Hero() {
           />
         )}
         {/* Overlay - pure white to match production */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to right, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.50) 50%, rgba(255, 255, 255, 0.10) 100%)'
-          }}
-        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/50 to-background/10" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full flex-grow flex flex-col justify-center">
@@ -108,7 +103,7 @@ export function Hero() {
                 document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
               }}
               variant="outline"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-6 py-4 sm:py-5 shadow-md hover:shadow-lg transition-all"
+              className="border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground px-4 sm:px-6 py-4 sm:py-5 shadow-md hover:shadow-lg transition-all"
               size="lg"
             >
               <span className="text-sm sm:text-base">{t('ourServices', { ns: 'public_landing' }) || "Услуги"}</span>
