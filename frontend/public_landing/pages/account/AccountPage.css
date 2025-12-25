@@ -36,21 +36,29 @@
 
 /* Ensure TabButton styling is exactly as prototype */
 .account-tab-active {
-  background-color: #1e293b !important;
+  background-color: #1a1f2c !important; /* Very dark navy/gray */
   color: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .account-tab-inactive {
   background-color: white !important;
-  color: #4b5563 !important;
-  border: 1px solid transparent !important;
+  color: #64748b !important;
+  border: 1px solid #f1f5f9 !important;
 }
 
 .account-tab-inactive:hover {
-  background-color: #f9fafb !important;
+  background-color: #f8fafc !important;
+  color: #1a1f2c !important;
 }
 
 /* Fix for the Welcome card background as requested by user */
 .welcome-card-bg {
-  background-color: #1e293b !important;
+  background-color: #1a1f2c !important;
+}
+
+/* Ensure next appointment card vertical layout is clean */
+.next-appointment-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
