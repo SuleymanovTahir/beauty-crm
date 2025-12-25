@@ -6,8 +6,8 @@ import { format } from 'date-fns';
 import { ru, enUS, ar } from 'date-fns/locale';
 import {
   ArrowLeft, Calendar as CalendarIcon, Check, ChevronRight, Clock,
-  List, MapPin, Search, Star, User, X, Home, Loader2, Edit2,
-  Sparkles, Award, Zap, TrendingUp, CheckCircle2
+  List, MapPin, Search, User, X, Loader2, Edit2,
+  Sparkles, CheckCircle2
 } from 'lucide-react';
 import { Calendar } from '../../components/ui/calendar';
 import { Button } from '../../components/ui/button';
@@ -88,7 +88,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showSelectedModal, setShowSelectedModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [history, setHistory] = useState<string[]>([]);
   const [mastersAvailability, setMastersAvailability] = useState<Record<string, string[]>>({});
@@ -815,11 +814,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         <div className="flex items-start justify-between mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">
-              M Le Diamant
+              {t('bookingTitle', 'Online Booking')}
             </h1>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               <MapPin className="w-4 h-4" />
-              Shop 13, Amwaj 2, Plaza Level, JBR - Dubai
+              {t('bookingSubtitle', 'Select services to continue')}
             </p>
           </div>
           {onClose && (
@@ -910,8 +909,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           {/* Any Professional */}
           <Card
             className={`cursor-pointer transition-all border-2 ${!selectedMaster
-                ? 'border-black bg-black/5'
-                : 'border-muted hover:border-muted-foreground/50'
+              ? 'border-black bg-black/5'
+              : 'border-muted hover:border-muted-foreground/50'
               }`}
             onClick={() => {
               if (currentServiceId) {
@@ -959,8 +958,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <Card
                 key={master.id}
                 className={`cursor-pointer transition-all border-2 ${isSelected
-                    ? 'border-black bg-black/5 shadow-lg'
-                    : 'border-muted hover:border-muted-foreground/50 hover:shadow-md'
+                  ? 'border-black bg-black/5 shadow-lg'
+                  : 'border-muted hover:border-muted-foreground/50 hover:shadow-md'
                   }`}
                 onClick={() => toggleMaster(master)}
               >
@@ -1114,8 +1113,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Card
                       key={service.id}
                       className={`cursor-pointer transition-all border-2 ${isSelected
-                          ? 'border-black bg-black/5'
-                          : 'border-muted hover:border-muted-foreground/50'
+                        ? 'border-black bg-black/5'
+                        : 'border-muted hover:border-muted-foreground/50'
                         }`}
                       onClick={e => toggleService(service, e)}
                     >
@@ -1316,8 +1315,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         key={slot.time}
                         variant={selectedTime === slot.time ? 'default' : 'outline'}
                         className={`h-12 ${selectedTime === slot.time
-                            ? 'bg-black text-white hover:bg-black/90'
-                            : 'hover:border-black'
+                          ? 'bg-black text-white hover:bg-black/90'
+                          : 'hover:border-black'
                           } ${slot.is_optimal ? 'ring-2 ring-pink-300' : ''}`}
                         onClick={() => handleSlotClick(slot.time)}
                       >

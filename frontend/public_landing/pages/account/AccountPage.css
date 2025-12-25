@@ -1,6 +1,20 @@
-/* Account Specific Theme Variables */
 @import "tailwindcss" source(none);
 @source "./AccountPage.tsx";
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility account-card {
+  @apply bg-card rounded-2xl p-6 transition-all border border-border/10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Account Specific Theme Variables */
 :root {
   font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --background: #ffffff;
@@ -112,4 +126,329 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Chart Colors */
+  --chart-1: #9333ea;
+  --chart-2: #ec4899;
+  --chart-3: #3b82f6;
+  --chart-4: #10b981;
+  --chart-5: #f59e0b;
+}
+
+/* Navigation & Tabs */
+.nav-tabs-container {
+  @apply mb-6 overflow-x-auto pb-2 scrollbar-hide;
+}
+
+.nav-tabs-list {
+  @apply flex gap-2 min-w-max;
+}
+
+.nav-tab {
+  @apply flex items-center gap-2 px-4 py-3 rounded-lg transition-all whitespace-nowrap;
+}
+
+.nav-tab-active {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.nav-tab-inactive {
+  background-color: var(--card);
+  color: var(--muted-foreground);
+}
+
+.nav-tab-inactive:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.nav-badge {
+  @apply absolute -top-1 -right-1 w-4 h-4 border-2 rounded-full flex items-center justify-center text-[10px] font-bold;
+  background-color: var(--destructive);
+  border-color: var(--background);
+  color: var(--destructive-foreground);
+}
+
+/* Cards & Layout */
+@utility account-card-hover {
+  @apply border-primary/20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card {
+  @apply bg-card rounded-2xl p-6 border border-border/10 flex flex-col gap-1;
+}
+
+.stat-value {
+  @apply text-2xl font-bold;
+  color: var(--foreground);
+}
+
+.stat-label {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+.stat-icon-wrapper {
+  @apply w-10 h-10 rounded-xl flex items-center justify-center mb-2;
+}
+
+.welcome-card {
+  @apply relative overflow-hidden rounded-3xl p-8 mb-8 text-white;
+  background: linear-gradient(135deg, var(--primary), #4f46e5);
+}
+
+.welcome-bg-pattern {
+  @apply absolute top-0 right-0 w-32 h-32 opacity-10;
+}
+
+.appointment-card {
+  @apply bg-card p-6 rounded-2xl border border-border/10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.badge-success {
+  @apply px-3 py-1 rounded-full text-sm font-medium;
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-secondary {
+  @apply px-3 py-1 rounded-full text-sm font-medium;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.badge-danger {
+  @apply px-3 py-1 rounded-full text-sm font-medium;
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Buttons */
+.btn-primary {
+  @apply px-4 py-2 rounded-lg transition-all font-medium text-center flex items-center justify-center gap-2;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-lg transition-all font-medium text-center flex items-center justify-center gap-2;
+  background-color: var(--muted);
+  color: var(--primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent);
+}
+
+.btn-outline {
+  @apply px-4 py-2 rounded-lg transition-all font-medium text-center flex items-center justify-center gap-2 border;
+  border-color: var(--border);
+  background-color: transparent;
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background-color: var(--muted);
+}
+
+.btn-destructive {
+  @apply px-4 py-2 rounded-lg transition-all font-medium text-center flex items-center justify-center gap-2;
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-destructive:hover {
+  background-color: #fecaca;
+}
+
+/* Loyalty & Achievements */
+.loyalty-card-gold {
+  @apply rounded-2xl p-6 text-white relative overflow-hidden;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.loyalty-gold-text {
+  color: #fef3c7;
+}
+
+.streak-card {
+  @apply bg-card p-6 rounded-xl border border-border/10;
+}
+
+.streak-flame {
+  color: #f97316;
+}
+
+.streak-bar {
+  @apply flex-1 h-2 rounded-full;
+  background-color: var(--muted);
+}
+
+.streak-bar-active {
+  background-color: #f97316;
+}
+
+.achievement-card {
+  @apply flex items-center gap-4 p-4 rounded-xl border border-border/10 transition-all;
+  background-color: var(--card);
+}
+
+.achievement-card-locked {
+  @apply opacity-60 grayscale;
+}
+
+.achievement-icon-wrapper {
+  @apply w-12 h-12 rounded-full flex items-center justify-center text-xl shrink-0;
+  background-color: var(--muted);
+}
+
+.achievement-hero {
+  @apply rounded-2xl p-6 text-white bg-gradient-to-br from-indigo-600 to-purple-600;
+}
+
+.achievement-hero-text {
+  color: #e0e7ff;
+}
+
+.achievement-item {
+  @apply p-4 rounded-xl border border-border/10 bg-card transition-all;
+}
+
+.achievement-item-unlocked {
+  @apply border-yellow-200 bg-gradient-to-br from-yellow-50 to-orange-50;
+}
+
+.challenge-card {
+  @apply p-4 rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-purple-50/50;
+}
+
+/* Gallery Section */
+.gallery-grid {
+  @apply grid grid-cols-2 sm:grid-cols-3 gap-3;
+}
+
+.gallery-item {
+  @apply relative aspect-square rounded-2xl overflow-hidden cursor-pointer border border-border/10;
+}
+
+.gallery-item-overlay {
+  @apply absolute inset-0 bg-black/40 opacity-0 transition-opacity flex items-center justify-center gap-4 text-white;
+}
+
+.gallery-item:hover .gallery-item-overlay {
+  opacity: 1;
+}
+
+/* Masters Section */
+.master-card {
+  @apply flex flex-col items-center text-center gap-4;
+}
+
+.favorite-heart {
+  @apply transition-colors;
+}
+
+.favorite-heart-active {
+  color: var(--destructive);
+  fill: var(--destructive);
+}
+
+.favorite-heart-inactive {
+  @apply text-gray-400 hover:text-destructive;
+}
+
+/* Beauty Profile */
+.beauty-metric-card {
+  @apply flex flex-col gap-3;
+}
+
+.beauty-score-hero {
+  @apply rounded-2xl p-6 text-white bg-gradient-to-br from-pink-500 to-rose-600;
+}
+
+.beauty-score-text {
+  color: #ffe4e6;
+}
+
+.beauty-tag {
+  @apply px-3 py-1 bg-muted rounded-full text-sm font-medium;
+  color: var(--foreground);
+}
+
+.alert-card {
+  @apply p-4 rounded-xl border flex items-start gap-3;
+  background-color: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.alert-card-icon {
+  color: #d97706;
+}
+
+/* Notifications */
+.notification-item {
+  @apply p-4 rounded-xl border border-border/10 mb-2 transition-colors flex gap-4;
+}
+
+.notification-unread {
+  @apply border-primary/20 bg-primary/5;
+}
+
+.notification-read {
+  @apply bg-card;
+}
+
+/* Forms & Settings */
+.form-label {
+  @apply block text-sm font-medium mb-2;
+  color: var(--muted-foreground);
+}
+
+.form-input {
+  @apply w-full px-4 py-2 border rounded-lg transition-all focus:outline-none;
+  border-color: var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary/10);
+}
+
+.toggle-switch {
+  @apply relative inline-flex items-center cursor-pointer;
+}
+
+.toggle-slider {
+  @apply w-11 h-6 transition-all rounded-full;
+  background-color: var(--muted);
+}
+
+.toggle-input:checked + .toggle-slider {
+  background-color: var(--primary);
+}
+
+.toggle-slider:after {
+  content: "";
+  @apply absolute top-[2px] left-[2px] bg-white border border-gray-300 rounded-full h-5 after:w-5 transition-all;
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-input:checked + .toggle-slider:after {
+  transform: translateX(20px);
+  border-color: var(--primary);
+}
+
+.rating-star {
+  color: #fabb15;
+  fill: #fabb15;
 }
