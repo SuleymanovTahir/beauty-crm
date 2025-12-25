@@ -121,12 +121,13 @@ const EmptyState: React.FC<{ icon: React.ReactNode; title: string; description: 
 export function AccountPage() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { i18n } = useTranslation(['account', 'common']);
+  const { t, i18n } = useTranslation(['account', 'common']);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
 
   // States
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const initialTab = searchParams.get('tab') || 'dashboard';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [appointmentsView, setAppointmentsView] = useState('upcoming');
   const [galleryFilter, setGalleryFilter] = useState('all');
   const [showAllMasters, setShowAllMasters] = useState(false);
@@ -142,10 +143,16 @@ export function AccountPage() {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loyalty, setLoyalty] = useState<any>(null);
+  const [salonSettings, setSalonSettings] = useState<any>(null);
 
   const isBooking = searchParams.get('booking') === 'true';
-  const openBooking = () => setSearchParams({ booking: 'true' });
-  const closeBooking = () => setSearchParams({});
+  const openBooking = () => setSearchParams({ tab: activeTab, booking: 'true' });
+  const closeBooking = () => setSearchParams({ tab: activeTab });
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -191,7 +198,8 @@ export function AccountPage() {
         mastersRes,
         metricsRes,
         notifsRes,
-        loyaltyRes
+        loyaltyRes,
+        salonRes
       ] = await Promise.allSettled([
         api.getClientDashboard(),
         api.getClientBookings(),
@@ -200,7 +208,8 @@ export function AccountPage() {
         api.getClientFavoriteMasters(),
         api.getClientBeautyMetrics(),
         api.getClientNotifications(),
-        api.getClientLoyalty()
+        api.getClientLoyalty(),
+        fetch('/api/public/salon-settings').then(r => r.json())
       ]);
 
       if (dashboardRes.status === 'fulfilled') setDashboardData(dashboardRes.value);
@@ -211,6 +220,7 @@ export function AccountPage() {
       if (metricsRes.status === 'fulfilled') setMetrics(metricsRes.value.metrics || []);
       if (notifsRes.status === 'fulfilled') setNotifications(notifsRes.value.notifications || []);
       if (loyaltyRes.status === 'fulfilled') setLoyalty(loyaltyRes.value);
+      if (salonRes.status === 'fulfilled') setSalonSettings(salonRes.value);
     } catch (error) {
       console.error('Error loading account data', error);
       toast.error('Ошибка загрузки данных');
@@ -335,7 +345,7 @@ export function AccountPage() {
   };
 
   const handleCopyReferralCode = () => {
-    navigator.clipboard.writeText((user as any)?.referral_code || 'ANNA2024');
+    navigator.clipboard.writeText((user as any)?.referral_code || 'REFCODE');
     toast.success('Код скопирован в буфер обмена');
   };
 
@@ -500,14 +510,14 @@ export function AccountPage() {
           <span>Повторить последнюю</span>
         </button>
         <button
-          onClick={() => setActiveTab('masters')}
+          onClick={() => handleTabChange('masters')}
           className="btn-outline h-auto p-4 justify-start"
         >
           <Heart className="w-5 h-5" />
           <span>Мои мастера</span>
         </button>
         <button
-          onClick={() => setActiveTab('chat')}
+          onClick={() => handleTabChange('chat')}
           className="btn-outline h-auto p-4 justify-start"
         >
           <MessageCircle className="w-5 h-5" />
@@ -1035,7 +1045,7 @@ export function AccountPage() {
         <div className="bg-white p-4 rounded-lg mb-4">
           <p className="text-sm text-gray-500 mb-2">Ваш код</p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-xl tracking-wider">{(user as any)?.referral_code || 'ANNA2024'}</code>
+            <code className="flex-1 text-xl tracking-wider">{(user as any)?.referral_code || 'REFCODE'}</code>
             <button
               onClick={handleCopyReferralCode}
               className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
@@ -1257,7 +1267,7 @@ export function AccountPage() {
                       color={metric.score_value < 50 ? 'bg-orange-500' : metric.score_value > 80 ? 'bg-green-500' : 'bg-blue-500'}
                     />
                   </div>
-                  <span className="text-sm w-12 text-right font-medium">{metric.score_value}%</span>
+                  <span className="text-sm w-12 text-right font-medium">{metric.score_value ?? 0}%</span>
                   <button
                     onClick={openBooking}
                     className="btn-secondary px-3 py-1 text-sm"
@@ -1546,16 +1556,16 @@ export function AccountPage() {
         {/* Navigation */}
         <div className="nav-tabs-container">
           <div className="nav-tabs-list">
-            <TabButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
-            <TabButton active={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
-            <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
-            <TabButton active={activeTab === 'loyalty'} onClick={() => setActiveTab('loyalty')} icon={<Award className="w-5 h-5" />} label="Лояльность" />
-            <TabButton active={activeTab === 'achievements'} onClick={() => setActiveTab('achievements')} icon={<Trophy className="w-5 h-5" />} label="Достижения" />
-            <TabButton active={activeTab === 'masters'} onClick={() => setActiveTab('masters')} icon={<Users className="w-5 h-5" />} label="Мастера" />
-            <TabButton active={activeTab === 'beauty'} onClick={() => setActiveTab('beauty')} icon={<Sparkles className="w-5 h-5" />} label="Beauty-профиль" />
-            <TabButton active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={<Bell className="w-5 h-5" />} label="Уведомления" hasBadge badgeCount={notifications.filter(n => !n.is_read).length} />
-            <TabButton active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} icon={<MessageCircle className="w-5 h-5" />} label="Связь" />
-            <TabButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Settings className="w-5 h-5" />} label="Настройки" />
+            <TabButton active={activeTab === 'dashboard'} onClick={() => handleTabChange('dashboard')} icon={<Sparkles className="w-5 h-5" />} label="Главная" />
+            <TabButton active={activeTab === 'appointments'} onClick={() => handleTabChange('appointments')} icon={<Calendar className="w-5 h-5" />} label="Записи" />
+            <TabButton active={activeTab === 'gallery'} onClick={() => handleTabChange('gallery')} icon={<ImageIcon className="w-5 h-5" />} label="Галерея" />
+            <TabButton active={activeTab === 'loyalty'} onClick={() => handleTabChange('loyalty')} icon={<Award className="w-5 h-5" />} label="Лояльность" />
+            <TabButton active={activeTab === 'achievements'} onClick={() => handleTabChange('achievements')} icon={<Trophy className="w-5 h-5" />} label="Достижения" />
+            <TabButton active={activeTab === 'masters'} onClick={() => handleTabChange('masters')} icon={<Users className="w-5 h-5" />} label="Мастера" />
+            <TabButton active={activeTab === 'beauty'} onClick={() => handleTabChange('beauty')} icon={<Sparkles className="w-5 h-5" />} label="Beauty-профиль" />
+            <TabButton active={activeTab === 'notifications'} onClick={() => handleTabChange('notifications')} icon={<Bell className="w-5 h-5" />} label="Уведомления" hasBadge badgeCount={notifications.filter(n => !n.is_read).length} />
+            <TabButton active={activeTab === 'chat'} onClick={() => handleTabChange('chat')} icon={<MessageCircle className="w-5 h-5" />} label="Связь" />
+            <TabButton active={activeTab === 'settings'} onClick={() => handleTabChange('settings')} icon={<Settings className="w-5 h-5" />} label="Настройки" />
           </div>
         </div>
 
@@ -1589,35 +1599,35 @@ export function AccountPage() {
                 <h3 className="text-lg mb-4">Контакты</h3>
                 <div className="space-y-3">
                   <a
-                    href="tel:+97150123456"
+                    href={salonSettings?.phone ? `tel:${salonSettings.phone}` : '#'}
                     className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <Phone className="w-5 h-5 text-gray-600" />
                     <div>
-                      <p className="text-sm text-gray-500">Телефон</p>
-                      <p>+971 50 123 4567</p>
+                      <p className="text-sm text-gray-500">{t('phone', 'Phone')}</p>
+                      <p>{salonSettings?.phone || t('notAvailable', 'Not available')}</p>
                     </div>
                   </a>
                   <a
-                    href="mailto:info@beautystudio.ae"
+                    href={salonSettings?.email ? `mailto:${salonSettings.email}` : '#'}
                     className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <Mail className="w-5 h-5 text-gray-600" />
                     <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p>info@beautystudio.ae</p>
+                      <p className="text-sm text-gray-500">{t('email', 'Email')}</p>
+                      <p>{salonSettings?.email || t('notAvailable', 'Not available')}</p>
                     </div>
                   </a>
                   <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
                     <MapPin className="w-5 h-5 text-gray-600 mt-1" />
                     <div>
-                      <p className="text-sm text-gray-500">Адрес</p>
-                      <p>Dubai Marina, Marina Plaza, Office 302</p>
+                      <p className="text-sm text-gray-500">{t('address', 'Address')}</p>
+                      <p>{salonSettings?.address || t('notAvailable', 'Not available')}</p>
                       <button
                         onClick={handleNavigate}
                         className="text-sm text-gray-900 hover:underline mt-1 flex items-center gap-1"
                       >
-                        Построить маршрут
+                        {t('getDirections', 'Get Directions')}
                         <Navigation className="w-4 h-4" />
                       </button>
                     </div>

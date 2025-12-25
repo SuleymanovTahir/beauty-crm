@@ -839,11 +839,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <List className="w-7 h-7" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-xl mb-1">Select Services</h3>
+                  <h3 className="font-bold text-xl mb-1">{t('selectServices', 'Select Services')}</h3>
                   <p className="text-sm text-muted-foreground">
                     {selectedServices.length > 0
-                      ? `${selectedServices.length} selected • ${selectedServices.reduce((acc, s) => acc + s.price, 0)} AED`
-                      : "Choose from our menu"}
+                      ? `${selectedServices.length} ${t('selected', 'selected')} • ${selectedServices.reduce((acc, s) => acc + s.price, 0)} ${t('currency', 'AED')}`
+                      : t('chooseFromMenu', 'Choose from our menu')}
                   </p>
                 </div>
                 <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -861,9 +861,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <User className="w-7 h-7" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-xl mb-1">Choose Professional</h3>
+                  <h3 className="font-bold text-xl mb-1">{t('chooseProfessional', 'Choose Professional')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {selectedServices.length === 0 ? "Select services first" : "Configure per service"}
+                    {selectedServices.length === 0 ? t('selectServicesFirst', 'Select services first') : t('configurePerService', 'Configure per service')}
                   </p>
                 </div>
                 <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -881,9 +881,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   <CalendarIcon className="w-7 h-7" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-xl mb-1">Select Date & Time</h3>
+                  <h3 className="font-bold text-xl mb-1">{t('selectDateTime', 'Select Date & Time')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {selectedServices.length === 0 ? "Select services first" : "Configure per service"}
+                    {selectedServices.length === 0 ? t('selectServicesFirst', 'Select services first') : t('configurePerService', 'Configure per service')}
                   </p>
                 </div>
                 <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -937,8 +937,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <User className="w-7 h-7 text-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">Any Available Professional</h3>
-                    <p className="text-sm text-muted-foreground">First available master</p>
+                    <h3 className="font-bold text-lg">{t('anyProfessional', 'Any Available Professional')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('firstAvailable', 'First available master')}</p>
                   </div>
                 </div>
                 <div
@@ -988,7 +988,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                   {previewSlots[master.id] && (
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        Nearest slots for <span className="font-semibold text-foreground">{previewDates[master.id]}</span>:
+                        {t('nearestSlots', 'Nearest slots for')} <span className="font-semibold text-foreground">{previewDates[master.id]}</span>:
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {previewSlots[master.id].slice(0, 4).map(slot => (
@@ -1070,14 +1070,14 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     return (
       <div className="max-w-4xl mx-auto p-4 space-y-6 pb-40">
-        {renderHeader("Select Services")}
+        {renderHeader(t('selectServices', 'Select Services'))}
 
         {/* Search & Category Tabs */}
         <div className="space-y-4">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
-              placeholder="Search services..."
+              placeholder={t('searchServices', 'Search services...')}
               className="pl-12 h-12 bg-muted/50 border-muted"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -1125,9 +1125,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                             <div className="flex items-center gap-3 text-sm">
                               <span className="text-muted-foreground flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
-                                {service.duration || '30 min'}
+                                {service.duration || t('defaultDuration', '30 min')}
                               </span>
-                              <span className="font-bold text-primary">{service.price} AED</span>
+                              <span className="font-bold text-primary">{service.price} {t('currency', 'AED')}</span>
                             </div>
                           </div>
                           <div
@@ -1148,7 +1148,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           {filteredServices.length === 0 && (
             <div className="text-center py-16">
               <Search className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">No services found</p>
+              <p className="text-muted-foreground">{t('noServicesFound', 'No services found')}</p>
             </div>
           )}
         </div>
@@ -1160,12 +1160,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <CardContent className="p-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-white/60">Selected</p>
-                    <p className="font-bold">{selectedServices.length} service(s)</p>
+                    <p className="text-sm text-white/60">{t('selected', 'Selected')}</p>
+                    <p className="font-bold">{selectedServices.length} {t('servicesCount', 'service(s)')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-white/60">Total</p>
-                    <p className="font-bold text-xl">{getTotalStats().price} AED</p>
+                    <p className="text-sm text-white/60">{t('total', 'Total')}</p>
+                    <p className="font-bold text-xl">{getTotalStats().price} {t('currency', 'AED')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -1183,7 +1183,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     return (
       <div className="max-w-4xl mx-auto p-4 space-y-6 pb-32">
-        {renderHeader("Select Date & Time")}
+        {renderHeader(t('selectDateTime', 'Select Date & Time'))}
 
         <div className="space-y-6">
           {/* Calendar */}
@@ -1340,20 +1340,20 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
     return (
       <div className="max-w-4xl mx-auto p-4 space-y-6 pb-32">
-        {renderHeader("Confirm Booking")}
+        {renderHeader(t('confirmBookingTitle', 'Confirm Booking'))}
 
         <div className="space-y-4">
           {/* Summary Card */}
           <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-purple-500/5">
             <CardContent className="p-6">
-              <h3 className="font-bold text-xl mb-4">Booking Summary</h3>
+              <h3 className="font-bold text-xl mb-4">{t('bookingSummary', 'Booking Summary')}</h3>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                     <List className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Services</p>
+                    <p className="text-sm text-muted-foreground">{t('services', 'Services')}</p>
                     <p className="font-bold">{selectedServices.length}</p>
                   </div>
                 </div>
@@ -1362,7 +1362,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Clock className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Duration</p>
+                    <p className="text-sm text-muted-foreground">{t('duration', 'Duration')}</p>
                     <p className="font-bold">{totalStats.durationStr}</p>
                   </div>
                 </div>
@@ -1371,8 +1371,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                     <Sparkles className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Total</p>
-                    <p className="font-bold text-xl">{totalStats.price} AED</p>
+                    <p className="text-sm text-muted-foreground">{t('total', 'Total')}</p>
+                    <p className="font-bold text-xl">{totalStats.price} {t('currency', 'AED')}</p>
                   </div>
                 </div>
               </div>
@@ -1423,8 +1423,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         </div>
                       )}
                       <div>
-                        <p className="text-xs text-muted-foreground">Master</p>
-                        <p className="font-semibold">{config.master?.full_name || 'Any Professional'}</p>
+                        <p className="text-xs text-muted-foreground">{t('master', 'Master')}</p>
+                        <p className="font-semibold">{config.master?.full_name || t('anyProfessional', 'Any Professional')}</p>
                       </div>
                     </div>
 
@@ -1433,9 +1433,9 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         <CalendarIcon className="w-5 h-5 text-muted-foreground" />
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Date & Time</p>
+                        <p className="text-xs text-muted-foreground">{t('dateTime', 'Date & Time')}</p>
                         <p className="font-semibold">
-                          {config.date ? format(new Date(config.date), 'd MMM') : '-'} at {config.time || '-'}
+                          {config.date ? format(new Date(config.date), 'd MMM') : '-'} {t('at', 'at')} {config.time || '-'}
                         </p>
                       </div>
                     </div>

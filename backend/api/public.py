@@ -34,8 +34,41 @@ class ContactForm(BaseModel):
     email: Optional[str] = None
     message: str
 
+@router.get("/salon-settings")
+async def get_public_salon_settings():
+    """Получить публичную информацию о салоне (контакты, адрес)"""
+    from utils.logger import log_error
+    
+    try:
+        settings = get_salon_settings()
+        if not settings:
+            return {
+                "phone": None,
+                "email": None,
+                "address": None,
+                "whatsapp": None,
+                "instagram": None,
+                "google_maps": None,
+                "name": None
+            }
+        
+        return {
+            "phone": settings.get("phone"),
+            "email": settings.get("email"),
+            "address": settings.get("address"),
+            "whatsapp": settings.get("whatsapp"),
+            "instagram": settings.get("instagram"),
+            "google_maps": settings.get("google_maps"),
+            "name": settings.get("name"),
+            "currency": settings.get("currency", "AED")
+        }
+    except Exception as e:
+        log_error(f"Error fetching salon settings: {e}", "public_api")
+        return {"error": str(e)}
+
 @router.post("/send-message")
 async def send_contact_message(form: ContactForm, background_tasks: BackgroundTasks):
+
     """Отправка сообщения с контактной формы"""
     from utils.logger import log_info, log_error
     
