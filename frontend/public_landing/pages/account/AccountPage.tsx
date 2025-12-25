@@ -50,7 +50,7 @@ import { UserBookingWizard } from './UserBookingWizard';
 
 // Import styles
 import './AccountPage.css';
-// // import '../../new_admin/src/styles/index.css';
+
 // Using local AccountPage.css for styles to avoid global conflicts
 
 // Utility Components
