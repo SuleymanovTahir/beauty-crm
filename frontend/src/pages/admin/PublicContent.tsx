@@ -1,5 +1,5 @@
 // /frontend/src/pages/admin/PublicContent.tsx
-import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { Layout, Star, HelpCircle, Image as ImageIcon, Megaphone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,15 @@ import BannersTab from '../../components/admin/publicContent/BannersTab';
 
 export default function PublicContent() {
     const { t } = useTranslation('admin/PublicContent');
-    const [activeTab, setActiveTab] = useState('reviews');
+    const { tab } = useParams<{ tab: string }>();
+    const navigate = useNavigate();
+
+    // Синхронизация с URL: если таб в URL есть, используем его, иначе 'reviews'
+    const activeTab = tab || 'reviews';
+
+    const handleTabChange = (value: string) => {
+        navigate(`/admin/public-content/${value}`);
+    };
 
     return (
         <div className="p-6">
@@ -28,7 +36,7 @@ export default function PublicContent() {
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={handleTabChange}>
                 <TabsList className="mb-6">
                     <TabsTrigger value="reviews" className="flex items-center gap-2">
                         <Star className="w-4 h-4" />

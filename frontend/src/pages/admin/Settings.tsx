@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
+import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../services/api';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
@@ -936,6 +937,14 @@ export default function AdminSettings() {
     );
   }
 
+  const { tab } = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+  const activeTab = tab || 'general';
+
+  const handleTabChange = (value: string) => {
+    navigate(`/admin/settings/${value}`);
+  };
+
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8">
@@ -961,7 +970,7 @@ export default function AdminSettings() {
         </div>
       )}
 
-      <Tabs defaultValue="general" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="flex flex-wrap w-full lg:w-auto gap-1">
 
           <TabsTrigger key="general" value="general" className="flex items-center gap-2">

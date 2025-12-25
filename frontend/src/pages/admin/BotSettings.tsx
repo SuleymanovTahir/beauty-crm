@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle, Bell } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BarChart3 } from 'lucide-react';
 import BotAnalyticsWidget from '../../components/admin/BotAnalyticsWidget';
 
@@ -76,7 +77,16 @@ type TabType = 'general' | 'notifications' | 'analytics' | 'personality' | 'pric
 
 
 export default function BotSettings() {
-  const [activeTab, setActiveTab] = useState<TabType>('general');
+  const { tab } = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+
+  // Синхронизация с URL: если таб в URL есть, используем его, иначе 'general'
+  const activeTab = (tab as TabType) || 'general';
+
+  const handleTabChange = (value: TabType | string) => {
+    navigate(`/admin/bot-settings/${value}`);
+  };
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { t } = useTranslation(['admin/botsettings', 'common']);
@@ -305,7 +315,7 @@ export default function BotSettings() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             style={{
               padding: '0.625rem 1rem',
               backgroundColor: activeTab === tab.id ? '#ede9fe' : 'transparent',

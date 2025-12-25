@@ -32,9 +32,15 @@ interface Employee {
 }
 
 export default function EmployeeDetail() {
-    const { id } = useParams<{ id: string }>();
+    const { id, tab } = useParams<{ id: string; tab: string }>();
     const navigate = useNavigate();
     const { t } = useTranslation(['admin/users', 'common']);
+
+    const activeTab = tab || 'information';
+
+    const handleTabChange = (value: string) => {
+        navigate(`/admin/users/${id}/${value}`);
+    };
 
     const [employee, setEmployee] = useState<Employee | null>(null);
     const [allEmployees, setAllEmployees] = useState<Employee[]>([]);
@@ -164,7 +170,7 @@ export default function EmployeeDetail() {
                     {filteredEmployees.map((emp) => (
                         <button
                             key={emp.id}
-                            onClick={() => navigate(`/admin/users/${emp.id}`)}
+                            onClick={() => navigate(`/admin/users/${emp.id}/${activeTab}`)}
                             className={`w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${emp.id === employee.id ? 'bg-gray-100' : ''
                                 }`}
                         >
@@ -195,7 +201,7 @@ export default function EmployeeDetail() {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
-                <Tabs defaultValue="information" className="flex flex-col h-full">
+                <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-col h-full">
                     {/* Header with Tabs */}
                     <div className="bg-white border-b border-gray-200 shrink-0">
                         <div className="flex items-center justify-between px-6 pt-4">

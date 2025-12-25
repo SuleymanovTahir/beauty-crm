@@ -151,12 +151,22 @@ else:
 UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
 
 # ✅ Универсальный BASE_URL с автоопределением окружения
-if os.getenv("BASE_URL"):
-    BASE_URL = os.getenv("BASE_URL")
-elif os.getenv("ENVIRONMENT") == "production":
-    BASE_URL = "https://mlediamant.com"
+# Приоритет: 
+# 1. Переменная окружения BASE_URL (если установлена)
+# 2. http://localhost:{PORT} (если мы на локалке)
+# 3. https://mlediamant.com (fallback для продакшена)
+_env_base_url = os.getenv("BASE_URL")
+_env_port = os.getenv("PORT", "8000")
+
+if _env_base_url:
+    BASE_URL = _env_base_url
+    PUBLIC_URL = os.getenv("PUBLIC_URL") or _env_base_url
+elif is_localhost():
+    BASE_URL = f"http://localhost:{_env_port}"
+    PUBLIC_URL = f"http://localhost:{_env_port}"
 else:
-    BASE_URL = "http://localhost:8000"
+    BASE_URL = "https://mlediamant.com"
+    PUBLIC_URL = os.getenv("PUBLIC_URL") or "https://mlediamant.com"
 
 # ===== СТАТУСЫ КЛИЕНТОВ =====
 CLIENT_STATUSES = {
