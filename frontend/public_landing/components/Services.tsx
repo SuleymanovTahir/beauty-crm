@@ -99,7 +99,7 @@ export function Services() {
             {t('servicesTag', { defaultValue: 'УСЛУГИ' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('servicesTitle', { defaultValue: 'Что мы предлагаем' })}
+            {t('servicesTitlePart1', { defaultValue: 'Что мы' })} <span className="text-primary">{t('servicesTitlePart2', { defaultValue: 'предлагаем' })}</span>
           </h2>
         </div>
 

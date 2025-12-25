@@ -69,7 +69,8 @@ async def get_my_employee_profile(
         # Запрашиваем данные из таблицы users (не employees!)
         c.execute("""
             SELECT id, full_name, position, email, phone, birthday, 
-                   is_service_provider, role, is_active
+                   is_service_provider, role, is_active,
+                   years_of_experience, bio, specialization
             FROM users
             WHERE id = %s
         """, (user["id"],))
@@ -94,7 +95,10 @@ async def get_my_employee_profile(
             "birthday": row[5],
             "is_service_provider": bool(row[6]),
             "role": row[7],
-            "is_active": bool(row[8])
+            "is_active": bool(row[8]),
+            "years_of_experience": row[9],
+            "bio": row[10],
+            "specialization": row[11]
         }
         
         return {

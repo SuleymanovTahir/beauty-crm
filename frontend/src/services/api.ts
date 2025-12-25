@@ -1,5 +1,5 @@
 // frontend/src/services/api.ts
-const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://mlediamant.com')
+const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin)
 
 export class ApiClient {
   private baseURL: string
@@ -120,6 +120,12 @@ export class ApiClient {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
+    })
+  }
+
+  async verifyEmailToken(token: string) {
+    return this.request<any>(`/api/verify-email-token?token=${token}`, {
+      method: 'GET',
     })
   }
 
@@ -368,7 +374,21 @@ export class ApiClient {
     return this.request<any>(`/api/users/by-username/${username}/profile`)
   }
 
-  async updateUserProfile(userId: number, data: { username: string; full_name: string; email?: string; position?: string; photo?: string }) {
+  async updateUserProfile(userId: number, data: {
+    username?: string;
+    full_name?: string;
+    email?: string;
+    position?: string;
+    photo?: string;
+    years_of_experience?: string | number;
+    specialization?: string;
+    about_me?: string;
+    phone_number?: string;
+    birth_date?: string;
+    telegram?: string;
+    whatsapp?: string;
+    instagram_link?: string;
+  }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -979,6 +999,13 @@ export class ApiClient {
   }) {
     return this.request('/api/employees/my-profile', {
       method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateMyProfile(data: any) {
+    return this.request<any>('/api/my-profile/update', {
+      method: 'POST',
       body: JSON.stringify(data),
     })
   }

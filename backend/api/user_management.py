@@ -30,6 +30,15 @@ class UpdateProfileRequest(BaseModel):
     current_password: Optional[str] = None
     new_password: Optional[str] = None
     photo_url: Optional[str] = None
+    phone_number: Optional[str] = None
+    position: Optional[str] = None
+    birth_date: Optional[str] = None
+    about_me: Optional[str] = None
+    specialization: Optional[str] = None
+    years_of_experience: Optional[str] = None
+    instagram_link: Optional[str] = None
+    whatsapp: Optional[str] = None
+    telegram: Optional[str] = None
 
 @router.get("/api/my-profile")
 async def get_my_profile(session_token: Optional[str] = Cookie(None)):
@@ -81,7 +90,7 @@ async def get_my_profile(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error getting profile: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@router.post("/api/my-profile")
+@router.post("/api/my-profile/update")
 async def update_my_profile(
     data: UpdateProfileRequest,
     session_token: Optional[str] = Cookie(None)
@@ -170,6 +179,42 @@ async def update_my_profile(
         if data.photo_url is not None:
             updates.append("photo = %s")
             params.append(data.photo_url)
+
+        # Обновление дополнительных полей
+        if data.phone_number is not None:
+            updates.append("phone = %s")
+            params.append(data.phone_number)
+        
+        if data.position is not None:
+            updates.append("position = %s")
+            params.append(data.position)
+            
+        if data.birth_date is not None:
+            updates.append("birthday = %s")
+            params.append(data.birth_date)
+            
+        if data.about_me is not None:
+            updates.append("bio = %s")
+            params.append(data.about_me)
+            
+        if data.specialization is not None:
+            updates.append("specialization = %s")
+            params.append(data.specialization)
+            
+        if data.years_of_experience is not None:
+            try:
+                if data.years_of_experience != '':
+                    val = int(data.years_of_experience)
+                else:
+                    val = None
+                updates.append("years_of_experience = %s")
+                params.append(val)
+            except (ValueError, TypeError):
+                pass
+                
+        if data.telegram is not None:
+            updates.append("telegram_username = %s")
+            params.append(data.telegram)
 
         if not updates:
             conn.close()

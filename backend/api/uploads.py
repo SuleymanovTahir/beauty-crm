@@ -7,15 +7,7 @@ from typing import Optional
 router = APIRouter(tags=["Upload"])
 
 # ✅ Универсальное определение PUBLIC_URL
-# Приоритет: переменная окружения > автоопределение по localhost
-from core.config import UPLOAD_DIR, BASE_DIR, is_localhost
-
-if os.getenv("PUBLIC_URL"):
-    PUBLIC_URL = os.getenv("PUBLIC_URL")
-elif is_localhost():
-    PUBLIC_URL = "http://localhost:8000"
-else:
-    PUBLIC_URL = "https://mlediamant.com"
+from core.config import UPLOAD_DIR, BASE_DIR, is_localhost, PUBLIC_URL
 
 print(f"📸 PUBLIC_URL: {PUBLIC_URL}")
 

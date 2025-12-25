@@ -35,7 +35,7 @@ export function MapSection() {
             {t('mapTag', { defaultValue: 'Наше местоположение' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('mapTitle', { defaultValue: 'Посетите наш салон' })}
+            {t('mapTitlePart1', { defaultValue: 'Посетите' })} <span className="text-primary">{t('mapTitlePart2', { defaultValue: 'наш салон' })}</span>
           </h2>
         </div>
 

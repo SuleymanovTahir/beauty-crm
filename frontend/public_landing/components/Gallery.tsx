@@ -56,7 +56,7 @@ export function Gallery() {
             {t('galleryTag', { defaultValue: 'Наш салон' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('galleryTitle', { defaultValue: 'Атмосфера роскоши и комфорта' })}
+            {t('galleryTitlePart1', { defaultValue: 'Атмосфера' })} <span className="text-primary">{t('galleryTitlePart2', { defaultValue: 'роскоши и комфорта' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('galleryDesc', { defaultValue: 'Современный интерьер создает атмосферу спокойствия' })}

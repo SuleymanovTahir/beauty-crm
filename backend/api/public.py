@@ -192,15 +192,7 @@ def process_contact_notifications(form: ContactForm):
 async def get_public_services():
     """Публичный список активных услуг"""
     services = get_all_services(active_only=True)
-    from core.config import BASE_URL
-
-    def sanitize_url(url):
-        if not url: return None
-        if url.startswith('/static/'):
-            return url
-        if "localhost:8000" in url and "localhost" not in BASE_URL:
-            return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
-        return url
+    from utils.utils import sanitize_url
 
     return [
         {
@@ -382,15 +374,7 @@ async def get_salon_news(limit: int = 10, language: str = "ru"):
         LIMIT%s
     """, (limit,))
 
-    from core.config import BASE_URL
-    
-    def sanitize_url(url):
-        if not url: return None
-        if url.startswith('/static/'):
-            return url
-        if "localhost:8000" in url and "localhost" not in BASE_URL:
-            return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
-        return url
+    from utils.utils import sanitize_url
 
     news = []
     for row in c.fetchall():
@@ -430,16 +414,7 @@ async def get_public_banners():
         """)
         
         
-        from core.config import BASE_URL
-        
-        def sanitize_url(url):
-            if not url: return None
-            if url.startswith('/static/'):
-                # Return relative path to let frontend handle it via its own API_URL or proxy
-                return url
-            if "localhost:8000" in url and "localhost" not in BASE_URL:
-                return url.replace("http://localhost:8000", BASE_URL).replace("http://127.0.0.1:8000", BASE_URL)
-            return url
+        from utils.utils import sanitize_url
 
         banners = []
         rows = c.fetchall()

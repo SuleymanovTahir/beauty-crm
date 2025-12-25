@@ -240,6 +240,8 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
+        f"http://localhost:{os.getenv('PORT', '8000')}",
+        f"http://127.0.0.1:{os.getenv('PORT', '8000')}",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -615,10 +617,11 @@ async def startup_event():
 if __name__ == "__main__":
     import uvicorn
     
+    port = int(os.getenv("PORT", "8000"))
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=8000,
+        port=port,
         log_level="info"
     )
     

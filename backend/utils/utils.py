@@ -53,6 +53,41 @@ def sanitize_filename(filename: str) -> str:
         safe_name = name[:100] + ext
     return safe_name
 
+def sanitize_url(url: str) -> Optional[str]:
+    """
+    Очистить URL от локальных хостов и привести к относительному пути или BASE_URL
+    
+    Args:
+        url: Исходный URL
+        
+    Returns:
+        Санитизированный URL или None
+    """
+    if not url: 
+        return None
+        
+    # Пути начинающиеся с /static/ уже корректны
+    if url.startswith('/static/'):
+        return url
+        
+    # Импортируем внутри чтобы избежать циклических зависимостей
+    from core.config import BASE_URL
+    import re
+    
+    # Шаблон для поиска localhost и 127.0.0.1 с любым портом
+    local_pattern = r'https?://(localhost|127\.0\.0\.1)(:\d+)?'
+    
+    if re.search(local_pattern, url):
+        # Если BASE_URL — это внешний домен, заменяем локальный хост на него
+        if "localhost" not in BASE_URL and "127.0.0.1" not in BASE_URL:
+            # Заменяем протокол и хост на BASE_URL, сохраняя остальной путь
+            return re.sub(local_pattern, BASE_URL.rstrip('/'), url)
+        
+        # Если мы все еще на локалке, возвращаем относительный путь
+        return re.sub(local_pattern, '', url)
+        
+    return url
+
 def validate_file_upload(file, max_size_mb: int = 10, allowed_extensions: list = None):
     """
     Валидировать загружаемый файл

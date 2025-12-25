@@ -453,7 +453,9 @@ def init_database():
                   specialization TEXT,
                   years_of_experience INTEGER,
                   certificates TEXT,
-                  is_service_provider BOOLEAN DEFAULT FALSE)''')
+                  is_service_provider BOOLEAN DEFAULT FALSE,
+                  base_salary REAL DEFAULT 0,
+                  commission_rate REAL DEFAULT 0)''')
 
     # Миграция: добавить отсутствующие колонки в users
     try:
@@ -477,7 +479,9 @@ def init_database():
         'phone': 'TEXT',
         'full_name_ru': 'TEXT',
         'full_name_en': 'TEXT',
-        'full_name_ar': 'TEXT'
+        'full_name_ar': 'TEXT',
+        'base_salary': 'REAL DEFAULT 0',
+        'commission_rate': 'REAL DEFAULT 0'
     }
 
     for column_name, column_type in user_migrations.items():
@@ -606,12 +610,25 @@ def init_database():
         'chat_notifications': 'INTEGER DEFAULT 1',
         'daily_report': 'INTEGER DEFAULT 1',
         'report_time': "TEXT DEFAULT '09:00'",
+        'telegram_notifications': 'BOOLEAN DEFAULT 0',
         'updated_at': 'TEXT DEFAULT CURRENT_TIMESTAMP'
     }
     for col, col_type in notif_migrations.items():
         if col not in notif_columns:
             c.execute(f"ALTER TABLE notification_settings ADD COLUMN {col} {col_type}")
             
+    # Таблица выплат (Payroll History)
+    c.execute('''CREATE TABLE IF NOT EXISTS payroll_payments (
+        id SERIAL PRIMARY KEY,
+        employee_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        currency TEXT DEFAULT 'AED',
+        period_start TEXT NOT NULL,
+        period_end TEXT NOT NULL,
+        status TEXT DEFAULT 'paid',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (employee_id) REFERENCES users(id)
+    )''')            
     # ✅ Таблица уведомлений (сарих уведомлений)
     c.execute('''CREATE TABLE IF NOT EXISTS notifications (
         id SERIAL PRIMARY KEY,

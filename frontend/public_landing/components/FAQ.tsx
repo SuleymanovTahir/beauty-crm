@@ -71,7 +71,7 @@ export function FAQ() {
             {t('faqTag', { defaultValue: 'FAQ' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('faqTitle', { defaultValue: 'Часто задаваемые вопросы' })}
+            {t('faqTitlePart1', { defaultValue: 'Часто задаваемые' })} <span className="text-primary">{t('faqTitlePart2', { defaultValue: 'вопросы' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('faqDesc', { defaultValue: 'Ответы на популярные вопросы' })}

@@ -1,10 +1,10 @@
 // /frontend/src/components/admin/EmployeePayroll.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Loader2, Calculator, Calendar, DollarSign, TrendingUp } from 'lucide-react';
+import { Loader2, Calculator, Calendar, DollarSign, TrendingUp, Save } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import {
@@ -24,6 +24,8 @@ interface PayrollSummary {
     total_bookings: number;
     total_revenue: number;
     calculated_salary: number;
+    base_salary: number;
+    commission_amount: number;
     currency: string;
     period_start: string;
     period_end: string;
@@ -34,9 +36,12 @@ interface PayrollHistoryItem {
     period_start: string;
     period_end: string;
     total_amount: number;
-    status: 'paid' | 'pending';
+    currency: string;
     created_at: string;
+    status: string;
 }
+
+
 
 export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
     const { t } = useTranslation(['admin/users', 'common']);
@@ -49,8 +54,22 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
     const [startDate, setStartDate] = useState(firstDay);
     const [endDate, setEndDate] = useState(lastDay);
     const [loading, setLoading] = useState(false);
+    const [recording, setRecording] = useState(false);
     const [summary, setSummary] = useState<PayrollSummary | null>(null);
     const [history, setHistory] = useState<PayrollHistoryItem[]>([]);
+
+    useEffect(() => {
+        loadHistory();
+    }, [employeeId]);
+
+    const loadHistory = async () => {
+        try {
+            const data = await api.get(`/api/payroll/history/${employeeId}`);
+            setHistory(data);
+        } catch (error) {
+            console.error('Error loading history:', error);
+        }
+    };
 
     const handleCalculate = async () => {
         try {
@@ -67,6 +86,29 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
             toast.error(t('error_calculating_payroll', 'Error calculating payroll'));
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleRecordPayment = async () => {
+        if (!summary) return;
+
+        try {
+            setRecording(true);
+            await api.post(`/api/payroll/record-payment`, {
+                employee_id: employeeId,
+                amount: summary.calculated_salary,
+                currency: summary.currency,
+                period_start: summary.period_start,
+                period_end: summary.period_end
+            });
+            toast.success(t('payment_recorded', 'Payment recorded successfully'));
+            loadHistory();
+            setSummary(null); // Clear summary after recording
+        } catch (error) {
+            console.error('Error recording payment:', error);
+            toast.error(t('error_recording_payment', 'Error recording payment'));
+        } finally {
+            setRecording(false);
         }
     };
 
@@ -148,9 +190,27 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
                             <div className="text-2xl font-bold text-green-600">
                                 {summary.calculated_salary} {summary.currency}
                             </div>
-                            <p className="text-xs text-muted-foreground">
+                            <div className="mt-2 space-y-1">
+                                <p className="text-xs text-muted-foreground flex justify-between">
+                                    <span>{t('base_salary', 'Base')}:</span>
+                                    <span className="font-medium">{summary.base_salary || 0} {summary.currency}</span>
+                                </p>
+                                <p className="text-xs text-muted-foreground flex justify-between">
+                                    <span>{t('commission', 'Commission')}:</span>
+                                    <span className="font-medium text-blue-600">+{summary.commission_amount || 0} {summary.currency}</span>
+                                </p>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-2 italic">
                                 {t('based_on_settings', 'Based on current settings')}
                             </p>
+                            <Button
+                                className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
+                                onClick={handleRecordPayment}
+                                disabled={recording}
+                            >
+                                {recording ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                                {t('record_payment', 'Record & Save Payment')}
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
@@ -170,11 +230,32 @@ export function EmployeePayroll({ employeeId }: EmployeePayrollProps) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow>
-                                <TableCell colSpan={4} className="text-center py-8 text-gray-500">
-                                    {t('no_history', 'No payroll history found')}
-                                </TableCell>
-                            </TableRow>
+                            {history.length > 0 ? (
+                                history.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-medium">
+                                            {item.period_start} — {item.period_end}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.total_amount} {item.currency}
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                                {item.status || 'paid'}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-gray-500">
+                                            {new Date(item.created_at).toLocaleDateString()}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                                        {t('no_history', 'No payroll history found')}
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </div>

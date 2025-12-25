@@ -1,86 +1,163 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
+"""
+API endpoints для расчета зарплат (Payroll)
+"""
+from fastapi import APIRouter, Depends, Query, HTTPException
+from typing import Optional, List, Dict
 from datetime import datetime
-
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.logger import log_error, log_info
+from core.auth import get_current_user_or_redirect as get_current_user
+from utils.logger import log_info, log_error
+from pydantic import BaseModel
 
 router = APIRouter(tags=["Payroll"])
 
-class PayrollRequest(BaseModel):
+class PayrollCalculateRequest(BaseModel):
     employee_id: int
     start_date: str
     end_date: str
 
-class PayrollSummary(BaseModel):
-    total_bookings: int
-    total_revenue: float
-    calculated_salary: float
-    currency: str = "AED"
-    period_start: str
-    period_end: str
+@router.post("/payroll/calculate")
+async def calculate_payroll(
+    data: PayrollCalculateRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Рассчитать зарплату сотрудника за период"""
+    if current_user["role"] not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
 
-@router.post("/payroll/calculate", response_model=PayrollSummary)
-async def calculate_payroll(request: PayrollRequest):
-    """
-    Calculate payroll for an employee within a date range.
-    Currently implements a basic model:
-    - Sum of revenue from completed bookings
-    - 35% commission (hardcoded for now, can be moved to settings later)
-    """
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        # 1. Get employee details (to verify existence and maybe get custom rate later)
-        c.execute("SELECT full_name FROM users WHERE id =%s", (request.employee_id,))
-        employee = c.fetchone()
-        if not employee:
+        # 1. Получаем настройки сотрудника (оклад и % комиссии)
+        c.execute("SELECT full_name, base_salary, commission_rate, currency FROM users WHERE id = %s", (data.employee_id,))
+        emp_row = c.fetchone()
+        if not emp_row:
             raise HTTPException(status_code=404, detail="Employee not found")
         
-        employee_name = employee[0]
-
-        # 2. Get completed bookings in range
-        # We look for bookings where status is 'completed' or 'paid'
-        # And the master matches the employee name
-        query = """
-            SELECT COUNT(*), SUM(revenue)
-            FROM bookings
-            WHERE master =%s
-            AND status IN ('completed', 'paid', 'confirmed') 
-            AND DATE(datetime) BETWEEN DATE(%s) AND DATE(%s)
-        """
+        full_name, base_salary, commission_rate, default_currency = emp_row
         
-        # Note: 'confirmed' is included for testing purposes if 'completed' is not used yet,
-        # but strictly it should be completed. Let's stick to completed/paid for accuracy.
-        # Actually, let's include 'confirmed' for now as the system might be in early stage.
-        # Better: let's check what statuses are used. 
-        # For now, I'll use a broad set to ensure data shows up during demo.
+        # 2. Получаем все завершенные записи этого мастера за период
+        # Примечание: предполагается, что в bookings.datetime хранится "YYYY-MM-DD HH:MM"
+        # Нам нужно сравнивать только дату или весь стринг
+        c.execute("""
+            SELECT id, revenue, service_name, datetime, status 
+            FROM bookings 
+            WHERE master = %s 
+            AND status = 'completed'
+            AND datetime >= %s 
+            AND datetime <= %s
+        """, (full_name, data.start_date + " 00:00", data.end_date + " 23:59"))
         
-        c.execute(query, (employee_name, request.start_date, request.end_date))
-        result = c.fetchone()
+        bookings = c.fetchall()
         
-        total_bookings = result[0] or 0
-        total_revenue = result[1] or 0.0
-
-        # 3. Calculate Salary
-        # Default commission: 35%
-        COMMISSION_RATE = 0.35
-        calculated_salary = total_revenue * COMMISSION_RATE
+        total_revenue = sum(row[1] for row in bookings if row[1])
+        total_bookings = len(bookings)
+        
+        # 3. Расчет
+        # Комиссия считается от выручки
+        commission_amount = (total_revenue * (commission_rate or 0)) / 100
+        
+        # Итоговая зарплата за период (упрощенно: оклад + комиссия)
+        # В идеале оклад должен делиться на количество дней в месяце, 
+        # но для начала возьмем фиксированный оклад + бонусы.
+        calculated_salary = (base_salary or 0) + commission_amount
 
         return {
+            "employee_id": data.employee_id,
+            "full_name": full_name,
             "total_bookings": total_bookings,
-            "total_revenue": total_revenue,
+            "total_revenue": round(total_revenue, 2),
+            "base_salary": base_salary,
+            "commission_rate": commission_rate,
+            "commission_amount": round(commission_amount, 2),
             "calculated_salary": round(calculated_salary, 2),
-            "currency": "AED",
-            "period_start": request.start_date,
-            "period_end": request.end_date
+            "currency": default_currency or "AED",
+            "period_start": data.start_date,
+            "period_end": data.end_date
         }
 
     except Exception as e:
-        log_error(f"Error calculating payroll: {e}", "payroll")
+        log_error(f"Error calculating payroll: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+class PayrollRecordRequest(BaseModel):
+    employee_id: int
+    amount: float
+    currency: str
+    period_start: str
+    period_end: str
+
+@router.post("/payroll/record-payment")
+async def record_payment(
+    data: PayrollRecordRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Записать факт выплаты зарплаты в историю"""
+    if current_user["role"] not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            INSERT INTO payroll_payments (employee_id, amount, currency, period_start, period_end)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+        """, (data.employee_id, data.amount, data.currency, data.period_start, data.period_end))
+        
+        payment_id = c.fetchone()[0]
+        conn.commit()
+        
+        log_info(f"Payment recorded: ID={payment_id}, Emp={data.employee_id}, Amount={data.amount}", "api")
+        return {"status": "success", "payment_id": payment_id}
+
+    except Exception as e:
+        log_error(f"Error recording payment: {e}", "api")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/payroll/history/{employee_id}")
+async def get_payroll_history(
+    employee_id: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить историю реальных выплат сотруднику"""
+    if current_user["role"] not in ["admin", "director"] and current_user["id"] != employee_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT id, period_start, period_end, amount, currency, created_at, status
+            FROM payroll_payments
+            WHERE employee_id = %s
+            ORDER BY created_at DESC
+        """, (employee_id,))
+        
+        rows = c.fetchall()
+        history = []
+        for row in rows:
+            history.append({
+                "id": row[0],
+                "period_start": row[1],
+                "period_end": row[2],
+                "total_amount": row[3],
+                "currency": row[4],
+                "created_at": row[5],
+                "status": row[6]
+            })
+            
+        return history
+
+    except Exception as e:
+        log_error(f"Error fetching payroll history: {e}", "api")
+        return []
     finally:
         conn.close()

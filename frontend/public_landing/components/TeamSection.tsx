@@ -69,7 +69,7 @@ export function TeamSection() {
             {t('teamTag', { defaultValue: 'Наша команда' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('teamTitle', { defaultValue: 'Мастера своего дела' })}
+            {t('teamTitlePart1', { defaultValue: 'Мастера' })} <span className="text-primary">{t('teamTitlePart2', { defaultValue: 'своего дела' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('teamDesc', { defaultValue: 'Профессионалы с многолетним опытом' })}
@@ -91,7 +91,7 @@ export function TeamSection() {
                     {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
                       <div className="flex items-center gap-1.5 text-primary-foreground mb-1">
                         <Award className="w-3 h-3" />
-                        <span className="text-xs">{member.experience} {t('yearsExp', { defaultValue: 'лет' })}</span>
+                        <span className="text-xs">{member.experience}</span>
                       </div>
                     )}
                     <p className="text-primary-foreground text-xs line-clamp-2">{member.specialty}</p>

@@ -180,7 +180,7 @@ export const BookingSection = () => {
             {t('bookingTag', { defaultValue: 'Онлайн запись' })}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('bookingTitle', { defaultValue: 'Запишитесь на прием' })}
+            {t('bookingTitlePart1', { defaultValue: 'Запишитесь' })} <span className="text-primary">{t('bookingTitlePart2', { defaultValue: 'на прием' })}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
             {t('bookingDesc', { defaultValue: 'Выберите удобное время для визита' })}
