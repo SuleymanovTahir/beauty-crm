@@ -461,6 +461,13 @@ export class ApiClient {
     })
   }
 
+  async createPublicBooking(data: any) {
+    return this.request('/api/public/bookings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async updateBookingStatus(key: string, data: any) {
     return this.request(`/api/statuses/booking/${key}`, {
       method: 'PUT',

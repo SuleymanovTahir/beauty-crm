@@ -1,15 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Calendar, Clock, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Loader2, Check, ChevronsUpDown } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { api } from '../../../src/services/api';
 import { toast } from 'sonner';
+import { cn } from './ui/utils';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "./ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "./ui/popover";
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
-export function BookingSection() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+export const BookingSection = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -40,8 +57,10 @@ export function BookingSection() {
         const res = await fetch(`${API_URL}/api/public/services?language=${i18n.language}`);
         const data = await res.json();
 
-        // Flatten categories to get all services
-        if (data.categories) {
+        if (Array.isArray(data)) {
+          setAvailableServices(data);
+        } else if (data.categories) {
+          // Flatten categories to get all services (fallback)
           const services: any[] = [];
           data.categories.forEach((cat: any) => {
             if (cat.items) {
@@ -77,30 +96,33 @@ export function BookingSection() {
       // If guest, generate ephemeral ID based on phone.
       const instagramId = user?.username || `web_${formData.phone.replace(/\D/g, '')}`;
 
-      const payload = {
+      const bookingData = {
         instagram_id: instagramId,
         service: serviceName, // Backend expects Name
+        name: formData.name,
+        phone: formData.phone,
+        service_id: parseInt(formData.service),
         date: formData.date,
         time: formData.time,
-        phone: formData.phone,
-        name: formData.name,
-        // master: optional, not in this simplified form yet
+        source: 'website', // Explicitly setting source
+        status: 'pending_confirmation' // Explicitly expecting pending status
       };
 
-      const response = await api.createBooking(payload) as any;
+      await api.createPublicBooking(bookingData);
 
-      if (response.success) {
-        toast.success(t('bookingSuccessMessage', { defaultValue: 'Спасибо за запись! Мы свяжемся с вами в ближайшее время.' }));
-        // Only clear date/time/service, keep contact info if user might book again? 
-        // Or clear all? Let's clear sensitive time/service info.
-        setFormData(prev => ({ ...prev, service: '', date: '', time: '' }));
-      } else {
-        toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' }));
-      }
+      // Reset form
+      setFormData({
+        name: '',
+        phone: '',
+        service: '',
+        date: '',
+        time: ''
+      });
 
-    } catch (error) {
-      console.error('Booking error:', error);
-      toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи.' }));
+      toast.success(t('bookingSuccess', { defaultValue: 'Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.' }));
+    } catch (err) {
+      console.error('Error creating booking:', err);
+      toast.error(t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' }));
     } finally {
       setLoading(false);
     }
@@ -136,37 +158,63 @@ export function BookingSection() {
 
           <div>
             <label className="block text-sm font-medium mb-2">{t('formPhone', { defaultValue: 'Телефон' })}</label>
-            <Input
-              type="tel"
-              required
+            <PhoneInput
+              defaultCountry="ae"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="+971 XX XXX XXXX"
-              className="h-10 sm:h-11"
+              onChange={(phone) => setFormData({ ...formData, phone })}
+              inputClassName="w-full h-10 sm:h-11 px-3 rounded-md border border-input bg-input-background text-sm"
+              forceDialCode
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">{t('formService', { defaultValue: 'Услуга' })}</label>
-            <select
-              required
-              value={formData.service}
-              onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-              className="w-full h-10 sm:h-11 px-3 rounded-md border border-input bg-input-background text-sm"
-            >
-              <option value="">{t('formServicePlaceholder', { defaultValue: 'Выберите услугу' })}</option>
-              {availableServices.length > 0 ? (
-                availableServices.map((srv: any) => (
-                  <option key={srv.id} value={srv.id}>
-                    {srv[`title_${i18n.language}`] || srv.title_ru || srv.title || srv.name}
-                  </option>
-                ))
-              ) : (
-                <>
-                  <option disabled>{t('loadingServices', { defaultValue: 'Загрузка услуг...' })}</option>
-                </>
-              )}
-            </select>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between h-10 sm:h-11 px-3 bg-white hover:bg-white text-left font-normal border-input"
+                >
+                  {formData.service
+                    ? availableServices.find((s) => s.id.toString() === formData.service.toString())?.[`name_${i18n.language}`] ||
+                    availableServices.find((s) => s.id.toString() === formData.service.toString())?.name_ru ||
+                    availableServices.find((s) => s.id.toString() === formData.service.toString())?.name ||
+                    t('formServicePlaceholder', { defaultValue: 'Выберите услугу' })
+                    : t('formServicePlaceholder', { defaultValue: 'Выберите услугу' })}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[300px] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder={t('searchService', { defaultValue: 'Найти услугу...' })} />
+                  <CommandList>
+                    <CommandEmpty>{t('noServicesFound', { defaultValue: 'Услуги не найдены.' })}</CommandEmpty>
+                    <CommandGroup>
+                      {availableServices.map((srv: any) => (
+                        <CommandItem
+                          key={srv.id}
+                          value={srv[`name_${i18n.language}`] || srv.name_ru || srv.name}
+                          onSelect={() => {
+                            setFormData({ ...formData, service: srv.id.toString() });
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              formData.service === srv.id.toString() ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {srv[`name_${i18n.language}`] || srv.name_ru || srv.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

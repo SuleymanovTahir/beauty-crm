@@ -20,7 +20,7 @@ const Users = React.lazy(() => import('./pages/admin/Users'));
 const Calendar = React.lazy(() => import('./pages/admin/Calendar'));
 const Settings = React.lazy(() => import('./pages/admin/Settings'));
 const BotSettings = React.lazy(() => import('./pages/admin/BotSettings'));
-const PendingUsers = React.lazy(() => import('./pages/admin/PendingUsers'));
+const PendingRegistrations = React.lazy(() => import('./pages/admin/PendingRegistrations'));
 const PermissionManagement = React.lazy(() => import('./pages/admin/PermissionManagement'));
 const PlansManagement = React.lazy(() => import('./pages/admin/PlansManagement'));
 const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
@@ -217,7 +217,7 @@ export default function App() {
                 <Route path="employees" element={<EmployeeManagement />} />
                 <Route path="employees/:id" element={<EmployeeManagement />} />
                 <Route path="users/create" element={<CreateUser />} />
-                <Route path="users/pending" element={<PendingUsers />} />
+                <Route path="users/pending" element={<PendingRegistrations />} />
                 <Route path="users/permissions" element={<PermissionManagement />} />
                 <Route path="users/:identifier/edit" element={<EditUser />} />
                 <Route path="plans" element={<PlansManagement />} />

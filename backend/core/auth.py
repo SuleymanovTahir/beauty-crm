@@ -44,55 +44,54 @@ async def api_login(username: str = Form(...), password: str = Form(...)):
             )
         
         # ============================================================================
-        # 🔒 ПРОВЕРКА EMAIL ВЕРИФИКАЦИИ И АКТИВАЦИИ (ВРЕМЕННО ОТКЛЮЧЕНО)
+        # 🔒 EMAIL VERIFICATION AND ADMIN APPROVAL CHECKS (NOW ENABLED)
         # ============================================================================
-        # Раскомментируйте блок ниже, чтобы ВКЛЮЧИТЬ проверку email и активации
-        # Закомментируйте блок ниже, чтобы ОТКЛЮЧИТЬ проверку (для быстрой разработки)
+        # Проверяем email верификацию и активацию ВСЕХ пользователей
+        # Исключение: admin/admin123 может войти всегда
         # ============================================================================
+        
+        # Исключение для admin пользователя
+        is_admin_exception = (username.lower() == 'admin')
+        
+        if not is_admin_exception:
+            conn = get_db_connection()
+            c = conn.cursor()
+            c.execute("SELECT is_active, email_verified, email FROM users WHERE id = %s", (user["id"],))
+            result = c.fetchone()
+            conn.close()
 
-        """
-        # ЗАКОММЕНТИРОВАНО: Проверка email верификации и активации
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT is_active, email_verified, email FROM users WHERE id = %s", (user["id"],))
-        result = c.fetchone()
-        conn.close()
+            if not result:
+                return JSONResponse(
+                    {"error": "Пользователь не найден"},
+                    status_code=404
+                )
 
-        if not result:
-            return JSONResponse(
-                {"error": "Пользователь не найден"},
-                status_code=404
-            )
+            is_active, email_verified, user_email = result
 
-        is_active, email_verified, email = result
+            # Проверяем email верификацию
+            if not email_verified:
+                log_warning(f"User {username} email not verified yet", "auth")
+                return JSONResponse(
+                    {
+                        "error": "Email не подтвержден",
+                        "error_type": "email_not_verified",
+                        "email": user_email,
+                        "message": "Пожалуйста, проверьте вашу почту и введите код подтверждения"
+                    },
+                    status_code=403
+                )
 
-        # Проверяем email верификацию
-        if not email_verified:
-            log_warning(f"User {username} email not verified yet", "auth")
-            return JSONResponse(
-                {
-                    "error": "Email не подтвержден",
-                    "error_type": "email_not_verified",
-                    "email": email
-                },
-                status_code=403
-            )
-
-        # Проверяем активацию администратором
-        if is_active == 0:
-            log_warning(f"User {username} not activated yet", "auth")
-            return JSONResponse(
-                {
-                    "error": "Ваш аккаунт еще не активирован администратором",
-                    "error_type": "not_approved"
-                },
-                status_code=403
-            )
-        """
-
-        # ============================================================================
-        # ⚠️  ВНИМАНИЕ: Проверка верификации ОТКЛЮЧЕНА - любой пользователь может войти
-        # ============================================================================
+            # Проверяем активацию администратором
+            if not is_active:
+                log_warning(f"User {username} not activated yet", "auth")
+                return JSONResponse(
+                    {
+                        "error": "Ваш аккаунт еще не активирован администратором",
+                        "error_type": "not_approved",
+                        "message": "Ваша регистрация ожидает одобрения администратора"
+                    },
+                    status_code=403
+                )
         
         session_token = create_session(user["id"])
         log_info(f"Session created for {username}", "auth")
@@ -184,19 +183,25 @@ async def api_register(
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT id FROM users WHERE username = %s", (username,))
-        if c.fetchone():
+        # Проверка уникальности username
+        c.execute("SELECT id, username FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
+        existing_user = c.fetchone()
+        if existing_user:
             conn.close()
+            log_warning(f"Registration failed: username '{username}' already exists", "auth")
             return JSONResponse(
-                {"error": "Пользователь с таким логином уже существует"},
+                {"error": f"Пользователь с логином '{username}' уже существует"},
                 status_code=400
             )
 
-        c.execute("SELECT id FROM users WHERE email = %s", (email,))
-        if c.fetchone():
+        # Проверка уникальности email
+        c.execute("SELECT id, email FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
+        existing_email = c.fetchone()
+        if existing_email:
             conn.close()
+            log_warning(f"Registration failed: email '{email}' already exists", "auth")
             return JSONResponse(
-                {"error": "Пользователь с таким email уже существует"},
+                {"error": f"Пользователь с email '{email}' уже зарегистрирован"},
                 status_code=400
             )
 
@@ -219,13 +224,20 @@ async def api_register(
         now = datetime.now().isoformat()
 
         # ============================================================================
-        # 🔒 АВТОАКТИВАЦИЯ ПОЛЬЗОВАТЕЛЕЙ ПРИ РЕГИСТРАЦИИ
+        # 🔒 EMAIL VERIFICATION REQUIRED
         # ============================================================================
-        # ВАРИАНТ 1 (ВКЛЮЧЕН): Автоактивация ВСЕХ пользователей без проверки email
-        # Раскомментируйте строку ниже для разработки/тестирования:
+        # Теперь ВСЕ пользователи должны подтвердить email и получить одобрение админа
+        # Исключение только для первого админа (admin/admin123)
         # ============================================================================
 
-        auto_verify = True  # 🟢 ВКЛЮЧЕНО: Все пользователи автоматически активируются
+        # Проверяем, это первый admin?
+        is_first_admin = False
+        if username.lower() == 'admin' and role == 'director':
+            c.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = 'admin' AND role = 'director'")
+            admin_count = c.fetchone()[0]
+            is_first_admin = (admin_count == 0)
+        
+        auto_verify = is_first_admin  # Только первый admin автоактивируется
 
         # ============================================================================
         # ВАРИАНТ 2 (ОТКЛЮЧЕН): Автоактивация только первого директора
@@ -288,21 +300,45 @@ async def api_register(
         conn.commit()
         conn.close()
 
-        # Если это первый директор, он автоматически подтвержден
+        # Если это первый admin, он автоматически подтвержден
         if auto_verify:
             response_data = {
                 "success": True,
-                "message": "Регистрация успешна! Вы первый директор системы и автоматически подтверждены. Можете войти в систему.",
+                "message": "Регистрация успешна! Вы первый администратор системы и автоматически подтверждены. Можете войти в систему.",
                 "user_id": user_id,
                 "auto_verified": True,
-                "is_first_director": True
+                "is_first_admin": True
             }
-            log_info(f"First director registered and auto-verified: {username} (ID: {user_id})", "auth")
+            log_info(f"First admin registered and auto-verified: {username} (ID: {user_id})", "auth")
+            conn.close()
             return response_data
 
-        # Отправляем email со ссылкой верификации
-        from utils.email import send_verification_link_email
-        email_sent = send_verification_link_email(email, verification_token, full_name)
+        # Отправляем email с КОДОМ верификации (вместо ссылки)
+        from utils.email_service import send_verification_code_email, send_admin_notification_email
+        
+        # Отправляем код пользователю
+        email_sent = send_verification_code_email(email, verification_code, full_name, 'user')
+        
+        # Уведомляем админов о новой регистрации
+        try:
+            # Получаем email всех директоров для уведомления
+            c.execute("SELECT email FROM users WHERE role = 'director' AND is_active = TRUE AND email IS NOT NULL")
+            admin_emails = [row[0] for row in c.fetchall() if row[0]]
+            
+            user_data_for_admin = {
+                'username': username,
+                'email': email,
+                'full_name': full_name,
+                'role': role,
+                'position': position
+            }
+            
+            for admin_email in admin_emails:
+                send_admin_notification_email(admin_email, user_data_for_admin)
+                
+            log_info(f"Admin notifications sent to {len(admin_emails)} directors", "auth")
+        except Exception as e:
+            log_error(f"Failed to send admin notifications: {e}", "auth")
 
         response_data = {
             "success": True,

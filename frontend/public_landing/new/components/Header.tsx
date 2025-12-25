@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X, Globe, Instagram, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
@@ -42,6 +42,20 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const langMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     // Fetch salon info if not provided
@@ -79,10 +93,19 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const location = window.location;
+  const navigate = (path: string) => window.location.href = path;
+
   const handleScrollTo = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     setIsMobileMenuOpen(false);
     setActiveSection(href);
+
+    if (location.pathname !== '/') {
+      navigate(`/${href}`);
+      return;
+    }
+
     const element = document.querySelector(href);
     if (element) {
       const headerOffset = 80;
@@ -150,7 +173,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
               ))}
 
               {/* Language Switcher */}
-              <div className="relative language-switcher">
+              <div className="relative language-switcher" ref={langMenuRef}>
                 <button
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                   className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-black/5 transition-colors"

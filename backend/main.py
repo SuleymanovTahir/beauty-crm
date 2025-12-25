@@ -103,6 +103,7 @@ from api.holidays import router as holidays_router
 from api.visitor_analytics import router as visitor_analytics_router
 from api.analytics import router as analytics_router
 from api.newsletter import router as newsletter_router
+from api.admin_registrations import router as admin_registrations_router
 
 # Создаём директории для загрузок
 ensure_upload_directories()
@@ -175,6 +176,7 @@ app.include_router(sitemap_router)  # для XML sitemap (/sitemap.xml)
 app.include_router(seo_metadata_router)  # для SEO метаданных (/api/public/seo-metadata)
 app.include_router(visitor_analytics_router, prefix="/api")  # для аналитики посетителей
 app.include_router(analytics_router, prefix="/api")  # для аналитики бота
+app.include_router(admin_registrations_router, prefix="/api")  # Admin Registrations Management
 
 
 # ===== MIDDLEWARE =====
